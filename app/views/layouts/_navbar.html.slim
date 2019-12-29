@@ -1,0 +1,33 @@
+nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
+  button.navbar-toggler aria-controls="navbartoggler" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbartoggler" data-toggle="collapse" type="button" 
+    span.navbar-toggler-icon
+  #navbartoggler.collapse.navbar-collapse
+    a.navbar-brand href="/" 
+      = image_tag "microhealthllc.png"
+    
+    ul.navbar-nav.mr-auto.mt-2.mt-lg-0
+    
+    ul.navbar-nav.my-2.my-lg-0
+      - if user_signed_in?
+        li.nav-item
+          = link_to destroy_user_session_path, method: :delete, class: "nav-link" do 
+            | Log out
+      - else
+        li.nav-item
+          = link_to new_user_session_path, class: "nav-link" do
+            | Log in
+        li.nav-item
+          = link_to new_user_registration_path, class: "nav-link" do
+            | Sign up
+
+css:
+  #nav-wrap {
+    padding: 20px 70px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    z-index: 1030;
+    font-weight: 300;
+    background: #fff;
+  }
+  .navbar-brand > img {
+    height: 40px;
+  }

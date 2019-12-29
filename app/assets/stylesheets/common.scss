@@ -1,0 +1,12 @@
+.icon-btn {
+  background: #fff;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  font-size: 18px;
+  justify-content: center;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.65) !important;
+  &:hover {
+    background: #f4f4f4;
+  }
+}
