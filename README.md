@@ -66,7 +66,7 @@ gem install rails
 
 gem install bundler
 
-yum install nodejs
+yum install yarn
 
 bundle install
 
@@ -75,6 +75,8 @@ rails db:setup
 rake db:seed
 
 rake assets:precompile
+
+chown -R nginx:nginx *
 
 # generate your secrets for config/secrets.yml
 
@@ -99,7 +101,6 @@ gpgcheck=1
 enabled=1
 
 gpgkey=https://nginx.org/keys/nginx_signing.key
-
 
 
 # Update yum and install nginx
