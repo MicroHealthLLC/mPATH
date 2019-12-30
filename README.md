@@ -142,9 +142,7 @@ service nginx restart
 # Setup
 go to https://your-url/admin
 
-login with temp account admin@example.com with password admin@2018
-
-be sure to configure your label printer to print A8 NOT A4
+login with temp account admin@example.com with password password
 
 Change, configure and customize your instance.  callback uri for socialmedia setup below.
 
