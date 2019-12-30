@@ -43,7 +43,7 @@ mysql_secure_installation
 
 mysql -u root -p
 
-create database mGis_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
+create database mgis_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 exit
 
