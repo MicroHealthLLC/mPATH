@@ -66,7 +66,7 @@ gem install rails
 
 gem install bundler
 
-yum install yarn
+gem install yarn
 
 bundle install
 
