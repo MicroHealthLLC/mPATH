@@ -68,6 +68,8 @@ gem install bundler
 
 yum install nodejs
 
+yarn install
+
 bundle install
 
 rails db:setup 
