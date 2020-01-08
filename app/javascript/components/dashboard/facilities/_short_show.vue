@@ -1,12 +1,16 @@
 <template>
-  <div id="facility-short-show">
+  <div id="facility-short-show" class="mt-3">
     <div v-if="!loading">
       <h6 class="text-muted">{{DV_facility.facilityName}}</h6>
       <p class="text-muted">{{DV_facility.region.name}}</p>
       <p class="text-muted">{{DV_facility.email}}</p>
       <div class="row mt-3">
-        <button class="col btn float-right btn-sm btn-primary">Edit</button>
-        <button @click.prevent.stop="$emit('show-facility', facility)" class="col btn float-right btn-sm btn-link">Show</button>
+        <div class="col-6">
+          <button @click.prevent.stop="$emit('edit-facility', DV_facility)" class="btn btn-sm btn-primary w-100" :disabled="!isCreator">Edit</button>
+        </div>
+        <div class="col-6">
+          <button @click.prevent.stop="$emit('show-facility', DV_facility)" class="btn btn-sm btn-link w-100">Show</button>
+        </div>
       </div>
     </div>
   </div>
@@ -28,6 +32,11 @@
     mounted() {
       this.fetchFacility()
     },
+    computed: {
+      isCreator() {
+        return this.DV_facility.creator && this.$currentUser && (this.$currentUser.id === this.DV_facility.creator.id)
+      }
+    },
     methods: {
       fetchFacility() {
         http
@@ -48,6 +57,6 @@
 <style lang="scss" scoped>
   #facility-short-show {
     font-size: 12px;
-    min-width: 100px;
+    min-width: 130px;
   }
 </style>

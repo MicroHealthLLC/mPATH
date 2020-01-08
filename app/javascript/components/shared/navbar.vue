@@ -1,7 +1,7 @@
 <template>
   <nav id="s-nav-wrap" class="navbar navbar-expand-lg blue-gradient navbar-light">
     <div class="s-nav-router">
-      <ul class="float-right navbar-nav my-2 my-lg-0">
+      <ul class="navbar-nav my-2 my-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="javascript:;">Facilities</a>
         </li>

@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   
   resources :dashboard, only: [:index]
   resources :facilities
+  resources :regions, only: [:index]
   
   root 'landing#index'  
 end

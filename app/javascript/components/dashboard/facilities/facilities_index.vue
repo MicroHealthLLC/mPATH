@@ -39,20 +39,12 @@
           </tbody>
         </table>
       </div>
-      <custom-modal name="new-facility-form" width="450">
-        <div slot="modal-content">
-          <facility-form
-            @callback="facilityFormCb"
-          ></facility-form>
-        </div>
-      </custom-modal>
     </div>
   </div>
 </template>
 
 <script>
   import http         from './../../../common/http'
-  import CustomModal  from './../../shared/custom_modal.vue'
   import FacilityForm from './_form.vue'
   import FacilityShow from './_show.vue'
   
@@ -60,7 +52,6 @@
     name: 'FacilitiesIndex',
     components: {
       FacilityForm,
-      CustomModal,
       FacilityShow
     },
     data() {

@@ -1,3 +1,7 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  /*overflow-y: hidden;*/
+}
 .icon-btn {
   background: #fff;
   cursor: pointer;
@@ -9,4 +13,23 @@
   &:hover {
     background: #f4f4f4;
   }
+}
+.brand-sidebar {
+  background-image: url('map-image.png');
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 60px 50px;
+  width: 70vw;
+}
+.auth-sidebar {
+  width: 30vw;
+  float: right;
+  margin: 60px 50px;  
+}
+.btn-social {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
 }

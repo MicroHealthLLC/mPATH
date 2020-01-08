@@ -6,7 +6,7 @@ class FacilitiesController < AuthenticatedController
   end
 
   def create
-    @facility = Facility.create(facility_params)
+    @facility = Facility.create(facility_params.merge(creator: current_user))
     render json: {facility: @facility.as_json}
   end
 

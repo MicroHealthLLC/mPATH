@@ -20,15 +20,9 @@
 <style lang="scss" scoped>
   #dash-wrap {
     padding-top: 1px;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 130px);
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    
-    .sidebar {
-      padding: 0 !important;
-      z-index: 1020;
-      box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-    }
   }  
 </style>

@@ -10,12 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_28_112007) do
+ActiveRecord::Schema.define(version: 2020_01_08_131657) do
 
-  # These are extensions that must be enabled in order to support this database
-  # enable_extension "mysql2"
-
-  create_table "active_admin_comments", force: :cascade do |t|
+  create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_type"
@@ -29,7 +26,7 @@ ActiveRecord::Schema.define(version: 2019_12_28_112007) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
-  create_table "admin_users", force: :cascade do |t|
+  create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -46,9 +43,8 @@ ActiveRecord::Schema.define(version: 2019_12_28_112007) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "facilities", force: :cascade do |t|
+  create_table "facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
-    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -58,19 +54,25 @@ ActiveRecord::Schema.define(version: 2019_12_28_112007) do
     t.datetime "updated_at", null: false
     t.string "latlng"
     t.bigint "region_id"
+    t.bigint "creator_id"
+    t.index ["creator_id"], name: "index_facilities_on_creator_id"
     t.index ["region_id"], name: "index_facilities_on_region_id"
   end
 
-  create_table "regions", force: :cascade do |t|
+  create_table "regions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
     t.string "position"
-    t.string "boundary"
+    t.text "boundary"
     t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code"
+    t.integer "status", default: 0
+    t.integer "region_type", default: 0
+    t.string "center"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -87,4 +89,5 @@ ActiveRecord::Schema.define(version: 2019_12_28_112007) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "facilities", "users", column: "creator_id"
 end

@@ -1,14 +1,11 @@
 <template>
-  <form id="facilities-short-form" @submit.prevent="saveFacilitiy" class="mx-auto" accept-charset="UTF-8">
+  <form id="facilities-short-form" @submit.prevent="saveFacilitiy" class="pt-3 mx-auto" accept-charset="UTF-8">
     <div class="form-group">
-      <label>Facility Name</label>
       <input type="text" class="form-control form-control-sm" v-model="DV_facility.facilityName" placeholder="Facility name" />
-      
-      <label class="mt-2">Phone Number</label>
-      <input type="text" class="form-control form-control-sm" placeholder="Phone number" v-model="DV_facility.phoneNumber" />
 
-      <label class="mt-2">Email</label>
-      <input type="email" class="form-control form-control-sm" placeholder="Email" v-model="DV_facility.email" />
+      <input type="text" class="mt-2 form-control form-control-sm" placeholder="Phone number" v-model="DV_facility.phoneNumber" />
+      
+      <input type="email" class="mt-2 form-control form-control-sm" placeholder="Email" v-model="DV_facility.email" />
     </div>
     <div class="clearfix form-group mt-3">
       <button :disabled="!readyToSave" class="btn float-right btn-sm btn-primary">Save</button>
@@ -54,7 +51,7 @@
       },
       setLatLng() {
         this.DV_facility.latlng = this.marker.latlng['lat'] +" "+ this.marker.latlng['lng']
-        this.DV_facility.regionId = 1 //this.marker.region.id
+        this.DV_facility.regionId = this.marker.region ? this.marker.region.id : 1
       }
     },
     computed: {

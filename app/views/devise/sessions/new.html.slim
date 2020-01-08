@@ -1,23 +1,44 @@
-.text-center
-  h2 Log in
+.d-flex
+  .brand-sidebar
+  .auth-sidebar
+    h4.my-3.text-center.text-secondary Login to your Account
 
-  = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| 
-    div.field
-      = f.label :email
-      br
-      = f.email_field :email, autofocus: true, autocomplete: "email" 
+    =form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+      = devise_error_messages!
 
-    div.field
-      = f.label :password
-      br
-      = f.password_field :password, autocomplete: "off" 
+      div.form-group
+        = f.label :email
+        br
+        = f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
 
-    - if devise_mapping.rememberable?
-      div.field
-        = f.check_box :remember_me 
-        = f.label :remember_me 
+      div.form-group
+        = f.label :password 
+        = f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password" 
 
-    div.actions
-      = f.submit "Log in" 
+      - if devise_mapping.rememberable?
+        .form-group
+          .form-check
+            = f.check_box :remember_me, class: 'form-check-input' 
+            = f.label :remember_me 
 
-  = render "devise/shared/links" 
+      div.form-group
+        = f.submit "LOG IN", class: 'form-control btn btn-primary'
+
+      .mt-5
+        .text-center.text-muted.my-4.font-italic * OR LOGIN WITH *
+        .row.my-3
+          .col-6
+            button.btn.btn-outline-primary.btn-social
+              i.fab.fa-facebook-square.mr-2
+              span Facebook
+
+          .col-6
+            button.btn.btn-outline-danger.btn-social
+              i.fab.fa-google-plus-square.mr-2
+              span Google
+          
+        .mt-5.text-center
+          span.pr-2
+            | Are you new here?
+          = render "devise/shared/links"
+ 

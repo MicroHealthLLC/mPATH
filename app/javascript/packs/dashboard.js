@@ -1,4 +1,5 @@
 import                       '@babel/polyfill'
+import _                from 'lodash'
 import Leaflet          from 'leaflet'
 import VModal           from 'vue-js-modal'
 import * as Vue2Leaflet from 'vue2-leaflet'
@@ -17,6 +18,7 @@ Vue.use(VModal)
 Vue.prototype.$leaflet = Leaflet
 Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-polyline', Vue2Leaflet.LPolyline);
+Vue.component('l-polygon', Vue2Leaflet.LPolygon);
 Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer);
 Vue.component('l-marker', Vue2Leaflet.LMarker);
 Vue.component('l-tooltip', Vue2Leaflet.LTooltip);
@@ -25,6 +27,9 @@ Vue.component('l-control-zoom', Vue2Leaflet.LControlZoom);
 Vue.component('l-geo-json', Vue2Leaflet.LGeoJson);
 Vue.component('l-feature-group', Vue2Leaflet.LFeatureGroup);
 Vue.config.productionTip = false
+
+
+Vue.prototype.$currentUser = JSON.parse(window.current_user.replace(/&quot;/g,'"'));
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
