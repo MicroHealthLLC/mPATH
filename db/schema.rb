@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_08_131657) do
+ActiveRecord::Schema.define(version: 2020_01_23_020840) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -52,11 +52,35 @@ ActiveRecord::Schema.define(version: 2020_01_08_131657) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "latlng"
     t.bigint "region_id"
     t.bigint "creator_id"
+    t.integer "status", default: 0
+    t.string "lat"
+    t.string "lng"
+    t.bigint "project_id"
     t.index ["creator_id"], name: "index_facilities_on_creator_id"
+    t.index ["project_id"], name: "index_facilities_on_project_id"
     t.index ["region_id"], name: "index_facilities_on_region_id"
+  end
+
+  create_table "project_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "project_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_users_on_project_id"
+    t.index ["user_id"], name: "index_project_users_on_user_id"
+  end
+
+  create_table "projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "status", default: 0
+    t.integer "project_type"
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid"
+    t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
 
   create_table "regions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -70,6 +94,27 @@ ActiveRecord::Schema.define(version: 2020_01_08_131657) do
     t.integer "status", default: 0
     t.integer "region_type", default: 0
     t.string "center"
+  end
+
+  create_table "states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
+    t.string "center", default: "[]"
+    t.bigint "region_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["region_id"], name: "index_states_on_region_id"
+  end
+
+  create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "text"
+    t.integer "task_type"
+    t.text "notes"
+    t.date "due_date"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_tasks_on_project_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -89,5 +134,10 @@ ActiveRecord::Schema.define(version: 2020_01_08_131657) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "facilities", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
+  add_foreign_key "project_users", "projects"
+  add_foreign_key "project_users", "users"
+  add_foreign_key "states", "regions"
+  add_foreign_key "tasks", "projects"
 end

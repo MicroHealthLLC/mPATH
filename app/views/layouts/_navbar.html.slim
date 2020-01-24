@@ -10,6 +10,9 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
     ul.navbar-nav.my-2.my-lg-0
       - if user_signed_in?
         li.nav-item
+          = link_to "javascript:;", class: "nav-link" do 
+            | Welcome #{current_user.email}!
+        li.nav-item
           = link_to destroy_user_session_path, method: :delete, class: "nav-link" do 
             | Log out
       - else

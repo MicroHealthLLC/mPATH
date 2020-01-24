@@ -1,11 +1,13 @@
 import                       '@babel/polyfill'
 import _                from 'lodash'
 import Leaflet          from 'leaflet'
+import Multiselect      from 'vue-multiselect'
 import VModal           from 'vue-js-modal'
 import * as Vue2Leaflet from 'vue2-leaflet'
 import Dashboard        from 'components/dashboard/dashboard.vue'
 import router           from 'routers/dashboard'
 import                       'leaflet/dist/leaflet.css'
+import                       'vue-multiselect/dist/vue-multiselect.min.css'
 
 delete Leaflet.Icon.Default.prototype._getIconUrl
 Leaflet.Icon.Default.mergeOptions({
@@ -16,6 +18,7 @@ Leaflet.Icon.Default.mergeOptions({
 
 Vue.use(VModal)
 Vue.prototype.$leaflet = Leaflet
+Vue.component('multiselect', Multiselect);
 Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-polyline', Vue2Leaflet.LPolyline);
 Vue.component('l-polygon', Vue2Leaflet.LPolygon);
@@ -26,6 +29,7 @@ Vue.component('l-popup', Vue2Leaflet.LPopup);
 Vue.component('l-control-zoom', Vue2Leaflet.LControlZoom);
 Vue.component('l-geo-json', Vue2Leaflet.LGeoJson);
 Vue.component('l-feature-group', Vue2Leaflet.LFeatureGroup);
+Vue.component('l-icon', Vue2Leaflet.LIcon);
 Vue.config.productionTip = false
 
 

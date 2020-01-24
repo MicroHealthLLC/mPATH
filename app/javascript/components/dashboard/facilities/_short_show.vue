@@ -1,7 +1,7 @@
 <template>
   <div id="facility-short-show" class="mt-3">
     <div v-if="!loading">
-      <h6 class="text-muted">{{DV_facility.facilityName}}</h6>
+      <h6 class="text-muted f-head">{{DV_facility.facilityName}}</h6>
       <p class="text-muted">{{DV_facility.region.name}}</p>
       <p class="text-muted">{{DV_facility.email}}</p>
       <div class="row mt-3">
@@ -50,6 +50,14 @@
             console.error(err);
           })
       }
+    },
+    watch: {
+      facility: {
+        handler: function(value) {
+          this.DV_facility = value
+        },
+        deep: true
+      }
     }
   }  
 </script>
@@ -58,5 +66,9 @@
   #facility-short-show {
     font-size: 12px;
     min-width: 130px;
+    .f-head {
+      word-break: break-all;
+      text-overflow: ellipsis;
+    }
   }
 </style>

@@ -2,6 +2,13 @@ body {
   font-family: 'Roboto', sans-serif;
   /*overflow-y: hidden;*/
 }
+p {
+  word-break: break-all;
+}
+button:focus,
+input[type=button]:focus {
+  outline: none;
+}
 .icon-btn {
   background: #fff;
   cursor: pointer;
@@ -32,4 +39,39 @@ body {
   align-items: center;
   width: 100%;
   justify-content: center;
+}
+.fav-btn {
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.5);
+  border-radius: 10rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.875rem;
+  line-height: 1.25;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+  &:hover {
+    color: rgba(0, 0, 0, 0.7);
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+  }
+}
+.fbody-icon {
+  font-size: 15px;
+  color: gray;
+  margin-right: 10px;
+}
+.crud-actions {
+  display: flex;
+  justify-content: flex-end;
+  color: gray;
+  span {
+    cursor: pointer;
+  }
+}
+.delete-action:hover {
+  color: red;
+}
+.edit-action:hover {
+  color: blue;
 }

@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   devise_for :users
   
   resources :dashboard, only: [:index]
-  resources :facilities
+  resources :projects, only: [:index, :show] do 
+    resources :facilities
+  end
   resources :regions, only: [:index]
   
   root 'landing#index'  

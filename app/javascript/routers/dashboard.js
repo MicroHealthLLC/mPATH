@@ -1,15 +1,16 @@
-import DashboardWrap from '../components/dashboard/dashboard_wrap.vue'
+import DashboardWrap  from '../components/dashboard/dashboard_wrap'
 
 export default new VueRouter({
   routes: [
     {
-      path: '/',
+      name: 'ProjectDashboard',
+      path: '/projects/:projectId',
       component: DashboardWrap
     }
   ],
   hashbang: false,
   mode    : 'history',
-  base    : '/dashboard',
+  base    : '/',
   scrollBehavior () {
     return { x: 0, y: 0 }
   }

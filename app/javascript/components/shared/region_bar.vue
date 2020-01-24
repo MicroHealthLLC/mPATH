@@ -47,7 +47,7 @@
     },
     computed: {
       filteredRegions() {
-        return this.regions.filter(region => ['country', 'state'].includes(region.regionType)).sort((a, b) => a.name.localeCompare(b.name))
+        return this.regions.filter(region => ['region'].includes(region.regionType)).sort((a, b) => a.name.localeCompare(b.name))
       }
     }
   }

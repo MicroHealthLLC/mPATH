@@ -1,10 +1,1 @@
-.p-5.text-center
-  h1 
-    | Welcome to Microhealth Georaphical Information System
-  br
-  - if user_signed_in?
-    = link_to dashboard_index_path, class: "btn btn-link" do 
-      | Goto Dashboard
-  - else
-    = link_to new_user_session_path, class: "btn btn-link" do 
-      | Login to continue
+= render 'layouts/landing'

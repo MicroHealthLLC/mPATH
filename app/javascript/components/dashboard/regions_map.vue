@@ -1,6 +1,6 @@
 <template>
   <div class="row m-0 mw-100">
-    <div id="map-wrap" class="col p-0">
+    <div v-if="!loading" id="map-wrap" class="col p-0">
       <div class="regions-bar">
         <region-bar 
           :regions="regions"
@@ -8,49 +8,72 @@
         >    
         </region-bar>
       </div>
-      <l-map ref="leafmap" :zoom="zoom" :center="center" @click="addFacilityModal">
-        <l-tile-layer :noWrap="true" :url="url" :attribution="attribution"></l-tile-layer>
+      <l-map 
+        ref="leafmap" 
+        :min-zoom="minZoom" 
+        :zoom="zoom" 
+        :center="center"
+      >
+        <l-tile-layer 
+          :noWrap="true" 
+          :url="url" 
+          :attribution="attribution"
+        ></l-tile-layer>
+        <l-marker 
+          v-for="(region, index) in regions" 
+          :lat-lng="centerForRegion(region)"
+          :key="`${region.id}__${index}`"
+          :visible="region.facilityCount > 0 && region.visible"
+          @click="zoomInRegion(region)"
+        >
+          <l-icon 
+            :icon-anchor="iconAnchor" 
+            class-name="map-count-marker"
+          >
+            <div class="heading">
+              <div>
+                <div class="f-counter shadow">
+                  <span>{{region.facilityCount}}</span>
+                </div>
+                <div class="row mr-0">
+                  <div class="col-6 p-0">
+                    <div class="bg-primary markericon top-left"></div>
+                    <div class="bg-warning markericon bottom-left"></div>
+                  </div>
+                  <div class="col-6 p-0">
+                    <div class="bg-danger markericon top-right"></div>
+                    <div class="bg-info markericon bottom-right"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </l-icon>
+        </l-marker>
+        <l-marker 
+          v-for="(facility, index) in facilities" 
+          :lat-lng="getLatLngForFacility(facility)"
+          :key="`${facility.id}_facility_${index}`"
+          :visible="isVisible(facility)"
+          @click="showFacility(facility)"
+        ></l-marker>
         <l-polygon
-          v-for="(region, index) in regions"
-          @click="setCurrentRegion(region)"
-          :region="region"
-          :key="region.id"
-          :lat-lngs="getLatLng(region)"
+          v-for="(region, index) in regionPolygons"
+          :key="`${region.id}_polygon`"
+          :lat-lngs="getLatLngs(region)"
           :color="region.color"
           :fill-color="region.color"
-        >
-        </l-polygon>
-        <l-marker 
-          v-for="(marker, index) in markers" 
-          :lat-lng="marker.latlng"
-          :key="`${marker.region.id}__${index}`"
-          @add="addNewMarker"
-        >
-          <l-popup v-if="marker.facility && marker.facility.id">
-            <facility-popup-show
-              :facility="marker.facility"
-              @show-facility="showFacility"
-              @edit-facility="editFacility"
-            />
-          </l-popup>
-          <l-popup v-else @remove="removeEmptyMarkers">
-            <short-facility-form 
-              :marker="marker"
-              :marker-key="index"
-              @facility-callback="facilityCallback" 
-            />
-          </l-popup>
-        </l-marker>
+        ></l-polygon>
       </l-map>
     </div>
     <transition name="slide-fade">
       <div v-if="openSidebar" id="map-sidebar">
-        <div @click="openSidebar = !openSidebar" class="close-sidebar-btn">
+        <div @click="closeSidebar" class="close-sidebar-btn">
           <i class="fas fa-minus"></i>
         </div>
         <facility-show  
           v-if="currentFacility"
           :facility="currentFacility"
+          :region="currentRegion"
           @back-after-delete="backFromFacilityShow"
           @edit-facility="editFacility"
         />
@@ -58,13 +81,16 @@
     </transition>
 
     <sweet-modal 
-      ref="editFacilityForm" 
+      ref="facilityForm" 
       overlay-theme="dark"
-      title="Edit Facility"
+      :title="facilityModalTitle"
+      @close="closeFacilityModal"
     >
       <facility-form
-        v-if="currentFacility"
+        v-if="DV_facilityForm"
         :facility="currentFacility"
+        :regions="regions"
+        @facility-created="createdFacility"
         @facility-update="updateFacility"
         class="facility-form-modal"
       ></facility-form>
@@ -87,6 +113,7 @@ import { SweetModal }    from 'sweet-modal-vue'
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
+  props: ['withFacility'],
   components: {
     ShortFacilityForm,
     FacilityForm,
@@ -99,41 +126,46 @@ export default {
     return {
       loading: true,
       center: [40.64730356252251, -74.66308593750001],
-      zoom: 6,
+      newCenter: null,
+      zoom: 7,
+      minZoom: 5,
+      iconAnchor: [16, 37],
       url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors`,
       markers: [],
+      countMarkers: [],
       currentRegion: null,
       facilities: [],
       regions: [],
+      regionPolygons: [],
       openSidebar: false,
       currentFacility: null,
-      targetMarker: null
+      targetMarker: null,
+      DV_facilityForm: false,
+      updated: false
     }
   },
   mounted() {
     this.fetchRegions();
-    this.fetchFacilities();
+  },
+  beforeUpdate() {
+    if (this.updated && this.newCenter) {
+      this.zoom = 8
+      this.updated = false
+    }
+  },
+  updated() {
+    if (this.newCenter) {
+      this.$refs.leafmap.mapObject.flyTo(this.newCenter, 9)
+      this.newCenter = null
+    }
   },
   computed: {
     isCreator() {
       return this.currentFacility.creator && this.$currentUser && (this.$currentUser.id === this.currentFacility.creator.id)
     },
-    getLatLng() {
-      return function(region) {
-        var data = null
-        if (region.code == null || region.code == undefined || region.code === 'EMPTY') {return [];}
-        if (region.regionType === "state") {
-          data = StatesRaw.features.find(feature => feature.properties.NAME === region.code)
-        }
-        else if (region.regionType === "country") {
-          data = RegionsRaw.features.find(feature => feature.properties.ISO_A3 == region.code)
-        }
-        if (data == null || data == undefined) {return [];}
-        var coordinates = data.geometry.coordinates
-        this.getSorted(coordinates)
-        return coordinates;
-      } 
+    facilityModalTitle() {
+      return this.currentFacility ? "Edit facility" : "Add Facility"
     }
   },
   methods: {
@@ -142,6 +174,8 @@ export default {
         .get('/regions.json')
         .then((res) => {
           this.regions = res.data.regions;
+          this.regionPolygons = res.data.regions;
+          this.fetchFacilities();
         })
         .catch((err) => {
           console.error(err);
@@ -149,19 +183,30 @@ export default {
     },
     fetchFacilities() {
       http
-        .get('/facilities.json')
+        .get(`/projects/${this.$route.params.projectId}/facilities.json`)
         .then((res) => {
           this.facilities = res.data.facilities;
+          this.setRegionCountMarkers();
           this.loading = false;
-          this.setFacilityMarkers();
         })
         .catch((err) => {
           this.loading = false;
           console.error(err);
         })
     },
+    setRegionCountMarkers() {
+      let countArr = _.map(_.countBy(this.facilities, "regionId"), (val, key) => ({ regionId: key, facilityCount: val }))
+      this.regions.forEach((region) => {
+        let foundRegion = countArr.find(count => count.regionId == region.id)
+        region.facilityCount = foundRegion ? foundRegion.facilityCount : 0
+        region.visible = true
+      })
+    },
     setCurrentRegion(region) {
       this.currentRegion = region;
+    },
+    getLatLngForFacility(facility) {
+      return L.latLng(Number(facility.lat), Number(facility.lng))
     },
     addFacilityModal(event) {
       this.markers.push({
@@ -169,44 +214,38 @@ export default {
         facility: null,
         latlng: event.latlng
       });
-      this.$nextTick(() => this.targetMarker.openPopup())
     },
-    facilityCallback(hash) {
-      this.loading = true;
-      this.markers = [];
-      this.currentRegion = null;
-      this.fetchFacilities();
-    },
-    setFacilityMarkers() {
-      for (var index in this.facilities) {
-        var facility = this.facilities[index]
-        if (facility.latlng == null || facility.latlng == undefined) continue 
-        let latlng = facility.latlng.split(/ /g);
-        this.markers.push({
-          region: facility.region,
-          facility: facility,          
-          latlng: L.latLng(Number(latlng[0]), Number(latlng[1]))
-        });
-      }
-    },
-    addNewMarker(event) {
-      this.targetMarker = event.target
+    isVisible(facility) {
+      var region = this.regions.find(r => r.id == facility.regionId)
+      return !region.visible
     },
     showFacility(facility) {
       this.openSidebar = true
+      var new_center = this.getLatLngForFacility(facility)
+      this.center = new_center
+      this.newCenter = new_center
+      this.zoom = 7
+      this.updated = true
       this.currentFacility = facility
+    },
+    closeSidebar() {
+      this.openSidebar = false
+      var new_center = this.getLatLngForFacility(this.currentFacility)
+      this.center = new_center
+      this.newCenter = new_center
+      this.zoom = 7
+      this.updated = true
+      this.currentFacility = null
     },
     gotoRegion(region) {
       this.currentRegion = region
-      var new_center = JSON.parse(region.center)
-      if (new_center) {
-        this.center = L.latLng(new_center[0], new_center[1])
-        this.zoom = 6
+      if (region.states.length > 0) {
+        var new_center = this.centerForRegion(region)
+        this.center = new_center
+        this.newCenter = new_center
+        this.zoom = 7
+        this.updated = true
       }
-    },
-    removeEmptyMarkers() {
-      this.currentRegion = null
-      this.markers = this.markers.filter((m) => m.facility !== null)
     },
     backFromFacilityShow(facility) {
       this.openSidebar = false
@@ -217,12 +256,71 @@ export default {
       this.currentFacility = facility
       if (!this.isCreator) {return;}
       this.openSidebar = false
-      this.$refs.editFacilityForm.open()
+      this.DV_facilityForm = true
+      this.$refs.facilityForm.open()
     },
     updateFacility(facility) {
       this.currentFacility = facility
       this.openSidebar = true
-      this.$refs.editFacilityForm.close()
+      this.DV_facilityForm = false
+      this.$refs.facilityForm.close()
+    },
+    closeFacilityModal() {
+      this.DV_facilityForm = false
+      this.$emit('nullify-modals');
+    },
+    createdFacility(facility) {
+      this.$refs.facilityForm.close()
+      var region = this.regions.find(r => r.id == facility.regionId)
+      this.facilities.push(facility)
+      region.facilityCount += 1
+    },
+    zoomInRegion(region) {
+      this.loading = true
+      this.currentRegion = region
+      var new_center = this.centerForRegion(region)
+      this.regions.forEach((r) => r.visible = r.id !== region.id)
+      this.newCenter = new_center
+      this.zoom = 7
+      this.loading = false
+      this.updated = true
+    },
+    getLatLngs(region) {
+      var data = []
+      if (region.states == null || region.states == []) return []
+      for (var index in region.states) {
+        var state = region.states[index]
+        var data_raw = StatesRaw.features.find(feature => feature.properties.NAME === state.code)
+        if (data_raw == null || data_raw == undefined) continue
+        data.push(data_raw.geometry.coordinates)
+      }
+      if (data.length <= 0) return []
+      this.getSorted(data)
+      return data
+    },
+    centerForRegion(region) {
+      const average = arr => arr.reduce((p, c) => p+c, 0) / arr.length
+      var lat = []
+      var lng = []
+      if (region.states == null || region.states.length <= 0) return []
+      for (var index in region.states) {
+        var new_center = JSON.parse(region.states[index].center)
+        lat.push(new_center[0])
+        lng.push(new_center[1])
+      }
+      return L.latLng(average(lat), average(lng))
+    }
+  },
+  watch: {
+    withFacility: {
+      handler: function(value) {
+        if (value) {
+          this.currentFacility = null
+          this.openSidebar = false
+          this.DV_facilityForm = true
+          this.$refs.facilityForm.open()
+        }
+      }, deep: true
     }
   }
 }
@@ -239,10 +337,11 @@ export default {
     z-index: 800;
     background: white;
     right: 0;
-    width: 24vw;
+    width: 35vw;
     height: calc(100vh - 130px);
     padding: 10px;
     box-shadow: 0 1px 3px rgba(0,0,0,.15);
+    overflow-y: scroll;
   }
 
   /* sidebar transitions */
@@ -263,11 +362,8 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    left: -24px;
     background: #fff;
     padding: 5px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
   }
   .regions-bar {
     position: absolute;
@@ -276,10 +372,50 @@ export default {
     z-index: 800;
   }
   .sweet-modal-overlay /deep/ .sweet-modal {
-    max-height: 65vh;
+    max-height: 75vh;
+    min-width: 50vw;
     .sweet-title {
       display: flex;
       align-items: center;
     }
+  }
+  .vue2leaflet-map /deep/ .map-count-marker {
+    border-radius: 50%;
+    box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.5);
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    .heading {
+      width: 1.25em;
+    }
+  }
+  .markericon {
+    width: 15px;
+    height: 15px;
+  }
+  .top-left {
+    border-top-left-radius: 8px;
+  }
+  .bottom-left {
+    border-bottom-left-radius: 8px;
+  }
+  .top-right {
+    border-top-right-radius: 8px;
+  }
+  .bottom-right {
+    border-bottom-right-radius: 8px;
+  }
+  .f-counter {
+    text-align: center;
+    font-weight: 600;
+    background: white;
+    position: absolute;
+    z-index: 9999;
+    right: 4px;
+    height: 22px;
+    width: 22px;
+    top: 4px;
+    padding: 3px;
+    border-radius: 50%;
   }
 </style>
