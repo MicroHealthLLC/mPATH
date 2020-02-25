@@ -5,7 +5,7 @@ class Project < ApplicationRecord
   has_many :tasks, through: :facilities
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
-  belongs_to :project_type
+
 
   enum status: [:pending, :completed]
 

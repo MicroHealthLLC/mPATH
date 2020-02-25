@@ -6,9 +6,9 @@ ActiveAdmin.register Project do
     permitted
   end
 
-  action_item :regions, only: :show do
-    link_to 'Regions', admin_project_regions_path(project)
-  end
+  # action_item :regions, only: :show do
+  #   link_to 'Regions', admin_project_regions_path(project)
+  # end
 
   index do
     selectable_column

@@ -13,7 +13,7 @@ ActiveAdmin.register Region do
       f.input :code
       f.input :color
       f.input :status
-      f.input :states, as: :select, collection: State.where(nil)
+      # f.input :states, as: :select, collection: State.where(nil)
     end
     f.actions
   end
@@ -25,7 +25,7 @@ ActiveAdmin.register Region do
     column :code
     column :color
     column :status
-    column :states
+    # column :states
     actions
   end
 

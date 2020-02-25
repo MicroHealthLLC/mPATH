@@ -1,5 +1,5 @@
 class Region < ApplicationRecord
-  belongs_to :project
+  # belongs_to :project
   has_many :region_states, dependent: :destroy
   has_many :states, through: :region_states
   has_many :facilities
