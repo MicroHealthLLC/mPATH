@@ -1,20 +1,19 @@
 <template>
   <div id="facility-detail-show" class="mt-3">
-    <project-index 
-      v-if="DV_facility" 
+    <project-show
       :facility="DV_facility"
-      @refresh-facility="refreshFacility"
-    ></project-index>
+    />
     <a href="javascript:;" @click.prevent.stop="$emit('show-less')" class="btn btn-link float-right f-show-btn">show less..</a>
   </div>
 </template>
 
 <script>
-  import ProjectIndex from './projects/_index'
+  import ProjectShow from './../projects/project_show'
+
   export default {
     name: 'DetailShow',
     props: ['facility'],
-    components: { ProjectIndex },
+    components: { ProjectShow },
     data() {
       return {
         DV_facility: this.facility
@@ -33,7 +32,7 @@
         deep: true
       }
     }
-  }  
+  }
 </script>
 
 <style lang="scss" scoped>

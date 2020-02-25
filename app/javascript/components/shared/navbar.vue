@@ -3,7 +3,7 @@
     <div class="left-sub-nav">
       <ul class="navbar-nav my-2 my-lg-0">
         <li class="nav-item" v-if="currentProject">
-          <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="$emit('add-facility-from-nav')">Add Facility</a>
+          <a class="btn fav-btn" :class="{disabled: !allowFacilityAdd}" href="javascript:;" @click.prevent.stop="addFacility">Add Facility</a>
         </li>
       </ul>
     </div>
@@ -11,19 +11,19 @@
       <ul class="navbar-nav my-2 my-lg-0">
         <li class="nav-item">
           <div class="project-select">
-            <multiselect 
-              v-model="currentProject" 
-              track-by="name" 
-              label="name" 
-              placeholder="Select Project" 
-              :options="DV_projects" 
-              :searchable="false" 
+            <multiselect
+              v-model="currentProject"
+              track-by="name"
+              label="name"
+              placeholder="Select Project"
+              :options="DV_projects"
+              :searchable="false"
               :allow-empty="false"
               @select="updateProjectQuery"
             >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
-                  <span>{{option.name}}</span> 
+                  <span>{{option.name}}</span>
                   <span class="ml-2 badge badge-pill" :class="{ 'badge-success': option.status == 'completed', 'badge-warning': option.status == 'pending' }">{{option.status}}</span>
                 </div>
               </template>
@@ -46,12 +46,20 @@
       }
     },
     mounted() {
-      this.currentProject = this.DV_projects.find(project => project.uuid=== this.$route.params.projectId)
+      this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
+    },
+    computed: {
+      allowFacilityAdd() {
+        return this.currentProject;// && this.currentProject.regions.length > 0
+      }
     },
     methods: {
       updateProjectQuery(selected, index) {
-        window.location.pathname = "/projects/" + selected.uuid
-        // this.$router.push({name: 'ProjectDashboard', params: {projectId: selected.uuid} })
+        window.location.pathname = "/projects/" + selected.id
+        // this.$router.push({name: 'ProjectDashboard', params: {projectId: selected.id} })
+      },
+      addFacility() {
+        if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
       }
     },
     watch: {
@@ -92,7 +100,12 @@
     .multiselect__placeholder {
       margin-bottom: 2px;
       padding-top: 2px;
-    } 
+    }
+  }
+  a.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.8;
   }
 
 </style>

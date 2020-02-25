@@ -1,5 +1,6 @@
 ActiveAdmin.register Region do
 
+  menu priority: 5
 
   permit_params do
     permitted = [:name, :code, :status, :color, state_ids: []]
@@ -12,12 +13,13 @@ ActiveAdmin.register Region do
       f.input :code
       f.input :color
       f.input :status
-      f.input :states
+      f.input :states, as: :select, collection: State.where(nil)
     end
     f.actions
   end
 
   index do
+    selectable_column
     id_column
     column :name
     column :code
@@ -25,6 +27,18 @@ ActiveAdmin.register Region do
     column :status
     column :states
     actions
+  end
+
+  show do
+    attributes_table do
+      row :name
+      row :code
+      row :color
+      row :status
+      row :project
+      row :states
+    end
+    active_admin_comments
   end
 
   filter :name

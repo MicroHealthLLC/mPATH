@@ -29,11 +29,11 @@ class FacilitiesController < AuthenticatedController
 
   private
   def set_facility
-    @facility = Facility.find_by(id: params[:id])
+    @facility = @project.facilities.find_by(id: params[:id])
   end
 
   def set_project
-    @project = Project.find_by(uuid: params[:project_id])
+    @project = current_user.projects.find_by(id: params[:project_id])
   end
   
   def facility_params

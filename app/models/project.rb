@@ -1,24 +1,21 @@
 class Project < ApplicationRecord
+  has_many :regions, dependent: :destroy
+  has_many :states, through: :regions
   has_many :facilities, dependent: :destroy
-  has_many :tasks, dependent: :destroy
-  has_many :project_users
+  has_many :tasks, through: :facilities
+  has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
-  
+  belongs_to :project_type
+
   enum status: [:pending, :completed]
-  enum project_type: [:project_type1, :project_type2]
 
   before_create :set_uuid
 
-  # def as_json(options=nil)
-  #   json = super(options)
-  #   json.merge(
-  #     progress: progress,
-  #     tasks: self.tasks.as_json
-  #   ).as_json
-  # end
-
-  def progress
-    self.tasks.map(&:progress).sum/self.tasks.count rescue 0
+  def as_json(options=nil)
+    json = super(options)
+    json.merge(
+      regions: self.regions.as_json
+    ).as_json
   end
 
   private

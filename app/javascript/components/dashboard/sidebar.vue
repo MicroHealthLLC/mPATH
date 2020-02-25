@@ -1,17 +1,18 @@
 <template>
   <div id="sidebar-wrapper">
-    <facilities-index></facilities-index>
+    <facilities-index />
   </div>
 </template>
 
 <script>
-  import FacilitiesIndex from './facilities/_index'
+  import FacilitiesIndex from './facilities/facility_index'
+
   export default {
     name: 'Sidebar',
     components: {
       FacilitiesIndex
     }
-  }  
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -19,7 +20,7 @@
     width: 100%;
     height: calc(100vh - 130px);
     max-height: calc(100vh - 130px);
-    overflow: auto; 
+
     background: white;
     padding: 10px 20px;
   }

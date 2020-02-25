@@ -1,5 +1,6 @@
 ActiveAdmin.register User do
-
+  menu priority: 3
+  
   actions :index, :show, :edit, :update
   permit_params do
     permitted = [:email, :encrypted_password, project_ids: []]
@@ -14,6 +15,7 @@ ActiveAdmin.register User do
   end
   
   index do
+    selectable_column
     id_column
     column :email
     column :last_sign_in_at

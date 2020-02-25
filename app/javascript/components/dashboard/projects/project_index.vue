@@ -3,7 +3,6 @@
     <div v-if="!showCurrent">
       <div class="d-flex justify-content-between mb-3">
         <h5>{{ DV_facility.facilityName }}</h5>
-        <a href="javascript:;" class="btn fav-btn" @click.prevent.stop="addNewProject">Add Project</a>
       </div>
       <ul class="list-group">
         <li class="list-group-item" v-for="(project, index) in DV_facility.projects">
@@ -28,38 +27,22 @@
         :project="currentProject"
         @deleted-project="projectDeleted"
         @edit-project="editProject"
-      ></project-show>
+      />
     </div>
-
-    <sweet-modal 
-      ref="projectForm" 
-      overlay-theme="dark"
-      @close="DV_projectForm = false"
-    >
-      <project-form
-        v-if="DV_projectForm"
-        :facility="DV_facility"
-        :project="currentProject"
-        @project-created="projectCreated"
-        class="project-form-modal"
-      ></project-form>
-    </sweet-modal>
   </div>
 </template>
 
 <script>
-  import ProjectShow  from './_show'
-  import ProjectForm  from './_form'
-  import {SweetModal} from 'sweet-modal-vue'
+  import ProjectShow  from './project_show'
+
   export default {
     name: 'ProjectIndex',
     props: ['facility'],
-    components: { ProjectShow, ProjectForm, SweetModal },
+    components: { ProjectShow },
     data() {
       return {
         showCurrent: false,
         currentProject: null,
-        DV_projectForm: false,
         DV_facility: this.facility
       }
     },
@@ -68,15 +51,9 @@
         this.currentProject = project
         this.showCurrent = true
       },
-      addNewProject() {
-        this.DV_projectForm = true
-        this.$refs.projectForm.open()
-      },
       projectCreated(project) {
         this.currentProject = project
         this.showCurrent = true
-        this.DV_projectForm = false
-        this.$refs.projectForm.close()
         this.$emit('refresh-facility')
       },
       projectDeleted() {
@@ -85,8 +62,6 @@
       },
       editProject(res) {
         this.currentProject = res.project
-        this.DV_projectForm = true
-        this.$refs.projectForm.open()
       }
     },
     watch: {
@@ -97,7 +72,7 @@
         deep: true
       }
     }
-  }  
+  }
 </script>
 
 <style lang="scss" scoped>

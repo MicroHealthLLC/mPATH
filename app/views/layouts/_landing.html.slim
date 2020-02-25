@@ -15,7 +15,7 @@
                   span.ml-2.badge.badge-pill class=(project.completed? ?  'badge-success' : 'badge-warning')
                     =project.status
               .col-2
-                = link_to project_path(project.uuid), class: 'btn btn-link btn-sm' do 
+                = link_to project_path(project), class: 'btn btn-link btn-sm' do 
                   | show
       -else
         li.list-group-item.text-center

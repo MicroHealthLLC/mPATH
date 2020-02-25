@@ -24,7 +24,7 @@ class ProjectsController < AuthenticatedController
 
   private
   def set_project
-    @project = current_user.projects.find_by(uuid: params[:id])
+    @project = current_user.projects.find_by(id: params[:id])
   end
   
   def project_params

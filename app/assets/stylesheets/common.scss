@@ -1,6 +1,6 @@
 body {
   font-family: 'Roboto', sans-serif;
-  /*overflow-y: hidden;*/
+  overflow-y: hidden;
 }
 p {
   word-break: break-all;
@@ -32,7 +32,7 @@ input[type=button]:focus {
 .auth-sidebar {
   width: 30vw;
   float: right;
-  margin: 60px 50px;  
+  margin: 60px 50px;
 }
 .btn-social {
   display: flex;
@@ -74,4 +74,7 @@ input[type=button]:focus {
 }
 .edit-action:hover {
   color: blue;
+}
+.pac-container {
+  z-index: 100000;
 }

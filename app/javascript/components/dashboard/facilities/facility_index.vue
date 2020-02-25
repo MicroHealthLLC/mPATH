@@ -1,11 +1,10 @@
 <template>
   <div>
     <div v-if="cuurentFacility">
-      <facility-show 
+      <facility-show
         :facility="cuurentFacility"
         @back="backFromShow"
-      >
-      </facility-show>
+      />
     </div>
 
     <div v-else id="facilities-wrap">
@@ -27,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(facility, index) in facilities" 
+            <tr v-for="(facility, index) in facilities"
               :key="facility.id"
               @click.stop="showFacility(facility)"
             >
@@ -45,9 +44,9 @@
 
 <script>
   import http         from './../../../common/http'
-  import FacilityForm from './_form.vue'
-  import FacilityShow from './_show.vue'
-  
+  import FacilityForm from './facility_form'
+  import FacilityShow from './facility_show'
+
   export default {
     name: 'FacilitiesIndex',
     components: {
@@ -94,7 +93,7 @@
         this.fetchFacilities();
       }
     }
-  }  
+  }
 </script>
 
 <style lang="scss" scoped>

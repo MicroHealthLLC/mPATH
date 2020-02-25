@@ -20,6 +20,12 @@
             <span class="fbody-icon"><i class="fas fa-globe"></i></span>
             <span>{{region.name}}</span>
           </p>
+          <p class="mt-2 d-flex align-items-center">
+            <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
+            <span class="w-100">
+              <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
+            </span>
+          </p>
           <p class="mt-2">
             <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
             <span>{{DV_facility.address || 'N/A'}}</span>
@@ -27,11 +33,11 @@
           <p class="mt-2">
             <span class="fbody-icon"><i class="far fa-id-badge"></i></span>
             <span>{{DV_facility.pointOfContact || 'N/A'}}</span>
-          </p> 
+          </p>
           <p class="mt-2">
             <span class="fbody-icon"><i class="fas fa-phone"></i></span>
             <span>{{DV_facility.phoneNumber || 'N/A'}}</span>
-          </p> 
+          </p>
           <p class="mt-2">
             <span class="fbody-icon"><i class="far fa-envelope"></i></span>
             <span>{{DV_facility.email || 'N/A'}}</span>
@@ -46,16 +52,16 @@
             <span class="fbody-icon">
               <i class="fa fa-exclamation-circle"></i>
             </span>
-            <span class="ml-2 badge badge-pill" :class="{ 'badge-success': DV_facility.status == 'completed', 'badge-warning': DV_facility.status == 'pending' }"> 
+            <span class="ml-2 badge badge-pill" :class="{ 'badge-success': DV_facility.status == 'completed', 'badge-warning': DV_facility.status == 'pending' }">
               {{DV_facility.status}}
             </span>
           </p>
-          <a href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a> 
+          <a href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a>
         </div>
-      </div> 
+      </div>
       <div v-if="showMore">
         <detail-show
-          :facility="DV_facility" 
+          :facility="DV_facility"
           @show-less="showLessTab"
           @refresh-facility="refreshFacility"
         />
@@ -66,8 +72,8 @@
 
 <script>
   import http from './../../../common/http'
-  import DetailShow from './_detail_show'
-  
+  import DetailShow from './facility_detail_show'
+
   export default {
     name: 'FacilitiesShow',
     components: { DetailShow },
@@ -130,7 +136,7 @@
         deep: true
       }
     }
-  }  
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -141,7 +147,7 @@
   .f-notes {
     border: 1px solid #ccc;
     padding: 5px;
-    overflow-y: auto;
+    overflow-y:auto;
     min-height: 20vh;
     max-height: 34vh;
   }

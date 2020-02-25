@@ -1,6 +1,6 @@
 ActiveAdmin.register State do
-
-  actions :index, :show, :edit, :update
+  menu false
+  actions :index, :show
 
   permit_params do
     permitted = [:name, :region_id]

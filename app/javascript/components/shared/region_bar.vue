@@ -11,14 +11,17 @@
             <i class="fas fa-minus"></i>
           </div>
         </div>
-        <ul class="regions-list list-unstyled">
+        <ul v-if="regions.length > 0" class="regions-list list-unstyled">
           <li v-for="region in filteredRegions" class="px-3">
             <a class="text-secondary d-flex align-items-center" @click.prevent.stop="pointToRegion(region)" href="javascript:;">
             <div class="region-color rounded-lg mr-2" :style="{backgroundColor: region.color}"></div>
               <span>{{region.name}}</span>
-            </a>    
+            </a>
           </li>
         </ul>
+        <div v-else class="text-danger px-3 py-1">
+          The Project doesn't have any region associated
+        </div>
       </div>
     </transition>
   </div>
@@ -32,6 +35,9 @@
       return {
         regionBar: false
       }
+    },
+    mounted() {
+      if (this.regions.length <= 0) this.regionBar = true
     },
     methods: {
       openRegionBar() {
@@ -60,14 +66,13 @@
     max-height: 60vh;
     min-height: 30vh;
     border-radius: 4px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
     .r-header {
       display: flex;
       justify-content: space-between;
     }
     .regions-list {
       max-height: 88%;
-      overflow-y: scroll;
       li:hover > a {
         color: #000;
         text-decoration: none;
@@ -86,8 +91,8 @@
     height: 26px;
     background: white;
     text-align: center;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.45);
-    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    border-radius: 2px;
     cursor: pointer;
     font-size: 14px;
     padding: 2px;

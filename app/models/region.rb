@@ -1,7 +1,10 @@
 class Region < ApplicationRecord
-  has_many :states
+  belongs_to :project
+  has_many :region_states, dependent: :destroy
+  has_many :states, through: :region_states
   has_many :facilities
   validates :name, uniqueness: true
+  validates :name, presence: true
   enum status: [:inactive, :active]
   enum region_type: [:region, :country, :state]
 
@@ -12,5 +15,4 @@ class Region < ApplicationRecord
       facility_count: self.facilities.count
     ).as_json
   end
-  
 end

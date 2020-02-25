@@ -1,13 +1,16 @@
 <template>
   <div>
     <div v-if="!loading">
-      <navbar 
+      <navbar
         @add-facility-from-nav="openModal"
         :projects="projects"
-      ></navbar>
+      />
       <div id="dash-wrap">
         <div class="col p-0">
-          <regions-map :with-facility="facilityModal" @nullify-modals="nullifyModal"></regions-map>
+          <regions-map
+            :with-facility="facilityModal"
+            @nullify-modals="nullifyModal"
+          />
         </div>
       </div>
     </div>
@@ -63,5 +66,5 @@
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-  }  
+  }
 </style>
