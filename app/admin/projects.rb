@@ -6,16 +6,13 @@ ActiveAdmin.register Project do
     permitted
   end
 
-  # action_item :regions, only: :show do
-  #   link_to 'Regions', admin_project_regions_path(project)
-  # end
-
   index do
     selectable_column
     id_column
     column :name
     column :description
     column :status
+    column :project_type
     actions
   end
 
@@ -24,8 +21,10 @@ ActiveAdmin.register Project do
       row :name
       row :description
       row :status
-      row :regions
-      row :users
+      row :project_type
+      row :users do
+        project.users.pluck(:email).join(', ')
+      end
     end
     active_admin_comments
   end
@@ -35,12 +34,13 @@ ActiveAdmin.register Project do
       f.input :name
       f.input :description
       f.input :status
-      f.input :users, :label => 'Project Users', :as => :select, :collection => User.all.map{|u| [u.email, u.id]}
+      f.input :project_type
+      f.input :users, label: 'Project Users', as: :select, collection: User.subscriber.map{|u| [u.email, u.id]}
     end
     f.actions
   end
 
   filter :name
   filter :status
-
+  filter :project_type
 end

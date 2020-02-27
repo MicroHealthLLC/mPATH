@@ -1,6 +1,5 @@
 ActiveAdmin.register Region do
-
-  menu priority: 5
+  menu priority: 3
 
   permit_params do
     permitted = [:name, :code, :status, :color, state_ids: []]
@@ -13,7 +12,7 @@ ActiveAdmin.register Region do
       f.input :code
       f.input :color
       f.input :status
-      # f.input :states, as: :select, collection: State.where(nil)
+      f.input :states
     end
     f.actions
   end
@@ -25,7 +24,7 @@ ActiveAdmin.register Region do
     column :code
     column :color
     column :status
-    # column :states
+    column :states
     actions
   end
 
@@ -45,5 +44,4 @@ ActiveAdmin.register Region do
   filter :code
   filter :status
   filter :color
-  
 end

@@ -53,6 +53,7 @@
         :facility="facility"
         :project="DV_project"
         :task="currentTask"
+        :task-types="DV_taskTypes"
         :title="taskFormTitle"
         @task-created="taskCreated"
         @task-updated="taskUpdated"
@@ -77,12 +78,14 @@
         loading: true,
         DV_project: {},
         DV_facility: {},
+        DV_taskTypes: [],
         currentTask: null,
         showProject: true
       }
     },
     mounted() {
       this.fetchProject()
+      this.fetchTaskTypes()
       if (this.facility) this.DV_facility = this.facility
     },
     methods: {
@@ -91,11 +94,21 @@
           .get(`/projects/${this.$route.params.projectId}.json`)
           .then((res) => {
             this.DV_project = res.data.project
+            this.fetchTaskTypes()
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+      },
+      fetchTaskTypes() {
+        http
+          .get(`/task_types.json`)
+          .then((res) => {
+            this.DV_taskTypes = res.data.taskTypes
             this.loading = false
           })
           .catch((err) => {
             console.error(err)
-
           })
       },
       taskCreated(task) {

@@ -1,6 +1,6 @@
 class Task < ApplicationRecord
   belongs_to :facility
-  enum task_type: [:upgrade, :story]
+  belongs_to :task_type
   has_many_attached :task_files
   validates_numericality_of :progress, :in => 0..100
 
@@ -16,7 +16,8 @@ class Task < ApplicationRecord
     end
 
     self.as_json.merge(
-      attach_files: attach_files
+      attach_files: attach_files,
+      task_type: self.task_type.name
     ).as_json
   end
 end

@@ -3,7 +3,7 @@ class TasksController < AuthenticatedController
   before_action :set_task, only: [:show, :update, :destroy, :destroy_file]
 
   def index
-    render json: {tasks: @facility.tasks.order(created_at: :desc).map(&:to_json)}
+    render json: {tasks: @facility.tasks.order(due_date: :desc).map(&:to_json)}
   end
 
   def create
@@ -46,7 +46,7 @@ class TasksController < AuthenticatedController
   def task_params
     params.require(:task).permit(
       :text,
-      :task_type,
+      :task_type_id,
       :due_date,
       :notes,
       :progress,

@@ -123,7 +123,7 @@ export default {
   methods: {
     fetchRegions() {
       http
-        .get(`/projects/${this.$route.params.projectId}/regions.json`)
+        .get(`/regions.json`)
         .then((res) => {
           this.regions = res.data.regions;
           this.fetchFacilities();

@@ -33,11 +33,11 @@
         name="Task Type"
         v-validate="'required'"
         :class="{'form-control': true, 'error': errors.has('Task Type') }" class="form-control form-control-sm"
-        v-model="DV_task.taskType"
+        v-model="DV_task.taskTypeId"
       >
         <option disabled selected value="">Task Type</option>
-        <option v-for="opt in taskTypes" :value="opt.value">
-          {{opt.text}}
+        <option v-for="opt in taskTypes" :value="opt.id">
+          {{opt.name}}
         </option>
       </select>
       <div v-show="errors.has('Task Type')" class="text-danger">
@@ -127,7 +127,7 @@
 
   export default {
     name: 'TaskForm',
-    props: ['facility', 'project', 'task', 'title'],
+    props: ['facility', 'project', 'task', 'title', 'taskTypes'],
     components: {AttachmentInput},
     mixins: [utils],
 
@@ -136,16 +136,12 @@
         DV_task: {
           text: '',
           dueDate: '',
-          taskType: '',
+          taskTypeId: '',
           notes: '',
           progress: 0,
           taskFiles: []
         },
-        showErrors: false,
-        taskTypes: [
-          { text: 'upgrade', value: 'upgrade' },
-          { text: 'story', value: 'story' }
-        ]
+        showErrors: false
       }
     },
     mounted() {
@@ -192,7 +188,7 @@
           var formData = new FormData()
           formData.append('task[text]', this.DV_task.text)
           formData.append('task[due_date]', this.DV_task.dueDate)
-          formData.append('task[task_type]', this.DV_task.taskType)
+          formData.append('task[task_type_id]', this.DV_task.taskTypeId)
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[notes]', this.DV_task.notes)
 
@@ -234,7 +230,7 @@
         return (
           this.DV_task &&
           this.DV_task.text !== '' &&
-          this.DV_task.taskType !== '' &&
+          this.DV_task.taskTypeId !== '' &&
           this.DV_task.dueDate !== ''
         )
       }

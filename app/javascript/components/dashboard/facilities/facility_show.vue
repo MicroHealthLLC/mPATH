@@ -22,7 +22,7 @@
           </p>
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-            <span class="w-100">
+            <span class="w-100 progress">
               <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
             </span>
           </p>

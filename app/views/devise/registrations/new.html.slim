@@ -1,45 +1,31 @@
-div.d-flex
-  div.brand-sidebar
-  div.auth-sidebar
-    h4.my-3.text-center.text-secondary Create a new Account
-
-    =form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+.container.signup-section
+  .row.d-flex.justify-content-center
+    =form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-signin mg-btm' }) do |f|
       = devise_error_messages!
-
-      div.form-group
-        = f.label :email
-        br
-        = f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
-
-      div.form-group
-        = f.label :password 
-        -if @minimum_password_length 
-          em  "#{@minimum_password_length} characters minimum"
-        br
-        = f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password" 
-
-      div.form-group
-        = f.label :password_confirmation 
-        br
-        = f.password_field :password_confirmation, autocomplete: "off", class: 'form-control', placeholder: "password"
-
-      div.form-group
-        = f.submit "SIGN UP", class: 'form-control btn btn-primary'
-
-      .mt-5
-        .text-center.text-muted.my-4.font-italic * OR SIGN UP WITH *
-        .row.my-3
-          .col-6
-            button.btn.btn-outline-primary.btn-social
-              i.fab.fa-facebook-square.mr-2
-              span Facebook
-
-          .col-6
-            button.btn.btn-outline-danger.btn-social
-              i.fab.fa-google-plus-square.mr-2
-              span Google
-          
-        .mt-5.text-center
-          span.pr-2
-            | Already have an account?
-          = render "devise/shared/links"
+      h3.heading-desc.text-center
+        a.navbar-brand href="/"
+          =image_tag "microhealthllc.png"
+      .social-box.pb-5.p-4
+        .row.mg-btm
+          .col-md-12
+            a.btn.btn-danger.btn-block href="#"
+              i.icon-facebook
+              | Login with Google
+        .row
+          .col-md-12
+            a.btn.btn-info.btn-block href="#"
+              i.icon-twitter
+              | Login with Office 365
+      .form-group.mt-5.px-4
+        =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
+        =f.password_field :password, autocomplete: "off", class: 'form-control mt-3', placeholder: "password"
+        =f.password_field :password_confirmation, autocomplete: "off", class: 'form-control mt-3', placeholder: "confirm password"
+        span.clearfix
+      .login-footer.p-4
+        .row
+          .col-xs-6.col-md-6
+            .left-section
+              span Already have an account?
+              a href="#{new_session_path(resource_name)}" Sign up now
+          .col-xs-6.col-md-6.pull-right
+            =f.submit "Signup", class: 'btn btn-large btn-danger pull-right'

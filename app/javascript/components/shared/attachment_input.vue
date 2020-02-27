@@ -42,94 +42,83 @@
         class="drop__file-input"
         name="file"
         multiple
-        @change="onFileChange"
+        @change.prevent="onFileChange"
       >
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    showLabel: Boolean
-  },
+  export default {
+    props: {showLabel: Boolean},
+    data() {
+      return {
+        files       : [],
+        validFiles  : [],
+        invalidFiles: [],
+        inputError  : null,
+        isDragActive: false
+      }
+    },
+    computed: {
+      C_invalidFiles() {
+        return this.invalidFiles.length > 0
+      }
+    },
+    methods: {
+      onDrop(e) {
+        e.stopPropagation()
+        e.preventDefault()
+        let file = null
+        this.isDragActive = false
 
-  data() {
-    return {
-      files       : [],
-      validFiles  : [],
-      invalidFiles: [],
-      inputError  : null,
-      isDragActive: false
-    };
-  },
-
-  computed: {
-    C_invalidFiles() {
-      return this.invalidFiles.length > 0;
-    }
-  },
-
-  methods: {
-    onDrop(e) {
-      e.stopPropagation()
-      e.preventDefault()
-      let file = null
-      this.isDragActive = false
-
-      for (let idx = 0; idx < e.dataTransfer.files.length; idx += 1)
-      {
-        file = e.dataTransfer.files[idx]
-        if (file.size <= 7000000) {
-          this.validFiles.push(file)
-        } else {
-          this.invalidFiles.push(file)
+        for (let idx = 0; idx < e.dataTransfer.files.length; idx += 1)
+        {
+          file = e.dataTransfer.files[idx]
+          if (file.size <= 7000000) {
+            this.validFiles.push(file)
+          } else {
+            this.invalidFiles.push(file)
+          }
         }
-      }
-      this.submitFiles()
-    },
-
-    onChange() {
-      this.$refs.fileInput.click()
-      this.inputError = null
-    },
-
-    onFileChange(e) {
-      if (!e.currentTarget) { return; }
-      let file = null
-
-      for (let idx = 0; idx < this.$refs.fileInput.files.length; idx += 1)
-      {
-        file = this.$refs.fileInput.files[idx]
-        if (file.size <= 7000000) {
-          this.validFiles.push(file)
-        } else {
-          this.invalidFiles.push(file)
+        this.submitFiles()
+      },
+      onChange() {
+        this.$refs.fileInput.click()
+        this.inputError = null
+      },
+      onFileChange(e) {
+        if (!e.currentTarget) { return; }
+        let file = null
+        for (let idx = 0; idx < this.$refs.fileInput.files.length; idx += 1)
+        {
+          file = this.$refs.fileInput.files[idx]
+          if (file.size <= 7000000) {
+            this.validFiles.push(file)
+          } else {
+            this.invalidFiles.push(file)
+          }
         }
+        this.submitFiles()
+      },
+      submitFiles() {
+        if (this.validFiles.length > 0) {
+          this.$emit('input', this.validFiles)
+          this.validFiles = []
+          this.$refs.fileInput.value = ""
+        }
+      },
+      onDragEnter() {
+        this.isDragActive = true
+      },
+      onDragLeave() {
+        this.isDragActive = false
+      },
+      closeInvalidModal() {
+        this.invalidFiles = []
       }
-      this.submitFiles()
-    },
-
-    submitFiles() {
-      if(this.validFiles.length > 0) {
-        this.$emit('input', this.validFiles)
-        this.validFiles = []
-      }
-    },
-
-    onDragEnter() {
-      this.isDragActive = true
-    },
-
-    onDragLeave() {
-      this.isDragActive = false
-    },
-
-    closeInvalidModal() {
-      this.invalidFiles = []
     }
   }
-}
 </script>
 
 <style scoped lang="scss">

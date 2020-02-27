@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
-
-  #auth routes
   devise_for :users
+  authenticate :user, lambda { |u| u.admin? } do
+    ActiveAdmin.routes(self)
+  end
 
   resources :dashboard, only: [:index]
+  resources :task_types, only: [:index]
+  resources :regions, only: [:index]
   resources :projects, only: [:index, :show] do
-    resources :regions, only: [:index]
     resources :facilities do
       resources :tasks do
         member do

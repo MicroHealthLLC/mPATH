@@ -1,5 +1,5 @@
-ActiveAdmin.register ProjectType do
-  menu priority: 5
+ActiveAdmin.register TaskType do
+  menu priority: 6
 
   permit_params do
     permitted = [:name]

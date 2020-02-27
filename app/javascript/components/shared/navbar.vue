@@ -50,7 +50,7 @@
     },
     computed: {
       allowFacilityAdd() {
-        return this.currentProject;// && this.currentProject.regions.length > 0
+        return this.currentProject
       }
     },
     methods: {
@@ -79,6 +79,7 @@
     z-index: 1030;
     font-weight: 300;
     background: #fff;
+    overflow: hidden;
   }
   .right-sub-nav {
     position: absolute;
