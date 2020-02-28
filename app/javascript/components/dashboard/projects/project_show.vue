@@ -114,11 +114,13 @@
       taskCreated(task) {
         this.DV_facility.tasks.unshift(task)
         this.showProject = true
+        this.$emit('refresh-facility')
       },
       taskUpdated(task) {
         var index = this.DV_facility.tasks.findIndex((t) => t.id == task.id)
         this.DV_facility.tasks[index] = task
         this.showProject = true
+        this.$emit('refresh-facility')
       },
       taskDeleted(task) {
         http
@@ -126,8 +128,7 @@
           .then((res) => {
             var tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
-            this.DV_facility.tasks = tasks
-            this.$forceUpdate()
+            this.$emit('refresh-facility')
           })
           .catch((err) => console.log(err))
       },
@@ -160,7 +161,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
-    height: 17vh;
+    height: 20vh;
   }
   .project-name {
     font-size: 15px;
@@ -170,7 +171,7 @@
   }
   .progress {
     position: relative;
-    left: 57px;
+    left: 55px;
     bottom: 20px;
     max-width: 80%;
   }

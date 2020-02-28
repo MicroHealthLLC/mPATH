@@ -1,8 +1,9 @@
 class Task < ApplicationRecord
+  default_scope { order(due_date: :desc) }
   belongs_to :facility
   belongs_to :task_type
   has_many_attached :task_files
-  validates_numericality_of :progress, :in => 0..100
+  validates_numericality_of :progress, in: 0..100
 
   def to_json
     attach_files = []
@@ -17,7 +18,7 @@ class Task < ApplicationRecord
 
     self.as_json.merge(
       attach_files: attach_files,
-      task_type: self.task_type.name
+      task_type: self.task_type.try(:name)
     ).as_json
   end
 end

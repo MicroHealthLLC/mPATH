@@ -60,6 +60,7 @@
       overlay-theme="dark"
       :title="facilityModalTitle"
       @close="closeFacilityModal"
+      :blocking="true"
     >
       <facility-form
         v-if="facilityFormModal"

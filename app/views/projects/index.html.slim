@@ -4,9 +4,9 @@
 .mw_10
   #dashboard
 
-javascript:
-  var current_user = "#{JSON.generate(current_user.as_json)}";
-  var google_api_key = "#{ENV['GOOGLE_MAP_KEY']}";
+=javascript_tag nonce: true do
+  |var current_user = "#{JSON.generate(current_user.as_json)}";
+  |var google_api_key = "#{ENV['GOOGLE_MAP_KEY']}";
 
 = javascript_pack_tag "dashboard", async: true
 = stylesheet_pack_tag "dashboard"

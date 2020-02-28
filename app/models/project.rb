@@ -4,11 +4,18 @@ class Project < ApplicationRecord
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
   belongs_to :project_type
-
-  enum status: [:pending, :completed]
+  belongs_to :status
 
   before_create :set_uuid
-  after_commit :grant_access_to_admins, on: :create
+  after_commit :grant_access_to_admins
+
+  def as_json(options=nil)
+    json = super(options)
+    json.merge(
+      project_type: self.project_type.try(:name),
+      status: self.status.try(:name)
+    ).as_json
+  end
 
   private
 

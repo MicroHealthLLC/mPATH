@@ -1,5 +1,5 @@
 .p-5.container
-  h1 
+  h1
     | Welcome to Microhealth Georaphical Information System
   br
   -if user_signed_in?
@@ -12,14 +12,14 @@
                 p.m-0
                   =project.name
                 div
-                  span.ml-2.badge.badge-pill class=(project.completed? ?  'badge-success' : 'badge-warning')
-                    =project.status
+                  span.ml-2.badge.badge-pill.badge-warning
+                    =project.status.try(:name)
               .col-2
-                = link_to project_path(project), class: 'btn btn-link btn-sm' do 
+                = link_to project_path(project), class: 'btn btn-link btn-sm' do
                   | show
       -else
         li.list-group-item.text-center
           | Currently you dont have permissions to access projects
   -else
-    = link_to new_user_session_path, class: "btn btn-link" do 
+    = link_to new_user_session_path, class: "btn btn-link" do
       | Login to continue

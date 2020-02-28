@@ -35,7 +35,7 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </div>
-            <div class="progress">
+            <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
               <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
             </div>
           </div>
@@ -45,7 +45,7 @@
             <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
             <p>{{task.notes || 'Notes'}}</p>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mt-2">
             <span v-for="file in task.attachFiles">
               <span class="fbody-icon">
                 <i class="fas fa-file-alt" @click.prevent="downloadFile(file)"></i>
@@ -105,5 +105,16 @@
   .note,
   .crud-actions span {
     font-size: 13px;
+  }
+  .progress-0 {
+    .progress-bar {
+      margin-left: 1vw;
+      color: #6c757d !important;
+    }
+  }
+  .pg-content {
+    width: 100%;
+    height: 20px;
+    font-weight: bold;
   }
 </style>

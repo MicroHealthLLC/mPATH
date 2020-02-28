@@ -12,7 +12,7 @@ class Facility < ApplicationRecord
     json = super(options)
     json.merge(
       creator: self.creator.as_json,
-      tasks: self.tasks.order(:due_date).map(&:as_json),
+      tasks: self.tasks.map(&:to_json),
       progress: progress
     ).as_json
   end

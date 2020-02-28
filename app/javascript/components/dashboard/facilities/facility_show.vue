@@ -2,7 +2,7 @@
   <div id="facility-show">
     <div v-if="!loading">
       <div v-if="!showMore">
-        <div v-if="DV_facility.creator && $currentUser.id === DV_facility.creator.id" class="crud-actions mx-3">
+        <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
           <span class="mr-3 edit-action" @click.stop="editFacility">
             <i class="fas fa-edit"></i>
           </span>
@@ -22,7 +22,7 @@
           </p>
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-            <span class="w-100 progress">
+            <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
               <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
             </span>
           </p>
@@ -48,14 +48,6 @@
               {{DV_facility.notes || 'N/A'}}
             </p>
           </div>
-          <p class="mt-2">
-            <span class="fbody-icon">
-              <i class="fa fa-exclamation-circle"></i>
-            </span>
-            <span class="ml-2 badge badge-pill" :class="{ 'badge-success': DV_facility.status == 'completed', 'badge-warning': DV_facility.status == 'pending' }">
-              {{DV_facility.status}}
-            </span>
-          </p>
           <a href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a>
         </div>
       </div>
@@ -105,6 +97,9 @@
         this.$emit('edit-facility', this.DV_facility);
       },
       deleteFacility() {
+        var confirm = window.confirm(`Are you sure, you want to delete ${this.DV_facility.facilityName}?`)
+        if (!confirm) return;
+
         http
           .delete(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
@@ -146,13 +141,26 @@
   }
   .f-notes {
     border: 1px solid #ccc;
-    padding: 5px;
-    overflow-y:auto;
+    padding: 5px 10px;
+    border-radius: 5px;
+    overflow: auto;
     min-height: 20vh;
     max-height: 34vh;
   }
   .f-show-btn {
     font-size: 12px;
     font-style: italic;
+  }
+  .progress-0 {
+    .progress-bar {
+      margin-left: 1vw;
+      color: #6c757d !important;
+    }
+  }
+  .pg-content {
+    width: 100%;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
   }
 </style>

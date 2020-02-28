@@ -23,10 +23,10 @@
       <GmapAutocomplete
         name="Street Address"
         @place_changed="updateAddress"
-        v-validate="'required'"
         class="form-control"
-        v-model="DV_facility.address"
-        :class="{'form-control': true, 'error': errors.has('Street Address')}"
+        :value="DV_facility.address"
+        @input="DV_facility.address=$event.target.value"
+        :class="{'error': errors.has('Street Address')}"
       />
       <div v-show="errors.has('Street Address')" class="text-danger">{{ errors.first('Street Address') }}</div>
     </div>
@@ -91,7 +91,7 @@
     methods: {
       saveFacilitiy() {
         this.$validator.validate().then((success) => {
-          if (!success) {
+          if (!(this.isAddressPresent() && success)) {
             this.showErrors = true
             return
           }
@@ -116,6 +116,17 @@
           }
          });
       },
+      isAddressPresent() {
+        let valid = false
+        if (this.DV_facility.address) {
+          this.errors.remove("Street Address")
+          valid = true
+        } else {
+          this.errors.add({field: "Street Address", msg: "Street address is required"})
+        }
+        this.$forceUpdate()
+        return valid
+      },
       updateAddress(address) {
         this.address = address
       }
@@ -131,7 +142,7 @@
           this.DV_facility.phoneNumber !== '' &&
           this.DV_facility.email.trim() !== ''
         );
-      }
+      },
     },
     watch: {
       facility: {
@@ -143,6 +154,7 @@
       address: {
         handler: function(value) {
           this.DV_facility.address = value.formatted_address
+          this.errors.remove("Street Address")
           if (value.geometry) {
             this.DV_facility.lat = value.geometry.location.lat()
             this.DV_facility.lng = value.geometry.location.lng()

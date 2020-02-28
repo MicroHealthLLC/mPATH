@@ -2,6 +2,7 @@
   <div id="facility-detail-show" class="mt-3">
     <project-show
       :facility="DV_facility"
+      @refresh-facility="refreshFacility"
     />
     <a href="javascript:;" @click.prevent.stop="$emit('show-less')" class="btn btn-link float-right f-show-btn">show less..</a>
   </div>

@@ -2,7 +2,7 @@
   <nav id="sub-nav-wrap" class="navbar navbar-expand-lg blue-gradient navbar-light">
     <div class="left-sub-nav">
       <ul class="navbar-nav my-2 my-lg-0">
-        <li class="nav-item" v-if="currentProject">
+        <li class="nav-item" v-if="currentProject && $currentUser.role === 'admin'">
           <a class="btn fav-btn" :class="{disabled: !allowFacilityAdd}" href="javascript:;" @click.prevent.stop="addFacility">Add Facility</a>
         </li>
       </ul>
@@ -23,7 +23,7 @@
             >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
-                  <span>{{option.name}}</span>
+                  <span class='select__tag-name'>{{option.name}}</span>
                   <span class="ml-2 badge badge-pill" :class="{ 'badge-success': option.status == 'completed', 'badge-warning': option.status == 'pending' }">{{option.status}}</span>
                 </div>
               </template>
@@ -79,7 +79,6 @@
     z-index: 1030;
     font-weight: 300;
     background: #fff;
-    overflow: hidden;
   }
   .right-sub-nav {
     position: absolute;
@@ -91,7 +90,7 @@
     left: 70px;
   }
   .project-select {
-    width: 300px;
+    width: 450px;
   }
   .project-select /deep/ .multiselect {
     font-size: 14px;
@@ -101,6 +100,18 @@
     .multiselect__placeholder {
       margin-bottom: 2px;
       padding-top: 2px;
+    }
+    .select__tag-name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 300px;
+    }
+    .multiselect__option {
+      white-space: normal;
+    }
+    .multiselect__option--selected:after {
+      content: unset;
     }
   }
   a.disabled {

@@ -2,7 +2,7 @@ ActiveAdmin.register Project do
   menu priority: 4
 
   permit_params do
-    permitted = [:name, :description, :status, :project_type_id, user_ids: []]
+    permitted = [:name, :description, :status_id, :project_type_id, user_ids: []]
     permitted
   end
 
