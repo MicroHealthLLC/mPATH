@@ -8,14 +8,14 @@
       .social-box.pb-5.p-4
         .row.mg-btm
           .col-md-12
-            a.btn.btn-danger.btn-block href="#"
+            a.btn.btn-danger.btn-block href="#{omniauth_authorize_path(resource_name, :google_oauth2)}"
               i.icon-facebook
-              | Login with Google
+              | Continue with Google
         .row
           .col-md-12
-            a.btn.btn-info.btn-block href="#"
+            a.btn.btn-info.btn-block href="#{omniauth_authorize_path(resource_name, :office365)}"
               i.icon-twitter
-              | Login with Office 365
+              | Continue with Office 365
       .form-group.mt-5.px-4
         =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
         =f.password_field :password, autocomplete: "off", class: 'form-control mt-3', placeholder: "password"

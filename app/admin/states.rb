@@ -1,23 +1,23 @@
 ActiveAdmin.register State do
   menu false
-  actions :index, :show
+  actions :all, except: [:edit, :new]
 
   permit_params do
-    permitted = [:name, :region_id]
+    permitted = [:name, :facility_group_id]
     permitted
   end
 
   form do |f|
     f.inputs 'Details' do
       f.input :name
-      f.input :code, input_html: { disabled: true } 
-      f.input :region
+      f.input :code, input_html: { disabled: true }
+      f.input :facility_group
     end
     f.actions
   end
 
   filter :name
   filter :code
-  filter :region
-  
+  filter :facility_group
+
 end

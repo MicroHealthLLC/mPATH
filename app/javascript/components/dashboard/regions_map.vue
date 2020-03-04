@@ -1,12 +1,12 @@
 <template>
   <div class="row m-0 mw-100">
     <div v-if="!loading" id="map-wrap" class="col p-0">
-      <div class="regions-bar">
+      <!-- <div class="regions-bar">
         <region-bar
           :regions="regions"
           @goto-region="gotoRegion"
         />
-      </div>
+      </div> -->
       <GmapMap
         ref="googlemap"
         :center="center"
@@ -124,9 +124,9 @@ export default {
   methods: {
     fetchRegions() {
       http
-        .get(`/regions.json`)
+        .get(`/facility_groups.json`)
         .then((res) => {
-          this.regions = res.data.regions;
+          this.regions = res.data.facility_groups;
           this.fetchFacilities();
         })
         .catch((err) => {
@@ -138,21 +138,12 @@ export default {
         .get(`/projects/${this.$route.params.projectId}/facilities.json`)
         .then((res) => {
           this.facilities = res.data.facilities;
-          this.setRegionCountMarkers();
           this.loading = false;
         })
         .catch((err) => {
           this.loading = false;
           console.error(err);
         })
-    },
-    setRegionCountMarkers() {
-      let countArr = _.map(_.countBy(this.facilities, "regionId"), (val, key) => ({ regionId: key, facilityCount: val }))
-      this.regions.forEach((region) => {
-        let foundRegion = countArr.find(count => count.regionId == region.id)
-        region.facilityCount = foundRegion ? foundRegion.facilityCount : 0
-        region.visible = true
-      })
     },
     setCurrentRegion(region) {
       this.currentRegion = region;
@@ -202,9 +193,7 @@ export default {
     },
     createdFacility(facility) {
       this.$refs.facilityForm.close()
-      var region = this.regions.find(r => r.id == facility.regionId)
       this.facilities.push(facility)
-      region.facilityCount += 1
     },
     zoomInRegion(region) {
       this.currentRegion = region
@@ -293,35 +282,5 @@ export default {
       display: flex;
       align-items: center;
     }
-  }
-  .markericon {
-    width: 15px;
-    height: 15px;
-  }
-  .top-left {
-    border-top-left-radius: 8px;
-  }
-  .bottom-left {
-    border-bottom-left-radius: 8px;
-  }
-  .top-right {
-    border-top-right-radius: 8px;
-  }
-  .bottom-right {
-    border-bottom-right-radius: 8px;
-  }
-  .f-counter {
-    cursor: pointer;
-    text-align: center;
-    font-weight: 600;
-    background: white;
-    position: absolute;
-    z-index: 9999;
-    right: 4px;
-    height: 22px;
-    width: 22px;
-    top: 4px;
-    padding: 5px;
-    border-radius: 50%;
   }
 </style>

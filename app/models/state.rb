@@ -1,4 +1,4 @@
 class State < ApplicationRecord
   has_many :region_states, dependent: :destroy
-  has_many :regions, through: :region_states
+  has_many :facility_group, through: :region_states
 end

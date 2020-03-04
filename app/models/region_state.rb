@@ -1,4 +1,4 @@
 class RegionState < ApplicationRecord
-  belongs_to :region
+  belongs_to :facility_group
   belongs_to :state
 end

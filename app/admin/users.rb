@@ -1,39 +1,48 @@
 ActiveAdmin.register User do
   menu priority: 2
+  actions :all, except: [:show]
 
   permit_params do
-    permitted = [:email, :first_name, :last_name, :title, :phone_number, :address, :role, :password, :password_confirmation, project_ids: []]
+    permitted = [
+      :email,
+      :first_name,
+      :last_name,
+      :title,
+      :phone_number,
+      :address,
+      :role,
+      :password,
+      :password_confirmation,
+      project_ids: []
+    ]
   end
 
   form do |f|
-    f.inputs 'Details' do
-      f.input :title
-      f.input :first_name
-      f.input :last_name
-      f.input :email, input_html: { disabled: user.id? }
-      f.input :password, input_html: { disabled: user.id? }
-      f.input :password_confirmation, input_html: { disabled: user.id? }
-      f.input :role
-      f.input :phone_number
-      f.input :address
-      f.input :projects, label: 'Projects', as: :select
+    tabs do
+      tab 'Basic' do
+        f.inputs 'Basic Details' do
+          f.input :title
+          f.input :first_name
+          f.input :last_name
+          f.input :email, input_html: { disabled: user.id? }
+          if user.id.nil?
+            f.input :password, input_html: { disabled: user.id? }
+            f.input :password_confirmation, input_html: { disabled: user.id? }
+          end
+          f.input :role
+          f.input :phone_number
+          f.input :address
+        end
+      end
+
+      tab 'Projects' do
+        f.inputs 'Projects Details' do
+          f.input :projects, label: 'Projects', as: :select
+        end
+      end
     end
 
-    f.actions
-  end
-
-  show do
-    attributes_table do
-      row :title
-      row :first_name
-      row :last_name
-      row :email
-      row :role
-      row :phone_number
-      row :address
-      row :projects
-    end
-    active_admin_comments
+    actions
   end
 
   index do

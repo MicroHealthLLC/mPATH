@@ -1,8 +1,10 @@
 class Task < ApplicationRecord
   default_scope { order(due_date: :desc) }
+
   belongs_to :facility
   belongs_to :task_type
   has_many_attached :task_files
+
   validates_numericality_of :progress, in: 0..100
 
   def to_json

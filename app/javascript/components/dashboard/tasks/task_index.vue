@@ -76,6 +76,9 @@
         this.$emit('show-hide', task)
       },
       deleteTask(task) {
+        var confirm = window.confirm(`Are you sure, you want to delete "${task.text}"?`)
+        if (!confirm) return;
+
         this.$emit('delete-task', task)
       },
       downloadFile(file) {

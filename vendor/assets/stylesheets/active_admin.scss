@@ -11,9 +11,17 @@
   select {
     width: 80%;
   }
+  select[multiple=multiple] {
+    height: 150px;
+  }
 
   ul.header-item li:nth-last-child(1),
   ul.header-item li:nth-last-child(2) {
-    float: right !important;
+    /*float: right !important;*/
+  }
+  .comments.custom_made {
+    label {
+      width: 10%;
+    }
   }
 }

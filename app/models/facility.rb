@@ -1,5 +1,5 @@
 class Facility < ApplicationRecord
-  belongs_to :region
+  belongs_to :facility_group
   belongs_to :creator, class_name: "User"
   belongs_to :project
   has_many :tasks, dependent: :destroy

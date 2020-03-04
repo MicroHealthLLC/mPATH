@@ -92,8 +92,8 @@ ActiveAdmin.setup do |config|
   #
   # This setting changes the method which Active Admin calls
   # (within the application controller) to return the currently logged in user.
-  # config.current_user_method = :current_admin_user
-  config.current_user_method   = false
+  config.current_user_method = :current_user
+  # config.current_user_method   = false
 
   # == Logging Out
   #
@@ -242,9 +242,9 @@ ActiveAdmin.setup do |config|
   # If you wanted to add a static menu item to the default menu provided:
   #
     config.namespace :admin do |admin|
-      admin.build_menu :default do |menu|
+      admin.build_menu :utility_navigation do |menu|
         menu.add label: "Client Panel", url: :dashboard_index_url, html_options: {data: {turbolinks: false} }
-        menu.add label: "Logout", url: :destroy_user_session_path, html_options: { method: :delete }
+        admin.add_logout_button_to_menu(menu)
       end
     end
 

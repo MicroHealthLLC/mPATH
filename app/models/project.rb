@@ -3,6 +3,10 @@ class Project < ApplicationRecord
   has_many :tasks, through: :facilities
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
+  has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
+  accepts_nested_attributes_for :comments, reject_if: :reject_comment
+
+
   belongs_to :project_type
   belongs_to :status
 
@@ -15,6 +19,10 @@ class Project < ApplicationRecord
       project_type: self.project_type.try(:name),
       status: self.status.try(:name)
     ).as_json
+  end
+
+  def reject_comment(comment)
+    return comment['body'].blank?
   end
 
   private

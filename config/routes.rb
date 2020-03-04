@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
 
-  devise_for :users
+  devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
   authenticate :user, lambda { |u| u.admin? } do
     ActiveAdmin.routes(self)
   end
 
   resources :dashboard, only: [:index]
   resources :task_types, only: [:index]
-  resources :regions, only: [:index]
+  resources :facility_groups, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
       resources :tasks do

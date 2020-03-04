@@ -35,12 +35,12 @@ class FacilitiesController < AuthenticatedController
   def set_project
     @project = current_user.projects.find_by(id: params[:project_id])
   end
-  
+
   def facility_params
     params.require(:facility).permit(
       :facility_name,
       :address,
-      :region_id,
+      :facility_group_id,
       :point_of_contact,
       :phone_number,
       :email,

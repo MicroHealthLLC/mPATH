@@ -2,24 +2,20 @@
   h1
     | Welcome to Microhealth Georaphical Information System
   br
-  -if user_signed_in?
-    ul.list-group
-      -if current_user.projects.count > 0
-        -current_user.projects.find_each do |project|
-          li.list-group-item
-            .row
-              .col-10.d-flex
-                p.m-0
-                  =project.name
-                div
-                  span.ml-2.badge.badge-pill.badge-warning
-                    =project.status.try(:name)
-              .col-2
-                = link_to project_path(project), class: 'btn btn-link btn-sm' do
-                  | show
-      -else
-        li.list-group-item.text-center
-          | Currently you dont have permissions to access projects
-  -else
-    = link_to new_user_session_path, class: "btn btn-link" do
-      | Login to continue
+  ul.list-group
+    -if current_user.projects.count > 0
+      -current_user.projects.find_each do |project|
+        li.list-group-item
+          .row
+            .col-10.d-flex
+              p.m-0
+                =project.name
+              div
+                span.ml-2.badge.badge-pill.badge-warning
+                  =project.status.try(:name)
+            .col-2
+              = link_to project_path(project), class: 'btn btn-link btn-sm' do
+                | show
+    -else
+      li.list-group-item.text-center
+        | Currently you dont have permissions to access projects
