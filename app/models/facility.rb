@@ -13,7 +13,8 @@ class Facility < ApplicationRecord
     json.merge(
       creator: self.creator.as_json,
       tasks: self.tasks.map(&:to_json),
-      progress: progress
+      progress: progress,
+      facility_group: facility_group.to_json
     ).as_json
   end
 

@@ -16,10 +16,7 @@
             <span class="fbody-icon"><i class="fas fa-check"></i></span>
             <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
           </div>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="fas fa-globe"></i></span>
-            <span>{{region.name}}</span>
-          </p>
+
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
             <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
@@ -69,7 +66,7 @@
   export default {
     name: 'FacilitiesShow',
     components: { DetailShow },
-    props: ['facility', 'region'],
+    props: ['facility'],
     data() {
       return {
         loading: true,

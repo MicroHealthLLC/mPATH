@@ -126,7 +126,7 @@ export default {
       http
         .get(`/facility_groups.json`)
         .then((res) => {
-          this.regions = res.data.facility_groups;
+          this.regions = res.data.facilityGroups;
           this.fetchFacilities();
         })
         .catch((err) => {
