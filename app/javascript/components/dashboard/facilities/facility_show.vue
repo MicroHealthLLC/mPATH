@@ -2,21 +2,26 @@
   <div id="facility-show">
     <div v-if="!loading">
       <div v-if="!showMore">
-        <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
-          <span class="mr-3 edit-action" @click.stop="editFacility">
-            <i class="fas fa-edit"></i>
-          </span>
-          <span class="delete-action" @click.stop="deleteFacility">
-            <i class="fas fa-trash-alt"></i>
-          </span>
+        <div v-if="extras">
+          <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
+            <span class="mr-3 edit-action" @click.stop="editFacility">
+              <i class="fas fa-edit"></i>
+            </span>
+            <span class="delete-action" @click.stop="deleteFacility">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+          </div>
         </div>
-        <h3 class="text-center">Facility Summary</h3>
+        <h3 v-if="extras" class="text-center">Facility Summary</h3>
         <div class="f-body mt-3 p-2">
           <div class="d-flex">
             <span class="fbody-icon"><i class="fas fa-check"></i></span>
             <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
           </div>
-
+          <p class="mt-2">
+            <span class="fbody-icon"><i class="fas fa-globe"></i></span>
+            <span>{{region.name}}</span>
+          </p>
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
             <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
@@ -45,7 +50,7 @@
               {{DV_facility.notes || 'N/A'}}
             </p>
           </div>
-          <a href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a>
+          <a v-if="extras" href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a>
         </div>
       </div>
       <div v-if="showMore">
@@ -66,7 +71,20 @@
   export default {
     name: 'FacilitiesShow',
     components: { DetailShow },
-    props: ['facility'],
+    props: {
+      facility: {
+        default: null,
+        type: Object
+      },
+      region: {
+        default: null,
+        type: Object
+      },
+      extras: {
+        default: true,
+        type: Boolean
+      }
+    },
     data() {
       return {
         loading: true,
@@ -75,7 +93,12 @@
       }
     },
     mounted() {
-      this.fetchFacility()
+      if (this.extras) {
+        this.fetchFacility()
+      }
+      else {
+        this.loading = false
+      }
     },
     methods: {
       fetchFacility() {

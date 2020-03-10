@@ -11,10 +11,14 @@ import Dashboard            from 'components/dashboard/dashboard.vue'
 import router               from 'routers/dashboard'
 import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
+import VueTelInput          from 'vue-tel-input'
+import DatePicker           from 'vuejs-datepicker'
 
 
 Vue.use(VModal)
+Vue.use(VueTelInput)
 Vue.prototype.$leaflet = Leaflet
+Vue.component('date-picker', DatePicker)
 Vue.component('GmapCluster', GmapCluster)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)

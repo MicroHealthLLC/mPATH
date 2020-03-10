@@ -1,11 +1,11 @@
 class Project < ApplicationRecord
-  has_many :facilities, dependent: :destroy
   has_many :tasks, through: :facilities
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
+  has_many :facility_projects, dependent: :destroy
+  has_many :facilities, through: :facility_projects
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
-
 
   belongs_to :project_type
   belongs_to :status

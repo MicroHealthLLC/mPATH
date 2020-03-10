@@ -6,21 +6,24 @@
     <transition name="slide-fade">
       <div v-if="regionBar" id="region-bar">
         <div class="r-header px-3">
-          <h5 class="text-muted">Regions</h5>
+          <h5 class="text-muted">Facility Groups</h5>
           <div class="region-minus-btn" @click="closeRegionBar">
             <i class="fas fa-minus"></i>
           </div>
         </div>
         <ul v-if="regions.length > 0" class="regions-list list-unstyled">
-          <li v-for="region in filteredRegions" class="px-3">
-            <a class="text-secondary d-flex align-items-center" @click.prevent.stop="pointToRegion(region)" href="javascript:;">
-            <div class="region-color rounded-lg mr-2" :style="{backgroundColor: region.color}"></div>
-              <span>{{region.name}}</span>
+          <li v-for="region in regions" class="px-3">
+            <a class="text-secondary d-flex align-items-center mt-2"
+              @click.prevent.stop="pointToRegion(region)"
+              href="javascript:;"
+            >
+              <div class="region-color rounded-lg" :style="{backgroundColor: region.color}"></div>
+              <div class="ml-2 region-name">{{region.name}}</div>
             </a>
           </li>
         </ul>
         <div v-else class="text-danger px-3 py-1">
-          The Project doesn't have any region associated
+          The Project doesn't have any facility groups
         </div>
       </div>
     </transition>
@@ -50,11 +53,6 @@
         this.regionBar = false
         this.$emit('goto-region', region);
       }
-    },
-    computed: {
-      filteredRegions() {
-        return this.regions.filter(region => ['region'].includes(region.regionType)).sort((a, b) => a.name.localeCompare(b.name))
-      }
     }
   }
 </script>
@@ -83,6 +81,10 @@
       li a > .region-color {
         height: 10px;
         width: 15px;
+      }
+      .region-name {
+        word-break: break-all;
+        width: 15vw;
       }
     }
   }

@@ -46,13 +46,11 @@
     </div>
     <div class="form-group mx-4">
       <label class="due-date">Due Date:</label>
-      <input
-        name="Due Date"
-        :class="{'form-control': true, 'error': errors.has('Due Date') }"
-        type="date"
-        v-validate="'required'"
-        class="form-control form-control-sm"
+      <date-picker
+        input-class="form-control"
         v-model="DV_task.dueDate"
+        :disabled-dates="disabledDates"
+        name="Due Date"
       />
       <div v-show="errors.has('Due Date')" class="text-danger">
         {{ errors.first('Due Date') }}
@@ -135,11 +133,14 @@
       return {
         DV_task: {
           text: '',
-          dueDate: '',
+          dueDate: new Date(),
           taskTypeId: '',
           notes: '',
           progress: 0,
           taskFiles: []
+        },
+        disabledDates: {
+          to: new Date("2020")
         },
         showErrors: false
       }
@@ -147,6 +148,7 @@
     mounted() {
       if (this.task) {
         this.DV_task = this.task
+        this.DV_task.dueDate = new Date(this.task.dueDate)
         this.DV_task.taskFiles = []
         this.addFile(this.task.attachFiles)
       }
@@ -260,5 +262,10 @@
   .description,
   .files {
     font-size: 13px;
+  }
+  .vdp-datepicker /deep/ {
+    .form-control[readonly] {
+      background-color: unset;
+    }
   }
 </style>

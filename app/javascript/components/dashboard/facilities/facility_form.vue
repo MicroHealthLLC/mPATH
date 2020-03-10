@@ -7,8 +7,8 @@
       <div v-show="errors.has('Facility Name')" class="text-danger">{{ errors.first('Facility Name') }}</div>
     </div>
     <div class="form-group">
-      <label>Region:</label>
-      <select name="Region" class="form-control" v-model="DV_facility.regionId" v-validate="'required'" :class="{'form-control': true, 'error': errors.has('Region')}">
+      <label>Facility Group:</label>
+      <select name="Facility Group" class="form-control" v-model="DV_facility.facilityGroupId" v-validate="'required'" :class="{'form-control': true, 'error': errors.has('Facility Group')}">
         <option
           v-for="region in regions"
           :value="region.id"
@@ -16,7 +16,7 @@
           {{region.name}}
         </option>
       </select>
-      <span v-show="errors.has('Region')" class="text-danger">{{ errors.first('Region') }}</span>
+      <span v-show="errors.has('Facility Group')" class="text-danger">{{ errors.first('Facility Group') }}</span>
     </div>
     <div class="form-group">
       <label>Street Address:</label>
@@ -37,7 +37,17 @@
     </div>
     <div class="form-group">
       <label>Phone Number:</label>
-      <input name="phonenumber" type="text" v-validate="'required'" class="form-control" oninput="this.value = this.value.replace(/^[2-9]\d{2}-\d{3}-\d{4}$/g, '$1');" placeholder="0912345678" v-model="DV_facility.phoneNumber" :class="{'form-control': true, 'error': errors.has('phonenumber') }" />
+      <vue-tel-input
+        v-model="DV_facility.phoneNumber"
+        :required="true"
+        :valid-characters-only="true"
+        :only-countries="['US', 'CA']"
+        name="phonenumber"
+        default-country="US"
+        @input="checkPhoneValidation"
+        class="form-control"
+        :class="{'error': errors.has('phonenumber')}"
+      />
       <div v-show="errors.has('phonenumber')" class="text-danger">{{ errors.first('phonenumber') }}</div>
     </div>
     <div class="form-group">
@@ -67,7 +77,7 @@
       return {
         DV_facility: {
           facilityName: '',
-          regionId: '',
+          facilityGroupId: '',
           address: '',
           pointOfContact: '',
           phoneNumber: '',
@@ -129,6 +139,13 @@
       },
       updateAddress(address) {
         this.address = address
+      },
+      checkPhoneValidation(input, {isValid}) {
+        if (isValid) {
+          this.errors.remove("phonenumber")
+        } else {
+          this.errors.add({field: "phonenumber", msg: "Please provide a valid Phone number"})
+        }
       }
     },
     computed: {
@@ -136,7 +153,7 @@
         return (
           this.DV_facility &&
           this.DV_facility.facilityName.trim() !== '' &&
-          this.DV_facility.regionId !== '' &&
+          this.DV_facility.facilityGroupId !== '' &&
           this.DV_facility.address !== '' &&
           this.DV_facility.pointOfContact !== '' &&
           this.DV_facility.phoneNumber !== '' &&
@@ -169,7 +186,8 @@
   .street-address /deep/ .multiselect__select {
     display: none;
   }
- .form-control.error {
+  .form-control.error {
     border-color: #E84444;
   }
+
 </style>

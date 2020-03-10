@@ -162,6 +162,7 @@
     border-radius: 5px;
     padding: 10px;
     height: 20vh;
+    overflow: scroll;
   }
   .project-name {
     font-size: 15px;

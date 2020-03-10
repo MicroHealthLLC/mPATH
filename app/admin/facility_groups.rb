@@ -7,8 +7,7 @@ ActiveAdmin.register FacilityGroup do
       :name,
       :code,
       :status,
-      :color,
-      state_ids: []
+      :color
     ]
     permitted
   end
@@ -19,7 +18,6 @@ ActiveAdmin.register FacilityGroup do
       f.input :code
       f.input :color
       f.input :status
-      f.input :states
     end
     actions
   end
@@ -31,7 +29,6 @@ ActiveAdmin.register FacilityGroup do
     column :code
     column :color
     column :status
-    column :states
     actions
   end
 

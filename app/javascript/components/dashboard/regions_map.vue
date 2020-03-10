@@ -1,12 +1,12 @@
 <template>
   <div class="row m-0 mw-100">
     <div v-if="!loading" id="map-wrap" class="col p-0">
-      <!-- <div class="regions-bar">
+      <div class="regions-bar">
         <region-bar
           :regions="regions"
           @goto-region="gotoRegion"
         />
-      </div> -->
+      </div>
       <GmapMap
         ref="googlemap"
         :center="center"
@@ -56,8 +56,8 @@
     </transition>
 
     <sweet-modal
+      class="facility_form_modal"
       ref="facilityForm"
-      overlay-theme="dark"
       :title="facilityModalTitle"
       @close="closeFacilityModal"
       :blocking="true"
@@ -70,20 +70,42 @@
         @facility-update="updateFacility"
         @close-facility="$refs.facilityForm.close"
         class="facility-form-modal"
-      ></facility-form>
+      />
+    </sweet-modal>
+
+    <sweet-modal
+      class="facility_accordion_modal"
+      ref="facilitiesAccordion"
+      :hide-close-button="true"
+    >
+      <div v-if="currentRegion && currentRegion.id">
+        <h3 class="mb-3 text-break">{{currentRegion.name}}</h3>
+        <div v-if="currentRegion.facilities && currentRegion.facilities.length == 0" class="mt-3 text-muted">
+          There is no facility under this group
+        </div>
+        <div v-else>
+          <div v-for="facility in currentRegion.facilities">
+            <accordion
+              :expanded="expandedFacility.id"
+              :facility="facility"
+              :region="currentRegion"
+              @update-expanded="updateExpanded"
+            />
+          </div>
+        </div>
+      </div>
     </sweet-modal>
   </div>
 </template>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
 <script>
-import http              from '../../common/http'
+import http              from './../../common/http'
 import FacilityForm      from './facilities/facility_form'
 import FacilityShow      from './facilities/facility_show'
 import RegionBar         from './../shared/region_bar'
-import RegionsRaw        from '../../fixtures/countries_raw.json'
-import StatesRaw         from '../../fixtures/usa_states.json'
-import utils             from '../../mixins/utils'
+import Accordion         from './../shared/accordion'
+import utils             from './../../mixins/utils'
 import { SweetModal }    from 'sweet-modal-vue'
 
 export default {
@@ -94,6 +116,7 @@ export default {
     FacilityForm,
     FacilityShow,
     RegionBar,
+    Accordion,
     SweetModal
   },
   data() {
@@ -107,7 +130,8 @@ export default {
       openSidebar: false,
       currentFacility: null,
       facilityFormModal: false,
-      showFacilities: true
+      showFacilities: true,
+      expandedFacility: {}
     }
   },
   mounted() {
@@ -145,15 +169,12 @@ export default {
           console.error(err);
         })
     },
-    setCurrentRegion(region) {
-      this.currentRegion = region;
-    },
     getLatLngForFacility(facility) {
       return L.latLng(Number(facility.lat), Number(facility.lng))
     },
     showFacility(facility) {
       this.openSidebar = true
-      this.currentRegion = this.regions.find(region => region.id == facility.regionId)
+      this.currentRegion = this.regions.find(region => region.id == facility.facilityGroupId)
       this.center = this.getLatLngForFacility(facility)
       this.zoom = 17
       this.$refs.googlemap.panTo(this.center)
@@ -166,9 +187,7 @@ export default {
     },
     gotoRegion(region) {
       this.currentRegion = region
-      if (region.states.length > 0) {
-        this.center = this.centerForRegion(region)
-      }
+      this.$refs.facilitiesAccordion.open()
     },
     backFromFacilityShow(facility) {
       this.openSidebar = false
@@ -176,7 +195,6 @@ export default {
     },
     editFacility(facility) {
       this.currentFacility = facility
-      if (!this.isCreator) return
       this.openSidebar = false
       this.facilityFormModal = true
       this.$refs.facilityForm.open()
@@ -213,6 +231,14 @@ export default {
         lng.push(new_center[1])
       }
       return L.latLng(average(lat), average(lng))
+    },
+    updateExpanded(facility) {
+      if (facility.id === this.expandedFacility.id) {
+        this.expandedFacility = {}
+      }
+      else {
+        this.expandedFacility = facility
+      }
     }
   },
   watch: {
@@ -275,12 +301,18 @@ export default {
     left: 10px;
     z-index: 800;
   }
-  .sweet-modal-overlay /deep/ .sweet-modal {
-    max-height: 75vh;
+  .facility_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+    max-height: 80vh;
     min-width: 50vw;
     .sweet-title {
       display: flex;
       align-items: center;
+    }
+  }
+  .facility_accordion_modal.sweet-modal-overlay /deep/ .sweet-modal {
+    min-width: 50vw;
+    .sweet-content {
+      padding-top: 30px;
     }
   }
 </style>
