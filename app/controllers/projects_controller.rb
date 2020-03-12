@@ -17,7 +17,7 @@ class ProjectsController < AuthenticatedController
     else
       respond_to do |format|
         format.json { render json: {}, status: :not_found }
-        format.html { render 'shared/_not_found', locals: { message: "Project with uid #{params[:id]}" } }
+        format.html { render 'layouts/_not_found', locals: { message: "Project with id #{params[:id]} doesn't exists" } }
       end
     end
   end
@@ -26,7 +26,7 @@ class ProjectsController < AuthenticatedController
   def set_project
     @project = current_user.projects.find_by(id: params[:id])
   end
-  
+
   def project_params
     params.require(:project).permit(
       :name,

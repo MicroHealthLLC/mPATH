@@ -13,6 +13,8 @@ ActiveAdmin.register FacilityGroup do
   end
 
   form do |f|
+    f.semantic_errors *f.object.errors.keys
+
     inputs 'Details' do
       f.input :name
       f.input :code

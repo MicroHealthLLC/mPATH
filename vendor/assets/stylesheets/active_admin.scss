@@ -15,6 +15,11 @@
     height: 150px;
   }
 
+  #main_content_wrapper .index_content {
+    max-width: 75vw;
+    overflow: auto;
+  }
+
   ul.header-item li:nth-last-child(1),
   ul.header-item li:nth-last-child(2) {
     /*float: right !important;*/

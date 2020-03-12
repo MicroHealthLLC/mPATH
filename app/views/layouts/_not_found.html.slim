@@ -1,0 +1,13 @@
+.p-5.container
+  ul.list-group
+    li.list-group-item.text-center
+      .text-danger
+        span Whoops!
+      br
+      -if message.present?
+        p.font-weight-bold #{message}
+      -else
+        p You are not authorize to perform this action
+
+      = link_to dashboard_index_path, class: "btn btn-link" do
+        | Go back safely

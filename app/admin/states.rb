@@ -8,6 +8,8 @@ ActiveAdmin.register State do
   end
 
   form do |f|
+    f.semantic_errors *f.object.errors.keys
+
     f.inputs 'Details' do
       f.input :name
       f.input :code, input_html: { disabled: true }

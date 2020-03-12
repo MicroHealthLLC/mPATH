@@ -30,6 +30,8 @@ ActiveAdmin.register Project do
   end
 
   form do |f|
+    f.semantic_errors *f.object.errors.keys
+
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do

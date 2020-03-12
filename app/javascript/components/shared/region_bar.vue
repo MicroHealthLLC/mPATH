@@ -61,6 +61,7 @@
     padding: 10px;
     background: #fff;
     width: 20vw;
+    min-width: 200px;
     max-height: 60vh;
     min-height: 30vh;
     border-radius: 4px;
@@ -70,7 +71,8 @@
       justify-content: space-between;
     }
     .regions-list {
-      max-height: 88%;
+      max-height: 85%;
+      overflow: auto;
       li:hover > a {
         color: #000;
         text-decoration: none;

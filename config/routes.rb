@@ -19,4 +19,5 @@ Rails.application.routes.draw do
   end
 
   root 'landing#index'
+  match "*missing", to: "not_found#index", via: :all
 end

@@ -77,8 +77,12 @@
       class="facility_accordion_modal"
       ref="facilitiesAccordion"
       :hide-close-button="true"
+      :blocking="true"
     >
       <div v-if="currentRegion && currentRegion.id">
+        <div class="facility_grp_close_btn" @click="$refs.facilitiesAccordion.close">
+          <i class="fas fa-minus"></i>
+        </div>
         <h3 class="mb-3 text-break">{{currentRegion.name}}</h3>
         <div v-if="currentRegion.facilities && currentRegion.facilities.length == 0" class="mt-3 text-muted">
           There is no facility under this group
@@ -313,6 +317,13 @@ export default {
     min-width: 50vw;
     .sweet-content {
       padding-top: 30px;
+    }
+    .facility_grp_close_btn {
+      display: flex;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      cursor: pointer;
     }
   }
 </style>

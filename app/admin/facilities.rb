@@ -39,6 +39,8 @@ ActiveAdmin.register Facility do
   end
 
   form do |f|
+    f.semantic_errors *f.object.errors.keys
+
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
@@ -93,6 +95,12 @@ ActiveAdmin.register Facility do
   end
 
   controller do
+
+    def create
+      params[:facility][:creator_id] = current_user.id
+      super
+    end
+
     def update(options={}, &block)
       params[:facility][:comments_attributes]['0']['namespace'] = 'admin'
       params[:facility][:comments_attributes]['0']['author_id'] = current_user.id
