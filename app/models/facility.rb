@@ -9,8 +9,10 @@ class Facility < ApplicationRecord
 
   enum status: [:pending, :completed]
 
-  geocoded_by :address, latitude: :lat, longitude: :lng
-  after_validation :geocode, if: lambda { |f| f.address_changed? }
+  validates_presence_of :facility_name, :address, :point_of_contact, :phone_number, :email
+
+  # geocoded_by :address, latitude: :lat, longitude: :lng
+  # after_validation :geocode, if: lambda { |f| f.address_changed? }
 
   def as_json(options=nil)
     json = super(options)

@@ -29,4 +29,18 @@
       width: 10%;
     }
   }
+  .gmap-input {
+    width: calc(80% - 22px);
+    border: 1px solid #c9d0d6;
+    border-radius: 3px;
+    font-size: 0.95em;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    outline: none;
+    padding: 8px 10px 7px;
+  }
+  #facility_address_input,
+  #facility_lat_input,
+  #facility_lng_input {
+    display: none;
+  }
 }

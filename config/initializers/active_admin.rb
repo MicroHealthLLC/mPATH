@@ -216,7 +216,7 @@ ActiveAdmin.setup do |config|
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
   # To load a javascript file:
-  #   config.register_javascript 'my_javascript.js'
+
 
   # == CSV options
   #
@@ -328,4 +328,10 @@ ActiveAdmin.setup do |config|
   # You can inherit it with own class and inject it for all resources
   #
   # config.order_clause = MyOrderClause
+end
+
+Rails.application.config.after_initialize do
+  javascripts = %W[//cdn.jsdelivr.net/npm/vue/dist/vue.js]
+  javascripts += ActiveAdmin.application.javascripts.to_a
+  ActiveAdmin.application.javascripts.replace javascripts
 end

@@ -2,9 +2,9 @@
   <nav id="sub-nav-wrap" class="navbar navbar-expand-lg blue-gradient navbar-light">
     <div class="left-sub-nav">
       <ul class="navbar-nav my-2 my-lg-0">
-        <li class="nav-item" v-if="currentProject && $currentUser.role === 'admin'">
+        <!-- <li class="nav-item" v-if="currentProject && $currentUser.role === 'admin'">
           <a class="btn fav-btn" :class="{disabled: !allowFacilityAdd}" href="javascript:;" @click.prevent.stop="addFacility">Add Facility</a>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div class="right-sub-nav">

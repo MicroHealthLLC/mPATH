@@ -27,6 +27,7 @@
         :value="DV_facility.address"
         @input="DV_facility.address=$event.target.value"
         :class="{'error': errors.has('Street Address')}"
+        @keypress.enter="$event.preventDefault"
       />
       <div v-show="errors.has('Street Address')" class="text-danger">{{ errors.first('Street Address') }}</div>
     </div>

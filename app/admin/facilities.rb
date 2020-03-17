@@ -45,12 +45,15 @@ ActiveAdmin.register Facility do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name
+          f.input :facility_group
           f.input :address
+          f.input :lat
+          f.input :lng
+          div id: 'gmaps-tab'
           f.input :point_of_contact
           f.input :phone_number
           f.input :email
           f.input :notes
-          f.input :facility_group
         end
       end
 
