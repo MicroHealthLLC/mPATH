@@ -3,14 +3,14 @@
     <div v-if="!loading">
       <div v-if="!showMore">
         <div v-if="extras">
-          <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
+          <!-- <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
             <span class="mr-3 edit-action" @click.stop="editFacility">
               <i class="fas fa-edit"></i>
             </span>
             <span class="delete-action" @click.stop="deleteFacility">
               <i class="fas fa-trash-alt"></i>
             </span>
-          </div>
+          </div> -->
         </div>
         <h3 v-if="extras" class="text-center">Facility Summary</h3>
         <div class="f-body mt-3 p-2">

@@ -44,16 +44,35 @@
         {{ errors.first('Task Type') }}
       </div>
     </div>
-    <div class="form-group mx-4">
-      <label class="due-date">Due Date:</label>
-      <date-picker
-        input-class="form-control"
-        v-model="DV_task.dueDate"
-        :disabled-dates="disabledDates"
-        name="Due Date"
-      />
-      <div v-show="errors.has('Due Date')" class="text-danger">
-        {{ errors.first('Due Date') }}
+    <div class="form-row mx-4">
+      <div class="form-group col-md-6 px-0">
+        <label class="due-date">Start Date:</label>
+        <date-picker
+          v-validate="'required'"
+          input-class="form-control"
+          v-model="DV_task.startDate"
+          :disabled-dates="disabledStartDates"
+          placeholder="Start Date"
+          name="Start Date"
+        />
+        <div v-show="errors.has('Start Date')" class="text-danger">
+          {{ errors.first('Start Date') }}
+        </div>
+      </div>
+      <div class="form-group col-md-6 px-0">
+        <label class="due-date">Due Date:</label>
+        <date-picker
+          v-validate="'required'"
+          input-class="form-control"
+          v-model="DV_task.dueDate"
+          :disabled-dates="disabledDueDates"
+          placeholder="Due date"
+          name="Due Date"
+          :disabled="DV_task.startDate === ''"
+        />
+        <div v-show="errors.has('Due Date')" class="text-danger">
+          {{ errors.first('Due Date') }}
+        </div>
       </div>
     </div>
     <div class="form-group mx-4">
@@ -133,14 +152,12 @@
       return {
         DV_task: {
           text: '',
-          dueDate: new Date(),
+          startDate: '',
+          dueDate: '',
           taskTypeId: '',
           notes: '',
           progress: 0,
           taskFiles: []
-        },
-        disabledDates: {
-          to: new Date("2020")
         },
         showErrors: false
       }
@@ -149,11 +166,17 @@
       if (this.task) {
         this.DV_task = this.task
         this.DV_task.dueDate = new Date(this.task.dueDate)
+        this.DV_task.startDate = new Date(this.task.startDate)
         this.DV_task.taskFiles = []
         this.addFile(this.task.attachFiles)
       }
     },
     methods: {
+      getDate(days=0) {
+        var date = new Date
+        date.setDate(date.getDate() + days)
+        return date
+      },
       addFile(files) {
         for (let file of files) {
           file.guid = this.guid()
@@ -190,6 +213,7 @@
           var formData = new FormData()
           formData.append('task[text]', this.DV_task.text)
           formData.append('task[due_date]', this.DV_task.dueDate)
+          formData.append('task[start_date]', this.DV_task.startDate)
           formData.append('task[task_type_id]', this.DV_task.taskTypeId)
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[notes]', this.DV_task.notes)
@@ -233,8 +257,15 @@
           this.DV_task &&
           this.DV_task.text !== '' &&
           this.DV_task.taskTypeId !== '' &&
-          this.DV_task.dueDate !== ''
+          this.DV_task.dueDate !== '' &&
+          this.DV_task.startDate !== ''
         )
+      },
+      disabledStartDates() {
+        return { to: this.getDate(-1) }
+      },
+      disabledDueDates() {
+        return { to: new Date(this.DV_task.startDate) }
       }
     },
     watch: {

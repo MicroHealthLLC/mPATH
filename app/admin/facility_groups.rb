@@ -1,5 +1,5 @@
 ActiveAdmin.register FacilityGroup do
-  menu priority: 3
+  menu priority: 5
   actions :all, except: [:show]
 
   permit_params do

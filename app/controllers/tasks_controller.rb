@@ -48,11 +48,13 @@ class TasksController < AuthenticatedController
       :text,
       :task_type_id,
       :due_date,
+      :start_date,
       :notes,
       :progress,
       task_files: []
     )
   end
+
   def file_params
     params.require(:file).permit(:id, :uri)
   end

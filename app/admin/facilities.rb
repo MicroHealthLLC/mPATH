@@ -1,5 +1,5 @@
 ActiveAdmin.register Facility do
-  menu priority: 8
+  menu priority: 6
   actions :all, except: [:show]
 
   permit_params do
@@ -97,6 +97,23 @@ ActiveAdmin.register Facility do
 
   end
 
+  batch_action :assign_facility_group, form: {
+    "Facility Group": FacilityGroup.pluck(:name, :id)
+  } do |ids, inputs|
+    Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
+    redirect_to collection_path, notice: "Facility group is updated"
+  end
+
+  batch_action :assign_projects, confirm: "Are you sure?", form: {
+    project: Project.pluck(:name, :id)
+  } do |ids, inputs|
+    project = Project.find_by_id(inputs[:project])
+    Facility.where(id: ids).each do |facility|
+      facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
+    end
+    redirect_to collection_path, notice: "Assigned projects updated"
+  end
+
   controller do
 
     def create
@@ -114,5 +131,17 @@ ActiveAdmin.register Facility do
       end
     end
   end
-end
 
+  preserve_default_filters!
+  filter :creator_id, as: :select, collection: User.all.map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
+  filter :tasks, as: :select, collection: Task.pluck(:text, :id)
+  remove_filter :creator
+  remove_filter :comments
+  remove_filter :created_at
+  remove_filter :updated_at
+  remove_filter :lat
+  remove_filter :lng
+  remove_filter :status
+  remove_filter :facility_projects
+
+end

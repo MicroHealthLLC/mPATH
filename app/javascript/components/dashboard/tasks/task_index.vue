@@ -16,11 +16,15 @@
               {{task.text}}
             </div>
             <div class="row d-flex">
-              <div class="type col-md-6">
+              <div class="type col-md-4">
                 <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                 {{task.taskType}}
               </div>
-              <div class="date col-md-6">
+              <div class="date col-md-4">
+                <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                {{task.startDate}}
+              </div>
+              <div class="date col-md-4">
                 <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                 {{task.dueDate}}
               </div>
