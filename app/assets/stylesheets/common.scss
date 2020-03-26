@@ -9,6 +9,20 @@ button:focus,
 input[type=button]:focus {
   outline: none;
 }
+.font-sm {
+  font-size: 13px;
+}
+.progress-0 {
+  .progress-bar {
+    margin-left: 1vw;
+    color: #6c757d !important;
+  }
+}
+.pg-content {
+  width: 100%;
+  height: 20px;
+  font-weight: bold;
+}
 .icon-btn {
   background: #fff;
   cursor: pointer;

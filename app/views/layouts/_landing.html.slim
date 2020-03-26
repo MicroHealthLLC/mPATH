@@ -10,9 +10,6 @@
             .col-10.d-flex
               p.m-0
                 =project.name
-              div
-                span.ml-2.badge.badge-pill.badge-warning
-                  =project.status.try(:name)
             .col-2
               = link_to project_path(project), class: 'btn btn-link btn-sm' do
                 | show

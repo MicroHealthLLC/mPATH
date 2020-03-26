@@ -24,7 +24,6 @@
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
                   <span class='select__tag-name'>{{option.name}}</span>
-                  <span class="ml-2 badge badge-pill" :class="{ 'badge-success': option.status == 'completed', 'badge-warning': option.status == 'pending' }">{{option.status}}</span>
                 </div>
               </template>
             </multiselect>
@@ -90,7 +89,7 @@
     left: 70px;
   }
   .project-select {
-    width: 450px;
+    width: 410px;
   }
   .project-select /deep/ .multiselect {
     font-size: 14px;
@@ -105,7 +104,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 300px;
+      width: 350px;
     }
     .multiselect__option {
       white-space: normal;

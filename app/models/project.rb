@@ -17,6 +17,7 @@ class Project < ApplicationRecord
     json = super(options)
     json.merge(
       project_type: self.project_type.try(:name),
+      facility_count: self.facilities.count,
       status: self.status.try(:name)
     ).as_json
   end
@@ -26,7 +27,6 @@ class Project < ApplicationRecord
   end
 
   private
-
     def set_uuid
       self.uuid = SecureRandom.uuid
     end

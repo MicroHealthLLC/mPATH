@@ -11,20 +11,20 @@
       >
         <div class="row">
           <div class="col-md-9">
-            <div class="text d-flex">
+            <div class="font-sm d-flex">
               <span class="fbody-icon"><i class="fas fa-check"></i></span>
               {{task.text}}
             </div>
             <div class="row d-flex">
-              <div class="type col-md-4">
+              <div class="font-sm col-md-4">
                 <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                 {{task.taskType}}
               </div>
-              <div class="date col-md-4">
+              <div class="font-sm col-md-4">
                 <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                 {{task.startDate}}
               </div>
-              <div class="date col-md-4">
+              <div class="font-sm col-md-4">
                 <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                 {{task.dueDate}}
               </div>
@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="note d-flex col-md-9">
+          <div class="font-sm d-flex col-md-9">
             <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
             <p>{{task.notes || 'Notes'}}</p>
           </div>
@@ -106,10 +106,6 @@
     justify-content: flex-end;
     margin-top: 30px;
   }
-  .text,
-  .type,
-  .date,
-  .note,
   .crud-actions span {
     font-size: 13px;
   }

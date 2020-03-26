@@ -4,6 +4,7 @@ class Facility < ApplicationRecord
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
   has_many :tasks, dependent: :destroy
+  has_many :notes, as: :noteable
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
 
@@ -19,6 +20,7 @@ class Facility < ApplicationRecord
     json.merge(
       creator: self.creator.as_json,
       tasks: self.tasks.map(&:to_json),
+      notes: self.notes.map(&:to_json),
       progress: progress
     ).as_json
   end

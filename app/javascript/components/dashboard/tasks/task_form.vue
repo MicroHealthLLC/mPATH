@@ -13,7 +13,7 @@
       Please fill the required feilds before submitting
     </div>
     <div class="form-group mx-4">
-      <label class="name">Name:</label>
+      <label class="font-sm">Name:</label>
       <input
         name="Name"
         v-validate="'required'"
@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="form-group mx-4">
-      <label class="task-type">Task Type:</label>
+      <label class="font-sm">Task Type:</label>
       <select
         name="Task Type"
         v-validate="'required'"
@@ -46,7 +46,7 @@
     </div>
     <div class="form-row mx-4">
       <div class="form-group col-md-6 px-0">
-        <label class="due-date">Start Date:</label>
+        <label class="font-sm">Start Date:</label>
         <date-picker
           v-validate="'required'"
           input-class="form-control"
@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="form-group col-md-6 px-0">
-        <label class="due-date">Due Date:</label>
+        <label class="font-sm">Due Date:</label>
         <date-picker
           v-validate="'required'"
           input-class="form-control"
@@ -76,7 +76,7 @@
       </div>
     </div>
     <div class="form-group mx-4">
-      <label class="due-date">Progress: (in %)</label>
+      <label class="font-sm">Progress: (in %)</label>
       <input
         type="number"
         v-model="DV_task.progress"
@@ -86,7 +86,7 @@
       />
     </div>
     <div class="form-group mx-4">
-      <label class="description">Description:</label>
+      <label class="font-sm">Description:</label>
       <textarea
         class="form-control"
         placeholder="task brief description"
@@ -118,7 +118,7 @@
       </div>
     </div>
     <div class="form-group mx-4" >
-      <label class="files">Files:</label>
+      <label class="font-sm">Files:</label>
       <attachment-input
         @input="addFile"
         :show-label="true"
@@ -286,13 +286,6 @@
   .title {
     font-size: 15px;
     margin-left: 65px;
-  }
-  .name,
-  .task-type,
-  .due-date,
-  .description,
-  .files {
-    font-size: 13px;
   }
   .vdp-datepicker /deep/ {
     .form-control[readonly] {

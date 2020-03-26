@@ -44,13 +44,25 @@
             <span class="fbody-icon"><i class="far fa-envelope"></i></span>
             <span>{{DV_facility.email || 'N/A'}}</span>
           </p>
-          <div class="mt-2">
-            <span class="font-italic text-secondary">Notes:</span>
-            <p class="mt-1 f-notes text-muted">
-              {{DV_facility.notes || 'N/A'}}
-            </p>
-          </div>
-          <a v-if="extras" href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link float-right f-show-btn">show more..</a>
+          <a v-if="extras" href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link f-show-btn mt-2">show more..</a>
+        </div>
+        <div v-if="newNote" class="mb-3">
+          <notes-form
+            :facility="DV_facility"
+            @close-note-input="newNote = false"
+            @note-created="noteCreated"
+          />
+        </div>
+        <div v-else class="mb-3">
+          <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
+        </div>
+        <div v-for="note in DV_facility.notes">
+          <notes-show
+            :facility="DV_facility"
+            :note="note"
+            @note-updated="noteUpdated"
+            @note-deleted="noteDeleted"
+          />
         </div>
       </div>
       <div v-if="showMore">
@@ -66,11 +78,13 @@
 
 <script>
   import http from './../../../common/http'
+  import NotesForm from './../notes/notes_form'
+  import NotesShow from './../notes/notes_show'
   import DetailShow from './facility_detail_show'
 
   export default {
     name: 'FacilitiesShow',
-    components: { DetailShow },
+    components: { DetailShow, NotesForm, NotesShow },
     props: {
       facility: {
         default: null,
@@ -89,6 +103,7 @@
       return {
         loading: true,
         showMore: false,
+        newNote: false,
         DV_facility: this.facility
       }
     },
@@ -141,6 +156,21 @@
         this.loading = true
         this.showMore = true
         this.fetchFacility()
+      },
+      noteCreated(note) {
+        this.newNote = false
+        this.DV_facility.notes.unshift(note)
+      },
+      noteUpdated(note) {
+        var index = this.DV_facility.notes.findIndex(n=> n.id == note.id)
+        if (index > -1) {
+          this.DV_facility.notes[index] = note
+        }
+        this.$forceUpdate()
+      },
+      noteDeleted(note) {
+        _.remove(this.DV_facility.notes, (n) => n.id == note.id)
+        this.$forceUpdate()
       }
     },
     watch: {
@@ -170,6 +200,8 @@
   .f-show-btn {
     font-size: 12px;
     font-style: italic;
+    display: flex;
+    flex-direction: row-reverse;
   }
   .progress-0 {
     .progress-bar {

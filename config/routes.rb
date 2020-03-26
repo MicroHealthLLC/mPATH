@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   resources :facility_groups, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
+      resources :notes, module: :facilities do
+        put :destroy_file, on: :member
+      end
       resources :tasks do
         member do
           put :destroy_file

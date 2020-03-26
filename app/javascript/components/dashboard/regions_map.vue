@@ -1,6 +1,6 @@
 <template>
   <div class="row m-0 mw-100">
-    <div v-if="!loading" id="map-wrap" class="col p-0">
+    <div v-if="!loading" id="map-wrap" class="p-0">
       <div class="regions-bar">
         <region-bar
           :regions="regions"
@@ -40,20 +40,52 @@
         </GmapCluster>
       </GmapMap>
     </div>
-    <transition name="slide-fade">
-      <div v-if="openSidebar" id="map-sidebar">
-        <div @click="closeSidebar" class="close-sidebar-btn">
-          <i class="fas fa-minus"></i>
+    <div v-if="!loading" id="rollup-sidebar">
+      <div class="m-3">
+        <div class="text-center">
+          <h2>{{facilityCount}} Facilities</h2>
+          <p class="mt-2 d-flex align-items-center">
+            <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
+              <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}}%</div>
+            </span>
+          </p>
         </div>
-        <facility-show
-          v-if="currentFacility"
-          :facility="currentFacility"
-          :region="currentRegion"
-          @back-after-delete="backFromFacilityShow"
-          @edit-facility="editFacility"
-        />
+        <hr>
+        <div class="my-1">
+          <h5 class="text-center">Status</h5>
+          <div v-for="project in projects">
+            <span class="font-weight-bold">{{project.facilityCount}}</span>
+            <span> {{project.status || 'No Status'}}</span>
+          </div>
+        </div>
+        <hr>
+        <div>
+          <h5 class="text-center">Facility Groups</h5>
+          <div class="row my-2" v-for="region in regions">
+            <div class="col-md-3">{{region.name}}</div>
+            <div class="col-md-9 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
+                <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}}%</div>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-    </transition>
+      <transition name="slide-fade">
+        <div v-if="openSidebar" id="map-sidebar">
+          <div @click="closeSidebar" class="close-sidebar-btn">
+            <i class="fas fa-minus"></i>
+          </div>
+          <facility-show
+            v-if="currentFacility"
+            :facility="currentFacility"
+            :region="currentRegion"
+            @back-after-delete="backFromFacilityShow"
+            @edit-facility="editFacility"
+          />
+        </div>
+      </transition>
+    </div>
 
     <sweet-modal
       class="facility_form_modal"
@@ -61,7 +93,7 @@
       :title="facilityModalTitle"
       @close="closeFacilityModal"
       :blocking="true"
-    >
+      >
       <facility-form
         v-if="facilityFormModal"
         :facility="currentFacility"
@@ -78,7 +110,7 @@
       ref="facilitiesAccordion"
       :hide-close-button="true"
       :blocking="true"
-    >
+      >
       <div v-if="currentRegion && currentRegion.id">
         <div class="facility_grp_close_btn" @click="$refs.facilitiesAccordion.close">
           <i class="fas fa-minus"></i>
@@ -131,6 +163,7 @@ export default {
       currentRegion: null,
       facilities: [],
       regions: [],
+      projects: [],
       openSidebar: false,
       currentFacility: null,
       facilityFormModal: false,
@@ -139,6 +172,7 @@ export default {
     }
   },
   mounted() {
+    this.fetchProjects()
     this.fetchRegions()
   },
   computed: {
@@ -147,6 +181,12 @@ export default {
     },
     facilityModalTitle() {
       return this.currentFacility ? "Edit facility" : "Add Facility"
+    },
+    facilityCount() {
+      return this.facilities.length
+    },
+    facilityProgress() {
+      return _.sumBy(this.facilities, 'progress') || 0
     }
   },
   methods: {
@@ -171,6 +211,16 @@ export default {
         .catch((err) => {
           this.loading = false;
           console.error(err);
+        })
+    },
+    fetchProjects() {
+      http
+        .get(`/projects.json`)
+        .then((res) => {
+          this.projects = res.data.projects
+        })
+        .catch((err) => {
+          console.error(err)
         })
     },
     getLatLngForFacility(facility) {
@@ -243,6 +293,9 @@ export default {
       else {
         this.expandedFacility = facility
       }
+    },
+    facilityGroupProgress(f_group) {
+      return _.sumBy(f_group.facilities, 'progress') || 0
     }
   },
   watch: {
@@ -263,7 +316,12 @@ export default {
 <style scoped lang="scss">
   #map-wrap {
     height: calc(100vh - 130px);
-    width: 100%;
+    width: 68vw;
+  }
+  #rollup-sidebar {
+    width: 32vw;
+    height: calc(100vh - 130px);
+    overflow: auto;
   }
   #map-sidebar {
     position: absolute;
@@ -272,7 +330,7 @@ export default {
     z-index: 800;
     background: white;
     right: 0;
-    width: 35vw;
+    width: 32vw;
     height: calc(100vh - 130px);
     padding: 10px;
     box-shadow: 0 1px 3px rgba(0,0,0,.15);
