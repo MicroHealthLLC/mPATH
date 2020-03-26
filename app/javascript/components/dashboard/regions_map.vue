@@ -319,7 +319,7 @@ export default {
     width: 68vw;
   }
   #rollup-sidebar {
-    width: 32vw;
+    width: 31vw;
     height: calc(100vh - 130px);
     overflow: auto;
   }
