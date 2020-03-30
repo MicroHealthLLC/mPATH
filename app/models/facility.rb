@@ -1,14 +1,13 @@
 class Facility < ApplicationRecord
   belongs_to :facility_group
   belongs_to :creator, class_name: "User"
+  belongs_to :status, optional: true
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
   has_many :tasks, dependent: :destroy
   has_many :notes, as: :noteable
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
-
-  enum status: [:pending, :completed]
 
   validates_presence_of :facility_name, :address, :point_of_contact, :phone_number, :email
 
@@ -21,6 +20,7 @@ class Facility < ApplicationRecord
       creator: self.creator.as_json,
       tasks: self.tasks.map(&:to_json),
       notes: self.notes.map(&:to_json),
+      status: self.status.try(:name),
       progress: progress
     ).as_json
   end

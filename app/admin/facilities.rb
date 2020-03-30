@@ -11,6 +11,7 @@ ActiveAdmin.register Facility do
       :email,
       :notes,
       :facility_group_id,
+      :status_id,
       :creator_id,
       :status,
       :lat,
@@ -46,6 +47,7 @@ ActiveAdmin.register Facility do
         f.inputs 'Basic Details' do
           f.input :facility_name
           f.input :facility_group
+          f.input :status
           f.input :address
           f.input :lat
           f.input :lng
@@ -53,7 +55,6 @@ ActiveAdmin.register Facility do
           f.input :point_of_contact
           f.input :phone_number
           f.input :email
-          f.input :notes
         end
       end
 
@@ -141,7 +142,6 @@ ActiveAdmin.register Facility do
   remove_filter :updated_at
   remove_filter :lat
   remove_filter :lng
-  remove_filter :status
   remove_filter :facility_projects
 
 end

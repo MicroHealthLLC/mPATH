@@ -22,6 +22,10 @@
             <span class="fbody-icon"><i class="fas fa-globe"></i></span>
             <span>{{region.name}}</span>
           </p>
+          <p class="mt-2">
+            <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
+            <span>{{DV_facility.status || 'No status'}}</span>
+          </p>
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
             <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">

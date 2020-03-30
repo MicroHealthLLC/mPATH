@@ -4,11 +4,15 @@
       <navbar
         @add-facility-from-nav="openModal"
         :projects="projects"
+        :statuses="statuses"
+        @on-status-change="onStatusChange"
       />
       <div id="dash-wrap">
         <div class="col p-0">
           <regions-map
+            :projects="projects"
             :with-facility="facilityModal"
+            :project-status="projectStatus"
             @nullify-modals="nullifyModal"
           />
         </div>
@@ -32,7 +36,9 @@
       return {
         loading: true,
         facilityModal: false,
-        projects: []
+        projects: [],
+        projectStatus: null,
+        statuses: []
       }
     },
     mounted() {
@@ -43,10 +49,20 @@
         http.get('/projects.json')
           .then((res) => {
             this.projects = res.data.projects
-            this.loading = false
+            this.fetchStatuses()
           })
           .catch((err) => {
             console.error(err)
+          })
+      },
+      fetchStatuses() {
+        http.get('/statuses.json')
+          .then((res) => {
+            this.statuses = res.data.statuses
+            this.loading = false
+          })
+          .catch((err) => {
+            console.log(err)
           })
       },
       openModal() {
@@ -54,6 +70,9 @@
       },
       nullifyModal() {
         this.facilityModal = false
+      },
+      onStatusChange(status) {
+        this.projectStatus = status
       }
     }
   }

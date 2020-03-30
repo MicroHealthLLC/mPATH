@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
   resources :task_types, only: [:index]
   resources :facility_groups, only: [:index]
+  resources :statuses, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
       resources :notes, module: :facilities do

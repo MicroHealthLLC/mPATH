@@ -6,7 +6,6 @@ ActiveAdmin.register Project do
     permitted = [
       :name,
       :description,
-      :status_id,
       :project_type_id,
       user_ids: [],
       comments_attributes: [
@@ -24,7 +23,6 @@ ActiveAdmin.register Project do
     id_column
     column :name
     column :description
-    column :status
     column :project_type
     actions
   end
@@ -36,7 +34,6 @@ ActiveAdmin.register Project do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :name
-          f.input :status
           f.input :project_type
           f.input :description
         end
@@ -83,7 +80,6 @@ ActiveAdmin.register Project do
   end
 
   filter :name
-  filter :status
   filter :project_type
 
   controller do

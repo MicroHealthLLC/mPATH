@@ -8,7 +8,6 @@ class Project < ApplicationRecord
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
 
   belongs_to :project_type
-  belongs_to :status
 
   before_create :set_uuid
   after_commit :grant_access_to_admins
@@ -17,8 +16,7 @@ class Project < ApplicationRecord
     json = super(options)
     json.merge(
       project_type: self.project_type.try(:name),
-      facility_count: self.facilities.count,
-      status: self.status.try(:name)
+      facility_count: self.facilities.count
     ).as_json
   end
 

@@ -26,13 +26,4 @@ class ProjectsController < AuthenticatedController
   def set_project
     @project = current_user.projects.find_by(id: params[:id])
   end
-
-  def project_params
-    params.require(:project).permit(
-      :name,
-      :project_type,
-      :status,
-      :description
-    )
-  end
 end

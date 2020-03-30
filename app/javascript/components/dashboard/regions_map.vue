@@ -33,14 +33,14 @@
           <GmapMarker
             :key="index"
             :animation="4"
-            v-for="(facility, index) in facilities"
+            v-for="(facility, index) in filteredFacilities"
             :position="getLatLngForFacility(facility)"
             @click="showFacility(facility)"
           />
         </GmapCluster>
       </GmapMap>
     </div>
-    <div v-if="!loading" id="rollup-sidebar">
+    <div v-if="!loading" id="rollup-sidebar" class="p-0">
       <div class="m-3">
         <div class="text-center">
           <h2>{{facilityCount}} Facilities</h2>
@@ -53,9 +53,9 @@
         <hr>
         <div class="my-1">
           <h5 class="text-center">Status</h5>
-          <div v-for="project in projects">
-            <span class="font-weight-bold">{{project.facilityCount}}</span>
-            <span> {{project.status || 'No Status'}}</span>
+          <div v-for="(_f, s) in facilitiesByStatus">
+            <span class="font-weight-bold">{{_f.length}}</span>
+            <span> {{ s.replace('null', 'No Status') }}</span>
           </div>
         </div>
         <hr>
@@ -147,7 +147,7 @@ import { SweetModal }    from 'sweet-modal-vue'
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility'],
+  props: ['withFacility', 'projects', 'projectStatus'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -162,8 +162,8 @@ export default {
       zoom: 3,
       currentRegion: null,
       facilities: [],
+      filters: [],
       regions: [],
-      projects: [],
       openSidebar: false,
       currentFacility: null,
       facilityFormModal: false,
@@ -172,7 +172,6 @@ export default {
     }
   },
   mounted() {
-    this.fetchProjects()
     this.fetchRegions()
   },
   computed: {
@@ -186,7 +185,21 @@ export default {
       return this.facilities.length
     },
     facilityProgress() {
-      return _.sumBy(this.facilities, 'progress') || 0
+      return _.meanBy(this.facilities, 'progress') || 0
+    },
+    filteredFacilities() {
+      return _.filter(this.facilities, (facility) => {
+        var valid = this.filters.length <= 0
+        _.each(this.filters, (f) => {
+          var k = Object.keys(f)[0]
+          valid = Array.isArray(facility[k]) ? facility[k].includes(f[k]) : facility[k] == f[k]
+          if (valid === false) return
+        })
+        return valid
+      })
+    },
+    facilitiesByStatus() {
+      return _.groupBy(this.facilities, 'status')
     }
   },
   methods: {
@@ -211,16 +224,6 @@ export default {
         .catch((err) => {
           this.loading = false;
           console.error(err);
-        })
-    },
-    fetchProjects() {
-      http
-        .get(`/projects.json`)
-        .then((res) => {
-          this.projects = res.data.projects
-        })
-        .catch((err) => {
-          console.error(err)
         })
     },
     getLatLngForFacility(facility) {
@@ -295,7 +298,7 @@ export default {
       }
     },
     facilityGroupProgress(f_group) {
-      return _.sumBy(f_group.facilities, 'progress') || 0
+      return _.meanBy(f_group.facilities, 'progress') || 0
     }
   },
   watch: {
@@ -308,6 +311,18 @@ export default {
           this.$refs.facilityForm.open()
         }
       }, deep: true
+    },
+    projectStatus: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('statusId'))
+          }
+          else {
+            this.filters.push({statusId: value.id})
+          }
+        }
+      }, deep: true
     }
   }
 }
@@ -316,7 +331,7 @@ export default {
 <style scoped lang="scss">
   #map-wrap {
     height: calc(100vh - 130px);
-    width: 68vw;
+    width: 69vw;
   }
   #rollup-sidebar {
     width: 31vw;
@@ -330,7 +345,7 @@ export default {
     z-index: 800;
     background: white;
     right: 0;
-    width: 32vw;
+    width: 31vw;
     height: calc(100vh - 130px);
     padding: 10px;
     box-shadow: 0 1px 3px rgba(0,0,0,.15);

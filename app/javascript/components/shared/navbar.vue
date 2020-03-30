@@ -5,6 +5,26 @@
         <!-- <li class="nav-item" v-if="currentProject && $currentUser.role === 'admin'">
           <a class="btn fav-btn" :class="{disabled: !allowFacilityAdd}" href="javascript:;" @click.prevent.stop="addFacility">Add Facility</a>
         </li> -->
+        <li class="nav-item">
+          <div class="status-select">
+            <multiselect
+              v-model="currentStatus"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Status"
+              :options="DV_statuses"
+              :searchable="false"
+              :allow-empty="false"
+              @select="updateStatusFilter"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </li>
       </ul>
     </div>
     <div class="right-sub-nav">
@@ -20,7 +40,7 @@
               :searchable="false"
               :allow-empty="false"
               @select="updateProjectQuery"
-            >
+              >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
                   <span class='select__tag-name'>{{option.name}}</span>
@@ -37,14 +57,17 @@
 <script>
   export default {
     name: 'Navbar',
-    props: ['projects'],
+    props: ['projects', 'statuses'],
     data() {
       return {
         currentProject: null,
+        currentStatus: {name: 'Select All', id: 'sa'},
+        DV_statuses: [],
         DV_projects: this.projects
       }
     },
     mounted() {
+      this.DV_statuses = [this.currentStatus, ...this.statuses]
       this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
     },
     computed: {
@@ -56,6 +79,9 @@
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
         // this.$router.push({name: 'ProjectDashboard', params: {projectId: selected.id} })
+      },
+      updateStatusFilter(selected, index) {
+        this.$emit('on-status-change', selected)
       },
       addFacility() {
         if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
@@ -91,6 +117,26 @@
   .project-select {
     width: 410px;
   }
+  .status-select /deep/ .multiselect {
+    font-size: 14px;
+    width: 225px;
+    .multiselect__placeholder {
+      margin-bottom: 2px;
+      padding-top: 2px;
+    }
+    .select__tag-name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 180px;
+    }
+    .multiselect__option {
+      white-space: normal;
+    }
+    .multiselect__option--selected:after {
+      content: unset;
+    }
+  }
   .project-select /deep/ .multiselect {
     font-size: 14px;
     .multiselect__tags {
@@ -118,5 +164,4 @@
     cursor: default;
     opacity: 0.8;
   }
-
 </style>
