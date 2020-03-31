@@ -5,7 +5,7 @@
         <!-- <li class="nav-item" v-if="currentProject && $currentUser.role === 'admin'">
           <a class="btn fav-btn" :class="{disabled: !allowFacilityAdd}" href="javascript:;" @click.prevent.stop="addFacility">Add Facility</a>
         </li> -->
-        <li class="nav-item">
+        <li class="nav-item mr-2">
           <div class="status-select">
             <multiselect
               v-model="currentStatus"
@@ -16,6 +16,26 @@
               :searchable="false"
               :allow-empty="false"
               @select="updateStatusFilter"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="facilitygroup-select">
+            <multiselect
+              v-model="currentFacilityGroup"
+              track-by="name"
+              label="name"
+              placeholder="Filter by facility group"
+              :options="DV_facilityGroups"
+              :searchable="false"
+              :allow-empty="false"
+              @select="updateFacilityGroupFilter"
               >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
@@ -57,17 +77,20 @@
 <script>
   export default {
     name: 'Navbar',
-    props: ['projects', 'statuses'],
+    props: ['projects', 'statuses', 'facilityGroups'],
     data() {
       return {
         currentProject: null,
         currentStatus: {name: 'Select All', id: 'sa'},
+        currentFacilityGroup: {name: 'Select All', id: 'sa'},
         DV_statuses: [],
+        DV_facilityGroups: [],
         DV_projects: this.projects
       }
     },
     mounted() {
       this.DV_statuses = [this.currentStatus, ...this.statuses]
+      this.DV_facilityGroups = [this.currentFacilityGroup, ...this.facilityGroups]
       this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
     },
     computed: {
@@ -82,6 +105,9 @@
       },
       updateStatusFilter(selected, index) {
         this.$emit('on-status-change', selected)
+      },
+      updateFacilityGroupFilter(selected, index) {
+        this.$emit('on-facilitygroup-change', selected)
       },
       addFacility() {
         if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
@@ -117,9 +143,10 @@
   .project-select {
     width: 410px;
   }
+  .facilitygroup-select /deep/ .multiselect,
   .status-select /deep/ .multiselect {
     font-size: 14px;
-    width: 225px;
+    width: 200px;
     .multiselect__placeholder {
       margin-bottom: 2px;
       padding-top: 2px;
@@ -128,7 +155,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 180px;
+      width: 170px;
     }
     .multiselect__option {
       white-space: normal;

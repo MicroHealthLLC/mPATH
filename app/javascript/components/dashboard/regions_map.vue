@@ -1,6 +1,6 @@
 <template>
   <div class="row m-0 mw-100">
-    <div v-if="!loading" id="map-wrap" class="p-0">
+    <div v-if="!loading" id="map-wrap" class="col-8 p-0">
       <div class="regions-bar">
         <region-bar
           :regions="regions"
@@ -40,39 +40,41 @@
         </GmapCluster>
       </GmapMap>
     </div>
-    <div v-if="!loading" id="rollup-sidebar" class="p-0">
-      <div class="m-3">
-        <div class="text-center">
-          <h2>{{facilityCount}} Facilities</h2>
-          <p class="mt-2 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
-              <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}}%</div>
-            </span>
-          </p>
-        </div>
-        <hr>
-        <div class="my-1">
-          <h5 class="text-center">Status</h5>
-          <div v-for="(_f, s) in facilitiesByStatus">
-            <span class="font-weight-bold">{{_f.length}}</span>
-            <span> {{ s.replace('null', 'No Status') }}</span>
-          </div>
-        </div>
-        <hr>
-        <div>
-          <h5 class="text-center">Facility Groups</h5>
-          <div class="row my-2" v-for="region in regions">
-            <div class="col-md-3">{{region.name}}</div>
-            <div class="col-md-9 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
-                <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}}%</div>
+    <div v-if="!loading" id="rollup-sidebar" class="col-4 p-0">
+      <transition name="roll-fade">
+        <div v-show="!openSidebar" class="m-3">
+          <div class="text-center">
+            <h2>{{facilityCount}} Facilities</h2>
+            <p class="mt-2 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
+                <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
               </span>
+            </p>
+          </div>
+          <hr>
+          <div class="my-1">
+            <h5 class="text-center">Status</h5>
+            <div v-for="(_f, s) in facilitiesByStatus">
+              <span class="font-weight-bold">{{_f.length}}</span>
+              <span> {{ s.replace('null', 'No Status') }}</span>
+            </div>
+          </div>
+          <hr>
+          <div>
+            <h5 class="text-center">Facility Groups</h5>
+            <div class="row my-2" v-for="region in regions">
+              <div class="col-md-3">{{region.name}}</div>
+              <div class="col-md-9 d-flex align-items-center">
+                <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
+                  <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}} %</div>
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
       <transition name="slide-fade">
-        <div v-if="openSidebar" id="map-sidebar">
+        <div v-show="openSidebar" id="map-sidebar">
           <div @click="closeSidebar" class="close-sidebar-btn">
             <i class="fas fa-minus"></i>
           </div>
@@ -147,7 +149,7 @@ import { SweetModal }    from 'sweet-modal-vue'
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'projectStatus'],
+  props: ['withFacility', 'projects', 'projectStatus', 'facilityGroups', 'facilityGroup'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -163,7 +165,7 @@ export default {
       currentRegion: null,
       facilities: [],
       filters: [],
-      regions: [],
+      regions: this.facilityGroups || [],
       openSidebar: false,
       currentFacility: null,
       facilityFormModal: false,
@@ -172,7 +174,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchRegions()
+    this.fetchFacilities()
   },
   computed: {
     isCreator() {
@@ -185,7 +187,8 @@ export default {
       return this.facilities.length
     },
     facilityProgress() {
-      return _.meanBy(this.facilities, 'progress') || 0
+      var mean = _.meanBy(this.facilities, 'progress') || 0
+      return mean.toFixed(2)
     },
     filteredFacilities() {
       return _.filter(this.facilities, (facility) => {
@@ -203,17 +206,6 @@ export default {
     }
   },
   methods: {
-    fetchRegions() {
-      http
-        .get(`/facility_groups.json`)
-        .then((res) => {
-          this.regions = res.data.facilityGroups;
-          this.fetchFacilities();
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-    },
     fetchFacilities() {
       http
         .get(`/projects/${this.$route.params.projectId}/facilities.json`)
@@ -298,7 +290,8 @@ export default {
       }
     },
     facilityGroupProgress(f_group) {
-      return _.meanBy(f_group.facilities, 'progress') || 0
+      var mean = _.meanBy(f_group.facilities, 'progress') || 0
+      return mean.toFixed(2)
     }
   },
   watch: {
@@ -323,6 +316,18 @@ export default {
           }
         }
       }, deep: true
+    },
+    facilityGroup: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('facilityGroupId'))
+          }
+          else {
+            this.filters.push({facilityGroupId: value.id})
+          }
+        }
+      }, deep: true
     }
   }
 }
@@ -339,28 +344,31 @@ export default {
     overflow: auto;
   }
   #map-sidebar {
-    position: absolute;
-    overflow: auto;
-    top: 0;
     z-index: 800;
     background: white;
-    right: 0;
-    width: 31vw;
-    height: calc(100vh - 130px);
     padding: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.15);
   }
 
   /* sidebar transitions */
   .slide-fade-enter-active {
-    transition: all .4s ease;
+    transition: all .2s ease;
   }
   .slide-fade-leave-active {
-    transition: all .4s ease-in;
+    transition: all .3s ease;
   }
   .slide-fade-enter, .slide-fade-leave-to {
     transform: translateX(100px);
     opacity: 0;
+  }
+  .roll-fade-enter-active {
+    transition: all .2s ease;
+  }
+  .roll-fade-leave-active {
+    transition: all .3s ease;
+  }
+  .roll-fade-enter, .roll-fade-leave-to {
+    opacity: 0;
+    transform: translate(100px, 50px);
   }
   .close-sidebar-btn {
     z-index: 800;

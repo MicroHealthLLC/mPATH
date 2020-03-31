@@ -5,14 +5,18 @@
         @add-facility-from-nav="openModal"
         :projects="projects"
         :statuses="statuses"
+        :facility-groups="facilityGroups"
         @on-status-change="onStatusChange"
+        @on-facilitygroup-change="onFacilityGroupChange"
       />
       <div id="dash-wrap">
         <div class="col p-0">
           <regions-map
             :projects="projects"
+            :facility-groups="facilityGroups"
             :with-facility="facilityModal"
             :project-status="projectStatus"
+            :facility-group="facilityGroup"
             @nullify-modals="nullifyModal"
           />
         </div>
@@ -38,30 +42,48 @@
         facilityModal: false,
         projects: [],
         projectStatus: null,
-        statuses: []
+        statuses: [],
+        facilityGroups: [],
+        facilityGroup: null
       }
     },
     mounted() {
-      this.fetchProjects()
+      this.fetchProjects((err) => {
+        if (!err) this.loading = false;
+      })
     },
     methods: {
-      fetchProjects() {
+      fetchProjects(cb) {
         http.get('/projects.json')
           .then((res) => {
             this.projects = res.data.projects
-            this.fetchStatuses()
+            this.fetchFacilityGroups(cb)
           })
           .catch((err) => {
+            cb(err)
             console.error(err)
           })
       },
-      fetchStatuses() {
+      fetchFacilityGroups(cb) {
+        http
+          .get(`/facility_groups.json`)
+          .then((res) => {
+            this.facilityGroups = res.data.facilityGroups
+            this.fetchStatuses(cb)
+          })
+          .catch((err) => {
+            cb(err)
+            console.error(err);
+          })
+      },
+      fetchStatuses(cb) {
         http.get('/statuses.json')
           .then((res) => {
             this.statuses = res.data.statuses
-            this.loading = false
+            cb(null)
           })
           .catch((err) => {
+            cb(err)
             console.log(err)
           })
       },
@@ -73,6 +95,9 @@
       },
       onStatusChange(status) {
         this.projectStatus = status
+      },
+      onFacilityGroupChange(facilityGroup) {
+        this.facilityGroup = facilityGroup
       }
     }
   }
