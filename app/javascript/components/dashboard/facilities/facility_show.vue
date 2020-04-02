@@ -22,9 +22,14 @@
             <span class="fbody-icon"><i class="fas fa-globe"></i></span>
             <span>{{region.name}}</span>
           </p>
-          <p class="mt-2">
+          <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-            <span>{{DV_facility.status || 'No status'}}</span>
+            <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacilityStatus">
+              <option :value="null">No Status</option>
+              <option v-for="status in statuses" :value="status.id">
+                {{status.name}}
+              </option>
+            </select>
           </p>
           <p class="mt-2 d-flex align-items-center">
             <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
@@ -98,6 +103,10 @@
         default: null,
         type: Object
       },
+      statuses: {
+        default: [],
+        type: Array
+      },
       extras: {
         default: true,
         type: Boolean
@@ -129,6 +138,16 @@
           })
           .catch((err) => {
             this.loading = false;
+            console.error(err);
+          })
+      },
+      updateFacilityStatus() {
+        http
+          .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, {facility: {statusId: this.DV_facility.statusId}})
+          .then((res) => {
+            this.DV_facility = res.data.facility;
+          })
+          .catch((err) => {
             console.error(err);
           })
       },

@@ -82,8 +82,10 @@
             v-if="currentFacility"
             :facility="currentFacility"
             :region="currentRegion"
+            :statuses="statuses"
             @back-after-delete="backFromFacilityShow"
             @edit-facility="editFacility"
+            @facility-update="updateFacility"
           />
         </div>
       </transition>
@@ -149,7 +151,7 @@ import { SweetModal }    from 'sweet-modal-vue'
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'projectStatus', 'facilityGroups', 'facilityGroup'],
+  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -305,7 +307,7 @@ export default {
         }
       }, deep: true
     },
-    projectStatus: {
+    status: {
       handler: function(value) {
         if (value) {
           if (value.id === 'sa') {

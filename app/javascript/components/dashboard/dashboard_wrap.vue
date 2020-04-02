@@ -15,7 +15,8 @@
             :projects="projects"
             :facility-groups="facilityGroups"
             :with-facility="facilityModal"
-            :project-status="projectStatus"
+            :status="status"
+            :statuses="statuses"
             :facility-group="facilityGroup"
             @nullify-modals="nullifyModal"
           />
@@ -41,7 +42,7 @@
         loading: true,
         facilityModal: false,
         projects: [],
-        projectStatus: null,
+        status: null,
         statuses: [],
         facilityGroups: [],
         facilityGroup: null
@@ -94,7 +95,7 @@
         this.facilityModal = false
       },
       onStatusChange(status) {
-        this.projectStatus = status
+        this.status = status
       },
       onFacilityGroupChange(facilityGroup) {
         this.facilityGroup = facilityGroup
