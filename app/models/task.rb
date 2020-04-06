@@ -5,7 +5,7 @@ class Task < ApplicationRecord
   belongs_to :task_type
   has_many_attached :task_files
 
-  validates_numericality_of :progress, in: 0..100
+  validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
   def to_json
     attach_files = []

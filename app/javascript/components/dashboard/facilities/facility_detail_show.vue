@@ -4,7 +4,6 @@
       :facility="DV_facility"
       @refresh-facility="refreshFacility"
     />
-    <a href="javascript:;" @click.prevent.stop="$emit('show-less')" class="btn btn-link float-right f-show-btn">show less..</a>
   </div>
 </template>
 

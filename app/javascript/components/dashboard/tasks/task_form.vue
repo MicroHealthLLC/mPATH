@@ -59,7 +59,7 @@
           {{ errors.first('Start Date') }}
         </div>
       </div>
-      <div class="form-group col-md-6 px-0">
+      <div class="form-group col-md-6 px-0 ml-2">
         <label class="font-sm">Due Date:</label>
         <date-picker
           v-validate="'required'"

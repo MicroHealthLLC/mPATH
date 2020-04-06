@@ -1,86 +1,85 @@
 <template>
   <div id="facility-show">
     <div v-if="!loading">
-      <div v-if="!showMore">
-        <div v-if="extras">
-          <!-- <div v-if="$currentUser.role == 'admin'" class="crud-actions mx-3">
-            <span class="mr-3 edit-action" @click.stop="editFacility">
-              <i class="fas fa-edit"></i>
-            </span>
-            <span class="delete-action" @click.stop="deleteFacility">
-              <i class="fas fa-trash-alt"></i>
-            </span>
-          </div> -->
-        </div>
-        <h3 v-if="extras" class="text-center">Facility Summary</h3>
-        <div class="f-body mt-3 p-2">
-          <div class="d-flex">
-            <span class="fbody-icon"><i class="fas fa-check"></i></span>
-            <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
+      <tabs>
+        <tab title="Overview" key="overview">
+          <div>
+            <h3 v-if="extras" class="text-center">Facility Summary</h3>
+            <div class="f-body mt-3 p-2">
+              <div class="d-flex">
+                <span class="fbody-icon"><i class="fas fa-check"></i></span>
+                <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
+              </div>
+              <p class="mt-2">
+                <span class="fbody-icon"><i class="fas fa-globe"></i></span>
+                <span>{{region.name}}</span>
+              </p>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
+                <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacilityStatus">
+                  <option :value="null">No Status</option>
+                  <option v-for="status in statuses" :value="status.id">
+                    {{status.name}}
+                  </option>
+                </select>
+              </p>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
+                <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
+                  <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
+                </span>
+              </p>
+              <p class="mt-2">
+                <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
+                <span>{{DV_facility.address || 'N/A'}}</span>
+              </p>
+              <p class="mt-2">
+                <span class="fbody-icon"><i class="far fa-id-badge"></i></span>
+                <span>{{DV_facility.pointOfContact || 'N/A'}}</span>
+              </p>
+              <p class="mt-2">
+                <span class="fbody-icon"><i class="fas fa-phone"></i></span>
+                <span>{{DV_facility.phoneNumber || 'N/A'}}</span>
+              </p>
+              <p class="mt-2">
+                <span class="fbody-icon"><i class="far fa-envelope"></i></span>
+                <span>{{DV_facility.email || 'N/A'}}</span>
+              </p>
+            </div>
           </div>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="fas fa-globe"></i></span>
-            <span>{{region.name}}</span>
-          </p>
-          <p class="mt-2 d-flex align-items-center">
-            <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-            <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacilityStatus">
-              <option :value="null">No Status</option>
-              <option v-for="status in statuses" :value="status.id">
-                {{status.name}}
-              </option>
-            </select>
-          </p>
-          <p class="mt-2 d-flex align-items-center">
-            <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-            <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
-              <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
-            </span>
-          </p>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
-            <span>{{DV_facility.address || 'N/A'}}</span>
-          </p>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="far fa-id-badge"></i></span>
-            <span>{{DV_facility.pointOfContact || 'N/A'}}</span>
-          </p>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="fas fa-phone"></i></span>
-            <span>{{DV_facility.phoneNumber || 'N/A'}}</span>
-          </p>
-          <p class="mt-2">
-            <span class="fbody-icon"><i class="far fa-envelope"></i></span>
-            <span>{{DV_facility.email || 'N/A'}}</span>
-          </p>
-          <a v-if="extras" href="javascript:;" @click.prevent.stop="showMoreTab" class="btn btn-link f-show-btn mt-2">show more..</a>
-        </div>
-        <div v-if="newNote" class="mb-3">
-          <notes-form
-            :facility="DV_facility"
-            @close-note-input="newNote = false"
-            @note-created="noteCreated"
-          />
-        </div>
-        <div v-else class="mb-3">
-          <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
-        </div>
-        <div v-for="note in DV_facility.notes">
-          <notes-show
-            :facility="DV_facility"
-            :note="note"
-            @note-updated="noteUpdated"
-            @note-deleted="noteDeleted"
-          />
-        </div>
-      </div>
-      <div v-if="showMore">
-        <detail-show
-          :facility="DV_facility"
-          @show-less="showLessTab"
-          @refresh-facility="refreshFacility"
-        />
-      </div>
+        </tab>
+        <tab title="Notes" key="notes">
+          <div>
+            <p class="text-muted" v-if="DV_facility.notes.length <= 0">No notes present, try adding new</p>
+            <div v-if="newNote" class="mb-3">
+              <notes-form
+                :facility="DV_facility"
+                @close-note-input="newNote = false"
+                @note-created="noteCreated"
+              />
+            </div>
+            <div v-else class="mb-3">
+              <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
+            </div>
+            <div v-for="note in DV_facility.notes">
+              <notes-show
+                :facility="DV_facility"
+                :note="note"
+                @note-updated="noteUpdated"
+                @note-deleted="noteDeleted"
+              />
+            </div>
+          </div>
+        </tab>
+        <tab title="Tasks" key="tasks">
+          <div>
+            <detail-show
+              :facility="DV_facility"
+              @refresh-facility="refreshFacility"
+            />
+          </div>
+        </tab>
+      </tabs>
     </div>
   </div>
 </template>
@@ -104,7 +103,7 @@
         type: Object
       },
       statuses: {
-        default: [],
+        default: () => [],
         type: Array
       },
       extras: {
@@ -115,7 +114,6 @@
     data() {
       return {
         loading: true,
-        showMore: false,
         newNote: false,
         DV_facility: this.facility
       }
@@ -169,15 +167,8 @@
             console.error(err);
           })
       },
-      showMoreTab() {
-        this.showMore = true
-      },
-      showLessTab() {
-        this.showMore = false
-      },
       refreshFacility() {
         this.loading = true
-        this.showMore = true
         this.fetchFacility()
       },
       noteCreated(note) {
@@ -237,5 +228,8 @@
     height: 20px;
     font-size: 14px;
     font-weight: bold;
+  }
+  .vue-tabs {
+    margin-top: 15px;
   }
 </style>

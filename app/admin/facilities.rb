@@ -28,14 +28,14 @@ ActiveAdmin.register Facility do
 
   index do
     selectable_column
-    id_column
     column :facility_name
     column :address
     column :point_of_contact
     column :email
     column :phone_number
     column :facility_group
-    column :projects
+    column :status
+    column(:projects) { |facility| facility.projects.active }
     actions
   end
 
@@ -105,6 +105,13 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "Facility group is updated"
   end
 
+  batch_action :assign_status, form: {
+    "status": Status.pluck(:name, :id)
+  } do |ids, inputs|
+    Facility.where(id: ids).update_all(status_id: inputs["status"])
+    redirect_to collection_path, notice: "Status is updated"
+  end
+
   batch_action :assign_projects, confirm: "Are you sure?", form: {
     project: Project.pluck(:name, :id)
   } do |ids, inputs|
@@ -113,6 +120,22 @@ ActiveAdmin.register Facility do
       facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
     end
     redirect_to collection_path, notice: "Assigned projects updated"
+  end
+
+  batch_action :add_task, id:"asasas", form: {
+    text: :text,
+    "Task Type": TaskType.pluck(:name, :id),
+    "Start Date": :datepicker,
+    "Due Date": :datepicker,
+    "progress": :number,
+    "notes":  :textarea
+  } do |ids, inputs|
+    Facility.where(id: ids).each do |facility|
+      facility.tasks.create!(text: inputs['text'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['progress'], notes: inputs['notes'])
+    end
+    redirect_to collection_path, notice: "Task added"
+  rescue => e
+    redirect_to collection_path, flash: {error: e.message}
   end
 
   controller do

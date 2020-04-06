@@ -1,6 +1,7 @@
 import                           '@babel/polyfill'
 import                           'leaflet/dist/leaflet.css'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
+import                           'vue-slim-tabs/themes/default.css'
 import _                    from 'lodash'
 import Leaflet              from 'leaflet'
 import Multiselect          from 'vue-multiselect'
@@ -13,8 +14,10 @@ import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
 import DatePicker           from 'vuejs-datepicker'
+import * as Tabs            from 'vue-slim-tabs'
 
 
+Vue.use(Tabs)
 Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.prototype.$leaflet = Leaflet

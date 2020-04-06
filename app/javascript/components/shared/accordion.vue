@@ -6,6 +6,7 @@
     <transition name="slide-fade">
       <div v-if="expand" class="accordion_body">
         <facility-show
+          :statuses="statuses"
           :facility="facility"
           :region="region"
           :extras="false"
@@ -18,7 +19,7 @@
   import FacilityShow from './../dashboard/facilities/facility_show'
   export default {
     name: 'Accordion',
-    props: ['facility', 'region', 'expanded'],
+    props: ['facility', 'region', 'expanded', 'statuses'],
     components: {
       FacilityShow
     },

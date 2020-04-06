@@ -13,16 +13,10 @@
           </span>
           <div>{{DV_project.projectType}}</div>
           <div class=" ml-2 badge badge-pill" :class="{ 'badge-success':
-            DV_project.status == 'completed', 'badge-warning': DV_project.status == 'pending' }">
+            DV_project.status == 'active', 'badge-warning': DV_project.status == 'inactive' }">
             {{DV_project.status}}
           </div>
         </div>
-        <!-- <div class="progress-wrapper mt-3">
-          <i class="fas fa-spinner progress-icon"></i>
-          <div class="progress ">
-            <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuemax="100">60%</div>
-          </div>
-        </div> -->
         <div class="mt-3 mx-4">
           <span class="font-italic text-secondary">Notes:</span>
           <p class="f-notes text-muted">

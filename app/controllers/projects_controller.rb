@@ -3,7 +3,7 @@ class ProjectsController < AuthenticatedController
 
   def index
     respond_to do |format|
-      format.json { render json: {projects: current_user.projects.order(created_at: :desc).as_json}, status: 200 }
+      format.json { render json: {projects: current_user.projects.active.order(created_at: :desc).as_json}, status: 200 }
       format.html {}
     end
   end
@@ -24,6 +24,6 @@ class ProjectsController < AuthenticatedController
 
   private
   def set_project
-    @project = current_user.projects.find_by(id: params[:id])
+    @project = current_user.projects.active.find_by(id: params[:id])
   end
 end

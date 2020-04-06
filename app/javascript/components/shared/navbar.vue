@@ -14,8 +14,36 @@
               placeholder="Filter by Status"
               :options="DV_statuses"
               :searchable="false"
-              :allow-empty="false"
+              :multiple="true"
+              :max="1"
+              select-label="Select"
+              deselect-Label="Remove"
               @select="updateStatusFilter"
+              @remove="removeStatusFilter"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </li>
+        <li class="nav-item mr-2">
+          <div class="facilitygroup-select">
+            <multiselect
+              v-model="currentFacilityGroup"
+              track-by="name"
+              label="name"
+              placeholder="Filter by facility group"
+              :options="DV_facilityGroups"
+              :multiple="true"
+              :max="1"
+              select-label="Select"
+              deselect-Label="Remove"
+              :searchable="false"
+              @select="updateFacilityGroupFilter"
+              @remove="removeFacilityGroupFilter"
               >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
@@ -26,22 +54,30 @@
           </div>
         </li>
         <li class="nav-item">
-          <div class="facilitygroup-select">
+          <div class="facilityname-search">
             <multiselect
-              v-model="currentFacilityGroup"
-              track-by="name"
-              label="name"
-              placeholder="Filter by facility group"
-              :options="DV_facilityGroups"
-              :searchable="false"
-              :allow-empty="false"
-              @select="updateFacilityGroupFilter"
+              placeholder="Search by facility name"
+              v-model="selectedFacility"
+              label="facilityName"
+              track-by="id"
+              :multiple="true"
+              :max="1"
+              :options="facilities"
+              :searchable="true"
+              :loading="isLoading"
+              :preserve-search="true"
+              select-label="Select"
+              deselect-Label="Remove"
+              @select="onSelectFacility"
+              @remove="onRemoveFacility"
+              @search-change="findFacility"
               >
               <template slot="singleLabel" slot-scope="{option}">
                 <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
+                  <span class='select__tag-name'>{{option.facilityName}}</span>
                 </div>
               </template>
+              <span slot="noOptions">...</span>
             </multiselect>
           </div>
         </li>
@@ -59,6 +95,7 @@
               :options="DV_projects"
               :searchable="false"
               :allow-empty="false"
+              select-label="Select"
               @select="updateProjectQuery"
               >
               <template slot="singleLabel" slot-scope="{option}">
@@ -80,17 +117,18 @@
     props: ['projects', 'statuses', 'facilityGroups'],
     data() {
       return {
+        isLoading: false,
         currentProject: null,
-        currentStatus: {name: 'Select All', id: 'sa'},
-        currentFacilityGroup: {name: 'Select All', id: 'sa'},
-        DV_statuses: [],
-        DV_facilityGroups: [],
+        currentStatus: null,
+        currentFacilityGroup: null,
+        selectedFacility: null,
+        facilities: [],
+        DV_statuses: this.statuses,
+        DV_facilityGroups: this.facilityGroups,
         DV_projects: this.projects
       }
     },
     mounted() {
-      this.DV_statuses = [this.currentStatus, ...this.statuses]
-      this.DV_facilityGroups = [this.currentFacilityGroup, ...this.facilityGroups]
       this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
     },
     computed: {
@@ -106,11 +144,31 @@
       updateStatusFilter(selected, index) {
         this.$emit('on-status-change', selected)
       },
+      removeStatusFilter() {
+        this.$emit('on-status-change', {id: 'sa'})
+      },
       updateFacilityGroupFilter(selected, index) {
         this.$emit('on-facilitygroup-change', selected)
       },
+      removeFacilityGroupFilter() {
+        this.$emit('on-facilitygroup-change', {id: 'sa'})
+      },
       addFacility() {
         if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
+      },
+      findFacility(query) {
+        this.isLoading = true
+        var callback = (response => {
+          this.facilities = response
+          this.isLoading = false
+        })
+        this.$emit('on-facility-name-search', query, callback)
+      },
+      onSelectFacility(selected) {
+        this.$emit('on-filter-by-facility', selected)
+      },
+      onRemoveFacility() {
+        this.$emit('on-filter-by-facility', null)
       }
     },
     watch: {
@@ -143,6 +201,7 @@
   .project-select {
     width: 410px;
   }
+  .facilityname-search /deep/ .multiselect,
   .facilitygroup-select /deep/ .multiselect,
   .status-select /deep/ .multiselect {
     font-size: 14px;
@@ -163,6 +222,12 @@
     .multiselect__option--selected:after {
       content: unset;
     }
+    .multiselect__tags {
+      padding-top: 6px;
+    }
+  }
+  .facilityname-search /deep/ .multiselect {
+    width: 250px;
   }
   .project-select /deep/ .multiselect {
     font-size: 14px;

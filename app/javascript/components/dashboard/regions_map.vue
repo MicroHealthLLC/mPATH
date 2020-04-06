@@ -54,17 +54,22 @@
           <hr>
           <div class="my-1">
             <h5 class="text-center">Status</h5>
-            <div v-for="(_f, s) in facilitiesByStatus">
-              <span class="font-weight-bold">{{_f.length}}</span>
-              <span> {{ s.replace('null', 'No Status') }}</span>
+            <div v-if="facilityCount > 0">
+              <div v-for="(_f, s) in facilitiesByStatus">
+                <span class="font-weight-bold">{{_f.length}}</span>
+                <span> {{s.replace('null', 'No Status')}}</span>
+              </div>
             </div>
+            <p v-else class="text-muted font-sm">
+              no statuses...
+            </p>
           </div>
           <hr>
           <div>
             <h5 class="text-center">Facility Groups</h5>
             <div class="row my-2" v-for="region in regions">
-              <div class="col-md-3">{{region.name}}</div>
-              <div class="col-md-9 d-flex align-items-center">
+              <div class="col-md-9">{{region.name}}</div>
+              <div class="col-md-3 d-flex align-items-center">
                 <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}} %</div>
                 </span>
@@ -120,14 +125,15 @@
           <i class="fas fa-minus"></i>
         </div>
         <h3 class="mb-3 text-break">{{currentRegion.name}}</h3>
-        <div v-if="currentRegion.facilities && currentRegion.facilities.length == 0" class="mt-3 text-muted">
+        <div v-if="currentRegionFacilities && currentRegionFacilities.length == 0" class="mt-3 text-muted">
           There is no facility under this group
         </div>
         <div v-else>
-          <div v-for="facility in currentRegion.facilities">
+          <div v-for="facility in currentRegionFacilities">
             <accordion
               :expanded="expandedFacility.id"
               :facility="facility"
+              :statuses="statuses"
               :region="currentRegion"
               @update-expanded="updateExpanded"
             />
@@ -151,7 +157,7 @@ import { SweetModal }    from 'sweet-modal-vue'
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup'],
+  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -193,18 +199,26 @@ export default {
       return mean.toFixed(2)
     },
     filteredFacilities() {
+      var valid = this.filters.length <= 0
       return _.filter(this.facilities, (facility) => {
-        var valid = this.filters.length <= 0
         _.each(this.filters, (f) => {
           var k = Object.keys(f)[0]
-          valid = Array.isArray(facility[k]) ? facility[k].includes(f[k]) : facility[k] == f[k]
-          if (valid === false) return
+          valid = valid && Array.isArray(facility[k]) ? facility[k].includes(f[k]) : facility[k] == f[k]
         })
         return valid
       })
     },
     facilitiesByStatus() {
       return _.groupBy(this.facilities, 'status')
+    },
+    currentRegionFacilities() {
+      if (this.currentRegion && this.currentRegion.facilities) {
+        var facilityIds = _.map(this.facilities, 'id')
+        return _.filter(this.currentRegion.facilities, (f => facilityIds.includes(f.id)))
+      }
+      else {
+        return []
+      }
     }
   },
   methods: {
@@ -292,7 +306,8 @@ export default {
       }
     },
     facilityGroupProgress(f_group) {
-      var mean = _.meanBy(f_group.facilities, 'progress') || 0
+      var facilityIds = _.map(this.facilities, 'id')
+      var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.id))), 'progress') || 0
       return mean.toFixed(2)
     }
   },
@@ -330,6 +345,28 @@ export default {
           }
         }
       }, deep: true
+    },
+    facilityQuery: {
+      handler: function({q, cb}) {
+        if (q) {
+          var filtered = _.filter(this.filteredFacilities, (f) => f.facilityName.includes(q))
+          cb(filtered)
+        }
+        else {
+          cb(this.filteredFacilities)
+        }
+      }, deep: true
+    },
+    filterFacility: {
+      handler: function(facility) {
+        if (facility && facility.id) {
+          this.filters.push({id: facility.id})
+          this.showFacility(facility)
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('id'))
+        }
+      }
     }
   }
 }

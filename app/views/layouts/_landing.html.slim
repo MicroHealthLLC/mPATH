@@ -3,8 +3,9 @@
     | Welcome to MicroHealth Geographical Information System
   br
   ul.list-group
-    -if current_user.projects.count > 0
-      -current_user.projects.find_each do |project|
+    - projects = current_user.projects.active
+    -if projects.count > 0
+      -projects.find_each do |project|
         li.list-group-item
           .row
             .col-10.d-flex

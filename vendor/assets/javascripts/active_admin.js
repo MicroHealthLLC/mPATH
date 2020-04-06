@@ -3,6 +3,13 @@
 //= require 'node_modules/vue2-google-maps/dist/vue-google-maps.js'
 
 jQuery(function($) {
+  // project index page
+  $("#index_table_projects td.col-status").each(function() {
+    this.parentElement.classList.value = "";
+    this.parentElement.classList.add(`status_${$(this).text()}`);
+  })
+
+  // facility form google-map
   if ($("#gmaps-tab").is(":visible"))
   {
     Vue.use(VueGoogleMaps, {

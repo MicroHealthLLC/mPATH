@@ -7,6 +7,7 @@ ActiveAdmin.register Project do
       :name,
       :description,
       :project_type_id,
+      :status,
       user_ids: [],
       comments_attributes: [
         :namespace,
@@ -20,10 +21,10 @@ ActiveAdmin.register Project do
 
   index do
     selectable_column
-    id_column
     column :name
     column :description
     column :project_type
+    column :status
     actions
   end
 
@@ -35,6 +36,7 @@ ActiveAdmin.register Project do
         f.inputs 'Basic Details' do
           f.input :name
           f.input :project_type
+          f.input :status
           f.input :description
         end
       end
@@ -81,6 +83,8 @@ ActiveAdmin.register Project do
 
   filter :name
   filter :project_type
+  filter :status
+  filter :status, as: :select, collection: Project.statuses
 
   controller do
     def update(options={}, &block)

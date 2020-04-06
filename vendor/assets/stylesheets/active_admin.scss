@@ -48,4 +48,29 @@
     height: 300px;
     margin: 10px 0 10px 20%;
   }
+
+  #index_table_projects {
+    .status_inactive {
+      background: #FDEDEC !important;
+    }
+    .status_active {
+      background: #EAFAF1 !important;
+    }
+  }
+  .active_admin_dialog {
+    width: 40em !important;
+    li {
+      display: flex;
+      align-items: center;
+      label {
+        width: 20%;
+      }
+      input {
+        width: 80%;
+      }
+      textarea {
+        height: 100px;
+      }
+    }
+  }
 }

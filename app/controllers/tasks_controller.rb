@@ -35,7 +35,7 @@ class TasksController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.projects.find_by(id: params[:project_id])
+    @project = current_user.projects.active.find_by(id: params[:project_id])
     @facility = @project.facilities.find_by(id: params[:facility_id])
   end
 

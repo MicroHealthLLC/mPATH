@@ -49,7 +49,6 @@ ActiveAdmin.register User do
 
   index do
     selectable_column
-    id_column
     column :title
     column :first_name
     column :last_name
@@ -57,7 +56,7 @@ ActiveAdmin.register User do
     column :role
     column :phone_number
     column :address
-    column :projects
+    column(:projects) { |user| user.projects.active }
     actions
   end
 

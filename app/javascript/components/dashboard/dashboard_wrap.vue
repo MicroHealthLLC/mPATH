@@ -6,8 +6,10 @@
         :projects="projects"
         :statuses="statuses"
         :facility-groups="facilityGroups"
+        @on-facility-name-search="onFacilitySearch"
         @on-status-change="onStatusChange"
         @on-facilitygroup-change="onFacilityGroupChange"
+        @on-filter-by-facility="onFilterByFacility"
       />
       <div id="dash-wrap">
         <div class="col p-0">
@@ -18,6 +20,8 @@
             :status="status"
             :statuses="statuses"
             :facility-group="facilityGroup"
+            :facility-query="facilityQuery"
+            :filter-facility="filterFacility"
             @nullify-modals="nullifyModal"
           />
         </div>
@@ -45,7 +49,9 @@
         status: null,
         statuses: [],
         facilityGroups: [],
-        facilityGroup: null
+        facilityGroup: null,
+        facilityQuery: {},
+        filterFacility: null
       }
     },
     mounted() {
@@ -99,6 +105,12 @@
       },
       onFacilityGroupChange(facilityGroup) {
         this.facilityGroup = facilityGroup
+      },
+      onFacilitySearch(query, cb) {
+        this.facilityQuery= {q: query, cb: cb}
+      },
+      onFilterByFacility(facility) {
+        this.filterFacility = facility
       }
     }
   }
