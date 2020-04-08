@@ -22,6 +22,7 @@
                     ="#{percentage} %"
               .mt-1
                 -project.facilities.group_by(&:status).each do |s, f|
+                  - next if s.nil?
                   div
                     ="#{s.name} "
                     span.badge.badge-secondary.badge-pill
