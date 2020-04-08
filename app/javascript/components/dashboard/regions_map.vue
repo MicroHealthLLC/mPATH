@@ -4,6 +4,7 @@
       <div class="regions-bar">
         <region-bar
           :regions="regions"
+          :facilities="facilities"
           @goto-region="gotoRegion"
         />
       </div>
@@ -56,8 +57,8 @@
             <h5 class="text-center">Status</h5>
             <div v-if="facilityCount > 0">
               <div v-for="(_f, s) in facilitiesByStatus">
-                <span class="font-weight-bold">{{_f.length}}</span>
                 <span> {{s.replace('null', 'No Status')}}</span>
+                <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
               </div>
             </div>
             <p v-else class="text-muted font-sm">
@@ -68,7 +69,14 @@
           <div>
             <h5 class="text-center">Facility Groups</h5>
             <div class="row my-2" v-for="region in regions">
-              <div class="col-md-9">{{region.name}}</div>
+              <div class="col-md-9 font-md">
+                <span class="badge badge-pill" :class="{ 'badge-success':
+                  region.status == 'active', 'badge-danger': region.status == 'inactive' }">
+                  {{region.status}}
+                </span>
+                <span>{{region.name}}</span>
+                <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(region).length}}</span>
+              </div>
               <div class="col-md-3 d-flex align-items-center">
                 <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}} %</div>
@@ -124,7 +132,7 @@
         <div class="facility_grp_close_btn" @click="$refs.facilitiesAccordion.close">
           <i class="fas fa-minus"></i>
         </div>
-        <h3 class="mb-3 text-break">{{currentRegion.name}}</h3>
+        <h3 class="mb-3 text-break">{{currentRegion.name}} <span class="badge badge-secondary badge-pill">{{currentRegionFacilities.length}}</span></h3>
         <div v-if="currentRegionFacilities && currentRegionFacilities.length == 0" class="mt-3 text-muted">
           There is no facility under this group
         </div>
@@ -309,6 +317,10 @@ export default {
       var facilityIds = _.map(this.facilities, 'id')
       var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.id))), 'progress') || 0
       return mean.toFixed(2)
+    },
+    facilityGroupFacilities(f_group) {
+      var facilityIds = _.map(this.facilities, 'id')
+      return _.filter(f_group.facilities, (f => facilityIds.includes(f.id)))
     }
   },
   watch: {

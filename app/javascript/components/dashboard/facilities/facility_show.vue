@@ -16,12 +16,22 @@
               </p>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacilityStatus">
+                <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacility">
                   <option :value="null">No Status</option>
-                  <option v-for="status in statuses" :value="status.id">
+                  <option v-for="status in statuses" :disabled="isBlockedStatus(status)" :value="status.id">
                     {{status.name}}
                   </option>
                 </select>
+              </p>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                <date-picker
+                  input-class="form-control form-control-sm"
+                  v-model="DV_facility.dueDate"
+                  @input="updateFacility"
+                  placeholder="Due date"
+                  :disabled="!DV_facility.statusId"
+                />
               </p>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
@@ -139,9 +149,10 @@
             console.error(err);
           })
       },
-      updateFacilityStatus() {
+      updateFacility() {
+        var data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
-          .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, {facility: {statusId: this.DV_facility.statusId}})
+          .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
             this.DV_facility = res.data.facility;
           })
@@ -185,6 +196,9 @@
       noteDeleted(note) {
         _.remove(this.DV_facility.notes, (n) => n.id == note.id)
         this.$forceUpdate()
+      },
+      isBlockedStatus(status) {
+        return status && status.name.toLowerCase().includes('complete') && this.DV_facility.progress < 100
       }
     },
     watch: {
@@ -231,5 +245,13 @@
   }
   .vue-tabs {
     margin-top: 15px;
+  }
+  .vdp-datepicker {
+    width: 100%;
+  }
+  .vdp-datepicker /deep/ {
+    .form-control[readonly] {
+      background-color: unset;
+    }
   }
 </style>

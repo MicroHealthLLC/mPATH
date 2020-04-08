@@ -9,6 +9,12 @@ jQuery(function($) {
     this.parentElement.classList.add(`status_${$(this).text()}`);
   })
 
+  // facility_group index page
+  $("#index_table_facility_groups td.col-status").each(function() {
+    this.parentElement.classList.value = "";
+    this.parentElement.classList.add(`status_${$(this).text()}`);
+  })
+
   // facility form google-map
   if ($("#gmaps-tab").is(":visible"))
   {

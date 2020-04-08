@@ -13,6 +13,7 @@ ActiveAdmin.register Facility do
       :facility_group_id,
       :status_id,
       :creator_id,
+      :due_date,
       :status,
       :lat,
       :lng,
@@ -48,6 +49,7 @@ ActiveAdmin.register Facility do
           f.input :facility_name
           f.input :facility_group
           f.input :status
+          f.input :due_date
           f.input :address
           f.input :lat
           f.input :lng

@@ -42,6 +42,7 @@ class FacilitiesController < AuthenticatedController
       :address,
       :facility_group_id,
       :status_id,
+      :due_date,
       :point_of_contact,
       :phone_number,
       :email,

@@ -44,12 +44,12 @@
         {{ errors.first('Task Type') }}
       </div>
     </div>
-    <div class="form-row mx-4">
-      <div class="form-group col-md-6 px-0">
+    <div class="form-row mx-3">
+      <div class="form-group col-md-6">
         <label class="font-sm">Start Date:</label>
         <date-picker
           v-validate="'required'"
-          input-class="form-control"
+          input-class="form-control form-control-sm"
           v-model="DV_task.startDate"
           :disabled-dates="disabledStartDates"
           placeholder="Start Date"
@@ -59,11 +59,11 @@
           {{ errors.first('Start Date') }}
         </div>
       </div>
-      <div class="form-group col-md-6 px-0 ml-2">
+      <div class="form-group col-md-6">
         <label class="font-sm">Due Date:</label>
         <date-picker
           v-validate="'required'"
-          input-class="form-control"
+          input-class="form-control form-control-sm"
           v-model="DV_task.dueDate"
           :disabled-dates="disabledDueDates"
           placeholder="Due date"
@@ -80,7 +80,7 @@
       <input
         type="number"
         v-model="DV_task.progress"
-        class="form-control"
+        class="form-control form-control-sm"
         max="100"
         min="0"
       />
@@ -185,7 +185,9 @@
         this.$forceUpdate()
       },
       deleteFile(file) {
-        if (!file) { return; }
+        if (!file) return;
+        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        if (!confirm) return;
 
         if (file.uri) {
           http.put(`/projects/${this.project.id}/facilities/${this.facility.id}/tasks/${this.task.id}/destroy_file.json`, {file: file})

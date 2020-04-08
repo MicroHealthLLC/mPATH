@@ -16,9 +16,16 @@
             <a class="text-secondary d-flex align-items-center mt-2"
               @click.prevent.stop="pointToRegion(region)"
               href="javascript:;"
+              :class="{'link-disabled': region.status == 'inactive'}"
             >
-              <div class="region-color rounded-lg" :style="{backgroundColor: region.color}"></div>
-              <div class="ml-2 region-name">{{region.name}}</div>
+              <div class="badge badge-pill" :class="{ 'badge-success':
+                region.status == 'active', 'badge-danger': region.status == 'inactive' }">
+                {{region.status}}
+              </div>
+              <div class="ml-2 region-name font-md">
+                <span>{{region.name}}</span>
+                <span class="badge badge-secondary badge-pill">{{fetchRegionFacilities(region).length}}</span>
+              </div>
             </a>
           </li>
         </ul>
@@ -33,7 +40,7 @@
 <script>
   export default {
     name: 'RegionBar',
-    props: ['regions'],
+    props: ['regions', 'facilities'],
     data() {
       return {
         regionBar: false
@@ -50,8 +57,15 @@
         this.regionBar = false
       },
       pointToRegion(region) {
+        if (region && region.status === 'inactive') {
+          return;
+        }
         this.regionBar = false
         this.$emit('goto-region', region);
+      },
+      fetchRegionFacilities(region) {
+        var facilityIds = _.map(this.facilities, 'id')
+        return _.filter(region.facilities, (f => facilityIds.includes(f.id)))
       }
     }
   }
@@ -114,4 +128,13 @@
     transform: translateX(-100px);
     opacity: 0;
   }
+  .link-disabled {
+    cursor: not-allowed;
+    text-decoration: none !important;
+    opacity: 0.5;
+    &:hover {
+      color: #6c757d !important;
+    }
+  }
+
 </style>
