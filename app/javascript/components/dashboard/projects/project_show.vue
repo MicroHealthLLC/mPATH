@@ -1,28 +1,9 @@
 <template>
   <div v-if="!loading" class="mt-4">
     <div v-if="showProject">
-      <div>
-        <h4 class="facility-name mt-3 text-center">{{facility.facilityName}}</h4>
-        <div class="mt-3 d-flex mx-4">
-          <span class="fbody-icon"><i class="fas fa-check"></i></span>
-          <h5 class="project-name font-weight-normal text-secondary ml-2">{{ DV_project.name }}</h5>
-        </div>
-        <div class="mt-3 d-flex mx-4 align-items-center mb-3">
-          <span class="fbody-icon">
-            <i class="fas fa-exclamation-circle"></i>
-          </span>
-          <div>{{DV_project.projectType}}</div>
-          <div class=" ml-2 badge badge-pill" :class="{ 'badge-success':
-            DV_project.status == 'active', 'badge-warning': DV_project.status == 'inactive' }">
-            {{DV_project.status}}
-          </div>
-        </div>
-        <div class="mt-3 mx-4">
-          <span class="font-italic text-secondary">Notes:</span>
-          <p class="f-notes text-muted">
-            {{DV_project.description || 'No description'}}
-          </p>
-        </div>
+      <div class="d-flex align-items-center ml-2">
+        <span class="fbody-icon"><i class="fas fa-check"></i></span>
+        <h4 class="text-secondary f-head">{{facility.facilityName}}</h4>
       </div>
       <div>
         <task-index
@@ -37,8 +18,8 @@
     </div>
     <div v-else>
       <button
-        class="btn btn-link float-right"
-        style="margin-top:-30px"
+        class="btn btn-sm btn-link float-right"
+        style="margin-top:-35px"
         @click.prevent.stop="showProject=true"
       >
         back

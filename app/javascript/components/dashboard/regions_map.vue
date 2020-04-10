@@ -207,11 +207,11 @@ export default {
       return mean.toFixed(2)
     },
     filteredFacilities() {
-      var valid = this.filters.length <= 0
       return _.filter(this.facilities, (facility) => {
+        var valid = true
         _.each(this.filters, (f) => {
           var k = Object.keys(f)[0]
-          valid = valid && Array.isArray(facility[k]) ? facility[k].includes(f[k]) : facility[k] == f[k]
+          valid = valid && facility[k] == f[k]
         })
         return valid
       })
@@ -234,7 +234,9 @@ export default {
       http
         .get(`/projects/${this.$route.params.projectId}/facilities.json`)
         .then((res) => {
-          this.facilities = res.data.facilities;
+          for (var f of res.data.facilities) {
+            this.facilities.push({...f, ...f.facility})
+          }
           this.loading = false;
         })
         .catch((err) => {
@@ -361,8 +363,10 @@ export default {
     facilityQuery: {
       handler: function({q, cb}) {
         if (q) {
-          var filtered = _.filter(this.filteredFacilities, (f) => f.facilityName.includes(q))
-          cb(filtered)
+          const resp    = new RegExp(_.escapeRegExp(q.toLowerCase()), 'i')
+          const isMatch = (result) => resp.test(result.facilityName)
+          var filtered = _.filter(this.filteredFacilities, isMatch)
+          return cb(filtered)
         }
         else {
           cb(this.filteredFacilities)

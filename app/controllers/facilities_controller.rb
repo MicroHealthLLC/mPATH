@@ -3,7 +3,7 @@ class FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show, :update, :destroy]
 
   def index
-    render json: {facilities: @project.facilities.order(created_at: :desc).as_json}
+    render json: {facilities: @project.facility_projects.order(created_at: :desc).as_json}
   end
 
   def create
@@ -12,12 +12,13 @@ class FacilitiesController < AuthenticatedController
   end
 
   def show
-    render json: {facility: @facility.as_json}
+    render json: {facility: @facility_project.as_json}
   end
 
   def update
     @facility.update(facility_params)
-    render json: {facility: @facility.as_json}
+    @facility_project.update(facility_project_params)
+    render json: {facility: @facility_project.as_json}
   end
 
   def destroy
@@ -29,7 +30,8 @@ class FacilitiesController < AuthenticatedController
 
   private
   def set_facility
-    @facility = @project.facilities.find_by(id: params[:id])
+    @facility_project = @project.facility_projects.find_by(facility_id: params[:id])
+    @facility = @facility_project.facility
   end
 
   def set_project
@@ -41,14 +43,18 @@ class FacilitiesController < AuthenticatedController
       :facility_name,
       :address,
       :facility_group_id,
-      :status_id,
-      :due_date,
       :point_of_contact,
       :phone_number,
       :email,
-      :notes,
       :lat,
       :lng
+    )
+  end
+
+  def facility_project_params
+    params.require(:facility).permit(
+      :status_id,
+      :due_date
     )
   end
 end

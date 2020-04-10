@@ -9,11 +9,8 @@ ActiveAdmin.register Facility do
       :point_of_contact,
       :phone_number,
       :email,
-      :notes,
       :facility_group_id,
-      :status_id,
       :creator_id,
-      :due_date,
       :status,
       :lat,
       :lng,
@@ -35,7 +32,6 @@ ActiveAdmin.register Facility do
     column :email
     column :phone_number
     column :facility_group
-    column :status
     column(:projects) { |facility| facility.projects.active }
     actions
   end
@@ -48,8 +44,6 @@ ActiveAdmin.register Facility do
         f.inputs 'Basic Details' do
           f.input :facility_name
           f.input :facility_group
-          f.input :status
-          f.input :due_date
           f.input :address
           f.input :lat
           f.input :lng
@@ -107,12 +101,12 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "Facility group is updated"
   end
 
-  batch_action :assign_status, form: {
-    "status": Status.pluck(:name, :id)
-  } do |ids, inputs|
-    Facility.where(id: ids).update_all(status_id: inputs["status"])
-    redirect_to collection_path, notice: "Status is updated"
-  end
+  # batch_action :assign_status, form: {
+  #   "status": Status.pluck(:name, :id)
+  # } do |ids, inputs|
+  #   Facility.where(id: ids).update_all(status_id: inputs["status"])
+  #   redirect_to collection_path, notice: "Status is updated"
+  # end
 
   batch_action :assign_projects, confirm: "Are you sure?", form: {
     project: Project.pluck(:name, :id)

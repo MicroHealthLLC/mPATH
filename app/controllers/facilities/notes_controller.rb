@@ -5,7 +5,7 @@ class Facilities::NotesController < NotesController
   private
   def set_noteable
     @project = current_user.projects.active.find(params[:project_id])
-    @noteable = @project.facilities.find(params[:facility_id])
+    @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
 
   def set_note

@@ -3,11 +3,11 @@ class TasksController < AuthenticatedController
   before_action :set_task, only: [:show, :update, :destroy, :destroy_file]
 
   def index
-    render json: {tasks: @facility.tasks.map(&:to_json)}
+    render json: {tasks: @facility_project.tasks.map(&:to_json)}
   end
 
   def create
-    @task = @facility.tasks.create(task_params)
+    @task = @facility_project.tasks.create(task_params)
     render json: {task: @task.to_json}
   end
 
@@ -36,11 +36,11 @@ class TasksController < AuthenticatedController
   private
   def set_resources
     @project = current_user.projects.active.find_by(id: params[:project_id])
-    @facility = @project.facilities.find_by(id: params[:facility_id])
+    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
 
   def set_task
-    @task = @facility.tasks.find_by(id: params[:id])
+    @task = @facility_project.tasks.find_by(id: params[:id])
   end
 
   def task_params

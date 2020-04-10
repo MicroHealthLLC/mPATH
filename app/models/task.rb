@@ -1,7 +1,7 @@
 class Task < ApplicationRecord
   default_scope { order(due_date: :desc) }
 
-  belongs_to :facility
+  belongs_to :facility_project
   belongs_to :task_type
   has_many_attached :task_files
 

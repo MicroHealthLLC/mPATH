@@ -6,7 +6,7 @@
           <div>
             <h3 v-if="extras" class="text-center">Facility Summary</h3>
             <div class="f-body mt-3 p-2">
-              <div class="d-flex">
+              <div class="d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-check"></i></span>
                 <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
               </div>
@@ -60,6 +60,10 @@
         </tab>
         <tab title="Notes" key="notes">
           <div>
+            <div class="d-flex align-items-center ml-2 mb-4">
+              <span class="fbody-icon"><i class="fas fa-check"></i></span>
+              <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
+            </div>
             <p class="text-muted" v-if="DV_facility.notes.length <= 0">No notes present, try adding new</p>
             <div v-if="newNote" class="mb-3">
               <notes-form
@@ -129,19 +133,14 @@
       }
     },
     mounted() {
-      if (this.extras) {
-        this.fetchFacility()
-      }
-      else {
-        this.loading = false
-      }
+      this.fetchFacility()
     },
     methods: {
       fetchFacility() {
         http
           .get(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
-            this.DV_facility = res.data.facility;
+            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             this.loading = false;
           })
           .catch((err) => {
@@ -154,14 +153,11 @@
         http
           .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
-            this.DV_facility = res.data.facility;
+            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
           })
           .catch((err) => {
             console.error(err);
           })
-      },
-      editFacility() {
-        this.$emit('edit-facility', this.DV_facility);
       },
       deleteFacility() {
         var confirm = window.confirm(`Are you sure, you want to delete ${this.DV_facility.facilityName}?`)
