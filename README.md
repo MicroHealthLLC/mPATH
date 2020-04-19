@@ -150,7 +150,11 @@ login with temp account admin@example.com with password password
 Change, configure and customize your instance.  callback uri for socialmedia setup below.
 
 https://YourliveSiteDomain/users/auth/linkedin/callback
+
 https://YourliveSiteDomain/users/auth/google_oauth2/callback
+
 https://YourliveSiteDomain/users/auth/facebook/callback
+
 https://YourliveSiteDomain/users/auth/twitter/callback
+
 https://YourliveSiteDomain/users/auth/office365/callback
