@@ -3,6 +3,7 @@ class Facility < ApplicationRecord
   belongs_to :creator, class_name: "User"
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
+  has_many :tasks, through: :facility_projects
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
 

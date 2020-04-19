@@ -101,12 +101,14 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "Facility group is updated"
   end
 
-  # batch_action :assign_status, form: {
-  #   "status": Status.pluck(:name, :id)
-  # } do |ids, inputs|
-  #   Facility.where(id: ids).update_all(status_id: inputs["status"])
-  #   redirect_to collection_path, notice: "Status is updated"
-  # end
+  batch_action :assign_status, form: {
+    "status": Status.pluck(:name, :id)
+  } do |ids, inputs|
+    Facility.where(id: ids).each do |facility|
+      facility.facility_projects.update_all(status_id: inputs["status"])
+    end
+    redirect_to collection_path, notice: "Status is updated"
+  end
 
   batch_action :assign_projects, confirm: "Are you sure?", form: {
     project: Project.pluck(:name, :id)
@@ -127,7 +129,9 @@ ActiveAdmin.register Facility do
     "notes":  :textarea
   } do |ids, inputs|
     Facility.where(id: ids).each do |facility|
-      facility.tasks.create!(text: inputs['text'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['progress'], notes: inputs['notes'])
+      facility.facility_projects.each do |facility_project|
+        facility_project.tasks.create!(text: inputs['text'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['progress'], notes: inputs['notes'])
+      end
     end
     redirect_to collection_path, notice: "Task added"
   rescue => e
@@ -154,7 +158,7 @@ ActiveAdmin.register Facility do
 
   preserve_default_filters!
   filter :creator_id, as: :select, collection: User.all.map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
-  # filter :tasks, as: :select, collection: Task.pluck(:text, :id)
+  filter :tasks, as: :select, collection: Task.pluck(:text, :id)
   remove_filter :creator
   remove_filter :comments
   remove_filter :created_at
