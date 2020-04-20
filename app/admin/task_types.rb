@@ -7,4 +7,12 @@ ActiveAdmin.register TaskType do
     permitted
   end
 
+  controller do
+    def index
+      super do |format|
+        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+      end
+    end
+  end
+
 end

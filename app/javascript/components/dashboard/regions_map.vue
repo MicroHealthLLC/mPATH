@@ -3,7 +3,7 @@
     <div v-if="!loading" id="map-wrap" class="col-8 p-0">
       <div class="regions-bar">
         <region-bar
-          :regions="regions"
+          :regions="filteredRegions"
           :facilities="facilities"
           @goto-region="gotoRegion"
         />
@@ -68,7 +68,7 @@
           <hr>
           <div>
             <h5 class="text-center">Facility Groups</h5>
-            <div class="row my-2" v-for="region in regions">
+            <div class="row my-2" v-for="region in filteredRegions">
               <div class="col-md-9 font-md">
                 <span class="badge badge-pill" :class="{ 'badge-success':
                   region.status == 'active', 'badge-danger': region.status == 'inactive' }">
@@ -227,6 +227,10 @@ export default {
       else {
         return []
       }
+    },
+    filteredRegions() {
+      var facilityGroupIds = _.map(this.facilities, 'facilityGroupId')
+      return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
     }
   },
   methods: {

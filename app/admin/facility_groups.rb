@@ -33,6 +33,21 @@ ActiveAdmin.register FacilityGroup do
     actions
   end
 
+  batch_action :assign_status, form: {
+    status: FacilityGroup.statuses&.to_a
+  } do |ids, inputs|
+    FacilityGroup.where(id: ids).update_all(status: inputs['status'].to_i)
+    redirect_to collection_path, notice: 'Status is updated'
+  end
+
+  controller do
+    def index
+      super do |format|
+        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+      end
+    end
+  end
+
   filter :name
   filter :code
   filter :status

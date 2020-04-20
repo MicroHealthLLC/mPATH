@@ -154,10 +154,16 @@ ActiveAdmin.register Facility do
         failure.html { render :edit }
       end
     end
+
+    def index
+      super do |format|
+        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+      end
+    end
   end
 
   preserve_default_filters!
-  filter :creator_id, as: :select, collection: User.all.map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
+  filter :creator_id, as: :select, collection: User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
   filter :tasks, as: :select, collection: Task.pluck(:text, :id)
   remove_filter :creator
   remove_filter :comments

@@ -86,6 +86,13 @@ ActiveAdmin.register Project do
   filter :status
   filter :status, as: :select, collection: Project.statuses
 
+  batch_action :assign_status, form: {
+    status: Project.statuses&.to_a
+  } do |ids, inputs|
+    Project.where(id: ids).update_all(status: inputs['status'].to_i)
+    redirect_to collection_path, notice: 'Status is updated'
+  end
+
   controller do
     def update(options={}, &block)
       params[:project][:comments_attributes]['0']['namespace'] = 'admin'
@@ -96,5 +103,12 @@ ActiveAdmin.register Project do
         failure.html { render :edit }
       end
     end
+
+    def index
+      super do |format|
+        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+      end
+    end
+
   end
 end

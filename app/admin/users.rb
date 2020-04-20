@@ -31,9 +31,10 @@ ActiveAdmin.register User do
             f.input :password, input_html: { disabled: user.id? }
             f.input :password_confirmation, input_html: { disabled: user.id? }
           end
-          f.input :role
+          f.input :role, include_blank: false, include_hidden: false
           f.input :phone_number
           f.input :address
+          f.input :status, include_blank: false, include_hidden: false
         end
       end
 
@@ -54,14 +55,42 @@ ActiveAdmin.register User do
     column :last_name
     column :email
     column :role
+    column :status
     column :phone_number
     column :address
     column(:projects) { |user| user.projects.active }
     actions
   end
 
+  batch_action :assign_status, form: {
+    status: User.statuses&.to_a
+  } do |ids, inputs|
+    User.where(id: ids).update_all(status: inputs['status'].to_i)
+    redirect_to collection_path, notice: 'Status is updated'
+  end
+
+  batch_action :assign_projects, confirm: 'Are you sure?', form: {
+    project: Project.pluck(:name, :id)
+  } do |ids, inputs|
+    project = Project.find_by_id(inputs[:project])
+    User.where(id: ids).each do |user|
+      user.projects << project unless user.projects.pluck(:id).include?(project.id)
+    end
+    redirect_to collection_path, notice: "Assigned projects updated"
+  end
+
+  controller do
+    def index
+      super do |format|
+        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+      end
+    end
+  end
+
   filter :email
   filter :title
+  filter :projects, as: :select, collection: Project.active
+  filter :role, as: :select, collection: User.roles
   filter :first_name
   filter :last_name
   filter :phone_number
