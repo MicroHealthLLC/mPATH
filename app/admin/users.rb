@@ -13,6 +13,7 @@ ActiveAdmin.register User do
       :role,
       :password,
       :password_confirmation,
+      :status,
       project_ids: []
     ]
   end
