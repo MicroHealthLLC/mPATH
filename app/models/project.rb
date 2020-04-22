@@ -11,6 +11,9 @@ class Project < ApplicationRecord
 
   enum status: [:inactive, :active].freeze
 
+  validates_uniqueness_of :name, case_sensitive: false
+  validates :name, presence: true
+
   before_create :set_uuid
   after_commit :grant_access_to_admins
 
