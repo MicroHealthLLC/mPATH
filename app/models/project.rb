@@ -9,7 +9,7 @@ class Project < ApplicationRecord
 
   belongs_to :project_type
 
-  enum status: [:inactive, :active]
+  enum status: [:inactive, :active].freeze
 
   before_create :set_uuid
   after_commit :grant_access_to_admins
