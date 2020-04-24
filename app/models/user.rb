@@ -7,7 +7,7 @@ class User < ApplicationRecord
   has_many :projects, through: :project_users
   has_many :facilities
 
-  validates :first_name, :last_name, presence: true, on: :update
+  validates :first_name, :last_name, presence: true
 
   enum role: [:subscriber, :admin].freeze
   enum status: [:inactive, :active].freeze

@@ -9,10 +9,13 @@ class Project < ApplicationRecord
 
   belongs_to :project_type
 
-  enum status: [:inactive, :active]
+  enum status: [:inactive, :active].freeze
+
+  validates_uniqueness_of :name, case_sensitive: false
+  validates :name, presence: true
 
   before_create :set_uuid
-  after_commit :grant_access_to_admins
+  after_save :grant_access_to_admins
 
   def as_json(options=nil)
     json = super(options)

@@ -4,7 +4,7 @@ class FacilityGroup < ApplicationRecord
   validates :name, uniqueness: true
   validates :name, presence: true
 
-  enum status: [:inactive, :active]
+  enum status: [:inactive, :active].freeze
 
   def as_json(options=nil)
     json = super(options)

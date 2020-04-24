@@ -10,6 +10,8 @@ class Facility < ApplicationRecord
 
   validates_presence_of :facility_name, :address, :point_of_contact, :phone_number, :email
 
+  enum status: [:inactive, :active].freeze
+
   def as_json(options=nil)
     json = super(options)
     json.merge(

@@ -14,6 +14,7 @@ ActiveAdmin.register Facility do
       :status,
       :lat,
       :lng,
+      :status,
       project_ids: [],
       comments_attributes: [
         :namespace,
@@ -32,6 +33,7 @@ ActiveAdmin.register Facility do
     column :email
     column :phone_number
     column :facility_group
+    column :status
     column(:projects) { |facility| facility.projects.active }
     actions
   end
@@ -50,7 +52,9 @@ ActiveAdmin.register Facility do
           div id: 'gmaps-tab'
           f.input :point_of_contact
           f.input :phone_number
+          div id: 'f_phone_number-tab'
           f.input :email
+          f.input :status, include_blank: false, include_hidden: false
         end
       end
 
@@ -102,12 +106,10 @@ ActiveAdmin.register Facility do
   end
 
   batch_action :assign_status, form: {
-    "status": Status.pluck(:name, :id)
+    status: Facility.statuses&.to_a
   } do |ids, inputs|
-    Facility.where(id: ids).each do |facility|
-      facility.facility_projects.update_all(status_id: inputs["status"])
-    end
-    redirect_to collection_path, notice: "Status is updated"
+    Facility.where(id: ids).update_all(status: inputs['status'].to_i)
+    redirect_to collection_path, notice: 'Status is updated'
   end
 
   batch_action :assign_projects, confirm: "Are you sure?", form: {
