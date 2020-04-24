@@ -15,4 +15,9 @@ ActiveAdmin.register TaskType do
     end
   end
 
+  filter :name
+  filter :created_at
+  filter :updated_at
+  remove_filter :tasks
+  
 end
