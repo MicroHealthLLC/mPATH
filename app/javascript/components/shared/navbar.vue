@@ -35,7 +35,7 @@
               v-model="currentFacilityGroup"
               track-by="name"
               label="name"
-              placeholder="Filter by facility group"
+              placeholder="Filter by Facility Group"
               :options="DV_facilityGroups"
               :multiple="true"
               :max="1"
@@ -56,7 +56,7 @@
         <li class="nav-item">
           <div class="facilityname-search">
             <multiselect
-              placeholder="Search by facility name"
+              placeholder="Search by Facility Name"
               v-model="selectedFacility"
               label="facilityName"
               track-by="id"
