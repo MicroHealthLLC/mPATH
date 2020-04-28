@@ -167,6 +167,7 @@ ActiveAdmin.register Facility do
   preserve_default_filters!
   filter :creator_id, as: :select, collection: User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
   filter :tasks, as: :select, collection: Task.pluck(:text, :id)
+  filter :status, as: :select, collection: Facility.statuses
   remove_filter :creator
   remove_filter :comments
   remove_filter :created_at
