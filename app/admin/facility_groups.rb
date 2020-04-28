@@ -50,6 +50,6 @@ ActiveAdmin.register FacilityGroup do
 
   filter :name
   filter :code
-  filter :status
+  filter :status, as: :select, collection: FacilityGroup.statuses
   filter :color
 end
