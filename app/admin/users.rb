@@ -96,5 +96,6 @@ ActiveAdmin.register User do
   filter :last_name
   filter :phone_number
   filter :address
+  filter :status
 
 end
