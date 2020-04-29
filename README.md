@@ -72,8 +72,6 @@ yarn install
 
 bundle install
 
-rails db:setup 
-
 rake db:seed
 
 rake assets:precompile
