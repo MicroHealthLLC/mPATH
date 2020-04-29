@@ -152,9 +152,9 @@ OFFICE365_KEY= your key
 
 OFFICE365_SECRET= your secriet
 
-GOOGLE_KEY= your key
+GOOGLE_OAUTH_KEY=  your key
 
-GOOGLE_SECRET= your secret
+GOOGLE_OAUTH_SECRET= your secret
 
 
 then save
