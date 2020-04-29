@@ -51,19 +51,22 @@
                 <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
               </span>
             </p>
-          </div>
-          <hr>
-          <div class="my-1">
-            <h5 class="text-center">Status</h5>
-            <div v-if="facilityCount > 0">
+            <div v-if="facilityCount > 0" class="d-flex justify-content-around">
               <div v-for="(_f, s) in facilitiesByStatus">
                 <span> {{s.replace('null', 'No Status')}}</span>
                 <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
               </div>
             </div>
-            <p v-else class="text-muted font-sm">
-              no statuses...
-            </p>
+          </div>
+          <hr>
+          <div class="my-1">
+            <h5 class="text-center">Facilities Project Statuses</h5>
+            <div v-if="facilityCount > 0">
+              <div v-for="(_f, s) in facilitiesByProjectStatus">
+                <span> {{s.replace('null', 'No Status')}}</span>
+                <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+              </div>
+            </div>
           </div>
           <hr>
           <div>
@@ -231,6 +234,9 @@ export default {
     filteredRegions() {
       var facilityGroupIds = _.map(this.facilities, 'facilityGroupId')
       return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
+    },
+    facilitiesByProjectStatus() {
+      return _.groupBy(this.facilities, 'projectStatus')
     }
   },
   methods: {

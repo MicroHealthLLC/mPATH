@@ -71,7 +71,7 @@ ActiveAdmin.register User do
   end
 
   batch_action :assign_projects, confirm: 'Are you sure?', form: {
-    project: Project.pluck(:name, :id)
+    project: (Project.pluck(:name, :id))
   } do |ids, inputs|
     project = Project.find_by_id(inputs[:project])
     User.where(id: ids).each do |user|

@@ -19,7 +19,7 @@ ActiveAdmin.register FacilityGroup do
       f.input :name
       f.input :code
       f.input :color
-      f.input :status
+      f.input :status, include_blank: false, include_hidden: false
     end
     actions
   end

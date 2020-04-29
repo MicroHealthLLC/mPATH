@@ -4,12 +4,12 @@
     @submit.prevent="saveTask"
     class="mx-auto"
     accept-charset="UTF-8"
-  >
+    >
     <h5 class="title d-flex justify-content-center">{{title}}</h5>
     <div
       v-if="showErrors"
       class="text-danger mb-3"
-    >
+      >
       Please fill the required feilds before submitting
     </div>
     <div class="form-group mx-4">
@@ -34,7 +34,7 @@
         v-validate="'required'"
         :class="{'form-control': true, 'error': errors.has('Task Type') }" class="form-control form-control-sm"
         v-model="DV_task.taskTypeId"
-      >
+        >
         <option disabled selected value="">Task Type</option>
         <option v-for="opt in taskTypes" :value="opt.id">
           {{opt.name}}
@@ -76,13 +76,10 @@
       </div>
     </div>
     <div class="form-group mx-4">
-      <label class="font-sm">Progress: (in %)</label>
-      <input
-        type="number"
+      <label class="font-sm mb-0">Progress: (in %)</label>
+      <vue-slide-bar
         v-model="DV_task.progress"
-        class="form-control form-control-sm"
-        max="100"
-        min="0"
+        :line-height="8"
       />
     </div>
     <div class="form-group mx-4">
@@ -111,7 +108,7 @@
           <button
             class="btn btn-danger btn-sm d-flex flex-row-reverse"
             @click.prevent="deleteFile(file)"
-          >
+            >
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -128,7 +125,7 @@
       <button
         :disabled="!readyToSave"
         class="btn btn-success"
-      >
+        >
         Save
       </button>
     </div>

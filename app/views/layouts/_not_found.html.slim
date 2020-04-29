@@ -8,6 +8,9 @@
         p.font-weight-bold #{message}
       -else
         p You are not authorize to perform this action
-
-      = link_to dashboard_index_path, class: "btn btn-link" do
-        | Go back safely
+      -if user_signed_in?
+        = link_to dashboard_index_path, class: "btn btn-link" do
+          | Go back safely
+      -else
+        = link_to new_user_session_path, class: "btn btn-link" do
+          | Go back safely

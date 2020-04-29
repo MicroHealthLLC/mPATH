@@ -16,7 +16,5 @@ ActiveAdmin.register ProjectType do
   end
 
   filter :name
-  filter :created_at
-  filter :updated_at
 
 end

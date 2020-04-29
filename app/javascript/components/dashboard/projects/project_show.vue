@@ -19,7 +19,7 @@
     <div v-else>
       <button
         class="btn btn-sm btn-link float-right"
-        style="margin-top:-35px"
+        style="margin-top:-20px"
         @click.prevent.stop="showProject=true"
       >
         back

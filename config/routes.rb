@@ -2,7 +2,11 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
   authenticate :user, lambda { |u| u.admin? } do
-    ActiveAdmin.routes(self)
+    begin
+      ActiveAdmin.routes(self)
+    rescue Exception => e
+      puts "ActiveAdmin: #{e.class}: #{e}"
+    end
   end
 
   resources :dashboard, only: [:index]
@@ -20,6 +24,12 @@ Rails.application.routes.draw do
         end
       end
     end
+  end
+
+  namespace :downloads, defaults: { format: :json } do
+    get '/facility_groups', to: 'data#facility_groups'
+    get '/task_types', to: 'data#task_types'
+    get '/statuses', to: 'data#statuses'
   end
 
   root 'landing#index'

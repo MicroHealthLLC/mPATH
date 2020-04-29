@@ -11,7 +11,7 @@ class FacilityProject < ApplicationRecord
       facility: self.facility.as_json,
       tasks: self.tasks.map(&:to_json),
       notes: self.notes.map(&:to_json),
-      status: self.status.try(:name),
+      project_status: self.status.try(:name),
       progress: progress
     ).as_json
   end

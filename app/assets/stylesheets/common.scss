@@ -1,5 +1,12 @@
+@font-face {
+  font-family: 'FuturaPTBook';
+  src: url('/assets/FuturaPTBook.otf');
+}
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'FuturaPTBook';
+  font-style: normal;
+  font-weight: 300;
   /*overflow-y: hidden;*/
 }
 p {

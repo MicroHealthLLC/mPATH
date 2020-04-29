@@ -1,11 +1,19 @@
-/* $sidebar-width: 242px; */
 
 /* Active Admin's got SASS! */
 
 @import "active_admin/mixins";
 @import "active_admin/base";
 
-/*.status_tag { background: #6090DB; }*/
+@font-face {
+  font-family: 'FuturaPTBook';
+  src: url('/assets/FuturaPTBook.otf');
+}
+
+body {
+  font-family: 'FuturaPTBook';
+  font-style: normal;
+  font-weight: 300;
+}
 
 .active_admin {
   select {

@@ -15,12 +15,14 @@ import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
 import DatePicker           from 'vuejs-datepicker'
 import * as Tabs            from 'vue-slim-tabs'
+import VueSlideBar          from 'vue-slide-bar'
 
 
 Vue.use(Tabs)
 Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.prototype.$leaflet = Leaflet
+Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
 Vue.component('GmapCluster', GmapCluster)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
