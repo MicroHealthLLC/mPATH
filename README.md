@@ -136,7 +136,7 @@ add these
         passenger_enabled on;
         rails_env development;
 
-# Enter your maps api
+# Enter your maps api key along with google and microsoft
 
 /var/www/mGis
 
@@ -146,7 +146,16 @@ then enter this below
 
 GOOGLE_MAP_KEY= your key
 
-SECRET_KEY_BASE= your key
+SECRET_KEY_BASE= your key base
+
+OFFICE365_KEY= your key
+
+OFFICE365_SECRET= your secriet
+
+GOOGLE_KEY: your key
+
+GOOGLE_SECRET: your secret
+
 
 then save
 
@@ -160,12 +169,6 @@ login with temp account admin@example.com with password password
 
 Change, configure and customize your instance.  callback uri for socialmedia setup below.
 
-https://YourliveSiteDomain/users/auth/linkedin/callback
-
 https://YourliveSiteDomain/users/auth/google_oauth2/callback
-
-https://YourliveSiteDomain/users/auth/facebook/callback
-
-https://YourliveSiteDomain/users/auth/twitter/callback
 
 https://YourliveSiteDomain/users/auth/office365/callback
