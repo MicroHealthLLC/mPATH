@@ -8,13 +8,15 @@
 
 
 # if Rails.env.development?
-  AdminUser.create_with(
+  User.create_with(
     password: 'password', 
-    password_confirmation: 'password'
+    password_confirmation: 'password',
+    first_name: 'admin',
+    last_name: 'admin'
   ).find_or_create_by(email: 'admin@example.com')
 
-  @region = Region.find_or_create_by(name: 'Sample Region', code: 'SAMP')
-
+  @region = FacilityGroup.find_or_create_by(name: 'Sample Region', code: 'SAMP')
+  states = [ ]
   states.each do |state|
     State.create_with(
       center: state["center"],
