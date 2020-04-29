@@ -4,7 +4,7 @@ class CreateStates < ActiveRecord::Migration[5.2]
       t.string :name
       t.string :code
       t.string :center, default: "[]"
-      t.references :region, foreign_key: true
+      t.references :facility_group, foreign_key: true
       t.timestamps
     end
   end
