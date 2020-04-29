@@ -147,6 +147,7 @@ nano .env
 then enter this below
 
 GOOGLE_MAP_KEY= your key
+
 SECRET_KEY_BASE= your key
 
 then save
