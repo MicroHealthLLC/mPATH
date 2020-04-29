@@ -1,5 +1,5 @@
 class ChangeTypeOfRegionBoundary < ActiveRecord::Migration[5.2]
   def change
-    change_column :regions, :boundary, :text
+    change_column :facility_groups, :boundary, :text
   end
 end
