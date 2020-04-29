@@ -83,7 +83,6 @@ ActiveAdmin.register Project do
 
   filter :name
   filter :project_type
-  filter :status
   filter :status, as: :select, collection: Project.statuses
 
   batch_action :assign_status, form: {
