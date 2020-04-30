@@ -60,7 +60,7 @@
           </div>
           <hr>
           <div class="my-1">
-            <h5 class="text-center">Facilities Project Statuses</h5>
+            <h5 class="text-center">Facility Project Status</h5>
             <div v-if="facilityCount > 0">
               <div v-for="(_f, s) in facilitiesByProjectStatus">
                 <span> {{s.replace('null', 'No Status')}}</span>
