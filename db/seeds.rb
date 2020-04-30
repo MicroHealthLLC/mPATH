@@ -12,6 +12,7 @@
     password: 'password', 
     password_confirmation: 'password',
     first_name: 'admin',
+    role: "admin",
     last_name: 'admin'
   ).find_or_create_by(email: 'admin@example.com')
 
