@@ -117,7 +117,7 @@ jQuery(function($) {
           $("#facility_phone_number").val(ph_number);
         }
       },
-      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :valid-characters-only="true" :only-countries="['US']" name="phonenumber" default-country="US" @input="checkPhoneValidation" class="form-control" :class="{'error': phoneError || apiError}"></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :valid-characters-only="true" name="phonenumber" default-country="US" @input="checkPhoneValidation" class="form-control" :class="{'error': phoneError || apiError}"></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 });
