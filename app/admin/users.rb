@@ -11,6 +11,8 @@ ActiveAdmin.register User do
       :phone_number,
       :address,
       :role,
+      :lat,
+      :lng,
       :password,
       :password_confirmation,
       :status,
@@ -35,6 +37,9 @@ ActiveAdmin.register User do
           f.input :role, include_blank: false, include_hidden: false
           f.input :phone_number
           f.input :address
+          f.input :lat
+          f.input :lng
+          div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false
         end
       end
@@ -97,5 +102,6 @@ ActiveAdmin.register User do
   filter :phone_number
   filter :address
   filter :status, as: :select, collection: User.statuses
-
+  remove_filter :lat
+  remove_filter :lng
 end
