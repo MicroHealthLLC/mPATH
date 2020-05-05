@@ -4,8 +4,8 @@
 .mw_10
   #dashboard
 
-=javascript_tag nonce: true do
-  |var current_user = "#{JSON.generate(current_user.as_json)}";
+= javascript_tag nonce: true do
+  |var current_user = "#{JSON.generate(current_user.as_json(methods: :abilities))}";
   |var google_api_key = "#{ENV['GOOGLE_MAP_KEY']}";
 
 = javascript_pack_tag "dashboard", async: true

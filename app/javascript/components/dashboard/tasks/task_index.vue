@@ -1,6 +1,6 @@
 <template>
   <div id="tasks-index" class="mt-3" >
-    <div class="new-tasks-btn mb-3 mx-4">
+    <div v-if="permitted" class="new-tasks-btn mb-3 mx-4">
       <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
     </div>
     <ul class="list-group mx-4 rounded-lg">
@@ -8,7 +8,7 @@
         class="list-group-item mb-2"
         v-for="task in facility.tasks"
         :key="task.id"
-      >
+        >
         <div class="row">
           <div class="col-md-9">
             <div class="font-sm d-flex">
@@ -33,7 +33,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="crud-actions my-2">
+            <div v-if="permitted" class="crud-actions my-2">
               <span class="mr-3 edit-action" @click.prevent="editTask(task)">
                 <i class="fas fa-edit"></i>
               </span>
@@ -89,6 +89,16 @@
       },
       downloadFile(file) {
         // debugger
+      }
+    },
+    computed: {
+      permitted() {
+        if (this.$currentUser.role === 'admin') return true
+        if (this.$currentUser.role === 'subscriber' &&
+          !(_.keys(this.$currentUser.abilities.cannot.manage).includes('Task'))
+        ) return true
+
+        return false
       }
     },
     watch: {

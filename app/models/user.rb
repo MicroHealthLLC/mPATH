@@ -12,6 +12,8 @@ class User < ApplicationRecord
   enum role: [:subscriber, :admin].freeze
   enum status: [:inactive, :active].freeze
 
+  PRIVILIGES = ['Tasks']
+
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
       return where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first
@@ -35,5 +37,9 @@ class User < ApplicationRecord
 
   def inactive_message
     "You are not allowed to log in!"
+  end
+
+  def abilities
+    Ability.new(self).permissions
   end
 end

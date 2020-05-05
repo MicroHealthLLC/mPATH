@@ -16,6 +16,7 @@ ActiveAdmin.register User do
       :password,
       :password_confirmation,
       :status,
+      privileges: [],
       project_ids: []
     ]
   end
@@ -42,11 +43,15 @@ ActiveAdmin.register User do
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false
         end
+
+        f.inputs 'Role Privileges' do
+          f.input :privileges, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
+        end
       end
 
       tab 'Projects' do
         f.inputs 'Projects Details' do
-          f.input :projects, label: 'Projects', as: :select
+          f.input :projects, label: 'Projects', as: :select, include_blank: false
         end
       end
     end

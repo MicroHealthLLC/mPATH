@@ -261,7 +261,7 @@ export default {
       this.openSidebar = true
       this.currentRegion = this.regions.find(region => region.id == facility.facilityGroupId)
       this.center = this.getLatLngForFacility(facility)
-      this.zoom = 17
+      // this.zoom = 17
       this.$refs.googlemap.panTo(this.center)
       this.currentFacility = facility
     },

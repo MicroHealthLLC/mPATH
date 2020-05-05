@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading" class="notes_show mb-5">
     <div v-if="show">
-      <div class="crud-actions mx-3 float-right">
+      <div v-if="permitted" class="crud-actions mx-3 float-right">
         <span class="mr-2 font-sm edit-action" @click.stop="show = false">
           <i class="fas fa-edit"></i>
         </span>
@@ -82,6 +82,10 @@
       noteBy() {
         if (this.loading) return null
         else return `${this.DV_note.user.firstName} ${this.DV_note.user.lastName} at ${new Date(this.DV_note.createdAt).toUTCString()}`
+      },
+      permitted() {
+        if (this.loading) return false
+        return this.note.userId === this.$currentUser.id
       }
     },
     watch: {

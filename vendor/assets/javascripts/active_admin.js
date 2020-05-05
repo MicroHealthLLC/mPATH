@@ -17,7 +17,8 @@ jQuery(function($) {
   })
 
   // facility form google-map
-  if ($("#gmaps-tab").is(":visible")){
+  if ($("#gmaps-tab").is(":visible"))
+  {
     Vue.use(VueGoogleMaps, {
       load: {
         key: 'AIzaSyCAE5VIs52m1DN5Acuk9NudjSEKYmQwmi0',
@@ -81,13 +82,11 @@ jQuery(function($) {
           }, deep: true
         }
       },
-      template: `<li class='string input required stringish' id='facility_address_input_gmap'>
-          <label for='facility_address_input_gmap' class='label'>Address<abbr title="required">*</abbr></label>
-          <GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete>
-          <div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_address_input_gmap'><label for='facility_address_input_gmap' class='label'>Address<abbr title="required">*</abbr></label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
-// User form google-map
+
+  // User form google-map
   if ($("#user-gmaps-tab").is(":visible"))
   {
     Vue.use(VueGoogleMaps, {

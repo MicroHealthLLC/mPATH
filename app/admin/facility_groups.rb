@@ -6,8 +6,7 @@ ActiveAdmin.register FacilityGroup do
     permitted = [
       :name,
       :code,
-      :status,
-      :color
+      :status
     ]
     permitted
   end
@@ -18,7 +17,6 @@ ActiveAdmin.register FacilityGroup do
     inputs 'Details' do
       f.input :name
       f.input :code
-      f.input :color
       f.input :status, include_blank: false, include_hidden: false
     end
     actions
@@ -28,7 +26,6 @@ ActiveAdmin.register FacilityGroup do
     selectable_column
     column :name
     column :code
-    column :color
     column :status
     actions
   end
@@ -51,5 +48,4 @@ ActiveAdmin.register FacilityGroup do
   filter :name
   filter :code
   filter :status, as: :select, collection: FacilityGroup.statuses
-  filter :color
 end
