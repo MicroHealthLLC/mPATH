@@ -16,7 +16,7 @@ ActiveAdmin.register User do
       :password,
       :password_confirmation,
       :status,
-      privileges: [],
+      :privileges,
       project_ids: []
     ]
   end
@@ -45,7 +45,8 @@ ActiveAdmin.register User do
         end
 
         f.inputs 'Role Privileges' do
-          f.input :privileges, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
+          f.input :privileges, input_html: { disabled: true }
+          f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
         end
       end
 
@@ -95,6 +96,24 @@ ActiveAdmin.register User do
       super do |format|
         format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
       end
+    end
+
+    def create
+      privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+      params["user"].merge!({"privileges": privileges})
+      super
+    end
+
+    def update
+      privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+      params["user"].merge!({"privileges": privileges})
+      super
+    end
+
+    def edit
+      resource.priviliges_collection = resource.privileges.split(",")
+      puts resource
+      super
     end
   end
 

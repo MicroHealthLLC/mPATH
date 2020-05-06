@@ -190,4 +190,100 @@ jQuery(function($) {
       template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :valid-characters-only="true" name="phonenumber" default-country="US" @input="checkPhoneValidation" class="form-control" :class="{'error': phoneError || apiError}"></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
+
+  // settings page
+  if ($("#settings_container").is(":visible"))
+  {
+    var settings = new Vue({
+      el: "#settings_container",
+      data() {
+        return {
+          currentTab: 1,
+          isEditing: false,
+          loading: true,
+          settings: {
+            office365_key: '',
+            office365_secret: '',
+            google_map_key: '',
+            google_oauth_key: '',
+            google_oauth_secret: ''
+          }
+        }
+      },
+      mounted() {
+        this.fetchSettings()
+      },
+      computed: {
+        textType() {
+          return this.isEditing ? 'text' : 'password'
+        }
+      },
+      methods: {
+        submitSettings() {
+          $.post("/settings.json", {settings: this.settings}, (data) => {
+            window.location.href = "/admin/settings"
+          });
+        },
+        fetchSettings() {
+          $.get("/settings.json", (data) => {
+            for (key in this.settings) {
+              this.settings[key] = data[key] || ''
+            }
+            this.loading = false
+          });
+        }
+      },
+      template: `<div>
+        <button class="edit-creds" :class="{'vue__disabled': isEditing}" @click.stop="isEditing=true">Edit</button>
+        <form v-if="!loading" class="formtastic settings" @submit.prevent="submitSettings">
+          <div class="tabs ui-tabs ui-corner-all ui-widget ui-widget-content">
+            <ul class="nav nav-tabs ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
+              <li role="tab" tabindex="0" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="office365" aria-labelledby="ui-id-1" :class="{'ui-tabs-active ui-state-active': currentTab == 1}"><a @click.stop.prevent="currentTab = 1" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-1">Office 365</a></li>
+              <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_oauth" aria-labelledby="ui-id-2" :class="{'ui-tabs-active ui-state-active': currentTab == 2}"><a @click.stop.prevent="currentTab = 2" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-2">Google OAuth</a></li>
+              <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_map" aria-labelledby="ui-id-3" :class="{'ui-tabs-active ui-state-active': currentTab == 3}"><a @click.stop.prevent="currentTab = 3" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-3">Google Maps</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="office365" aria-labelledby="ui-id-1" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false" v-show="currentTab === 1">
+                <fieldset class="inputs"><legend><span>Office 365</span></legend>
+                  <ol>
+                    <li class="string input required stringish" id="office365_key_input"><label class="label">Office 365 key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_key" v-model="settings.office365_key" type="text"></li>
+                    <li class="string input required stringish" id="office365_secret_input"><label class="label">Office 365 secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_secret" v-model="settings.office365_secret" :type="textType"></li>
+                  </ol>
+                </fieldset>
+              </div>
+              <div id="google_oauth" aria-labelledby="ui-id-2" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 2">
+                <fieldset class="inputs"><legend><span>Google OAuth</span></legend>
+                  <ol>
+                    <li class="string input required stringish" id="google_oauth_key_input"><label class="label">Google oauth key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_key" v-model="settings.google_oauth_key" type="text"></li>
+                    <li class="string input required stringish" id="google_oauth_secret_input"><label class="label">Google oauth secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_secret" v-model="settings.google_oauth_secret" :type="textType"></li>
+                  </ol>
+                </fieldset>
+              </div>
+              <div id="google_map" aria-labelledby="ui-id-3" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 3">
+                <fieldset class="inputs"><legend><span>Google Maps</span></legend>
+                  <ol>
+                    <li class="string input required stringish" id="google_maps_key_input"><label class="label">Google maps key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_maps_key" v-model="settings.google_map_key" type="text"></li>
+                  </ol>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+          <fieldset class="actions" v-show="isEditing">
+            <ol>
+              <li class="action input_action " id="submit_settings"><input :readOnly="!isEditing" type="submit"></li>
+            </ol>
+          </fieldset>
+        </form>
+      </div>`
+    });
+  }
+
+  // user role previliges
+  if ($("#user_privileges_collection_input").is(":visible"))
+  {
+    var previliges = $("input#user_privileges").val();
+    previliges.split(",").map(p => {
+      $(`input[value=${p}]`).prop("checked", true);
+    });
+  }
 });

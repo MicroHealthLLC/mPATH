@@ -56,7 +56,8 @@ body {
   #facility_address_input,
   #facility_lat_input,
   #facility_lng_input,
-  #facility_phone_number_input {
+  #facility_phone_number_input,
+  #user_privileges_input {
     display: none;
   }
   input[type=tel]:focus {
@@ -107,5 +108,17 @@ body {
     select {
       width: 98%;
     }
+  }
+  .edit-creds {
+    position: absolute;
+    right: 40px;
+    top: 70px;
+    z-index: 1001;
+  }
+  .vue__disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: default;
+    outline: none;
   }
 }

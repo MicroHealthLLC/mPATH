@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  attr_accessor :priviliges_collection
+
   devise :database_authenticatable,
          :recoverable, :rememberable, :trackable,
          :validatable, :omniauthable
@@ -7,7 +9,6 @@ class User < ApplicationRecord
   has_many :projects, through: :project_users
   has_many :facilities
 
-  serialize :privileges
   validates :first_name, :last_name, presence: true
 
   enum role: [:subscriber, :admin].freeze
@@ -34,10 +35,6 @@ class User < ApplicationRecord
 
   def active_for_authentication?
     super and self.active?
-  end
-
-  def privileges
-    Array.wrap(super)
   end
 
   def inactive_message

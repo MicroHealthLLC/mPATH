@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/settings', to: 'settings#index'
+  post '/settings', to: 'settings#update'
+
   namespace :downloads, defaults: { format: :json } do
     get '/facility_groups', to: 'data#facility_groups'
     get '/task_types', to: 'data#task_types'
