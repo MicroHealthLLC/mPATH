@@ -12,6 +12,7 @@ class Setting < ApplicationRecord
     ['office365_key', 'office365_secret', 'google_map_key', 'google_oauth_key', 'google_oauth_secret'].each do |key|
       available_settings["#{key.upcase}"] = { 'default' => ENV["#{key.upcase}"], 'cached' => cached.send(key) || '' }
     end
+    cached.save if cached.new_record?
   end
   load_available_settings
 end
