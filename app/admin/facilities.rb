@@ -121,13 +121,13 @@ ActiveAdmin.register Facility do
   end
 
   batch_action :add_task, id:"add-tasks", form: {
-    text: :text,
+    "Name": :text,
     "Project": Project.pluck(:name, :id),
     "Task Type": TaskType.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
-    "progress": :number,
-    "notes":  :textarea
+    "Progress": :number,
+    "Description":  :textarea
   } do |ids, inputs|
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
