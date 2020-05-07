@@ -112,7 +112,7 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :assign_projects, confirm: "Are you sure?", form: -> { {user: Project.pluck(:name, :id)} } do |ids, inputs|
+  batch_action :assign_projects, confirm: "Are you sure?", form: -> { {"Project": Project.pluck(:name, :id)} } do |ids, inputs|
     project = Project.find_by_id(inputs[:project])
     Facility.where(id: ids).each do |facility|
       facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
