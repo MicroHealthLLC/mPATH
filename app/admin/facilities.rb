@@ -33,7 +33,7 @@ ActiveAdmin.register Facility do
     column :email
     column :phone_number
     column :facility_group
-    column :status
+    column "State", :status
     column(:projects) { |facility| facility.projects.active }
     actions
   end
@@ -54,7 +54,7 @@ ActiveAdmin.register Facility do
           f.input :phone_number
           div id: 'f_phone_number-tab'
           f.input :email
-          f.input :status, include_blank: false, include_hidden: false
+          f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
       end
 
@@ -105,16 +105,14 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "Facility group is updated"
   end
 
-  batch_action :assign_status, form: {
-    status: Facility.statuses&.to_a
+  batch_action :assign_state, form: {
+    state: Facility.statuses&.to_a
   } do |ids, inputs|
     Facility.where(id: ids).update_all(status: inputs['status'].to_i)
-    redirect_to collection_path, notice: 'Status is updated'
+    redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :assign_projects, confirm: "Are you sure?", form: {
-    project: Project.pluck(:name, :id)
-  } do |ids, inputs|
+  batch_action :assign_projects, confirm: "Are you sure?", form: -> { {user: Project.pluck(:name, :id)} } do |ids, inputs|
     project = Project.find_by_id(inputs[:project])
     Facility.where(id: ids).each do |facility|
       facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
@@ -122,8 +120,9 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "Assigned projects updated"
   end
 
-  batch_action :add_task, id:"asasas", form: {
+  batch_action :add_task, id:"add-tasks", form: {
     text: :text,
+    "Project": Project.pluck(:name, :id),
     "Task Type": TaskType.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
@@ -131,11 +130,26 @@ ActiveAdmin.register Facility do
     "notes":  :textarea
   } do |ids, inputs|
     Facility.where(id: ids).each do |facility|
-      facility.facility_projects.each do |facility_project|
+      facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
         facility_project.tasks.create!(text: inputs['text'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['progress'], notes: inputs['notes'])
       end
     end
     redirect_to collection_path, notice: "Task added"
+  rescue => e
+    redirect_to collection_path, flash: {error: e.message}
+  end
+
+  batch_action :assign_duedate_and_status, id:"assign-duedate-status", form: {
+    "Project": Project.pluck(:name, :id),
+    "Status": Status.pluck(:name, :id),
+    "Due Date": :datepicker
+  } do |ids, inputs|
+    Facility.where(id: ids).each do |facility|
+      facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
+        facility_project.update_columns(status_id: inputs['text'], due_date: inputs['Due Date'])
+      end
+    end
+    redirect_to collection_path, notice: "Due Date and Status is updated"
   rescue => e
     redirect_to collection_path, flash: {error: e.message}
   end
@@ -167,7 +181,7 @@ ActiveAdmin.register Facility do
   preserve_default_filters!
   filter :creator_id, as: :select, collection: User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
   filter :tasks, as: :select, collection: Task.pluck(:text, :id)
-  filter :status, as: :select, collection: Facility.statuses
+  filter :status, label: 'State', as: :select, collection: Facility.statuses
   remove_filter :creator
   remove_filter :comments
   remove_filter :created_at

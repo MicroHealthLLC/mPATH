@@ -3,7 +3,7 @@ class FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show, :update, :destroy]
 
   def index
-    render json: {facilities: @project.facility_projects.order(created_at: :desc).as_json}
+    render json: {facilities: @project.facility_projects.order(created_at: :desc).as_json, project: @project}
   end
 
   def create

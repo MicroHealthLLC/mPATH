@@ -36,7 +36,7 @@ ActiveAdmin.register Project do
         f.inputs 'Basic Details' do
           f.input :name
           f.input :project_type
-          f.input :status
+          f.input :status, include_blank: false, include_hidden: false
           f.input :description
         end
       end

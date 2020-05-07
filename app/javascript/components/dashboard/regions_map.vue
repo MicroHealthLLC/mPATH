@@ -44,6 +44,8 @@
     <div v-if="!loading" id="rollup-sidebar" class="col-4 p-0">
       <transition name="roll-fade">
         <div v-show="!openSidebar" class="m-3">
+          <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
+          <br>
           <div class="text-center">
             <h2>{{facilityCount}} Facilities</h2>
             <p class="mt-2 d-flex align-items-center">
@@ -182,6 +184,7 @@ export default {
       center: {lat: 40.64, lng: -74.66},
       zoom: 3,
       currentRegion: null,
+      currentProject: null,
       facilities: [],
       filters: [],
       regions: this.facilityGroups || [],
@@ -247,6 +250,7 @@ export default {
           for (var f of res.data.facilities) {
             this.facilities.push({...f, ...f.facility})
           }
+          this.currentProject = res.data.project
           this.loading = false;
         })
         .catch((err) => {

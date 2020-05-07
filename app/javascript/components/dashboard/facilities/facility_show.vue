@@ -16,9 +16,9 @@
               </p>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change.stop="updateFacility">
+                <select class="form-control form-control-sm" v-model="DV_facility.statusId">
                   <option :value="null">No Status</option>
-                  <option v-for="status in statuses" :disabled="isBlockedStatus(status)" :value="status.id">
+                  <option v-for="status in statuses" :value="status.id">
                     {{status.name}}
                   </option>
                 </select>
@@ -33,6 +33,7 @@
                   :disabled="!DV_facility.statusId"
                 />
               </p>
+              <p v-if="!DV_facility.statusId" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
                 <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
@@ -72,10 +73,18 @@
                 @note-created="noteCreated"
               />
             </div>
-            <div v-else class="mb-3">
-              <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
+            <div v-else class="mb-4 d-flex align-items-center justify-content-around">
+              <div>
+                <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
+              </div>
+              <div class="input-group search-tab">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                </div>
+                <input type="text" class="form-control form-control-sm" placeholder="type to search" aria-label="Search" aria-describedby="search-addon" v-model="searchQuery">
+              </div>
             </div>
-            <div v-for="note in DV_facility.notes">
+            <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
               <notes-show
                 :facility="DV_facility"
                 :note="note"
@@ -83,6 +92,7 @@
                 @note-deleted="noteDeleted"
               />
             </div>
+            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
           </div>
         </tab>
         <tab title="Tasks" key="tasks">
@@ -129,6 +139,8 @@
       return {
         loading: true,
         newNote: false,
+        searchQuery: '',
+        searchTerm: '',
         DV_facility: this.facility
       }
     },
@@ -197,12 +209,28 @@
         return status && status.name.toLowerCase().includes('complete') && this.DV_facility.progress < 100
       }
     },
+    computed: {
+      filteredNotes() {
+        if (this.searchQuery.trim() !== '') {
+          const resp    = new RegExp(_.escapeRegExp(this.searchQuery.trim().toLowerCase()), 'i')
+          const isMatch = (result) => resp.test(result.body)
+          return _.filter(this.DV_facility.notes, isMatch)
+        }
+        return this.DV_facility.notes;
+      }
+    },
     watch: {
       facility: {
         handler: function(value) {
           this.DV_facility = value
         },
         deep: true
+      },
+      "DV_facility.statusId"(value) {
+        if (value === null) {
+          this.DV_facility.dueDate = null
+        }
+        this.updateFacility()
       }
     }
   }
@@ -249,5 +277,8 @@
     .form-control[readonly] {
       background-color: unset;
     }
+  }
+  .search-tab {
+    width: 80%;
   }
 </style>

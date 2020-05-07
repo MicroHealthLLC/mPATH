@@ -1,12 +1,26 @@
 <template>
-  <div id="tasks-index" class="mt-3" >
-    <div v-if="permitted" class="new-tasks-btn mb-3 mx-4">
-      <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
+  <div id="tasks-index" class="mt-3">
+    <div class="d-flex align-item-center justify-content-around mb-3">
+      <div class="task-filters w-75">
+        <select
+          name="Task Type"
+          class="form-control form-control-sm"
+          v-model="filters.taskType"
+          >
+          <option selected value="">Filter by Task Type</option>
+          <option v-for="opt in taskTypes" :value="opt.id">
+            {{opt.name}}
+          </option>
+        </select>
+      </div>
+      <div v-if="permitted" class="new-tasks-btn">
+        <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
+      </div>
     </div>
-    <ul class="list-group mx-4 rounded-lg">
+    <ul v-if="filteredTasks.length > 0" class="list-group mx-4 rounded-lg">
       <li
         class="list-group-item mb-2"
-        v-for="task in facility.tasks"
+        v-for="task in filteredTasks"
         :key="task.id"
         >
         <div class="row">
@@ -61,17 +75,21 @@
         </div>
       </li>
     </ul>
+    <p v-else class="text-danger mx-4">No Tasks found..</p>
   </div>
 </template>
 
 <script>
   export default {
     name: 'TasksIndex',
-    props: ['facility', 'project'],
+    props: ['facility', 'project', 'taskTypes'],
 
     data() {
       return {
-        DV_project: this.project
+        DV_project: this.project,
+        filters: {
+          taskType: ''
+        }
       }
     },
     methods: {
@@ -99,6 +117,12 @@
         ) return true
 
         return false
+      },
+      filteredTasks() {
+        if (this.filters.taskType) {
+          return _.filter(this.facility.tasks, (t => t.taskTypeId == this.filters.taskType))
+        }
+        return this.facility.tasks
       }
     },
     watch: {
@@ -116,7 +140,6 @@
   .new-tasks-btn {
     display: flex;
     justify-content: flex-end;
-    margin-top: 30px;
   }
   .crud-actions span {
     font-size: 13px;

@@ -10,6 +10,7 @@
           v-if="DV_project"
           :project="DV_project"
           :facility="facility"
+          :task-types="DV_taskTypes"
           @refresh-project="refreshProject"
           @show-hide="projectShowHide"
           @delete-task="taskDeleted"
@@ -21,7 +22,7 @@
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
         @click.prevent.stop="showProject=true"
-      >
+        >
         back
       </button>
       <task-form
