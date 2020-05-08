@@ -180,8 +180,14 @@ ActiveAdmin.register Facility do
 
   preserve_default_filters!
   filter :creator_id, as: :select, collection: User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
-  filter :tasks, as: :select, collection: Task.pluck(:text, :id)
+  filter :facility_group
+  filter :facility_name
+  filter :address
+  filter :point_of_contact
+  filter :email
+  filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
+  filter :tasks, as: :select, collection: Task.pluck(:text, :id)
   remove_filter :creator
   remove_filter :comments
   remove_filter :created_at
