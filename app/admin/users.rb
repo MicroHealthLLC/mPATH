@@ -41,7 +41,7 @@ ActiveAdmin.register User do
           f.input :lat
           f.input :lng
           div id: 'user-gmaps-tab'
-          f.input :status, include_blank: false, include_hidden: false
+          f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
 
         f.inputs 'Role Privileges' do
@@ -67,18 +67,18 @@ ActiveAdmin.register User do
     column :last_name
     column :email
     column :role
-    column :status
+    column "State", :status
     column :phone_number
     column :address
     column(:projects) { |user| user.projects.active }
     actions
   end
 
-  batch_action :assign_status, form: {
-    status: User.statuses&.to_a
+  batch_action :assign_state, form: {
+    state: User.statuses&.to_a
   } do |ids, inputs|
     User.where(id: ids).update_all(status: inputs['status'].to_i)
-    redirect_to collection_path, notice: 'Status is updated'
+    redirect_to collection_path, notice: 'State is updated'
   end
 
   batch_action :assign_projects, confirm: 'Are you sure?', form: {
@@ -125,7 +125,7 @@ ActiveAdmin.register User do
   filter :last_name
   filter :phone_number
   filter :address
-  filter :status, as: :select, collection: User.statuses
+  filter :status, label: 'State', as: :select, collection: User.statuses
   remove_filter :lat
   remove_filter :lng
 end
