@@ -17,7 +17,7 @@ ActiveAdmin.register FacilityGroup do
     inputs 'Details' do
       f.input :name
       f.input :code
-      f.input :status, include_blank: false, include_hidden: false
+      f.input :status, include_blank: false, include_hidden: false, label: "State"
     end
     actions
   end
@@ -26,15 +26,15 @@ ActiveAdmin.register FacilityGroup do
     selectable_column
     column :name
     column :code
-    column :status
+    column "State", :status
     actions
   end
 
-  batch_action :assign_status, form: {
-    status: FacilityGroup.statuses&.to_a
+  batch_action :assign_state, form: {
+    state: FacilityGroup.statuses&.to_a
   } do |ids, inputs|
     FacilityGroup.where(id: ids).update_all(status: inputs['status'].to_i)
-    redirect_to collection_path, notice: 'Status is updated'
+    redirect_to collection_path, notice: 'State is updated'
   end
 
   controller do
@@ -47,5 +47,5 @@ ActiveAdmin.register FacilityGroup do
 
   filter :name
   filter :code
-  filter :status, as: :select, collection: FacilityGroup.statuses
+  filter :status, label: 'State', as: :select, collection: FacilityGroup.statuses
 end
