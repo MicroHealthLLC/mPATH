@@ -118,9 +118,9 @@ ActiveAdmin.register User do
   end
 
   filter :email
-  filter :title
   filter :projects, as: :select, collection: Project.active
   filter :role, as: :select, collection: User.roles
+  filter :title
   filter :first_name
   filter :last_name
   filter :phone_number
