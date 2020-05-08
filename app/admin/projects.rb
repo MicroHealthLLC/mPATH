@@ -24,7 +24,7 @@ ActiveAdmin.register Project do
     column :name
     column :description
     column :project_type
-    column :status
+    column "State", :status
     actions
   end
 
@@ -36,7 +36,7 @@ ActiveAdmin.register Project do
         f.inputs 'Basic Details' do
           f.input :name
           f.input :project_type
-          f.input :status, include_blank: false, include_hidden: false
+          f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
         end
       end
@@ -83,13 +83,13 @@ ActiveAdmin.register Project do
 
   filter :name
   filter :project_type
-  filter :status, as: :select, collection: Project.statuses
+  filter :status, label: 'State', as: :select, collection: Project.statuses
 
-  batch_action :assign_status, form: {
-    status: Project.statuses&.to_a
+  batch_action :assign_state, form: {
+    state: Project.statuses&.to_a
   } do |ids, inputs|
     Project.where(id: ids).update_all(status: inputs['status'].to_i)
-    redirect_to collection_path, notice: 'Status is updated'
+    redirect_to collection_path, notice: 'State is updated'
   end
 
   controller do
