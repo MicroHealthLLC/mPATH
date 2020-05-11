@@ -82,6 +82,9 @@
       deleteFile(file) {
         if (!file) { return; }
 
+        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        if (!confirm) return;
+
         if (file.uri) {
           http.put(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/notes/${this.note.id}/destroy_file.json`, {file: file})
           .then((res)=> {

@@ -24,13 +24,13 @@
           streetViewControl: false,
           fullscreenControl: true
         }"
-      >
+        >
         <GmapCluster
           :averageCenter="true"
           :enableRetinaIcons="true"
           :ignoreHidden="true"
           :zoomOnClick="true"
-        >
+          >
           <GmapMarker
             :key="index"
             :animation="4"
@@ -67,6 +67,20 @@
               <div v-for="(_f, s) in facilitiesByProjectStatus">
                 <span> {{s.replace('null', 'No Status')}}</span>
                 <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="my-1">
+            <h5 class="text-center">{{currentProject.tasksCount}} Tasks</h5>
+            <div>
+              <div>
+                <span>completed</span>
+                <span class="badge badge-secondary badge-pill">{{currentProject.tasksComplete}}</span>
+              </div>
+              <div>
+                <span>in-complete</span>
+                <span class="badge badge-secondary badge-pill">{{currentProject.tasksIncomplete}}</span>
               </div>
             </div>
           </div>

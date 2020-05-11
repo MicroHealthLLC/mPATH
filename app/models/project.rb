@@ -4,6 +4,7 @@ class Project < ApplicationRecord
   has_many :users, through: :project_users
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects
+  has_many :tasks, through: :facility_projects
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
 
@@ -21,6 +22,9 @@ class Project < ApplicationRecord
     json = super(options)
     json.merge(
       project_type: self.project_type.try(:name),
+      tasks_count: self.tasks.count,
+      tasks_complete: self.tasks.complete.count,
+      tasks_incomplete: self.tasks.incomplete.count,
       facility_count: self.facilities.count
     ).as_json
   end

@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require 'node_modules/vue2-google-maps/dist/vue-google-maps.js'
 //= require 'node_modules/vue-tel-input/dist/vue-tel-input.min.js'
+//= require 'node_modules/vue-slide-bar/lib/vue-slide-bar.min.js'
 
 jQuery(function($) {
   // project index page
@@ -286,4 +287,37 @@ jQuery(function($) {
       $(`input[value=${p}]`).prop("checked", true);
     });
   }
+
+  // task form #slider
+  $(document).on('ready page:load turbolinks:load', function() {
+    $('a[data-action=add_task]').click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var input = $("form#dialog_confirm input[name=Progress]")
+      var parent = input.parent()
+      input.css({display: 'none'})
+      parent.append("<div id='progress_slider'></div>");
+
+      if ($("#progress_slider").is(":visible"))
+      {
+        Vue.component('vue-slide-bar', vueSlideBar)
+        var progress_slider = new Vue({
+          el: "#progress_slider",
+          data() {
+            return {
+              progress: 0
+            }
+          },
+          watch: {
+            progress(value) {
+              $("input[name=Progress]").val(value)
+            }
+          },
+          template: `<div class="progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div>`
+        });
+      }
+    })
+  }());
+
 });

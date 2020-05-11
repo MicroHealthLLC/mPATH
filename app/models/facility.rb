@@ -5,6 +5,7 @@ class Facility < ApplicationRecord
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
   has_many :tasks, through: :facility_projects
+  has_many :task_types, through: :tasks
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment
 

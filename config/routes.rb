@@ -9,10 +9,13 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :api, defaults: { format: :json } do
+    resources :task_types, only: [:index]
+    resources :facility_groups, only: [:index]
+    resources :statuses, only: [:index]
+  end
+
   resources :dashboard, only: [:index]
-  resources :task_types, only: [:index]
-  resources :facility_groups, only: [:index]
-  resources :statuses, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
       resources :notes, module: :facilities do
@@ -28,12 +31,9 @@ Rails.application.routes.draw do
 
   get '/settings', to: 'settings#index'
   post '/settings', to: 'settings#update'
-
-  namespace :downloads, defaults: { format: :json } do
-    get '/facility_groups', to: 'data#facility_groups'
-    get '/task_types', to: 'data#task_types'
-    get '/statuses', to: 'data#statuses'
-  end
+  get '/facility_groups', to: 'data#facility_groups'
+  get '/task_types', to: 'data#task_types'
+  get '/statuses', to: 'data#statuses'
 
   root 'landing#index'
   match "*missing", to: "not_found#index", via: :all

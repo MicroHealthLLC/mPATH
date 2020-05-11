@@ -73,7 +73,7 @@
       },
       fetchFacilityGroups(cb) {
         http
-          .get(`/facility_groups.json`)
+          .get(`/api/facility_groups.json`)
           .then((res) => {
             this.facilityGroups = res.data.facilityGroups
             this.fetchStatuses(cb)
@@ -84,7 +84,7 @@
           })
       },
       fetchStatuses(cb) {
-        http.get('/statuses.json')
+        http.get('/api/statuses.json')
           .then((res) => {
             this.statuses = res.data.statuses
             cb(null)

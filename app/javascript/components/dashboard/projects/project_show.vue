@@ -78,7 +78,7 @@
       },
       fetchTaskTypes() {
         http
-          .get(`/task_types.json`)
+          .get(`/api/task_types.json`)
           .then((res) => {
             this.DV_taskTypes = res.data.taskTypes
             this.loading = false

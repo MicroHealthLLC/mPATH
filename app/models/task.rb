@@ -7,6 +7,9 @@ class Task < ApplicationRecord
 
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
+  scope :complete, -> { where("progress = ?", 100) }
+  scope :incomplete, -> { where("progress < ?", 100) }
+
   def to_json
     attach_files = []
     if self.task_files.attached?
