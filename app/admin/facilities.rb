@@ -108,7 +108,7 @@ ActiveAdmin.register Facility do
   batch_action :assign_state, form: {
     state: Facility.statuses&.to_a
   } do |ids, inputs|
-    Facility.where(id: ids).update_all(status: inputs['status'].to_i)
+    Facility.where(id: ids).update_all(status: inputs['state'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
 

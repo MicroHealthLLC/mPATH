@@ -77,7 +77,7 @@ ActiveAdmin.register User do
   batch_action :assign_state, form: {
     "State": User.statuses&.to_a
   } do |ids, inputs|
-    User.where(id: ids).update_all(status: inputs['status'].to_i)
+    User.where(id: ids).update_all(status: inputs['State'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
 
