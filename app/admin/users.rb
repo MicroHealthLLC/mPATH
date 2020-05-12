@@ -44,9 +44,11 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
 
-        f.inputs 'Role Privileges' do
-          f.input :privileges, input_html: { disabled: true }
-          f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
+        unless user.admin?
+          f.inputs 'Role Privileges' do
+            f.input :privileges, input_html: { disabled: true }
+            f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
+          end
         end
       end
 
@@ -99,13 +101,13 @@ ActiveAdmin.register User do
     end
 
     def create
-      privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+      privileges = (params["user"]["privileges_collection"]|| []).compact.split("").flatten.join(", ")
       params["user"].merge!({"privileges": privileges})
       super
     end
 
     def update
-      privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+      privileges = (params["user"]["privileges_collection"]|| []).compact.split("").flatten.join(", ")
       params["user"].merge!({"privileges": privileges})
       super
     end

@@ -18,19 +18,24 @@ class User < ApplicationRecord
 
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
-      return where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first
+      where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|
+        user.provider = auth.provider
+        user.uid = auth.uid
+        user.first_name = auth.info.first_name rescue nil
+        user.last_name = auth.info.last_name rescue nil
+        user.email = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+        user.login = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
+        user.first_name ||= user.login
+        user.last_name ||= user.login
+        user.password = Devise.friendly_token[0, 20]
+      end
+    else
+      nil
     end
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.provider = auth.provider
-      user.uid = auth.uid
-      user.first_name = auth.info.first_name rescue nil
-      user.last_name = auth.info.last_name rescue nil
-      user.email = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
-      user.login = auth.info.email || "#{auth.uid}@#{auth.provider}.com"
-      user.first_name ||= user.login
-      user.last_name ||= user.login
-      user.password = Devise.friendly_token[0, 20]
-    end
+  end
+
+  def privileges
+    super || []
   end
 
   def active_for_authentication?
