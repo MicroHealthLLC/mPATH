@@ -75,11 +75,11 @@
             <h5 class="text-center">{{currentProject.tasksCount}} Tasks</h5>
             <div>
               <div>
-                <span>completed</span>
+                <span>Complete</span>
                 <span class="badge badge-secondary badge-pill">{{currentProject.tasksComplete}}</span>
               </div>
               <div>
-                <span>in-complete</span>
+                <span>Incomplete</span>
                 <span class="badge badge-secondary badge-pill">{{currentProject.tasksIncomplete}}</span>
               </div>
             </div>
