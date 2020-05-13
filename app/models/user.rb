@@ -34,10 +34,6 @@ class User < ApplicationRecord
     end
   end
 
-  def privileges
-    super || []
-  end
-
   def active_for_authentication?
     super and self.active?
   end

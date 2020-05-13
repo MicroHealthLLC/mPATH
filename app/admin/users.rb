@@ -83,9 +83,9 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :assign_projects, confirm: 'Are you sure?', form: {
-    project: (Project.pluck(:name, :id))
-  } do |ids, inputs|
+  batch_action :assign_projects, confirm: 'Are you sure?', form: -> {{
+    project: Project.pluck(:name, :id)
+  }} do |ids, inputs|
     project = Project.find_by_id(inputs[:project])
     User.where(id: ids).each do |user|
       user.projects << project unless user.projects.pluck(:id).include?(project.id)
@@ -101,14 +101,18 @@ ActiveAdmin.register User do
     end
 
     def create
-      privileges = (params["user"]["privileges_collection"]|| []).compact.split("").flatten.join(", ")
-      params["user"].merge!({"privileges": privileges})
+      if params["user"]["privileges_collection"].present?
+        privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+        params["user"].merge!({"privileges": privileges})
+      end
       super
     end
 
     def update
-      privileges = (params["user"]["privileges_collection"]|| []).compact.split("").flatten.join(", ")
-      params["user"].merge!({"privileges": privileges})
+      if params["user"]["privileges_collection"].present?
+        privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+        params["user"].merge!({"privileges": privileges})
+      end
       super
     end
 

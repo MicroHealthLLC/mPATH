@@ -98,9 +98,9 @@ ActiveAdmin.register Facility do
 
   end
 
-  batch_action :assign_facility_group, form: {
+  batch_action :assign_facility_group, form: -> {{
     "Facility Group": FacilityGroup.pluck(:name, :id)
-  } do |ids, inputs|
+  }} do |ids, inputs|
     Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
     redirect_to collection_path, notice: "Facility group is updated"
   end
