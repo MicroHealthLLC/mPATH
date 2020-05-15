@@ -38,11 +38,11 @@
             <div class="row">
               <div class="font-sm col-md-6">
                 <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                {{new Date(task.startDate).toDateString()}}
+                {{new Date(task.startDate).toLocaleDateString()}}
               </div>
               <div class="font-sm col-md-6">
                 <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                {{new Date(task.dueDate).toDateString()}}
+                {{new Date(task.dueDate).toLocaleDateString()}}
               </div>
             </div>
           </div>

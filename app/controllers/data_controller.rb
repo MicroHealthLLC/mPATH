@@ -19,4 +19,11 @@ class DataController < AuthenticatedController
       format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
     end
   end
+
+  def settings
+    collection = Setting.first || Setting.new
+    respond_to do |format|
+      format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+    end
+  end
 end

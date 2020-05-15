@@ -40,6 +40,7 @@ ActiveAdmin.register User do
           f.input :address
           f.input :lat
           f.input :lng
+          div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
         end

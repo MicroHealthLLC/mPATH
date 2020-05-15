@@ -20,9 +20,10 @@ jQuery(function($) {
   // facility form google-map
   if ($("#gmaps-tab").is(":visible"))
   {
+    var google_map_key = $("#gmap-key") ? $("#gmap-key").data().key : ""
     Vue.use(VueGoogleMaps, {
       load: {
-        key: 'AIzaSyCAE5VIs52m1DN5Acuk9NudjSEKYmQwmi0',
+        key: google_map_key,
         libraries: 'places',
       },
       installComponents: true
@@ -90,9 +91,10 @@ jQuery(function($) {
   // User form google-map
   if ($("#user-gmaps-tab").is(":visible"))
   {
+    var google_map_key = $("#gmap-key") ? $("#gmap-key").data().key : ""
     Vue.use(VueGoogleMaps, {
       load: {
-        key: 'AIzaSyCAE5VIs52m1DN5Acuk9NudjSEKYmQwmi0',
+        key: google_map_key,
         libraries: 'places',
       },
       installComponents: true
@@ -178,7 +180,7 @@ jQuery(function($) {
         setApiError() {
           this.apiError = $("#facility_phone_number_input p").text() || '';
         },
-        checkPhoneValidation(input, {isValid}) {
+        validate(input, {isValid}) {
           this.phoneError = !isValid;
         }
       },
@@ -188,7 +190,7 @@ jQuery(function($) {
           $("#facility_phone_number").val(ph_number);
         }
       },
-      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :valid-characters-only="true" name="phonenumber" default-country="US" @input="checkPhoneValidation" class="form-control" :class="{'error': phoneError || apiError}"></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :enabled-country-code="true" mode="international" :valid-characters-only="true" name="phonenumber" default-country="US" @input="validate" class="form-control" :class="{'error': phoneError || apiError}" ></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -221,13 +223,13 @@ jQuery(function($) {
       },
       methods: {
         submitSettings() {
-          $.post("/settings.json", {settings: this.settings}, (data) => {
+          $.post("/api/settings.json", {settings: this.settings}, (data) => {
             window.location.href = "/admin/settings"
           });
         },
         fetchSettings() {
-          $.get("/settings.json", (data) => {
-            for (key in this.settings) {
+          $.get("/api/settings.json", (data) => {
+            for (var key in this.settings) {
               this.settings[key] = data[key] || ''
             }
             this.loading = false

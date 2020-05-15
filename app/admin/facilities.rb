@@ -49,6 +49,7 @@ ActiveAdmin.register Facility do
           f.input :address
           f.input :lat
           f.input :lng
+          div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'gmaps-tab'
           f.input :point_of_contact
           f.input :phone_number
@@ -146,7 +147,7 @@ ActiveAdmin.register Facility do
   }} do |ids, inputs|
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.update_columns(status_id: inputs['text'], due_date: inputs['Due Date'])
+        facility_project.update_columns(status_id: inputs['Status'], due_date: inputs['Due Date'])
       end
     end
     redirect_to collection_path, notice: "Due Date and Status is updated"

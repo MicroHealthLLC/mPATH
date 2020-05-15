@@ -1,4 +1,4 @@
-class SettingsController < AuthenticatedController
+class Api::SettingsController < AuthenticatedController
   before_action :require_admin
   before_action :set_resource
 

@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]
+    get '/settings', to: 'settings#index'
+    post '/settings', to: 'settings#update'
   end
 
   resources :dashboard, only: [:index]
@@ -29,8 +31,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/settings', to: 'settings#index'
-  post '/settings', to: 'settings#update'
+  get '/settings', to: 'data#settings'
   get '/facility_groups', to: 'data#facility_groups'
   get '/task_types', to: 'data#task_types'
   get '/statuses', to: 'data#statuses'

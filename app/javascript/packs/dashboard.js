@@ -30,7 +30,8 @@ Vue.component('multiselect', Multiselect)
 Vue.config.productionTip = false
 Vue.use(VeeValidate);
 
-Vue.use(VueGoogleMaps,{
+
+Vue.use(VueGoogleMaps, {
   load: {
     key: window.google_api_key,
     libraries: 'places',
