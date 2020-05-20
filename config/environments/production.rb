@@ -82,8 +82,10 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   if File.exist?("#{Rails.root}/config/emails.yml")
     emails = YAML::load(File.open("#{Rails.root}/config/emails.yml"))
-    config.action_mailer.delivery_method = emails['email_delivery']['delivery_method']
-    config.action_mailer.smtp_settings = emails['email_delivery']['smtp_settings'].symbolize_keys
-    config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys
+    if emails['email_delivery']
+      config.action_mailer.delivery_method = emails['email_delivery']['delivery_method'] if emails['email_delivery']['delivery_method']
+      config.action_mailer.smtp_settings = emails['email_delivery']['smtp_settings'].symbolize_keys if emails['email_delivery']['smtp_settings']
+    end
+    config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys if emails['action_mailer_config']
   end
 end
