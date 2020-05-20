@@ -18,9 +18,14 @@
               i.icon-twitter
               | Continue with Office 365
       .form-group.mt-5.px-4
+        =f.label :email, "Email"
         =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
-        =f.password_field :password, autocomplete: "off", class: 'form-control mt-3', placeholder: "password"
-        =f.password_field :password_confirmation, autocomplete: "off", class: 'form-control mt-3', placeholder: "confirm password"
+        br
+        =f.label :password, "Password"
+        =f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password"
+        br
+        =f.label :password_confirmation, "Confirm Password"
+        =f.password_field :password_confirmation, autocomplete: "off", class: 'form-control', placeholder: "confirm password"
         span.clearfix
       .login-footer.p-4
         .row

@@ -37,5 +37,11 @@ Rails.application.routes.draw do
   get '/statuses', to: 'data#statuses'
 
   root 'landing#index'
-  match "*missing", to: "not_found#index", via: :all
+  mount ActiveStorage::Engine, at: '/rails/active_storage'
+
+  if Rails.env.production?
+    get '*all', to: "not_found#index", constraints: -> (req) do
+      req.path.exclude? 'rails/active_storage'
+    end
+  end
 end

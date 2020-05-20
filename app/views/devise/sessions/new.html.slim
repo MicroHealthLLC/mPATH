@@ -17,9 +17,12 @@
             a.btn.btn-info.btn-block href="#{omniauth_authorize_path(resource_name, :office365)}"
               i.icon-twitter
               | Continue with Office 365
-      .form-group.mt-5.px-4
+      .form-group.mt-4.px-4
+        =f.label :email, "Email"
         =f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "user@example.com"
-        =f.password_field :password, autocomplete: "off", class: 'form-control mt-3', placeholder: "password"
+        br
+        =f.label :password, "Password"
+        =f.password_field :password, autocomplete: "off", class: 'form-control', placeholder: "password"
         -if devise_mapping.rememberable?
           .form-group.mt-3
             .form-check

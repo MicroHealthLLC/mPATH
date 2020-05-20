@@ -40,7 +40,7 @@
 <script>
   export default {
     name: 'RegionBar',
-    props: ['regions', 'facilities'],
+    props: ['regions', 'facilities', 'currentProject'],
     data() {
       return {
         regionBar: false
@@ -65,7 +65,7 @@
       },
       fetchRegionFacilities(region) {
         var facilityIds = _.map(this.facilities, 'id')
-        return _.filter(region.facilities, (f => facilityIds.includes(f.id)))
+        return _.filter(region.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
       }
     }
   }

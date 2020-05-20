@@ -67,8 +67,8 @@
           </div>
           <div class="col-md-3 mt-2">
             <span v-for="file in task.attachFiles">
-              <span class="fbody-icon">
-                <i class="fas fa-file-alt" @click.prevent="downloadFile(file)"></i>
+              <span class="fbody-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
+                <i class="fas fa-file-alt"></i>
               </span>
             </span>
           </div>
@@ -106,7 +106,8 @@
         this.$emit('delete-task', task)
       },
       downloadFile(file) {
-        // debugger
+        let url = window.location.origin + file.uri
+        window.open(url, '_blank');
       }
     },
     computed: {

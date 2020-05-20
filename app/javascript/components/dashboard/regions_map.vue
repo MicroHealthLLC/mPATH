@@ -5,6 +5,7 @@
         <region-bar
           :regions="filteredRegions"
           :facilities="facilities"
+          :current-project="currentProject"
           @goto-region="gotoRegion"
         />
       </div>
@@ -13,7 +14,7 @@
         :center="center"
         :zoom="zoom"
         map-type-id="terrain"
-        style="width: 100%; height: 99%"
+        style="width: 100%; height: 100%"
         :control-size="5"
         :options="{
           rotateControl: true,
@@ -32,7 +33,7 @@
           :zoomOnClick="true"
           >
           <GmapMarker
-            :key="index"
+            :key="`${facility.id}__${index}`"
             :animation="4"
             v-for="(facility, index) in filteredFacilities"
             :position="getLatLngForFacility(facility)"
@@ -41,86 +42,116 @@
         </GmapCluster>
       </GmapMap>
     </div>
-    <div v-if="!loading" id="rollup-sidebar" class="col-4 p-0">
-      <transition name="roll-fade">
-        <div v-show="!openSidebar" class="m-3">
-          <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
-          <br>
-          <div class="text-center">
-            <h2>{{facilityCount}} Facilities</h2>
-            <p class="mt-2 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
-                <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
-              </span>
-            </p>
-            <div v-if="facilityCount > 0" class="d-flex justify-content-around">
-              <div v-for="(_f, s) in facilitiesByStatus">
-                <span> {{s.replace('null', 'No Status')}}</span>
-                <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+    <div v-else class="col-8 p-0"></div>
+    <div id="rollup-sidebar" class="col-4 p-0 shadow-sm">
+      <div v-if="!sideLoading">
+        <transition name="roll-fade">
+          <div v-show="!openSidebar" class="m-3">
+            <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
+            <br>
+            <div class="text-center">
+              <h2>{{facilityCount}} Facilities</h2>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
+                  <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
+                </span>
+              </p>
+              <div v-if="facilityCount > 0" class="d-flex justify-content-around">
+                <div v-for="(_f, s) in facilitiesByStatus">
+                  <span> {{s.replace('null', 'No Status')}}</span>
+                  <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <hr>
-          <div class="my-1">
-            <h5 class="text-center">Facility Project Status</h5>
-            <div v-if="facilityCount > 0">
-              <div v-for="(_f, s) in facilitiesByProjectStatus">
-                <span> {{s.replace('null', 'No Status')}}</span>
-                <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+            <hr>
+            <div class="my-1">
+              <h5 class="text-center">Facility Project Status</h5>
+              <div v-if="facilityCount > 0">
+                <div v-for="(_f, s) in facilitiesByProjectStatus">
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span> {{s.replace('null', 'No Status')}}</span>
+                      <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, facilities.length) <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, facilities.length)}%`">{{getAverage(_f.length, facilities.length)}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <hr>
-          <div class="my-1">
-            <h5 class="text-center">{{currentProject.tasksCount}} Tasks</h5>
+            <hr>
+            <div class="my-1">
+              <h5 class="text-center">{{currentProject.tasksCount}} Tasks</h5>
+              <div>
+                <div class="row">
+                  <div class="col-md-9">
+                    <span>Complete</span>
+                    <span class="badge badge-secondary badge-pill">{{currentProject.tasksComplete}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': tasksPercentage.complete <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${tasksPercentage.complete}%`">{{tasksPercentage.complete}} %</div>
+                    </span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-9">
+                    <span>Incomplete</span>
+                    <span class="badge badge-secondary badge-pill">{{currentProject.tasksIncomplete}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': tasksPercentage.incomplete <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${tasksPercentage.incomplete}%`">{{tasksPercentage.incomplete}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
             <div>
-              <div>
-                <span>Complete</span>
-                <span class="badge badge-secondary badge-pill">{{currentProject.tasksComplete}}</span>
-              </div>
-              <div>
-                <span>Incomplete</span>
-                <span class="badge badge-secondary badge-pill">{{currentProject.tasksIncomplete}}</span>
-              </div>
-            </div>
-          </div>
-          <hr>
-          <div>
-            <h5 class="text-center">Facility Groups</h5>
-            <div class="row my-2" v-for="region in filteredRegions">
-              <div class="col-md-9 font-md">
-                <span class="badge badge-pill" :class="{ 'badge-success':
-                  region.status == 'active', 'badge-danger': region.status == 'inactive' }">
-                  {{region.status}}
-                </span>
-                <span>{{region.name}}</span>
-                <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(region).length}}</span>
-              </div>
-              <div class="col-md-3 d-flex align-items-center">
-                <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
-                  <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}} %</div>
-                </span>
+              <h5 class="text-center">Facility Groups</h5>
+              <div class="row my-2" v-for="region in filteredRegions">
+                <div class="col-md-9 font-md">
+                  <span class="badge badge-pill" :class="{ 'badge-success':
+                    region.status == 'active', 'badge-danger': region.status == 'inactive' }">
+                    {{region.status}}
+                  </span>
+                  <span>{{region.name}}</span>
+                  <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(region).length}}</span>
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                  <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(region) <= 0 }">
+                    <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(region)}%`">{{facilityGroupProgress(region)}} %</div>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </transition>
-      <transition name="slide-fade">
-        <div v-show="openSidebar" id="map-sidebar">
-          <div @click="closeSidebar" class="close-sidebar-btn">
-            <i class="fas fa-minus"></i>
+        </transition>
+        <transition name="slide-fade">
+          <div v-show="openSidebar" id="map-sidebar">
+            <div @click="closeSidebar" class="close-sidebar-btn">
+              <i class="fas fa-minus"></i>
+            </div>
+            <facility-show
+              v-if="currentFacility"
+              :facility="currentFacility"
+              :region="currentRegion"
+              :statuses="statuses"
+              @back-after-delete="backFromFacilityShow"
+              @edit-facility="editFacility"
+              @facility-update="updateFacility"
+            />
           </div>
-          <facility-show
-            v-if="currentFacility"
-            :facility="currentFacility"
-            :region="currentRegion"
-            :statuses="statuses"
-            @back-after-delete="backFromFacilityShow"
-            @edit-facility="editFacility"
-            @facility-update="updateFacility"
-          />
-        </div>
-      </transition>
+        </transition>
+      </div>
+      <div v-else class="d-flex justify-content-center align-items-center h-75">
+        <loader :loading="true" color="black"></loader>
+        <p class="__loading">Loading</p>
+      </div>
     </div>
 
     <sweet-modal
@@ -152,14 +183,14 @@
           <i class="fas fa-minus"></i>
         </div>
         <h3 class="mb-3 text-break">{{currentRegion.name}} <span class="badge badge-secondary badge-pill">{{currentRegionFacilities.length}}</span></h3>
-        <div v-if="currentRegionFacilities && currentRegionFacilities.length == 0" class="mt-3 text-muted">
+        <div v-if="currentRegionFacilities && currentRegionFacilities.length == 0" class="mt-3 text-danger">
           There is no facility under this group
         </div>
         <div v-else>
           <div v-for="facility in currentRegionFacilities">
             <accordion
               :expanded="expandedFacility.id"
-              :facility="facility"
+              :facility="facility.facility"
               :statuses="statuses"
               :region="currentRegion"
               @update-expanded="updateExpanded"
@@ -195,13 +226,14 @@ export default {
   data() {
     return {
       loading: true,
+      sideLoading: true,
       center: {lat: 40.64, lng: -74.66},
       zoom: 3,
       currentRegion: null,
       currentProject: null,
       facilities: [],
       filters: [],
-      regions: this.facilityGroups || [],
+      regions: [],
       openSidebar: false,
       currentFacility: null,
       facilityFormModal: false,
@@ -227,8 +259,11 @@ export default {
       return mean.toFixed(2)
     },
     filteredFacilities() {
+      var activeRegions = _.map(_.filter(this.regions, (r) => r.status === 'active'), 'id')
       return _.filter(this.facilities, (facility) => {
-        var valid = true
+        var valid = activeRegions.includes(facility.facilityGroupId)
+        if (!valid) return valid
+
         _.each(this.filters, (f) => {
           var k = Object.keys(f)[0]
           valid = valid && facility[k] == f[k]
@@ -242,7 +277,7 @@ export default {
     currentRegionFacilities() {
       if (this.currentRegion && this.currentRegion.facilities) {
         var facilityIds = _.map(this.facilities, 'id')
-        return _.filter(this.currentRegion.facilities, (f => facilityIds.includes(f.id)))
+        return _.filter(this.currentRegion.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
       }
       else {
         return []
@@ -254,6 +289,13 @@ export default {
     },
     facilitiesByProjectStatus() {
       return _.groupBy(this.facilities, 'projectStatus')
+    },
+    tasksPercentage() {
+      var total = this.currentProject.tasksComplete + this.currentProject.tasksIncomplete
+      return {
+        incomplete: this.getAverage(this.currentProject.tasksIncomplete, total),
+        complete: this.getAverage(this.currentProject.tasksComplete, total)
+      }
     }
   },
   methods: {
@@ -261,15 +303,30 @@ export default {
       http
         .get(`/projects/${this.$route.params.projectId}/facilities.json`)
         .then((res) => {
-          for (var f of res.data.facilities) {
-            this.facilities.push({...f, ...f.facility})
+          for (var facility of res.data.facilities) {
+            this.facilities.push({...facility, ...facility.facility})
           }
           this.currentProject = res.data.project
-          this.loading = false;
+          this.fetchFacilityGroups()
         })
         .catch((err) => {
           this.loading = false;
+          this.sideLoading = false;
           console.error(err);
+        })
+    },
+    fetchFacilityGroups() {
+      http
+        .get(`/api/facility_groups.json?=project_id=${this.currentProject.id}`)
+        .then((res) => {
+          this.regions = res.data.facilityGroups
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          this.loading = false;
+          this.sideLoading = false;
         })
     },
     getLatLngForFacility(facility) {
@@ -345,12 +402,12 @@ export default {
     },
     facilityGroupProgress(f_group) {
       var facilityIds = _.map(this.facilities, 'id')
-      var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.id))), 'progress') || 0
+      var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
       return mean.toFixed(2)
     },
     facilityGroupFacilities(f_group) {
       var facilityIds = _.map(this.facilities, 'id')
-      return _.filter(f_group.facilities, (f => facilityIds.includes(f.id)))
+      return _.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId === this.currentProject.id))
     }
   },
   watch: {
@@ -410,6 +467,13 @@ export default {
         else {
           this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('id'))
         }
+      }
+    },
+    openSidebar(value) {
+      if (!value && !this.loading) {
+        this.sideLoading = true
+        this.facilities = []
+        this.fetchFacilities()
       }
     }
   }
@@ -489,5 +553,9 @@ export default {
       left: 15px;
       cursor: pointer;
     }
+  }
+  .__loading {
+    margin-top: 125px;
+    margin-left: -20px;
   }
 </style>

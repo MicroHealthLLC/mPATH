@@ -311,6 +311,9 @@ jQuery(function($) {
               progress: 0
             }
           },
+          mounted() {
+            $("input[name=Progress]").val(this.progress)
+          },
           watch: {
             progress(value) {
               $("input[name=Progress]").val(value)

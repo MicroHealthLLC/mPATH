@@ -16,12 +16,16 @@ import VueTelInput          from 'vue-tel-input'
 import DatePicker           from 'vuejs-datepicker'
 import * as Tabs            from 'vue-slim-tabs'
 import VueSlideBar          from 'vue-slide-bar'
+import FadeLoader           from 'vue-spinner/src/FadeLoader.vue'
+import VTooltip             from 'v-tooltip'
 
 
+Vue.use(VTooltip)
 Vue.use(Tabs)
 Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.prototype.$leaflet = Leaflet
+Vue.component('loader', FadeLoader)
 Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
 Vue.component('GmapCluster', GmapCluster)

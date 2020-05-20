@@ -80,4 +80,10 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  if File.exist?("#{Rails.root}/config/emails.yml")
+    emails = YAML::load(File.open("#{Rails.root}/config/emails.yml"))
+    config.action_mailer.delivery_method = emails['email_delivery']['delivery_method']
+    config.action_mailer.smtp_settings = emails['email_delivery']['smtp_settings'].symbolize_keys
+    config.action_mailer.default_url_options = emails['action_mailer_config'].symbolize_keys
+  end
 end

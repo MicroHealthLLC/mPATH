@@ -15,6 +15,9 @@ export default {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
         return v.toString(16)
       })
+    },
+    getAverage(_count, _total) {
+      return ((_count / _total) * 100).toFixed(2)
     }
   }
 }

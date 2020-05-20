@@ -290,5 +290,12 @@
     .form-control[readonly] {
       background-color: unset;
     }
+    .vdp-datepicker__calendar {
+      width: 100%;
+    }
+    .vdp-datepicker__calendar .cell {
+      height: unset;
+      line-height: unset;
+    }
   }
 </style>

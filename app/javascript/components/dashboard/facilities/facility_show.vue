@@ -40,6 +40,23 @@
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
+
+              <hr>
+              <p>
+                <div class="row my-2" v-for="task in taskStats">
+                  <div class="col-md-9 font-md">
+                    <span>{{task.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{task.count}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </p>
+              <hr>
+
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
                 <span>{{DV_facility.address || 'N/A'}}</span>
@@ -217,6 +234,18 @@
           return _.filter(this.DV_facility.notes, isMatch)
         }
         return this.DV_facility.notes;
+      },
+      taskStats() {
+        var tasks = new Array
+        var group = _.groupBy(this.DV_facility.tasks, 'taskType')
+        for (var type in group) {
+          tasks.push({
+            name: type,
+            count: group[type].length,
+            progress: (_.meanBy(group[type], 'progress') || 0).toFixed(2)
+          })
+        }
+        return tasks
       }
     },
     watch: {
