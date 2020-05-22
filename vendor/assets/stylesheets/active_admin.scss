@@ -3,6 +3,7 @@
 
 @import "active_admin/mixins";
 @import "active_admin/base";
+@import "node_modules/vue-phone-number-input.min.css";
 
 @font-face {
   font-family: 'FuturaPTBook';
@@ -17,7 +18,7 @@ body {
 
 .active_admin {
   select {
-    width: 80%;
+    width: calc(80% - 20px);
   }
   select[multiple=multiple] {
     height: 150px;
@@ -57,6 +58,7 @@ body {
   #facility_lat_input,
   #facility_lng_input,
   #facility_phone_number_input,
+  #facility_country_code_input,
   #user_privileges_input {
     display: none;
   }
@@ -101,6 +103,11 @@ body {
       }
       textarea {
         height: 100px;
+      }
+    }
+    li.radio__group {
+      input {
+        width: 25px;
       }
     }
   }

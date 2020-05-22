@@ -1,8 +1,8 @@
 //= require active_admin/base
 //= require jquery_ujs
 //= require 'node_modules/vue2-google-maps/dist/vue-google-maps.js'
-//= require 'node_modules/vue-tel-input/dist/vue-tel-input.min.js'
 //= require 'node_modules/vue-slide-bar/lib/vue-slide-bar.min.js'
+//= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
 
 jQuery(function($) {
   // project index page
@@ -162,35 +162,58 @@ jQuery(function($) {
   // facility form phone_number_tab
   if ($("#f_phone_number-tab").is(":visible"))
   {
-    Vue.use(VueTelInput)
+    Vue.component('vue-phone-number-input', window['vue-phone-number-input'])
     var phone_number = new Vue({
       el: "#f_phone_number-tab",
       data() {
         return {
+          phoneData: {},
           phoneNumber: '',
-          phoneError: false,
+          countryCode: '',
+          loading: true,
+          error: false,
           apiError: ''
         }
       },
       mounted() {
         this.setApiError();
         this.phoneNumber = $("#facility_phone_number").val();
+        this.countryCode = $("#facility_country_code").val();
+        this.loading = false
       },
       methods: {
         setApiError() {
           this.apiError = $("#facility_phone_number_input p").text() || '';
         },
-        validate(input, {isValid}) {
-          this.phoneError = !isValid;
+        onUpdate(data) {
+          this.phoneData = data
+          this.error = !data.isValid
+          if (data.formattedNumber)
+          {
+            this.phoneNumber = data.formattedNumber
+            this.countryCode = data.countryCode
+          }
         }
       },
       watch: {
         phoneNumber(value) {
-          var ph_number = this.phoneError ? '' : this.phoneNumber;
+          var ph_number = this.error ? '' : this.phoneNumber;
           $("#facility_phone_number").val(ph_number);
+        },
+        countryCode(value) {
+          var code = this.error ? '' : this.countryCode;
+          $("#facility_country_code").val(code);
         }
       },
-      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><vue-tel-input v-model="phoneNumber" :required="true" :enabled-country-code="true" mode="international" :valid-characters-only="true" name="phonenumber" default-country="US" @input="validate" class="form-control" :class="{'error': phoneError || apiError}" ></vue-tel-input><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      computed: {
+        phone() {
+          return this.phoneData.phoneNumber ? this.phoneData.formatNational : this.phoneNumber
+        },
+        code() {
+          return this.phoneData.phoneNumber ? this.phoneData.countryCode : this.countryCode
+        }
+      },
+      template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -290,8 +313,21 @@ jQuery(function($) {
     });
   }
 
-  // task form #slider
   $(document).on('ready page:load turbolinks:load', function() {
+
+    // add assign/unassign inputs in dialog_form
+    $("a[data-action='Assign/Unassign Facility Group']").click(function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var input = $("form#dialog_confirm input[name=assign]")
+      var li = input.parent()
+      var ul = li.parent()
+      li.remove()
+      ul.prepend("<li class='radio__group'><input name='assign' type='radio' value='assign' checked><label>Assign</label><input name='assign' type='radio' value='unassign'><label>Unassign</label></li>");
+    })
+
+    // task form #slider
     $('a[data-action=add_task]').click(function(e) {
       e.stopPropagation();
       e.preventDefault();

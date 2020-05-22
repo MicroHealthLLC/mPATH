@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   validates :first_name, :last_name, presence: true
 
-  enum role: [:subscriber, :admin].freeze
+  enum role: [:subscriber, :admin, :viewer].freeze
   enum status: [:inactive, :active].freeze
 
   PRIVILIGES = ['Tasks']

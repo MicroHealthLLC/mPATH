@@ -17,7 +17,7 @@ export default {
       })
     },
     getAverage(_count, _total) {
-      return ((_count / _total) * 100).toFixed(2)
+      return (((_count / _total) * 100) || 0).toFixed(2)
     }
   }
 }

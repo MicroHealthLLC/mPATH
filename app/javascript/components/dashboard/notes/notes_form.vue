@@ -38,7 +38,7 @@
         :disabled="!readyToSave"
         class="btn btn-success"
         @click.prevent.stop="saveNote"
-      >
+        >
         Save
       </button>
     </div>

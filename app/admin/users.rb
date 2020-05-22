@@ -45,7 +45,7 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
 
-        unless user.admin?
+        if user.subscriber?
           f.inputs 'Role Privileges' do
             f.input :privileges, input_html: { disabled: true }
             f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false

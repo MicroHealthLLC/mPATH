@@ -11,6 +11,7 @@ class Note < ApplicationRecord
       attach_files = self.note_files.map do |file|
         {
           id: file.id,
+          name: file.blob.filename,
           uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
         }
       end

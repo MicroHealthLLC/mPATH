@@ -5,6 +5,8 @@ class FacilityProject < ApplicationRecord
   has_many :tasks, dependent: :destroy
   has_many :notes, as: :noteable
 
+  scope :active, -> { joins(:facility).where("facilities.status = ?", 1).distinct }
+
   def as_json(options=nil)
     json = super(options)
     json.merge(

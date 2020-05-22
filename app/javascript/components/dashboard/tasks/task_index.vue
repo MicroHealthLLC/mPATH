@@ -1,7 +1,7 @@
 <template>
   <div id="tasks-index" class="mt-3">
-    <div class="d-flex align-item-center justify-content-around mb-3">
-      <div class="task-filters w-75">
+    <div class="d-flex align-item-center justify-content-between mb-3">
+      <div class="task-filters mx-2" :class="{'w-75': _isallowed, 'w-100': !_isallowed }">
         <select
           name="Task Type"
           class="form-control form-control-sm"
@@ -17,7 +17,7 @@
         <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
       </div>
     </div>
-    <ul v-if="filteredTasks.length > 0" class="list-group mx-4 rounded-lg">
+    <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
       <li
         class="list-group-item mb-2"
         v-for="task in filteredTasks"
@@ -75,7 +75,7 @@
         </div>
       </li>
     </ul>
-    <p v-else class="text-danger mx-4">No Tasks found..</p>
+    <p v-else class="text-danger m-3">No Tasks found..</p>
   </div>
 </template>
 
@@ -118,6 +118,9 @@
         ) return true
 
         return false
+      },
+      _isallowed() {
+        return ["admin", "subscriber"].includes(this.$currentUser.role)
       },
       filteredTasks() {
         if (this.filters.taskType) {

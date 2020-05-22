@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="notes_show mb-5">
+  <div v-if="!loading" class="notes_show mb-5 mx-2">
     <div v-if="show">
       <div v-if="permitted" class="crud-actions mx-3 float-right">
         <span class="mr-2 font-sm edit-action" @click.stop="show = false">
@@ -9,7 +9,6 @@
           <i class="fas fa-trash-alt"></i>
         </span>
       </div>
-
       <div class="note_by my-2">
         <span class="badge badge-secondary">Note by</span>
         <span class="text-muted font-sm">{{noteBy}}</span>
@@ -17,8 +16,8 @@
       <div v-if="DV_note.attachFiles.length > 0" class="note_files">
         <span class="badge badge-secondary mr-3">Note Files</span>
         <span v-for="file in DV_note.attachFiles">
-          <span class="file-icon">
-            <i class="fas fa-file-alt" @click.prevent="downloadFile(file)"></i>
+          <span class="file-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
+            <i class="fas fa-file-alt"></i>
           </span>
         </span>
       </div>
@@ -76,6 +75,10 @@
             this.loading = false;
             console.error(err);
           })
+      },
+      downloadFile(file) {
+        let url = window.location.origin + file.uri
+        window.open(url, '_blank');
       }
     },
     computed: {
@@ -85,7 +88,10 @@
       },
       permitted() {
         if (this.loading) return false
-        return this.note.userId === this.$currentUser.id
+        return this.note.userId === this.$currentUser.id && this._isallowed
+      },
+      _isallowed() {
+        return ["admin", "subscriber"].includes(this.$currentUser.role)
       }
     },
     watch: {

@@ -267,3 +267,7 @@ input[type=button]:focus {
     transition: opacity .15s;
   }
 }
+.form-control:disabled,
+.form-control[readonly] {
+  background: transparent;
+}

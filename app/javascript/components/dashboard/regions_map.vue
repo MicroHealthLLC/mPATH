@@ -133,14 +133,12 @@
         </transition>
         <transition name="slide-fade">
           <div v-show="openSidebar" id="map-sidebar">
-            <div @click="closeSidebar" class="close-sidebar-btn">
-              <i class="fas fa-minus"></i>
-            </div>
             <facility-show
               v-if="currentFacility"
               :facility="currentFacility"
               :region="currentRegion"
               :statuses="statuses"
+              @close-side-bar="closeSidebar"
               @back-after-delete="backFromFacilityShow"
               @edit-facility="editFacility"
               @facility-update="updateFacility"
@@ -261,7 +259,7 @@ export default {
     filteredFacilities() {
       var activeRegions = _.map(_.filter(this.regions, (r) => r.status === 'active'), 'id')
       return _.filter(this.facilities, (facility) => {
-        var valid = activeRegions.includes(facility.facilityGroupId)
+        var valid = activeRegions.includes(facility.facilityGroupId) && facility.status === 'active'
         if (!valid) return valid
 
         _.each(this.filters, (f) => {
@@ -516,16 +514,6 @@ export default {
   .roll-fade-enter, .roll-fade-leave-to {
     opacity: 0;
     transform: translate(100px, 50px);
-  }
-  .close-sidebar-btn {
-    z-index: 800;
-    cursor: pointer;
-    display: flex;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: #fff;
-    padding: 5px;
   }
   .regions-bar {
     position: absolute;

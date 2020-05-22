@@ -7,6 +7,8 @@ class Ability
     user ||= User.new
     if user.admin?
       can :manage, :all
+    elsif user.viewer?
+      can :read, :all
     elsif user.subscriber?
       can :manage, :all
       unless user.privileges.include?('Tasks')

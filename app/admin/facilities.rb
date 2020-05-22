@@ -8,6 +8,7 @@ ActiveAdmin.register Facility do
       :address,
       :point_of_contact,
       :phone_number,
+      :country_code,
       :email,
       :facility_group_id,
       :creator_id,
@@ -53,6 +54,7 @@ ActiveAdmin.register Facility do
           div id: 'gmaps-tab'
           f.input :point_of_contact
           f.input :phone_number
+          f.input :country_code
           div id: 'f_phone_number-tab'
           f.input :email
           f.input :status, include_blank: false, include_hidden: false, label: "State"
@@ -99,11 +101,19 @@ ActiveAdmin.register Facility do
 
   end
 
-  batch_action :assign_facility_group, form: -> {{
+  batch_action :"Assign/Unassign Facility Group", form: -> {{
+    assign: :checkbox,
     "Facility Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
-    Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-    redirect_to collection_path, notice: "Facility group is updated"
+    notice = "Facility group is updated"
+    if inputs['assign'] === 'assign'
+      Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
+      notice = "Facility group is assigned"
+    elsif inputs['assign'] === 'unassign'
+      Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
+      notice = "Facility group is unassigned"
+    end
+    redirect_to collection_path, notice: "#{notice}"
   end
 
   batch_action :assign_state, form: {
@@ -191,6 +201,7 @@ ActiveAdmin.register Facility do
   filter :tasks_text, as: :string, label: "Task Name"
   filter :task_types, as: :select, collection: TaskType.pluck(:name, :id)
   remove_filter :creator
+  remove_filter :country_code
   remove_filter :tasks
   remove_filter :comments
   remove_filter :created_at
