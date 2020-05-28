@@ -13,6 +13,9 @@ Rails.application.routes.draw do
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]
+    resources :issue_statuses, only: [:index]
+    resources :issue_severities, only: [:index]
+    resources :issue_types, only: [:index]
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
   end
@@ -20,13 +23,12 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
+      resources :issues
       resources :notes, module: :facilities do
         put :destroy_file, on: :member
       end
       resources :tasks do
-        member do
-          put :destroy_file
-        end
+        put :destroy_file, on: :member
       end
     end
   end

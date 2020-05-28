@@ -45,12 +45,12 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
 
-        if user.subscriber?
-          f.inputs 'Role Privileges' do
+        # if user.subscriber?
+          f.inputs 'Role Privileges', id: '__privileges' do
             f.input :privileges, input_html: { disabled: true }
             f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
           end
-        end
+        # end
       end
 
       tab 'Projects' do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_24_143048) do
+ActiveRecord::Schema.define(version: 2020_05_14_064709) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -70,18 +70,47 @@ ActiveRecord::Schema.define(version: 2020_02_24_143048) do
     t.string "point_of_contact"
     t.string "phone_number"
     t.string "email", default: "", null: false
-    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "region_id"
+    t.bigint "facility_group_id"
     t.bigint "creator_id"
-    t.integer "status", default: 0
     t.string "lat"
     t.string "lng"
-    t.bigint "project_id"
+    t.integer "status", default: 1
     t.index ["creator_id"], name: "index_facilities_on_creator_id"
-    t.index ["project_id"], name: "index_facilities_on_project_id"
-    t.index ["region_id"], name: "index_facilities_on_region_id"
+    t.index ["facility_group_id"], name: "index_facilities_on_facility_group_id"
+  end
+
+  create_table "facility_groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "code"
+    t.integer "status", default: 0
+    t.integer "region_type", default: 0
+    t.string "center"
+  end
+
+  create_table "facility_projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "facility_id"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.date "due_date"
+    t.bigint "status_id"
+    t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
+    t.index ["project_id"], name: "index_facility_projects_on_project_id"
+    t.index ["status_id"], name: "index_facility_projects_on_status_id"
+  end
+
+  create_table "notes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "noteable_type"
+    t.integer "noteable_id"
+    t.bigint "user_id"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
   create_table "project_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -100,39 +129,34 @@ ActiveRecord::Schema.define(version: 2020_02_24_143048) do
   end
 
   create_table "projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.integer "status", default: 0
     t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
     t.bigint "project_type_id"
+    t.integer "status", default: 1
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
 
   create_table "region_states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "region_id"
+    t.bigint "facility_group_id"
     t.bigint "state_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["region_id"], name: "index_region_states_on_region_id"
+    t.index ["facility_group_id"], name: "index_region_states_on_facility_group_id"
     t.index ["state_id"], name: "index_region_states_on_state_id"
   end
 
-  create_table "regions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "position"
-    t.text "boundary"
-    t.string "color"
+  create_table "settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.text "office365_key"
+    t.text "office365_secret"
+    t.text "google_map_key"
+    t.text "google_oauth_key"
+    t.text "google_oauth_secret"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "code"
-    t.integer "status", default: 0
-    t.integer "region_type", default: 0
-    t.string "center"
-    t.bigint "project_id"
-    t.index ["project_id"], name: "index_regions_on_project_id"
   end
 
   create_table "states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -143,16 +167,30 @@ ActiveRecord::Schema.define(version: 2020_02_24_143048) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "text"
-    t.integer "task_type"
     t.text "notes"
     t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "progress", default: 0
-    t.bigint "facility_id"
-    t.index ["facility_id"], name: "index_tasks_on_facility_id"
+    t.bigint "task_type_id"
+    t.date "start_date"
+    t.bigint "facility_project_id"
+    t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
+    t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -168,18 +206,33 @@ ActiveRecord::Schema.define(version: 2020_02_24_143048) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "title"
+    t.string "phone_number"
+    t.string "address"
+    t.integer "role", default: 0
+    t.string "provider"
+    t.string "uid"
+    t.string "login"
+    t.integer "status", default: 1
+    t.string "lat"
+    t.string "lng"
+    t.text "privileges"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "facilities", "projects"
   add_foreign_key "facilities", "users", column: "creator_id"
+  add_foreign_key "facility_projects", "facilities"
+  add_foreign_key "facility_projects", "projects"
+  add_foreign_key "facility_projects", "statuses"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
   add_foreign_key "projects", "project_types"
-  add_foreign_key "region_states", "regions"
+  add_foreign_key "region_states", "facility_groups"
   add_foreign_key "region_states", "states"
-  add_foreign_key "regions", "projects"
-  add_foreign_key "tasks", "facilities"
+  add_foreign_key "tasks", "facility_projects"
+  add_foreign_key "tasks", "task_types"
 end

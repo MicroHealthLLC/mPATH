@@ -103,7 +103,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
                 </div>
-                <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="searchQuery">
+                <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
               </div>
             </div>
             <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
@@ -125,6 +125,12 @@
             />
           </div>
         </tab>
+        <tab title="Issues" key="issues">
+          <issue-index
+            :facility="DV_facility"
+            @refresh-facility="refreshFacility"
+          />
+        </tab>
       </tabs>
     </div>
   </div>
@@ -134,11 +140,12 @@
   import http from './../../../common/http'
   import NotesForm from './../notes/notes_form'
   import NotesShow from './../notes/notes_show'
+  import IssueIndex from './../issues/issue_index'
   import DetailShow from './facility_detail_show'
 
   export default {
     name: 'FacilitiesShow',
-    components: { DetailShow, NotesForm, NotesShow },
+    components: { DetailShow, NotesForm, NotesShow, IssueIndex },
     props: {
       facility: {
         default: null,
@@ -162,8 +169,7 @@
         loading: true,
         DV_updated: false,
         newNote: false,
-        searchQuery: '',
-        searchTerm: '',
+        notesQuery: '',
         DV_facility: this.facility
       }
     },
@@ -246,8 +252,8 @@
     },
     computed: {
       filteredNotes() {
-        if (this.searchQuery.trim() !== '') {
-          const resp = new RegExp(_.escapeRegExp(this.searchQuery.trim().toLowerCase()), 'i')
+        if (this.notesQuery.trim() !== '') {
+          const resp = new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i')
           const isMatch = (result) => resp.test(result.body)
           return _.filter(this.DV_facility.notes, isMatch)
         }

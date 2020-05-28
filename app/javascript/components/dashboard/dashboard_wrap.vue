@@ -5,7 +5,7 @@
         @add-facility-from-nav="openModal"
         :projects="projects"
         :statuses="statuses"
-        :facility-groups="facilityGroups"
+        :facility-groups="activeFacilityGroups"
         @on-facility-name-search="onFacilitySearch"
         @on-status-change="onStatusChange"
         @on-facilitygroup-change="onFacilityGroupChange"
@@ -111,6 +111,11 @@
       },
       onFilterByFacility(facility) {
         this.filterFacility = facility
+      }
+    },
+    computed: {
+      activeFacilityGroups() {
+        return _.filter(this.facilityGroups, (f) => f.status === 'active')
       }
     }
   }

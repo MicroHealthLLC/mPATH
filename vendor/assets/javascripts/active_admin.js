@@ -309,11 +309,24 @@ jQuery(function($) {
   {
     var previliges = $("input#user_privileges").val();
     previliges.split(",").map(p => {
-      $(`input[value=${p}]`).prop("checked", true);
+      if (p) $(`input[value=${p}]`).prop("checked", true);
     });
   }
 
+  var togglePrivileges = function () {
+    var show = $("#user_role").val() === 'subscriber'
+    $("#__privileges").css({display: show ? 'block' : 'none'})
+  }
+
   $(document).on('ready page:load turbolinks:load', function() {
+
+    if ($("#user_role").is(":visible"))
+    {
+      togglePrivileges()
+      $("#user_role").change(function(e) {
+        togglePrivileges()
+      })
+    }
 
     // add assign/unassign inputs in dialog_form
     $("a[data-action='Assign/Unassign Facility Group']").click(function(e) {
