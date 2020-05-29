@@ -11,10 +11,13 @@ class Setting < ApplicationRecord
   end
 
   def self.load_available_settings
+    begin
     cached = first || new
     ['office365_key', 'office365_secret', 'google_map_key', 'google_oauth_key', 'google_oauth_secret'].each do |key|
       available_settings["#{key.upcase}"] = { 'default' => ENV["#{key.upcase}"], 'cached' => cached.send(key) || '' }
     end
+  rescue
+#nothing
   end
   load_available_settings
 
