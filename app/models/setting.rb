@@ -17,7 +17,7 @@ class Setting < ApplicationRecord
       available_settings["#{key.upcase}"] = { 'default' => ENV["#{key.upcase}"], 'cached' => cached.send(key) || '' }
     end
   rescue
-#nothing
+{}
   end
   load_available_settings
 
