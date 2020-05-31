@@ -19,7 +19,7 @@
         type="text"
         class="form-control form-control-sm"
         v-model="DV_issue.title"
-        placeholder="Text"
+        placeholder="Title"
         :class="{'form-control': true, 'error': errors.has('title') }"
       />
       <div v-show="errors.has('title')" class="text-danger">
@@ -41,6 +41,40 @@
       </select>
       <div v-show="errors.has('Issue Type')" class="text-danger">
         {{ errors.first('Issue Type') }}
+      </div>
+    </div>
+    <div class="form-group mx-4">
+      <label class="font-sm">Issue Severity:</label>
+      <select
+        name="Issue Severity"
+        v-validate="'required'"
+        :class="{'form-control': true, 'error': errors.has('Issue Severity') }" class="form-control form-control-sm"
+        v-model="DV_issue.issueSeverityId"
+        >
+        <option disabled selected value="">Issue Severity</option>
+        <option v-for="opt in issueSeverities" :value="opt.id">
+          {{opt.name}}
+        </option>
+      </select>
+      <div v-show="errors.has('Issue Severity')" class="text-danger">
+        {{ errors.first('Issue Severity') }}
+      </div>
+    </div>
+    <div class="form-group mx-4">
+      <label class="font-sm">Issue Status:</label>
+      <select
+        name="Issue Status"
+        v-validate="'required'"
+        :class="{'form-control': true, 'error': errors.has('Issue Status') }" class="form-control form-control-sm"
+        v-model="DV_issue.issueStatusId"
+        >
+        <option disabled selected value="">Issue Status</option>
+        <option v-for="opt in issueStatuses" :value="opt.id">
+          {{opt.name}}
+        </option>
+      </select>
+      <div v-show="errors.has('Issue Status')" class="text-danger">
+        {{ errors.first('Issue Status') }}
       </div>
     </div>
     <div class="form-row mx-3">
@@ -78,7 +112,7 @@
       <label class="font-sm">Description:</label>
       <textarea
         class="form-control"
-        placeholder="task brief description"
+        placeholder="issue brief description"
         v-model="DV_issue.description"
         rows="4"
       />
@@ -135,37 +169,29 @@
         return date
       },
       saveIssue() {
-        debugger
-        return
-        this.$validator.validate().then((success) =>
-        {
+        this.$validator.validate().then((success) => {
           if (!success) {
             this.showErrors = true
             return;
           }
 
           var formData = new FormData()
-          formData.append('task[text]', this.DV_issue.text)
-          formData.append('task[due_date]', this.DV_issue.dueDate)
-          formData.append('task[start_date]', this.DV_issue.startDate)
-          formData.append('task[task_type_id]', this.DV_issue.taskTypeId)
-          formData.append('task[progress]', this.DV_issue.progress)
-          formData.append('task[notes]', this.DV_issue.notes)
+          formData.append('issue[title]', this.DV_issue.title)
+          formData.append('issue[due_date]', this.DV_issue.dueDate)
+          formData.append('issue[start_date]', this.DV_issue.startDate)
+          formData.append('issue[issue_type_id]', this.DV_issue.issueTypeId)
+          formData.append('issue[issue_status_id]', this.DV_issue.issueStatusId)
+          formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
+          formData.append('issue[description]', this.DV_issue.description)
 
-          for (var file of this.DV_issue.taskFiles) {
-            if (!file.id) {
-              formData.append('task[task_files][]', file)
-            }
-          }
-
-          var url = `/projects/${this.project.id}/facilities/${this.facility.id}/issues.json`
+          var url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues.json`
           var method = "POST"
-          var callback = "task-created"
+          var callback = "issue-created"
 
-          if (this.task && this.task.id) {
-            url = `/projects/${this.project.id}/facilities/${this.facility.id}/issues/${this.task.id}.json`
+          if (this.issue && this.issue.id) {
+            url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${this.issue.id}.json`
             method = "PUT"
-            callback = "task-updated"
+            callback = "issue-updated"
           }
 
           axios({
@@ -177,7 +203,7 @@
             }
           })
           .then((response)=> {
-            this.$emit(callback, humps.camelizeKeys(response.data.task))
+            this.$emit(callback, humps.camelizeKeys(response.data.issue))
           })
           .catch((err)=> {
             console.log(err)

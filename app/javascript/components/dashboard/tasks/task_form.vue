@@ -156,6 +156,7 @@
           progress: 0,
           taskFiles: []
         },
+        _ismounted: false,
         showErrors: false
       }
     },
@@ -167,6 +168,7 @@
         this.DV_task.taskFiles = []
         this.addFile(this.task.attachFiles)
       }
+      this._ismounted = true
     },
     methods: {
       getDate(days=0) {
@@ -273,6 +275,13 @@
           this.DV_task = value
         },
         deep: true
+      },
+      "DV_task.dueDate"(value) {
+        if (this._ismounted && this.facility.dueDate) {
+          if (moment(value).isAfter(this.facility.dueDate, 'day')) {
+            confirm('Task Due Date is past Project Due Date!')
+          }
+        }
       }
     }
   }

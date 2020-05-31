@@ -35,7 +35,7 @@
           <GmapMarker
             :key="`${facility.id}__${index}`"
             :animation="4"
-            v-for="(facility, index) in filteredFacilities"
+            v-for="(facility, index) in filterFacilitiesWithActiveRegion"
             :position="getLatLngForFacility(facility)"
             @click="showFacility(facility)"
           />
@@ -43,9 +43,9 @@
       </GmapMap>
     </div>
     <div v-else class="col-8 p-0"></div>
-    <div id="rollup-sidebar" class="col-4 p-0 shadow-sm">
-      <div v-if="!sideLoading">
-        <transition name="roll-fade">
+    <div id="rollup-sidebar" class="col-4 p-0" :style="rollupStyle">
+      <div style="margin-left: 12px;">
+        <div v-if="!sideLoading">
           <div v-show="!openSidebar" class="m-3">
             <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
             <br>
@@ -74,8 +74,8 @@
                       <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, facilities.length) <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, facilities.length)}%`">{{getAverage(_f.length, facilities.length)}} %</div>
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities.length) <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities.length)}%`">{{getAverage(_f.length, filteredFacilities.length)}} %</div>
                       </span>
                     </div>
                   </div>
@@ -84,27 +84,27 @@
             </div>
             <hr>
             <div class="my-1">
-              <h5 class="text-center">{{currentProject.tasksCount}} Tasks</h5>
+              <h5 class="text-center">{{currentTasks.length}} Tasks</h5>
               <div>
                 <div class="row">
                   <div class="col-md-9">
                     <span>Complete</span>
-                    <span class="badge badge-secondary badge-pill">{{currentProject.tasksComplete}}</span>
+                    <span class="badge badge-secondary badge-pill">{{completedTasks.count}}</span>
                   </div>
                   <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': tasksPercentage.complete <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${tasksPercentage.complete}%`">{{tasksPercentage.complete}} %</div>
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks.avg <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${completedTasks.avg}%`">{{completedTasks.avg}} %</div>
                     </span>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-9">
                     <span>Incomplete</span>
-                    <span class="badge badge-secondary badge-pill">{{currentProject.tasksIncomplete}}</span>
+                    <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
                   </div>
                   <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': tasksPercentage.incomplete <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${tasksPercentage.incomplete}%`">{{tasksPercentage.incomplete}} %</div>
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
                     </span>
                   </div>
                 </div>
@@ -130,25 +130,28 @@
               </div>
             </div>
           </div>
-        </transition>
-        <transition name="slide-fade">
-          <div v-show="openSidebar" id="map-sidebar">
-            <facility-show
-              v-if="currentFacility"
-              :facility="currentFacility"
-              :region="currentRegion"
-              :statuses="statuses"
-              @close-side-bar="closeSidebar"
-              @back-after-delete="backFromFacilityShow"
-              @edit-facility="editFacility"
-              @facility-update="updateFacility"
-            />
+          <div class="knocker_side" :style="knockerStyle">
+            <div v-if="currentFacility" class="knocker" @click="toggleOpenSideBar">
+              <div class="linner"></div>
+            </div>
+            <div id="map-sidebar">
+              <facility-show
+                v-if="currentFacility"
+                :facility="currentFacility"
+                :region="currentRegion"
+                :statuses="statuses"
+                @close-side-bar="closeSidebar"
+                @back-after-delete="backFromFacilityShow"
+                @edit-facility="editFacility"
+                @facility-update="updateFacility"
+              />
+            </div>
           </div>
-        </transition>
-      </div>
-      <div v-else class="d-flex justify-content-center align-items-center h-75">
-        <loader :loading="true" color="black"></loader>
-        <p class="__loading">Loading</p>
+        </div>
+        <div v-else class="d-flex justify-content-center align-items-center h-75">
+          <loader :loading="true" color="black"></loader>
+          <p class="__loading">Loading</p>
+        </div>
       </div>
     </div>
 
@@ -208,12 +211,15 @@ import FacilityShow      from './facilities/facility_show'
 import RegionBar         from './../shared/region_bar'
 import Accordion         from './../shared/accordion'
 import utils             from './../../mixins/utils'
-import { SweetModal }    from 'sweet-modal-vue'
+import {SweetModal}      from 'sweet-modal-vue'
+import * as Moment       from 'moment'
+import {extendMoment}    from 'moment-range'
+const moment = extendMoment(Moment)
 
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility'],
+  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility', 'dueDate', 'taskType', 'progress'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -250,31 +256,54 @@ export default {
       return this.currentFacility ? "Edit facility" : "Add Facility"
     },
     facilityCount() {
-      return this.facilities.length
+      return this.filteredFacilities.length
     },
     facilityProgress() {
-      var mean = _.meanBy(this.facilities, 'progress') || 0
+      var mean = _.meanBy(this.filteredFacilities, 'progress') || 0
       return mean.toFixed(2)
     },
-    filteredFacilities() {
+    filterFacilitiesWithActiveRegion() {
       var activeRegions = _.map(_.filter(this.regions, (r) => r.status === 'active'), 'id')
+      return _.filter(this.filteredFacilities, (facility) => {
+        return activeRegions.includes(facility.facilityGroupId) && facility.status === 'active'
+      })
+    },
+    filteredFacilities() {
       return _.filter(this.facilities, (facility) => {
-        var valid = activeRegions.includes(facility.facilityGroupId) && facility.status === 'active'
-        if (!valid) return valid
-
+        var valid = true
         _.each(this.filters, (f) => {
           var k = Object.keys(f)[0]
-          valid = valid && facility[k] == f[k]
+          switch(k) {
+            case "dueDate": {
+              var range = moment.range(f[k][0], f[k][1])
+              valid = valid && range.contains(new Date(facility[k]))
+              break
+            }
+            case "progress": {
+              var range = f[k].value.split("-")
+              valid = valid && range[0] <= facility[k] && range[1] >= facility[k]
+              break
+            }
+            case "taskTypeId": {
+              var ids = _.map(facility.tasks, 'taskTypeId')
+              valid = valid && ids.includes(f[k])
+              break
+            }
+            default: {
+              valid = valid && facility[k] == f[k]
+              break
+            }
+          }
         })
         return valid
       })
     },
     facilitiesByStatus() {
-      return _.groupBy(this.facilities, 'status')
+      return _.groupBy(this.filteredFacilities, 'status')
     },
     currentRegionFacilities() {
       if (this.currentRegion && this.currentRegion.facilities) {
-        var facilityIds = _.map(this.facilities, 'id')
+        var facilityIds = _.map(this.filteredFacilities, 'id')
         return _.filter(this.currentRegion.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
       }
       else {
@@ -282,17 +311,43 @@ export default {
       }
     },
     filteredRegions() {
-      var facilityGroupIds = _.map(this.facilities, 'facilityGroupId')
+      var facilityGroupIds = _.map(this.filteredFacilities, 'facilityGroupId')
       return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
     },
     facilitiesByProjectStatus() {
-      return _.groupBy(this.facilities, 'projectStatus')
+      return _.groupBy(this.filteredFacilities, 'projectStatus')
     },
-    tasksPercentage() {
-      var total = this.currentProject.tasksComplete + this.currentProject.tasksIncomplete
+    currentTasks() {
+      return _.flatten(_.map(this.filteredFacilities, 'tasks'))
+    },
+    completedTasks() {
+      var tasks = this.currentTasks
+      var completed = _.filter(tasks, (t) => t.progress == 100)
       return {
-        incomplete: this.getAverage(this.currentProject.tasksIncomplete, total),
-        complete: this.getAverage(this.currentProject.tasksComplete, total)
+        count: completed.length,
+        avg: this.getAverage(completed.length, tasks.length)
+      }
+    },
+    incompletedTasks() {
+      var tasks = this.currentTasks
+      var incompleted = _.filter(tasks, (t) => t.progress != 100)
+      return {
+        count: incompleted.length,
+        avg: this.getAverage(incompleted.length, tasks.length)
+      }
+    },
+    knockerStyle() {
+      if (this.openSidebar) {
+        return {}
+      } else {
+        return {transform: "translateX(calc(100% - 12px))"}
+      }
+    },
+    rollupStyle() {
+      if (this.openSidebar) {
+        return {right: '12px'}
+      } else {
+        return {right: '0'}
       }
     }
   },
@@ -399,13 +454,20 @@ export default {
       }
     },
     facilityGroupProgress(f_group) {
-      var facilityIds = _.map(this.facilities, 'id')
+      var facilityIds = _.map(this.filteredFacilities, 'id')
       var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
       return mean.toFixed(2)
     },
     facilityGroupFacilities(f_group) {
-      var facilityIds = _.map(this.facilities, 'id')
+      var facilityIds = _.map(this.filteredFacilities, 'id')
       return _.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId === this.currentProject.id))
+    },
+    toggleOpenSideBar() {
+      if (this.currentFacility) {
+        this.openSidebar= !this.openSidebar
+      } else {
+        this.openSidebar = false
+      }
     }
   },
   watch: {
@@ -427,6 +489,42 @@ export default {
           }
           else {
             this.filters.push({statusId: value.id})
+          }
+        }
+      }, deep: true
+    },
+    taskType: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskTypeId'))
+          }
+          else {
+            this.filters.push({taskTypeId: value.id})
+          }
+        }
+      }, deep: true
+    },
+    dueDate: {
+      handler: function(value) {
+        if (value) {
+          if (value == null || value.includes(null)) {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('dueDate'))
+          }
+          else {
+            this.filters.push({dueDate: value})
+          }
+        }
+      }, deep: true
+    },
+    progress: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('progress'))
+          }
+          else {
+            this.filters.push({progress: value})
           }
         }
       }, deep: true
@@ -469,7 +567,7 @@ export default {
     },
     openSidebar(value) {
       if (!value && !this.loading) {
-        this.sideLoading = true
+        // this.sideLoading = true
         this.facilities = []
         this.fetchFacilities()
       }
@@ -480,18 +578,30 @@ export default {
 
 <style scoped lang="scss">
   #map-wrap {
-    height: calc(100vh - 130px);
+    height: calc(100vh - 90px);
     width: 69vw;
   }
   #rollup-sidebar {
-    width: 31vw;
-    height: calc(100vh - 130px);
-    overflow: auto;
+    > div {
+      height: calc(100vh - 90px);
+      overflow: auto;
+    }
+    position: absolute;
+    top: 0;
   }
   #map-sidebar {
     z-index: 800;
+    height: calc(100vh - 90px);
+    overflow: auto;
     background: white;
     padding: 10px;
+  }
+  .knocker_side {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    transition: .3s ease;
+    height: 100%;
   }
 
   /* sidebar transitions */
@@ -545,5 +655,26 @@ export default {
   .__loading {
     margin-top: 125px;
     margin-left: -20px;
+  }
+  .knocker {
+    z-index: 9999999;
+    cursor: pointer;
+    position: absolute;
+    top: 40%;
+    left: -12px;
+    width: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    height: 100px;
+    background: #37AFEA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .linner {
+      width: 5px;
+      height: 60px;
+      border-left: 1px solid #fff;
+      border-right: 1px solid #fff;
+    }
   }
 </style>

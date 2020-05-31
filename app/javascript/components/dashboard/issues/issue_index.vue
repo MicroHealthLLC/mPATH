@@ -20,20 +20,32 @@
       />
     </div>
     <div v-else>
-      issues index
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
+      </div>
+      <div class="mt-1">
+        <issue-show
+          v-for="issue in facility.issues"
+          :key="issue.id"
+          :issue="issue"
+          :facility="facility"
+          @issue-edited="issueEdited"
+          @issue-deleted="issueDeleted"
+        />
+      </div>
     </div>
-
   </div>
 </template>
 
 <script>
   import http from './../../../common/http'
   import IssueForm from './issue_form'
+  import IssueShow from './issue_show'
 
   export default {
     name: 'ProjectShow',
     props: ['facility'],
-    components: { IssueForm },
+    components: { IssueForm, IssueShow },
 
     data() {
       return {
@@ -46,66 +58,68 @@
       }
     },
     mounted() {
-      this.fetchIssueTypes()
-      this.fetchIssueStatuses()
-      this.fetchIssueSeverities()
-      this.loading = false
+      var cb = () => this.loading = false
+      this.fetchIssueTypes(cb)
     },
     methods: {
-      fetchIssueTypes() {
+      fetchIssueTypes(cb) {
         http
           .get(`/api/issue_types.json`)
           .then((res) => {
-            this.DV_issueStatuses = res.data.DV_issueStatuses
+            this.DV_issueTypes = res.data.issueTypes
+            this.fetchIssueStatuses(cb)
           })
           .catch((err) => {
             console.error(err)
           })
       },
-      fetchIssueStatuses() {
+      fetchIssueStatuses(cb) {
         http
           .get(`/api/issue_statuses.json`)
           .then((res) => {
-            this.DV_issueTypes = res.data.issueTypes
+            this.DV_issueStatuses = res.data.issueStatuses
+            this.fetchIssueSeverities(cb)
           })
           .catch((err) => {
             console.error(err)
           })
       },
-      fetchIssueSeverities() {
+      fetchIssueSeverities(cb) {
         http
           .get(`/api/issue_severities.json`)
           .then((res) => {
             this.DV_issueSeverities = res.data.issueSeverities
+            return cb()
           })
           .catch((err) => {
             console.error(err)
           })
       },
       issueCreated(issue) {
-        this.DV_facility.issues.unshift(issue)
-        this.showProject = true
+        this.facility.issues.unshift(issue)
+        this.newIssue = false
         this.$emit('refresh-facility')
       },
       issueUpdated(issue) {
-        var index = this.DV_facility.issues.findIndex((t) => t.id == issue.id)
-        this.DV_facility.issues[index] = issue
-        this.showProject = true
+        var index = this.facility.issues.findIndex((t) => t.id == issue.id)
+        this.facility.issues[index] = issue
+        this.newIssue = false
         this.$emit('refresh-facility')
       },
       issueDeleted(issue) {
         http
-          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}/issues/${issue.id}.json`)
+          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${issue.id}.json`)
           .then((res) => {
-            var issues = [...this.DV_facility.issues]
+            var issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
           })
           .catch((err) => console.log(err))
+      },
+      issueEdited(issue) {
+        this.currentIssue = issue
+        this.newIssue = true
       }
-    },
-    computed: {
-
     }
   }
 </script>

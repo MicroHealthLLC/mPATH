@@ -1,8 +1,8 @@
 <template>
   <div id="facility-show">
-    <div @click="saveThenClose" class="close-sidebar-btn">
+    <!-- <div @click="saveThenClose" class="close-sidebar-btn">
       <i class="fas fa-minus"></i>
-    </div>
+    </div> -->
     <div v-if="!loading">
       <tabs>
         <tab title="Overview" key="overview">

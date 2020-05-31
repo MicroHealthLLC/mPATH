@@ -32,7 +32,13 @@ Rails.application.routes.draw do
       end
     end
   end
+  resources :facilities, only: [] do
+    resources :facility_projects, only: [:index, :update, :show]
+  end
 
+  get '/profile', to: 'profiles#index'
+  post '/profile', to: 'profiles#update'
+  get '/current_user', to: 'profiles#current_profile'
   get '/settings', to: 'data#settings'
   get '/facility_groups', to: 'data#facility_groups'
   get '/task_types', to: 'data#task_types'

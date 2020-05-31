@@ -6,10 +6,15 @@
         :projects="projects"
         :statuses="statuses"
         :facility-groups="activeFacilityGroups"
+        :task-types="taskTypes"
         @on-facility-name-search="onFacilitySearch"
         @on-status-change="onStatusChange"
         @on-facilitygroup-change="onFacilityGroupChange"
+        @on-duedate-change="onDuedateChange"
+        @on-tasktype-change="onTasktypeChange"
+        @on-progress-change="onProgressChange"
         @on-filter-by-facility="onFilterByFacility"
+        @clear-filters="onClearFilters"
       />
       <div id="dash-wrap">
         <div class="col p-0">
@@ -22,6 +27,9 @@
             :facility-group="facilityGroup"
             :facility-query="facilityQuery"
             :filter-facility="filterFacility"
+            :due-date="dueDate"
+            :progress="progress"
+            :task-type="taskType"
             @nullify-modals="nullifyModal"
           />
         </div>
@@ -48,6 +56,10 @@
         projects: [],
         status: null,
         statuses: [],
+        taskTypes: [],
+        progress: null,
+        taskType: null,
+        dueDate: null,
         facilityGroups: [],
         facilityGroup: null,
         facilityQuery: {},
@@ -55,9 +67,8 @@
       }
     },
     mounted() {
-      this.fetchProjects((err) => {
-        if (!err) this.loading = false;
-      })
+      var cb = () => this.loading = false
+      this.fetchProjects(cb)
     },
     methods: {
       fetchProjects(cb) {
@@ -87,7 +98,18 @@
         http.get('/api/statuses.json')
           .then((res) => {
             this.statuses = res.data.statuses
-            cb(null)
+            this.fetchTaskTypes(cb)
+          })
+          .catch((err) => {
+            cb(err)
+            console.log(err)
+          })
+      },
+      fetchTaskTypes(cb) {
+        http.get('/api/task_types.json')
+          .then((res) => {
+            this.taskTypes = res.data.taskTypes
+            cb()
           })
           .catch((err) => {
             cb(err)
@@ -111,6 +133,24 @@
       },
       onFilterByFacility(facility) {
         this.filterFacility = facility
+      },
+      onDuedateChange(duedate) {
+        this.dueDate = duedate
+      },
+      onProgressChange(progress) {
+        this.progress = progress
+      },
+      onTasktypeChange(tasktype) {
+        this.taskType = tasktype
+      },
+      onClearFilters(value) {
+        this.progress = value
+        this.taskType = value
+        this.dueDate = null
+        this.status = value
+        this.facilityGroup = value
+        this.filterFacility = null
+        this.$forceUpdate()
       }
     },
     computed: {
@@ -124,7 +164,7 @@
 <style lang="scss" scoped>
   #dash-wrap {
     padding-top: 1px;
-    height: calc(100vh - 130px);
+    height: calc(100vh - 90px);
     width: 100%;
     display: flex;
     flex-wrap: wrap;

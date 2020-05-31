@@ -1,4 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  skip_before_action :verify_authenticity_token
+
   def passthru
     render status: 404, text: "Not found. Authentication passthru."
   end

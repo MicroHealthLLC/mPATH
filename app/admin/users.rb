@@ -17,6 +17,7 @@ ActiveAdmin.register User do
       :password_confirmation,
       :status,
       :privileges,
+      :country_code,
       project_ids: []
     ]
   end
@@ -84,14 +85,22 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :assign_projects, confirm: 'Are you sure?', form: -> {{
-    project: Project.pluck(:name, :id)
+  batch_action :"Assign/Unassign Project", form: -> {{
+    assign: :checkbox,
+    "Project": Project.pluck(:name, :id)
   }} do |ids, inputs|
+    notice = "Project is assigned"
     project = Project.find_by_id(inputs[:project])
-    User.where(id: ids).each do |user|
-      user.projects << project unless user.projects.pluck(:id).include?(project.id)
+    if inputs['assign'] === 'assign'
+      User.where(id: ids).each do |user|
+        user.projects << project unless user.projects.pluck(:id).include?(project.id)
+      end
+      notice = "Project is assigned"
+    elsif inputs['assign'] === 'unassign'
+      ProjectUser.where(project_id: project.id, user_id: ids).destroy_all
+      notice = "Project is unassigned"
     end
-    redirect_to collection_path, notice: "Assigned projects updated"
+    redirect_to collection_path, notice: "#{notice}"
   end
 
   controller do

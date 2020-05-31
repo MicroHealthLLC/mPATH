@@ -304,6 +304,131 @@ jQuery(function($) {
     });
   }
 
+  // facilities projects list
+  if ($("#facility_projects-tab"))
+  {
+    var facility_id = $("#facility_projects-tab").data().key
+    var facility_projects_tab = new Vue({
+      el: "#facility_projects-tab",
+      data() {
+        return {
+          loading: true,
+          editable: false,
+          projects: [],
+          project: {}
+        }
+      },
+      mounted() {
+        var cb = () => this.loading = false;
+        this.fetchFacilityProjects(cb);
+      },
+      methods: {
+        fetchFacilityProjects(cb) {
+          $.get(`/facilities/${facility_id}/facility_projects.json`, (data) => {
+            this.projects = data;
+            this.fetchStatuses(cb);
+          });
+        },
+        fetchStatuses(cb) {
+          $.get("/api/statuses.json", (data) => {
+            this.statuses = data.statuses;
+            return cb();
+          });
+        },
+        openEditModal(project) {
+          $("body").append('<div id="dimmer" class="ui-widget-overlay ui-front" style="z-index: 1001;"></div>');
+          this.editable = true;
+          this.project = project;
+        },
+        handleClose() {
+          this.editable = false;
+          $("#dimmer").remove();
+          this.project = {};
+        },
+        handleSubmit() {
+          var data = {facility_project: {due_date: this.project.due_date, status_id: this.project.status_id}}
+          var _this = this
+          $.ajax({
+            url: `/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
+            type: 'PUT',
+            data: data,
+            success: function(res) {
+              var index = _this.projects.findIndex(p => p.id === res.id)
+              _this.projects[index] = res
+              _this.handleClose()
+            }
+          });
+        }
+      },
+      computed: {
+        shouldVisible() {
+          return true
+          return $('#advanced').css('display') === 'block'
+        }
+      },
+      template: `<div v-if="!loading">
+        <div v-show="shouldVisible" id='project_vue_tab' class="index_as_table">
+          <table border="0" cellspacing="0" cellpadding="0" class="index_table index" paginator="true">
+            <thead>
+              <tr>
+                <th class="sortable col col-project"><a href="#">Project</a></th>
+                <th class="sortable col col-due_date"><a href="#">Due Date</a></th>
+                <th class="sortable col col-status"><a href="#">Status</a></th>
+                <th class="col col-actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="project in projects" :key="project.id">
+                <td class="col col-project">{{project.project.name}}</td>
+                <td class="col col-due_date">{{project.due_date || '-'}}</td>
+                <td class="col col-status">{{project.status_name || '-'}}</td>
+                <td class="col col-actions">
+                  <div class="table_actions">
+                    <a class="edit_link member_link" title="Edit" href="#" @click.prevent="openEditModal(project)">Edit</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-if="editable">
+          <div tabindex="-1" role="dialog" style="position: fixed; height: auto; width: 300px; top: 155.625px; left: 489.578px;" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front active_admin_dialog ui-dialog-buttons ui-draggable ui-resizable" aria-describedby="dialog_confirm" aria-labelledby="ui-id-1">
+            <div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle">
+              <span id="ui-id-1" class="ui-dialog-title">Are you sure you want to do this?</span>
+              <button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="Close">
+                <span class="ui-button-icon ui-icon ui-icon-closethick"></span>
+                <span class="ui-button-icon-space"> </span>Close</button>
+            </div>
+            <form id="dialog_confirm" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 49.25px; max-height: none; height: auto;">
+              <ul>
+                <li>
+                  <label>Project</label>
+                  <input name="project" class="text" type="text" readOnly :value="project.project.name">
+                </li>
+                <li>
+                  <label>Status</label>
+                  <select name="Status" class="" v-model="project.status_id">
+                    <option v-for="status in statuses" :value="status.id">{{status.name}}</option>
+                  </select>
+                </li>
+                <li>
+                  <label>Due Date</label>
+                  <input name="Due Date" class="datepicker" type="datepicker" v-model="project.due_date">
+                </li>
+              </ul>
+            </form>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+              <div class="ui-dialog-buttonset">
+                <button type="button" class="ui-button ui-corner-all ui-widget" @click.prevent="handleSubmit">OK</button>
+                <button type="button" class="ui-button ui-corner-all ui-widget" @click="handleClose">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`
+    });
+  }
+
   // user role previliges
   if ($("#user_privileges_collection_input").is(":visible"))
   {
@@ -329,7 +454,7 @@ jQuery(function($) {
     }
 
     // add assign/unassign inputs in dialog_form
-    $("a[data-action='Assign/Unassign Facility Group']").click(function(e) {
+    $("a[data-action='Assign/Unassign Facility Group'], a[data-action='Assign/Unassign Project']").click(function(e) {
       e.stopPropagation();
       e.preventDefault();
 

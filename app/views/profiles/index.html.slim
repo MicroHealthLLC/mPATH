@@ -1,0 +1,12 @@
+- content_for :title
+  | Profile
+
+.mw_10
+  #users
+
+= javascript_tag nonce: true do
+  |var current_user = "#{JSON.generate(current_user.as_json(methods: :abilities))}";
+  |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
+
+= javascript_pack_tag "users", async: true
+= stylesheet_pack_tag "users"

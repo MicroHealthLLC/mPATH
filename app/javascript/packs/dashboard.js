@@ -2,6 +2,7 @@ import                           '@babel/polyfill'
 import                           'leaflet/dist/leaflet.css'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
 import                           'vue-slim-tabs/themes/default.css'
+import                           'vue2-datepicker/index.css'
 import _                    from 'lodash'
 import Leaflet              from 'leaflet'
 import Multiselect          from 'vue-multiselect'
@@ -18,6 +19,7 @@ import * as Tabs            from 'vue-slim-tabs'
 import VueSlideBar          from 'vue-slide-bar'
 import FadeLoader           from 'vue-spinner/src/FadeLoader.vue'
 import VTooltip             from 'v-tooltip'
+import V2DatePicker         from 'vue2-datepicker'
 
 
 Vue.use(VTooltip)
@@ -28,6 +30,7 @@ Vue.prototype.$leaflet = Leaflet
 Vue.component('loader', FadeLoader)
 Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
+Vue.component('v2-date-picker', V2DatePicker)
 Vue.component('GmapCluster', GmapCluster)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)

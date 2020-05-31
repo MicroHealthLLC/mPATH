@@ -131,4 +131,18 @@ body {
   .progress-slide {
     width: 80%;
   }
+  #project_vue_tab {
+    margin-top: 15px;
+  }
+  input[type=datepicker] {
+    border: 1px solid #c9d0d6;
+    border-radius: 3px;
+    font-size: 0.95em;
+    outline: none;
+    padding: 8px 10px 7px;
+  }
+  .ui-datepicker .ui-datepicker-header {
+    height: 25px;
+    width: 98%;
+  }
 }

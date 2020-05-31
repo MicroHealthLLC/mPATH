@@ -65,6 +65,7 @@ ActiveAdmin.register Facility do
         f.inputs 'Assign Projects' do
           f.input :projects, label: 'Projects', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
         end
+        div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
 
       tab 'Comments' do
@@ -123,12 +124,22 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :assign_projects, confirm: "Are you sure?", form: -> { {"Project": Project.pluck(:name, :id)} } do |ids, inputs|
+  batch_action :"Assign/Unassign Project", form: -> {{
+    assign: :checkbox,
+    "Project": Project.pluck(:name, :id)
+  }} do |ids, inputs|
+    notice = "Project is assigned"
     project = Project.find_by_id(inputs[:project])
-    Facility.where(id: ids).each do |facility|
-      facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
+    if inputs['assign'] === 'assign'
+      Facility.where(id: ids).each do |facility|
+        facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
+      end
+      notice = "Project is assigned"
+    elsif inputs['assign'] === 'unassign'
+      FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
+      notice = "Project is unassigned"
     end
-    redirect_to collection_path, notice: "Assigned projects updated"
+    redirect_to collection_path, notice: "#{notice}"
   end
 
   batch_action :add_task, id:"add-tasks", form: -> {{
@@ -200,6 +211,7 @@ ActiveAdmin.register Facility do
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
   filter :task_types, as: :select, collection: TaskType.pluck(:name, :id)
+  filter :facility_projects_status_id, as: :select, collection: Status.pluck(:name, :id)
   remove_filter :creator
   remove_filter :country_code
   remove_filter :tasks

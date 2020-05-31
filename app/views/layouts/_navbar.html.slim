@@ -14,7 +14,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
             =link_to admin_root_path, class: "nav-link", data: { turbolinks: false } do
               | Admin Panel
         li.nav-item
-          =link_to "#", class: "nav-link" do
+          =link_to profile_path, class: "nav-link" do
             | Welcome #{current_user.email}!
         li.nav-item
           =link_to destroy_user_session_path, method: :delete, class: "nav-link" do
@@ -30,7 +30,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
 css:
   #nav-wrap {
     padding: 20px 70px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02), 0 2px 5px 0 rgba(0,0,0,0.03);
     z-index: 1030;
     font-weight: 300;
     background: #fff;
