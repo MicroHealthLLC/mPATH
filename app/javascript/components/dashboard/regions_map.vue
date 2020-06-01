@@ -322,7 +322,8 @@ export default {
     },
     completedTasks() {
       var tasks = this.currentTasks
-      var completed = _.filter(tasks, (t) => t.progress == 100)
+      debugger;
+      var completed = _.filter(tasks, (t) => t && t.progress == 100)
       return {
         count: completed.length,
         avg: this.getAverage(completed.length, tasks.length)
@@ -330,7 +331,7 @@ export default {
     },
     incompletedTasks() {
       var tasks = this.currentTasks
-      var incompleted = _.filter(tasks, (t) => t.progress != 100)
+      var incompleted = _.filter(tasks, (t) => t && t.progress != 100)
       return {
         count: incompleted.length,
         avg: this.getAverage(incompleted.length, tasks.length)
