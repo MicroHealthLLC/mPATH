@@ -305,9 +305,9 @@ jQuery(function($) {
   }
 
   // facilities projects list
-  if ($("#facility_projects-tab"))
+  if ($("#facility_projects-tab").css('display') === 'block')
   {
-    var facility_id = $("#facility_projects-tab").data().key
+    var facility_id = $("#facility_projects-tab") ? $("#facility_projects-tab").data().key : ''
     var facility_projects_tab = new Vue({
       el: "#facility_projects-tab",
       data() {

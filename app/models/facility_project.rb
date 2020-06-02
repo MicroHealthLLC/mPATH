@@ -10,16 +10,14 @@ class FacilityProject < ApplicationRecord
 
   def as_json(options=nil)
     json = super(options)
-    if options.nil?
-      json.merge(
-        facility: self.facility.as_json,
-        tasks: self.tasks.map(&:to_json),
-        issues: self.issues.as_json,
-        notes: self.notes.map(&:to_json),
-        project_status: self.status.try(:name),
-        progress: progress
-      ).as_json
-    end
+    return json.merge(
+      facility: self.facility.as_json,
+      tasks: self.tasks.map(&:to_json),
+      issues: self.issues.as_json,
+      notes: self.notes.map(&:to_json),
+      project_status: self.status.try(:name),
+      progress: progress
+    ).as_json if options.nil?
     json
   end
 

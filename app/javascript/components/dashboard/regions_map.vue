@@ -312,6 +312,7 @@ export default {
     },
     filteredRegions() {
       var facilityGroupIds = _.map(this.filteredFacilities, 'facilityGroupId')
+      debugger
       return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
     },
     facilitiesByProjectStatus() {
@@ -322,8 +323,7 @@ export default {
     },
     completedTasks() {
       var tasks = this.currentTasks
-      debugger;
-      var completed = _.filter(tasks, (t) => t && t.progress == 100)
+      var completed = _.filter(tasks, (t) => t && t.progress && t.progress == 100)
       return {
         count: completed.length,
         avg: this.getAverage(completed.length, tasks.length)
@@ -331,7 +331,7 @@ export default {
     },
     incompletedTasks() {
       var tasks = this.currentTasks
-      var incompleted = _.filter(tasks, (t) => t && t.progress != 100)
+      var incompleted = _.filter(tasks, (t) => t == undefined || t.progress == null || t.progress != 100)
       return {
         count: incompleted.length,
         avg: this.getAverage(incompleted.length, tasks.length)
