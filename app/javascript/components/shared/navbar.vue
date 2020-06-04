@@ -175,16 +175,18 @@
         DV_facilityGroups: this.facilityGroups,
         DV_projects: this.projects,
         DV_progressRanges: [
+          { name: '0', value: '0'},
           { name: '1-10', value: '1-10'},
-          { name: '10-20', value: '10-20'},
-          { name: '20-30', value: '20-30'},
-          { name: '30-40', value: '30-40'},
-          { name: '40-50', value: '40-50'},
-          { name: '50-60', value: '50-60'},
-          { name: '60-70', value: '60-70'},
-          { name: '70-80', value: '70-80'},
-          { name: '80-90', value: '80-90'},
-          { name: '90-100', value: '90-100'}
+          { name: '11-20', value: '11-20'},
+          { name: '21-30', value: '21-30'},
+          { name: '31-40', value: '31-40'},
+          { name: '41-50', value: '41-50'},
+          { name: '51-60', value: '51-60'},
+          { name: '61-70', value: '61-70'},
+          { name: '71-80', value: '71-80'},
+          { name: '81-90', value: '81-90'},
+          { name: '91-99', value: '91-99'}
+          { name: '100', value: '100'}
         ]
       }
     },
