@@ -210,8 +210,8 @@ ActiveAdmin.register Facility do
   filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
-  filter :task_types, as: :select, collection: TaskType.pluck(:name, :id)
-  filter :facility_projects_status_id, as: :select, collection: Status.pluck(:name, :id)
+  filter :tasks_task_type_id, as: :select, collection: TaskType.pluck(:name, :id), label: 'Task Type'
+  filter :facility_projects_status_id, as: :select, collection: Status.pluck(:name, :id), label: 'Project Status'
   remove_filter :creator
   remove_filter :country_code
   remove_filter :tasks

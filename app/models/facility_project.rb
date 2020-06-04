@@ -15,7 +15,8 @@ class FacilityProject < ApplicationRecord
       tasks: self.tasks.map(&:to_json),
       issues: self.issues.as_json,
       notes: self.notes.map(&:to_json),
-      project_status: self.status.try(:name),
+      project_status: status_name,
+      color: color,
       progress: progress
     ).as_json if options.nil?
     json
@@ -23,6 +24,10 @@ class FacilityProject < ApplicationRecord
 
   def status_name
     self.status.try(:name)
+  end
+
+  def color
+    self.status.try(:color) || '#ff0000'
   end
 
   def progress

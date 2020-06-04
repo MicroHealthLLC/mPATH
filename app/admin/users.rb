@@ -38,6 +38,8 @@ ActiveAdmin.register User do
           end
           f.input :role, include_blank: false, include_hidden: false
           f.input :phone_number
+          f.input :country_code
+          div id: 'user_phone_number-tab'
           f.input :address
           f.input :lat
           f.input :lng

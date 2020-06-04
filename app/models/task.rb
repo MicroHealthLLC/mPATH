@@ -1,9 +1,12 @@
 class Task < ApplicationRecord
-  default_scope { order(due_date: :desc) }
+  default_scope {order(due_date: :desc)}
+
+  delegate :project, to: :facility_project
+  delegate :facility, to: :facility_project
 
   belongs_to :facility_project
   belongs_to :task_type
-  has_many_attached :task_files
+  has_many_attached :task_files, dependent: :destroy
 
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
@@ -27,4 +30,13 @@ class Task < ApplicationRecord
       task_type: self.task_type.try(:name)
     ).as_json
   end
+
+  def project_id
+    self.facility_project.try(:project_id)
+  end
+
+  def facility_id
+    self.facility_project.try(:facility_id)
+  end
+
 end

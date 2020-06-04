@@ -38,6 +38,7 @@
             v-for="(facility, index) in filterFacilitiesWithActiveRegion"
             :position="getLatLngForFacility(facility)"
             @click="showFacility(facility)"
+            :icon="{url: getStatusIconLink(facility)}"
           />
         </GmapCluster>
       </GmapMap>
@@ -70,6 +71,7 @@
                 <div v-for="(_f, s) in facilitiesByProjectStatus">
                   <div class="row">
                     <div class="col-md-9">
+                      <span class="badge badge-pill" :style="`background: ${_f[0].color}`" style="height: 10px">&nbsp;</span>
                       <span> {{s.replace('null', 'No Status')}}</span>
                       <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
                     </div>
@@ -312,7 +314,6 @@ export default {
     },
     filteredRegions() {
       var facilityGroupIds = _.map(this.filteredFacilities, 'facilityGroupId')
-      debugger
       return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
     },
     facilitiesByProjectStatus() {
@@ -469,6 +470,9 @@ export default {
       } else {
         this.openSidebar = false
       }
+    },
+    getStatusIconLink(facility) {
+      return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+ facility.color.split('#')[1]
     }
   },
   watch: {

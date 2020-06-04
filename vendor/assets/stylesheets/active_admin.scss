@@ -57,9 +57,12 @@ body {
   #facility_address_input,
   #facility_lat_input,
   #facility_lng_input,
+  #user_phone_number_input,
   #facility_phone_number_input,
+  #user_country_code_input,
   #facility_country_code_input,
-  #user_privileges_input {
+  #user_privileges_input,
+  #task_progress_input {
     display: none;
   }
   input[type=tel]:focus {
@@ -144,5 +147,8 @@ body {
   .ui-datepicker .ui-datepicker-header {
     height: 25px;
     width: 98%;
+  }
+  .task-progress-slide {
+    margin-left: 20%;
   }
 }

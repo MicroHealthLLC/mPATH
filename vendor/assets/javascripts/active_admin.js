@@ -159,6 +159,63 @@ jQuery(function($) {
     });
   }
 
+  // user form phone_number_tab
+  if ($("#user_phone_number-tab").is(":visible"))
+  {
+    Vue.component('vue-phone-number-input', window['vue-phone-number-input'])
+    var phone_number = new Vue({
+      el: "#user_phone_number-tab",
+      data() {
+        return {
+          phoneData: {},
+          phoneNumber: '',
+          countryCode: '',
+          loading: true,
+          error: false,
+          apiError: ''
+        }
+      },
+      mounted() {
+        this.setApiError();
+        this.phoneNumber = $("#user_phone_number").val();
+        this.countryCode = $("#user_country_code").val();
+        this.loading = false
+      },
+      methods: {
+        setApiError() {
+          this.apiError = $("#user_phone_number_input p").text() || '';
+        },
+        onUpdate(data) {
+          this.phoneData = data
+          this.error = !data.isValid
+          if (data.formattedNumber)
+          {
+            this.phoneNumber = data.formattedNumber
+            this.countryCode = data.countryCode
+          }
+        }
+      },
+      watch: {
+        phoneNumber(value) {
+          var ph_number = this.error ? '' : this.phoneNumber;
+          $("#user_phone_number").val(ph_number);
+        },
+        countryCode(value) {
+          $("#user_country_code").val(this.countryCode);
+        }
+      },
+      computed: {
+        phone() {
+          return this.phoneData.phoneNumber ? this.phoneData.formatNational : this.phoneNumber
+        },
+        code() {
+          return this.phoneData.phoneNumber ? this.phoneData.countryCode : this.countryCode
+        }
+      },
+      template: `<li class='string input required stringish' id='user_phone_number_input_tel'><label for='user_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+    });
+  }
+
   // facility form phone_number_tab
   if ($("#f_phone_number-tab").is(":visible"))
   {
@@ -201,8 +258,7 @@ jQuery(function($) {
           $("#facility_phone_number").val(ph_number);
         },
         countryCode(value) {
-          var code = this.error ? '' : this.countryCode;
-          $("#facility_country_code").val(code);
+          $("#facility_country_code").val(this.countryCode);
         }
       },
       computed: {
@@ -216,6 +272,29 @@ jQuery(function($) {
       template: `<li class='string input required stringish' id='facility_phone_number_input_tel'><label for='facility_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
+
+  // task form slider tab
+  if ($("#progress_slider-tab").is(":visible"))
+      {
+        Vue.component('vue-slide-bar', vueSlideBar)
+        var slider = new Vue({
+          el: "#progress_slider-tab",
+          data() {
+            return {
+              progress: 0
+            }
+          },
+          mounted() {
+            this.progress = $("#task_progress").val() || 0
+          },
+          watch: {
+            progress(value) {
+              $("#task_progress").val(value)
+            }
+          },
+          template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
+        });
+      }
 
   // settings page
   if ($("#settings_container").is(":visible"))
