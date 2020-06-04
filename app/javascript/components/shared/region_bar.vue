@@ -99,7 +99,7 @@
         width: 15px;
       }
       .region-name {
-        word-break: break-all;
+        word-break: break-word;
         width: 15vw;
       }
     }

@@ -294,7 +294,7 @@
 
 <style lang="scss" scoped>
   .f-head {
-    word-break: break-all;
+    word-break: break-word;
     text-overflow: ellipsis;
   }
   .f-notes {
