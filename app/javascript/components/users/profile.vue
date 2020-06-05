@@ -85,8 +85,9 @@
           </div>
         </div>
       </div>
-      <div class="form-group row d-flex justify-content-end">
-        <button class="btn btn-sm btn-primary m-3" :disabled="!enableEdit">Update</button>
+      <div class="form-group row d-flex justify-content-end mx-1 my-4">
+        <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
+        <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
       </div>
     </form>
   </div>
@@ -157,10 +158,14 @@
         http.post('/profile.json', {profile: data})
           .then((res) => {
             console.log("profile-updated")
+            this.gotoDashboard()
           })
           .catch((err) => {
             console.log(err)
           })
+      },
+      gotoDashboard() {
+        window.location.pathname = "/dashboard"
       }
     },
     computed: {

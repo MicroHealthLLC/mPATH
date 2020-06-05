@@ -21,10 +21,11 @@
     </div>
     <div v-else>
       <div class="d-flex justify-content-end">
-        <button class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
+        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
       </div>
       <div class="mt-1">
         <issue-show
+          v-if="facility.issues.length > 0"
           v-for="issue in facility.issues"
           :key="issue.id"
           :issue="issue"
@@ -32,6 +33,7 @@
           @issue-edited="issueEdited"
           @issue-deleted="issueDeleted"
         />
+        <p v-else class="text-danger">No issues listed..</p>
       </div>
     </div>
   </div>
@@ -119,6 +121,11 @@
       issueEdited(issue) {
         this.currentIssue = issue
         this.newIssue = true
+      }
+    },
+    computed: {
+      _isallowed() {
+        return ["admin", "subscriber"].includes(this.$currentUser.role)
       }
     }
   }

@@ -221,7 +221,7 @@ const moment = extendMoment(Moment)
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility', 'dueDate', 'taskType', 'progress'],
+  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility', 'dueDate', 'taskType', 'progress', 'issueType', 'issueStatus', 'issueSeverity'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -288,6 +288,21 @@ export default {
             }
             case "taskTypeId": {
               var ids = _.map(facility.tasks, 'taskTypeId')
+              valid = valid && ids.includes(f[k])
+              break
+            }
+            case "issueTypeId": {
+              var ids = _.map(facility.issues, 'issueTypeId')
+              valid = valid && ids.includes(f[k])
+              break
+            }
+            case "issueStatusId": {
+              var ids = _.map(facility.issues, 'issueStatusId')
+              valid = valid && ids.includes(f[k])
+              break
+            }
+            case "issueSeverityId": {
+              var ids = _.map(facility.issues, 'issueSeverityId')
               valid = valid && ids.includes(f[k])
               break
             }
@@ -569,6 +584,42 @@ export default {
           this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('id'))
         }
       }
+    },
+    issueType: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueTypeId'))
+          }
+          else {
+            this.filters.push({issueTypeId: value.id})
+          }
+        }
+      }, deep: true
+    },
+    issueStatus: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueStatusId'))
+          }
+          else {
+            this.filters.push({issueStatusId: value.id})
+          }
+        }
+      }, deep: true
+    },
+    issueSeverity: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueSeverityId'))
+          }
+          else {
+            this.filters.push({issueSeverityId: value.id})
+          }
+        }
+      }, deep: true
     },
     openSidebar(value) {
       if (!value && !this.loading) {

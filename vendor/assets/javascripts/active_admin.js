@@ -417,7 +417,7 @@ jQuery(function($) {
         openEditModal(project) {
           $("body").append('<div id="dimmer" class="ui-widget-overlay ui-front" style="z-index: 1001;"></div>');
           this.editable = true;
-          this.project = project;
+          this.project = Object.assign({}, project);
         },
         handleClose() {
           this.editable = false;
@@ -492,7 +492,7 @@ jQuery(function($) {
                 </li>
                 <li>
                   <label>Due Date</label>
-                  <input name="Due Date" class="datepicker" type="datepicker" v-model="project.due_date">
+                  <input name="Due Date" class="datepicker" type="date" v-model="project.due_date">
                 </li>
               </ul>
             </form>

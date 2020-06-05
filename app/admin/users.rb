@@ -92,7 +92,7 @@ ActiveAdmin.register User do
     "Project": Project.pluck(:name, :id)
   }} do |ids, inputs|
     notice = "Project is assigned"
-    project = Project.find_by_id(inputs[:project])
+    project = Project.find_by_id(inputs["Project"])
     if inputs['assign'] === 'assign'
       User.where(id: ids).each do |user|
         user.projects << project unless user.projects.pluck(:id).include?(project.id)

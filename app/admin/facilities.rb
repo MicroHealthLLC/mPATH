@@ -129,7 +129,7 @@ ActiveAdmin.register Facility do
     "Project": Project.pluck(:name, :id)
   }} do |ids, inputs|
     notice = "Project is assigned"
-    project = Project.find_by_id(inputs[:project])
+    project = Project.find_by_id(inputs["Project"])
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).each do |facility|
         facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
