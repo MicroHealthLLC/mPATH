@@ -1,8 +1,8 @@
 class Task < ApplicationRecord
   default_scope {order(due_date: :desc)}
 
-  delegate :project, to: :facility_project
-  delegate :facility, to: :facility_project
+  delegate :project, to: :facility_project, allow_nil: true
+  delegate :facility, to: :facility_project, allow_nil: true
 
   belongs_to :facility_project
   belongs_to :task_type

@@ -30,7 +30,7 @@ ActiveAdmin.register Task do
     end
     column :project
     column :facility do |t|
-      raw "<a href='#{edit_admin_facility_path(t.facility)}'>#{t.facility.facility_name}</a>"
+      raw "<a href='#{edit_admin_facility_path(t.facility)}'>#{t.facility.facility_name}</a>" if t.facility
     end
     actions
   end
