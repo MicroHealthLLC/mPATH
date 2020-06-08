@@ -168,28 +168,6 @@
             </template>
           </multiselect>
         </div>
-        <div class="issueSeverity-select my-3">
-          <multiselect
-            v-model="currentIssueSeverity"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Issue Severity"
-            :options="DV_issueSeverities"
-            :searchable="false"
-            :multiple="true"
-            :max="1"
-            select-label="Select"
-            deselect-Label="Remove"
-            @select="updateIssueSeverityFilter"
-            @remove="removeIssueSeverityFilter"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
         <div class="issueStatus-select my-3">
           <multiselect
             v-model="currentIssueStatus"
@@ -204,6 +182,28 @@
             deselect-Label="Remove"
             @select="updateIssueStatusFilter"
             @remove="removeIssueStatusFilter"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="issueSeverity-select my-3">
+          <multiselect
+            v-model="currentIssueSeverity"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Issue Severity"
+            :options="DV_issueSeverities"
+            :searchable="false"
+            :multiple="true"
+            :max="1"
+            select-label="Select"
+            deselect-Label="Remove"
+            @select="updateIssueSeverityFilter"
+            @remove="removeIssueSeverityFilter"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
