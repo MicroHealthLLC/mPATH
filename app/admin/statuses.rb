@@ -1,5 +1,5 @@
 ActiveAdmin.register Status do
-  menu priority: 8
+  menu priority: 7
   actions :all, except: [:show]
 
   permit_params do
