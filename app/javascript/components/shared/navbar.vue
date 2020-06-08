@@ -25,6 +25,28 @@
             </template>
           </multiselect>
         </div>
+        <div class="facilitygroup-select my-3">
+          <multiselect
+            v-model="currentFacilityGroup"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Facility Group"
+            :options="DV_facilityGroups"
+            :multiple="true"
+            :max="1"
+            select-label="Select"
+            deselect-Label="Remove"
+            :searchable="false"
+            @select="updateFacilityGroupFilter"
+            @remove="removeFacilityGroupFilter"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
         <div class="facilityname-search my-3">
           <multiselect
             placeholder="Search by Facility Name"
@@ -101,28 +123,6 @@
             placeholder="Due Date Range"
             range
           />
-        </div>
-        <div class="facilitygroup-select my-3">
-          <multiselect
-            v-model="currentFacilityGroup"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Facility Group"
-            :options="DV_facilityGroups"
-            :multiple="true"
-            :max="1"
-            select-label="Select"
-            deselect-Label="Remove"
-            :searchable="false"
-            @select="updateFacilityGroupFilter"
-            @remove="removeFacilityGroupFilter"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
         </div>
         <div class="tasktype-select my-3">
           <multiselect
