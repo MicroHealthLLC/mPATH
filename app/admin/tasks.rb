@@ -22,7 +22,7 @@ ActiveAdmin.register Task do
     column :start_date
     column :due_date
     column :progress
-    column :notes
+    column "Description", :notes
     column "Files" do |task|
       task.task_files.map do |file|
         raw "<a href='#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}' target='_blank'>#{file.blob.filename}</a>"
