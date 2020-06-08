@@ -1,5 +1,5 @@
 ActiveAdmin.register Task do
-  menu priority: 7
+  menu priority: 8
   actions :all, except: [:show, :new]
 
   permit_params do
