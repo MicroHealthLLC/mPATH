@@ -33,8 +33,8 @@
           @issue-edited="issueEdited"
           @issue-deleted="issueDeleted"
         />
-        <p v-else class="text-danger">No Issues Listed..</p>
       </div>
+      <div v-show="facility.issues.length <= 0" class="text-danger ml-3">No Issues Found..</div>
     </div>
   </div>
 </template>
