@@ -33,7 +33,7 @@
                     input-class="form-control form-control-sm"
                     v-model="DV_facility.dueDate"
                     @input="onChange"
-                    placeholder="Due date"
+                    placeholder="Due Date"
                     :disabled="!_isallowed || !DV_facility.statusId"
                   />
                 </p>
