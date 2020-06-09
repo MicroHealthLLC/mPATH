@@ -29,8 +29,8 @@ ActiveAdmin.register Task do
       end
     end
     column :project
-    column :facility do |t|
-      raw "<a href='#{edit_admin_facility_path(t.facility)}'>#{t.facility.facility_name}</a>" if t.facility
+    column :facility do |task|
+      raw "<a href='#{edit_admin_facility_path(task.facility)}'>#{task.facility.facility_name}</a>" if task.facility.present?
     end
     actions
   end

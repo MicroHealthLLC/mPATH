@@ -1,9 +1,6 @@
 class Task < ApplicationRecord
   default_scope {order(due_date: :desc)}
 
-  delegate :project, to: :facility_project, allow_nil: true
-  delegate :facility, to: :facility_project, allow_nil: true
-
   belongs_to :facility_project
   belongs_to :task_type
   has_many_attached :task_files, dependent: :destroy
@@ -35,8 +32,16 @@ class Task < ApplicationRecord
     self.facility_project.try(:project_id)
   end
 
+  def project
+    self.facility_project.try(:project)
+  end
+
   def facility_id
     self.facility_project.try(:facility_id)
+  end
+
+  def facility
+    self.facility_project.try(:facility)
   end
 
 end
