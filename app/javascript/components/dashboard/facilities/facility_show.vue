@@ -114,7 +114,7 @@
                 @note-deleted="noteDeleted"
               />
             </div>
-            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
+            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No Notes Found..</div>
           </div>
         </tab>
         <tab title="Tasks" key="tasks">
