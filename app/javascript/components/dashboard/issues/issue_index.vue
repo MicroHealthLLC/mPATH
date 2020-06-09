@@ -21,7 +21,7 @@
     </div>
     <div v-else>
       <div class="d-flex justify-content-end">
-        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
+        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an Issue</button>
       </div>
       <div class="mt-1">
         <issue-show
