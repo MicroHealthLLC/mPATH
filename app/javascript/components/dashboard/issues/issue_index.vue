@@ -33,7 +33,7 @@
           @issue-edited="issueEdited"
           @issue-deleted="issueDeleted"
         />
-        <p v-else class="text-danger">No issues listed..</p>
+        <p v-else class="text-danger">No Issues Listed..</p>
       </div>
     </div>
   </div>
