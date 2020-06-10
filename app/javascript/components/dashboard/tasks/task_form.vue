@@ -66,7 +66,7 @@
           input-class="form-control form-control-sm"
           v-model="DV_task.dueDate"
           :disabled-dates="disabledDueDates"
-          placeholder="Due date"
+          placeholder="Due Date"
           name="Due Date"
           :disabled="DV_task.startDate === ''"
         />
