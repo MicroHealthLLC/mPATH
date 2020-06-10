@@ -61,10 +61,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="font-sm d-flex col-md-9">
-            <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
-            <p>{{task.notes || 'Description'}}</p>
-          </div>
           <div class="col-md-3 mt-2">
             <span v-for="file in task.attachFiles">
               <span class="fbody-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
