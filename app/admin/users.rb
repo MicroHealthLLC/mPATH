@@ -31,11 +31,9 @@ ActiveAdmin.register User do
           f.input :title
           f.input :first_name
           f.input :last_name
-          f.input :email, input_html: { disabled: user.id? }
-          if user.id.nil?
-            f.input :password, input_html: { disabled: user.id? }
-            f.input :password_confirmation, input_html: { disabled: user.id? }
-          end
+          f.input :email, input_html: { disabled: user.id?, :'data-id' => user.id }
+          f.input :password, input_html: { disabled: user.id? }
+          f.input :password_confirmation, input_html: { disabled: user.id? }
           f.input :role, include_blank: false, include_hidden: false
           f.input :phone_number
           f.input :country_code
@@ -47,6 +45,8 @@ ActiveAdmin.register User do
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
         end
+
+        div id: 'user-password__tab'
 
         # if user.subscriber?
           f.inputs 'Role Privileges', id: '__privileges' do
@@ -114,7 +114,7 @@ ActiveAdmin.register User do
 
     def create
       if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+        privileges = params["user"]["privileges_collection"].compact.split(" ").flatten.join(", ")
         params["user"].merge!({"privileges": privileges})
       end
       super
@@ -122,7 +122,7 @@ ActiveAdmin.register User do
 
     def update
       if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].compact.split("").flatten.join(", ")
+        privileges = params["user"]["privileges_collection"].compact.split(" ").flatten.join(", ")
         params["user"].merge!({"privileges": privileges})
       end
       super

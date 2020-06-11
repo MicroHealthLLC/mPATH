@@ -20,20 +20,44 @@
       />
     </div>
     <div v-else>
-      <div class="d-flex justify-content-end">
-        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an Issue</button>
+      <div class="d-flex justify-content-between">
+        <div class="issue-filters ml-2 d-flex justify-content-between align-items-center" :class="{'w-70': _isallowed, 'w-100': !_isallowed }">
+          <select
+            name="Issue Type"
+            class="form-control form-control-sm"
+            v-model="filters.issueType"
+            >
+            <option selected value="">Filter by Issue Type</option>
+            <option v-for="opt in DV_issueTypes" :value="opt.id">
+              {{opt.name}}
+            </option>
+          </select>
+          <select
+            name="Issue Severity"
+            class="form-control form-control-sm ml-2"
+            v-model="filters.issueSeverity"
+            >
+            <option selected value="">Filter by Issue Severity</option>
+            <option v-for="opt in DV_issueSeverities" :value="opt.id">
+              {{opt.name}}
+            </option>
+          </select>
+        </div>
+        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
       </div>
       <div class="mt-1">
-        <issue-show
-          v-if="facility.issues.length > 0"
-          v-for="issue in facility.issues"
-          :key="issue.id"
-          :issue="issue"
-          :facility="facility"
-          @issue-edited="issueEdited"
-          @issue-deleted="issueDeleted"
-        />
-        <p v-else class="text-danger">No Issues Listed..</p>
+        <hr>
+        <div v-if="filteredIssues.length > 0">
+          <issue-show
+            v-for="issue in filteredIssues"
+            :key="issue.id"
+            :issue="issue"
+            :facility="facility"
+            @issue-edited="issueEdited"
+            @issue-deleted="issueDeleted"
+          />
+        </div>
+        <p v-else class="text-danger ml-2">No issues listed..</p>
       </div>
     </div>
   </div>
@@ -56,7 +80,11 @@
         DV_issueTypes: [],
         DV_issueSeverities: [],
         DV_issueStatuses: [],
-        currentIssue: null
+        currentIssue: null,
+        filters: {
+          issueType: '',
+          issueSeverity: ''
+        }
       }
     },
     mounted() {
@@ -126,6 +154,14 @@
     computed: {
       _isallowed() {
         return ["admin", "subscriber"].includes(this.$currentUser.role)
+      },
+      filteredIssues() {
+        return _.filter(this.facility.issues, ((issue) => {
+          let valid = true
+          if (this.filters.issueType) valid = valid && issue.issueTypeId == this.filters.issueType
+          if (this.filters.issueSeverity) valid = valid && issue.issueSeverityId == this.filters.issueSeverity
+          return valid;
+        }))
       }
     }
   }

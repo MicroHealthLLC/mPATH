@@ -43,12 +43,12 @@
               {{new Date(issue.dueDate).toLocaleDateString()}}
             </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-12 font-sm d-flex">
               <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
               <p>{{issue.description || 'Description'}}</p>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

@@ -111,6 +111,38 @@
                   </div>
                 </div>
               </div>
+              <br>
+              <div class="text-info font-weight-bold text-center">Task Types</div>
+              <div v-for="(_task, s) in currentTaskTypes">
+                <div class="row">
+                  <div class="col-md-9">
+                    <span> {{s.replace('null', 'N/A')}}</span>
+                    <span class="badge badge-secondary badge-pill">{{_task.length}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_task.length, currentTasks.length) <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${getAverage(_task.length, currentTasks.length)}%`">{{getAverage(_task.length, currentTasks.length)}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="my-1">
+              <h5 class="text-center">{{currentIssues.length}} Issues</h5>
+              <div v-for="(_issue, s) in currentIssueTypes">
+                <div class="row">
+                  <div class="col-md-9">
+                    <span> {{s.replace('null', 'N/A')}}</span>
+                    <span class="badge badge-secondary badge-pill">{{_issue.length}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_issue.length, currentIssues.length) <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${getAverage(_issue.length, currentIssues.length)}%`">{{getAverage(_issue.length, currentIssues.length)}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
             <hr>
             <div>
@@ -337,6 +369,15 @@ export default {
     currentTasks() {
       return _.flatten(_.map(this.filteredFacilities, 'tasks'))
     },
+    currentIssues() {
+      return _.flatten(_.map(this.filteredFacilities, 'issues'))
+    },
+    currentTaskTypes() {
+      return _.groupBy(this.currentTasks, 'taskType')
+    },
+    currentIssueTypes() {
+      return _.groupBy(this.currentIssues, 'issueType')
+    },
     completedTasks() {
       var tasks = this.currentTasks
       var completed = _.filter(tasks, (t) => t && t.progress && t.progress == 100)
@@ -528,7 +569,7 @@ export default {
     dueDate: {
       handler: function(value) {
         if (value) {
-          if (value == null || value.includes(null)) {
+          if (value.includes(null)) {
             this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('dueDate'))
           }
           else {

@@ -13,8 +13,8 @@
           </option>
         </select>
       </div>
-      <div v-if="permitted" class="new-tasks-btn">
-        <a class="btn fav-btn" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
+      <div v-if="permitted" class="new-tasks-btn mr-2">
+        <a class="btn btn-sm btn-light" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
       </div>
     </div>
     <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
@@ -61,11 +61,11 @@
           </div>
         </div>
         <div class="row">
-          <div class="font-sm d-flex col-md-9">
-            <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
-            <p>{{task.notes || 'Description'}}</p>
+          <div class="font-sm d-flex col-md-8">
+            <!-- <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
+            <p>{{task.notes || 'Description'}}</p> -->
           </div>
-          <div class="col-md-3 mt-2">
+          <div class="col-md-4 mt-2">
             <span v-for="file in task.attachFiles">
               <span class="fbody-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
                 <i class="fas fa-file-alt"></i>
@@ -75,7 +75,7 @@
         </div>
       </li>
     </ul>
-    <p v-else class="text-danger m-3">No Tasks Found..</p>
+    <p v-else class="text-danger m-3">No Tasks found..</p>
   </div>
 </template>
 

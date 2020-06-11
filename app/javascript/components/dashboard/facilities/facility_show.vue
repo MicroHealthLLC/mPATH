@@ -96,14 +96,14 @@
               />
             </div>
             <div v-else class="mb-4 d-flex mx-2" :class="{'align-items-center justify-content-between': _isallowed}">
-              <div v-if="_isallowed">
-                <button @click.stop="newNote = true" class="btn badge badge-pill badge-secondary">Add Note</button>
-              </div>
               <div class="input-group" :class="{'search-tab': _isallowed}">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
                 </div>
                 <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
+              </div>
+              <div v-if="_isallowed">
+                <button @click.stop="newNote = true" class="btn btn-sm btn-light">Add Note</button>
               </div>
             </div>
             <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
@@ -114,7 +114,7 @@
                 @note-deleted="noteDeleted"
               />
             </div>
-            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No Notes Found..</div>
+            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
           </div>
         </tab>
         <tab title="Tasks" key="tasks">

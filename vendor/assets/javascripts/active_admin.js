@@ -275,26 +275,26 @@ jQuery(function($) {
 
   // task form slider tab
   if ($("#progress_slider-tab").is(":visible"))
-      {
-        Vue.component('vue-slide-bar', vueSlideBar)
-        var slider = new Vue({
-          el: "#progress_slider-tab",
-          data() {
-            return {
-              progress: 0
-            }
-          },
-          mounted() {
-            this.progress = $("#task_progress").val() || 0
-          },
-          watch: {
-            progress(value) {
-              $("#task_progress").val(value)
-            }
-          },
-          template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
-        });
-      }
+  {
+    Vue.component('vue-slide-bar', vueSlideBar)
+    var slider = new Vue({
+      el: "#progress_slider-tab",
+      data() {
+        return {
+          progress: 0
+        }
+      },
+      mounted() {
+        this.progress = $("#task_progress").val() || 0
+      },
+      watch: {
+        progress(value) {
+          $("#task_progress").val(value)
+        }
+      },
+      template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
+    });
+  }
 
   // settings page
   if ($("#settings_container").is(":visible"))
@@ -513,7 +513,7 @@ jQuery(function($) {
   {
     var previliges = $("input#user_privileges").val();
     previliges.split(",").map(p => {
-      if (p) $(`input[value=${p}]`).prop("checked", true);
+      if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
     });
   }
 
@@ -578,4 +578,98 @@ jQuery(function($) {
     })
   }());
 
+  // password generator tab
+  if ($("#user-password__tab").is(":visible"))
+  {
+    var settings = new Vue({
+      el: "#user-password__tab",
+      data() {
+        return {
+          password: '',
+          confirm_password: '',
+          range: 12,
+          uppercase: true,
+          lowercase: true,
+          numbers: true,
+          special_chars: true
+        }
+      },
+      mounted() {
+        var user_id = $("#user_email").data().id
+        if (!user_id) this.generatePassword()
+      },
+      methods: {
+        generatePassword() {
+          var chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+          var pass = "";
+          if (this.uppercase || this.lowercase || this.numbers || this.special_chars)
+          {
+            chars = "";
+            if (this.uppercase) chars = chars + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (this.numbers) chars = chars + "1234567890"
+            if (this.special_chars) chars = chars + "!@#$%^&*()";
+            if (this.lowercase) chars = chars + "abcdefghijklmnopqrstuvwxyz";
+            for (var i=0; i<Number(this.range); i++) {
+              pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+          }
+          else {
+            var pass = chars;
+          }
+          this.password = pass;
+        },
+        copyPassword() {
+          var copyText = document.getElementById("__password");
+          copyText.select();
+          copyText.setSelectionRange(0, 99999);
+          document.execCommand("copy");
+        }
+      },
+      watch: {
+        password(value) {
+          $("#user_password").val(value);
+          $("#user_password_confirmation").val(value);
+        }
+      },
+      template: `<div id="pass-word-generator-tab" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
+        <fieldset class="inputs">
+          <legend><span>Password Generator</span></legend>
+          <ol>
+            <li class="string input optional stringish">
+              <label class="label">Password</label>
+              <input id="__password" maxlength="25" type="text" v-model="password" readOnly="true">
+              <input maxlength="25" v-model="confirm_password" type="hidden">
+            </li>
+            <li>
+              <div class="ml-20">
+                <a href="javascript:;" @click.prevent="generatePassword">Regenerate Password</a>
+                <a href="javascript:;" style="margin-left: 20px" @click.prevent="copyPassword">Copy Password</a>
+              </div>
+            </li>
+          </ol>
+          <fieldset class="choices ml-20 p-5">
+            <legend class="label"><label>Password Strength</label></legend>
+            <ol class="choices-group">
+              <li class="choice">
+                <label>Length ({{range}})</label>
+                <input type="range" v-model="range" min="8" max="25">
+              </li>
+              <li class="choice">
+                <label><input type="checkbox" v-model="uppercase">A-Z</label>
+              </li>
+              <li class="choice">
+                <label><input type="checkbox" v-model="lowercase">a-z</label>
+              </li>
+              <li class="choice">
+                <label><input type="checkbox" v-model="numbers">0-9</label>
+              </li>
+              <li class="choice">
+                <label><input type="checkbox" v-model="special_chars">!@#$%^&*</label>
+              </li>
+            </ol>
+          </fieldset>
+        </fieldset>
+      </div>`
+    });
+  }
 });

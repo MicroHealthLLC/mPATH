@@ -344,7 +344,7 @@
         this.currentTaskType = null
         this.currentFacilityGroup = null
         this.currentProgress = null
-        this.dueDateRange = null
+        this.dueDateRange = [null]
         this.selectedFacility = null
         this.$emit('clear-filters', {id: 'sa'})
       }
@@ -445,6 +445,24 @@
   }
   .duedate-range /deep/ .mx-datepicker-range {
     width: 280px;
+    .mx-input {
+      display: inline-block;
+      box-sizing: border-box;
+      box-shadow: none;
+      width: 100%;
+      height: 40px;
+      padding: 6px 30px;
+      padding-left: 8px;
+      line-height: 1.4;
+      background-color: #fff;
+      border-radius: 4px;
+      min-height: 40px;
+      border: 1px solid #e8e8e8;
+      font-size: 14px;
+      &::placeholder {
+        color: #adadad;
+      }
+    }
   }
   .knocker {
     cursor: pointer;
