@@ -10,7 +10,7 @@
       v-if="showErrors"
       class="text-danger mb-3"
       >
-      Please fill the required feilds before submitting
+      Please fill the required fields before submitting
     </div>
     <div class="form-group mx-4">
       <label class="font-sm">Name:</label>
@@ -66,7 +66,7 @@
           input-class="form-control form-control-sm"
           v-model="DV_task.dueDate"
           :disabled-dates="disabledDueDates"
-          placeholder="Due date"
+          placeholder="Due Date"
           name="Due Date"
           :disabled="DV_task.startDate === ''"
         />

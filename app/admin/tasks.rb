@@ -47,6 +47,7 @@ ActiveAdmin.register Task do
       f.input :due_date, as: :datepicker
       f.input :progress
       div id: 'progress_slider-tab'
+      f.input :notes, label: 'Description'
       f.input :task_files, as: :file, input_html: { multiple: true }
       f.input :notes, label: 'Description'
     end
