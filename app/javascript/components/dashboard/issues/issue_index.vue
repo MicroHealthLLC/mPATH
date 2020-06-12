@@ -43,7 +43,7 @@
             </option>
           </select>
         </div>
-        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an issue</button>
+        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an Issue</button>
       </div>
       <div class="mt-1">
         <hr>
@@ -57,7 +57,7 @@
             @issue-deleted="issueDeleted"
           />
         </div>
-        <p v-else class="text-danger ml-2">No issues listed..</p>
+        <p v-else class="text-danger ml-2">No issues found..</p>
       </div>
     </div>
   </div>
