@@ -23,8 +23,11 @@ ActiveAdmin.register Project do
     selectable_column
     column :name
     column :description
-    column :project_type
+    column :project_type, nil, sortable: 'project_types.name' do |project|
+      raw "<a href='#{edit_admin_project_type_path(project.project_type)}'>#{project.project_type.name}</a>" if project.project_type.present?
+    end
     column "State", :status
+
     actions
   end
 
@@ -109,5 +112,9 @@ ActiveAdmin.register Project do
       end
     end
 
+    def scoped_collection
+      super.includes(:project_type)
+    end
   end
+
 end

@@ -83,6 +83,19 @@
       />
     </div>
     <div class="form-group mx-4">
+      <label class="font-sm">Checklists:</label>
+      <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+      <div v-if="DV_task.checklists.length > 0">
+        <div v-for="(check, index) in DV_task.checklists" class="d-flex">
+          <label class="form-control" :key="index">
+            <input type="checkbox" v-model="check.checked" :key="`check_${index}`">
+            <input v-model="check.text" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+          </label>
+        </div>
+      </div>
+      <p v-else class="text-danger font-sm">No checks..</p>
+    </div>
+    <div class="form-group mx-4">
       <label class="font-sm">Description:</label>
       <textarea
         class="form-control"
@@ -95,7 +108,7 @@
       <div class="input-group mb-2">
         <div v-for="file in DV_task.taskFiles" class="d-flex mb-2 w-100">
           <div class="input-group-prepend">
-            <div class="input-group-text">
+            <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
               <i class="fas fa-file-image"></i>
             </div>
           </div>
@@ -103,7 +116,7 @@
             readonly
             type="text"
             class="form-control form-control-sm"
-            :value="file.uri || file.name"
+            :value="file.name || file.uri"
           />
           <button
             class="btn btn-danger btn-sm d-flex flex-row-reverse"
@@ -154,7 +167,8 @@
           taskTypeId: '',
           notes: '',
           progress: 0,
-          taskFiles: []
+          taskFiles: [],
+          checklists: []
         },
         _ismounted: false,
         showErrors: false
@@ -219,6 +233,13 @@
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[notes]', this.DV_task.notes)
 
+          for (var i in this.DV_task.checklists) {
+            var check = this.DV_task.checklists[i]
+            for (var key in check) {
+              formData.append(`task[checklists_attributes][${i}][${key}]`, check[key])
+            }
+          }
+
           for (var file of this.DV_task.taskFiles) {
             if (!file.id) {
               formData.append('task[task_files][]', file)
@@ -250,6 +271,13 @@
             console.log(err)
           })
         })
+      },
+      addChecks() {
+        this.DV_task.checklists.push({text: '', checked: false})
+      },
+      downloadFile(file) {
+        let url = window.location.origin + file.uri
+        window.open(url, '_blank');
       }
     },
     computed: {
@@ -294,6 +322,12 @@
   .title {
     font-size: 15px;
     margin-left: 65px;
+  }
+  .checklist-text {
+    margin-left: 5px;
+    border: 0;
+    width: 92%;
+    outline: none;
   }
   .vdp-datepicker /deep/ {
     .form-control[readonly] {

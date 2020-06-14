@@ -274,3 +274,10 @@ input[type=button]:focus {
 .w-70 {
   width: 70%;
 }
+.clickable {
+  cursor: pointer;
+}
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -675,12 +675,12 @@ export default {
 
 <style scoped lang="scss">
   #map-wrap {
-    height: calc(100vh - 90px);
+    height: calc(100vh - 60px);
     width: 69vw;
   }
   #rollup-sidebar {
     > div {
-      height: calc(100vh - 90px);
+      height: calc(100vh - 60px);
       overflow: auto;
     }
     position: absolute;
@@ -688,7 +688,7 @@ export default {
   }
   #map-sidebar {
     z-index: 800;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 60px);
     overflow: auto;
     background: white;
     padding: 10px;

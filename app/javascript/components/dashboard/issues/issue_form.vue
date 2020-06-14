@@ -99,7 +99,7 @@
           input-class="form-control form-control-sm"
           v-model="DV_issue.dueDate"
           :disabled-dates="disabledDueDates"
-          placeholder="Due Date"
+          placeholder="Due date"
           name="Due Date"
           :disabled="DV_issue.startDate === ''"
         />

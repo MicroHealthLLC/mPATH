@@ -224,7 +224,7 @@
 <style lang="scss" scoped>
   #dash-wrap {
     padding-top: 1px;
-    height: calc(100vh - 90px);
+    height: calc(100vh - 60px);
     width: 100%;
     display: flex;
     flex-wrap: wrap;

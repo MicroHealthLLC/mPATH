@@ -75,7 +75,7 @@
         </div>
       </li>
     </ul>
-    <p v-else class="text-danger m-3">No Tasks found..</p>
+    <p v-else class="text-danger m-3">No tasks found..</p>
   </div>
 </template>
 

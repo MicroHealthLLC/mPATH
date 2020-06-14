@@ -2,6 +2,14 @@ ActiveAdmin.register User do
   menu priority: 2
   actions :all, except: [:show]
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Users', admin_users_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(user.email, edit_admin_user_path)
+    end
+    links
+  end
+
   permit_params do
     permitted = [
       :email,

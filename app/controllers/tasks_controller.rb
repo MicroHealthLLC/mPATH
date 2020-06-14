@@ -51,7 +51,13 @@ class TasksController < AuthenticatedController
       :start_date,
       :notes,
       :progress,
-      task_files: []
+      task_files: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :checked
+      ]
     )
   end
 

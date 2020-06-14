@@ -2,6 +2,14 @@ ActiveAdmin.register Facility do
   menu priority: 6
   actions :all, except: [:show]
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Facilities', admin_facilities_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(facility.facility_name, edit_admin_facility_path)
+    end
+    links
+  end
+
   permit_params do
     permitted = [
       :facility_name,
@@ -33,7 +41,9 @@ ActiveAdmin.register Facility do
     column :point_of_contact
     column :email
     column :phone_number
-    column :facility_group
+    column :facility_group, nil, sortable: 'facility_groups.name' do |facility|
+      raw "<a href='#{edit_admin_facility_group_path(facility.facility_group)}'>#{facility.facility_group.name}</a>" if facility.facility_group.present?
+    end
     column "State", :status
     column(:projects) { |facility| facility.projects.active }
     actions
@@ -197,6 +207,10 @@ ActiveAdmin.register Facility do
       super do |format|
         format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
       end
+    end
+
+    def scoped_collection
+      super.includes(:facility_group)
     end
   end
 
