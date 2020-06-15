@@ -65,13 +65,6 @@
             <!-- <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
             <p>{{task.notes || 'Description'}}</p> -->
           </div>
-          <div class="col-md-4 mt-2">
-            <span v-for="file in task.attachFiles">
-              <span class="fbody-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
-                <i class="fas fa-file-alt"></i>
-              </span>
-            </span>
-          </div>
         </div>
       </li>
     </ul>
@@ -104,10 +97,6 @@
         if (!confirm) return;
 
         this.$emit('delete-task', task)
-      },
-      downloadFile(file) {
-        let url = window.location.origin + file.uri
-        window.open(url, '_blank');
       }
     },
     computed: {
