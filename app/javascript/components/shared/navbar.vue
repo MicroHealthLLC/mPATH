@@ -1,7 +1,7 @@
 <template>
   <div id="filterbar" :style="filterBarStyle">
     <div id="filter_bar" class="shadow-sm">
-      <div class="text-center my-3">
+      <div class="text-center my-3 filter-header">
         <h5 class="mb-4">Filter Map</h5>
         <button class="btn btn-sm btn-link clear_btn" @click.prevent="onClearFilter">clear</button>
       </div>
@@ -20,7 +20,7 @@
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+                <span class='select__tag-name selected-opt'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
@@ -146,6 +146,28 @@
             </template>
           </multiselect>
         </div>
+        <div class="taskProgress-select my-3">
+          <multiselect
+            v-model="currentTaskProgress"
+            track-by="name"
+            label="name"
+            placeholder="Task % Progress Range"
+            :options="DV_taskProgressRanges"
+            :searchable="false"
+            :multiple="true"
+            :max="1"
+            select-label="Select"
+            deselect-Label="Remove"
+            @select="updateTaskProgressFilter"
+            @remove="removeTaskProgressFilter"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
         <div class="issetype-select my-3">
           <multiselect
             v-model="currentIssueType"
@@ -168,20 +190,20 @@
             </template>
           </multiselect>
         </div>
-        <div class="issueStatus-select my-3">
+        <div class="issueProgress-select my-3">
           <multiselect
-            v-model="currentIssueStatus"
+            v-model="currentIssueProgress"
             track-by="name"
             label="name"
-            placeholder="Filter by Issue Status"
-            :options="DV_issueStatuses"
+            placeholder="Issue % Progress Range"
+            :options="DV_issueProgressRanges"
             :searchable="false"
             :multiple="true"
             :max="1"
             select-label="Select"
             deselect-Label="Remove"
-            @select="updateIssueStatusFilter"
-            @remove="removeIssueStatusFilter"
+            @select="updateIssueProgressFilter"
+            @remove="removeIssueProgressFilter"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -223,7 +245,7 @@
 <script>
   export default {
     name: 'Navbar',
-    props: ['projects', 'statuses', 'facilityGroups', 'taskTypes', 'issueTypes', 'issueSeverities', 'issueStatuses'],
+    props: ['projects', 'statuses', 'facilityGroups', 'taskTypes', 'issueTypes', 'issueSeverities'],
     data() {
       return {
         isLoading: false,
@@ -237,28 +259,18 @@
         dueDateRange: null,
         currentIssueType: null,
         currentIssueSeverity: null,
-        currentIssueStatus: null,
+        currentIssueProgress: null,
+        currentTaskProgress: null,
         facilities: [],
         DV_statuses: this.statuses,
         DV_taskTypes: this.taskTypes,
         DV_issueTypes: this.issueTypes,
         DV_issueSeverities: this.issueSeverities,
-        DV_issueStatuses: this.issueStatuses,
         DV_facilityGroups: this.facilityGroups,
         DV_projects: this.projects,
-        DV_progressRanges: [
-          { name: '0', value: '0'},
-          { name: '11-20', value: '11-20'},
-          { name: '21-30', value: '21-30'},
-          { name: '31-40', value: '31-40'},
-          { name: '41-50', value: '41-50'},
-          { name: '51-60', value: '51-60'},
-          { name: '61-70', value: '61-70'},
-          { name: '71-80', value: '71-80'},
-          { name: '81-90', value: '81-90'},
-          { name: '91-99', value: '91-99'},
-          { name: '100', value: '100'}
-        ]
+        DV_progressRanges: this.progressRanges(),
+        DV_issueProgressRanges: this.progressRanges(),
+        DV_taskProgressRanges: this.progressRanges()
       }
     },
     mounted() {
@@ -279,6 +291,21 @@
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
         // this.$router.push({name: 'ProjectDashboard', params: {projectId: selected.id} })
+      },
+      progressRanges() {
+        return [
+          { name: '0', value: '0'},
+          { name: '11-20', value: '11-20'},
+          { name: '21-30', value: '21-30'},
+          { name: '31-40', value: '31-40'},
+          { name: '41-50', value: '41-50'},
+          { name: '51-60', value: '51-60'},
+          { name: '61-70', value: '61-70'},
+          { name: '71-80', value: '71-80'},
+          { name: '81-90', value: '81-90'},
+          { name: '91-99', value: '91-99'},
+          { name: '100', value: '100'}
+        ]
       },
       updateStatusFilter(selected, index) {
         this.$emit('on-status-change', selected)
@@ -316,11 +343,17 @@
       removeIssueSeverityFilter() {
         this.$emit('on-issueseverity-change', {id: 'sa'})
       },
-      updateIssueStatusFilter(selected, index) {
-        this.$emit('on-issuestatus-change', selected)
+      updateIssueProgressFilter(selected, index) {
+        this.$emit('on-issueprogress-change', selected)
       },
-      removeIssueStatusFilter() {
-        this.$emit('on-issuestatus-change', {id: 'sa'})
+      removeIssueProgressFilter() {
+        this.$emit('on-issueprogress-change', {id: 'sa'})
+      },
+      updateTaskProgressFilter(selected, index) {
+        this.$emit('on-taskprogress-change', selected)
+      },
+      removeTaskProgressFilter() {
+        this.$emit('on-taskprogress-change', {id: 'sa'})
       },
       addFacility() {
         if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
@@ -346,6 +379,10 @@
         this.currentProgress = null
         this.dueDateRange = [null]
         this.selectedFacility = null
+        this.currentIssueType = null
+        this.currentIssueSeverity = null
+        this.currentIssueProgress = null
+        this.currentTaskProgress = null
         this.$emit('clear-filters', {id: 'sa'})
       }
     },
@@ -383,7 +420,8 @@
   }
   .issetype-select /deep/ .multiselect,
   .issueSeverity-select /deep/ .multiselect,
-  .issueStatus-select /deep/ .multiselect,
+  .issueProgress-select /deep/ .multiselect,
+  .taskProgress-select /deep/ .multiselect,
   .tasktype-select /deep/ .multiselect,
   .progress-ranges-select /deep/ .multiselect,
   .facilityname-search /deep/ .multiselect,
@@ -424,7 +462,7 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 350px;
+      width: fit-content;
     }
     .multiselect__option {
       white-space: normal;
@@ -439,9 +477,12 @@
     opacity: 0.8;
   }
   .clear_btn {
-    position: absolute;
-    top: 8px;
-    right: 10px;
+    position: relative;
+    top: -50px;
+    left: 120px;
+  }
+  .filter-header {
+    height: 30px;
   }
   .duedate-range /deep/ .mx-datepicker-range {
     width: 280px;
@@ -483,5 +524,19 @@
       border-left: 1px solid #fff;
       border-right: 1px solid #fff;
     }
+  }
+  .selected-opt {
+    position: relative;
+    display: inline-block;
+    padding: 5px 25px 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    color: #fff;
+    line-height: 1;
+    background: #41b883;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
   }
 </style>

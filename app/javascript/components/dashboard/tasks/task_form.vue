@@ -85,12 +85,13 @@
     <div class="form-group mx-4">
       <label class="font-sm">Checklists:</label>
       <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
-      <div v-if="DV_task.checklists.length > 0">
-        <div v-for="(check, index) in DV_task.checklists" class="d-flex">
+      <div v-if="filteredChecks.length > 0">
+        <div v-for="(check, index) in DV_task.checklists" class="d-flex w-104" v-if="!check._destroy">
           <label class="form-control" :key="index">
             <input type="checkbox" v-model="check.checked" :key="`check_${index}`">
             <input v-model="check.text" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
           </label>
+          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times-circle"></i></span>
         </div>
       </div>
       <p v-else class="text-danger font-sm">No checks..</p>
@@ -176,7 +177,7 @@
     },
     mounted() {
       if (this.task) {
-        this.DV_task = this.task
+        this.DV_task = _.cloneDeep(this.task)
         this.DV_task.dueDate = new Date(this.task.dueDate)
         this.DV_task.startDate = new Date(this.task.startDate)
         this.DV_task.taskFiles = []
@@ -278,6 +279,10 @@
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
+      },
+      destroyCheck(check, index) {
+        var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
+        Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
       }
     },
     computed: {
@@ -290,6 +295,9 @@
           this.DV_task.startDate !== ''
         )
       },
+      filteredChecks() {
+        return _.filter(this.DV_task.checklists, c => !c._destroy)
+      },
       disabledStartDates() {
         return { to: this.getDate(-1) }
       },
@@ -300,7 +308,7 @@
     watch: {
       task: {
         handler: function(value) {
-          this.DV_task = value
+          this.DV_task = _.cloneDeep(value)
         },
         deep: true
       },
@@ -340,5 +348,14 @@
       height: unset;
       line-height: unset;
     }
+  }
+  .del-check {
+    position: relative;
+    top: -5px;
+    display: flex;
+    right: 10px;
+    background: #fff;
+    height: fit-content;
+    color: red;
   }
 </style>

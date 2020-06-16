@@ -8,15 +8,15 @@
         :facility-groups="activeFacilityGroups"
         :task-types="taskTypes"
         :issue-types="issueTypes"
-        :issue-statuses="issueStatuses"
         :issue-severities="issueSeverities"
         @on-facility-name-search="onFacilitySearch"
         @on-status-change="onStatusChange"
         @on-facilitygroup-change="onFacilityGroupChange"
         @on-duedate-change="onDuedateChange"
         @on-tasktype-change="onTasktypeChange"
+        @on-taskprogress-change="onTaskProgressChange"
         @on-issuetype-change="onIssuetypeChange"
-        @on-issuestatus-change="onIssuestatusChange"
+        @on-issueprogress-change="onIssueProgressChange"
         @on-issueseverity-change="onIssueseverityChange"
         @on-progress-change="onProgressChange"
         @on-filter-by-facility="onFilterByFacility"
@@ -37,7 +37,8 @@
             :progress="progress"
             :task-type="taskType"
             :issue-type="issueType"
-            :issue-status="issueStatus"
+            :issue-progress="issueProgress"
+            :task-progress="taskProgress"
             :issue-severity="issueSeverity"
             @nullify-modals="nullifyModal"
           />
@@ -68,6 +69,7 @@
         taskTypes: [],
         progress: null,
         taskType: null,
+        taskProgress: null,
         dueDate: null,
         facilityGroups: [],
         facilityGroup: null,
@@ -75,8 +77,7 @@
         filterFacility: null,
         issueTypes: [],
         issueType: null,
-        issueStatuses: [],
-        issueStatus: null,
+        issueProgress: null,
         issueSeverities: [],
         issueSeverity: null
       }
@@ -135,17 +136,6 @@
         http.get('/api/issue_types.json')
           .then((res) => {
             this.issueTypes = res.data.issueTypes
-            this.fetchIssueStatuses(cb)
-          })
-          .catch((err) => {
-            cb(err)
-            console.log(err)
-          })
-      },
-      fetchIssueStatuses(cb) {
-        http.get('/api/issue_statuses.json')
-          .then((res) => {
-            this.issueStatuses = res.data.issueStatuses
             this.fetchIssueSeverities(cb)
           })
           .catch((err) => {
@@ -191,11 +181,14 @@
       onTasktypeChange(tasktype) {
         this.taskType = tasktype
       },
+      onTaskProgressChange(progress) {
+        this.taskProgress = progress
+      },
       onIssuetypeChange(type) {
         this.issueType = type
       },
-      onIssuestatusChange(status) {
-        this.issueStatus = status
+      onIssueProgressChange(progress) {
+        this.issueProgress = progress
       },
       onIssueseverityChange(severity) {
         this.issueSeverity = severity
@@ -203,12 +196,13 @@
       onClearFilters(value) {
         this.progress = value
         this.taskType = value
+        this.taskProgress = value
         this.dueDate = null
         this.status = value
         this.facilityGroup = value
         this.filterFacility = null
         this.issueType = value
-        this.issueStatus = value
+        this.issueProgress = value
         this.issueSeverity = value
         this.$forceUpdate()
       }

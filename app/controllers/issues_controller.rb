@@ -43,7 +43,7 @@ class IssuesController < AuthenticatedController
       :description,
       :issue_type_id,
       :issue_severity_id,
-      :issue_status_id,
+      :progress,
       :start_date,
       :due_date
     )

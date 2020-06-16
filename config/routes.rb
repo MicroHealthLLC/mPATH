@@ -13,7 +13,6 @@ Rails.application.routes.draw do
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]
-    resources :issue_statuses, only: [:index]
     resources :issue_severities, only: [:index]
     resources :issue_types, only: [:index]
     get '/settings', to: 'settings#index'

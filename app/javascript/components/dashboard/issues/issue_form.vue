@@ -61,21 +61,11 @@
       </div>
     </div>
     <div class="form-group mx-4">
-      <label class="font-sm">Issue Status:</label>
-      <select
-        name="Issue Status"
-        v-validate="'required'"
-        :class="{'form-control': true, 'error': errors.has('Issue Status') }" class="form-control form-control-sm"
-        v-model="DV_issue.issueStatusId"
-        >
-        <option disabled selected value="">Issue Status</option>
-        <option v-for="opt in issueStatuses" :value="opt.id">
-          {{opt.name}}
-        </option>
-      </select>
-      <div v-show="errors.has('Issue Status')" class="text-danger">
-        {{ errors.first('Issue Status') }}
-      </div>
+      <label class="font-sm mb-0">Progress: (in %)</label>
+      <vue-slide-bar
+        v-model="DV_issue.progress"
+        :line-height="8"
+      />
     </div>
     <div class="form-row mx-3">
       <div class="form-group col-md-6">
@@ -129,15 +119,15 @@
 </template>
 
 <script>
-  import axios           from 'axios'
-  import humps           from 'humps'
-  import http            from './../../../common/http'
+  import axios from 'axios'
+  import humps from 'humps'
+  import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils           from './../../../mixins/utils'
+  import utils from './../../../mixins/utils'
 
   export default {
     name: 'TaskForm',
-    props: ['facility', 'project', 'issue', 'title', 'issueTypes', 'issueStatuses', 'issueSeverities'],
+    props: ['facility', 'project', 'issue', 'title', 'issueTypes', 'issueSeverities'],
     components: {AttachmentInput},
     mixins: [utils],
 
@@ -148,7 +138,7 @@
           startDate: '',
           dueDate: '',
           issueTypeId: '',
-          issueStatusId: '',
+          progress: 0,
           issueSeverityId: '',
           description: ''
         },
@@ -180,8 +170,8 @@
           formData.append('issue[due_date]', this.DV_issue.dueDate)
           formData.append('issue[start_date]', this.DV_issue.startDate)
           formData.append('issue[issue_type_id]', this.DV_issue.issueTypeId)
-          formData.append('issue[issue_status_id]', this.DV_issue.issueStatusId)
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
+          formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
 
           var url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues.json`
@@ -217,7 +207,6 @@
           this.DV_issue &&
           this.DV_issue.title !== '' &&
           this.DV_issue.issueTypeId !== '' &&
-          this.DV_issue.issueStatusId !== '' &&
           this.DV_issue.issueSeverityId !== '' &&
           this.DV_issue.dueDate !== '' &&
           this.DV_issue.startDate !== ''

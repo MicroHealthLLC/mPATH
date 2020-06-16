@@ -13,7 +13,6 @@
         :issue="currentIssue"
         :issue-types="DV_issueTypes"
         :issue-severities="DV_issueSeverities"
-        :issue-statuses="DV_issueStatuses"
         @issue-created="issueCreated"
         @issue-updated="issueUpdated"
         class="issue-form-modal"
@@ -44,6 +43,23 @@
           </select>
         </div>
         <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an Issue</button>
+      </div>
+      <div class="m-3">
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+          </label>
+        </div>
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+          </label>
+        </div>
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+          </label>
+        </div>
       </div>
       <div class="mt-1">
         <hr>
@@ -77,9 +93,9 @@
       return {
         loading: true,
         newIssue: false,
+        viewList: 'active',
         DV_issueTypes: [],
         DV_issueSeverities: [],
-        DV_issueStatuses: [],
         currentIssue: null,
         filters: {
           issueType: '',
@@ -97,17 +113,6 @@
           .get(`/api/issue_types.json`)
           .then((res) => {
             this.DV_issueTypes = res.data.issueTypes
-            this.fetchIssueStatuses(cb)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
-      fetchIssueStatuses(cb) {
-        http
-          .get(`/api/issue_statuses.json`)
-          .then((res) => {
-            this.DV_issueStatuses = res.data.issueStatuses
             this.fetchIssueSeverities(cb)
           })
           .catch((err) => {
@@ -156,12 +161,28 @@
         return ["admin", "subscriber"].includes(this.$currentUser.role)
       },
       filteredIssues() {
-        return _.filter(this.facility.issues, ((issue) => {
-          let valid = true
+        var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
+          let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.filters.issueType) valid = valid && issue.issueTypeId == this.filters.issueType
           if (this.filters.issueSeverity) valid = valid && issue.issueSeverityId == this.filters.issueSeverity
+          switch (this.viewList) {
+            case "active": {
+              valid = valid && issue.progress < 100
+              break
+            }
+            case "completed": {
+              valid = valid && issue.progress == 100
+              break
+            }
+            default: {
+              break
+            }
+          }
           return valid;
-        }))
+        })), ['dueDate'])
+        var futureIssues = _.filter(issues, (t => new Date(t.dueDate) >= new Date))
+        var pastIssues = _.filter(issues, (t => new Date(t.dueDate) < new Date))
+        return [...futureIssues, ...pastIssues]
       }
     }
   }

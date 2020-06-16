@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="issues_show m-3">
+  <div v-if="!loading" class="issues_show m-3 pb-2">
     <div v-if="show">
       <div v-if="_isallowed" class="crud-actions mx-3 float-right">
         <span class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
@@ -11,29 +11,28 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <div class="font-sm d-flex">
+          <div class="mb-1 d-flex">
             <span class="fbody-icon"><i class="fas fa-check"></i></span>
             {{issue.title}}
           </div>
-          <div class="row d-flex">
+          <div class="row mb-1 d-flex">
             <div class="font-sm col">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
               {{issue.issueType}}
             </div>
           </div>
-          <div class="row d-flex">
+          <div class="row mb-1 d-flex">
             <div class="font-sm col">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
               {{issue.issueSeverity}}
             </div>
-          </div>
-          <div class="row d-flex">
             <div class="font-sm col">
-              <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-              {{issue.issueStatus}}
+              <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%</div>
+              </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-1">
             <div class="font-sm col-md-6">
               <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
               {{new Date(issue.startDate).toLocaleDateString()}}

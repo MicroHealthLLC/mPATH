@@ -17,6 +17,23 @@
         <a class="btn btn-sm btn-light" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
       </div>
     </div>
+    <div class="m-3">
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+        </label>
+      </div>
+      <div class="form-check-inline">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+        </label>
+      </div>
+    </div>
     <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
       <li
         class="list-group-item mb-2"
@@ -60,10 +77,10 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="font-sm d-flex col-md-8">
-            <!-- <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
-            <p>{{task.notes || 'Description'}}</p> -->
+            <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
+            <p>{{task.notes || 'Description'}}</p>
           </div>
           <div class="col-md-4 mt-2">
             <span v-for="file in task.attachFiles">
@@ -72,7 +89,7 @@
               </span>
             </span>
           </div>
-        </div>
+        </div> -->
       </li>
     </ul>
     <p v-else class="text-danger m-3">No tasks found..</p>
@@ -89,7 +106,8 @@
         DV_project: this.project,
         filters: {
           taskType: ''
-        }
+        },
+        viewList: 'active'
       }
     },
     methods: {
@@ -104,10 +122,6 @@
         if (!confirm) return;
 
         this.$emit('delete-task', task)
-      },
-      downloadFile(file) {
-        let url = window.location.origin + file.uri
-        window.open(url, '_blank');
       }
     },
     computed: {
@@ -123,10 +137,28 @@
         return ["admin", "subscriber"].includes(this.$currentUser.role)
       },
       filteredTasks() {
-        if (this.filters.taskType) {
-          return _.filter(this.facility.tasks, (t => t.taskTypeId == this.filters.taskType))
-        }
-        return this.facility.tasks
+        var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
+          var valid = Boolean(task && task.hasOwnProperty('progress'))
+          if (this.filters.taskType) valid = valid && task.taskTypeId == this.filters.taskType
+          switch (this.viewList) {
+            case "active": {
+              valid = valid && task.progress < 100
+              break
+            }
+            case "completed": {
+              valid = valid && task.progress == 100
+              break
+            }
+            default: {
+              break
+            }
+          }
+          return valid
+        }), ['dueDate'])
+
+        var futureTasks = _.filter(tasks, (t => new Date(t.dueDate) >= new Date))
+        var pastTasks = _.filter(tasks, (t => new Date(t.dueDate) < new Date))
+        return [...futureTasks, ...pastTasks]
       }
     },
     watch: {

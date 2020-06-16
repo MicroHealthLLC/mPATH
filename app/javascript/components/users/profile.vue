@@ -30,6 +30,7 @@
         <label class="col-sm-2 col-form-label">Password <span class="font-sm text-success" @click.prevent.stop="editPass=true">(click to edit)</span></label>
         <div class="col-sm-10">
           <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off">
+          <span v-if="!C_passValidationCheck" class="font-sm text-danger">{{passError}}</span>
         </div>
       </div>
       <div class="form-group row">
@@ -114,6 +115,7 @@
           passwordConfirmation: '',
           countryCode: ''
         },
+        passError: "",
         phoneData: {},
         gmap_address: {},
         center: {lat: 40.64, lng: -74.66}
@@ -189,11 +191,35 @@
           return true
         }
       },
-      C_passValidation() {
-        return this.profile.password.length >= 10 && this.profile.password === this.profile.passwordConfirmation
+      C_passValidationCheck() {
+        var pass = this.profile.password
+        if (this.editPass) {
+          if (pass.length < 12) {
+            this.passError = "Must be atleast 12 characters"
+            return false
+          }
+          if (!(/([A-Z])/g).test(pass)) {
+            this.passError = "Must contain atleast 1 Uppercase letter"
+            return false
+          }
+          if (!(/([a-z])/g).test(pass)) {
+            this.passError = "Must contain atleast 1 Lowercase letter"
+            return false
+          }
+          if (!(/([\d])/g).test(pass)) {
+            this.passError = "Must contain atleast 1 digit"
+            return false
+          }
+          if (!(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g).test(pass)) {
+            this.passError = "Must contain atleast 1 special character"
+            return false
+          }
+        }
+        this.passError = ""
+        return true
       },
       enableEdit() {
-        return this.editPass ? this.C_passValidation : true
+        return this.editPass ? this.C_passCheck && this.C_passValidationCheck : true
       }
     },
     watch: {

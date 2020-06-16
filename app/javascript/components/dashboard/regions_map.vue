@@ -91,11 +91,11 @@
                 <div class="row">
                   <div class="col-md-9">
                     <span>Complete</span>
-                    <span class="badge badge-secondary badge-pill">{{completedTasks.count}}</span>
+                    <span class="badge badge-secondary badge-pill">{{completedTasks().count}}</span>
                   </div>
                   <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks.avg <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${completedTasks.avg}%`">{{completedTasks.avg}} %</div>
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks().avg <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${completedTasks().avg}%`">{{completedTasks().avg}} %</div>
                     </span>
                   </div>
                 </div>
@@ -120,8 +120,8 @@
                     <span class="badge badge-secondary badge-pill">{{_task.length}}</span>
                   </div>
                   <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_task.length, currentTasks.length) <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${getAverage(_task.length, currentTasks.length)}%`">{{getAverage(_task.length, currentTasks.length)}} %</div>
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks(s, _task).avg <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${completedTasks(s, _task).avg}%`">{{completedTasks(s, _task).avg}} %</div>
                     </span>
                   </div>
                 </div>
@@ -253,7 +253,7 @@ const moment = extendMoment(Moment)
 export default {
   name: 'RegionsMap',
   mixins: [ utils ],
-  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility', 'dueDate', 'taskType', 'progress', 'issueType', 'issueStatus', 'issueSeverity'],
+  props: ['withFacility', 'projects', 'statuses', 'status', 'facilityGroups', 'facilityGroup', 'facilityQuery', 'filterFacility', 'dueDate', 'taskType', 'taskProgress', 'progress', 'issueType', 'issueProgress', 'issueSeverity'],
   components: {
     FacilityForm,
     FacilityShow,
@@ -328,9 +328,14 @@ export default {
               valid = valid && ids.includes(f[k])
               break
             }
-            case "issueStatusId": {
-              var ids = _.map(facility.issues, 'issueStatusId')
-              valid = valid && ids.includes(f[k])
+            case "issueProgress":
+            case "taskProgress": {
+              var progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
+              var progress = _.uniq(_.map(progressFor, 'progress'))
+              var range = f[k].value.split("-").map(Number)
+              var size = range[1] ? (range[1] - range[0]) + 1 : 1
+              var ranges = Array.from(Array(size), (_, i) => i + range[0])
+              valid = valid && _.intersection(progress, ranges).length > 0
               break
             }
             case "issueSeverityId": {
@@ -379,11 +384,17 @@ export default {
       return _.groupBy(this.currentIssues, 'issueType')
     },
     completedTasks() {
-      var tasks = this.currentTasks
-      var completed = _.filter(tasks, (t) => t && t.progress && t.progress == 100)
-      return {
-        count: completed.length,
-        avg: this.getAverage(completed.length, tasks.length)
+      return (taskType=null, child=null) => {
+        var tasks = child ? child : this.currentTasks
+        var completed = _.filter(tasks, (t) => {
+          var valid = t && t.progress && t.progress == 100
+          if (taskType) valid = valid && t.taskType == taskType
+          return valid
+        })
+        return {
+          count: completed.length,
+          avg: this.getAverage(completed.length, tasks.length)
+        }
       }
     },
     incompletedTasks() {
@@ -638,14 +649,26 @@ export default {
         }
       }, deep: true
     },
-    issueStatus: {
+    issueProgress: {
       handler: function(value) {
         if (value) {
           if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueStatusId'))
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueProgress'))
           }
           else {
-            this.filters.push({issueStatusId: value.id})
+            this.filters.push({issueProgress: value})
+          }
+        }
+      }, deep: true
+    },
+    taskProgress: {
+      handler: function(value) {
+        if (value) {
+          if (value.id === 'sa') {
+            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskProgress'))
+          }
+          else {
+            this.filters.push({taskProgress: value})
           }
         }
       }, deep: true

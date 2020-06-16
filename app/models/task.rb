@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-  default_scope {order(due_date: :desc)}
+  default_scope {order(due_date: :asc)}
 
   belongs_to :facility_project
   belongs_to :task_type
