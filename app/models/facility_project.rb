@@ -13,7 +13,7 @@ class FacilityProject < ApplicationRecord
     return json.merge(
       facility: self.facility.as_json,
       tasks: self.tasks.map(&:to_json),
-      issues: self.issues.as_json,
+      issues: self.issues.map(&:to_json),
       notes: self.notes.map(&:to_json),
       project_status: status_name,
       color: color,

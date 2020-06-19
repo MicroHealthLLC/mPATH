@@ -273,7 +273,7 @@ jQuery(function($) {
     });
   }
 
-  // task form slider tab
+  // task/issue form slider tab
   if ($("#progress_slider-tab").is(":visible"))
   {
     Vue.component('vue-slide-bar', vueSlideBar)
@@ -285,11 +285,12 @@ jQuery(function($) {
         }
       },
       mounted() {
-        this.progress = $("#task_progress").val() || 0
+        this.progress = $("#task_progress").val() || $("#issue_progress").val() || 0
       },
       watch: {
         progress(value) {
           $("#task_progress").val(value)
+          $("#issue_progress").val(value)
         }
       },
       template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
@@ -512,9 +513,10 @@ jQuery(function($) {
   if ($("#user_privileges_collection_input").is(":visible"))
   {
     var previliges = $("input#user_privileges").val();
-    previliges.split(",").map(p => {
-      if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
-    });
+    if(previliges !== undefined)
+      previliges.split(",").map(p => {
+        if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
+      });
   }
 
   var togglePrivileges = function () {

@@ -1,10 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4">
     <div v-if="showProject">
-      <div class="d-flex align-items-center ml-2">
-        <span class="fbody-icon"><i class="fas fa-check"></i></span>
-        <h4 class="text-secondary f-head">{{facility.facilityName}}</h4>
-      </div>
       <div>
         <task-index
           v-if="DV_project"

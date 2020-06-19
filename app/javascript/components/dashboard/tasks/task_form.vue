@@ -48,6 +48,7 @@
       <div class="form-group col-md-6">
         <label class="font-sm">Start Date:</label>
         <date-picker
+          :clear-button="true"
           v-validate="'required'"
           input-class="form-control form-control-sm"
           v-model="DV_task.startDate"
@@ -62,6 +63,7 @@
       <div class="form-group col-md-6">
         <label class="font-sm">Due Date:</label>
         <date-picker
+          :clear-button="true"
           v-validate="'required'"
           input-class="form-control form-control-sm"
           v-model="DV_task.dueDate"
@@ -147,11 +149,11 @@
 </template>
 
 <script>
-  import axios           from 'axios'
-  import humps           from 'humps'
-  import http            from './../../../common/http'
+  import axios from 'axios'
+  import humps from 'humps'
+  import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils           from './../../../mixins/utils'
+  import utils from './../../../mixins/utils'
 
   export default {
     name: 'TaskForm',
@@ -336,18 +338,6 @@
     border: 0;
     width: 92%;
     outline: none;
-  }
-  .vdp-datepicker /deep/ {
-    .form-control[readonly] {
-      background-color: unset;
-    }
-    .vdp-datepicker__calendar {
-      width: 100%;
-    }
-    .vdp-datepicker__calendar .cell {
-      height: unset;
-      line-height: unset;
-    }
   }
   .del-check {
     position: relative;

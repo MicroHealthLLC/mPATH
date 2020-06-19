@@ -64,7 +64,8 @@ body {
   #user_privileges_input,
   #user_password_input,
   #user_password_confirmation_input,
-  #task_progress_input {
+  #task_progress_input,
+  #issue_progress_input {
     display: none;
   }
   input[type=tel]:focus {

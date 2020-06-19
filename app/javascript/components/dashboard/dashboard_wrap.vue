@@ -209,7 +209,8 @@
     },
     computed: {
       activeFacilityGroups() {
-        return _.filter(this.facilityGroups, (f) => f.status === 'active')
+        let projectId = Number(this.$route.params.projectId)
+        return _.filter(this.facilityGroups, (f) => f.status === 'active' && f.projectIds.includes(projectId))
       }
     }
   }

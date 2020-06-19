@@ -1,18 +1,15 @@
 <template>
   <div id="facility-show">
-    <!-- <div @click="saveThenClose" class="close-sidebar-btn">
-      <i class="fas fa-minus"></i>
-    </div> -->
     <div v-if="!loading">
+      <div class="d-flex align-items-center my-2">
+        <span class="fbody-icon"><i class="fas fa-check"></i></span>
+        <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
+      </div>
       <tabs>
         <tab title="Overview" key="overview">
           <div>
             <h3 v-if="extras" class="text-center">Facility Summary</h3>
             <div class="f-body mt-3 p-2">
-              <div class="d-flex align-items-center">
-                <span class="fbody-icon"><i class="fas fa-check"></i></span>
-                <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
-              </div>
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe"></i></span>
                 <span>{{region.name}}</span>
@@ -31,6 +28,7 @@
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                   <date-picker
                     input-class="form-control form-control-sm"
+                    :clear-button="true"
                     v-model="DV_facility.dueDate"
                     @input="onChange"
                     placeholder="Due date"
@@ -84,10 +82,6 @@
         </tab>
         <tab title="Notes" key="notes">
           <div>
-            <div class="d-flex align-items-center ml-2 mb-4">
-              <span class="fbody-icon"><i class="fas fa-check"></i></span>
-              <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
-            </div>
             <div v-if="newNote" class="mb-3">
               <notes-form
                 :facility="DV_facility"
@@ -328,11 +322,6 @@
   }
   .vdp-datepicker {
     width: 100%;
-  }
-  .vdp-datepicker /deep/ {
-    .form-control[readonly] {
-      background-color: unset;
-    }
   }
   .search-tab {
     width: 80%;

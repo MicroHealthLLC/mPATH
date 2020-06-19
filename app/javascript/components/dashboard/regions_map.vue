@@ -168,7 +168,7 @@
             <div v-if="currentFacility" class="knocker" @click="toggleOpenSideBar">
               <div class="linner"></div>
             </div>
-            <div id="map-sidebar">
+            <div id="map-sidebar" class="shadow-sm">
               <facility-show
                 v-if="currentFacility"
                 :facility="currentFacility"
@@ -314,8 +314,8 @@ export default {
               break
             }
             case "progress": {
-              var range = f[k].value.split("-")
-              valid = valid && range[0] <= facility[k] && range[1] >= facility[k]
+              var range = f[k].value.split("-").map(Number)
+              valid = valid && (range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0])
               break
             }
             case "taskTypeId": {

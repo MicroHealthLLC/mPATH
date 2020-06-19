@@ -71,6 +71,7 @@
       <div class="form-group col-md-6">
         <label class="font-sm">Start Date:</label>
         <date-picker
+          :clear-button="true"
           v-validate="'required'"
           input-class="form-control form-control-sm"
           v-model="DV_issue.startDate"
@@ -85,11 +86,12 @@
       <div class="form-group col-md-6">
         <label class="font-sm">Due Date:</label>
         <date-picker
+          :clear-button="true"
           v-validate="'required'"
           input-class="form-control form-control-sm"
           v-model="DV_issue.dueDate"
           :disabled-dates="disabledDueDates"
-          placeholder="Due date"
+          placeholder="Due Date"
           name="Due Date"
           :disabled="DV_issue.startDate === ''"
         />
@@ -105,6 +107,36 @@
         placeholder="issue brief description"
         v-model="DV_issue.description"
         rows="4"
+      />
+    </div>
+    <div class="mx-4">
+      <div class="input-group mb-2">
+        <div v-for="file in DV_issue.issueFiles" class="d-flex mb-2 w-100">
+          <div class="input-group-prepend">
+            <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+              <i class="fas fa-file-image"></i>
+            </div>
+          </div>
+          <input
+            readonly
+            type="text"
+            class="form-control form-control-sm"
+            :value="file.name || file.uri"
+          />
+          <button
+            class="btn btn-danger btn-sm d-flex flex-row-reverse"
+            @click.prevent="deleteFile(file)"
+            >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group mx-4" >
+      <label class="font-sm">Files:</label>
+      <attachment-input
+        @input="addFile"
+        :show-label="true"
       />
     </div>
     <div class="d-flex form-group mt-4 ml-4">
@@ -140,16 +172,19 @@
           issueTypeId: '',
           progress: 0,
           issueSeverityId: '',
-          description: ''
+          description: '',
+          issueFiles: []
         },
         showErrors: false
       }
     },
     mounted() {
       if (this.issue) {
-        this.DV_issue = this.issue
+        this.DV_issue = _.cloneDeep(this.issue)
         this.DV_issue.dueDate = new Date(this.issue.dueDate)
         this.DV_issue.startDate = new Date(this.issue.startDate)
+        this.DV_issue.issueFiles = []
+        this.addFile(this.issue.attachFiles)
       }
     },
     methods: {
@@ -157,6 +192,33 @@
         var date = new Date
         date.setDate(date.getDate() + days)
         return date
+      },
+      addFile(files=[]) {
+        for (let file of files) {
+          file.guid = this.guid()
+          this.DV_issue.issueFiles.push(file)
+        }
+        this.$forceUpdate()
+      },
+      deleteFile(file) {
+        if (!file) return;
+        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        if (!confirm) return;
+
+        if (file.uri) {
+          http.put(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${this.issue.id}/destroy_file.json`, {file: file})
+          .then((res)=> {
+            _.remove(this.DV_issue.issueFiles, (f) => f.guid === file.guid)
+            this.$forceUpdate()
+          })
+          .catch((error) => {
+            console.log("Unable to destroy the file..")
+          })
+        }
+        else if (file.name) {
+          _.remove(this.DV_issue.issueFiles, (f) => f.guid === file.guid)
+          this.$forceUpdate()
+        }
       },
       saveIssue() {
         this.$validator.validate().then((success) => {
@@ -173,6 +235,12 @@
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
+
+          for (var file of this.DV_issue.issueFiles) {
+            if (!file.id) {
+              formData.append('issue[issue_files][]', file)
+            }
+          }
 
           var url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues.json`
           var method = "POST"
@@ -199,6 +267,10 @@
             console.log(err)
           })
         })
+      },
+      downloadFile(file) {
+        let url = window.location.origin + file.uri
+        window.open(url, '_blank');
       }
     },
     computed: {
@@ -237,17 +309,5 @@
   .title {
     font-size: 15px;
     margin-left: 65px;
-  }
-  .vdp-datepicker /deep/ {
-    .form-control[readonly] {
-      background-color: unset;
-    }
-    .vdp-datepicker__calendar {
-      width: 100%;
-    }
-    .vdp-datepicker__calendar .cell {
-      height: unset;
-      line-height: unset;
-    }
   }
 </style>

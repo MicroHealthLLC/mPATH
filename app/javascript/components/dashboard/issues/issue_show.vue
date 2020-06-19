@@ -1,16 +1,8 @@
 <template>
   <div v-if="!loading" class="issues_show m-3 pb-2">
-    <div v-if="show">
-      <div v-if="_isallowed" class="crud-actions mx-3 float-right">
-        <span class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
-          <i class="fas fa-edit"></i>
-        </span>
-        <span class="font-sm delete-action" @click.stop="deleteIssue">
-          <i class="fas fa-trash-alt"></i>
-        </span>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
+    <div v-if="show" class="row">
+      <div class="col-md-9">
+        <div>
           <div class="mb-1 d-flex">
             <span class="fbody-icon"><i class="fas fa-check"></i></span>
             {{issue.title}}
@@ -20,16 +12,9 @@
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
               {{issue.issueType}}
             </div>
-          </div>
-          <div class="row mb-1 d-flex">
             <div class="font-sm col">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
               {{issue.issueSeverity}}
-            </div>
-            <div class="font-sm col">
-              <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%</div>
-              </div>
             </div>
           </div>
           <div class="row mb-1">
@@ -48,6 +33,23 @@
               <p>{{issue.description || 'Description'}}</p>
             </div>
           </div> -->
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div v-if="_isallowed" class="crud-actions mx-3">
+          <span class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
+            <i class="fas fa-edit"></i>
+          </span>
+          <span class="font-sm delete-action" @click.stop="deleteIssue">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+        </div>
+        <div class="row my-3 d-flex">
+          <div class="font-sm col">
+            <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+              <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

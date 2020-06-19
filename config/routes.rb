@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     resources :facilities do
-      resources :issues
+      resources :issues do
+        put :destroy_file, on: :member
+      end
       resources :notes, module: :facilities do
         put :destroy_file, on: :member
       end

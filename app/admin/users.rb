@@ -122,7 +122,7 @@ ActiveAdmin.register User do
 
     def create
       if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].compact.split(" ").flatten.join(", ")
+        privileges = params["user"]["privileges_collection"].filter(&:present?).join(",")
         params["user"].merge!({"privileges": privileges})
       end
       super
@@ -130,7 +130,7 @@ ActiveAdmin.register User do
 
     def update
       if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].compact.split(" ").flatten.join(", ")
+        privileges = params["user"]["privileges_collection"].filter(&:present?).join(",")
         params["user"].merge!({"privileges": privileges})
       end
       super

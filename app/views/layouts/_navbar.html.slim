@@ -5,7 +5,13 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
     a.navbar-brand href="/"
       =image_tag "microhealthllc.png"
 
-    ul.navbar-nav.mr-auto.mt-2.mt-lg-0
+    -unless @project.present?
+      ul.navbar-nav.mr-auto.mt-2.mt-lg-0
+    -else
+      ul.navbar-nav.m0-auto
+        li.nav-item
+          span.text-info.font-weight-bold
+            | #{@project.try(:name)}
 
     ul.navbar-nav.my-2.my-lg-0
       -if user_signed_in?

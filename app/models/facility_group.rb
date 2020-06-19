@@ -11,7 +11,8 @@ class FacilityGroup < ApplicationRecord
     json = super(options)
     json.merge(
       facilities: self.facility_projects.as_json,
-      facility_count: self.facilities.count
+      facility_count: self.facilities.count,
+      project_ids: self.facility_projects.pluck(:project_id).uniq
     ).as_json
   end
 end

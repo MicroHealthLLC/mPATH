@@ -284,3 +284,28 @@ input[type=button]:focus {
   opacity: 0.6;
   cursor: not-allowed;
 }
+.m0-auto {
+  margin: 0 auto;
+}
+
+/* vue date-picker style */
+.vdp-datepicker /deep/ {
+  .form-control[readonly] {
+    background-color: unset;
+  }
+  .vdp-datepicker__calendar {
+    width: 100%;
+  }
+  .vdp-datepicker__calendar .cell {
+    height: unset;
+    line-height: unset;
+  }
+  .vdp-datepicker__clear-button {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 10px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
