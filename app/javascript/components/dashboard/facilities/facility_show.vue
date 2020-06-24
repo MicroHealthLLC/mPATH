@@ -164,7 +164,7 @@
         DV_updated: false,
         newNote: false,
         notesQuery: '',
-        DV_facility: this.facility
+        DV_facility: Object.assign({}, this.facility)
       }
     },
     mounted() {
@@ -192,14 +192,11 @@
           .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
+            this.$emit('facility-update', this.DV_facility)
           })
           .catch((err) => {
             console.error(err);
           })
-      },
-      saveThenClose(e) {
-        this.updateFacility(e)
-        this.$emit('close-side-bar')
       },
       deleteFacility() {
         var confirm = window.confirm(`Are you sure, you want to delete ${this.DV_facility.facilityName}?`)
@@ -272,8 +269,10 @@
     watch: {
       facility: {
         handler: function(value) {
-          this.DV_facility = value
+          this.DV_facility = Object.assign({}, value)
           this.DV_updated = false
+          this.loading = true
+          this.fetchFacility()
         },
         deep: true
       },

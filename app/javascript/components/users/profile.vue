@@ -9,21 +9,27 @@
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Firt Name</label>
+        <label class="col-sm-2 col-form-label">Firt Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="profile.firstName" placeholder="John">
+          <input type="text" name="firstName" v-validate="'required'" class="form-control" v-model="profile.firstName" placeholder="John" :class="{'error': errors.has('firstName')}">
+          <div v-show="errors.has('firstName')" class="text-danger mt-1">
+            {{errors.first('firstName')}}
+          </div>
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Last Name</label>
+        <label class="col-sm-2 col-form-label">Last Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="profile.lastName" placeholder="Doe">
+          <input type="text" name="lastName" v-validate="'required'" class="form-control" v-model="profile.lastName" placeholder="John" :class="{'error': errors.has('lastName') }">
+          <div v-show="errors.has('lastName')" class="text-danger mt-1">
+            {{errors.first('lastName')}}
+          </div>
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Email</label>
+        <label class="col-sm-2 col-form-label">Email<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="email" readOnly class="form-control" v-model="profile.email" placeholder="johndoe@example.com" autocomplete="off">
+          <input type="email" readOnly class="form-control" v-model="profile.email" placeholder="johndoe@example.com" autocomplete="off" required>
         </div>
       </div>
       <div class="form-group row">
@@ -108,7 +114,6 @@
           title: '',
           phoneNumber: '',
           address: '',
-          role: '',
           lat: '',
           lng: '',
           password: '',
@@ -151,20 +156,25 @@
         this.gmap_address = address
       },
       handleSubmit(event) {
-        if (!this.enableEdit) return;
-        let data = Object.assign({}, this.profile)
-        if (!this.editPass) {
-          delete data.password
-          delete data.passwordConfirmation
-        }
-        http.post('/profile.json', {profile: data})
-          .then((res) => {
-            console.log("profile-updated")
-            this.gotoDashboard()
-          })
-          .catch((err) => {
-            console.log(err)
-          })
+        this.$validator.validate().then((success) => {
+          if (!success || !this.enableEdit) return;
+          let data = Object.assign({}, this.profile)
+          if (!this.editPass) {
+            delete data.password
+            delete data.passwordConfirmation
+          }
+          delete data.email
+
+          http
+            .post('/profile.json', {profile: data})
+            .then((res) => {
+              console.log("profile-updated")
+              this.gotoDashboard()
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+        })
       },
       gotoDashboard() {
         window.location.pathname = "/dashboard"
@@ -219,7 +229,11 @@
         return true
       },
       enableEdit() {
-        return this.editPass ? this.C_passCheck && this.C_passValidationCheck : true
+        let pass = this.editPass ? this.C_passCheck && this.C_passValidationCheck : true
+
+        return pass && this.profile.email !== '' &&
+               this.profile.firstName !== '' &&
+               this.profile.lastName !== ''
       }
     },
     watch: {
@@ -249,5 +263,13 @@
     width: 100%;
     height: 300px;
     margin-top: 10px;
+  }
+  abbr {
+    border: 0;
+    text-decoration: none;
+    color: #dc3545;
+  }
+  input.error {
+    border-color: #dc3545;
   }
 </style>

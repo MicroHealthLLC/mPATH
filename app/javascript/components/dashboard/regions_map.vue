@@ -310,7 +310,7 @@ export default {
           switch(k) {
             case "dueDate": {
               var range = moment.range(f[k][0], f[k][1])
-              valid = valid && range.contains(new Date(facility[k]))
+              valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
               break
             }
             case "progress": {
@@ -455,6 +455,7 @@ export default {
       return L.latLng(Number(facility.lat), Number(facility.lng))
     },
     showFacility(facility) {
+      if (this.currentFacility && facility.id == this.currentFacility.id) return;
       this.openSidebar = true
       this.currentRegion = this.regions.find(region => region.id == facility.facilityGroupId)
       this.center = this.getLatLngForFacility(facility)
@@ -483,9 +484,10 @@ export default {
     },
     updateFacility(facility) {
       this.currentFacility = facility
-      this.openSidebar = true
-      this.facilityFormModal = false
-      this.$refs.facilityForm.close()
+      var index = this.facilities.findIndex(f => f.id == facility.id)
+      if (index > -1) {
+        Vue.set(this.facilities, index, facility)
+      }
     },
     closeFacilityModal() {
       this.facilityFormModal = false
