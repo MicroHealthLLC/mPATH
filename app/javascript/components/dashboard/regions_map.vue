@@ -724,6 +724,7 @@ export default {
     top: 0;
     transition: .3s ease;
     height: 100%;
+    z-index: 500;
   }
 
   /* sidebar transitions */
