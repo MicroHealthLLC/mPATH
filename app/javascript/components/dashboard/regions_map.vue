@@ -788,7 +788,7 @@ export default {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
     height: 100px;
-    background: #37AFEA;
+    background: #ffa500;
     display: flex;
     align-items: center;
     justify-content: center;
