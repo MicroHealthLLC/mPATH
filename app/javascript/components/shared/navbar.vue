@@ -33,6 +33,7 @@
             placeholder="Filter by Facility Group"
             :options="DV_facilityGroups"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             :searchable="false"
@@ -53,6 +54,7 @@
             label="facilityName"
             track-by="id"
             :multiple="true"
+            :max="1"
             :options="facilities"
             :searchable="true"
             :loading="isLoading"
@@ -80,6 +82,7 @@
             :options="DV_statuses"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateStatusFilter"
@@ -101,6 +104,7 @@
             :options="DV_progressRanges"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateProgressFilter"
@@ -129,6 +133,7 @@
             :options="DV_taskTypes"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateTaskTypeFilter"
@@ -150,6 +155,7 @@
             :options="DV_taskProgressRanges"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateTaskProgressFilter"
@@ -171,6 +177,7 @@
             :options="DV_issueTypes"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateIssueTypeFilter"
@@ -192,6 +199,7 @@
             :options="DV_issueProgressRanges"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateIssueProgressFilter"
@@ -213,6 +221,7 @@
             :options="DV_issueSeverities"
             :searchable="false"
             :multiple="true"
+            :max="1"
             select-label="Select"
             deselect-Label="Remove"
             @select="updateIssueSeverityFilter"
@@ -225,6 +234,9 @@
             </template>
           </multiselect>
         </div>
+      </div>
+      <div class="export-btn my-4">
+        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-info badge badge-pill px-3">Export</button>
       </div>
     </div>
     <div class="knocker" @click="showFilters=!showFilters">
@@ -240,6 +252,8 @@
     data() {
       return {
         isLoading: false,
+        exporting: false,
+        enableExport: this.$listeners['is-exportable'](),
         showFilters: false,
         currentProject: null,
         currentStatus: null,
@@ -266,6 +280,11 @@
     },
     mounted() {
       this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
+    },
+    updated() {
+      this.$nextTick(() => {
+        this.enableExport = this.$listeners['is-exportable']()
+      })
     },
     computed: {
       allowFacilityAdd() {
@@ -375,6 +394,25 @@
         this.currentIssueProgress = null
         this.currentTaskProgress = null
         this.$emit('clear-filters', {id: 'sa'})
+      },
+      exportData() {
+        if (!this.enableExport || this.exporting) return;
+        this.exporting = true
+        var cb = (err) => this.exporting = false
+
+        var filters = [`Map Filters:\n
+          Facility Group: ${this.currentFacilityGroup ? this.currentFacilityGroup.name : 'all'}\n
+          Facility Name: ${this.selectedFacility ? this.selectedFacility.facilityName : 'all'}\n
+          Project Status: ${this.currentStatus ? this.currentStatus.name : 'all'}\n
+          Facility % Progress Range: ${this.currentProgress ? this.currentProgress.name : 'all'}\n
+          Facility Due Date: ${this.dueDateRange && this.dueDateRange[0] ? this.dueDateRange[0].toLocaleDateString() + ' to ' + this.dueDateRange[1].toLocaleDateString() : 'all'}\n
+          Task Type: ${this.currentTaskType ? this.currentTaskType.name : 'all'}\n
+          Task % Progress Range: ${this.currentTaskProgress ? this.currentTaskProgress.name : 'all'}\n
+          Issue Type: ${this.currentIssueType ? this.currentIssueType.name : 'all'}\n
+          Issue % Progress Range: ${this.currentIssueProgress ? this.currentIssueProgress.name : 'all'}\n
+          Issue severity: ${this.currentIssueSeverity ? this.currentIssueSeverity.name : 'all'}\n
+        `]
+        this.$emit('export-data', filters, cb)
       }
     },
     watch: {
@@ -529,5 +567,11 @@
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
+  }
+  .export-btn {
+    text-align: center;
+    .btn {
+      font-size: 18px;
+    }
   }
 </style>

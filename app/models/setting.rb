@@ -11,17 +11,12 @@ class Setting < ApplicationRecord
   end
 
   def self.load_available_settings
-    
     cached = first || new
     ['office365_key', 'office365_secret', 'google_map_key', 'google_oauth_key', 'google_oauth_secret'].each do |key|
       available_settings["#{key.upcase}"] = { 'default' => ENV["#{key.upcase}"], 'cached' => cached.send(key) || '' }
     end
   end
-  begin
-    load_available_settings
-  rescue ActiveRecord::NoDatabaseError
-  end
-
+  load_available_settings
 
   after_save do
     Setting.load_available_settings

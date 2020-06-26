@@ -77,19 +77,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="row">
-          <div class="font-sm d-flex col-md-8">
-            <span class="fbody-icon"><i class="fas fa-file-alt"></i></span>
-            <p>{{task.notes || 'Description'}}</p>
-          </div>
-          <div class="col-md-4 mt-2">
-            <span v-for="file in task.attachFiles">
-              <span class="fbody-icon" v-tooltip.bottom="`${file.name}`" @click="downloadFile(file)">
-                <i class="fas fa-file-alt"></i>
-              </span>
-            </span>
-          </div>
-        </div> -->
       </li>
     </ul>
     <p v-else class="text-danger m-3">No tasks found..</p>
@@ -156,9 +143,7 @@
           return valid
         }), ['dueDate'])
 
-        var futureTasks = _.filter(tasks, (t => new Date(t.dueDate) >= new Date))
-        var pastTasks = _.filter(tasks, (t => new Date(t.dueDate) < new Date))
-        return [...futureTasks, ...pastTasks]
+        return tasks
       }
     },
     watch: {

@@ -10,7 +10,7 @@
     <div class="input-group mb-2">
       <div v-for="file in DV_note.noteFiles" class="d-flex mb-2 w-100">
         <div class="input-group-prepend">
-          <div class="input-group-text">
+          <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
             <i class="fas fa-file-image"></i>
           </div>
         </div>
@@ -18,12 +18,12 @@
           readonly
           type="text"
           class="form-control form-control-sm"
-          :value="file.uri || file.name"
+          :value="file.name || file.uri"
         />
         <button
           class="btn btn-danger btn-sm d-flex flex-row-reverse"
           @click.prevent="deleteFile(file)"
-        >
+          >
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -46,11 +46,11 @@
 </template>
 
 <script>
-  import axios           from 'axios'
-  import humps           from 'humps'
-  import http            from './../../../common/http'
+  import axios from 'axios'
+  import humps from 'humps'
+  import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils           from './../../../mixins/utils'
+  import utils from './../../../mixins/utils'
 
   export default {
     props: ['facility', 'note'],
@@ -141,6 +141,10 @@
             console.log(err)
           })
         })
+      },
+      downloadFile(file) {
+        let url = window.location.origin + file.uri
+        window.open(url, '_blank');
       }
     },
     computed: {

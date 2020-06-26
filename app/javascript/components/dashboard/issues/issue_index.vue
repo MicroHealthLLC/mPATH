@@ -180,9 +180,8 @@
           }
           return valid;
         })), ['dueDate'])
-        var futureIssues = _.filter(issues, (t => new Date(t.dueDate) >= new Date))
-        var pastIssues = _.filter(issues, (t => new Date(t.dueDate) < new Date))
-        return [...futureIssues, ...pastIssues]
+
+        return issues
       }
     }
   }

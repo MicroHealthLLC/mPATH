@@ -9,6 +9,7 @@
         :task-types="taskTypes"
         :issue-types="issueTypes"
         :issue-severities="issueSeverities"
+        @is-exportable="isExportable"
         @on-facility-name-search="onFacilitySearch"
         @on-status-change="onStatusChange"
         @on-facilitygroup-change="onFacilityGroupChange"
@@ -21,10 +22,12 @@
         @on-progress-change="onProgressChange"
         @on-filter-by-facility="onFilterByFacility"
         @clear-filters="onClearFilters"
+        @export-data="exportData"
       />
       <div id="dash-wrap">
         <div class="col p-0">
           <regions-map
+            ref="regionsMap"
             :projects="projects"
             :facility-groups="facilityGroups"
             :with-facility="facilityModal"
@@ -49,16 +52,20 @@
 </template>
 
 <script>
-  import http       from './../../common/http'
-  import Navbar     from './../shared/navbar'
-  import Sidebar    from './sidebar'
+  import http from './../../common/http'
+  import utils from './../../mixins/utils'
+  import Navbar from './../shared/navbar'
+  import Sidebar from './sidebar'
   import RegionsMap from './regions_map'
+  import XLSX from 'xlsx'
+
   export default {
     components: {
       Sidebar,
       RegionsMap,
       Navbar
     },
+    mixins: [utils],
     data() {
       return {
         loading: true,
@@ -205,6 +212,39 @@
         this.issueProgress = value
         this.issueSeverity = value
         this.$forceUpdate()
+      },
+      isExportable() {
+        return this.$refs.regionsMap && this.$refs.regionsMap.filterFacilitiesWithActiveRegion && this.$refs.regionsMap.filterFacilitiesWithActiveRegion.length > 0
+      },
+      exportData(filters, cb) {
+        try {
+          var header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
+
+          var ex_data = []
+          for (var facility of this.$refs.regionsMap.filterFacilitiesWithActiveRegion) {
+            ex_data.push({
+              "Facility Name": facility.facilityName || 'N/A',
+              "Facility Group": facility.facilityGroupName || 'N/A',
+              "Project Status": facility.projectStatus || 'N/A',
+              "Due Date": facility.dueDate || 'N/A',
+              "Percentage Complete": facility.progress || 0,
+              "Point of Contact Name": facility.pointOfContact || 'N/A',
+              "Point of Contact Phone": facility.phoneNumber || 'N/A',
+              "Point of Contact Email": facility.email || 'N/A'
+            })
+          }
+
+          var wb = XLSX.utils.book_new()
+          var ws = XLSX.utils.aoa_to_sheet(new Array(filters))
+          XLSX.utils.sheet_add_json(ws, ex_data, {header: header,  origin: "A3"})
+          XLSX.utils.book_append_sheet(wb, ws, "MGIS")
+          XLSX.writeFile(wb, `${this.random()}.xlsx`)
+          return cb()
+        }
+        catch(error) {
+          console.log(error)
+          return cb(error)
+        }
       }
     },
     computed: {

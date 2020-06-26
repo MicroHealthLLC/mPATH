@@ -16,6 +16,9 @@ export default {
         return v.toString(16)
       })
     },
+    random() {
+      return Math.floor(new Date().valueOf() * Math.random())
+    },
     getAverage(_count, _total) {
       return (((_count / _total) * 100) || 0).toFixed(2)
     }

@@ -283,6 +283,9 @@
         window.open(url, '_blank');
       },
       destroyCheck(check, index) {
+        var confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
+        if (!confirm) return;
+
         var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
       }

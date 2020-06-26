@@ -155,7 +155,7 @@ jQuery(function($) {
           }, deep: true
         }
       },
-      template: `<li class='string input required stringish' id='user_address_input_gmap'><label for='user_address_input_gmap' class='label'>Address<abbr title="required">*</abbr></label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='user_address_input_gmap'><label for='user_address_input_gmap' class='label'>Address</label><GmapAutocomplete class='gmap-input' :class="{'error' : apiError}" @place_changed="updateAddress" :value="address" @input.stop="address=$event.target.value" @keypress.enter="$event.preventDefault"></GmapAutocomplete><div v-if="isAddressDrawn" class='gmap-wraper'><GmapMap map-type-id="terrain" ref="googlemap" :zoom="15" :options="{rotateControl: false, minZoom: 2, zoomControl: true, mapTypeControl: false, scaleControl: false, streetViewControl: false, fullscreenControl: false}" style="width: 100%; height: 99%" :center="center"><GmapMarker :animation="4" :position="getLatLng" /></GmapMap></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -212,7 +212,7 @@ jQuery(function($) {
           return this.phoneData.phoneNumber ? this.phoneData.countryCode : this.countryCode
         }
       },
-      template: `<li class='string input required stringish' id='user_phone_number_input_tel'><label for='user_phone_number_input_tel' class='label'>Phone number<abbr title="required">*</abbr></label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
+      template: `<li class='string input required stringish' id='user_phone_number_input_tel'><label for='user_phone_number_input_tel' class='label'>Phone number</label><div v-if="!loading"><vue-phone-number-input :value="phone" @update="onUpdate" id="phone-number__input" :default-country-code="code" ></vue-phone-number-input></div><p v-if="apiError" class="inline-errors">{{apiError}}</p></li>`
     });
   }
 
@@ -513,10 +513,9 @@ jQuery(function($) {
   if ($("#user_privileges_collection_input").is(":visible"))
   {
     var previliges = $("input#user_privileges").val();
-    if(previliges !== undefined)
-      previliges.split(",").map(p => {
-        if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
-      });
+    previliges.split(",").map(p => {
+      if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
+    });
   }
 
   var togglePrivileges = function () {

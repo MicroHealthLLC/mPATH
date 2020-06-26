@@ -239,15 +239,15 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
 <script>
-import http              from './../../common/http'
-import FacilityForm      from './facilities/facility_form'
-import FacilityShow      from './facilities/facility_show'
-import RegionBar         from './../shared/region_bar'
-import Accordion         from './../shared/accordion'
-import utils             from './../../mixins/utils'
-import {SweetModal}      from 'sweet-modal-vue'
-import * as Moment       from 'moment'
-import {extendMoment}    from 'moment-range'
+import http from './../../common/http'
+import FacilityForm from './facilities/facility_form'
+import FacilityShow from './facilities/facility_show'
+import RegionBar from './../shared/region_bar'
+import Accordion from './../shared/accordion'
+import utils from './../../mixins/utils'
+import {SweetModal} from 'sweet-modal-vue'
+import * as Moment from 'moment'
+import {extendMoment} from 'moment-range'
 const moment = extendMoment(Moment)
 
 export default {
@@ -724,7 +724,7 @@ export default {
     top: 0;
     transition: .3s ease;
     height: 100%;
-    z-index: 500;
+    z-index: 1002;
   }
 
   /* sidebar transitions */
