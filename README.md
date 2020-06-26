@@ -136,29 +136,6 @@ add these
         passenger_enabled on;
         rails_env development;
 
-# Enter your maps api key along with google and microsoft
-
-/var/www/mGis
-
-nano .env
-
-then enter this below
-
-GOOGLE_MAP_KEY= your key
-
-SECRET_KEY_BASE= your key base
-
-OFFICE365_KEY= your key
-
-OFFICE365_SECRET= your secriet
-
-GOOGLE_OAUTH_KEY=  your key
-
-GOOGLE_OAUTH_SECRET= your secret
-
-
-then save
-
 # restart nginx
 service nginx restart
 
