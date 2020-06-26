@@ -513,9 +513,10 @@ jQuery(function($) {
   if ($("#user_privileges_collection_input").is(":visible"))
   {
     var previliges = $("input#user_privileges").val();
-    previliges.split(",").map(p => {
-      if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
-    });
+    if(previliges !== undefined)
+      previliges.split(",").map(p => {
+        if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
+      });
   }
 
   var togglePrivileges = function () {
