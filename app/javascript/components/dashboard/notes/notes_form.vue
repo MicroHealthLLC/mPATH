@@ -36,7 +36,7 @@
     <div class="d-flex form-group mt-4">
       <button
         :disabled="!readyToSave"
-        class="btn btn-success"
+        class="btn btn-success btn-sm"
         @click.prevent.stop="saveNote"
         >
         Save

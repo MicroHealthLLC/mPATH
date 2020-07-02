@@ -200,17 +200,17 @@
       onIssueseverityChange(severity) {
         this.issueSeverity = severity
       },
-      onClearFilters(value) {
-        this.progress = value
-        this.taskType = value
-        this.taskProgress = value
+      onClearFilters() {
+        this.progress = null
+        this.taskType = null
+        this.taskProgress = null
         this.dueDate = null
-        this.status = value
-        this.facilityGroup = value
+        this.status = null
+        this.facilityGroup = null
         this.filterFacility = null
-        this.issueType = value
-        this.issueProgress = value
-        this.issueSeverity = value
+        this.issueType = null
+        this.issueProgress = null
+        this.issueSeverity = null
         this.$forceUpdate()
       },
       isExportable() {

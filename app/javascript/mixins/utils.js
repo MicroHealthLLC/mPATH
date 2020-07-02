@@ -21,6 +21,11 @@ export default {
     },
     getAverage(_count, _total) {
       return (((_count / _total) * 100) || 0).toFixed(2)
+    },
+    upsert(array, item) {
+      const i = array.findIndex(_item => _item.hasOwnProperty(Object.keys(item)[0]))
+      if (i > -1) array[i] = item
+      else array.push(item)
     }
   }
 }

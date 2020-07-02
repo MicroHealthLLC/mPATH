@@ -302,6 +302,10 @@ export default {
         return activeRegions.includes(facility.facilityGroupId) && facility.status === 'active'
       })
     },
+    unFilterFacilities() {
+      var reg = _.map(_.filter(this.regions, (r) => r.status === 'active'), 'id')
+      return _.filter(this.facilities, (f) => reg.includes(f.facilityGroupId) && f.status === 'active')
+    },
     filteredFacilities() {
       return _.filter(this.facilities, (facility) => {
         var valid = true
@@ -314,33 +318,54 @@ export default {
               break
             }
             case "progress": {
-              var range = f[k].value.split("-").map(Number)
-              valid = valid && (range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0])
+              var ranges = f[k].map(r => r.split("-").map(Number))
+              var is_valid = false
+              for (var range of ranges) {
+                is_valid = range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0]
+                if (is_valid) break
+              }
+              valid = valid && is_valid
               break
             }
-            case "taskTypeId": {
+            case "taskTypeIds": {
               var ids = _.map(facility.tasks, 'taskTypeId')
-              valid = valid && ids.includes(f[k])
+              valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
-            case "issueTypeId": {
+            case "issueTypeIds": {
               var ids = _.map(facility.issues, 'issueTypeId')
-              valid = valid && ids.includes(f[k])
+              valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "issueProgress":
             case "taskProgress": {
               var progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
               var progress = _.uniq(_.map(progressFor, 'progress'))
-              var range = f[k].value.split("-").map(Number)
-              var size = range[1] ? (range[1] - range[0]) + 1 : 1
-              var ranges = Array.from(Array(size), (_, i) => i + range[0])
-              valid = valid && _.intersection(progress, ranges).length > 0
+              var ranges = f[k].map(r => r.split("-").map(Number))
+              var is_valid = false
+              for (var range of ranges) {
+                var size = range[1] ? (range[1] - range[0]) + 1 : 1
+                is_valid = _.intersection(progress, Array.from(Array(size), (_, i) => i + range[0])).length > 0
+                if (is_valid) break
+              }
+              valid = valid && is_valid
               break
             }
-            case "issueSeverityId": {
+            case "issueSeverityIds": {
               var ids = _.map(facility.issues, 'issueSeverityId')
-              valid = valid && ids.includes(f[k])
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "facilityGroupIds": {
+              valid = valid && f[k].includes(facility.facilityGroupId)
+              break
+            }
+            case "ids": {
+              valid = valid && f[k].includes(facility.id)
+              break
+            }
+            case "statusIds": {
+              valid = valid && f[k].includes(facility.statusId)
               break
             }
             default: {
@@ -557,139 +582,139 @@ export default {
     },
     status: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('statusId'))
-          }
-          else {
-            this.filters.push({statusId: value.id})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('statusIds'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {statusIds: _.map(value, 'id')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('statusIds'))
         }
       }, deep: true
     },
     taskType: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskTypeId'))
-          }
-          else {
-            this.filters.push({taskTypeId: value.id})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('taskTypeIds'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {taskTypeIds: _.map(value, 'id')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskTypeIds'))
         }
       }, deep: true
     },
     dueDate: {
       handler: function(value) {
-        if (value) {
-          if (value.includes(null)) {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('dueDate'))
-          }
-          else {
-            this.filters.push({dueDate: value})
-          }
+        if (value && !value.includes(null)) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('dueDate'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {dueDate: value})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('dueDate'))
         }
       }, deep: true
     },
     progress: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('progress'))
-          }
-          else {
-            this.filters.push({progress: value})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('progress'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {progress: _.map(value, 'value')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('progress'))
         }
       }, deep: true
     },
     facilityGroup: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('facilityGroupId'))
-          }
-          else {
-            this.filters.push({facilityGroupId: value.id})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('facilityGroupIds'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {facilityGroupIds: _.map(value, 'id')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('facilityGroupIds'))
         }
       }, deep: true
     },
     facilityQuery: {
       handler: function({q, cb}) {
         if (q) {
-          const resp    = new RegExp(_.escapeRegExp(q.toLowerCase()), 'i')
+          const resp = new RegExp(_.escapeRegExp(q.toLowerCase()), 'i')
           const isMatch = (result) => resp.test(result.facilityName)
-          var filtered = _.filter(this.filteredFacilities, isMatch)
+          var filtered = _.filter(this.unFilterFacilities, isMatch)
           return cb(filtered)
         }
         else {
-          cb(this.filteredFacilities)
+          cb(this.unFilterFacilities)
         }
       }, deep: true
     },
     filterFacility: {
-      handler: function(facility) {
-        if (facility && facility.id) {
-          this.filters.push({id: facility.id})
-          this.showFacility(facility)
+      handler: function(value) {
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('ids'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {ids: _.map(value, 'id')})
         }
         else {
-          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('id'))
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('ids'))
         }
       }
     },
     issueType: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueTypeId'))
-          }
-          else {
-            this.filters.push({issueTypeId: value.id})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('issueTypeIds'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {issueTypeIds: _.map(value, 'id')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueTypeIds'))
         }
       }, deep: true
     },
     issueProgress: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueProgress'))
-          }
-          else {
-            this.filters.push({issueProgress: value})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('issueProgress'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {issueProgress: _.map(value, 'value')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueProgress'))
         }
       }, deep: true
     },
     taskProgress: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskProgress'))
-          }
-          else {
-            this.filters.push({taskProgress: value})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('taskProgress'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {taskProgress: _.map(value, 'value')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('taskProgress'))
         }
       }, deep: true
     },
     issueSeverity: {
       handler: function(value) {
-        if (value) {
-          if (value.id === 'sa') {
-            this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueSeverityId'))
-          }
-          else {
-            this.filters.push({issueSeverityId: value.id})
-          }
+        if (value && Array.isArray(value) && value.length > 0) {
+          var i = this.filters.findIndex(f => f.hasOwnProperty('issueSeverityIds'))
+          if (i < 0) i = this.filters.length
+          Vue.set(this.filters, i, {issueSeverityIds: _.map(value, 'id')})
+        }
+        else {
+          this.filters = _.filter(this.filters, (f) => !f.hasOwnProperty('issueSeverityIds'))
         }
       }, deep: true
     },
     openSidebar(value) {
       if (!value && !this.loading) {
-        // this.sideLoading = true
         this.facilities = []
         this.fetchFacilities()
       }

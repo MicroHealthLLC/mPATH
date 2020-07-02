@@ -146,11 +146,8 @@
       },
       onUpdatePhone(data) {
         this.phoneData = data
-        if (data.formattedNumber)
-        {
-          this.profile.phoneNumber = data.formattedNumber
-          this.profile.countryCode = data.countryCode
-        }
+        this.profile.phoneNumber = data.formattedNumber || ''
+        this.profile.countryCode = data.countryCode || 'US'
       },
       updateAddress(address) {
         this.gmap_address = address

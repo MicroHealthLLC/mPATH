@@ -33,12 +33,9 @@
             placeholder="Filter by Facility Group"
             :options="DV_facilityGroups"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
+            deselect-label="Remove"
             :searchable="false"
-            @select="updateFacilityGroupFilter"
-            @remove="removeFacilityGroupFilter"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -54,15 +51,12 @@
             label="facilityName"
             track-by="id"
             :multiple="true"
-            :max="1"
             :options="facilities"
             :searchable="true"
             :loading="isLoading"
             :preserve-search="true"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="onSelectFacility"
-            @remove="onRemoveFacility"
+            deselect-label="Remove"
             @search-change="findFacility"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -82,11 +76,8 @@
             :options="DV_statuses"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateStatusFilter"
-            @remove="removeStatusFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -104,11 +95,8 @@
             :options="DV_progressRanges"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateProgressFilter"
-            @remove="removeProgressFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -133,11 +121,8 @@
             :options="DV_taskTypes"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateTaskTypeFilter"
-            @remove="removeTaskTypeFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -155,11 +140,8 @@
             :options="DV_taskProgressRanges"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateTaskProgressFilter"
-            @remove="removeTaskProgressFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -177,11 +159,8 @@
             :options="DV_issueTypes"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateIssueTypeFilter"
-            @remove="removeIssueTypeFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -199,11 +178,8 @@
             :options="DV_issueProgressRanges"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateIssueProgressFilter"
-            @remove="removeIssueProgressFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -221,11 +197,8 @@
             :options="DV_issueSeverities"
             :searchable="false"
             :multiple="true"
-            :max="1"
             select-label="Select"
-            deselect-Label="Remove"
-            @select="updateIssueSeverityFilter"
-            @remove="removeIssueSeverityFilter"
+            deselect-label="Remove"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -235,8 +208,8 @@
           </multiselect>
         </div>
       </div>
-      <div class="export-btn my-4">
-        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-info badge badge-pill px-3">Export</button>
+      <div class="mx-3 mb-2 float-right">
+        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-link">Export</button>
       </div>
     </div>
     <div class="knocker" @click="showFilters=!showFilters">
@@ -317,54 +290,6 @@
           { name: '100', value: '100'}
         ]
       },
-      updateStatusFilter(selected, index) {
-        this.$emit('on-status-change', selected)
-      },
-      removeStatusFilter() {
-        this.$emit('on-status-change', {id: 'sa'})
-      },
-      updateFacilityGroupFilter(selected, index) {
-        this.$emit('on-facilitygroup-change', selected)
-      },
-      removeFacilityGroupFilter() {
-        this.$emit('on-facilitygroup-change', {id: 'sa'})
-      },
-      updateProgressFilter(selected, index) {
-        this.$emit('on-progress-change', selected)
-      },
-      removeProgressFilter() {
-        this.$emit('on-progress-change', {id: 'sa'})
-      },
-      updateTaskTypeFilter(selected, index) {
-        this.$emit('on-tasktype-change', selected)
-      },
-      removeTaskTypeFilter() {
-        this.$emit('on-tasktype-change', {id: 'sa'})
-      },
-      updateIssueTypeFilter(selected, index) {
-        this.$emit('on-issuetype-change', selected)
-      },
-      removeIssueTypeFilter() {
-        this.$emit('on-issuetype-change', {id: 'sa'})
-      },
-      updateIssueSeverityFilter(selected, index) {
-        this.$emit('on-issueseverity-change', selected)
-      },
-      removeIssueSeverityFilter() {
-        this.$emit('on-issueseverity-change', {id: 'sa'})
-      },
-      updateIssueProgressFilter(selected, index) {
-        this.$emit('on-issueprogress-change', selected)
-      },
-      removeIssueProgressFilter() {
-        this.$emit('on-issueprogress-change', {id: 'sa'})
-      },
-      updateTaskProgressFilter(selected, index) {
-        this.$emit('on-taskprogress-change', selected)
-      },
-      removeTaskProgressFilter() {
-        this.$emit('on-taskprogress-change', {id: 'sa'})
-      },
       addFacility() {
         if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
       },
@@ -375,12 +300,6 @@
           this.isLoading = false
         })
         this.$emit('on-facility-name-search', query, callback)
-      },
-      onSelectFacility(selected) {
-        this.$emit('on-filter-by-facility', selected)
-      },
-      onRemoveFacility() {
-        this.$emit('on-filter-by-facility', null)
       },
       onClearFilter() {
         this.currentStatus = null
@@ -393,24 +312,24 @@
         this.currentIssueSeverity = null
         this.currentIssueProgress = null
         this.currentTaskProgress = null
-        this.$emit('clear-filters', {id: 'sa'})
+        this.$emit('clear-filters')
       },
       exportData() {
         if (!this.enableExport || this.exporting) return;
         this.exporting = true
         var cb = (err) => this.exporting = false
 
-        var filters = [`Map Filters:\n
-          Facility Group: ${this.currentFacilityGroup ? this.currentFacilityGroup.name : 'all'}\n
-          Facility Name: ${this.selectedFacility ? this.selectedFacility.facilityName : 'all'}\n
-          Project Status: ${this.currentStatus ? this.currentStatus.name : 'all'}\n
-          Facility % Progress Range: ${this.currentProgress ? this.currentProgress.name : 'all'}\n
+        var filters = [`Map Filters: ${this.currentProject.name} \n
+          Facility Group: ${this.currentFacilityGroup ? _.map(this.currentFacilityGroup, 'name').join() : 'all'}\n
+          Facility Name: ${this.selectedFacility ? _.map(this.selectedFacility, 'facilityName').join() : 'all'}\n
+          Project Status: ${this.currentStatus ? _.map(this.currentStatus, 'name').join() : 'all'}\n
+          Facility % Progress Range: ${this.currentProgress ? _.map(this.currentProgress, 'name').join() : 'all'}\n
           Facility Due Date: ${this.dueDateRange && this.dueDateRange[0] ? this.dueDateRange[0].toLocaleDateString() + ' to ' + this.dueDateRange[1].toLocaleDateString() : 'all'}\n
-          Task Type: ${this.currentTaskType ? this.currentTaskType.name : 'all'}\n
-          Task % Progress Range: ${this.currentTaskProgress ? this.currentTaskProgress.name : 'all'}\n
-          Issue Type: ${this.currentIssueType ? this.currentIssueType.name : 'all'}\n
-          Issue % Progress Range: ${this.currentIssueProgress ? this.currentIssueProgress.name : 'all'}\n
-          Issue severity: ${this.currentIssueSeverity ? this.currentIssueSeverity.name : 'all'}\n
+          Task Type: ${this.currentTaskType ?  _.map(this.currentTaskType, 'name').join() : 'all'}\n
+          Task % Progress Range: ${this.currentTaskProgress ?  _.map(this.currentTaskProgress, 'name').join() : 'all'}\n
+          Issue Type: ${this.currentIssueType ?  _.map(this.currentIssueType, 'name').join() : 'all'}\n
+          Issue % Progress Range: ${this.currentIssueProgress ?  _.map(this.currentIssueProgress, 'name').join() : 'all'}\n
+          Issue severity: ${this.currentIssueSeverity ?  _.map(this.currentIssueSeverity, 'name').join() : 'all'}\n
         `]
         this.$emit('export-data', filters, cb)
       }
@@ -423,6 +342,51 @@
       },
       dueDateRange(value) {
         this.$emit('on-duedate-change', value)
+      },
+      currentFacilityGroup(value) {
+        if (value) {
+          this.$emit('on-facilitygroup-change', value)
+        }
+      },
+      selectedFacility(value) {
+        if (value) {
+          this.$emit('on-filter-by-facility', value)
+        }
+      },
+      currentStatus(value) {
+        if (value) {
+          this.$emit('on-status-change', value)
+        }
+      },
+      currentProgress(value) {
+        if (value) {
+          this.$emit('on-progress-change', value)
+        }
+      },
+      currentTaskType(value) {
+        if (value) {
+          this.$emit('on-tasktype-change', value)
+        }
+      },
+      currentTaskProgress(value) {
+        if (value) {
+          this.$emit('on-taskprogress-change', value)
+        }
+      },
+      currentIssueType(value) {
+        if (value) {
+          this.$emit('on-issuetype-change', value)
+        }
+      },
+      currentIssueProgress(value) {
+        if (value) {
+          this.$emit('on-issueprogress-change', value)
+        }
+      },
+      currentIssueSeverity(value) {
+        if (value) {
+          this.$emit('on-issueseverity-change', value)
+        }
       }
     }
   }
@@ -567,11 +531,5 @@
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
-  }
-  .export-btn {
-    text-align: center;
-    .btn {
-      font-size: 18px;
-    }
   }
 </style>

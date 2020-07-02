@@ -82,33 +82,10 @@
         </tab>
         <tab title="Notes" key="notes">
           <div>
-            <div v-if="newNote" class="mb-3">
-              <notes-form
-                :facility="DV_facility"
-                @close-note-input="newNote = false"
-                @note-created="noteCreated"
-              />
-            </div>
-            <div v-else class="mb-4 d-flex mx-2" :class="{'align-items-center justify-content-between': _isallowed}">
-              <div class="input-group" :class="{'search-tab': _isallowed}">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                </div>
-                <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
-              </div>
-              <div v-if="_isallowed">
-                <button @click.stop="newNote = true" class="btn btn-sm btn-light">Add Note</button>
-              </div>
-            </div>
-            <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
-              <notes-show
-                :facility="DV_facility"
-                :note="note"
-                @note-updated="noteUpdated"
-                @note-deleted="noteDeleted"
-              />
-            </div>
-            <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
+            <notes-index
+              :facility="DV_facility"
+              @refresh-facility="refreshFacility"
+            />
           </div>
         </tab>
         <tab title="Tasks" key="tasks">
@@ -132,14 +109,13 @@
 
 <script>
   import http from './../../../common/http'
-  import NotesForm from './../notes/notes_form'
-  import NotesShow from './../notes/notes_show'
+  import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './facility_detail_show'
 
   export default {
     name: 'FacilitiesShow',
-    components: { DetailShow, NotesForm, NotesShow, IssueIndex },
+    components: {DetailShow, NotesIndex, IssueIndex},
     props: {
       facility: {
         default: null,
