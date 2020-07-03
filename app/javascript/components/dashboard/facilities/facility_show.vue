@@ -111,7 +111,7 @@
   import http from './../../../common/http'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
-  import DetailShow from './facility_detail_show'
+  import DetailShow from './../projects/project_show'
 
   export default {
     name: 'FacilitiesShow',
@@ -147,11 +147,12 @@
       this.fetchFacility()
     },
     methods: {
-      fetchFacility() {
+      fetchFacility(opt={}) {
         http
           .get(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
+            if (opt.cb) this.$emit('facility-update', this.DV_facility)
             this.loading = false;
           })
           .catch((err) => {
@@ -191,7 +192,7 @@
       },
       refreshFacility() {
         this.loading = true
-        this.fetchFacility()
+        this.fetchFacility({cb: true})
       },
       noteCreated(note) {
         this.newNote = false

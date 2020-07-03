@@ -1,12 +1,13 @@
 <template>
   <div id="filterbar" :style="filterBarStyle">
     <div id="filter_bar" class="shadow-sm">
-      <div class="text-center my-3 filter-header">
-        <h5 class="mb-4">Filter Map</h5>
-        <button class="btn btn-sm btn-link clear_btn" @click.prevent="onClearFilter">clear</button>
+      <div class="d-flex m-3 align-items-center justify-content-between">
+        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-sm btn-link">export</button>
+        <h4>Filter Map</h4>
+        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
       <div class="filters_wrap">
-        <div class="project-select my-3">
+        <div class="project-select my-3 mx-1">
           <multiselect
             v-model="currentProject"
             track-by="name"
@@ -25,7 +26,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="facilitygroup-select my-3">
+        <div class="facilitygroup-select my-3 mx-1">
           <multiselect
             v-model="currentFacilityGroup"
             track-by="name"
@@ -44,7 +45,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="facilityname-search my-3">
+        <div class="facilityname-search my-3 mx-1">
           <multiselect
             placeholder="Search by Facility Name"
             v-model="selectedFacility"
@@ -67,7 +68,7 @@
             <span slot="noOptions">...</span>
           </multiselect>
         </div>
-        <div class="status-select">
+        <div class="status-select mx-1">
           <multiselect
             v-model="currentStatus"
             track-by="name"
@@ -86,7 +87,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="progress-ranges-select my-3">
+        <div class="progress-ranges-select my-3 mx-1">
           <multiselect
             v-model="currentProgress"
             track-by="name"
@@ -105,14 +106,14 @@
             </template>
           </multiselect>
         </div>
-        <div class="duedate-range my-3">
+        <div class="duedate-range my-3 mx-1">
           <v2-date-picker
             v-model="dueDateRange"
             placeholder="Due Date Range"
             range
           />
         </div>
-        <div class="tasktype-select my-3">
+        <div class="tasktype-select my-3 mx-1">
           <multiselect
             v-model="currentTaskType"
             track-by="name"
@@ -131,7 +132,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="taskProgress-select my-3">
+        <div class="taskProgress-select my-3 mx-1">
           <multiselect
             v-model="currentTaskProgress"
             track-by="name"
@@ -150,7 +151,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="issetype-select my-3">
+        <div class="issetype-select my-3 mx-1">
           <multiselect
             v-model="currentIssueType"
             track-by="name"
@@ -169,7 +170,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="issueProgress-select my-3">
+        <div class="issueProgress-select my-3 mx-1">
           <multiselect
             v-model="currentIssueProgress"
             track-by="name"
@@ -188,7 +189,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="issueSeverity-select my-3">
+        <div class="issueSeverity-select my-3 mx-1">
           <multiselect
             v-model="currentIssueSeverity"
             track-by="name"
@@ -207,9 +208,6 @@
             </template>
           </multiselect>
         </div>
-      </div>
-      <div class="mx-3 mb-2 float-right">
-        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-link">Export</button>
       </div>
     </div>
     <div class="knocker" @click="showFilters=!showFilters">

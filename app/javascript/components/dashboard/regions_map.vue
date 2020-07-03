@@ -165,12 +165,12 @@
             </div>
           </div>
           <div class="knocker_side" :style="knockerStyle">
-            <div v-if="currentFacility" class="knocker" @click="toggleOpenSideBar">
+            <div v-if="currentFacilityStatus" class="knocker" @click="toggleOpenSideBar">
               <div class="linner"></div>
             </div>
             <div id="map-sidebar" class="shadow-sm">
               <facility-show
-                v-if="currentFacility"
+                v-if="currentFacilityStatus"
                 :facility="currentFacility"
                 :region="currentRegion"
                 :statuses="statuses"
@@ -179,6 +179,10 @@
                 @edit-facility="editFacility"
                 @facility-update="updateFacility"
               />
+              <div v-else class="d-flex justify-content-center align-items-center h-75">
+                <loader :loading="true" color="black"></loader>
+                <p class="__loading">Loading</p>
+              </div>
             </div>
           </div>
         </div>
@@ -443,6 +447,11 @@ export default {
       } else {
         return {right: '0'}
       }
+    },
+    currentFacilityStatus() {
+      var status = this.currentFacility && _.map(this.filteredFacilities, 'id').includes(this.currentFacility.id)
+      if (!status && this.openSidebar) this.openSidebar = false
+      return status
     }
   },
   methods: {
@@ -480,8 +489,8 @@ export default {
       return L.latLng(Number(facility.lat), Number(facility.lng))
     },
     showFacility(facility) {
-      if (this.currentFacility && facility.id == this.currentFacility.id) return;
       this.openSidebar = true
+      if (this.currentFacility && facility.id == this.currentFacility.id) return;
       this.currentRegion = this.regions.find(region => region.id == facility.facilityGroupId)
       this.center = this.getLatLngForFacility(facility)
       // this.zoom = 17
@@ -716,6 +725,7 @@ export default {
     openSidebar(value) {
       if (!value && !this.loading) {
         this.facilities = []
+        this.sideLoading = true
         this.fetchFacilities()
       }
     }

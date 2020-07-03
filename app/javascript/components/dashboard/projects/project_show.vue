@@ -36,9 +36,9 @@
 </template>
 
 <script>
-  import TaskForm  from './../tasks/task_form'
+  import TaskForm from './../tasks/task_form'
   import TaskIndex from './../tasks/task_index'
-  import http      from './../../../common/http'
+  import http from './../../../common/http'
 
   export default {
     name: 'ProjectShow',
@@ -123,6 +123,12 @@
         if (value) {
           this.currentTask = null
         }
+      },
+      facility: {
+        handler: function(value) {
+          this.DV_facility = Object.assign({}, value)
+        },
+        deep: true
       }
     }
   }

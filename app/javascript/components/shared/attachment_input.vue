@@ -4,14 +4,14 @@
       <div
         v-if="C_invalidFiles"
         class="invalid-files"
-      >
+        >
         <div class="alert alert-danger alert-dismissible mb-0" role="alert">
           <h4 class="alert-heading">File alert!</h4>
           <p>These files are not uploaded..</p>
           <hr>
           <ul class="text-left">
             <li v-for="file in invalidFiles">
-              {{ (file.size/1000000).toPrecision(4) + "mb" }} - {{ file.name }}
+              {{(file.size/1000000).toPrecision(4) + "mb"}} - {{file.name}}
             </li>
           </ul>
           <button type="button" class="close" @click.prevent="closeInvalidModal">
@@ -28,13 +28,13 @@
       @dragleave="onDragLeave"
       @dragover.prevent="onDragEnter"
       @drop="onDrop"
-    >
+      >
       <label class="drop__label text-center">
         Drop files here or click to upload
         <span
           v-if="showLabel"
           class="drop__sub-label mt-4 d-block"
-        >Max file size 7mb.</span>
+          >Max file size 50mb.</span>
       </label>
       <input
         ref="fileInput"
@@ -43,7 +43,7 @@
         name="file"
         multiple
         @change.prevent="onFileChange"
-      >
+        >
     </div>
   </div>
 </template>
@@ -53,10 +53,10 @@
     props: {showLabel: Boolean},
     data() {
       return {
-        files       : [],
-        validFiles  : [],
+        files : [],
+        validFiles : [],
         invalidFiles: [],
-        inputError  : null,
+        inputError : null,
         isDragActive: false
       }
     },
@@ -72,10 +72,9 @@
         let file = null
         this.isDragActive = false
 
-        for (let idx = 0; idx < e.dataTransfer.files.length; idx += 1)
-        {
+        for (let idx=0; idx < e.dataTransfer.files.length; idx += 1) {
           file = e.dataTransfer.files[idx]
-          if (file.size <= 7000000) {
+          if (file.size <= 50000000) {
             this.validFiles.push(file)
           } else {
             this.invalidFiles.push(file)
@@ -88,12 +87,11 @@
         this.inputError = null
       },
       onFileChange(e) {
-        if (!e.currentTarget) { return; }
+        if (!e.currentTarget) return
         let file = null
-        for (let idx = 0; idx < this.$refs.fileInput.files.length; idx += 1)
-        {
+        for (let idx = 0; idx < this.$refs.fileInput.files.length; idx += 1) {
           file = this.$refs.fileInput.files[idx]
-          if (file.size <= 7000000) {
+          if (file.size <= 50000000) {
             this.validFiles.push(file)
           } else {
             this.invalidFiles.push(file)

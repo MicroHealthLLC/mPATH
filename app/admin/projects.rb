@@ -61,7 +61,7 @@ ActiveAdmin.register Project do
                   end
                   span pretty_format comment.created_at
                   if authorized?(ActiveAdmin::Auth::DESTROY, comment)
-                    text_node link_to I18n.t('active_admin.comments.delete'), admin_comment_url(comment.id), method: :delete, data: { confirm: I18n.t('active_admin.comments.delete_confirmation') }
+                    text_node link_to I18n.t('active_admin.comments.delete'), admin_comment_url(comment.id), method: :delete, data: {confirm: I18n.t('active_admin.comments.delete_confirmation')}
                   end
                 end
                 div class: 'active_admin_comment_body' do
@@ -72,7 +72,7 @@ ActiveAdmin.register Project do
 
             f.semantic_fields_for :comments, ActiveAdmin::Comment.new do |c|
               c.inputs :class => "" do
-                c.input :body, label: "Comment", input_html: { rows: 8 }
+                c.input :body, label: "Comment", required: false, input_html: {rows: 8}
               end
             end
           end
