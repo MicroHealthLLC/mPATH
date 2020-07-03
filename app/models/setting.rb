@@ -16,7 +16,11 @@ class Setting < ApplicationRecord
       available_settings["#{key.upcase}"] = { 'default' => ENV["#{key.upcase}"], 'cached' => cached.send(key) || '' }
     end
   end
-  load_available_settings
+  begin
+    load_available_settings
+  rescue ActiveRecord::NoDatabaseError
+  end
+
 
   after_save do
     Setting.load_available_settings
