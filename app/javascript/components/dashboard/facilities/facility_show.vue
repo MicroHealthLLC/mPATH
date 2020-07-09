@@ -76,7 +76,7 @@
                 <span class="fbody-icon"><i class="far fa-envelope"></i></span>
                 <span>{{DV_facility.email || 'N/A'}}</span>
               </p>
-              <button class="mt-2 btn btn-success btn-sm" @click="updateFacility" :disabled="!DV_updated">Save</button>
+              <button v-if="_isallowed" class="mt-2 btn btn-success btn-sm" @click="updateFacility" :disabled="!DV_updated">Save</button>
             </div>
           </div>
         </tab>
