@@ -135,7 +135,7 @@
             }
           })
           .then((response)=> {
-            this.$emit(callback, humps.camelizeKeys(response.data.note))
+            this.$emit(callback, humps.camelizeKeys(response.data))
           })
           .catch((err)=> {
             console.log(err)
