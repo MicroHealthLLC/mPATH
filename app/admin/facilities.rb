@@ -100,7 +100,7 @@ ActiveAdmin.register Facility do
 
             f.semantic_fields_for :comments, ActiveAdmin::Comment.new do |c|
               c.inputs :class => "" do
-                c.input :body, label: "Comment", input_html: { rows: 8 }
+                c.input :body, label: "Comment", required: false, input_html: {rows: 8}
               end
             end
           end
