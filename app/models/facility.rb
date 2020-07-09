@@ -1,6 +1,6 @@
 class Facility < ApplicationRecord
   strip_attributes
-  belongs_to :facility_group, optional: true
+  belongs_to :facility_group
   belongs_to :creator, class_name: "User"
   has_many :facility_projects, dependent: :destroy
   has_many :projects, through: :facility_projects
