@@ -1,6 +1,5 @@
 class CreatePrivileges < ActiveRecord::Migration[5.2]
   def change
-    remove_column :users, :privileges
     create_table :privileges do |t|
       t.string :overview, default: 'R'
       t.string :tasks, default: 'R'
@@ -16,5 +15,7 @@ class CreatePrivileges < ActiveRecord::Migration[5.2]
       user.privilege.create! unless user.privilege.present?
       user.save
     end
+
+    rename_column :users, :privileges, :old_privileges
   end
 end
