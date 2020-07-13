@@ -16,6 +16,12 @@ class CreatePrivileges < ActiveRecord::Migration[5.2]
       user.save
     end
 
-    rename_column :users, :privileges, :old_privileges
+    begin
+      remove_index :users, :privileges
+      rename_column :users, :privileges, :old_privileges
+    rescue
+
+    end
+
   end
 end
