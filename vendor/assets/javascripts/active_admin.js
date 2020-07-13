@@ -400,7 +400,7 @@ jQuery(function($) {
       },
       mounted() {
         var cb = () => this.loading = false;
-        this.fetchFacilityProjects(cb);
+        if (facility_id) this.fetchFacilityProjects(cb);
       },
       methods: {
         fetchFacilityProjects(cb) {
@@ -442,7 +442,6 @@ jQuery(function($) {
       },
       computed: {
         shouldVisible() {
-          return true
           return $('#advanced').css('display') === 'block'
         }
       },
@@ -510,29 +509,242 @@ jQuery(function($) {
   }
 
   // user role previliges
-  if ($("#user_privileges_collection_input").is(":visible"))
+  if ($("#user-role_privilege-tab").is(":visible"))
   {
-    var previliges = $("input#user_privileges").val();
-    if(previliges !== undefined)
-      previliges.split(",").map(p => {
-        if (p) $(`input[value=${p.trim()}]`).prop("checked", true);
-      });
+    var role_privilege = new Vue({
+      el: "#user-role_privilege-tab",
+      data() {
+        return {
+          loading: true,
+          overview: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          tasks: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          issues: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          notes: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          admin: {
+            read: false,
+            write: false,
+            delete: false
+          }
+        }
+      },
+      mounted() {
+        this.writePrivileges()
+        this.$nextTick(() => {
+          this.loading = false
+        })
+      },
+      methods: {
+        writePrivileges() {
+          var overview = $("#user_privilege_attributes_overview").val() || ""
+          var tasks = $("#user_privilege_attributes_tasks").val() || ""
+          var issues = $("#user_privilege_attributes_issues").val() || ""
+          var notes = $("#user_privilege_attributes_notes").val() || ""
+          var admin = $("#user_privilege_attributes_admin").val() || ""
+          this.overview = {
+            read: overview.includes("R"),
+            write: overview.includes("W"),
+            delete: overview.includes("D")
+          }
+          this.tasks = {
+            read: tasks.includes("R"),
+            write: tasks.includes("W"),
+            delete: tasks.includes("D")
+          }
+          this.issues = {
+            read: issues.includes("R"),
+            write: issues.includes("W"),
+            delete: issues.includes("D")
+          }
+          this.notes = {
+            read: notes.includes("R"),
+            write: notes.includes("W"),
+            delete: notes.includes("D")
+          }
+          this.admin = {
+            read: admin.includes("R"),
+            write: admin.includes("W"),
+            delete: admin.includes("D")
+          }
+        }
+      },
+      watch: {
+        "overview.read"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_overview").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.overview.write = false
+            this.overview.delete = false
+          }
+          $("#user_privilege_attributes_overview").val(v)
+        },
+        "overview.write"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_overview").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.overview.read = value
+          $("#user_privilege_attributes_overview").val(v)
+        },
+        "overview.delete"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_overview").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.overview.read = value
+          $("#user_privilege_attributes_overview").val(v)
+        },
+        "tasks.read"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_tasks").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.tasks.write = false
+            this.tasks.delete = false
+          }
+          $("#user_privilege_attributes_tasks").val(v)
+        },
+        "tasks.write"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_tasks").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.tasks.read = value
+          $("#user_privilege_attributes_tasks").val(v)
+        },
+        "tasks.delete"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_tasks").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.tasks.read = value
+          $("#user_privilege_attributes_tasks").val(v)
+        },
+        "issues.read"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_issues").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.issues.write = false
+            this.issues.delete = false
+          }
+          $("#user_privilege_attributes_issues").val(v)
+        },
+        "issues.write"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_issues").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.issues.read = value
+          $("#user_privilege_attributes_issues").val(v)
+        },
+        "issues.delete"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_issues").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.issues.read = value
+          $("#user_privilege_attributes_issues").val(v)
+        },
+        "notes.read"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_notes").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.notes.write = false
+            this.notes.delete = false
+          }
+          $("#user_privilege_attributes_notes").val(v)
+        },
+        "notes.write"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_notes").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.notes.read = value
+          $("#user_privilege_attributes_notes").val(v)
+        },
+        "notes.delete"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_notes").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.notes.read = value
+          $("#user_privilege_attributes_notes").val(v)
+        },
+        "admin.read"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_admin").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.admin.write = false
+            this.admin.delete = false
+          }
+          $("#user_privilege_attributes_admin").val(v)
+        },
+        "admin.write"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_admin").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.admin.read = value
+          $("#user_privilege_attributes_admin").val(v)
+        },
+        "admin.delete"(value) {
+          if (this.loading) return
+          var v = $("#user_privilege_attributes_admin").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.admin.read = value
+          $("#user_privilege_attributes_admin").val(v)
+        },
+      },
+      template: `<fieldset v-if="!loading" class="choices p-5 privileges_tab">
+        <div class="p-5">Privileges</div>
+        <ol class="choices-group">
+          <li class="choice d-flex">
+            <label>Overview</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="overview.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="overview.delete">Delete</label>
+          </li>
+          <li class="choice d-flex">
+            <label>Tasks</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.delete">Delete</label>
+          </li>
+          <li class="choice d-flex">
+            <label>Issues</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="issues.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="issues.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
+          </li>
+          <li class="choice d-flex">
+            <label>Notes</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
+          </li>
+          <li class="choice d-flex">
+            <label>Admin</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="admin.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="admin.delete">Delete</label>
+          </li>
+        </ol>
+      </fieldset>`
+    });
   }
 
-  var togglePrivileges = function () {
-    var show = $("#user_role").val() === 'subscriber'
-    $("#__privileges").css({display: show ? 'block' : 'none'})
-  }
 
   $(document).on('ready page:load turbolinks:load', function() {
-
-    if ($("#user_role").is(":visible"))
-    {
-      togglePrivileges()
-      $("#user_role").change(function(e) {
-        togglePrivileges()
-      })
-    }
 
     // add assign/unassign inputs in dialog_form
     $("a[data-action='Assign/Unassign Facility Group'], a[data-action='Assign/Unassign Project']").click(function(e) {

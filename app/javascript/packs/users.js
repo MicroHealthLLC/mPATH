@@ -22,7 +22,20 @@ Vue.use(VueGoogleMaps, {
 })
 
 Vue.config.productionTip = false
-Vue.prototype.$currentUser = JSON.parse(window.current_user.replace(/&quot;/g,'"'));
+var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+var permissions = {}
+for (var key in current_user.privilege) {
+  if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
+  var value = current_user.privilege[key]
+  permissions[key] = {
+    read: value.includes('R'),
+    write: value.includes('W'),
+    delete: value.includes('D')
+  }
+}
+
+Vue.prototype.$currentUser = current_user
+Vue.prototype.$permissions = permissions
 
 // eslint-disable-next-line no-unused-vars
 const app = new Vue({

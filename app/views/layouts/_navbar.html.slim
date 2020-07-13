@@ -12,6 +12,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
         li.nav-item
           span.text-info.font-weight-bold
             | #{@project.try(:name)}
+          =link_to "View gantt chart", gantt_chart_project_path(@project), class: "btn btn-sm btn-link" if @project.present?
 
     ul.navbar-nav.my-2.my-lg-0
       -if user_signed_in?

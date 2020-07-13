@@ -47,14 +47,14 @@
     <div class="form-row mx-3">
       <div class="form-group col-md-6">
         <label class="font-sm">Start Date:</label>
-        <date-picker
-          :clear-button="true"
+        <v2-date-picker
           v-validate="'required'"
-          input-class="form-control form-control-sm"
           v-model="DV_task.startDate"
-          :disabled-dates="disabledStartDates"
-          placeholder="Start Date"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="yyyy-mm-dd"
           name="Start Date"
+          :disabled-date="disabledStartDate"
         />
         <div v-show="errors.has('Start Date')" class="text-danger">
           {{ errors.first('Start Date') }}
@@ -62,15 +62,15 @@
       </div>
       <div class="form-group col-md-6">
         <label class="font-sm">Due Date:</label>
-        <date-picker
-          :clear-button="true"
+        <v2-date-picker
           v-validate="'required'"
-          input-class="form-control form-control-sm"
           v-model="DV_task.dueDate"
-          :disabled-dates="disabledDueDates"
-          placeholder="Due Date"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="yyyy-mm-dd"
           name="Due Date"
           :disabled="DV_task.startDate === ''"
+          :disabled-date="disabledDueDate"
         />
         <div v-show="errors.has('Due Date')" class="text-danger">
           {{ errors.first('Due Date') }}
@@ -180,8 +180,6 @@
     mounted() {
       if (this.task) {
         this.DV_task = _.cloneDeep(this.task)
-        this.DV_task.dueDate = new Date(this.task.dueDate)
-        this.DV_task.startDate = new Date(this.task.startDate)
         this.DV_task.taskFiles = []
         this.addFile(this.task.attachFiles)
       }
@@ -288,6 +286,16 @@
 
         var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
+      },
+      disabledStartDate(date) {
+        const today = new Date()
+        today.setHours(0,0,0,0)
+        return date < today
+      },
+      disabledDueDate(date) {
+        const startDate = new Date(this.DV_task.startDate)
+        startDate.setHours(0,0,0,0)
+        return date < startDate
       }
     },
     computed: {
@@ -302,12 +310,6 @@
       },
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
-      },
-      disabledStartDates() {
-        return { to: this.getDate(-1) }
-      },
-      disabledDueDates() {
-        return { to: new Date(this.DV_task.startDate) }
       }
     },
     watch: {

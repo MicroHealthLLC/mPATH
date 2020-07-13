@@ -20,7 +20,7 @@
     </div>
     <div v-else>
       <div class="d-flex justify-content-between">
-        <div class="issue-filters ml-2 d-flex justify-content-between align-items-center" :class="{'w-70': _isallowed, 'w-100': !_isallowed }">
+        <div class="issue-filters ml-2 d-flex justify-content-between align-items-center" :class="{'w-70': _isallowed('write'), 'w-100': !_isallowed('write') }">
           <select
             name="Issue Type"
             class="form-control form-control-sm"
@@ -42,7 +42,7 @@
             </option>
           </select>
         </div>
-        <button v-if="_isallowed" class="btn btn-sm btn-light" @click.stop="newIssue=true">Report an Issue</button>
+        <button v-if="_isallowed('write')" class="btn btn-sm btn-light" @click.stop="reportNew">Report an Issue</button>
       </div>
       <div class="m-3">
         <div class="form-check-inline">
@@ -63,17 +63,20 @@
       </div>
       <div class="mt-1">
         <hr>
-        <div v-if="filteredIssues.length > 0">
-          <issue-show
-            v-for="issue in filteredIssues"
-            :key="issue.id"
-            :issue="issue"
-            :facility="facility"
-            @issue-edited="issueEdited"
-            @issue-deleted="issueDeleted"
-          />
+        <div v-if="_isallowed('read')">
+          <div v-if="filteredIssues.length > 0">
+            <issue-show
+              v-for="issue in filteredIssues"
+              :key="issue.id"
+              :issue="issue"
+              :facility="facility"
+              @issue-edited="issueEdited"
+              @issue-deleted="issueDeleted"
+            />
+          </div>
+          <p v-else class="text-danger ml-2">No issues found..</p>
         </div>
-        <p v-else class="text-danger ml-2">No issues found..</p>
+        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
   </div>
@@ -154,11 +157,15 @@
       issueEdited(issue) {
         this.currentIssue = issue
         this.newIssue = true
+      },
+      reportNew() {
+        this.currentIssue = null
+        this.newIssue = true
       }
     },
     computed: {
       _isallowed() {
-        return ["admin", "subscriber"].includes(this.$currentUser.role)
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       filteredIssues() {
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {

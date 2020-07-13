@@ -18,7 +18,6 @@ ActiveAdmin.register User do
       :title,
       :phone_number,
       :address,
-      :role,
       :lat,
       :lng,
       :password,
@@ -26,7 +25,15 @@ ActiveAdmin.register User do
       :status,
       :privileges,
       :country_code,
-      project_ids: []
+      project_ids: [],
+      privilege_attributes: [
+        :id,
+        :overview,
+        :tasks,
+        :issues,
+        :notes,
+        :admin
+      ]
     ]
   end
 
@@ -42,7 +49,6 @@ ActiveAdmin.register User do
           f.input :email, input_html: { disabled: user.id?, :'data-id' => user.id }
           f.input :password, input_html: { disabled: user.id? }
           f.input :password_confirmation, input_html: { disabled: user.id? }
-          f.input :role, include_blank: false, include_hidden: false
           f.input :phone_number
           f.input :country_code
           div id: 'user_phone_number-tab'
@@ -52,16 +58,16 @@ ActiveAdmin.register User do
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
-        end
-
-        div id: 'user-password__tab'
-
-        # if user.subscriber?
-          f.inputs 'Role Privileges', id: '__privileges' do
-            f.input :privileges, input_html: { disabled: true }
-            f.input :privileges_collection, label: 'Can Manages', as: :check_boxes, collection: User::PRIVILIGES, include_blank: false
+          div id: 'user-role_privilege-tab'
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+              p.input :overview
+              p.input :tasks
+              p.input :issues
+              p.input :notes
+              p.input :admin
           end
-        # end
+        end
+        div id: 'user-password__tab'
       end
 
       tab 'Projects' do
@@ -80,7 +86,6 @@ ActiveAdmin.register User do
     column :first_name
     column :last_name
     column :email
-    column :role
     column "State", :status
     column :phone_number
     column :address
@@ -119,32 +124,10 @@ ActiveAdmin.register User do
         format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
       end
     end
-
-    def create
-      if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].filter(&:present?).join(",")
-        params["user"].merge!({"privileges": privileges})
-      end
-      super
-    end
-
-    def update
-      if params["user"]["privileges_collection"].present?
-        privileges = params["user"]["privileges_collection"].filter(&:present?).join(",")
-        params["user"].merge!({"privileges": privileges})
-      end
-      super
-    end
-
-    def edit
-      resource.priviliges_collection = resource.privileges.split(",")
-      super
-    end
   end
 
   filter :email
   filter :projects, as: :select, collection: Project.active
-  filter :role, as: :select, collection: User.roles
   filter :title
   filter :first_name
   filter :last_name

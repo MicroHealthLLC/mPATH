@@ -19,7 +19,6 @@ ActiveAdmin.register Task do
       :task_type_id,
       :start_date,
       :facility_project_id,
-      :project_id,
       task_files: []
     ]
   end

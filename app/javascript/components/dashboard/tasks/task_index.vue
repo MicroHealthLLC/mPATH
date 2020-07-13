@@ -1,85 +1,88 @@
 <template>
   <div id="tasks-index" class="mt-3">
-    <div class="d-flex align-item-center justify-content-between mb-3">
-      <div class="task-filters mx-2" :class="{'w-75': _isallowed, 'w-100': !_isallowed }">
-        <select
-          name="Task Type"
-          class="form-control form-control-sm"
-          v-model="filters.taskType"
-          >
-          <option selected value="">Filter by Task Type</option>
-          <option v-for="opt in taskTypes" :value="opt.id">
-            {{opt.name}}
-          </option>
-        </select>
-      </div>
-      <div v-if="permitted" class="new-tasks-btn mr-2">
-        <a class="btn btn-sm btn-light" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
-      </div>
-    </div>
-    <div class="m-3">
-      <div class="form-check-inline">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-        </label>
-      </div>
-      <div class="form-check-inline">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-        </label>
-      </div>
-      <div class="form-check-inline">
-        <label class="form-check-label">
-          <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-        </label>
-      </div>
-    </div>
-    <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
-      <li
-        class="list-group-item mb-2"
-        v-for="task in filteredTasks"
-        :key="task.id"
-        >
-        <div class="row">
-          <div class="col-md-9">
-            <div class="font-sm d-flex">
-              <span class="fbody-icon"><i class="fas fa-check"></i></span>
-              {{task.text}}
-            </div>
-            <div class="row d-flex">
-              <div class="font-sm col">
-                <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                {{task.taskType}}
-              </div>
-            </div>
-            <div class="row">
-              <div class="font-sm col-md-6">
-                <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                {{new Date(task.startDate).toLocaleDateString()}}
-              </div>
-              <div class="font-sm col-md-6">
-                <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                {{new Date(task.dueDate).toLocaleDateString()}}
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div v-if="permitted" class="crud-actions my-2">
-              <span class="mr-3 edit-action" @click.prevent="editTask(task)">
-                <i class="fas fa-edit"></i>
-              </span>
-              <span class="delete-action" @click.prevent="deleteTask(task)">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-            </div>
-            <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
-            </div>
-          </div>
+    <div v-if="_isallowed('read')">
+      <div class="d-flex align-item-center justify-content-between mb-3">
+        <div class="task-filters mx-2" :class="{'w-75': _isallowed('write'), 'w-100': !_isallowed('write') }">
+          <select
+            name="Task Type"
+            class="form-control form-control-sm"
+            v-model="filters.taskType"
+            >
+            <option selected value="">Filter by Task Type</option>
+            <option v-for="opt in taskTypes" :value="opt.id">
+              {{opt.name}}
+            </option>
+          </select>
         </div>
-      </li>
-    </ul>
-    <p v-else class="text-danger m-3">No tasks found..</p>
+        <div v-if="_isallowed('write')" class="new-tasks-btn mr-2">
+          <a class="btn btn-sm btn-light" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
+        </div>
+      </div>
+      <div class="m-3">
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+          </label>
+        </div>
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+          </label>
+        </div>
+        <div class="form-check-inline">
+          <label class="form-check-label">
+            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+          </label>
+        </div>
+      </div>
+      <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
+        <li
+          class="list-group-item mb-2"
+          v-for="task in filteredTasks"
+          :key="task.id"
+          >
+          <div class="row">
+            <div class="col-md-9">
+              <div class="font-sm d-flex">
+                <span class="fbody-icon"><i class="fas fa-check"></i></span>
+                {{task.text}}
+              </div>
+              <div class="row d-flex">
+                <div class="font-sm col">
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                  {{task.taskType}}
+                </div>
+              </div>
+              <div class="row">
+                <div class="font-sm col-md-6">
+                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                  {{new Date(task.startDate).toLocaleDateString()}}
+                </div>
+                <div class="font-sm col-md-6">
+                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                  {{new Date(task.dueDate).toLocaleDateString()}}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="crud-actions my-2">
+                <span v-if="_isallowed('write')" class="mr-3 edit-action" @click.prevent="editTask(task)">
+                  <i class="fas fa-edit"></i>
+                </span>
+                <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask(task)">
+                  <i class="fas fa-trash-alt"></i>
+                </span>
+              </div>
+              <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <p v-else class="text-danger m-3">No tasks found..</p>
+    </div>
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
   </div>
 </template>
 
@@ -112,16 +115,8 @@
       }
     },
     computed: {
-      permitted() {
-        if (this.$currentUser.role === 'admin') return true
-        if (this.$currentUser.role === 'subscriber' &&
-          !(_.keys(this.$currentUser.abilities.cannot.manage).includes('Task'))
-        ) return true
-
-        return false
-      },
       _isallowed() {
-        return ["admin", "subscriber"].includes(this.$currentUser.role)
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredTasks() {
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {

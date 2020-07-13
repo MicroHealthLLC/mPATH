@@ -1,11 +1,11 @@
 <template>
   <div v-if="!loading" class="notes_show mb-5 mx-2">
     <div v-if="show">
-      <div v-if="permitted" class="crud-actions mx-3 float-right">
-        <span class="mr-2 font-sm edit-action" @click.stop="show = false">
+      <div class="crud-actions mx-3 float-right">
+        <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="show=false">
           <i class="fas fa-edit"></i>
         </span>
-        <span class="font-sm delete-action" @click.stop="deleteNote">
+        <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote">
           <i class="fas fa-trash-alt"></i>
         </span>
       </div>
@@ -27,9 +27,10 @@
     </div>
     <div v-else>
       <notes-form
+        v-if="permitted('write')"
         :note="DV_note"
         :facility="facility"
-        @close-note-input="show = true"
+        @close-note-input="show=true"
         @note-updated="noteUpdated"
       />
     </div>
@@ -84,14 +85,13 @@
     computed: {
       noteBy() {
         if (this.loading) return null
-        else return `${this.DV_note.user.firstName} ${this.DV_note.user.lastName} at ${new Date(this.DV_note.createdAt).toUTCString()}`
+        return `${this.DV_note.user.firstName} ${this.DV_note.user.lastName} at ${new Date(this.DV_note.createdAt).toLocaleString()}`
       },
       permitted() {
-        if (this.loading) return false
-        return this.note.userId === this.$currentUser.id && this._isallowed
+        return salut => !this.loading && this.note.userId === this.$currentUser.id && this._isallowed(salut)
       },
       _isallowed() {
-        return ["admin", "subscriber"].includes(this.$currentUser.role)
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
       }
     },
     watch: {

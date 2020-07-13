@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   devise_for :users, controllers: {omniauth_callbacks: 'callbacks'}
-  authenticate :user, lambda { |u| u.admin? } do
+  authenticate :user, lambda {|u| u.admin?} do
     begin
       ActiveAdmin.routes(self)
     rescue Exception => e
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :api, defaults: { format: :json } do
+  namespace :api, defaults: {format: :json} do
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
     resources :statuses, only: [:index]
@@ -21,6 +21,7 @@ Rails.application.routes.draw do
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
+    get :gantt_chart, on: :member
     resources :facilities do
       resources :issues do
         put :destroy_file, on: :member

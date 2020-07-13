@@ -87,7 +87,7 @@ ActiveAdmin.register Facility do
                   h4 class: 'active_admin_comment_author' do
                     comment.author ? auto_link(comment.author) : I18n.t('active_admin.comments.author_missing')
                   end
-                  span pretty_format comment.created_at
+                  div pretty_format comment.created_at
                   if authorized?(ActiveAdmin::Auth::DESTROY, comment)
                     text_node link_to I18n.t('active_admin.comments.delete'), admin_comment_url(comment.id), method: :delete, data: { confirm: I18n.t('active_admin.comments.delete_confirmation') }
                   end

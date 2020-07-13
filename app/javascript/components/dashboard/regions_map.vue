@@ -25,6 +25,7 @@
           streetViewControl: false,
           fullscreenControl: true
         }"
+        @click="resetView"
         >
         <GmapCluster
           :averageCenter="true"
@@ -38,9 +39,19 @@
             v-for="(facility, index) in filterFacilitiesWithActiveRegion"
             :position="getLatLngForFacility(facility)"
             @click="showFacility(facility)"
+            @mouseover="toggleTooltip(facility, `${facility.id}__${index}`)"
+            @mouseout="tooltip.opened=false"
             :icon="{url: getStatusIconLink(facility)}"
           />
         </GmapCluster>
+        <GmapInfoWindow
+          :options="tooltip.options"
+          :position="tooltip.position"
+          :opened="tooltip.opened"
+          @closeclick="tooltip.opened=false"
+          >
+          {{tooltip.content}}
+        </GmapInfoWindow>
       </GmapMap>
     </div>
     <div v-else class="col-8 p-0"></div>
@@ -280,7 +291,19 @@ export default {
       currentFacility: null,
       facilityFormModal: false,
       showFacilities: true,
-      expandedFacility: {}
+      expandedFacility: {},
+      tooltip: {
+        position: null,
+        content: null,
+        opened: false,
+        key: null,
+        options: {
+          pixelOffset: {
+            width: 0,
+            height: -30
+          }
+        }
+      }
     }
   },
   mounted() {
@@ -486,7 +509,7 @@ export default {
         })
     },
     getLatLngForFacility(facility) {
-      return L.latLng(Number(facility.lat), Number(facility.lng))
+      return {lat: Number(facility.lat), lng: Number(facility.lng)}
     },
     showFacility(facility) {
       this.openSidebar = true
@@ -548,7 +571,7 @@ export default {
         lat.push(new_center[0])
         lng.push(new_center[1])
       }
-      return L.latLng(average(lat), average(lng))
+      return {lat: average(lat), lng: average(lng)}
     },
     updateExpanded(facility) {
       if (facility.id === this.expandedFacility.id) {
@@ -576,6 +599,18 @@ export default {
     },
     getStatusIconLink(facility) {
       return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+ facility.color.split('#')[1]
+    },
+    resetView() {
+      if (this.openSidebar) {
+        this.currentFacility = null
+        this.openSidebar = false
+      }
+    },
+    toggleTooltip(marker, key) {
+      this.tooltip.position = this.getLatLngForFacility(marker)
+      this.tooltip.content = marker.facilityName
+      this.tooltip.opened = true
+      this.tooltip.key = key
     }
   },
   watch: {
@@ -834,5 +869,9 @@ export default {
       border-left: 1px solid #fff;
       border-right: 1px solid #fff;
     }
+  }
+  .vue-map-container /deep/ button.gm-ui-hover-effect {
+    display: none;
+    visibility: hidden;
   }
 </style>

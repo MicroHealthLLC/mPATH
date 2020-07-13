@@ -70,14 +70,14 @@
     <div class="form-row mx-3">
       <div class="form-group col-md-6">
         <label class="font-sm">Start Date:</label>
-        <date-picker
-          :clear-button="true"
+        <v2-date-picker
           v-validate="'required'"
-          input-class="form-control form-control-sm"
           v-model="DV_issue.startDate"
-          :disabled-dates="disabledStartDates"
-          placeholder="Start Date"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="yyyy-mm-dd"
           name="Start Date"
+          :disabled-date="disabledStartDate"
         />
         <div v-show="errors.has('Start Date')" class="text-danger">
           {{ errors.first('Start Date') }}
@@ -85,15 +85,15 @@
       </div>
       <div class="form-group col-md-6">
         <label class="font-sm">Due Date:</label>
-        <date-picker
-          :clear-button="true"
+        <v2-date-picker
           v-validate="'required'"
-          input-class="form-control form-control-sm"
           v-model="DV_issue.dueDate"
-          :disabled-dates="disabledDueDates"
-          placeholder="Due Date"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="yyyy-mm-dd"
           name="Due Date"
           :disabled="DV_issue.startDate === ''"
+          :disabled-date="disabledDueDate"
         />
         <div v-show="errors.has('Due Date')" class="text-danger">
           {{ errors.first('Due Date') }}
@@ -181,8 +181,6 @@
     mounted() {
       if (this.issue) {
         this.DV_issue = _.cloneDeep(this.issue)
-        this.DV_issue.dueDate = new Date(this.issue.dueDate)
-        this.DV_issue.startDate = new Date(this.issue.startDate)
         this.DV_issue.issueFiles = []
         this.addFile(this.issue.attachFiles)
       }
@@ -271,6 +269,16 @@
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
+      },
+      disabledStartDate(date) {
+        const today = new Date()
+        today.setHours(0,0,0,0)
+        return date < today
+      },
+      disabledDueDate(date) {
+        const startDate = new Date(this.DV_issue.startDate)
+        startDate.setHours(0,0,0,0)
+        return date < startDate
       }
     },
     computed: {
@@ -283,12 +291,6 @@
           this.DV_issue.dueDate !== '' &&
           this.DV_issue.startDate !== ''
         )
-      },
-      disabledStartDates() {
-        return { to: this.getDate(-1) }
-      },
-      disabledDueDates() {
-        return { to: new Date(this.DV_issue.startDate) }
       }
     },
     watch: {

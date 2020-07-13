@@ -7,7 +7,7 @@
       </div>
       <tabs>
         <tab title="Overview" key="overview">
-          <div>
+          <div v-if="_isallowed('read')">
             <h3 v-if="extras" class="text-center">Facility Summary</h3>
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
@@ -17,7 +17,7 @@
               <div>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                  <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change="onChange" :disabled="!_isallowed">
+                  <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change="onChange" :disabled="!_isallowed('write')">
                     <option :value="null">No Status</option>
                     <option v-for="status in statuses" :value="status.id">
                       {{status.name}}
@@ -26,16 +26,17 @@
                 </p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                  <date-picker
-                    input-class="form-control form-control-sm"
-                    :clear-button="true"
+                  <v2-date-picker
                     v-model="DV_facility.dueDate"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    class="w-100 vue2-datepicker"
                     @input="onChange"
-                    placeholder="Due date"
-                    :disabled="!_isallowed || !DV_facility.statusId"
+                    placeholder="yyyy-mm-dd"
+                    :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
-                <p v-if="!DV_facility.statusId && _isallowed" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
+                <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
@@ -76,9 +77,10 @@
                 <span class="fbody-icon"><i class="far fa-envelope"></i></span>
                 <span>{{DV_facility.email || 'N/A'}}</span>
               </p>
-              <button v-if="_isallowed" class="mt-2 btn btn-success btn-sm" @click="updateFacility" :disabled="!DV_updated">Save</button>
+              <button v-if="_isallowed('write') && DV_updated" class="mt-2 btn btn-success btn-sm" @click="updateFacility" :disabled="!DV_updated">Save</button>
             </div>
           </div>
+          <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </tab>
         <tab title="Notes" key="notes">
           <div>
@@ -162,7 +164,7 @@
       },
       updateFacility(e) {
         if (e.target) e.target.blur()
-        if (!this._isallowed || !this.DV_updated) return
+        if (!this._isallowed('write') || !this.DV_updated) return
         this.DV_updated = false
         var data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
@@ -240,7 +242,7 @@
         return tasks
       },
       _isallowed() {
-        return ["admin", "subscriber"].includes(this.$currentUser.role)
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.overview[salut]
       }
     },
     watch: {
@@ -311,5 +313,9 @@
     top: 0;
     background: #fff;
     padding: 5px;
+  }
+  .vue2-datepicker /deep/ .mx-input:disabled {
+    color: #555;
+    background-color: #fff;
   }
 </style>

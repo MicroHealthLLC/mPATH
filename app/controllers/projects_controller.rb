@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update]
+  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart]
 
   def index
     respond_to do |format|
@@ -20,6 +20,14 @@ class ProjectsController < AuthenticatedController
         format.html { render 'layouts/_not_found', locals: { message: "Project with id #{params[:id]} doesn't exists" } }
       end
     end
+  end
+
+  def gantt_chart
+    respond_to do |format|
+      format.json { render json: @project.gantt_data, status: 200 }
+      format.html {render action: :index}
+    end
+
   end
 
   private

@@ -5,15 +5,24 @@ class Ability
 
   def initialize(user)
     user ||= User.new
-    if user.admin?
+    if user.superadmin?
       can :manage, :all
-    elsif user.viewer?
-      can :read, :all
-    elsif user.subscriber?
-      can :manage, :all
-      unless user.privileges.include?('Tasks')
-        cannot :manage, Task
-      end
+    else
+      can [:read], "Overview" if user.privilege.overview.include?('R')
+      can [:create, :update], "Overview" if user.privilege.overview.include?('W')
+      can [:destroy], "Overview" if user.privilege.overview.include?('D')
+      can [:read], Task if user.privilege.tasks.include?('R')
+      can [:create, :update], Task if user.privilege.tasks.include?('W')
+      can [:destroy], Task if user.privilege.tasks.include?('D')
+      can [:read], Note if user.privilege.notes.include?('R')
+      can [:create, :update], Note if user.privilege.notes.include?('W')
+      can [:destroy], Note if user.privilege.notes.include?('D')
+      can [:read], Issue if user.privilege.issues.include?('R')
+      can [:create, :update], Issue if user.privilege.issues.include?('W')
+      can [:destroy], Issue if user.privilege.issues.include?('D')
+      can [:read], "Admin" if user.privilege.admin.include?('R')
+      can [:create, :update], "Admin" if user.privilege.admin.include?('W')
+      can [:destroy], "Admin" if user.privilege.admin.include?('D')
     end
   end
 end

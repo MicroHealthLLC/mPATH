@@ -22,6 +22,14 @@ class Facility < ApplicationRecord
   end
 
   def reject_comment(comment)
-    return comment['body'].blank?
+    comment['body'].blank?
+  end
+
+  def start_date
+    tasks.where(start_date: tasks.select('MIN(start_date)')).first.try(:start_date)
+  end
+
+  def end_date
+    tasks.where(due_date: tasks.select('MAX(tasks.due_date)')).first.try(:due_date)
   end
 end

@@ -36,11 +36,11 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div v-if="_isallowed" class="crud-actions mx-3">
-          <span class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
+        <div class="crud-actions mx-3">
+          <span v-if="_isallowed('write')" class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
             <i class="fas fa-edit"></i>
           </span>
-          <span class="font-sm delete-action" @click.stop="deleteIssue">
+          <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
             <i class="fas fa-trash-alt"></i>
           </span>
         </div>
@@ -85,8 +85,8 @@
     },
     computed: {
       _isallowed() {
-        return ["admin", "subscriber"].includes(this.$currentUser.role)
-      }
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
+      },
     },
     watch: {
       issue: {

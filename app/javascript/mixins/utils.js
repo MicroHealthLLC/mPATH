@@ -26,6 +26,21 @@ export default {
       const i = array.findIndex(_item => _item.hasOwnProperty(Object.keys(item)[0]))
       if (i > -1) array[i] = item
       else array.push(item)
+    },
+    getSimpleDate(hours) {
+      const currentDate = new Date()
+      const currentYear = currentDate.getFullYear()
+      const currentMonth = currentDate.getMonth()
+      const currentDay = currentDate.getDate()
+      const timeStamp = new Date(
+        currentYear,
+        currentMonth,
+        currentDay,
+        0,
+        0,
+        0
+      ).getTime()
+      return new Date(timeStamp + hours * 60 * 60 * 1000).getTime()
     }
   }
 }
