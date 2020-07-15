@@ -215,7 +215,7 @@ ActiveAdmin.register Facility do
   end
 
   preserve_default_filters!
-  filter :creator_id, as: :select, collection: User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
+  filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
   filter :facility_group
   filter :facility_name
   filter :address
@@ -224,8 +224,8 @@ ActiveAdmin.register Facility do
   filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
-  filter :tasks_task_type_id, as: :select, collection: TaskType.pluck(:name, :id), label: 'Task Type'
-  filter :facility_projects_status_id, as: :select, collection: Status.pluck(:name, :id), label: 'Project Status'
+  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Type'
+  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   remove_filter :creator
   remove_filter :country_code
   remove_filter :tasks

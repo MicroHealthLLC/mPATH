@@ -61,12 +61,7 @@
                 value: "name",
                 width: 200,
                 expander: true,
-                html: true,
-                events: {
-                  click({data, column}) {
-                    alert("name clicked!\n" + data.label);
-                  }
-                }
+                html: true
               },
               {
                 id: 2,

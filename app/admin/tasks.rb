@@ -18,8 +18,12 @@ ActiveAdmin.register Task do
       :progress,
       :task_type_id,
       :start_date,
-      :facility_project_id,
-      task_files: []
+      task_files: [],
+      facility_project_attributes: [
+        :id,
+        :project_id,
+        :facility_id
+      ]
     ]
   end
 
@@ -53,8 +57,10 @@ ActiveAdmin.register Task do
 
     f.inputs 'Basic Details' do
       f.input :text, label: 'Name'
-      f.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
-      f.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|f| [f.facility_name, f.id]}
+      f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+          fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+          fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}
+      end
       f.input :task_type
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker

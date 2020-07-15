@@ -1,14 +1,15 @@
 <template>
   <div>
-    <!-- <Navbar></Navbar> -->
+    <tabsbar></tabsbar>
     <router-view></router-view>
   </div>
 </template>
 <script>
-  import Navbar from './../shared/navbar'
+  import Tabsbar from './../shared/tabsbar'
   export default {
+    name: 'Dashboard',
     components: {
-      Navbar
+      Tabsbar
     }
   }
 </script>

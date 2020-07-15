@@ -6,8 +6,10 @@ class Task < ApplicationRecord
   has_many :checklists, as: :listable
   has_many_attached :task_files, dependent: :destroy
 
+  validates :text, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
   scope :complete, -> { where("progress = ?", 100) }
   scope :incomplete, -> { where("progress < ?", 100) }
@@ -39,16 +41,8 @@ class Task < ApplicationRecord
     ## NOTE: checklist to come..
   end
 
-  def project_id
-    self.facility_project.try(:project_id)
-  end
-
   def project
     self.facility_project.try(:project)
-  end
-
-  def facility_id
-    self.facility_project.try(:facility_id)
   end
 
   def facility

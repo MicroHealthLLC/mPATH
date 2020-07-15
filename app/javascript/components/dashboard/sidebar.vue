@@ -18,8 +18,8 @@
 <style lang="scss" scoped>
   #sidebar-wrapper {
     width: 100%;
-    height: calc(100vh - 60px);
-    max-height: calc(100vh - 60px);
+    height: calc(100vh - 94px);
+    max-height: calc(100vh - 94px);
 
     background: white;
     padding: 10px 20px;

@@ -250,7 +250,7 @@
 <style lang="scss" scoped>
   #users_wrapper {
     padding: 20px 70px;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 94px);
     width: 80%;
     margin: 0 auto;
     display: flex;

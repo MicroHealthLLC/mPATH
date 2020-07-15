@@ -44,8 +44,36 @@
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
+              <hr>
+              <div class="my-1">
+                <h5 class="text-center">{{DV_facility.tasks.length}} Tasks</h5>
+                <div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Complete</span>
+                      <span class="badge badge-secondary badge-pill">{{completedTasks.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks.avg <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${completedTasks.avg}%`">{{completedTasks.avg}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Incomplete</span>
+                      <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div v-if="taskStats.length > 0">
-                <hr>
+                <div class="text-info font-weight-bold text-center">Task Types</div>
                 <p>
                   <div class="row my-2" v-for="task in taskStats">
                     <div class="col-md-9 font-md">
@@ -111,6 +139,7 @@
 
 <script>
   import http from './../../../common/http'
+  import utils from './../../../mixins/utils'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './../projects/project_show'
@@ -118,6 +147,7 @@
   export default {
     name: 'FacilitiesShow',
     components: {DetailShow, NotesIndex, IssueIndex},
+    mixins: [utils],
     props: {
       facility: {
         default: null,
@@ -240,6 +270,20 @@
           })
         }
         return tasks
+      },
+      completedTasks() {
+        var completed = _.filter(this.DV_facility.tasks, (t) => t && t.progress && t.progress == 100)
+        return {
+          count: completed.length,
+          avg: this.getAverage(completed.length, this.DV_facility.tasks.length)
+        }
+      },
+      incompletedTasks() {
+        var incompleted = _.filter(this.DV_facility.tasks, (t) => t == undefined || t.progress == null || t.progress != 100)
+        return {
+          count: incompleted.length,
+          avg: this.getAverage(incompleted.length, this.DV_facility.tasks.length)
+        }
       },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.overview[salut]

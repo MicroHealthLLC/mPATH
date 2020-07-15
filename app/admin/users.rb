@@ -89,7 +89,7 @@ ActiveAdmin.register User do
     column "State", :status
     column :phone_number
     column :address
-    column(:projects) { |user| user.projects.active }
+    column(:projects) {|user| user.projects.active}
     actions
   end
 
@@ -127,7 +127,7 @@ ActiveAdmin.register User do
   end
 
   filter :email
-  filter :projects, as: :select, collection: Project.active
+  filter :projects, as: :select, collection: -> {Project.active}
   filter :title
   filter :first_name
   filter :last_name

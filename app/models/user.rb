@@ -15,7 +15,7 @@ class User < ApplicationRecord
 
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
-  accepts_nested_attributes_for :privilege
+  accepts_nested_attributes_for :privilege, reject_if: :all_blank
 
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?

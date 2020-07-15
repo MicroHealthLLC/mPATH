@@ -12,7 +12,6 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
         li.nav-item
           span.text-info.font-weight-bold
             | #{@project.try(:name)}
-          =link_to "View gantt chart", gantt_chart_project_path(@project), class: "btn btn-sm btn-link" if @project.present?
 
     ul.navbar-nav.my-2.my-lg-0
       -if user_signed_in?
@@ -37,7 +36,6 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
 css:
   #nav-wrap {
     padding: 7px 70px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02), 0 2px 5px 0 rgba(0,0,0,0.03);
     z-index: 1030;
     font-weight: 300;
     background: #fff;

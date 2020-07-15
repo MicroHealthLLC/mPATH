@@ -4,7 +4,7 @@
       <div class="regions-bar">
         <region-bar
           :regions="filteredRegions"
-          :facilities="facilities"
+          :facilities="filteredFacilities('active')"
           :current-project="currentProject"
           @goto-region="gotoRegion"
         />
@@ -69,9 +69,13 @@
                 </span>
               </p>
               <div v-if="facilityCount > 0" class="d-flex justify-content-around">
-                <div v-for="(_f, s) in facilitiesByStatus">
-                  <span> {{s.replace('null', 'No Status')}}</span>
-                  <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                <div>
+                  <span> active</span>
+                  <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.active}}</span>
+                </div>
+                <div>
+                  <span> inactive</span>
+                  <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.inactive}}</span>
                 </div>
               </div>
             </div>
@@ -87,8 +91,8 @@
                       <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities.length) <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities.length)}%`">{{getAverage(_f.length, filteredFacilities.length)}} %</div>
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities('active').length) <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities('active').length)}%`">{{getAverage(_f.length, filteredFacilities('active').length)}} %</div>
                       </span>
                     </div>
                   </div>
@@ -317,15 +321,15 @@ export default {
       return this.currentFacility ? "Edit facility" : "Add Facility"
     },
     facilityCount() {
-      return this.filteredFacilities.length
+      return this.filteredFacilities('all').length
     },
     facilityProgress() {
-      var mean = _.meanBy(this.filteredFacilities, 'progress') || 0
+      var mean = _.meanBy(this.filteredFacilities('active'), 'progress') || 0
       return mean.toFixed(2)
     },
     filterFacilitiesWithActiveRegion() {
       var activeRegions = _.map(_.filter(this.regions, (r) => r.status === 'active'), 'id')
-      return _.filter(this.filteredFacilities, (facility) => {
+      return _.filter(this.filteredFacilities('active'), (facility) => {
         return activeRegions.includes(facility.facilityGroupId) && facility.status === 'active'
       })
     },
@@ -334,82 +338,88 @@ export default {
       return _.filter(this.facilities, (f) => reg.includes(f.facilityGroupId) && f.status === 'active')
     },
     filteredFacilities() {
-      return _.filter(this.facilities, (facility) => {
-        var valid = true
-        _.each(this.filters, (f) => {
-          var k = Object.keys(f)[0]
-          switch(k) {
-            case "dueDate": {
-              var range = moment.range(f[k][0], f[k][1])
-              valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
-              break
-            }
-            case "progress": {
-              var ranges = f[k].map(r => r.split("-").map(Number))
-              var is_valid = false
-              for (var range of ranges) {
-                is_valid = range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0]
-                if (is_valid) break
+      return (state='active') => {
+        return _.filter(this.facilities, (facility) => {
+          var valid = state === 'all' || facility.status === state
+          if (!valid) return valid
+          _.each(this.filters, (f) => {
+            var k = Object.keys(f)[0]
+            switch(k) {
+              case "dueDate": {
+                var range = moment.range(f[k][0], f[k][1])
+                valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
+                break
               }
-              valid = valid && is_valid
-              break
-            }
-            case "taskTypeIds": {
-              var ids = _.map(facility.tasks, 'taskTypeId')
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
-            case "issueTypeIds": {
-              var ids = _.map(facility.issues, 'issueTypeId')
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
-            case "issueProgress":
-            case "taskProgress": {
-              var progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
-              var progress = _.uniq(_.map(progressFor, 'progress'))
-              var ranges = f[k].map(r => r.split("-").map(Number))
-              var is_valid = false
-              for (var range of ranges) {
-                var size = range[1] ? (range[1] - range[0]) + 1 : 1
-                is_valid = _.intersection(progress, Array.from(Array(size), (_, i) => i + range[0])).length > 0
-                if (is_valid) break
+              case "progress": {
+                var ranges = f[k].map(r => r.split("-").map(Number))
+                var is_valid = false
+                for (var range of ranges) {
+                  is_valid = range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0]
+                  if (is_valid) break
+                }
+                valid = valid && is_valid
+                break
               }
-              valid = valid && is_valid
-              break
+              case "taskTypeIds": {
+                var ids = _.map(facility.tasks, 'taskTypeId')
+                valid = valid && _.intersection(f[k], ids).length > 0
+                break
+              }
+              case "issueTypeIds": {
+                var ids = _.map(facility.issues, 'issueTypeId')
+                valid = valid && _.intersection(f[k], ids).length > 0
+                break
+              }
+              case "issueProgress":
+              case "taskProgress": {
+                var progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
+                var progress = _.uniq(_.map(progressFor, 'progress'))
+                var ranges = f[k].map(r => r.split("-").map(Number))
+                var is_valid = false
+                for (var range of ranges) {
+                  var size = range[1] ? (range[1] - range[0]) + 1 : 1
+                  is_valid = _.intersection(progress, Array.from(Array(size), (_, i) => i + range[0])).length > 0
+                  if (is_valid) break
+                }
+                valid = valid && is_valid
+                break
+              }
+              case "issueSeverityIds": {
+                var ids = _.map(facility.issues, 'issueSeverityId')
+                valid = valid && _.intersection(f[k], ids).length > 0
+                break
+              }
+              case "facilityGroupIds": {
+                valid = valid && f[k].includes(facility.facilityGroupId)
+                break
+              }
+              case "ids": {
+                valid = valid && f[k].includes(facility.id)
+                break
+              }
+              case "statusIds": {
+                valid = valid && f[k].includes(facility.statusId)
+                break
+              }
+              default: {
+                valid = valid && facility[k] == f[k]
+                break
+              }
             }
-            case "issueSeverityIds": {
-              var ids = _.map(facility.issues, 'issueSeverityId')
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
-            case "facilityGroupIds": {
-              valid = valid && f[k].includes(facility.facilityGroupId)
-              break
-            }
-            case "ids": {
-              valid = valid && f[k].includes(facility.id)
-              break
-            }
-            case "statusIds": {
-              valid = valid && f[k].includes(facility.statusId)
-              break
-            }
-            default: {
-              valid = valid && facility[k] == f[k]
-              break
-            }
-          }
+          })
+          return valid
         })
-        return valid
-      })
+      }
     },
     facilitiesByStatus() {
-      return _.groupBy(this.filteredFacilities, 'status')
+      return {
+        active: this.filteredFacilities('active').length,
+        inactive: this.filteredFacilities('inactive').length
+      }
     },
     currentRegionFacilities() {
       if (this.currentRegion && this.currentRegion.facilities) {
-        var facilityIds = _.map(this.filteredFacilities, 'id')
+        var facilityIds = _.map(this.filteredFacilities('active'), 'id')
         return _.filter(this.currentRegion.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
       }
       else {
@@ -417,17 +427,17 @@ export default {
       }
     },
     filteredRegions() {
-      var facilityGroupIds = _.map(this.filteredFacilities, 'facilityGroupId')
+      var facilityGroupIds = _.map(this.filteredFacilities('active'), 'facilityGroupId')
       return _.filter(this.regions, (r => facilityGroupIds.includes(r.id)))
     },
     facilitiesByProjectStatus() {
-      return _.groupBy(this.filteredFacilities, 'projectStatus')
+      return _.groupBy(this.filteredFacilities('active'), 'projectStatus')
     },
     currentTasks() {
-      return _.flatten(_.map(this.filteredFacilities, 'tasks'))
+      return _.flatten(_.map(this.filteredFacilities('active'), 'tasks'))
     },
     currentIssues() {
-      return _.flatten(_.map(this.filteredFacilities, 'issues'))
+      return _.flatten(_.map(this.filteredFacilities('active'), 'issues'))
     },
     currentTaskTypes() {
       return _.groupBy(this.currentTasks, 'taskType')
@@ -472,7 +482,7 @@ export default {
       }
     },
     currentFacilityStatus() {
-      var status = this.currentFacility && _.map(this.filteredFacilities, 'id').includes(this.currentFacility.id)
+      var status = this.currentFacility && _.map(this.filteredFacilities('active'), 'id').includes(this.currentFacility.id)
       if (!status && this.openSidebar) this.openSidebar = false
       return status
     }
@@ -582,12 +592,12 @@ export default {
       }
     },
     facilityGroupProgress(f_group) {
-      var facilityIds = _.map(this.filteredFacilities, 'id')
+      var facilityIds = _.map(this.filteredFacilities('active'), 'id')
       var mean = _.meanBy(_.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
       return mean.toFixed(2)
     },
     facilityGroupFacilities(f_group) {
-      var facilityIds = _.map(this.filteredFacilities, 'id')
+      var facilityIds = _.map(this.filteredFacilities('active'), 'id')
       return _.filter(f_group.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId === this.currentProject.id))
     },
     toggleOpenSideBar() {
@@ -770,12 +780,12 @@ export default {
 
 <style scoped lang="scss">
   #map-wrap {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 94px);
     width: 69vw;
   }
   #rollup-sidebar {
     > div {
-      height: calc(100vh - 60px);
+      height: calc(100vh - 94px);
       overflow: auto;
     }
     position: absolute;
@@ -783,7 +793,7 @@ export default {
   }
   #map-sidebar {
     z-index: 800;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 94px);
     overflow: auto;
     background: white;
     padding: 10px;

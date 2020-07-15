@@ -182,4 +182,15 @@ body {
     box-shadow: inset 0 1px 4px #ddd;
     margin: 15px;
   }
+  #edit_task {
+    .input {
+      fieldset {
+        box-shadow: none;
+      }
+    }
+    #task_facility_project_attributes_project_id_input,
+    #task_facility_project_attributes_facility_id_input {
+      padding: 10px 0;
+    }
+  }
 }

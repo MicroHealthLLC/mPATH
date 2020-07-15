@@ -15,9 +15,9 @@ export default new VueRouter({
     }
   ],
   hashbang: false,
-  mode    : 'history',
-  base    : '/',
+  mode: 'history',
+  base: '/',
   scrollBehavior () {
-    return { x: 0, y: 0 }
+    return {x: 0, y: 0}
   }
 })

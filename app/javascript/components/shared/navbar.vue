@@ -398,8 +398,8 @@
   #filter_bar {
     overflow-y: auto;
     background: white;
-    height: calc(100vh - 60px);
-    max-height: calc(100vh - 60px);
+    height: calc(100vh - 94px);
+    max-height: calc(100vh - 94px);
     width: 320px;
   }
   .filters_wrap {
