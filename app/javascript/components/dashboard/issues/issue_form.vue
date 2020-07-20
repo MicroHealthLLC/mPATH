@@ -156,6 +156,7 @@
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
   import utils from './../../../mixins/utils'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'TaskForm',
@@ -204,7 +205,7 @@
         if (!confirm) return;
 
         if (file.uri) {
-          http.put(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${this.issue.id}/destroy_file.json`, {file: file})
+          http.put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${this.issue.id}/destroy_file.json`, {file: file})
           .then((res)=> {
             _.remove(this.DV_issue.issueFiles, (f) => f.guid === file.guid)
             this.$forceUpdate()
@@ -240,12 +241,12 @@
             }
           }
 
-          var url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues.json`
+          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues.json`
           var method = "POST"
           var callback = "issue-created"
 
           if (this.issue && this.issue.id) {
-            url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${this.issue.id}.json`
+            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${this.issue.id}.json`
             method = "PUT"
             callback = "issue-updated"
           }
@@ -282,6 +283,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject'
+      ]),
       readyToSave() {
         return (
           this.DV_issue &&

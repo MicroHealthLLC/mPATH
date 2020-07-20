@@ -40,6 +40,7 @@
 <script>
   import http from './../../../common/http'
   import NotesForm from './notes_form'
+  import {mapGetters} from 'vuex'
 
   export default {
     props: ['facility', 'note'],
@@ -67,7 +68,7 @@
         if (!confirm) return;
 
         http
-          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/notes/${this.note.id}.json`)
+          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`)
           .then((res) => {
             this.loading = false;
             this.$emit('note-deleted', this.note);
@@ -83,6 +84,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject'
+      ]),
       noteBy() {
         if (this.loading) return null
         return `${this.DV_note.user.firstName} ${this.DV_note.user.lastName} at ${new Date(this.DV_note.createdAt).toLocaleString()}`

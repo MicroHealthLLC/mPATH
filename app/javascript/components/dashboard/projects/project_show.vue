@@ -1,13 +1,12 @@
 <template>
-  <div v-if="!loading" class="mt-4">
+  <div class="mt-4">
     <div v-if="showProject">
       <div>
         <task-index
-          v-if="DV_project"
-          :project="DV_project"
+          v-if="currentProject"
+          :project="currentProject"
           :facility="facility"
-          :task-types="DV_taskTypes"
-          @refresh-project="refreshProject"
+          :task-types="taskTypes"
           @show-hide="projectShowHide"
           @delete-task="taskDeleted"
         />
@@ -23,9 +22,9 @@
       </button>
       <task-form
         :facility="facility"
-        :project="DV_project"
+        :project="currentProject"
         :task="currentTask"
-        :task-types="DV_taskTypes"
+        :task-types="taskTypes"
         :title="taskFormTitle"
         @task-created="taskCreated"
         @task-updated="taskUpdated"
@@ -39,50 +38,24 @@
   import TaskForm from './../tasks/task_form'
   import TaskIndex from './../tasks/task_index'
   import http from './../../../common/http'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'ProjectShow',
     props: ['facility'],
-    components: { TaskIndex, TaskForm },
-
+    components: {TaskIndex, TaskForm},
     data() {
       return {
         loading: true,
-        DV_project: {},
         DV_facility: {},
-        DV_taskTypes: [],
         currentTask: null,
         showProject: true
       }
     },
     mounted() {
-      this.fetchProject()
-      this.fetchTaskTypes()
       if (this.facility) this.DV_facility = this.facility
     },
     methods: {
-      fetchProject() {
-        http
-          .get(`/projects/${this.$route.params.projectId}.json`)
-          .then((res) => {
-            this.DV_project = res.data.project
-            this.fetchTaskTypes()
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
-      fetchTaskTypes() {
-        http
-          .get(`/api/task_types.json`)
-          .then((res) => {
-            this.DV_taskTypes = res.data.taskTypes
-            this.loading = false
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
       taskCreated(task) {
         this.DV_facility.tasks.unshift(task)
         this.showProject = true
@@ -96,7 +69,7 @@
       },
       taskDeleted(task) {
         http
-          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`)
+          .delete(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`)
           .then((res) => {
             var tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
@@ -104,16 +77,16 @@
           })
           .catch((err) => console.log(err))
       },
-      refreshProject() {
-        this.loading = true
-        this.fetchProject()
-      },
       projectShowHide(task=null) {
         this.currentTask = task
         this.showProject = false;
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject',
+        'taskTypes'
+      ]),
       taskFormTitle() {
         return this.currentTask ? "Edit Task" : "Add a new Task"
       }
@@ -159,6 +132,6 @@
     position: relative;
   }
   .progress-wrapper {
-    position: inherite;
+    position: inherit;
   }
 </style>

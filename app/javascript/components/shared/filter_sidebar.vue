@@ -13,7 +13,7 @@
             track-by="name"
             label="name"
             placeholder="Select Project"
-            :options="DV_projects"
+            :options="projects"
             :searchable="false"
             :allow-empty="false"
             select-label="Select"
@@ -28,11 +28,11 @@
         </div>
         <div class="facilitygroup-select my-3 mx-1">
           <multiselect
-            v-model="currentFacilityGroup"
+            v-model="C_facilityGroupFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Facility Group"
-            :options="DV_facilityGroups"
+            :options="C_activeFacilityGroups"
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"
@@ -48,7 +48,7 @@
         <div class="facilityname-search my-3 mx-1">
           <multiselect
             placeholder="Search by Facility Name"
-            v-model="selectedFacility"
+            v-model="C_facilityNameFilter"
             label="facilityName"
             track-by="id"
             :multiple="true"
@@ -70,11 +70,11 @@
         </div>
         <div class="status-select mx-1">
           <multiselect
-            v-model="currentStatus"
+            v-model="C_projectStatusFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Status"
-            :options="DV_statuses"
+            :options="statuses"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -89,7 +89,7 @@
         </div>
         <div class="progress-ranges-select my-3 mx-1">
           <multiselect
-            v-model="currentProgress"
+            v-model="C_facilityProgressFilter"
             track-by="name"
             label="name"
             placeholder="Facility % Progress Range"
@@ -108,18 +108,18 @@
         </div>
         <div class="duedate-range my-3 mx-1">
           <v2-date-picker
-            v-model="dueDateRange"
+            v-model="C_facilityDueDateFilter"
             placeholder="Due Date Range"
             range
           />
         </div>
         <div class="tasktype-select my-3 mx-1">
           <multiselect
-            v-model="currentTaskType"
+            v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Task Type"
-            :options="DV_taskTypes"
+            :options="taskTypes"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -134,7 +134,7 @@
         </div>
         <div class="taskProgress-select my-3 mx-1">
           <multiselect
-            v-model="currentTaskProgress"
+            v-model="C_taskProgressFilter"
             track-by="name"
             label="name"
             placeholder="Task % Progress Range"
@@ -153,11 +153,11 @@
         </div>
         <div class="issetype-select my-3 mx-1">
           <multiselect
-            v-model="currentIssueType"
+            v-model="C_issueTypeFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Issue Type"
-            :options="DV_issueTypes"
+            :options="issueTypes"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -172,7 +172,7 @@
         </div>
         <div class="issueProgress-select my-3 mx-1">
           <multiselect
-            v-model="currentIssueProgress"
+            v-model="C_issueProgressFilter"
             track-by="name"
             label="name"
             placeholder="Issue % Progress Range"
@@ -191,11 +191,11 @@
         </div>
         <div class="issueSeverity-select my-3 mx-1">
           <multiselect
-            v-model="currentIssueSeverity"
+            v-model="C_issueSeverityFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Issue Severity"
-            :options="DV_issueSeverities"
+            :options="issueSeverities"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -217,49 +217,134 @@
 </template>
 
 <script>
+  import utils from './../../mixins/utils'
+  import {mapGetters, mapMutations, mapState} from 'vuex'
+  import XLSX from 'xlsx'
+
   export default {
-    name: 'Navbar',
-    props: ['projects', 'statuses', 'facilityGroups', 'taskTypes', 'issueTypes', 'issueSeverities'],
+    name: 'FilterSidebar',
+    mixins: [utils],
     data() {
       return {
         isLoading: false,
         exporting: false,
-        enableExport: this.$listeners['is-exportable'](),
         showFilters: false,
-        currentProject: null,
-        currentStatus: null,
-        currentTaskType: null,
-        currentFacilityGroup: null,
-        selectedFacility: null,
-        currentProgress: null,
-        dueDateRange: null,
-        currentIssueType: null,
-        currentIssueSeverity: null,
-        currentIssueProgress: null,
-        currentTaskProgress: null,
         facilities: [],
-        DV_statuses: this.statuses,
-        DV_taskTypes: this.taskTypes,
-        DV_issueTypes: this.issueTypes,
-        DV_issueSeverities: this.issueSeverities,
-        DV_facilityGroups: this.facilityGroups,
-        DV_projects: this.projects,
         DV_progressRanges: this.progressRanges(),
         DV_issueProgressRanges: this.progressRanges(),
         DV_taskProgressRanges: this.progressRanges()
       }
     },
-    mounted() {
-      this.currentProject = this.DV_projects.find(project => project.id == this.$route.params.projectId)
-    },
-    updated() {
-      this.$nextTick(() => {
-        this.enableExport = this.$listeners['is-exportable']()
-      })
-    },
     computed: {
-      allowFacilityAdd() {
-        return this.currentProject
+      ...mapState([
+        'projectStatusFilter',
+        'taskTypeFilter',
+        'facilityGroupFilter',
+        'facilityNameFilter',
+        'facilityProgressFilter',
+        'facilityDueDateFilter',
+        'issueTypeFilter',
+        'issueSeverityFilter',
+        'issueProgressFilter',
+        'taskProgressFilter'
+      ]),
+      ...mapGetters([
+        'projects',
+        'currentProject',
+        'statuses',
+        'activeFacilityGroups',
+        'taskTypes',
+        'issueTypes',
+        'issueSeverities',
+        'unFilterFacilities',
+        'filterFacilitiesWithActiveFacilityGroups'
+      ]),
+      enableExport() {
+        return this.filterFacilitiesWithActiveFacilityGroups.length > 0
+      },
+      C_activeFacilityGroups() {
+        var id = Number(this.$route.params.projectId)
+        return this.activeFacilityGroups(id)
+      },
+      C_projectStatusFilter: {
+        get() {
+          return this.projectStatusFilter
+        },
+        set(value) {
+          this.setProjectStatusFilter(value)
+        }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
+      C_facilityGroupFilter: {
+        get() {
+          return this.facilityGroupFilter
+        },
+        set(value) {
+          this.setFacilityGroupFilter(value)
+        }
+      },
+      C_facilityNameFilter: {
+        get() {
+          return this.facilityNameFilter
+        },
+        set(value) {
+          this.setFacilityNameFilter(value)
+        }
+      },
+      C_facilityProgressFilter: {
+        get() {
+          return this.facilityProgressFilter
+        },
+        set(value) {
+          this.setFacilityProgressFilter(value)
+        }
+      },
+      C_facilityDueDateFilter: {
+        get() {
+          return this.facilityDueDateFilter
+        },
+        set(value) {
+          this.setFacilityDueDateFilter(value)
+        }
+      },
+      C_issueTypeFilter: {
+        get() {
+          return this.issueTypeFilter
+        },
+        set(value) {
+          this.setIssueTypeFilter(value)
+        }
+      },
+      C_issueSeverityFilter: {
+        get() {
+          return this.issueSeverityFilter
+        },
+        set(value) {
+          this.setIssueSeverityFilter(value)
+        }
+      },
+      C_issueProgressFilter: {
+        get() {
+          return this.issueProgressFilter
+        },
+        set(value) {
+          this.setIssueProgressFilter(value)
+        }
+      },
+      C_taskProgressFilter: {
+        get() {
+          return this.taskProgressFilter
+        },
+        set(value) {
+          this.setTaskProgressFilter(value)
+        }
       },
       filterBarStyle() {
         if (this.showFilters) return {}
@@ -269,122 +354,139 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'updateMapFilters',
+        'setProjectStatusFilter',
+        'setTaskTypeFilter',
+        'setFacilityGroupFilter',
+        'setFacilityNameFilter',
+        'setFacilityProgressFilter',
+        'setFacilityDueDateFilter',
+        'setIssueTypeFilter',
+        'setIssueSeverityFilter',
+        'setIssueProgressFilter',
+        'setTaskProgressFilter',
+        'setMapFilters'
+      ]),
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
-        // this.$router.push({name: 'ProjectDashboard', params: {projectId: selected.id} })
       },
       progressRanges() {
         return [
-          { name: '0', value: '0'},
-          { name: '11-20', value: '11-20'},
-          { name: '21-30', value: '21-30'},
-          { name: '31-40', value: '31-40'},
-          { name: '41-50', value: '41-50'},
-          { name: '51-60', value: '51-60'},
-          { name: '61-70', value: '61-70'},
-          { name: '71-80', value: '71-80'},
-          { name: '81-90', value: '81-90'},
-          { name: '91-99', value: '91-99'},
-          { name: '100', value: '100'}
+          {name: '0', value: '0'},
+          {name: '11-20', value: '11-20'},
+          {name: '21-30', value: '21-30'},
+          {name: '31-40', value: '31-40'},
+          {name: '41-50', value: '41-50'},
+          {name: '51-60', value: '51-60'},
+          {name: '61-70', value: '61-70'},
+          {name: '71-80', value: '71-80'},
+          {name: '81-90', value: '81-90'},
+          {name: '91-99', value: '91-99'},
+          {name: '100', value: '100'}
         ]
-      },
-      addFacility() {
-        if (this.allowFacilityAdd) this.$emit('add-facility-from-nav')
       },
       findFacility(query) {
         this.isLoading = true
-        var callback = (response => {
-          this.facilities = response
+        if (query) {
+          const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
+          const isMatch = (result) => resp.test(result.facilityName)
+          this.facilities = _.filter(this.unFilterFacilities, isMatch)
           this.isLoading = false
-        })
-        this.$emit('on-facility-name-search', query, callback)
+        }
+        else {
+          this.facilities = this.unFilterFacilities
+          this.isLoading = false
+        }
       },
       onClearFilter() {
-        this.currentStatus = null
-        this.currentTaskType = null
-        this.currentFacilityGroup = null
-        this.currentProgress = null
-        this.dueDateRange = [null]
-        this.selectedFacility = null
-        this.currentIssueType = null
-        this.currentIssueSeverity = null
-        this.currentIssueProgress = null
-        this.currentTaskProgress = null
-        this.$emit('clear-filters')
+        this.setProjectStatusFilter(null)
+        this.setTaskTypeFilter(null)
+        this.setFacilityGroupFilter(null)
+        this.setFacilityProgressFilter(null)
+        this.setFacilityDueDateFilter([null])
+        this.setFacilityNameFilter(null)
+        this.setIssueTypeFilter(null)
+        this.setIssueSeverityFilter(null)
+        this.setIssueProgressFilter(null)
+        this.setTaskProgressFilter(null)
+        this.setMapFilters([])
       },
       exportData() {
         if (!this.enableExport || this.exporting) return;
         this.exporting = true
-        var cb = (err) => this.exporting = false
 
-        var filters = [`Map Filters: ${this.currentProject.name} \n
-          Facility Group: ${this.currentFacilityGroup ? _.map(this.currentFacilityGroup, 'name').join() : 'all'}\n
-          Facility Name: ${this.selectedFacility ? _.map(this.selectedFacility, 'facilityName').join() : 'all'}\n
-          Project Status: ${this.currentStatus ? _.map(this.currentStatus, 'name').join() : 'all'}\n
-          Facility % Progress Range: ${this.currentProgress ? _.map(this.currentProgress, 'name').join() : 'all'}\n
-          Facility Due Date: ${this.dueDateRange && this.dueDateRange[0] ? this.dueDateRange[0].toLocaleDateString() + ' to ' + this.dueDateRange[1].toLocaleDateString() : 'all'}\n
-          Task Type: ${this.currentTaskType ?  _.map(this.currentTaskType, 'name').join() : 'all'}\n
-          Task % Progress Range: ${this.currentTaskProgress ?  _.map(this.currentTaskProgress, 'name').join() : 'all'}\n
-          Issue Type: ${this.currentIssueType ?  _.map(this.currentIssueType, 'name').join() : 'all'}\n
-          Issue % Progress Range: ${this.currentIssueProgress ?  _.map(this.currentIssueProgress, 'name').join() : 'all'}\n
-          Issue severity: ${this.currentIssueSeverity ?  _.map(this.currentIssueSeverity, 'name').join() : 'all'}\n
-        `]
-        this.$emit('export-data', filters, cb)
+        try {
+          var filters = [`Map Filters: ${this.currentProject.name} \n
+            Facility Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
+            Facility Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
+            Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
+            Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
+            Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.facilityDueDateFilter[0].toLocaleDateString() + ' to ' + this.facilityDueDateFilter[1].toLocaleDateString() : 'all'}\n
+            Task Type: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
+            Task % Progress Range: ${this.taskProgressFilter ?  _.map(this.taskProgressFilter, 'name').join() : 'all'}\n
+            Issue Type: ${this.issueTypeFilter ?  _.map(this.issueTypeFilter, 'name').join() : 'all'}\n
+            Issue % Progress Range: ${this.issueProgressFilter ?  _.map(this.issueProgressFilter, 'name').join() : 'all'}\n
+            Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
+          `]
+          var header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
+
+          var ex_data = []
+          for (var facility of this.filterFacilitiesWithActiveFacilityGroups) {
+            ex_data.push({
+              "Facility Name": facility.facilityName || 'N/A',
+              "Facility Group": facility.facilityGroupName || 'N/A',
+              "Project Status": facility.projectStatus || 'N/A',
+              "Due Date": facility.dueDate || 'N/A',
+              "Percentage Complete": facility.progress || 0,
+              "Point of Contact Name": facility.pointOfContact || 'N/A',
+              "Point of Contact Phone": facility.phoneNumber || 'N/A',
+              "Point of Contact Email": facility.email || 'N/A'
+            })
+          }
+
+          var wb = XLSX.utils.book_new()
+          var ws = XLSX.utils.aoa_to_sheet(new Array(filters))
+          XLSX.utils.sheet_add_json(ws, ex_data, {header: header,  origin: "A3"})
+          XLSX.utils.book_append_sheet(wb, ws, "MGIS")
+          XLSX.writeFile(wb, `${this.random()}.xlsx`)
+          this.exporting = false
+        }
+        catch(err) {
+          console.error(err)
+        }
       }
     },
     watch: {
-      projects: {
-        handler: function(value) {
-          this.DV_projects = value
-        }, deep: true
+      facilityDueDateFilter(value) {
+        this.updateMapFilters({key: 'dueDate', filter: value, same: true})
       },
-      dueDateRange(value) {
-        this.$emit('on-duedate-change', value)
+      facilityGroupFilter(value) {
+        this.updateMapFilters({key: 'facilityGroupIds', filter: value})
       },
-      currentFacilityGroup(value) {
-        if (value) {
-          this.$emit('on-facilitygroup-change', value)
-        }
+      facilityNameFilter(value) {
+        this.updateMapFilters({key: 'ids', filter: value})
       },
-      selectedFacility(value) {
-        if (value) {
-          this.$emit('on-filter-by-facility', value)
-        }
+      projectStatusFilter(value) {
+        this.updateMapFilters({key: 'statusIds', filter: value})
       },
-      currentStatus(value) {
-        if (value) {
-          this.$emit('on-status-change', value)
-        }
+      facilityProgressFilter(value) {
+        this.updateMapFilters({key: 'progress', filter: value, _k: 'value'})
       },
-      currentProgress(value) {
-        if (value) {
-          this.$emit('on-progress-change', value)
-        }
+      taskTypeFilter(value) {
+        this.updateMapFilters({key: 'taskTypeIds', filter: value})
       },
-      currentTaskType(value) {
-        if (value) {
-          this.$emit('on-tasktype-change', value)
-        }
+      taskProgressFilter(value) {
+        this.updateMapFilters({key: 'taskProgress', filter: value, _k: 'value'})
       },
-      currentTaskProgress(value) {
-        if (value) {
-          this.$emit('on-taskprogress-change', value)
-        }
+      issueTypeFilter(value) {
+        this.updateMapFilters({key: 'issueTypeIds', filter: value})
       },
-      currentIssueType(value) {
-        if (value) {
-          this.$emit('on-issuetype-change', value)
-        }
+      issueProgressFilter(value) {
+        this.updateMapFilters({key: 'issueProgress', filter: value, _k: 'value'})
       },
-      currentIssueProgress(value) {
-        if (value) {
-          this.$emit('on-issueprogress-change', value)
-        }
-      },
-      currentIssueSeverity(value) {
-        if (value) {
-          this.$emit('on-issueseverity-change', value)
-        }
+      issueSeverityFilter(value) {
+        this.updateMapFilters({key: 'issueSeverityIds', filter: value})
       }
     }
   }

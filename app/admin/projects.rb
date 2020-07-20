@@ -46,7 +46,7 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
-          f.input :users, label: 'Project Users', as: :select, collection: User.subscriber.map{|u| [u.email, u.id]}
+          f.input :users, label: 'Project Users', as: :select, collection: User.client.map{|u| [u.email, u.id]}
         end
       end
 

@@ -1,30 +1,28 @@
 <template>
   <div class="d-flex">
-    <div v-if="!regionBar" class="map-icon-btn mr-2" @click="openRegionBar">
-      <i class="fas fa-info"></i>
-    </div>
+    <div v-if="!facilityGroupBar" class="map-icon-btn mr-2" @click="facilityGroupBar= true"><i class="fas fa-info"></i></div>
     <transition name="slide-fade">
-      <div v-if="regionBar" id="region-bar">
+      <div v-if="facilityGroupBar" id="facility_group-bar">
         <div class="r-header px-3">
           <h5 class="text-muted">Facility Groups</h5>
-          <div class="region-minus-btn" @click="closeRegionBar">
+          <div class="region-minus-btn" @click="facilityGroupBar= false">
             <i class="fas fa-minus"></i>
           </div>
         </div>
-        <ul v-if="regions.length > 0" class="regions-list list-unstyled">
-          <li v-for="region in regions" class="px-3">
+        <ul v-if="facilityGroups.length > 0" class="regions-list list-unstyled">
+          <li v-for="facilityGroup in facilityGroups" class="px-3">
             <a class="text-secondary d-flex align-items-center mt-2"
-              @click.prevent.stop="pointToRegion(region)"
+              @click.prevent.stop="gotoFacilityGroup(facilityGroup)"
               href="javascript:;"
-              :class="{'link-disabled': region.status == 'inactive'}"
-            >
-              <div class="badge badge-pill" :class="{ 'badge-success':
-                region.status == 'active', 'badge-danger': region.status == 'inactive' }">
-                {{region.status}}
+              :class="{'link-disabled': facilityGroup.status == 'inactive'}"
+              >
+              <div class="badge badge-pill" :class="{'badge-success':
+                facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
+                {{facilityGroup.status}}
               </div>
               <div class="ml-2 region-name font-md">
-                <span>{{region.name}}</span>
-                <span class="badge badge-secondary badge-pill">{{fetchRegionFacilities(region).length}}</span>
+                <span>{{facilityGroup.name}}</span>
+                <span class="badge badge-secondary badge-pill">{{groupFacilities(facilityGroup).length}}</span>
               </div>
             </a>
           </li>
@@ -39,39 +37,28 @@
 
 <script>
   export default {
-    name: 'RegionBar',
-    props: ['regions', 'facilities', 'currentProject'],
+    name: 'FacilityGroupBar',
+    props: ['facilityGroups', 'facilities', 'project'],
     data() {
       return {
-        regionBar: false
+        facilityGroupBar: false
       }
     },
-    mounted() {
-      if (this.regions.length <= 0) this.regionBar = true
-    },
     methods: {
-      openRegionBar() {
-        this.regionBar = true
+      gotoFacilityGroup(group) {
+        if (group && group.status === 'inactive') return;
+        this.facilityGroupBar = false
+        this.$emit('goto-facility-group', group)
       },
-      closeRegionBar() {
-        this.regionBar = false
-      },
-      pointToRegion(region) {
-        if (region && region.status === 'inactive') {
-          return;
-        }
-        this.regionBar = false
-        this.$emit('goto-region', region);
-      },
-      fetchRegionFacilities(region) {
-        var facilityIds = _.map(this.facilities, 'id')
-        return _.filter(region.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
+      groupFacilities(group) {
+        var ids = _.map(this.facilities, 'id')
+        return _.filter(group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.project.id))
       }
     }
   }
 </script>
 <style scoped lang="scss">
-  #region-bar {
+  #facility_group-bar {
     padding: 10px;
     background: #fff;
     width: 20vw;

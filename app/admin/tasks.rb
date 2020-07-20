@@ -76,7 +76,7 @@ ActiveAdmin.register Task do
   filter :task_type
   filter :start_date
   filter :due_date
-  filter :facility_project_project_id, as: :select, collection: Project.pluck(:name, :id), label: 'Project'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
   filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
   filter :progress
 

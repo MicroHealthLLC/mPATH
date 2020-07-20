@@ -8,7 +8,7 @@
         <facility-show
           :statuses="statuses"
           :facility="facility"
-          :region="region"
+          :facility-group="facilityGroup"
           :extras="false"
         />
       </div>
@@ -19,7 +19,7 @@
   import FacilityShow from './../dashboard/facilities/facility_show'
   export default {
     name: 'Accordion',
-    props: ['facility', 'region', 'expanded', 'statuses'],
+    props: ['facility', 'facilityGroup', 'expanded', 'statuses'],
     components: {
       FacilityShow
     },

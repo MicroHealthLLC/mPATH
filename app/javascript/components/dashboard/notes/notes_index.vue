@@ -86,7 +86,6 @@
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
           this.loading = true
-          this.fetchFacility()
         },
         deep: true
       }

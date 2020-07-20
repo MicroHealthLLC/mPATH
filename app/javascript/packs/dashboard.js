@@ -9,6 +9,7 @@ import * as VueGoogleMaps   from 'vue2-google-maps'
 import GmapCustomMarker     from 'vue2-gmap-custom-marker'
 import Dashboard            from 'components/dashboard/dashboard.vue'
 import router               from 'routers/dashboard'
+import store                from './../store'
 import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
@@ -19,7 +20,7 @@ import FadeLoader           from 'vue-spinner/src/FadeLoader.vue'
 import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
-import GanttHeader          from 'gantt-elastic-header'
+import GanttElasticHeader   from 'gantt-elastic-header'
 import dayjs                from 'dayjs'
 
 Vue.use(VTooltip)
@@ -28,7 +29,7 @@ Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.component('loader', FadeLoader)
 Vue.component('gantt-elastic', GanttElastic)
-Vue.component('gantt-header', GanttHeader)
+Vue.component('gantt-elastic-header', GanttElasticHeader)
 Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
 Vue.component('v2-date-picker', V2DatePicker)
@@ -65,6 +66,7 @@ Vue.prototype.$permissions = permissions
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
   router,
+  store,
   el: '#dashboard',
   template: '<Dashboard />',
   components: { Dashboard }

@@ -51,6 +51,7 @@
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
   import utils from './../../../mixins/utils'
+  import {mapGetters} from 'vuex'
 
   export default {
     props: ['facility', 'note'],
@@ -80,13 +81,13 @@
         this.$forceUpdate()
       },
       deleteFile(file) {
-        if (!file) { return; }
+        if (!file) return;
 
         var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
-          http.put(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/notes/${this.note.id}/destroy_file.json`, {file: file})
+          http.put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}/destroy_file.json`, {file: file})
           .then((res)=> {
             _.remove(this.DV_note.noteFiles, (f) => f.guid === file.guid)
             this.$forceUpdate()
@@ -116,12 +117,12 @@
             }
           }
 
-          var url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/notes.json`
+          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes.json`
           var method = "POST"
           var callback = "note-created"
 
           if (this.note && this.note.id) {
-            url = `/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/notes/${this.note.id}.json`
+            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`
             method = "PUT"
             callback = "note-updated"
           }
@@ -148,6 +149,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject'
+      ]),
       readyToSave() {
         return (
           this.DV_note &&

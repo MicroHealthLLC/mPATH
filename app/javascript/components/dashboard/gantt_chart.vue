@@ -3,8 +3,10 @@
     <div v-if="!loading">
       <gantt-elastic
         :options="options"
-        :tasks="tasks"
-      ></gantt-elastic>
+        :tasks="ganttData"
+        :dynamic-style="dynamicStyle"
+        >
+      </gantt-elastic>
     </div>
     <div v-else class="d-flex justify-content-center align-items-center h-75 mt-5">
       <loader :loading="true" color="black"></loader>
@@ -14,37 +16,37 @@
 </template>
 
 <script>
-  import utils from './../../mixins/utils'
-  import http from './../../common/http'
+  import {mapGetters} from 'vuex'
 
   export default {
-    name: "Gantt",
-    mixins: [utils],
+    name: "GanttChart",
     data() {
       return {
         loading: true,
-        tasks: [],
         options: {
+          times: {
+            timeZoom: 21
+          },
           taskMapping: {
             progress: "percent"
           },
-          maxRows: 100,
-          maxHeight: 500,
+          maxRows: 1000,
+          maxHeight: 620,
           title: {
-            label: "Project gantt chart",
+            label: "Project Gantt Chart View",
             html: false
           },
           row: {
-            height: 24
+            height: 18
           },
           calendar: {
             hour: {
-              display: true
+              display: false
             }
           },
           chart: {
             progress: {
-              bar: false
+              bar: true
             },
             expander: {
               display: true
@@ -59,62 +61,90 @@
                 id: 1,
                 label: "Name",
                 value: "name",
-                width: 200,
-                expander: true,
-                html: true
+                width: 180,
+                expander: true
               },
               {
                 id: 2,
                 label: "Duration",
-                value: "duration",
-                width: 100,
-                html: true
+                value: "durationInDays",
+                width: 75,
+                style: {
+                  'task-list-header-label': {
+                    'text-align': 'center',
+                    width: '100%'
+                  },
+                  'task-list-item-value-container': {
+                    'text-align': 'center',
+                    width: '100%'
+                  }
+                }
               },
               {
                 id: 3,
                 label: "% Complete",
                 value: "progress",
-                width: 78
+                width: 90,
+                style: {
+                  'task-list-header-label': {
+                    'text-align': 'center',
+                    width: '100%'
+                  },
+                  'task-list-item-value-container': {
+                    'text-align': 'center',
+                    width: '100%'
+                  }
+                }
               },
               {
                 id: 4,
                 label: "Start Date",
                 value: "startDate",
-                width: 130
+                width: 90,
+                style: {
+                  'task-list-header-label': {
+                    'text-align': 'center',
+                    width: '100%'
+                  },
+                  'task-list-item-value-container': {
+                    'text-align': 'center',
+                    width: '100%'
+                  }
+                }
               },
               {
                 id: 5,
                 label: "End Date",
                 value: "endDate",
-                width: 130
+                width: 90,
+                style: {
+                  'task-list-header-label': {
+                    'text-align': 'center',
+                    width: '100%'
+                  },
+                  'task-list-item-value-container': {
+                    'text-align': 'center',
+                    width: '100%'
+                  }
+                }
               }
             ]
+          }
+        },
+        dynamicStyle: {
+          'task-list-header-label': {
+            'font-weight': 'bold'
           }
         }
       }
     },
     mounted() {
-      this.fetchGantt()
+      this.loading = false
     },
-    methods: {
-      fetchGantt() {
-        http
-          .get(`/projects/${this.$route.params.projectId}/gantt_chart.json`)
-          .then((res) => {
-            this.tasks = res.data.map(task => (task.startDate ? {...task, start: this.getSimpleDate2(task.startDate)} : task) )
-            this.loading = false
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
-      getSimpleDate2(date) {
-        var dt = new Date(date)
-        var y = dt.getFullYear()
-        var m = dt.getMonth()
-        var d = dt.getDate()
-        return new Date(y, m, d, 0, 0, 0).getTime()
-      }
+    computed: {
+      ...mapGetters([
+        'ganttData'
+      ])
     }
   }
 </script>
@@ -122,9 +152,5 @@
 <style scoped lang="scss">
   .gantt_board {
     padding: 10px 70px;
-  }
-  .__loading {
-    margin-top: 125px;
-    margin-left: -20px;
   }
 </style>

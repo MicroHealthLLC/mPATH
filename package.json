@@ -9,6 +9,7 @@
     "gantt-elastic": "^1.0.11",
     "gantt-elastic-header": "^0.1.11",
     "humps": "^2.0.1",
+    "js-cookie": "^2.2.1",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
     "moment-range": "^4.0.2",
@@ -33,6 +34,7 @@
     "vue2-google-maps": "^0.10.7",
     "vuejs-datepicker": "^1.6.2",
     "vuex": "^3.1.2",
+    "vuex-persistedstate": "^3.0.1",
     "xlsx": "^0.16.2"
   },
   "devDependencies": {

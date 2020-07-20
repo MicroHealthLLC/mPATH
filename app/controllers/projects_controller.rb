@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart]
+  before_action :set_project, only: [:show, :destroy, :update]
 
   def index
     respond_to do |format|
@@ -24,10 +24,9 @@ class ProjectsController < AuthenticatedController
 
   def gantt_chart
     respond_to do |format|
-      format.json { render json: @project.gantt_data, status: 200 }
+      format.json { }
       format.html {render action: :index}
     end
-
   end
 
   private

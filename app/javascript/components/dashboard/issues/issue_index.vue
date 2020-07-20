@@ -11,8 +11,8 @@
       <issue-form
         :facility="facility"
         :issue="currentIssue"
-        :issue-types="DV_issueTypes"
-        :issue-severities="DV_issueSeverities"
+        :issue-types="issueTypes"
+        :issue-severities="issueSeverities"
         @issue-created="issueCreated"
         @issue-updated="issueUpdated"
         class="issue-form-modal"
@@ -27,7 +27,7 @@
             v-model="filters.issueType"
             >
             <option selected value="">Filter by Issue Type</option>
-            <option v-for="opt in DV_issueTypes" :value="opt.id">
+            <option v-for="opt in issueTypes" :value="opt.id">
               {{opt.name}}
             </option>
           </select>
@@ -37,7 +37,7 @@
             v-model="filters.issueSeverity"
             >
             <option selected value="">Filter by Issue Severity</option>
-            <option v-for="opt in DV_issueSeverities" :value="opt.id">
+            <option v-for="opt in issueSeverities" :value="opt.id">
               {{opt.name}}
             </option>
           </select>
@@ -86,19 +86,18 @@
   import http from './../../../common/http'
   import IssueForm from './issue_form'
   import IssueShow from './issue_show'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'ProjectShow',
     props: ['facility'],
-    components: { IssueForm, IssueShow },
+    components: {IssueForm, IssueShow},
 
     data() {
       return {
         loading: true,
         newIssue: false,
         viewList: 'active',
-        DV_issueTypes: [],
-        DV_issueSeverities: [],
         currentIssue: null,
         filters: {
           issueType: '',
@@ -107,32 +106,9 @@
       }
     },
     mounted() {
-      var cb = () => this.loading = false
-      this.fetchIssueTypes(cb)
+      this.loading= false
     },
     methods: {
-      fetchIssueTypes(cb) {
-        http
-          .get(`/api/issue_types.json`)
-          .then((res) => {
-            this.DV_issueTypes = res.data.issueTypes
-            this.fetchIssueSeverities(cb)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
-      fetchIssueSeverities(cb) {
-        http
-          .get(`/api/issue_severities.json`)
-          .then((res) => {
-            this.DV_issueSeverities = res.data.issueSeverities
-            return cb()
-          })
-          .catch((err) => {
-            console.error(err)
-          })
-      },
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
         this.newIssue = false
@@ -146,7 +122,7 @@
       },
       issueDeleted(issue) {
         http
-          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.facility.id}/issues/${issue.id}.json`)
+          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
           .then((res) => {
             var issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
@@ -164,6 +140,11 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject',
+        'issueTypes',
+        'issueSeverities',
+      ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },

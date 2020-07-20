@@ -8,11 +8,11 @@
       <tabs>
         <tab title="Overview" key="overview">
           <div v-if="_isallowed('read')">
-            <h3 v-if="extras" class="text-center">Facility Summary</h3>
+            <h5 v-if="extras" class="text-center">Facility Summary</h5>
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe"></i></span>
-                <span>{{region.name}}</span>
+                <span>{{facilityGroup.name}}</span>
               </p>
               <div>
                 <p class="mt-2 d-flex align-items-center">
@@ -87,8 +87,8 @@
                     </div>
                   </div>
                 </p>
-                <hr>
               </div>
+              <hr>
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
                 <span>{{DV_facility.address || 'N/A'}}</span>
@@ -143,6 +143,7 @@
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './../projects/project_show'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'FacilitiesShow',
@@ -153,7 +154,7 @@
         default: null,
         type: Object
       },
-      region: {
+      facilityGroup: {
         default: null,
         type: Object
       },
@@ -181,7 +182,7 @@
     methods: {
       fetchFacility(opt={}) {
         http
-          .get(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`)
+          .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             if (opt.cb) this.$emit('facility-update', this.DV_facility)
@@ -198,27 +199,12 @@
         this.DV_updated = false
         var data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
-          .put(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`, data)
+          .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             this.$emit('facility-update', this.DV_facility)
           })
           .catch((err) => {
-            console.error(err);
-          })
-      },
-      deleteFacility() {
-        var confirm = window.confirm(`Are you sure, you want to delete ${this.DV_facility.facilityName}?`)
-        if (!confirm) return;
-
-        http
-          .delete(`/projects/${this.$route.params.projectId}/facilities/${this.DV_facility.id}.json`)
-          .then((res) => {
-            this.loading = false;
-            this.$emit('back-after-delete', this.DV_facility);
-          })
-          .catch((err) => {
-            this.loading = false;
             console.error(err);
           })
       },
@@ -251,6 +237,9 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject'
+      ]),
       filteredNotes() {
         if (this.notesQuery.trim() !== '') {
           const resp = new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i')

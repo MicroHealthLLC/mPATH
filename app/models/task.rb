@@ -33,14 +33,6 @@ class Task < ApplicationRecord
     ).as_json
   end
 
-  def gantt_hash(hash, p_id)
-    t_id = "#{p_id}_t_#{self.id}"
-    t_duration = ((due_date.to_time - start_date.to_time) / 1.days).to_i * 24 * 60 * 60 * 1000
-    hash.push({id: t_id, parent_id: p_id, name: self.try(:text), duration: t_duration, percent: progress, start_date: start_date, end_date: due_date, type: 'task'})
-
-    ## NOTE: checklist to come..
-  end
-
   def project
     self.facility_project.try(:project)
   end
