@@ -1,9 +1,11 @@
 class ApplicationController < ActionController::Base
+  around_action :user_time_zone, if: :current_user
+
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
-      format.json { head :forbidden, content_type: 'text/html' }
-      format.html { redirect_to main_app.root_url, notice: exception.message }
-      format.js   { head :forbidden, content_type: 'text/html' }
+      format.json {head :forbidden, content_type: 'text/html'}
+      format.html {redirect_to main_app.root_url, notice: exception.message}
+      format.js {head :forbidden, content_type: 'text/html'}
     end
   end
 
@@ -19,11 +21,15 @@ class ApplicationController < ActionController::Base
     @status = arg[:status] || 500
 
     respond_to do |format|
-      format.any { head @status }
+      format.any {head @status}
     end
   end
 
   def require_admin
     render_404 unless current_user.admin?
+  end
+
+  def user_time_zone(&block)
+    Time.use_zone('Eastern Time (US & Canada)' , &block)
   end
 end
