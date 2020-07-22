@@ -25,7 +25,9 @@
         loading: true,
         options: {
           times: {
-            timeZoom: 21
+            timeScale: 4000 * 1000,
+            timeZoom: 20,
+            stepDuration: 'week'
           },
           taskMapping: {
             progress: "percent"
