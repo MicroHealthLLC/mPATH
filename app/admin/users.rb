@@ -81,7 +81,8 @@ ActiveAdmin.register User do
   end
 
   index do
-    selectable_column
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    selectable_column if current_user.admin_write?
     column :title
     column :first_name
     column :last_name
@@ -90,7 +91,10 @@ ActiveAdmin.register User do
     column :phone_number
     column :address
     column(:projects) {|user| user.projects.active}
-    actions
+    actions defaults: false do |user|
+      item "Edit", edit_admin_user_path(user), title: 'Edit', class: "member_link edit_link" if current_user.admin_write? && current_user.id != user.id
+      item "Delete", admin_user_path(user), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete? && current_user.id != user.id
+    end
   end
 
   batch_action :assign_state, form: {
@@ -118,10 +122,31 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: "#{notice}"
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Users?" do |ids|
+    deleted = User.where(id: ids).where.not(id: current_user.id).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Users"
+  end
+
   controller do
+    before_action :check_readability, only: [:index, :show]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def destroy
+      redirect_to '/not_found' and return unless current_user.admin_delete?
+      super
+    end
+
     def index
       super do |format|
-        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+        format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
   end

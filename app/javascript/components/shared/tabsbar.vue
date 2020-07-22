@@ -17,7 +17,7 @@
     name: 'Tabsbar',
     computed: {
       isMapView() {
-        return this.$route.name === 'ProjectDashboard'
+        return this.$route.name === 'ProjectMapView'
       },
       isGanttView() {
         return this.$route.name === 'ProjectGanttChart'

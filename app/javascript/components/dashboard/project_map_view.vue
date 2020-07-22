@@ -1,239 +1,243 @@
 <template>
-  <div class="row m-0 mw-100">
-    <div v-if="!mapLoading" id="map-wrap" class="col-8 p-0">
-      <div class="regions-bar">
-        <facility-group-bar
-          :facility-groups="filteredFacilityGroups"
-          :facilities="filteredFacilities('active')"
-          :project="currentProject"
-          @goto-facility-group="gotoFacilityGroup"
-        ></facility-group-bar>
-      </div>
-      <GmapMap
-        ref="googlemap"
-        :center="center"
-        :zoom="zoom"
-        map-type-id="terrain"
-        style="width: 100%; height: 100%"
-        :control-size="5"
-        :options="{
-          rotateControl: true,
-          minZoom: 2,
-          zoomControl: true,
-          mapTypeControl: false,
-          scaleControl: true,
-          streetViewControl: false,
-          fullscreenControl: true
-        }"
-        @click="resetView"
-        >
-        <GmapCluster
-          :averageCenter="true"
-          :enableRetinaIcons="true"
-          :ignoreHidden="true"
-          :zoomOnClick="true"
-          >
-          <GmapMarker
-            :key="`${facility.id}__${index}`"
-            :animation="4"
-            v-for="(facility, index) in filterFacilitiesWithActiveFacilityGroups"
-            :position="getLatLngForFacility(facility)"
-            @click="showFacility(facility)"
-            @mouseover="toggleTooltip(facility, `${facility.id}__${index}`)"
-            @mouseout="tooltip.opened=false"
-            :icon="{url: getStatusIconLink(facility)}"
-          />
-        </GmapCluster>
-        <GmapInfoWindow
-          :options="tooltip.options"
-          :position="tooltip.position"
-          :opened="tooltip.opened"
-          @closeclick="tooltip.opened=false"
-          >
-          {{tooltip.content}}
-        </GmapInfoWindow>
-      </GmapMap>
-    </div>
-    <div v-else class="col-8 p-0"></div>
-    <div id="rollup-sidebar" class="col-4 p-0" :style="rollupStyle">
-      <div style="margin-left: 12px;">
-        <div v-if="!sideLoading">
-          <div v-show="!openSidebar" class="m-3">
-            <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
-            <br>
-            <div class="text-center">
-              <h2>{{facilityCount}} Facilities</h2>
-              <p class="mt-2 d-flex align-items-center">
-                <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
-                  <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
-                </span>
-              </p>
-              <div v-if="facilityCount > 0" class="d-flex justify-content-around">
-                <div>
-                  <span> active</span>
-                  <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.active}}</span>
+  <div id="_wrapper">
+    <div class="col p-0">
+      <div class="row m-0 mw-100">
+        <div v-if="!mapLoading" id="map-wrap" class="col-8 p-0">
+          <div class="regions-bar">
+            <facility-group-bar
+              :facility-groups="filteredFacilityGroups"
+              :facilities="filteredFacilities('active')"
+              :project="currentProject"
+              @goto-facility-group="gotoFacilityGroup"
+            ></facility-group-bar>
+          </div>
+          <GmapMap
+            ref="googlemap"
+            :center="center"
+            :zoom="zoom"
+            map-type-id="terrain"
+            style="width: 100%; height: 100%"
+            :control-size="5"
+            :options="{
+              rotateControl: true,
+              minZoom: 2,
+              zoomControl: true,
+              mapTypeControl: false,
+              scaleControl: true,
+              streetViewControl: false,
+              fullscreenControl: true
+            }"
+            @click="resetView"
+            >
+            <GmapCluster
+              :averageCenter="true"
+              :enableRetinaIcons="true"
+              :ignoreHidden="true"
+              :zoomOnClick="true"
+              >
+              <GmapMarker
+                :key="`${facility.id}__${index}`"
+                :animation="4"
+                v-for="(facility, index) in filterFacilitiesWithActiveFacilityGroups"
+                :position="getLatLngForFacility(facility)"
+                @click="showFacility(facility)"
+                @mouseover="toggleTooltip(facility, `${facility.id}__${index}`)"
+                @mouseout="tooltip.opened=false"
+                :icon="{url: getStatusIconLink(facility)}"
+              />
+            </GmapCluster>
+            <GmapInfoWindow
+              :options="tooltip.options"
+              :position="tooltip.position"
+              :opened="tooltip.opened"
+              @closeclick="tooltip.opened=false"
+              >
+              {{tooltip.content}}
+            </GmapInfoWindow>
+          </GmapMap>
+        </div>
+        <div v-else class="col-8 p-0"></div>
+        <div id="rollup-sidebar" class="col-4 p-0" :style="rollupStyle">
+          <div style="margin-left: 12px;">
+            <div v-if="!sideLoading">
+              <div v-show="!openSidebar" class="m-3">
+                <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
+                <br>
+                <div class="text-center">
+                  <h2>{{facilityCount}} Facilities</h2>
+                  <p class="mt-2 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
+                      <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
+                    </span>
+                  </p>
+                  <div v-if="facilityCount > 0" class="d-flex justify-content-around">
+                    <div>
+                      <span> active</span>
+                      <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.active}}</span>
+                    </div>
+                    <div>
+                      <span> inactive</span>
+                      <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.inactive}}</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span> inactive</span>
-                  <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.inactive}}</span>
+                <hr>
+                <div class="my-1">
+                  <h5 class="text-center">Facility Project Status</h5>
+                  <div v-if="facilityCount > 0">
+                    <div v-for="(_f, s) in facilitiesByProjectStatus">
+                      <div class="row">
+                        <div class="col-md-9">
+                          <span class="badge badge-pill" :style="`background: ${_f[0].color}`" style="height: 10px">&nbsp;</span>
+                          <span> {{s.replace('null', 'No Status')}}</span>
+                          <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-center">
+                          <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities('active').length) <= 0 }">
+                            <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities('active').length)}%`">{{getAverage(_f.length, filteredFacilities('active').length)}} %</div>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <hr>
-            <div class="my-1">
-              <h5 class="text-center">Facility Project Status</h5>
-              <div v-if="facilityCount > 0">
-                <div v-for="(_f, s) in facilitiesByProjectStatus">
-                  <div class="row">
-                    <div class="col-md-9">
-                      <span class="badge badge-pill" :style="`background: ${_f[0].color}`" style="height: 10px">&nbsp;</span>
-                      <span> {{s.replace('null', 'No Status')}}</span>
-                      <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                <hr>
+                <div class="my-1">
+                  <h5 class="text-center">{{currentTasks.length}} Tasks</h5>
+                  <div>
+                    <div class="row">
+                      <div class="col-md-9">
+                        <span>Complete</span>
+                        <span class="badge badge-secondary badge-pill">{{completedTasks().count}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks().avg <= 0 }">
+                          <div class="progress-bar bg-info" :style="`width: ${completedTasks().avg}%`">{{completedTasks().avg}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-9">
+                        <span>Incomplete</span>
+                        <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
+                          <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="text-info font-weight-bold text-center">Task Types</div>
+                  <div v-for="task in currentTaskTypes">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <span> {{task.name}}</span>
+                        <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
+                          <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="my-1">
+                  <h5 class="text-center">{{currentIssues.length}} Issues</h5>
+                  <div v-for="issue in currentIssueTypes">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <span> {{issue.name}}</span>
+                        <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{ 'progress-0': issue.progress <= 0 }">
+                          <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div>
+                  <h5 class="text-center">Facility Groups</h5>
+                  <div class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
+                    <div class="col-md-9 font-md">
+                      <span class="badge badge-pill" :class="{'badge-success':
+                        facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
+                        {{facilityGroup.status}}
+                      </span>
+                      <span>{{facilityGroup.name}}</span>
+                      <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities('active').length) <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities('active').length)}%`">{{getAverage(_f.length, filteredFacilities('active').length)}} %</div>
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(facilityGroup) <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <hr>
-            <div class="my-1">
-              <h5 class="text-center">{{currentTasks.length}} Tasks</h5>
-              <div>
-                <div class="row">
-                  <div class="col-md-9">
-                    <span>Complete</span>
-                    <span class="badge badge-secondary badge-pill">{{completedTasks().count}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks().avg <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${completedTasks().avg}%`">{{completedTasks().avg}} %</div>
-                    </span>
-                  </div>
+              <div class="knocker_side" :style="knockerStyle">
+                <div v-if="currentFacilityStatus" class="knocker" @click="toggleOpenSideBar">
+                  <div class="linner"></div>
                 </div>
-                <div class="row">
-                  <div class="col-md-9">
-                    <span>Incomplete</span>
-                    <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <br>
-              <div class="text-info font-weight-bold text-center">Task Types</div>
-              <div v-for="task in currentTaskTypes">
-                <div class="row">
-                  <div class="col-md-9">
-                    <span> {{task.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-                    </span>
+                <div id="map-sidebar" class="shadow-sm">
+                  <facility-show
+                    v-if="currentFacilityStatus"
+                    :facility="currentFacility"
+                    :facility-group="currentFacilityGroup"
+                    :statuses="statuses"
+                    @close-side-bar="closeSidebar"
+                    @edit-facility="editFacility"
+                    @facility-update="updateFacility"
+                  />
+                  <div v-else class="d-flex justify-content-center align-items-center h-75">
+                    <loader :loading="true" color="black"></loader>
+                    <p class="__loading">Loading</p>
                   </div>
                 </div>
               </div>
             </div>
-            <hr>
-            <div class="my-1">
-              <h5 class="text-center">{{currentIssues.length}} Issues</h5>
-              <div v-for="issue in currentIssueTypes">
-                <div class="row">
-                  <div class="col-md-9">
-                    <span> {{issue.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': issue.progress <= 0 }">
-                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div>
-              <h5 class="text-center">Facility Groups</h5>
-              <div class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
-                <div class="col-md-9 font-md">
-                  <span class="badge badge-pill" :class="{'badge-success':
-                    facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-                    {{facilityGroup.status}}
-                  </span>
-                  <span>{{facilityGroup.name}}</span>
-                  <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
-                </div>
-                <div class="col-md-3 d-flex align-items-center">
-                  <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(facilityGroup) <= 0 }">
-                    <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="knocker_side" :style="knockerStyle">
-            <div v-if="currentFacilityStatus" class="knocker" @click="toggleOpenSideBar">
-              <div class="linner"></div>
-            </div>
-            <div id="map-sidebar" class="shadow-sm">
-              <facility-show
-                v-if="currentFacilityStatus"
-                :facility="currentFacility"
-                :facility-group="currentFacilityGroup"
-                :statuses="statuses"
-                @close-side-bar="closeSidebar"
-                @edit-facility="editFacility"
-                @facility-update="updateFacility"
-              />
-              <div v-else class="d-flex justify-content-center align-items-center h-75">
-                <loader :loading="true" color="black"></loader>
-                <p class="__loading">Loading</p>
-              </div>
+            <div v-else class="d-flex justify-content-center align-items-center h-75">
+              <loader :loading="true" color="black"></loader>
+              <p class="__loading">Loading</p>
             </div>
           </div>
         </div>
-        <div v-else class="d-flex justify-content-center align-items-center h-75">
-          <loader :loading="true" color="black"></loader>
-          <p class="__loading">Loading</p>
-        </div>
+
+        <sweet-modal
+          class="facility_accordion_modal"
+          ref="facilitiesAccordion"
+          :hide-close-button="true"
+          :blocking="true"
+          >
+          <div v-if="currentFacilityGroup && currentFacilityGroup.id">
+            <div class="facility_grp_close_btn">
+              <i class="fas fa-minus"></i>
+            </div>
+            <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{currentFacilityGroupFacilities.length}}</span></h3>
+            <div v-if="currentFacilityGroupFacilities && currentFacilityGroupFacilities.length == 0" class="mt-3 text-danger">
+              There is no facility under this group
+            </div>
+            <div v-else>
+              <div v-for="facility in currentFacilityGroupFacilities">
+                <accordion
+                  :expanded="expandedFacility.id"
+                  :facility="facility.facility"
+                  :statuses="statuses"
+                  :facility-group="currentFacilityGroup"
+                  @update-expanded="updateExpanded"
+                />
+              </div>
+            </div>
+          </div>
+        </sweet-modal>
       </div>
     </div>
-
-    <sweet-modal
-      class="facility_accordion_modal"
-      ref="facilitiesAccordion"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="currentFacilityGroup && currentFacilityGroup.id">
-        <div class="facility_grp_close_btn">
-          <i class="fas fa-minus"></i>
-        </div>
-        <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{currentFacilityGroupFacilities.length}}</span></h3>
-        <div v-if="currentFacilityGroupFacilities && currentFacilityGroupFacilities.length == 0" class="mt-3 text-danger">
-          There is no facility under this group
-        </div>
-        <div v-else>
-          <div v-for="facility in currentFacilityGroupFacilities">
-            <accordion
-              :expanded="expandedFacility.id"
-              :facility="facility.facility"
-              :statuses="statuses"
-              :facility-group="currentFacilityGroup"
-              @update-expanded="updateExpanded"
-            />
-          </div>
-        </div>
-      </div>
-    </sweet-modal>
   </div>
 </template>
 
@@ -442,7 +446,7 @@ export default {
     facilityGroupProgress(f_group) {
       var ids = _.map(this.filteredFacilities('active'), 'id')
       var mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
-      return mean.toFixed(2)
+      return Number(mean.toFixed(2))
     },
     toggleOpenSideBar() {
       this.openSidebar = this.currentFacility ? !this.openSidebar : false
@@ -467,6 +471,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  #_wrapper {
+    padding-top: 1px;
+    height: calc(100vh - 94px);
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
   #map-wrap {
     height: calc(100vh - 94px);
     width: 69vw;

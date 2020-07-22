@@ -20,15 +20,18 @@ ActiveAdmin.register Project do
   end
 
   index do
-    selectable_column
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    selectable_column if current_user.admin_write?
     column :name
     column :description
     column :project_type, nil, sortable: 'project_types.name' do |project|
       raw "<a href='#{edit_admin_project_type_path(project.project_type)}'>#{project.project_type.name}</a>" if project.project_type.present?
     end
     column "State", :status
-
-    actions
+    actions defaults: false do |project|
+      item "Edit", edit_admin_project_path(project), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_project_path(project), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    end
   end
 
   form do |f|
@@ -95,20 +98,41 @@ ActiveAdmin.register Project do
     redirect_to collection_path, notice: 'State is updated'
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects?" do |ids|
+    deleted = Project.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"
+  end
+
   controller do
+    before_action :check_readability, only: [:index, :show]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def destroy
+      redirect_to '/not_found' and return unless current_user.admin_delete?
+      super
+    end
+
     def update(options={}, &block)
       params[:project][:comments_attributes]['0']['namespace'] = 'admin'
       params[:project][:comments_attributes]['0']['author_id'] = current_user.id
       params[:project][:comments_attributes]['0']['author_type'] = 'User'
       super do |success, failure|
         block.call(success, failure) if block
-        failure.html { render :edit }
+        failure.html {render :edit}
       end
     end
 
     def index
       super do |format|
-        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+        format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
 

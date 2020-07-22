@@ -28,7 +28,8 @@ ActiveAdmin.register Task do
   end
 
   index do
-    selectable_column
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    selectable_column if current_user.admin_write?
     column "Name", :text
     column :task_type, nil, sortable: 'task_types.name' do |task|
       raw "<a href='#{edit_admin_task_type_path(task.task_type)}'>#{task.task_type.name}</a>" if task.task_type.present?
@@ -48,8 +49,10 @@ ActiveAdmin.register Task do
     column :facility, nil, sortable: 'facilities.facility_name' do |task|
       raw "<a href='#{edit_admin_facility_path(task.facility)}'>#{task.facility.facility_name}</a>" if task.facility.present?
     end
-
-    actions
+    actions defaults: false do |task|
+      item "Edit", edit_admin_task_path(task), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_task_path(task), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    end
   end
 
   form do |f|
@@ -72,6 +75,11 @@ ActiveAdmin.register Task do
     f.actions
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Tasks?" do |ids|
+    deleted = Task.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Tasks"
+  end
+
   filter :text, label: 'Name'
   filter :task_type
   filter :start_date
@@ -81,6 +89,22 @@ ActiveAdmin.register Task do
   filter :progress
 
   controller do
+    before_action :check_readability, only: [:index, :show]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def destroy
+      redirect_to '/not_found' and return unless current_user.admin_delete?
+      super
+    end
+
     def scoped_collection
       super.includes(:task_type, facility_project: [:project, :facility])
     end

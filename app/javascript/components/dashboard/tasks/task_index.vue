@@ -65,7 +65,7 @@
               </div>
             </div>
             <div class="col-md-3">
-              <div class="crud-actions my-2">
+              <div class="t_actions my-2">
                 <span v-if="_isallowed('write')" class="mr-3 edit-action" @click.prevent="editTask(task)">
                   <i class="fas fa-edit"></i>
                 </span>
@@ -156,14 +156,8 @@
     display: flex;
     justify-content: flex-end;
   }
-  .crud-actions span {
+  .t_actions span {
     font-size: 13px;
-  }
-  .progress-0 {
-    .progress-bar {
-      margin-left: 1vw;
-      color: #6c757d !important;
-    }
   }
   .pg-content {
     width: 100%;

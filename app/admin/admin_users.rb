@@ -19,7 +19,6 @@ ActiveAdmin.register AdminUser do
 
   form do |f|
     f.semantic_errors *f.object.errors.keys
-
     f.inputs do
       f.input :email
       f.input :password
@@ -31,7 +30,7 @@ ActiveAdmin.register AdminUser do
   controller do
     def index
       super do |format|
-        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+        format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
   end

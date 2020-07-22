@@ -184,7 +184,7 @@ export default new Vuex.Store({
     },
     facilityProgress: (state, getters) => {
       var mean = _.meanBy(getters.filteredFacilities('active'), 'progress') || 0
-      return mean.toFixed(2)
+      return Number(mean.toFixed(2))
     },
     filterFacilitiesWithActiveFacilityGroups: (state, getters) => {
       var ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
@@ -222,7 +222,7 @@ export default new Vuex.Store({
           name: getters.currentProject.name,
           duration: p_duration,
           durationInDays: `${Math.ceil(p_duration / (1000 * 3600 * 24)) || 0} days`,
-          percent: p_progress.toFixed(2),
+          percent: Number(p_progress.toFixed(2)),
           start: getSimpleDate(p_s_date),
           startDate: p_s_date,
           endDate: p_e_date,
@@ -247,7 +247,7 @@ export default new Vuex.Store({
             name: group,
             duration: fg_duration,
             durationInDays: `${Math.ceil(fg_duration / (1000 * 3600 * 24)) || 0} days`,
-            percent: fg_progress.toFixed(2),
+            percent: Number(fg_progress.toFixed(2)),
             start: getSimpleDate(fg_s_date),
             startDate: fg_s_date,
             endDate: fg_e_date,
@@ -270,7 +270,7 @@ export default new Vuex.Store({
               name: facility.facility.facilityName,
               duration: f_duration,
               durationInDays: `${Math.ceil(f_duration / (1000 * 3600 * 24)) || 0} days`,
-              percent: f_progress.toFixed(2),
+              percent: Number(f_progress.toFixed(2)),
               start: getSimpleDate(f_s_date),
               startDate: f_s_date,
               endDate: f_e_date,
@@ -295,7 +295,7 @@ export default new Vuex.Store({
                 name: type,
                 duration: tt_duration,
                 durationInDays: `${Math.ceil(tt_duration / (1000 * 3600 * 24))} days`,
-                percent: tt_progress.toFixed(2),
+                percent: Number(tt_progress.toFixed(2)),
                 start: getSimpleDate(tt_s_date),
                 startDate: tt_s_date,
                 endDate: tt_e_date,
@@ -315,7 +315,7 @@ export default new Vuex.Store({
                   name: task.text,
                   duration: t_duration,
                   durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
-                  percent: task.progress.toFixed(2),
+                  percent: Number(task.progress.toFixed(2)),
                   start: getSimpleDate(task.startDate),
                   startDate: task.startDate,
                   endDate: task.dueDate,
@@ -333,7 +333,7 @@ export default new Vuex.Store({
                     name: checklist.text,
                     duration: t_duration,
                     durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
-                    percent: task.progress.toFixed(2),
+                    percent: Number(task.progress.toFixed(2)),
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,

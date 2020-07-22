@@ -1,12 +1,12 @@
-import DashboardWrap from './../components/dashboard/dashboard_wrap'
+import ProjectMapView from './../components/dashboard/project_map_view'
 import GanttChart from './../components/dashboard/gantt_chart'
 
 export default new VueRouter({
   routes: [
     {
-      name: 'ProjectDashboard',
+      name: 'ProjectMapView',
       path: '/projects/:projectId',
-      component: DashboardWrap
+      component: ProjectMapView
     },
     {
       name: 'ProjectGanttChart',

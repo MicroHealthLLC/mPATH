@@ -35,7 +35,8 @@ ActiveAdmin.register Facility do
   end
 
   index do
-    selectable_column
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    selectable_column if current_user.admin_write?
     column :facility_name
     column :address
     column :point_of_contact
@@ -45,8 +46,11 @@ ActiveAdmin.register Facility do
       raw "<a href='#{edit_admin_facility_group_path(facility.facility_group)}'>#{facility.facility_group.name}</a>" if facility.facility_group.present?
     end
     column "State", :status
-    column(:projects) { |facility| facility.projects.active }
-    actions
+    column(:projects) {|facility| facility.projects.active}
+    actions defaults: false do |facility|
+      item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    end
   end
 
   form do |f|
@@ -186,7 +190,27 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, flash: {error: e.message}
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Facilities" do |ids|
+    deleted = Facility.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Facilities"
+  end
+
   controller do
+    before_action :check_readability, only: [:index, :show]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def destroy
+      redirect_to '/not_found' and return unless current_user.admin_delete?
+      super
+    end
 
     def create
       params[:facility][:creator_id] = current_user.id
@@ -199,13 +223,13 @@ ActiveAdmin.register Facility do
       params[:facility][:comments_attributes]['0']['author_type'] = 'User'
       super do |success, failure|
         block.call(success, failure) if block
-        failure.html { render :edit }
+        failure.html {render :edit}
       end
     end
 
     def index
       super do |format|
-        format.json { send_data collection.to_json, type: :json, disposition: "attachment" }
+        format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
     end
 
@@ -214,7 +238,6 @@ ActiveAdmin.register Facility do
     end
   end
 
-  preserve_default_filters!
   filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
   filter :facility_group
   filter :facility_name
@@ -226,6 +249,7 @@ ActiveAdmin.register Facility do
   filter :tasks_text, as: :string, label: "Task Name"
   filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Type'
   filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
+  filter :projects
   remove_filter :creator
   remove_filter :country_code
   remove_filter :tasks

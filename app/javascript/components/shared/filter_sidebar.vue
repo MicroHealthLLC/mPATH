@@ -3,7 +3,7 @@
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
         <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-sm btn-link">export</button>
-        <h4>Filter Map</h4>
+        <h4>Filter View</h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
       <div class="filters_wrap">

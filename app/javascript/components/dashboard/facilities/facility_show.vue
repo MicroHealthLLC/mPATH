@@ -253,7 +253,7 @@
           tasks.push({
             name: type,
             count: group[type].length,
-            progress: (_.meanBy(group[type], 'progress') || 0).toFixed(2)
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
           })
         }
         return tasks
@@ -313,12 +313,6 @@
     font-style: italic;
     display: flex;
     flex-direction: row-reverse;
-  }
-  .progress-0 {
-    .progress-bar {
-      margin-left: 1vw;
-      color: #6c757d !important;
-    }
   }
   .pg-content {
     width: 100%;

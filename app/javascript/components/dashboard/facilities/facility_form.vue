@@ -12,7 +12,7 @@
         <option
           v-for="region in regions"
           :value="region.id"
-        >
+          >
           {{region.name}}
         </option>
       </select>

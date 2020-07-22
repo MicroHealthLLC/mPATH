@@ -25,7 +25,8 @@ ActiveAdmin.register Issue do
   end
 
   index do
-    selectable_column
+    div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    selectable_column if current_user.admin_write?
     column :title
     column :issue_type, nil, sortable: 'issue_types.name' do |issue|
       raw "<a href='#{edit_admin_issue_type_path(issue.issue_type)}'>#{issue.issue_type.name}</a>" if issue.issue_type.present?
@@ -42,8 +43,10 @@ ActiveAdmin.register Issue do
         raw "<a href='#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}' target='_blank'>#{file.blob.filename}</a>"
       end
     end
-    actions
-
+    actions defaults: false do |issue|
+      item "Edit", edit_admin_issue_path(issue), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
+      item "Delete", admin_issue_path(issue), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+    end
   end
 
   form do |f|
@@ -63,6 +66,11 @@ ActiveAdmin.register Issue do
     f.actions
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Issues?" do |ids|
+    deleted = Issue.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Issues"
+  end
+
   filter :title
   filter :issue_type
   filter :issue_severity
@@ -71,6 +79,22 @@ ActiveAdmin.register Issue do
   filter :due_date
 
   controller do
+    before_action :check_readability, only: [:index, :show]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def destroy
+      redirect_to '/not_found' and return unless current_user.admin_delete?
+      super
+    end
+
     def scoped_collection
       super.includes(:issue_type, :issue_severity, facility_project: [:project, :facility])
     end

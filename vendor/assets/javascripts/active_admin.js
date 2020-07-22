@@ -50,7 +50,7 @@ jQuery(function($) {
         this.lat = $("#facility_lat").val();
         this.lng = $("#facility_lng").val();
         if (this.isAddressDrawn) {
-          this.center = {lat: this.lat, lng: this.lng}
+          this.center = {lat: this.lat, lng: this.lng};
         }
       },
       methods: {
@@ -66,7 +66,7 @@ jQuery(function($) {
           return this.lat !== '' && this.lng !== '';
         },
         getLatLng() {
-          this.center = {lat: Number(this.lat), lng: Number(this.lng)}
+          this.center = {lat: Number(this.lat), lng: Number(this.lng)};
           return this.center;
         }
       },
@@ -121,7 +121,7 @@ jQuery(function($) {
         this.lat = $("#user_lat").val();
         this.lng = $("#user_lng").val();
         if (this.isAddressDrawn) {
-          this.center = {lat: this.lat, lng: this.lng}
+          this.center = {lat: this.lat, lng: this.lng};
         }
       },
       methods: {
@@ -137,7 +137,7 @@ jQuery(function($) {
           return this.lat !== '' && this.lng !== '';
         },
         getLatLng() {
-          this.center = {lat: Number(this.lat), lng: Number(this.lng)}
+          this.center = {lat: Number(this.lat), lng: Number(this.lng)};
           return this.center;
         }
       },
@@ -162,7 +162,7 @@ jQuery(function($) {
   // user form phone_number_tab
   if ($("#user_phone_number-tab").is(":visible"))
   {
-    Vue.component('vue-phone-number-input', window['vue-phone-number-input'])
+    Vue.component('vue-phone-number-input', window['vue-phone-number-input']);
     var phone_number = new Vue({
       el: "#user_phone_number-tab",
       data() {
@@ -179,19 +179,19 @@ jQuery(function($) {
         this.setApiError();
         this.phoneNumber = $("#user_phone_number").val();
         this.countryCode = $("#user_country_code").val();
-        this.loading = false
+        this.loading = false;
       },
       methods: {
         setApiError() {
           this.apiError = $("#user_phone_number_input p").text() || '';
         },
         onUpdate(data) {
-          this.phoneData = data
-          this.error = !data.isValid
+          this.phoneData = data;
+          this.error = !data.isValid;
           if (data.formattedNumber)
           {
-            this.phoneNumber = data.formattedNumber
-            this.countryCode = data.countryCode
+            this.phoneNumber = data.formattedNumber;
+            this.countryCode = data.countryCode;
           }
         }
       },
@@ -219,7 +219,7 @@ jQuery(function($) {
   // facility form phone_number_tab
   if ($("#f_phone_number-tab").is(":visible"))
   {
-    Vue.component('vue-phone-number-input', window['vue-phone-number-input'])
+    Vue.component('vue-phone-number-input', window['vue-phone-number-input']);
     var phone_number = new Vue({
       el: "#f_phone_number-tab",
       data() {
@@ -236,19 +236,19 @@ jQuery(function($) {
         this.setApiError();
         this.phoneNumber = $("#facility_phone_number").val();
         this.countryCode = $("#facility_country_code").val();
-        this.loading = false
+        this.loading = false;
       },
       methods: {
         setApiError() {
           this.apiError = $("#facility_phone_number_input p").text() || '';
         },
         onUpdate(data) {
-          this.phoneData = data
-          this.error = !data.isValid
+          this.phoneData = data;
+          this.error = !data.isValid;
           if (data.formattedNumber)
           {
-            this.phoneNumber = data.formattedNumber
-            this.countryCode = data.countryCode
+            this.phoneNumber = data.formattedNumber;
+            this.countryCode = data.countryCode;
           }
         }
       },
@@ -276,7 +276,7 @@ jQuery(function($) {
   // task/issue form slider tab
   if ($("#progress_slider-tab").is(":visible"))
   {
-    Vue.component('vue-slide-bar', vueSlideBar)
+    Vue.component('vue-slide-bar', vueSlideBar);
     var slider = new Vue({
       el: "#progress_slider-tab",
       data() {
@@ -289,8 +289,8 @@ jQuery(function($) {
       },
       watch: {
         progress(value) {
-          $("#task_progress").val(value)
-          $("#issue_progress").val(value)
+          $("#task_progress").val(value);
+          $("#issue_progress").val(value);
         }
       },
       template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
@@ -317,17 +317,21 @@ jQuery(function($) {
         }
       },
       mounted() {
-        this.fetchSettings()
+        this.fetchSettings();
       },
       computed: {
         textType() {
           return this.isEditing ? 'text' : 'password'
+        },
+        permitted() {
+          return $("#__privileges").data('privilege').includes('W');
         }
       },
       methods: {
         submitSettings() {
+          if (!permitted) return;
           $.post("/api/settings.json", {settings: this.settings}, (data) => {
-            window.location.href = "/admin/settings"
+            window.location.href = "/admin/settings";
           });
         },
         fetchSettings() {
@@ -335,12 +339,12 @@ jQuery(function($) {
             for (var key in this.settings) {
               this.settings[key] = data[key] || ''
             }
-            this.loading = false
+            this.loading = false;
           });
         }
       },
       template: `<div>
-        <button class="edit-creds" :class="{'vue__disabled': isEditing}" @click.stop="isEditing=true">Edit</button>
+        <button v-if="permitted" class="edit-creds" :class="{'vue__disabled': isEditing}" @click.stop="isEditing=true">Edit</button>
         <form v-if="!loading" class="formtastic settings" @submit.prevent="submitSettings">
           <div class="tabs ui-tabs ui-corner-all ui-widget ui-widget-content">
             <ul class="nav nav-tabs ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
@@ -374,7 +378,7 @@ jQuery(function($) {
               </div>
             </div>
           </div>
-          <fieldset class="actions" v-show="isEditing">
+          <fieldset class="actions" v-if="permitted && isEditing">
             <ol>
               <li class="action input_action " id="submit_settings"><input :readOnly="!isEditing" type="submit"></li>
             </ol>
@@ -426,33 +430,28 @@ jQuery(function($) {
           this.project = {};
         },
         handleSubmit() {
-          var data = {facility_project: {due_date: this.project.due_date, status_id: this.project.status_id}}
-          var _this = this
+          var data = {facility_project: {due_date: this.project.due_date, status_id: this.project.status_id}};
+          var _this = this;
           $.ajax({
             url: `/facilities/${facility_id}/facility_projects/${this.project.id}.json`,
             type: 'PUT',
             data: data,
             success: function(res) {
-              var index = _this.projects.findIndex(p => p.id === res.id)
-              _this.projects[index] = res
-              _this.handleClose()
+              var index = _this.projects.findIndex(p => p.id === res.id);
+              _this.projects[index] = res;
+              _this.handleClose();
             }
           });
         }
       },
-      computed: {
-        shouldVisible() {
-          return $('#advanced').css('display') === 'block'
-        }
-      },
       template: `<div v-if="!loading">
-        <div v-show="shouldVisible" id='project_vue_tab' class="index_as_table">
+        <div id='project_vue_tab' class="index_as_table">
           <table border="0" cellspacing="0" cellpadding="0" class="index_table index" paginator="true">
             <thead>
               <tr>
-                <th class="sortable col col-project"><a href="#">Project</a></th>
-                <th class="sortable col col-due_date"><a href="#">Due Date</a></th>
-                <th class="sortable col col-status"><a href="#">Status</a></th>
+                <th class="col col-project">Project</th>
+                <th class="col col-due_date">Due Date</th>
+                <th class="col col-status">Status</th>
                 <th class="col col-actions"></th>
               </tr>
             </thead>
@@ -544,9 +543,9 @@ jQuery(function($) {
         }
       },
       mounted() {
-        this.writePrivileges()
+        this.writePrivileges();
         this.$nextTick(() => {
-          this.loading = false
+          this.loading = false;
         })
       },
       methods: {
@@ -585,124 +584,124 @@ jQuery(function($) {
       },
       watch: {
         "overview.read"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
-            this.overview.write = false
-            this.overview.delete = false
+            this.overview.write = false;
+            this.overview.delete = false;
           }
-          $("#user_privilege_attributes_overview").val(v)
+          $("#user_privilege_attributes_overview").val(v);
         },
         "overview.write"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.overview.read = value
-          $("#user_privilege_attributes_overview").val(v)
+          if (value) this.overview.read = value;
+          $("#user_privilege_attributes_overview").val(v);
         },
         "overview.delete"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.overview.read = value
-          $("#user_privilege_attributes_overview").val(v)
+          if (value) this.overview.read = value;
+          $("#user_privilege_attributes_overview").val(v);
         },
         "tasks.read"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
-            this.tasks.write = false
-            this.tasks.delete = false
+            this.tasks.write = false;
+            this.tasks.delete = false;
           }
-          $("#user_privilege_attributes_tasks").val(v)
+          $("#user_privilege_attributes_tasks").val(v);
         },
         "tasks.write"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.tasks.read = value
-          $("#user_privilege_attributes_tasks").val(v)
+          if (value) this.tasks.read = value;
+          $("#user_privilege_attributes_tasks").val(v);
         },
         "tasks.delete"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.tasks.read = value
-          $("#user_privilege_attributes_tasks").val(v)
+          if (value) this.tasks.read = value;
+          $("#user_privilege_attributes_tasks").val(v);
         },
         "issues.read"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_issues").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
-            this.issues.write = false
-            this.issues.delete = false
+            this.issues.write = false;
+            this.issues.delete = false;
           }
-          $("#user_privilege_attributes_issues").val(v)
+          $("#user_privilege_attributes_issues").val(v);
         },
         "issues.write"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_issues").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.issues.read = value
-          $("#user_privilege_attributes_issues").val(v)
+          if (value) this.issues.read = value;
+          $("#user_privilege_attributes_issues").val(v);
         },
         "issues.delete"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_issues").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.issues.read = value
-          $("#user_privilege_attributes_issues").val(v)
+          if (value) this.issues.read = value;
+          $("#user_privilege_attributes_issues").val(v);
         },
         "notes.read"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_notes").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
-            this.notes.write = false
-            this.notes.delete = false
+            this.notes.write = false;
+            this.notes.delete = false;
           }
-          $("#user_privilege_attributes_notes").val(v)
+          $("#user_privilege_attributes_notes").val(v);
         },
         "notes.write"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_notes").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.notes.read = value
-          $("#user_privilege_attributes_notes").val(v)
+          if (value) this.notes.read = value;
+          $("#user_privilege_attributes_notes").val(v);
         },
         "notes.delete"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_notes").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.notes.read = value
-          $("#user_privilege_attributes_notes").val(v)
+          if (value) this.notes.read = value;
+          $("#user_privilege_attributes_notes").val(v);
         },
         "admin.read"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_admin").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
-            this.admin.write = false
-            this.admin.delete = false
+            this.admin.write = false;
+            this.admin.delete = false;
           }
-          $("#user_privilege_attributes_admin").val(v)
+          $("#user_privilege_attributes_admin").val(v);
         },
         "admin.write"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_admin").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.admin.read = value
-          $("#user_privilege_attributes_admin").val(v)
+          if (value) this.admin.read = value;
+          $("#user_privilege_attributes_admin").val(v);
         },
         "admin.delete"(value) {
-          if (this.loading) return
+          if (this.loading) return;
           var v = $("#user_privilege_attributes_admin").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.admin.read = value
-          $("#user_privilege_attributes_admin").val(v)
+          if (value) this.admin.read = value;
+          $("#user_privilege_attributes_admin").val(v);
         },
       },
       template: `<fieldset v-if="!loading" class="choices p-5 privileges_tab">
@@ -751,31 +750,41 @@ jQuery(function($) {
       localStorage.removeItem('vuex');
     });
 
+    if ($("#__privileges").is(":visible")) {
+      var write = $("#__privileges").data('privilege').includes("W");
+      if (!write) $('.action_items').hide();
+    }
+
+    // hide batch_action after click
+    $('a.batch_action').click(function(e) {
+      $('.dropdown_menu_list_wrapper').css({display: 'none'});
+    });
+
     // add assign/unassign inputs in dialog_form
     $("a[data-action='Assign/Unassign Facility Group'], a[data-action='Assign/Unassign Project']").click(function(e) {
       e.stopPropagation();
       e.preventDefault();
 
-      var input = $("form#dialog_confirm input[name=assign]")
-      var li = input.parent()
-      var ul = li.parent()
-      li.remove()
+      var input = $("form#dialog_confirm input[name=assign]");
+      var li = input.parent();
+      var ul = li.parent();
+      li.remove();
       ul.prepend("<li class='radio__group'><input name='assign' type='radio' value='assign' checked><label>Assign</label><input name='assign' type='radio' value='unassign'><label>Unassign</label></li>");
-    })
+    });
 
     // task form #slider
     $('a[data-action=add_task]').click(function(e) {
       e.stopPropagation();
       e.preventDefault();
 
-      var input = $("form#dialog_confirm input[name=Progress]")
-      var parent = input.parent()
-      input.css({display: 'none'})
+      var input = $("form#dialog_confirm input[name=Progress]");
+      var parent = input.parent();
+      input.css({display: 'none'});
       parent.append("<div id='progress_slider'></div>");
 
       if ($("#progress_slider").is(":visible"))
       {
-        Vue.component('vue-slide-bar', vueSlideBar)
+        Vue.component('vue-slide-bar', vueSlideBar);
         var progress_slider = new Vue({
           el: "#progress_slider",
           data() {
@@ -784,17 +793,17 @@ jQuery(function($) {
             }
           },
           mounted() {
-            $("input[name=Progress]").val(this.progress)
+            $("input[name=Progress]").val(this.progress);
           },
           watch: {
             progress(value) {
-              $("input[name=Progress]").val(value)
+              $("input[name=Progress]").val(value);
             }
           },
           template: `<div class="progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div>`
         });
       }
-    })
+    });
   }());
 
   // password generator tab
@@ -814,8 +823,8 @@ jQuery(function($) {
         }
       },
       mounted() {
-        var user_id = $("#user_email").data().id
-        if (!user_id) this.generatePassword()
+        var user_id = $("#user_email").data().id;
+        if (!user_id) this.generatePassword();
       },
       methods: {
         generatePassword() {
@@ -825,7 +834,7 @@ jQuery(function($) {
           {
             chars = "";
             if (this.uppercase) chars = chars + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (this.numbers) chars = chars + "1234567890"
+            if (this.numbers) chars = chars + "1234567890";
             if (this.special_chars) chars = chars + "!@#$%^&*()";
             if (this.lowercase) chars = chars + "abcdefghijklmnopqrstuvwxyz";
             for (var i=0; i<Number(this.range); i++) {

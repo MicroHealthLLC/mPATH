@@ -26,8 +26,8 @@ export default {
     random() {
       return Math.floor(new Date().valueOf() * Math.random())
     },
-    getAverage(_count, _total) {
-      return (((_count / _total) * 100) || 0).toFixed(2)
+    getAverage(count, total) {
+      return Number((((count / total) * 100) || 0).toFixed(2))
     },
     upsert(array, item) {
       const i = array.findIndex(_item => _item.hasOwnProperty(Object.keys(item)[0]))

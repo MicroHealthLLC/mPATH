@@ -55,4 +55,20 @@ class User < ApplicationRecord
      privilege ||= Privilege.new
      super
   end
+
+  def admin_read?
+    superadmin? || privilege.admin.include?("R")
+  end
+
+  def admin_write?
+    superadmin? || (admin_read? && privilege.admin.include?("W"))
+  end
+
+  def admin_delete?
+    superadmin? || (admin_read? && privilege.admin.include?("D"))
+  end
+
+  def admin_privilege
+    superadmin? ? "RWD" : privilege.admin
+  end
 end
