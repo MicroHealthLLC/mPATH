@@ -1,4 +1,11 @@
+
+// mixins Utils
 export default {
+  data() {
+    return {
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+  },
   methods: {
     getSorted(array) {
       if (typeof(array[0]) === 'number') {
@@ -27,20 +34,18 @@ export default {
       if (i > -1) array[i] = item
       else array.push(item)
     },
-    getSimpleDate(hours) {
-      const currentDate = new Date()
-      const currentYear = currentDate.getFullYear()
-      const currentMonth = currentDate.getMonth()
-      const currentDay = currentDate.getDate()
-      const timeStamp = new Date(
-        currentYear,
-        currentMonth,
-        currentDay,
-        0,
-        0,
-        0
-      ).getTime()
-      return new Date(timeStamp + hours * 60 * 60 * 1000).getTime()
+    getSimpleDate(date) {
+      var dt = [undefined, null, 'N/A'].includes(date) ? new Date : new Date(date)
+      var y = dt.getFullYear()
+      var m = dt.getMonth()
+      var d = dt.getDate()
+      return new Date(y, m, d, 0, 0, 0).getTime()
+    },
+    formatDate(date) {
+      if (!moment(date).isValid()) return date
+      if (date instanceof Date) date = date.toISOString().slice(0, 10)
+      var dates = date.split('-')
+      return `${dates[2]} ${this.months[Number(dates[1])-1]} ${dates[0]}`
     }
   }
 }

@@ -10,6 +10,7 @@ import GmapCustomMarker     from 'vue2-gmap-custom-marker'
 import Dashboard            from 'components/dashboard/dashboard.vue'
 import router               from 'routers/dashboard'
 import store                from './../store'
+import utils                from './../mixins/utils'
 import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
@@ -21,8 +22,8 @@ import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
-import dayjs                from 'dayjs'
 
+Vue.mixin(utils)
 Vue.use(VTooltip)
 Vue.use(Tabs)
 Vue.use(VModal)

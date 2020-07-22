@@ -155,15 +155,12 @@
   import humps from 'humps'
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils from './../../../mixins/utils'
   import {mapGetters} from 'vuex'
 
   export default {
     name: 'TaskForm',
     props: ['facility', 'project', 'issue', 'title', 'issueTypes', 'issueSeverities'],
     components: {AttachmentInput},
-    mixins: [utils],
-
     data() {
       return {
         DV_issue: {
@@ -187,11 +184,6 @@
       }
     },
     methods: {
-      getDate(days=0) {
-        var date = new Date
-        date.setDate(date.getDate() + days)
-        return date
-      },
       addFile(files=[]) {
         for (let file of files) {
           file.guid = this.guid()
@@ -273,12 +265,10 @@
       },
       disabledStartDate(date) {
         const today = new Date()
-        today.setHours(0,0,0,0)
         return date < today
       },
       disabledDueDate(date) {
         const startDate = new Date(this.DV_issue.startDate)
-        startDate.setHours(0,0,0,0)
         return date < startDate
       }
     },
@@ -300,7 +290,7 @@
     watch: {
       issue: {
         handler: function(value) {
-          this.DV_issue = value
+          this.DV_issue = Object.assign({}, value)
         },
         deep: true
       }

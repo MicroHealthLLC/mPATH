@@ -56,11 +56,11 @@
               <div class="row">
                 <div class="font-sm col-md-6">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                  {{new Date(task.startDate).toLocaleDateString()}}
+                  {{formatDate(task.startDate)}}
                 </div>
                 <div class="font-sm col-md-6">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                  {{new Date(task.dueDate).toLocaleDateString()}}
+                  {{formatDate(task.dueDate)}}
                 </div>
               </div>
             </div>
@@ -90,7 +90,6 @@
   export default {
     name: 'TasksIndex',
     props: ['facility', 'project', 'taskTypes'],
-
     data() {
       return {
         DV_project: this.project,

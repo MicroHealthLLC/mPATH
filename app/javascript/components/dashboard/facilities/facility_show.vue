@@ -139,7 +139,6 @@
 
 <script>
   import http from './../../../common/http'
-  import utils from './../../../mixins/utils'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './../projects/project_show'
@@ -148,7 +147,6 @@
   export default {
     name: 'FacilitiesShow',
     components: {DetailShow, NotesIndex, IssueIndex},
-    mixins: [utils],
     props: {
       facility: {
         default: null,

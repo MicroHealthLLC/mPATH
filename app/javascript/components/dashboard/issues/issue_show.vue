@@ -20,11 +20,11 @@
           <div class="row mb-1">
             <div class="font-sm col-md-6">
               <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-              {{new Date(issue.startDate).toLocaleDateString()}}
+              {{formatDate(issue.startDate)}}
             </div>
             <div class="font-sm col-md-6">
               <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-              {{new Date(issue.dueDate).toLocaleDateString()}}
+              {{formatDate(issue.dueDate)}}
             </div>
           </div>
         </div>

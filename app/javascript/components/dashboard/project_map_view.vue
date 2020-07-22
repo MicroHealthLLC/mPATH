@@ -244,7 +244,6 @@ import FacilityForm from './facilities/facility_form'
 import FacilityShow from './facilities/facility_show'
 import FacilityGroupBar from './../shared/facility_group_bar'
 import Accordion from './../shared/accordion'
-import utils from './../../mixins/utils'
 import {SweetModal} from 'sweet-modal-vue'
 import {mapGetters, mapActions, mapMutations} from 'vuex'
 import * as Moment from 'moment'
@@ -253,7 +252,6 @@ const moment = extendMoment(Moment)
 
 export default {
   name: 'ProjectMapView',
-  mixins: [utils],
   components: {
     FacilityForm,
     FacilityShow,

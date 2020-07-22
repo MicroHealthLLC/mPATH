@@ -50,13 +50,11 @@
   import humps from 'humps'
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils from './../../../mixins/utils'
   import {mapGetters} from 'vuex'
 
   export default {
     props: ['facility', 'note'],
-    components: { AttachmentInput },
-    mixins: [utils],
+    components: {AttachmentInput},
     data() {
       return {
         DV_note: {

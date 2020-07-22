@@ -23,7 +23,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
           =link_to profile_path, class: "nav-link" do
             | Welcome #{current_user.email}!
         li.nav-item
-          =link_to destroy_user_session_path, method: :delete, class: "nav-link" do
+          =link_to destroy_user_session_path, method: :delete, id: '__logout', class: "nav-link" do
             | Log out
       -else
         li.nav-item
@@ -43,3 +43,9 @@ css:
   .navbar-brand > img {
     height: 30px;
   }
+
+javascript:
+  // destroy user session and storage
+  $('#__logout').click(function () {
+    localStorage.removeItem('vuex');
+  });

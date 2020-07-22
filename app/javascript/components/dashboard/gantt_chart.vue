@@ -101,6 +101,7 @@
                 label: "Start Date",
                 value: "startDate",
                 width: 90,
+                value: task => this.formatDate(task.startDate),
                 style: {
                   'task-list-header-label': {
                     'text-align': 'center',
@@ -117,6 +118,7 @@
                 label: "End Date",
                 value: "endDate",
                 width: 90,
+                value: task => this.formatDate(task.endDate),
                 style: {
                   'task-list-header-label': {
                     'text-align': 'center',

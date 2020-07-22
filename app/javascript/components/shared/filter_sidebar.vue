@@ -3,7 +3,7 @@
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
         <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-sm btn-link">export</button>
-        <h4>Filter View</h4>
+        <h4>Filter Map</h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
       <div class="filters_wrap">
@@ -217,13 +217,11 @@
 </template>
 
 <script>
-  import utils from './../../mixins/utils'
-  import {mapGetters, mapMutations, mapState} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
   import XLSX from 'xlsx'
 
   export default {
     name: 'FilterSidebar',
-    mixins: [utils],
     data() {
       return {
         isLoading: false,
@@ -236,7 +234,7 @@
       }
     },
     computed: {
-      ...mapState([
+      ...mapGetters([
         'projectStatusFilter',
         'taskTypeFilter',
         'facilityGroupFilter',
@@ -246,9 +244,7 @@
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueProgressFilter',
-        'taskProgressFilter'
-      ]),
-      ...mapGetters([
+        'taskProgressFilter',
         'projects',
         'currentProject',
         'statuses',
@@ -308,7 +304,8 @@
       },
       C_facilityDueDateFilter: {
         get() {
-          return this.facilityDueDateFilter
+          if (!this.facilityDueDateFilter) return this.facilityDueDateFilter
+          return this.facilityDueDateFilter.map(d => d ? new Date(d) : d)
         },
         set(value) {
           this.setFacilityDueDateFilter(value)
@@ -422,7 +419,7 @@
             Facility Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
             Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
-            Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.facilityDueDateFilter[0].toLocaleDateString() + ' to ' + this.facilityDueDateFilter[1].toLocaleDateString() : 'all'}\n
+            Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
             Task Type: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
             Task % Progress Range: ${this.taskProgressFilter ?  _.map(this.taskProgressFilter, 'name').join() : 'all'}\n
             Issue Type: ${this.issueTypeFilter ?  _.map(this.issueTypeFilter, 'name').join() : 'all'}\n

@@ -746,6 +746,11 @@ jQuery(function($) {
 
   $(document).on('ready page:load turbolinks:load', function() {
 
+    // destroy user session and storage
+    $('#logout').click(function () {
+      localStorage.removeItem('vuex');
+    });
+
     // add assign/unassign inputs in dialog_form
     $("a[data-action='Assign/Unassign Facility Group'], a[data-action='Assign/Unassign Project']").click(function(e) {
       e.stopPropagation();

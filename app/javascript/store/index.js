@@ -92,6 +92,16 @@ export default new Vuex.Store({
     currentProject: state => state.currentProject,
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
+    projectStatusFilter: state => state.projectStatusFilter,
+    taskTypeFilter: state => state.taskTypeFilter,
+    facilityGroupFilter: state => state.facilityGroupFilter,
+    facilityNameFilter: state => state.facilityNameFilter,
+    facilityProgressFilter: state => state.facilityProgressFilter,
+    facilityDueDateFilter: state => state.facilityDueDateFilter,
+    issueTypeFilter: state => state.issueTypeFilter,
+    issueSeverityFilter: state => state.issueSeverityFilter,
+    issueProgressFilter: state => state.issueProgressFilter,
+    taskProgressFilter: state => state.taskProgressFilter,
     mapFilters: state => state.mapFilters,
     filteredFacilities: (state, getters) => (_status='active') => {
       return _.filter(getters.facilities, (facility) => {

@@ -153,14 +153,11 @@
   import humps from 'humps'
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
-  import utils from './../../../mixins/utils'
 
   export default {
     name: 'TaskForm',
     props: ['facility', 'project', 'task', 'title', 'taskTypes'],
     components: {AttachmentInput},
-    mixins: [utils],
-
     data() {
       return {
         DV_task: {
@@ -289,12 +286,10 @@
       },
       disabledStartDate(date) {
         const today = new Date()
-        today.setHours(0,0,0,0)
         return date < today
       },
       disabledDueDate(date) {
         const startDate = new Date(this.DV_task.startDate)
-        startDate.setHours(0,0,0,0)
         return date < startDate
       }
     },
