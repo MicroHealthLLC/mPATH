@@ -286,11 +286,11 @@
       },
       disabledStartDate(date) {
         const today = new Date()
-        return date < today
+        return date < today - 1
       },
       disabledDueDate(date) {
         const startDate = new Date(this.DV_task.startDate)
-        return date < startDate
+        return date < startDate - 1
       }
     },
     computed: {
