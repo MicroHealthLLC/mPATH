@@ -79,11 +79,16 @@
     </div>
     <div class="form-group mx-4">
       <label class="font-sm mb-0">Progress: (in %)</label>
+      <span class="ml-3">
+        <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+      </span>
       <vue-slide-bar
         v-model="DV_task.progress"
         :line-height="8"
-      />
+        :draggable="!DV_task.autoCalculate"
+      ></vue-slide-bar>
     </div>
+
     <div class="form-group mx-4">
       <label class="font-sm">Checklists:</label>
       <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
@@ -167,6 +172,7 @@
           taskTypeId: '',
           notes: '',
           progress: 0,
+          autoCalculate: true,
           taskFiles: [],
           checklists: []
         },
@@ -229,6 +235,7 @@
           formData.append('task[start_date]', this.DV_task.startDate)
           formData.append('task[task_type_id]', this.DV_task.taskTypeId)
           formData.append('task[progress]', this.DV_task.progress)
+          formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[notes]', this.DV_task.notes)
 
           for (var i in this.DV_task.checklists) {
@@ -285,12 +292,26 @@
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
       },
       disabledStartDate(date) {
+        date.setHours(0,0,0,0)
         const today = new Date()
+        today.setHours(0,0,0,0)
         return date < today
       },
       disabledDueDate(date) {
+        date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
+        startDate.setHours(0,0,0,0)
         return date < startDate
+      },
+      calculateProgress(checks=null) {
+        try {
+          if (!checks) checks = this.DV_task.checklists
+          var checked = _.filter(checks, v => !v._destroy && v.checked).length
+          var total = _.filter(checks, v => !v._destroy).length
+          this.DV_task.progress = Number((((checked / total) * 100) || 0).toFixed(2))
+        } catch {
+          this.DV_task.progress = 0
+        }
       }
     },
     computed: {
@@ -320,6 +341,14 @@
             confirm('Task Due Date is past Project Due Date!')
           }
         }
+      },
+      "DV_task.checklists": {
+        handler: function(value) {
+          if (this.DV_task.autoCalculate) this.calculateProgress(value)
+        }, deep: true
+      },
+      "DV_task.autoCalculate"(value) {
+        if (value) this.calculateProgress()
       }
     }
   }

@@ -36,7 +36,7 @@ ActiveAdmin.register Facility do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :facility_name
     column :address
     column :point_of_contact
@@ -116,7 +116,7 @@ ActiveAdmin.register Facility do
 
   end
 
-  batch_action :"Assign/Unassign Facility Group", form: -> {{
+  batch_action :"Assign/Unassign Facility Group", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
     "Facility Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
@@ -131,14 +131,14 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "#{notice}"
   end
 
-  batch_action :assign_state, form: {
+  batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
     state: Facility.statuses&.to_a
   } do |ids, inputs|
     Facility.where(id: ids).update_all(status: inputs['state'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Project", form: -> {{
+  batch_action :"Assign/Unassign Project", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
     "Project": Project.pluck(:name, :id)
   }} do |ids, inputs|
@@ -156,7 +156,7 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: "#{notice}"
   end
 
-  batch_action :add_task, id:"add-tasks", form: -> {{
+  batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
     "Name": :text,
     "Project": Project.pluck(:name, :id),
     "Task Type": TaskType.pluck(:name, :id),
@@ -175,15 +175,13 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :assign_due_date_and_status, id:"assign-duedate-status", form: -> {{
+  batch_action :assign_due_date_and_status, if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
     "Project": Project.pluck(:name, :id),
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
   }} do |ids, inputs|
-    Facility.where(id: ids).each do |facility|
-      facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.update_columns(status_id: inputs['Status'], due_date: inputs['Due Date'])
-      end
+    Project.find_by_id(inputs['Project'])&.facility_projects.where(facility_id: ids).each do |facility_project|
+      facility_project.update_columns(status_id: inputs['Status'], due_date: inputs['Due Date'])
     end
     redirect_to collection_path, notice: "Due Date and Status is updated"
   rescue => e

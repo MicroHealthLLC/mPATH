@@ -31,6 +31,7 @@
     <div class="form-group" >
       <attachment-input
         @input="addFile"
+        :show-label="true"
       />
     </div>
     <div class="d-flex form-group mt-4">

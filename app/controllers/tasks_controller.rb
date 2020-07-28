@@ -51,6 +51,7 @@ class TasksController < AuthenticatedController
       :start_date,
       :notes,
       :progress,
+      :auto_calculate,
       task_files: [],
       checklists_attributes: [
         :id,

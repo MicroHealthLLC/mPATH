@@ -24,7 +24,7 @@ ActiveAdmin.register FacilityGroup do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :id
     column :name
     column :code
@@ -35,7 +35,7 @@ ActiveAdmin.register FacilityGroup do
     end
   end
 
-  batch_action :assign_state, form: {
+  batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
     "State": FacilityGroup.statuses&.to_a
   } do |ids, inputs|
     FacilityGroup.where(id: ids).update_all(status: inputs['State'].to_i)

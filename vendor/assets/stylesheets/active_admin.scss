@@ -193,4 +193,12 @@ body {
       padding: 10px 0;
     }
   }
+  #titlebar_right {
+    .action_items {
+      display: none;
+    }
+  }
+  .batch_actions_selector {
+    display: none;
+  }
 }

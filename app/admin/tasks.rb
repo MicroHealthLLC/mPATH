@@ -29,7 +29,7 @@ ActiveAdmin.register Task do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_delete?
     column "Name", :text
     column :task_type, nil, sortable: 'task_types.name' do |task|
       raw "<a href='#{edit_admin_task_type_path(task.task_type)}'>#{task.task_type.name}</a>" if task.task_type.present?

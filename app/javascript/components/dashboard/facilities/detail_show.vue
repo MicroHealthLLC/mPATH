@@ -1,13 +1,13 @@
 <template>
   <div class="mt-4">
-    <div v-if="showProject">
+    <div v-if="showDetails">
       <div>
         <task-index
           v-if="currentProject"
           :project="currentProject"
           :facility="facility"
           :task-types="taskTypes"
-          @show-hide="projectShowHide"
+          @show-hide="detailShowHide"
           @delete-task="taskDeleted"
         />
       </div>
@@ -16,7 +16,7 @@
       <button
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
-        @click.prevent.stop="showProject=true"
+        @click.prevent.stop="showDetails=true"
         >
         back
       </button>
@@ -41,7 +41,7 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    name: 'ProjectShow',
+    name: 'DetailShow',
     props: ['facility'],
     components: {TaskIndex, TaskForm},
     data() {
@@ -49,7 +49,7 @@
         loading: true,
         DV_facility: {},
         currentTask: null,
-        showProject: true
+        showDetails: true
       }
     },
     mounted() {
@@ -58,13 +58,13 @@
     methods: {
       taskCreated(task) {
         this.DV_facility.tasks.unshift(task)
-        this.showProject = true
+        this.showDetails = true
         this.$emit('refresh-facility')
       },
       taskUpdated(task) {
         var index = this.DV_facility.tasks.findIndex((t) => t.id == task.id)
         this.DV_facility.tasks[index] = task
-        this.showProject = true
+        this.showDetails = true
         this.$emit('refresh-facility')
       },
       taskDeleted(task) {
@@ -77,9 +77,9 @@
           })
           .catch((err) => console.log(err))
       },
-      projectShowHide(task=null) {
+      detailShowHide(task=null) {
         this.currentTask = task
-        this.showProject = false;
+        this.showDetails = false;
       }
     },
     computed: {
@@ -92,7 +92,7 @@
       }
     },
     watch: {
-      showProject(value) {
+      showDetails(value) {
         if (value) {
           this.currentTask = null
         }

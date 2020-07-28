@@ -26,7 +26,7 @@ ActiveAdmin.register Issue do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_delete?
     column :title
     column :issue_type, nil, sortable: 'issue_types.name' do |issue|
       raw "<a href='#{edit_admin_issue_type_path(issue.issue_type)}'>#{issue.issue_type.name}</a>" if issue.issue_type.present?

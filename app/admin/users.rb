@@ -37,7 +37,7 @@ ActiveAdmin.register User do
     ]
   end
 
-  form do |f|
+  form(html: {autocomplete: :off}) do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do
@@ -46,13 +46,13 @@ ActiveAdmin.register User do
           f.input :title
           f.input :first_name
           f.input :last_name
-          f.input :email, input_html: { disabled: user.id?, :'data-id' => user.id }
-          f.input :password, input_html: { disabled: user.id? }
-          f.input :password_confirmation, input_html: { disabled: user.id? }
+          f.input :email, input_html: {disabled: user.id?, :'data-id' => user.id, autocomplete: :off}
+          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :phone_number
           f.input :country_code
           div id: 'user_phone_number-tab'
-          f.input :address
+          f.input :address, input_html: {autocomplete: :off}
           f.input :lat
           f.input :lng
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
@@ -82,7 +82,7 @@ ActiveAdmin.register User do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :title
     column :first_name
     column :last_name
@@ -97,14 +97,14 @@ ActiveAdmin.register User do
     end
   end
 
-  batch_action :assign_state, form: {
+  batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
     "State": User.statuses&.to_a
   } do |ids, inputs|
     User.where(id: ids).update_all(status: inputs['State'].to_i)
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Project", form: -> {{
+  batch_action :"Assign/Unassign Project", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
     "Project": Project.pluck(:name, :id)
   }} do |ids, inputs|

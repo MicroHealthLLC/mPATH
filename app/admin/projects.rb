@@ -21,7 +21,7 @@ ActiveAdmin.register Project do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :name
     column :description
     column :project_type, nil, sortable: 'project_types.name' do |project|
@@ -91,7 +91,7 @@ ActiveAdmin.register Project do
   filter :project_type
   filter :status, as: :select, collection: Project.statuses, label: "State"
 
-  batch_action :assign_state, form: {
+  batch_action :assign_state, if: proc {current_user.admin_write?}, form: {
     "State": Project.statuses&.to_a
   } do |ids, inputs|
     Project.where(id: ids).update_all(status: inputs['State'].to_i)

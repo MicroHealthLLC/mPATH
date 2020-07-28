@@ -6,7 +6,7 @@
         <div class="r-header px-3">
           <h5 class="text-muted">Facility Groups</h5>
           <div class="region-minus-btn" @click="facilityGroupBar= false">
-            <i class="fas fa-minus"></i>
+            <i class="fa fa-times"></i>
           </div>
         </div>
         <ul v-if="facilityGroups.length > 0" class="regions-list list-unstyled">

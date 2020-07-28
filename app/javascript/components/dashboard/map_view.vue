@@ -216,8 +216,8 @@
           :blocking="true"
           >
           <div v-if="currentFacilityGroup && currentFacilityGroup.id">
-            <div class="facility_grp_close_btn">
-              <i class="fas fa-minus"></i>
+            <div class="facility_grp_close_btn" @click="onCloseAccordion">
+              <i class="fa fa-times"></i>
             </div>
             <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{currentFacilityGroupFacilities.length}}</span></h3>
             <div v-if="currentFacilityGroupFacilities && currentFacilityGroupFacilities.length == 0" class="mt-3 text-danger">
@@ -465,6 +465,9 @@ export default {
       this.tooltip.content = marker.facilityName
       this.tooltip.opened = true
       this.tooltip.key = key
+    },
+    onCloseAccordion() {
+      this.$refs.facilitiesAccordion && this.$refs.facilitiesAccordion.close()
     }
   }
 }

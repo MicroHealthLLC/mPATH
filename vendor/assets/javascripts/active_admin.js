@@ -751,8 +751,19 @@ jQuery(function($) {
     });
 
     if ($("#__privileges").is(":visible")) {
-      var write = $("#__privileges").data('privilege').includes("W");
-      if (!write) $('.action_items').hide();
+      var p_write = $("#__privileges").data('privilege').includes("W");
+      var p_delete = $("#__privileges").data('privilege').includes("D");
+      if (p_write) {
+        $("#titlebar_right .action_items").show();
+      } else {
+        $("#titlebar_right .action_items").remove();
+      }
+      if (!p_delete && !p_write) {
+        $(".batch_actions_selector").remove();
+      }
+      else {
+        $(".batch_actions_selector").show();
+      }
     }
 
     // hide batch_action after click

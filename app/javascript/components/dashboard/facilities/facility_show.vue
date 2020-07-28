@@ -141,7 +141,7 @@
   import http from './../../../common/http'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
-  import DetailShow from './../projects/project_show'
+  import DetailShow from './detail_show'
   import {mapGetters} from 'vuex'
 
   export default {

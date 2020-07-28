@@ -135,7 +135,6 @@
     cursor: inherit;
     left: 50%;
     position: absolute;
-    text-transform: uppercase;
     top: 50%;
     transform: translate(-50%, -50%);
     width: 80%;

@@ -233,7 +233,7 @@ export default new Vuex.Store({
       // for facility_groups
       var groups = _.groupBy(getters.filterFacilitiesWithActiveFacilityGroups, 'facilityGroupName')
       for (var group in groups) {
-        var fg_id = `${p_id}_fg_${group}`
+        var fg_id = `${p_id}_fg_${group}`.replace(/ /i, '_')
         var fg_tasks = _.flatten(_.map(groups[group], 'tasks'))
         var fg_s_date = _.min(_.map(fg_tasks, 'startDate')) || 'N/A'
         var fg_e_date = _.max(_.map(fg_tasks, 'dueDate')) || 'N/A'
@@ -255,9 +255,10 @@ export default new Vuex.Store({
           }
         )
 
+        var f_read = Vue.prototype.$permissions.overview.read || false
         // for facilities under facility_groups
         for (var facility of groups[group]) {
-          var f_id = `${fg_id}_f_${facility.id}`
+          var f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id
           var f_s_date = _.min(_.map(facility.tasks, 'startDate')) || 'N/A'
           var f_e_date = _.max(_.map(facility.tasks, 'dueDate')) || 'N/A'
           var f_duration = getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0
@@ -278,68 +279,84 @@ export default new Vuex.Store({
             }
           )
 
-          // for task_types under facilities
-          var types = _.groupBy(facility.tasks, 'taskType')
-          for (var type in types) {
-            var tasks = types[type]
-            var tt_id = `${f_id}_tt_${type}`
-            var tt_s_date = _.min(_.map(tasks, 'startDate'))
-            var tt_e_date = _.max(_.map(tasks, 'dueDate'))
-            var tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
-            var tt_progress = _.meanBy(tasks, 'progress')
-
-            hash.push(
-              {
-                id: tt_id,
-                parentId: f_id,
-                name: type,
-                duration: tt_duration,
-                durationInDays: `${Math.ceil(tt_duration / (1000 * 3600 * 24))} days`,
-                percent: Number(tt_progress.toFixed(2)),
-                start: getSimpleDate(tt_s_date),
-                startDate: tt_s_date,
-                endDate: tt_e_date,
-                type: 'task'
-              }
-            )
-
-            // for tasks under task_types
-            for (var task of tasks) {
-              var t_id = `${tt_id}_t_${task.id}`
-              var t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
+          if (Vue.prototype.$permissions.tasks.read)
+          {
+            // for task_types under facilities
+            var types = _.groupBy(facility.tasks, 'taskType')
+            var filteredTaskTypes = _.map(getters.taskTypeFilter, 'name')
+            for (var type in types) {
+              if (filteredTaskTypes.length > 0 && !filteredTaskTypes.includes(type)) continue
+              var tasks = types[type]
+              var tt_id = `${f_id}_tt_${type}`.replace(/ /i, '_')
+              var tt_s_date = _.min(_.map(tasks, 'startDate'))
+              var tt_e_date = _.max(_.map(tasks, 'dueDate'))
+              var tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
+              var tt_progress = _.meanBy(tasks, 'progress')
 
               hash.push(
                 {
-                  id: t_id,
-                  parentId: tt_id,
-                  name: task.text,
-                  duration: t_duration,
-                  durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
-                  percent: Number(task.progress.toFixed(2)),
-                  start: getSimpleDate(task.startDate),
-                  startDate: task.startDate,
-                  endDate: task.dueDate,
+                  id: tt_id,
+                  parentId: f_id,
+                  name: type,
+                  duration: tt_duration,
+                  durationInDays: `${Math.ceil(tt_duration / (1000 * 3600 * 24))} days`,
+                  percent: Number(tt_progress.toFixed(2)),
+                  start: getSimpleDate(tt_s_date),
+                  startDate: tt_s_date,
+                  endDate: tt_e_date,
                   type: 'task'
                 }
               )
 
-              // for checklists under tasks
-              for (var checklist of task.checklists) {
-                var c_id = `${t_id}_t_${checklist.id}`
+              var ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
+
+              // for tasks under task_types
+              for (var task of tasks) {
+                if (ranges && ranges.length > 0) {
+                  let is_valid = false
+                  for (var range of ranges) {
+                    is_valid = range[1] !== undefined ? range[0] <= task.progress && range[1] >= task.progress : task.progress == range[0]
+                    if (is_valid) break
+                  }
+                  if (!is_valid) continue
+                }
+                var t_id = `${tt_id}_t_${task.id}`
+                var t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
+
                 hash.push(
                   {
-                    id: c_id,
-                    parentId: t_id,
-                    name: checklist.text,
+                    id: t_id,
+                    parentId: tt_id,
+                    name: task.text,
                     duration: t_duration,
                     durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
                     percent: Number(task.progress.toFixed(2)),
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    type: 'task'
+                    type: 'task',
+                    collapsed: true
                   }
                 )
+
+                // for checklists under tasks
+                for (var checklist of task.checklists) {
+                  var c_id = `${t_id}_t_${checklist.id}`
+                  hash.push(
+                    {
+                      id: c_id,
+                      parentId: t_id,
+                      name: checklist.text,
+                      duration: t_duration,
+                      durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
+                      percent: checklist.checked ? 100 : 0,
+                      start: getSimpleDate(task.startDate),
+                      startDate: task.startDate,
+                      endDate: task.dueDate,
+                      type: 'task'
+                    }
+                  )
+                }
               }
             }
           }

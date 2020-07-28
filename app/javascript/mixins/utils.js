@@ -3,7 +3,7 @@
 export default {
   data() {
     return {
-      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      DV_months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }
   },
   methods: {
@@ -45,7 +45,7 @@ export default {
       if (!moment(date).isValid()) return date
       if (date instanceof Date) date = date.toISOString().slice(0, 10)
       var dates = date.split('-')
-      return `${dates[2]} ${this.months[Number(dates[1])-1]} ${dates[0]}`
+      return `${dates[2]} ${this.DV_months[Number(dates[1])-1]} ${dates[0]}`
     }
   }
 }

@@ -9,7 +9,7 @@ ActiveAdmin.register TaskType do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_write?
+    selectable_column if current_user.admin_delete?
     column :id
     column :name
     actions defaults: false do |task_type|

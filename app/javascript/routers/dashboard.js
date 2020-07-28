@@ -1,5 +1,5 @@
-import ProjectMapView from './../components/dashboard/project_map_view'
-import GanttChart from './../components/dashboard/gantt_chart'
+import ProjectMapView from './../components/dashboard/map_view'
+import GanttChart from './../components/dashboard/gantt_view'
 
 export default new VueRouter({
   routes: [

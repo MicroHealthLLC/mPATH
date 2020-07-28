@@ -264,11 +264,15 @@
         window.open(url, '_blank');
       },
       disabledStartDate(date) {
+        date.setHours(0,0,0,0)
         const today = new Date()
+        today.setHours(0,0,0,0)
         return date < today
       },
       disabledDueDate(date) {
+        date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_issue.startDate)
+        startDate.setHours(0,0,0,0)
         return date < startDate
       }
     },
