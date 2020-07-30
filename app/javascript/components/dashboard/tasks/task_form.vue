@@ -85,6 +85,7 @@
       <vue-slide-bar
         v-model="DV_task.progress"
         :line-height="8"
+        :is-disabled="DV_task.autoCalculate"
         :draggable="!DV_task.autoCalculate"
       ></vue-slide-bar>
     </div>

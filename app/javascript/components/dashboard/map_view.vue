@@ -243,7 +243,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
 <script>
-import http from './../../common/http'
 import FacilityForm from './facilities/facility_form'
 import FacilityShow from './facilities/facility_show'
 import FacilityGroupBar from './../shared/facility_group_bar'

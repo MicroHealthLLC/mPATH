@@ -325,6 +325,9 @@ export default new Vuex.Store({
 
                 hash.push(
                   {
+                    taskUrl: `/projects/${getters.currentProject.id}/facilities/${facility.facility.id}/tasks/${task.id}`,
+                    facilityId: facility.id,
+                    projectId: getters.currentProject.id,
                     id: t_id,
                     parentId: tt_id,
                     name: task.text,
@@ -378,6 +381,21 @@ export default new Vuex.Store({
             }
             commit('setFacilities', facilities)
             commit('setCurrentProject', res.data.project)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
+    fetchFacility({commit, dispatch, getters}, {projectId, facilityId}) {
+      return new Promise((resolve, reject) => {
+        http.get(`/projects/${projectId}/facilities/${facilityId}.json`)
+          .then((res) => {
+            var facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
+            var index = getters.facilities.findIndex(f => f.id == facility.id)
+            if (index > -1) commit('updateFacilities', {index, facility})
             resolve()
           })
           .catch((err) => {
@@ -474,6 +492,10 @@ export default new Vuex.Store({
       await dispatch('fetchTaskTypes')
       await dispatch('fetchIssueTypes')
       await dispatch('fetchIssueSeverities')
+      if (cb) return cb()
+    },
+    async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
+      await dispatch('fetchFacility', {projectId, facilityId})
       if (cb) return cb()
     }
   },

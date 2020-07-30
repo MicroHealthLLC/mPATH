@@ -314,3 +314,6 @@ input[type=button]:focus {
   margin-top: 125px;
   margin-left: -20px;
 }
+.mx-datepicker-main.mx-datepicker-popup {
+  z-index: 10011 !important;
+}
