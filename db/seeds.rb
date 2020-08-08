@@ -9,10 +9,10 @@
 
 # if Rails.env.development?
   User.create_with(
-    password: 'password', 
+    password: 'password',
     password_confirmation: 'password',
     first_name: 'admin',
-    role: "admin",
+    role: "superadmin",
     last_name: 'admin'
   ).find_or_create_by(email: 'admin@example.com')
 
@@ -27,4 +27,6 @@
     )
     puts state["name"] + " created!\n"
   end
+
+  setting = Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 # end

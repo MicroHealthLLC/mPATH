@@ -52,7 +52,15 @@ class IssuesController < AuthenticatedController
       :progress,
       :start_date,
       :due_date,
-      issue_files: []
+      :auto_calculate,
+      issue_files: [],
+      user_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :checked
+      ]
     )
   end
 

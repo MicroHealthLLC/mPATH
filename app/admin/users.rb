@@ -58,7 +58,6 @@ ActiveAdmin.register User do
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
-          div id: 'user-role_privilege-tab'
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
               p.input :overview
               p.input :tasks
@@ -67,6 +66,7 @@ ActiveAdmin.register User do
               p.input :admin
           end
         end
+        div id: 'user-role_privilege-tab'
         div id: 'user-password__tab'
       end
 
@@ -90,7 +90,13 @@ ActiveAdmin.register User do
     column "State", :status
     column :phone_number
     column :address
-    column(:projects) {|user| user.projects.active}
+    column :projects do |user|
+      if current_user.admin_write?
+        user.projects.active
+      else
+        "<span>#{user.projects.active.pluck(:name).join(', ')}</span>".html_safe
+      end
+    end
     actions defaults: false do |user|
       item "Edit", edit_admin_user_path(user), title: 'Edit', class: "member_link edit_link" if current_user.admin_write? && current_user.id != user.id
       item "Delete", admin_user_path(user), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete? && current_user.id != user.id
@@ -137,6 +143,11 @@ ActiveAdmin.register User do
 
     def check_writeability
       redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def edit
+      redirect_to '/not_found' and return if params[:id].to_i == current_user.id
+      super
     end
 
     def destroy

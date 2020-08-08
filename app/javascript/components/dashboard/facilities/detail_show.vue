@@ -22,7 +22,6 @@
       </button>
       <task-form
         :facility="facility"
-        :project="currentProject"
         :task="currentTask"
         :task-types="taskTypes"
         :title="taskFormTitle"

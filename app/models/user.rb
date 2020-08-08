@@ -6,7 +6,7 @@ class User < ApplicationRecord
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users
   has_many :facilities
-  has_one :privilege
+  has_one :privilege, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
 
@@ -33,6 +33,17 @@ class User < ApplicationRecord
     else
       nil
     end
+  end
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  def as_json(options=nil)
+    json = super(options)
+    json.merge(
+      full_name: full_name
+    ).as_json
   end
 
   def active_for_authentication?

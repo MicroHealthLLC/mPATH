@@ -53,6 +53,7 @@ class TasksController < AuthenticatedController
       :progress,
       :auto_calculate,
       task_files: [],
+      user_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,

@@ -20,7 +20,14 @@ ActiveAdmin.register Issue do
       :issue_severity_id,
       :start_date,
       :facility_project_id,
-      issue_files: []
+      :auto_calculate,
+      issue_files: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :checked
+      ]
     ]
   end
 
@@ -29,10 +36,18 @@ ActiveAdmin.register Issue do
     selectable_column if current_user.admin_delete?
     column :title
     column :issue_type, nil, sortable: 'issue_types.name' do |issue|
-      raw "<a href='#{edit_admin_issue_type_path(issue.issue_type)}'>#{issue.issue_type.name}</a>" if issue.issue_type.present?
+      if current_user.admin_write?
+        link_to "#{issue.issue_type.name}", "#{edit_admin_issue_type_path(issue.issue_type)}" if issue.issue_type.present?
+      else
+        "<span>#{issue.issue_type&.name}</span>".html_safe
+      end
     end
     column :issue_severity, nil, sortable: 'issue_severities.name' do |issue|
-      raw "<a href='#{edit_admin_issue_severity_path(issue.issue_severity)}'>#{issue.issue_severity.name}</a>" if issue.issue_severity.present?
+      if current_user.admin_write?
+        link_to "#{issue.issue_severity.name}", "#{edit_admin_issue_severity_path(issue.issue_severity)}" if issue.issue_severity.present?
+      else
+        "<span>#{issue.issue_severity&.name}</span>".html_safe
+      end
     end
     column :progress
     column :start_date
@@ -60,6 +75,11 @@ ActiveAdmin.register Issue do
       f.input :due_date, as: :datepicker
       f.input :progress
       div id: 'progress_slider-tab'
+      f.input :auto_calculate
+      f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
+        c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
+        c.input :text, input_html: {class: 'checklist_item_text'}
+      end
       f.input :description
       f.input :issue_files, as: :file, input_html: {multiple: true}
     end

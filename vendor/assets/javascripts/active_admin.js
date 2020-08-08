@@ -9,13 +9,13 @@ jQuery(function($) {
   $("#index_table_projects td.col-status").each(function() {
     this.parentElement.classList.value = "";
     this.parentElement.classList.add(`status_${$(this).text()}`);
-  })
+  });
 
   // facility_group index page
   $("#index_table_facility_groups td.col-status").each(function() {
     this.parentElement.classList.value = "";
     this.parentElement.classList.add(`status_${$(this).text()}`);
-  })
+  });
 
   // facility form google-map
   if ($("#gmaps-tab").is(":visible"))
@@ -277,23 +277,45 @@ jQuery(function($) {
   if ($("#progress_slider-tab").is(":visible"))
   {
     Vue.component('vue-slide-bar', vueSlideBar);
-    var slider = new Vue({
+    $.Vue_task_slider = new Vue({
       el: "#progress_slider-tab",
       data() {
         return {
-          progress: 0
+          progress: 0,
+          autoCalculate: false
         }
       },
       mounted() {
+        this.setAutoCalculate()
         this.progress = $("#task_progress").val() || $("#issue_progress").val() || 0
+      },
+      methods: {
+        setAutoCalculate() {
+          this.autoCalculate = $("#task_auto_calculate").is(':checked') || $("#issue_auto_calculate").is(':checked');
+        },
+        calculateProgress() {
+          var isCheked = total = 0;
+          $(".has_many_container.checklists fieldset").each(function() {
+            if (!$(this).is(':visible')) return;
+            if (this.querySelector("input[type=text]").value.trim()) {
+              if (this.querySelector("input[type=checkbox]").checked) isCheked+=1;
+              total+=1;
+            }
+          });
+          this.progress = Number(((isCheked / total) * 100).toFixed(2)) || 0;
+        }
       },
       watch: {
         progress(value) {
           $("#task_progress").val(value);
           $("#issue_progress").val(value);
+        },
+        autoCalculate(value) {
+          if (!value) return;
+          this.calculateProgress();
         }
       },
-      template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div></li>`
+      template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" :is-disabled="autoCalculate" :draggable="!autoCalculate" /></div></li>`
     });
   }
 
@@ -704,41 +726,43 @@ jQuery(function($) {
           $("#user_privilege_attributes_admin").val(v);
         },
       },
-      template: `<fieldset v-if="!loading" class="choices p-5 privileges_tab">
-        <div class="p-5">Privileges</div>
-        <ol class="choices-group">
-          <li class="choice d-flex">
-            <label>Overview</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="overview.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="overview.delete">Delete</label>
-          </li>
-          <li class="choice d-flex">
-            <label>Tasks</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="tasks.delete">Delete</label>
-          </li>
-          <li class="choice d-flex">
-            <label>Issues</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="issues.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="issues.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
-          </li>
-          <li class="choice d-flex">
-            <label>Notes</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
-          </li>
-          <li class="choice d-flex">
-            <label>Admin</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="admin.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="admin.delete">Delete</label>
-          </li>
-        </ol>
-      </fieldset>`
+      template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
+        <fieldset v-if="!loading" class="inputs">
+          <legend><span>Privileges</span></legend>
+          <ol class="choices-group">
+            <li class="choice d-flex">
+              <label>Overview</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="overview.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="overview.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Tasks</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="tasks.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="tasks.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="tasks.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Issues</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="issues.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="issues.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Notes</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Admin</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="admin.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="admin.delete">Delete</label>
+            </li>
+          </ol>
+        </fieldset>
+      </div>`
     });
   }
 
@@ -815,6 +839,35 @@ jQuery(function($) {
         });
       }
     });
+
+    // task form slider auto calculate and slider
+    $("#task_auto_calculate").change(function(e) {
+      $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
+    });
+    $("#issue_auto_calculate").change(function(e) {
+      $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
+    });
+
+    $("body").on("click", "a.button.has_many_remove", function() {
+      $(this.parentElement.parentElement.parentElement).hide();
+      if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
+    });
+
+    $(".has_many_container.checklists .has_many_delete.boolean input[type=checkbox]").change(function() {
+      $(this.parentElement.parentElement.parentElement.parentElement).hide();
+      if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
+    });
+
+    $("body").on('change', "input.checklist_item_checked", function() {
+      if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
+    });
+
+    $("body").on("input", "input.checklist_item_text", function() {
+      this.parentElement.parentElement.querySelector(".checklist_item_checked").disabled = !this.value.trim();
+      if (!this.value.trim()) this.parentElement.parentElement.querySelector(".checklist_item_checked").checked = false;
+      if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
+    });
+
   }());
 
   // password generator tab

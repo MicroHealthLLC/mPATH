@@ -26,6 +26,7 @@ export default new Vuex.Store({
     issueTypes: [],
     issueSeverities: [],
     currentProject: null,
+    projectUsers: [],
     currentFacility: null,
     currentFacilityGroup: null,
     mapFilters: [],
@@ -52,6 +53,7 @@ export default new Vuex.Store({
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
     setCurrentProject: (state, project) => state.currentProject = project,
+    setProjectUsers: (state, users) => state.projectUsers = users,
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
     setMapFilters: (state, filters) => state.mapFilters = filters,
@@ -90,6 +92,7 @@ export default new Vuex.Store({
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
     currentProject: state => state.currentProject,
+    projectUsers: state => state.projectUsers,
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
@@ -304,7 +307,7 @@ export default new Vuex.Store({
                   start: getSimpleDate(tt_s_date),
                   startDate: tt_s_date,
                   endDate: tt_e_date,
-                  type: 'task'
+                  type: 'milestone'
                 }
               )
 
@@ -356,7 +359,8 @@ export default new Vuex.Store({
                       start: getSimpleDate(task.startDate),
                       startDate: task.startDate,
                       endDate: task.dueDate,
-                      type: 'task'
+                      type: 'task',
+                      dependentOn: [t_id]
                     }
                   )
                 }
@@ -380,7 +384,20 @@ export default new Vuex.Store({
               facilities.push({...facility, ...facility.facility})
             }
             commit('setFacilities', facilities)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
+    fetchCurrentProject({commit, dispatch}, id) {
+      return new Promise((resolve, reject) => {
+        http.get(`/projects/${id}.json`)
+          .then((res) => {
             commit('setCurrentProject', res.data.project)
+            commit('setProjectUsers', res.data.users)
             resolve()
           })
           .catch((err) => {
@@ -486,6 +503,7 @@ export default new Vuex.Store({
     },
     async fetchDashboardData({dispatch}, {id, cb}) {
       await dispatch('fetchProjects')
+      await dispatch('fetchCurrentProject', id)
       await dispatch('fetchFacilities', id)
       await dispatch('fetchFacilityGroups', id)
       await dispatch('fetchStatuses')

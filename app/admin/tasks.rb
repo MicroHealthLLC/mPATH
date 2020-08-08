@@ -18,11 +18,18 @@ ActiveAdmin.register Task do
       :progress,
       :task_type_id,
       :start_date,
+      :auto_calculate,
       task_files: [],
       facility_project_attributes: [
         :id,
         :project_id,
         :facility_id
+      ],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :checked
       ]
     ]
   end
@@ -44,10 +51,18 @@ ActiveAdmin.register Task do
       end
     end
     column :project, nil, sortable: 'projects.name' do |task|
-      raw "<a href='#{edit_admin_project_path(task.project)}'>#{task.project.name}</a>" if task.project.present?
+      if current_user.admin_write?
+        link_to "#{task.project.name}", "#{edit_admin_project_path(task.project)}" if task.project.present?
+      else
+        "<span>#{task.project&.name}</span>".html_safe
+      end
     end
     column :facility, nil, sortable: 'facilities.facility_name' do |task|
-      raw "<a href='#{edit_admin_facility_path(task.facility)}'>#{task.facility.facility_name}</a>" if task.facility.present?
+      if current_user.admin_write?
+        link_to "#{task.facility.facility_name}", "#{edit_admin_facility_path(task.facility)}" if task.facility.present?
+      else
+        "<span>#{task.facility&.facility_name}</span>".html_safe
+      end
     end
     actions defaults: false do |task|
       item "Edit", edit_admin_task_path(task), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -69,8 +84,13 @@ ActiveAdmin.register Task do
       f.input :due_date, as: :datepicker
       f.input :progress
       div id: 'progress_slider-tab'
+      f.input :auto_calculate
+      f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
+        c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
+        c.input :text, input_html: {class: 'checklist_item_text'}
+      end
       f.input :notes, label: 'Description'
-      f.input :task_files, as: :file, input_html: { multiple: true }
+      f.input :task_files, as: :file, input_html: {multiple: true}
     end
     f.actions
   end

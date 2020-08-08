@@ -25,7 +25,11 @@ ActiveAdmin.register Project do
     column :name
     column :description
     column :project_type, nil, sortable: 'project_types.name' do |project|
-      raw "<a href='#{edit_admin_project_type_path(project.project_type)}'>#{project.project_type.name}</a>" if project.project_type.present?
+      if current_user.admin_write?
+        link_to "#{project.project_type.name}", "#{edit_admin_project_type_path(project.project_type)}" if project.project_type.present?
+      else
+        "<span>#{project.project_type&.name}</span>".html_safe
+      end
     end
     column "State", :status
     actions defaults: false do |project|

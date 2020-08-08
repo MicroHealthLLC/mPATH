@@ -60,12 +60,50 @@
         {{ errors.first('Issue Severity') }}
       </div>
     </div>
+    <div class="user-select m-4">
+      <multiselect
+        v-model="issueUsers"
+        track-by="id"
+        label="fullName"
+        placeholder="Assign Users"
+        :options="projectUsers"
+        :searchable="false"
+        :multiple="true"
+        select-label="Select"
+        deselect-label="Remove"
+        >
+        <template slot="singleLabel" slot-scope="{option}">
+          <div class="d-flex">
+            <span class='select__tag-name'>{{option.fullName}}</span>
+          </div>
+        </template>
+      </multiselect>
+    </div>
     <div class="form-group mx-4">
       <label class="font-sm mb-0">Progress: (in %)</label>
+      <span class="ml-3">
+        <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_issue.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+      </span>
       <vue-slide-bar
         v-model="DV_issue.progress"
         :line-height="8"
-      />
+        :is-disabled="DV_issue.autoCalculate"
+        :draggable="!DV_issue.autoCalculate"
+      ></vue-slide-bar>
+    </div>
+    <div class="form-group mx-4">
+      <label class="font-sm">Checklists:</label>
+      <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+      <div v-if="filteredChecks.length > 0">
+        <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104" v-if="!check._destroy">
+          <label class="form-control" :key="index">
+            <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
+            <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+          </label>
+          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times-circle"></i></span>
+        </div>
+      </div>
+      <p v-else class="text-danger font-sm">No checks..</p>
     </div>
     <div class="form-row mx-3">
       <div class="form-group col-md-6">
@@ -158,8 +196,8 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    name: 'TaskForm',
-    props: ['facility', 'project', 'issue', 'title', 'issueTypes', 'issueSeverities'],
+    name: 'IssueForm',
+    props: ['facility', 'issue', 'title', 'issueTypes', 'issueSeverities'],
     components: {AttachmentInput},
     data() {
       return {
@@ -171,15 +209,19 @@
           progress: 0,
           issueSeverityId: '',
           description: '',
-          issueFiles: []
+          autoCalculate: true,
+          userIds: [],
+          issueFiles: [],
+          checklists: []
         },
+        issueUsers: [],
         showErrors: false
       }
     },
     mounted() {
       if (this.issue) {
-        this.DV_issue = _.cloneDeep(this.issue)
-        this.DV_issue.issueFiles = []
+        this.DV_issue = {...this.DV_issue, ..._.cloneDeep(this.issue)}
+        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.addFile(this.issue.attachFiles)
       }
     },
@@ -226,6 +268,18 @@
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
+          formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
+
+          for (var u_id of this.DV_issue.userIds) {
+            formData.append('issue[user_ids][]', u_id)
+          }
+
+          for (var i in this.DV_issue.checklists) {
+            var check = this.DV_issue.checklists[i]
+            for (var key in check) {
+              formData.append(`issue[checklists_attributes][${i}][${key}]`, check[key])
+            }
+          }
 
           for (var file of this.DV_issue.issueFiles) {
             if (!file.id) {
@@ -274,11 +328,40 @@
         const startDate = new Date(this.DV_issue.startDate)
         startDate.setHours(0,0,0,0)
         return date < startDate
+      },
+      addChecks() {
+        this.DV_issue.checklists.push({text: '', checked: false})
+      },
+      destroyCheck(check, index) {
+        var confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
+        if (!confirm) return;
+
+        var i = check.id ? this.DV_issue.checklists.findIndex(c => c.id === check.id) : index
+        Vue.set(this.DV_issue.checklists, i, {...check, _destroy: true})
+      },
+      calculateProgress(checks=null) {
+        try {
+          if (!checks) checks = this.DV_issue.checklists
+          var checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
+          var total = _.filter(checks, v => !v._destroy && v.text.trim()).length
+          this.DV_issue.progress = Number((((checked / total) * 100) || 0).toFixed(2))
+        } catch {
+          this.DV_issue.progress = 0
+        }
+      },
+      updateCheckItem(event, name, index) {
+        if (name === 'text') {
+          this.DV_issue.checklists[index].text = event.target.value
+          if (!event.target.value) this.DV_issue.checklists[index].checked = false
+        } else if (name === 'check' && this.DV_issue.checklists[index].text) {
+          this.DV_issue.checklists[index].checked = event.target.checked
+        }
       }
     },
     computed: {
       ...mapGetters([
-        'currentProject'
+        'currentProject',
+        'projectUsers'
       ]),
       readyToSave() {
         return (
@@ -289,14 +372,30 @@
           this.DV_issue.dueDate !== '' &&
           this.DV_issue.startDate !== ''
         )
+      },
+      filteredChecks() {
+        return _.filter(this.DV_issue.checklists, c => !c._destroy)
       }
     },
     watch: {
       issue: {
         handler: function(value) {
-          this.DV_issue = Object.assign({}, value)
+          this.DV_issue = {...this.DV_issue, ..._.cloneDeep(value)}
         },
         deep: true
+      },
+      "DV_issue.checklists": {
+        handler: function(value) {
+          if (this.DV_issue.autoCalculate) this.calculateProgress(value)
+        }, deep: true
+      },
+      "DV_issue.autoCalculate"(value) {
+        if (value) this.calculateProgress()
+      },
+      issueUsers: {
+        handler: function(value) {
+          if (value) this.DV_issue.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
       }
     }
   }
@@ -309,5 +408,20 @@
   .title {
     font-size: 15px;
     margin-left: 65px;
+  }
+  .checklist-text {
+    margin-left: 5px;
+    border: 0;
+    width: 92%;
+    outline: none;
+  }
+  .del-check {
+    position: relative;
+    top: -5px;
+    display: flex;
+    right: 10px;
+    background: #fff;
+    height: fit-content;
+    color: red;
   }
 </style>

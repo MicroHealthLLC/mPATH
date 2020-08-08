@@ -20,7 +20,7 @@
         type="text"
         class="form-control form-control-sm"
         v-model="DV_task.text"
-        placeholder="Text"
+        placeholder="Task Name"
         :class="{'form-control': true, 'error': errors.has('Name') }"
       />
       <div v-show="errors.has('Name')" class="text-danger">
@@ -77,6 +77,25 @@
         </div>
       </div>
     </div>
+    <div class="user-select m-3">
+      <multiselect
+        v-model="taskUsers"
+        track-by="id"
+        label="fullName"
+        placeholder="Assign Users"
+        :options="projectUsers"
+        :searchable="false"
+        :multiple="true"
+        select-label="Select"
+        deselect-label="Remove"
+        >
+        <template slot="singleLabel" slot-scope="{option}">
+          <div class="d-flex">
+            <span class='select__tag-name'>{{option.fullName}}</span>
+          </div>
+        </template>
+      </multiselect>
+    </div>
     <div class="form-group mx-4">
       <label class="font-sm mb-0">Progress: (in %)</label>
       <span class="ml-3">
@@ -89,15 +108,14 @@
         :draggable="!DV_task.autoCalculate"
       ></vue-slide-bar>
     </div>
-
     <div class="form-group mx-4">
       <label class="font-sm">Checklists:</label>
       <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
       <div v-if="filteredChecks.length > 0">
         <div v-for="(check, index) in DV_task.checklists" class="d-flex w-104" v-if="!check._destroy">
           <label class="form-control" :key="index">
-            <input type="checkbox" v-model="check.checked" :key="`check_${index}`">
-            <input v-model="check.text" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+            <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
+            <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
           </label>
           <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times-circle"></i></span>
         </div>
@@ -159,10 +177,11 @@
   import humps from 'humps'
   import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'TaskForm',
-    props: ['facility', 'project', 'task', 'title', 'taskTypes'],
+    props: ['facility', 'task', 'title', 'taskTypes'],
     components: {AttachmentInput},
     data() {
       return {
@@ -171,30 +190,27 @@
           startDate: '',
           dueDate: '',
           taskTypeId: '',
+          userIds: [],
           notes: '',
           progress: 0,
           autoCalculate: true,
           taskFiles: [],
           checklists: []
         },
+        taskUsers: [],
         _ismounted: false,
         showErrors: false
       }
     },
     mounted() {
       if (this.task) {
-        this.DV_task = _.cloneDeep(this.task)
-        this.DV_task.taskFiles = []
+        this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
+        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
         this.addFile(this.task.attachFiles)
       }
       this._ismounted = true
     },
     methods: {
-      getDate(days=0) {
-        var date = new Date
-        date.setDate(date.getDate() + days)
-        return date
-      },
       addFile(files) {
         for (let file of files) {
           file.guid = this.guid()
@@ -208,7 +224,7 @@
         if (!confirm) return;
 
         if (file.uri) {
-          http.put(`/projects/${this.project.id}/facilities/${this.facility.id}/tasks/${this.task.id}/destroy_file.json`, {file: file})
+          http.put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.task.id}/destroy_file.json`, {file: file})
           .then((res)=> {
             _.remove(this.DV_task.taskFiles, (f) => f.guid === file.guid)
             this.$forceUpdate()
@@ -239,6 +255,10 @@
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[notes]', this.DV_task.notes)
 
+          for (var u_id of this.DV_task.userIds) {
+            formData.append('task[user_ids][]', u_id)
+          }
+
           for (var i in this.DV_task.checklists) {
             var check = this.DV_task.checklists[i]
             for (var key in check) {
@@ -252,12 +272,12 @@
             }
           }
 
-          var url = `/projects/${this.project.id}/facilities/${this.facility.id}/tasks.json`
+          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
           var method = "POST"
           var callback = "task-created"
 
           if (this.task && this.task.id) {
-            url = `/projects/${this.project.id}/facilities/${this.facility.id}/tasks/${this.task.id}.json`
+            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.task.id}.json`
             method = "PUT"
             callback = "task-updated"
           }
@@ -307,15 +327,27 @@
       calculateProgress(checks=null) {
         try {
           if (!checks) checks = this.DV_task.checklists
-          var checked = _.filter(checks, v => !v._destroy && v.checked).length
-          var total = _.filter(checks, v => !v._destroy).length
+          var checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
+          var total = _.filter(checks, v => !v._destroy && v.text.trim()).length
           this.DV_task.progress = Number((((checked / total) * 100) || 0).toFixed(2))
         } catch {
           this.DV_task.progress = 0
         }
+      },
+      updateCheckItem(event, name, index) {
+        if (name === 'text') {
+          this.DV_task.checklists[index].text = event.target.value
+          if (!event.target.value) this.DV_task.checklists[index].checked = false
+        } else if (name === 'check' && this.DV_task.checklists[index].text) {
+          this.DV_task.checklists[index].checked = event.target.checked
+        }
       }
     },
     computed: {
+      ...mapGetters([
+        'currentProject',
+        'projectUsers'
+      ]),
       readyToSave() {
         return (
           this.DV_task &&
@@ -332,7 +364,7 @@
     watch: {
       task: {
         handler: function(value) {
-          this.DV_task = _.cloneDeep(value)
+          this.DV_task = {...this.DV_task, ..._.cloneDeep(value)}
         },
         deep: true
       },
@@ -350,6 +382,11 @@
       },
       "DV_task.autoCalculate"(value) {
         if (value) this.calculateProgress()
+      },
+      taskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
       }
     }
   }

@@ -3,6 +3,7 @@
     <div class="gantt_board">
       <div v-if="!loading">
         <gantt-elastic
+          class="gantt_chart_view"
           :class="{'gantt_disabled': taskLoading}"
           :options="options"
           :tasks="ganttData"
@@ -290,5 +291,13 @@
   .gantt_disabled {
     opacity: 0.4;
     pointer-events: none;
+  }
+  .gantt_chart_view /deep/ .gantt-elastic__main-view {
+    .gantt-elastic__main-container-wrapper {
+      min-height: 70px;
+    }
+    .gantt-elastic__task-list-header {
+      min-height: 28px;
+    }
   }
 </style>

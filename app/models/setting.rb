@@ -8,6 +8,7 @@ class Setting < ApplicationRecord
       return available_settings[name]["cached"]
     end
     available_settings[name]["default"]
+  rescue
   end
 
   def self.load_available_settings

@@ -22,11 +22,7 @@ class Project < ApplicationRecord
   def as_json(options=nil)
     json = super(options)
     json.merge(
-      project_type: self.project_type.try(:name),
-      tasks_count: self.tasks.count,
-      tasks_complete: self.tasks.complete.count,
-      tasks_incomplete: self.tasks.incomplete.count,
-      facility_count: self.facilities.count
+      project_type: self.project_type.try(:name)
     ).as_json
   end
 

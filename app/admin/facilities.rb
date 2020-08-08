@@ -43,10 +43,20 @@ ActiveAdmin.register Facility do
     column :email
     column :phone_number
     column :facility_group, nil, sortable: 'facility_groups.name' do |facility|
-      raw "<a href='#{edit_admin_facility_group_path(facility.facility_group)}'>#{facility.facility_group.name}</a>" if facility.facility_group.present?
+      if current_user.admin_write?
+        link_to "#{facility.facility_group.name}", "#{edit_admin_facility_group_path(facility.facility_group)}" if facility.facility_group.present?
+      else
+        "<span>#{facility.facility_group&.name}</span>".html_safe
+      end
     end
     column "State", :status
-    column(:projects) {|facility| facility.projects.active}
+    column :projects do |facility|
+      if current_user.admin_write?
+        facility.projects.active
+      else
+        "<span>#{facility.projects.active.pluck(:name).join(', ')}</span>".html_safe
+      end
+    end
     actions defaults: false do |facility|
       item "Edit", edit_admin_facility_path(facility), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_path(facility), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -167,7 +177,7 @@ ActiveAdmin.register Facility do
   }} do |ids, inputs|
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'])
+        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: false)
       end
     end
     redirect_to collection_path, notice: "Task added"
