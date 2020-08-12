@@ -35,7 +35,7 @@
             v-model="DV_task.startDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="yyyy-mm-dd"
+            placeholder="DD MM YYYY"
             name="Start Date"
             :disabled-date="disabledStartDate"
           />
@@ -47,7 +47,7 @@
             v-model="DV_task.dueDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="yyyy-mm-dd"
+            placeholder="DD MM YYYY"
             name="Due Date"
             :disabled="DV_task.startDate === ''"
             :disabled-date="disabledDueDate"
@@ -214,6 +214,7 @@
     },
     mounted() {
       this.loading = false
+      this.updateZoom(this.ganttData)
     },
     computed: {
       ...mapGetters([
@@ -266,6 +267,19 @@
             this.onCloseTask()
           })
           .catch((err) => console.log(err))
+      },
+      updateZoom(data) {
+        if (data[0] && data[0].duration) {
+          var zoom = Number(data[0].durationInDays.split(" ")[0]) * 0.06
+          this.options.times.timeZoom = zoom > 20 ? 20 : (zoom < 10 ? 10 : zoom)
+        }
+      }
+    },
+    watch: {
+      ganttData: {
+        handler(value) {
+          this.updateZoom(value)
+        }, deep: true
       }
     }
   }

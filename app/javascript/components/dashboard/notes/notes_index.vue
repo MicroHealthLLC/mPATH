@@ -2,6 +2,7 @@
   <div>
     <div v-if="_isallowed('write') && newNote" class="mb-3">
       <notes-form
+        title="Add Note"
         :facility="DV_facility"
         @close-note-input="newNote=false"
         @note-created="noteCreated"

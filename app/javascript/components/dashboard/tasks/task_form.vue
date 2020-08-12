@@ -27,48 +27,57 @@
         {{ errors.first('Name') }}
       </div>
     </div>
-    <div class="form-group mx-4">
+    <div class="simple-select form-group mx-4">
       <label class="font-sm">Task Type:</label>
-      <select
-        name="Task Type"
+      <multiselect
+        v-model="selectedTaskType"
         v-validate="'required'"
-        :class="{'form-control': true, 'error': errors.has('Task Type') }" class="form-control form-control-sm"
-        v-model="DV_task.taskTypeId"
+        track-by="id"
+        label="name"
+        placeholder="Task Type"
+        :options="taskTypes"
+        :searchable="false"
+        select-label="Select"
+        deselect-label="Remove"
+        :class="{'error': errors.has('Task Type')}"
         >
-        <option disabled selected value="">Task Type</option>
-        <option v-for="opt in taskTypes" :value="opt.id">
-          {{opt.name}}
-        </option>
-      </select>
+        <template slot="singleLabel" slot-scope="{option}">
+          <div class="d-flex">
+            <span class='select__tag-name'>{{option.name}}</span>
+          </div>
+        </template>
+      </multiselect>
       <div v-show="errors.has('Task Type')" class="text-danger">
         {{ errors.first('Task Type') }}
       </div>
     </div>
-    <div class="form-row mx-3">
-      <div class="form-group col-md-6">
+    <div class="form-row mx-4">
+      <div class="form-group col-md-6 pl-0">
         <label class="font-sm">Start Date:</label>
         <v2-date-picker
           v-validate="'required'"
           v-model="DV_task.startDate"
           value-type="YYYY-MM-DD"
           format="DD MMM YYYY"
-          placeholder="yyyy-mm-dd"
+          placeholder="DD MM YYYY"
           name="Start Date"
+          class="w-100 vue2-datepicker"
           :disabled-date="disabledStartDate"
         />
         <div v-show="errors.has('Start Date')" class="text-danger">
           {{ errors.first('Start Date') }}
         </div>
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-6 pr-0">
         <label class="font-sm">Due Date:</label>
         <v2-date-picker
           v-validate="'required'"
           v-model="DV_task.dueDate"
           value-type="YYYY-MM-DD"
           format="DD MMM YYYY"
-          placeholder="yyyy-mm-dd"
+          placeholder="DD MM YYYY"
           name="Due Date"
+          class="w-100 vue2-datepicker"
           :disabled="DV_task.startDate === ''"
           :disabled-date="disabledDueDate"
         />
@@ -77,17 +86,19 @@
         </div>
       </div>
     </div>
-    <div class="user-select m-3">
+    <div class="form-group user-select mx-4">
+      <label class="font-sm mb-0">Assign Users:</label>
       <multiselect
         v-model="taskUsers"
         track-by="id"
         label="fullName"
-        placeholder="Assign Users"
+        placeholder="Search and select users"
         :options="projectUsers"
-        :searchable="false"
+        :searchable="true"
         :multiple="true"
         select-label="Select"
         deselect-label="Remove"
+        :close-on-select="false"
         >
         <template slot="singleLabel" slot-scope="{option}">
           <div class="d-flex">
@@ -197,6 +208,7 @@
           taskFiles: [],
           checklists: []
         },
+        selectedTaskType: null,
         taskUsers: [],
         _ismounted: false,
         showErrors: false
@@ -206,7 +218,7 @@
       if (this.task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
         this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
-        this.addFile(this.task.attachFiles)
+        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
       }
       this._ismounted = true
     },
@@ -386,6 +398,11 @@
       taskUsers: {
         handler: function(value) {
           if (value) this.DV_task.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      selectedTaskType: {
+        handler(value) {
+          this.DV_task.taskTypeId = value ? value.id : null
         }, deep: true
       }
     }

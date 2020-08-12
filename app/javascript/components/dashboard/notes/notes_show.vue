@@ -28,6 +28,7 @@
     <div v-else>
       <notes-form
         v-if="permitted('write')"
+        title="Edit Note"
         :note="DV_note"
         :facility="facility"
         @close-note-input="show=true"

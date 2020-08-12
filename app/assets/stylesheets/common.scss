@@ -317,3 +317,29 @@ input[type=button]:focus {
 .mx-datepicker-main.mx-datepicker-popup {
   z-index: 10011 !important;
 }
+.simple-select /deep/ .multiselect,
+.user-select /deep/ .multiselect {
+  .multiselect__tags {
+    min-height: 25px;
+    padding: 5px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+  }
+  .multiselect__single {
+    font-size: 13px;
+    position: relative;
+    display: inline-block;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    color: #fff;
+    line-height: 1;
+    background: #41b883;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    width: max-content;
+  }
+}

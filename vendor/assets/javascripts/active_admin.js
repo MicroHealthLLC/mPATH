@@ -853,7 +853,13 @@ jQuery(function($) {
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
     });
 
-    $(".has_many_container.checklists .has_many_delete.boolean input[type=checkbox]").change(function() {
+    $(".has_many_container.checklists .has_many_delete.boolean input[type=checkbox]").change(function(e) {
+      var confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
+      if (!confirm) {
+        e.preventDefault();
+        e.stopPropagation();
+        return $(this).prop('checked', false);
+      }
       $(this.parentElement.parentElement.parentElement.parentElement).hide();
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
     });
@@ -894,8 +900,7 @@ jQuery(function($) {
         generatePassword() {
           var chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
           var pass = "";
-          if (this.uppercase || this.lowercase || this.numbers || this.special_chars)
-          {
+          if (this.uppercase || this.lowercase || this.numbers || this.special_chars) {
             chars = "";
             if (this.uppercase) chars = chars + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             if (this.numbers) chars = chars + "1234567890";

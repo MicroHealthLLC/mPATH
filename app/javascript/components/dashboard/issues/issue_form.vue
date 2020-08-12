@@ -26,51 +26,102 @@
         {{ errors.first('title') }}
       </div>
     </div>
-    <div class="form-group mx-4">
+    <div class="simple-select form-group mx-4">
       <label class="font-sm">Issue Type:</label>
-      <select
-        name="Issue Type"
+      <multiselect
+        v-model="selectedIssueType"
         v-validate="'required'"
-        :class="{'form-control': true, 'error': errors.has('Issue Type') }" class="form-control form-control-sm"
-        v-model="DV_issue.issueTypeId"
+        track-by="id"
+        label="name"
+        placeholder="Issue Type"
+        :options="issueTypes"
+        :searchable="false"
+        select-label="Select"
+        deselect-label="Remove"
+        :class="{'error': errors.has('Issue Type')}"
         >
-        <option disabled selected value="">Issue Type</option>
-        <option v-for="opt in issueTypes" :value="opt.id">
-          {{opt.name}}
-        </option>
-      </select>
+        <template slot="singleLabel" slot-scope="{option}">
+          <div class="d-flex">
+            <span class='select__tag-name'>{{option.name}}</span>
+          </div>
+        </template>
+      </multiselect>
       <div v-show="errors.has('Issue Type')" class="text-danger">
         {{ errors.first('Issue Type') }}
       </div>
     </div>
-    <div class="form-group mx-4">
+    <div class="simple-select form-group mx-4">
       <label class="font-sm">Issue Severity:</label>
-      <select
-        name="Issue Severity"
+      <multiselect
+        v-model="selectedIssueSeverity"
         v-validate="'required'"
-        :class="{'form-control': true, 'error': errors.has('Issue Severity') }" class="form-control form-control-sm"
-        v-model="DV_issue.issueSeverityId"
+        track-by="id"
+        label="name"
+        placeholder="Issue Severity"
+        :options="issueSeverities"
+        :searchable="false"
+        select-label="Select"
+        deselect-label="Remove"
+        :class="{'error': errors.has('Issue Severity')}"
         >
-        <option disabled selected value="">Issue Severity</option>
-        <option v-for="opt in issueSeverities" :value="opt.id">
-          {{opt.name}}
-        </option>
-      </select>
+        <template slot="singleLabel" slot-scope="{option}">
+          <div class="d-flex">
+            <span class='select__tag-name'>{{option.name}}</span>
+          </div>
+        </template>
+      </multiselect>
       <div v-show="errors.has('Issue Severity')" class="text-danger">
         {{ errors.first('Issue Severity') }}
       </div>
     </div>
-    <div class="user-select m-4">
+    <div class="form-row mx-4">
+      <div class="form-group col-md-6 pl-0">
+        <label class="font-sm">Start Date:</label>
+        <v2-date-picker
+          v-validate="'required'"
+          v-model="DV_issue.startDate"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="DD MM YYYY"
+          name="Start Date"
+          class="w-100 vue2-datepicker"
+          :disabled-date="disabledStartDate"
+        />
+        <div v-show="errors.has('Start Date')" class="text-danger">
+          {{ errors.first('Start Date') }}
+        </div>
+      </div>
+      <div class="form-group col-md-6 pr-0">
+        <label class="font-sm">Due Date:</label>
+        <v2-date-picker
+          v-validate="'required'"
+          v-model="DV_issue.dueDate"
+          value-type="YYYY-MM-DD"
+          format="DD MMM YYYY"
+          placeholder="DD MM YYYY"
+          name="Due Date"
+          class="w-100 vue2-datepicker"
+          :disabled="DV_issue.startDate === ''"
+          :disabled-date="disabledDueDate"
+        />
+        <div v-show="errors.has('Due Date')" class="text-danger">
+          {{ errors.first('Due Date') }}
+        </div>
+      </div>
+    </div>
+    <div class="form-group user-select mx-4">
+      <label class="font-sm mb-0">Assign Users:</label>
       <multiselect
         v-model="issueUsers"
         track-by="id"
         label="fullName"
-        placeholder="Assign Users"
+        placeholder="Search and select users"
         :options="projectUsers"
-        :searchable="false"
+        :searchable="true"
         :multiple="true"
         select-label="Select"
         deselect-label="Remove"
+        :close-on-select="false"
         >
         <template slot="singleLabel" slot-scope="{option}">
           <div class="d-flex">
@@ -104,39 +155,6 @@
         </div>
       </div>
       <p v-else class="text-danger font-sm">No checks..</p>
-    </div>
-    <div class="form-row mx-3">
-      <div class="form-group col-md-6">
-        <label class="font-sm">Start Date:</label>
-        <v2-date-picker
-          v-validate="'required'"
-          v-model="DV_issue.startDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="yyyy-mm-dd"
-          name="Start Date"
-          :disabled-date="disabledStartDate"
-        />
-        <div v-show="errors.has('Start Date')" class="text-danger">
-          {{ errors.first('Start Date') }}
-        </div>
-      </div>
-      <div class="form-group col-md-6">
-        <label class="font-sm">Due Date:</label>
-        <v2-date-picker
-          v-validate="'required'"
-          v-model="DV_issue.dueDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="yyyy-mm-dd"
-          name="Due Date"
-          :disabled="DV_issue.startDate === ''"
-          :disabled-date="disabledDueDate"
-        />
-        <div v-show="errors.has('Due Date')" class="text-danger">
-          {{ errors.first('Due Date') }}
-        </div>
-      </div>
     </div>
     <div class="form-group mx-4">
       <label class="font-sm">Description:</label>
@@ -214,6 +232,8 @@
           issueFiles: [],
           checklists: []
         },
+        selectedIssueType: null,
+        selectedIssueSeverity: null,
         issueUsers: [],
         showErrors: false
       }
@@ -222,6 +242,8 @@
       if (this.issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(this.issue)}
         this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
+        this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
         this.addFile(this.issue.attachFiles)
       }
     },
@@ -395,6 +417,16 @@
       issueUsers: {
         handler: function(value) {
           if (value) this.DV_issue.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      selectedIssueType: {
+        handler(value) {
+          this.DV_issue.issueTypeId = value ? value.id : null
+        }, deep: true
+      },
+      selectedIssueSeverity: {
+        handler(value) {
+          this.DV_issue.issueSeverityId = value ? value.id : null
         }, deep: true
       }
     }

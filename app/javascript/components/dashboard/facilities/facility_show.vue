@@ -17,12 +17,26 @@
               <div>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                  <select class="form-control form-control-sm" v-model="DV_facility.statusId" @change="onChange" :disabled="!_isallowed('write')">
-                    <option :value="null">No Status</option>
-                    <option v-for="status in statuses" :value="status.id">
-                      {{status.name}}
-                    </option>
-                  </select>
+                  <span class="simple-select w-100">
+                    <multiselect
+                      v-model="selectedStatus"
+                      track-by="id"
+                      label="name"
+                      placeholder="No Status Selected"
+                      :options="statuses"
+                      :searchable="false"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      @select="onChange"
+                      :disabled="!_isallowed('write')"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </span>
                 </p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
@@ -32,7 +46,7 @@
                     format="DD MMM YYYY"
                     class="w-100 vue2-datepicker"
                     @input="onChange"
-                    placeholder="yyyy-mm-dd"
+                    placeholder="DD MM YYYY"
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
@@ -171,7 +185,8 @@
         DV_updated: false,
         newNote: false,
         notesQuery: '',
-        DV_facility: Object.assign({}, this.facility)
+        DV_facility: Object.assign({}, this.facility),
+        selectedStatus: null
       }
     },
     mounted() {
@@ -182,7 +197,8 @@
         http
           .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
-            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
+            this.DV_facility = {...res.data.facility, ...res.data.facility.facility},
+            this.selectedStatus = this.statuses.find(s => s.id === this.DV_facility.statusId)
             if (opt.cb) this.$emit('facility-update', this.DV_facility)
             this.loading = false;
           })
@@ -287,9 +303,12 @@
         deep: true
       },
       "DV_facility.statusId"(value) {
-        if (value === null) {
-          this.DV_facility.dueDate = null
-        }
+        if (!value) this.DV_facility.dueDate = null
+      },
+      selectedStatus: {
+        handler(value) {
+          this.DV_facility.statusId = value ? value.id : null
+        }, deep: true
       }
     }
   }
@@ -342,5 +361,11 @@
   .vue2-datepicker /deep/ .mx-input:disabled {
     color: #555;
     background-color: #fff;
+  }
+  .simple-select /deep/ .multiselect {
+    .multiselect__placeholder {
+      color: #dc3545;
+      text-overflow: ellipsis;
+    }
   }
 </style>

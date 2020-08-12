@@ -20,6 +20,7 @@ ActiveAdmin.register Task do
       :start_date,
       :auto_calculate,
       task_files: [],
+      user_ids: [],
       facility_project_attributes: [
         :id,
         :project_id,
@@ -64,6 +65,13 @@ ActiveAdmin.register Task do
         "<span>#{task.facility&.facility_name}</span>".html_safe
       end
     end
+    column "Assigned To", :users do |task|
+      if current_user.admin_write?
+        task.users
+      else
+        "<span>#{task.users.map(&:full_name).join(', ')}</span>".html_safe
+      end
+    end
     actions defaults: false do |task|
       item "Edit", edit_admin_task_path(task), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_task_path(task), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -82,6 +90,7 @@ ActiveAdmin.register Task do
       f.input :task_type
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
+      f.input :users, label: 'Assigned Users', as: :select, collection: User.client.map{|u| [u.full_name, u.id]}
       f.input :progress
       div id: 'progress_slider-tab'
       f.input :auto_calculate
@@ -106,6 +115,7 @@ ActiveAdmin.register Task do
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
   filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To'
   filter :progress
 
   controller do

@@ -22,6 +22,7 @@ ActiveAdmin.register Issue do
       :facility_project_id,
       :auto_calculate,
       issue_files: [],
+      user_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,
@@ -52,6 +53,13 @@ ActiveAdmin.register Issue do
     column :progress
     column :start_date
     column :due_date
+    column "Assigned To", :users do |issue|
+      if current_user.admin_write?
+        issue.users
+      else
+        "<span>#{issue.users.map(&:full_name).join(', ')}</span>".html_safe
+      end
+    end
     column "Description", :notes, sortable: false
     column "Files" do |issue|
       issue.issue_files.map do |file|
@@ -73,6 +81,7 @@ ActiveAdmin.register Issue do
       f.input :issue_severity
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
+      f.input :users, label: 'Assigned Users', as: :select, collection: User.client.map{|u| [u.full_name, u.id]}
       f.input :progress
       div id: 'progress_slider-tab'
       f.input :auto_calculate
@@ -97,6 +106,7 @@ ActiveAdmin.register Issue do
   filter :progress
   filter :start_date
   filter :due_date
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To'
 
   controller do
     before_action :check_readability, only: [:index, :show]

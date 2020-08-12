@@ -3,6 +3,7 @@
     <span class="close-icon" @click.stop="$emit('close-note-input')">
       <i class="fas fa-times"></i>
     </span>
+    <center>{{title}}</center>
     <div class="form-group">
       <label class="badge badge-secondary">Note</label>
       <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
@@ -54,7 +55,7 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    props: ['facility', 'note'],
+    props: ['facility', 'note', 'title'],
     components: {AttachmentInput},
     data() {
       return {
@@ -168,6 +169,7 @@
     padding: 15px;
   }
   .close-icon {
+    float: right;
     cursor: pointer;
     display: flex;
     flex-direction: row-reverse;
