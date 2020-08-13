@@ -219,6 +219,7 @@
         this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
         this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
+        this.addFile(this.task.attachFiles)
       }
       this._ismounted = true
     },
