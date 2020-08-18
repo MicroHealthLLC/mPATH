@@ -86,7 +86,7 @@
         tab: "",
         options: {
           times: {
-            timeScale: 4000 * 1000,
+            timeScale: 3800 * 1000,
             timeZoom: 20,
             stepDuration: 'week'
           },

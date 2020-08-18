@@ -9,7 +9,7 @@
       <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
     </div>
     <div class="input-group mb-2">
-      <div v-for="file in DV_note.noteFiles" class="d-flex mb-2 w-100">
+      <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
         <div class="input-group-prepend">
           <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
             <i class="fas fa-file-image"></i>
@@ -18,15 +18,15 @@
         <input
           readonly
           type="text"
-          class="form-control form-control-sm"
+          class="form-control form-control-sm mw-95"
           :value="file.name || file.uri"
         />
-        <button
-          class="btn btn-danger btn-sm d-flex flex-row-reverse"
+        <div
+          class="del-check clickable"
           @click.prevent="deleteFile(file)"
           >
           <i class="fas fa-times"></i>
-        </button>
+        </div>
       </div>
     </div>
     <div class="form-group" >
@@ -50,7 +50,6 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters} from 'vuex'
 
@@ -62,23 +61,24 @@
         DV_note: {
           body: '',
           noteFiles: []
-        }
+        },
+        destroyedFiles: []
       }
     },
     mounted() {
       if (this.note) {
-        this.DV_note = Object.assign({}, this.note)
-        this.DV_note.noteFiles = []
+        this.DV_note = {...this.DV_note, ..._.cloneDeep(this.note)}
         this.addFile(this.note.attachFiles)
       }
     },
     methods: {
       addFile(files) {
+        let _files = [...this.DV_note.noteFiles]
         for (let file of files) {
           file.guid = this.guid()
-          this.DV_note.noteFiles.push(file)
+          _files.push(file)
         }
-        this.$forceUpdate()
+        this.DV_note.noteFiles = _files
       },
       deleteFile(file) {
         if (!file) return;
@@ -87,18 +87,12 @@
         if (!confirm) return;
 
         if (file.uri) {
-          http.put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}/destroy_file.json`, {file: file})
-          .then((res)=> {
-            _.remove(this.DV_note.noteFiles, (f) => f.guid === file.guid)
-            this.$forceUpdate()
-          })
-          .catch((error) => {
-            console.log("Unable to destroy the file..")
-          })
+          var index = this.DV_note.noteFiles.findIndex(f => f.guid === file.guid)
+          Vue.set(this.DV_note.noteFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)
         }
         else if (file.name) {
-          _.remove(this.DV_note.noteFiles, (f) => f.guid === file.guid)
-          this.$forceUpdate()
+          this.DV_note.noteFiles.splice(this.DV_note.noteFiles.findIndex(f => f.guid === file.guid), 1)
         }
       },
       saveNote() {
@@ -111,6 +105,7 @@
 
           var formData = new FormData()
           formData.append('note[body]', this.DV_note.body)
+          formData.append('note[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
           for (var file of this.DV_note.noteFiles) {
             if (!file.id) {
               formData.append('note[note_files][]', file)
@@ -157,6 +152,9 @@
           this.DV_note &&
           this.DV_note.body !== ''
         )
+      },
+      filteredFiles() {
+        return _.filter(this.DV_note.noteFiles, f => !f._destroy)
       }
     }
   }
@@ -173,5 +171,14 @@
     cursor: pointer;
     display: flex;
     flex-direction: row-reverse;
+  }
+  .del-check {
+    position: relative;
+    top: -5px;
+    display: flex;
+    right: 10px;
+    background: #fff;
+    height: fit-content;
+    color: red;
   }
 </style>

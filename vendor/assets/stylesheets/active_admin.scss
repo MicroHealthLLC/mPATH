@@ -4,6 +4,7 @@
 @import "active_admin/mixins";
 @import "active_admin/base";
 @import "node_modules/vue-phone-number-input.scss";
+@import "node_modules/vue-multiselect.min.scss";
 
 @font-face {
   font-family: 'FuturaPTBook';
@@ -18,6 +19,7 @@ body {
 
 .active_admin {
   select {
+    min-height: 25px;
     width: calc(80% - 20px);
   }
   select[multiple=multiple] {
@@ -31,6 +33,15 @@ body {
   #main_content_wrapper .index_content {
     max-width: 75vw;
     overflow: auto;
+  }
+
+  form.filter_form .filter_form_field.select_and_search {
+    select {
+      width: 40%;
+    }
+    input[type=text] {
+      width: 50%;
+    }
   }
 
   ul.header-item li:nth-last-child(1),
@@ -121,6 +132,10 @@ body {
         width: 25px;
       }
     }
+    select,
+    textarea {
+      width: 80%;
+    }
   }
   .filter_select {
     select {
@@ -198,21 +213,62 @@ body {
   li.has_many_container.checklists {
     ol {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
+      li.boolean.input.optional {
+        margin-bottom: 3px;
+      }
       li.string {
+        width: 160%;
         label {
           width: 0;
         }
         input {
-          width: 80vw;
+          width: 98%;
+        }
+      }
+      li.select {
+        width: 100%;
+        label {
+          float: unset;
+        }
+        select {
+          width: 95%;
         }
       }
       li.has_many_delete {
         label {
-          width: 100px;
+          width: 83px;
           display: flex;
           align-items: center;
         }
+      }
+    }
+  }
+  .user_multiselect {
+    font-size: 13px;
+    width: 80%;
+    /deep/ .multiselect {
+      .multiselect__input {
+        width: 100%;
+        border: unset;
+        box-shadow: unset;
+        outline: none;
+        padding: 0px;
+      }
+      .multiselect__element {
+        margin: 0;
+      }
+      .multiselect__option {
+        width: 100%;
+      }
+      .multiselect__tags {
+        font-size: 13px;
+      }
+      .multiselect__select {
+        width: 23px;
+      }
+      .multiselect__tag {
+        margin-bottom: 1px;
       }
     }
   }

@@ -13,8 +13,8 @@ class Task < ApplicationRecord
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
-  scope :complete, -> { where("progress = ?", 100) }
-  scope :incomplete, -> { where("progress < ?", 100) }
+  scope :complete, -> {where("progress = ?", 100)}
+  scope :incomplete, -> {where("progress < ?", 100)}
 
   def to_json
     attach_files = []
@@ -32,7 +32,7 @@ class Task < ApplicationRecord
       attach_files: attach_files,
       task_type: self.task_type.try(:name),
       user_ids: self.users.pluck(:id),
-      checklists: self.checklists
+      checklists: self.checklists.as_json(include: {user: {methods: :full_name}})
     ).as_json
   end
 
@@ -43,5 +43,4 @@ class Task < ApplicationRecord
   def facility
     self.facility_project.try(:facility)
   end
-
 end

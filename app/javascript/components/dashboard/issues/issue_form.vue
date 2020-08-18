@@ -23,7 +23,7 @@
         :class="{'form-control': true, 'error': errors.has('title') }"
       />
       <div v-show="errors.has('title')" class="text-danger">
-        {{ errors.first('title') }}
+        {{errors.first('title')}}
       </div>
     </div>
     <div class="simple-select form-group mx-4">
@@ -47,7 +47,7 @@
         </template>
       </multiselect>
       <div v-show="errors.has('Issue Type')" class="text-danger">
-        {{ errors.first('Issue Type') }}
+        {{errors.first('Issue Type')}}
       </div>
     </div>
     <div class="simple-select form-group mx-4">
@@ -71,7 +71,7 @@
         </template>
       </multiselect>
       <div v-show="errors.has('Issue Severity')" class="text-danger">
-        {{ errors.first('Issue Severity') }}
+        {{errors.first('Issue Severity')}}
       </div>
     </div>
     <div class="form-row mx-4">
@@ -88,7 +88,7 @@
           :disabled-date="disabledStartDate"
         />
         <div v-show="errors.has('Start Date')" class="text-danger">
-          {{ errors.first('Start Date') }}
+          {{errors.first('Start Date')}}
         </div>
       </div>
       <div class="form-group col-md-6 pr-0">
@@ -101,11 +101,11 @@
           placeholder="DD MM YYYY"
           name="Due Date"
           class="w-100 vue2-datepicker"
-          :disabled="DV_issue.startDate === ''"
+          :disabled="DV_issue.startDate === '' || DV_issue.startDate === null"
           :disabled-date="disabledDueDate"
         />
         <div v-show="errors.has('Due Date')" class="text-danger">
-          {{ errors.first('Due Date') }}
+          {{errors.first('Due Date')}}
         </div>
       </div>
     </div>
@@ -146,12 +146,31 @@
       <label class="font-sm">Checklists:</label>
       <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
       <div v-if="filteredChecks.length > 0">
-        <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104" v-if="!check._destroy">
-          <label class="form-control" :key="index">
+        <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy">
+          <div class="form-control h-100" :key="index">
             <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
             <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
-          </label>
-          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times-circle"></i></span>
+            <div class="simple-select form-group m-0">
+              <label class="font-sm">Assigned To:</label>
+              <multiselect
+                v-model="check.user"
+                track-by="id"
+                label="fullName"
+                placeholder="Search and select users"
+                :options="issueUsers"
+                :searchable="true"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.fullName}}</span>
+                  </div>
+                </template>
+              </multiselect>
+            </div>
+          </div>
+          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
         </div>
       </div>
       <p v-else class="text-danger font-sm">No checks..</p>
@@ -167,7 +186,7 @@
     </div>
     <div class="mx-4">
       <div class="input-group mb-2">
-        <div v-for="file in DV_issue.issueFiles" class="d-flex mb-2 w-100">
+        <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
           <div class="input-group-prepend">
             <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
               <i class="fas fa-file-image"></i>
@@ -176,15 +195,15 @@
           <input
             readonly
             type="text"
-            class="form-control form-control-sm"
+            class="form-control form-control-sm mw-95"
             :value="file.name || file.uri"
           />
-          <button
-            class="btn btn-danger btn-sm d-flex flex-row-reverse"
+          <div
+            class="del-check clickable"
             @click.prevent="deleteFile(file)"
             >
             <i class="fas fa-times"></i>
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -209,7 +228,6 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import http from './../../../common/http'
   import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters} from 'vuex'
 
@@ -232,6 +250,7 @@
           issueFiles: [],
           checklists: []
         },
+        destroyedFiles: [],
         selectedIssueType: null,
         selectedIssueSeverity: null,
         issueUsers: [],
@@ -249,11 +268,12 @@
     },
     methods: {
       addFile(files=[]) {
+        let _files = [...this.DV_issue.issueFiles]
         for (let file of files) {
           file.guid = this.guid()
-          this.DV_issue.issueFiles.push(file)
+          _files.push(file)
         }
-        this.$forceUpdate()
+        this.DV_issue.issueFiles = _files
       },
       deleteFile(file) {
         if (!file) return;
@@ -261,18 +281,12 @@
         if (!confirm) return;
 
         if (file.uri) {
-          http.put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${this.issue.id}/destroy_file.json`, {file: file})
-          .then((res)=> {
-            _.remove(this.DV_issue.issueFiles, (f) => f.guid === file.guid)
-            this.$forceUpdate()
-          })
-          .catch((error) => {
-            console.log("Unable to destroy the file..")
-          })
+          var index = this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid)
+          Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)
         }
         else if (file.name) {
-          _.remove(this.DV_issue.issueFiles, (f) => f.guid === file.guid)
-          this.$forceUpdate()
+          this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
         }
       },
       saveIssue() {
@@ -291,6 +305,7 @@
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
           formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
+          formData.append('issue[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
           for (var u_id of this.DV_issue.userIds) {
             formData.append('issue[user_ids][]', u_id)
@@ -299,7 +314,9 @@
           for (var i in this.DV_issue.checklists) {
             var check = this.DV_issue.checklists[i]
             for (var key in check) {
-              formData.append(`issue[checklists_attributes][${i}][${key}]`, check[key])
+              if (key === 'user') key = 'user_id'
+              var value = key == 'user_id' ? check.user.id : check[key]
+              formData.append(`issue[checklists_attributes][${i}][${key}]`, value)
             }
           }
 
@@ -397,14 +414,21 @@
       },
       filteredChecks() {
         return _.filter(this.DV_issue.checklists, c => !c._destroy)
+      },
+      filteredFiles() {
+        return _.filter(this.DV_issue.issueFiles, f => !f._destroy)
       }
     },
     watch: {
       issue: {
         handler: function(value) {
           this.DV_issue = {...this.DV_issue, ..._.cloneDeep(value)}
+          this.destroyedFiles = []
         },
         deep: true
+      },
+      "DV_issue.startDate"(value) {
+        if (!value) this.DV_issue.dueDate = ''
       },
       "DV_issue.checklists": {
         handler: function(value) {
@@ -420,12 +444,12 @@
         }, deep: true
       },
       selectedIssueType: {
-        handler(value) {
+        handler: function(value) {
           this.DV_issue.issueTypeId = value ? value.id : null
         }, deep: true
       },
       selectedIssueSeverity: {
-        handler(value) {
+        handler: function(value) {
           this.DV_issue.issueSeverityId = value ? value.id : null
         }, deep: true
       }

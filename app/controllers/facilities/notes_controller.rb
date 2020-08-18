@@ -1,6 +1,6 @@
 class Facilities::NotesController < NotesController
   before_action :set_noteable
-  before_action :set_note, only: [:update, :destroy, :destroy_file]
+  before_action :set_note, only: [:update, :destroy]
 
   private
   def set_noteable

@@ -3,6 +3,7 @@
 //= require 'node_modules/vue2-google-maps/dist/vue-google-maps.js'
 //= require 'node_modules/vue-slide-bar/lib/vue-slide-bar.min.js'
 //= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
+//= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
 jQuery(function($) {
   // project index page
@@ -766,9 +767,8 @@ jQuery(function($) {
     });
   }
 
-
-  $(document).on('ready page:load turbolinks:load', function() {
-
+  $(document).on('ready page:load turbolinks:load', function()
+  {
     // destroy user session and storage
     $('#logout').click(function () {
       localStorage.removeItem('vuex');
@@ -807,11 +807,12 @@ jQuery(function($) {
       ul.prepend("<li class='radio__group'><input name='assign' type='radio' value='assign' checked><label>Assign</label><input name='assign' type='radio' value='unassign'><label>Unassign</label></li>");
     });
 
-    // task form #slider
+    // batch_action task form
     $('a[data-action=add_task]').click(function(e) {
       e.stopPropagation();
       e.preventDefault();
 
+      // #add slider
       var input = $("form#dialog_confirm input[name=Progress]");
       var parent = input.parent();
       input.css({display: 'none'});
@@ -836,6 +837,84 @@ jQuery(function($) {
             }
           },
           template: `<div class="progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div>`
+        });
+      }
+
+      // #add user_ids
+      var input = $("form#dialog_confirm input[name='Assign Users']");
+      input.parent().parent().addClass("__batch_task_form");
+      var parent = input.parent();
+      input.css({display: 'none'});
+      parent.append("<div id='__user_ids'></div>");
+
+      if ($("#__user_ids").is(":visible"))
+      {
+        Vue.component('multiselect', VueMultiselect.Multiselect);
+        $.Vue_users_select = new Vue({
+          el: "#__user_ids",
+          data() {
+            return {
+              loading: true,
+              project_id: '',
+              task_users: [],
+              project_users: []
+            }
+          },
+          mounted() {
+            this.setProjectId();
+          },
+          methods: {
+            setProjectId() {
+              this.project_id = $("select[name=Project]").children("option:selected").val();
+            },
+            fetchProject() {
+              $.get(`/projects/${this.project_id}.json`, (data) => {
+                this.project_users = data.users;
+                this.loading = false;
+              });
+            }
+          },
+          watch: {
+            project_id(value) {
+              this.fetchProject();
+            },
+            task_users: {
+              handler(value) {
+                if (value) $("input[name='Assign Users']").val(value.map(u => u.id));
+              }, deep: true
+            },
+            project_users: {
+              handler(value) {
+                let u_ids = value.map(u => u.id);
+                this.task_users = this.task_users.filter(u => u_ids.includes(u.id));
+              }, deep: true
+            }
+          },
+          template: `<div v-if="!loading" class="user_multiselect">
+            <multiselect
+              v-model="task_users"
+              track-by="id"
+              label="full_name"
+              placeholder="Search and select users"
+              :options="project_users"
+              :searchable="true"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              :close-on-select="false"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.full_name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>`
+        });
+
+        // on chnage project
+        $("body").on('change', ".__batch_task_form select[name=Project]", function() {
+          $.Vue_users_select && $.Vue_users_select.setProjectId();
         });
       }
     });

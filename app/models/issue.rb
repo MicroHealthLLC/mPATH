@@ -13,8 +13,8 @@ class Issue < ApplicationRecord
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
 
-  scope :complete, -> { where("progress = ?", 100) }
-  scope :incomplete, -> { where("progress < ?", 100) }
+  scope :complete, -> {where("progress = ?", 100)}
+  scope :incomplete, -> {where("progress < ?", 100)}
 
   def to_json
     attach_files = []
@@ -33,7 +33,7 @@ class Issue < ApplicationRecord
       issue_type: self.issue_type.try(:name),
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
-      checklists: self.checklists
+      checklists: self.checklists.as_json(include: {user: {methods: :full_name}})
     ).as_json
   end
 end

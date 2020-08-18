@@ -30,6 +30,7 @@ ActiveAdmin.register Task do
         :id,
         :_destroy,
         :text,
+        :user_id,
         :checked
       ]
     ]
@@ -40,7 +41,11 @@ ActiveAdmin.register Task do
     selectable_column if current_user.admin_delete?
     column "Name", :text
     column :task_type, nil, sortable: 'task_types.name' do |task|
-      raw "<a href='#{edit_admin_task_type_path(task.task_type)}'>#{task.task_type.name}</a>" if task.task_type.present?
+      if current_user.admin_write?
+        link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
+      else
+        "<span>#{task.task_type&.name}</span>".html_safe
+      end
     end
     column :start_date
     column :due_date
@@ -97,6 +102,7 @@ ActiveAdmin.register Task do
       f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
+        c.input :user_id, as: :select, label: 'Assigned To', collection: User.where(id: f.object.user_ids).map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
       end
       f.input :notes, label: 'Description'
       f.input :task_files, as: :file, input_html: {multiple: true}

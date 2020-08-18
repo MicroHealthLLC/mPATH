@@ -78,7 +78,7 @@
       },
       detailShowHide(task=null) {
         this.currentTask = task
-        this.showDetails = false;
+        this.showDetails = false
       }
     },
     computed: {

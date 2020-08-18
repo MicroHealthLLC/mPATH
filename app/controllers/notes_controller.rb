@@ -10,6 +10,7 @@ class NotesController < AuthenticatedController
   end
 
   def update
+    destroy_files_first if destroy_file_ids.present?
     if @note.update(note_params)
       render json: @note.to_json, status: 200
     else
@@ -24,21 +25,20 @@ class NotesController < AuthenticatedController
     render json: {}, status: 500
   end
 
-  def destroy_file
-    file = @note.note_files.find_by(id: file_params[:id])
-    file.purge if file.present?
-    render json: {note: @note.to_json}
-  end
-
   private
   def note_params
     params.require(:note).permit(
+      :id,
       :body,
       note_files: []
     )
   end
 
-  def file_params
-    params.require(:file).permit(:id, :uri)
+  def destroy_file_ids
+    params[:note][:destroy_file_ids].split(',').map(&:to_i)
+  end
+
+  def destroy_files_first
+    @note.note_files.where(id: destroy_file_ids).map(&:purge)
   end
 end

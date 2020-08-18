@@ -103,6 +103,50 @@
                 </p>
               </div>
               <hr>
+              <div class="my-1">
+                <h5 class="text-center">{{DV_facility.issues.length}} Issues</h5>
+                <div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Complete</span>
+                      <span class="badge badge-secondary badge-pill">{{completedIssues.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': completedIssues.avg <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${completedIssues.avg}%`">{{completedIssues.avg}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Incomplete</span>
+                      <span class="badge badge-secondary badge-pill">{{incompletedIssues.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': incompletedIssues.avg <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${incompletedIssues.avg}%`">{{incompletedIssues.avg}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="issueStats.length > 0">
+                <div class="text-info font-weight-bold text-center">Issue Types</div>
+                <p>
+                  <div class="row my-2" v-for="issue in issueStats">
+                    <div class="col-md-9 font-md">
+                      <span>{{issue.name}}</span>
+                      <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                </p>
+              </div>
+              <hr>
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
                 <span>{{DV_facility.address || 'N/A'}}</span>
@@ -129,7 +173,7 @@
             <notes-index
               :facility="DV_facility"
               @refresh-facility="refreshFacility"
-            />
+            ></notes-index>
           </div>
         </tab>
         <tab title="Tasks" key="tasks">
@@ -137,14 +181,14 @@
             <detail-show
               :facility="DV_facility"
               @refresh-facility="refreshFacility"
-            />
+            ></detail-show>
           </div>
         </tab>
         <tab title="Issues" key="issues">
           <issue-index
             :facility="DV_facility"
             @refresh-facility="refreshFacility"
-          />
+          ></issue-index>
         </tab>
       </tabs>
     </div>
@@ -183,7 +227,6 @@
       return {
         loading: true,
         DV_updated: false,
-        newNote: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null
@@ -226,21 +269,6 @@
         this.loading = true
         this.fetchFacility({cb: true})
       },
-      noteCreated(note) {
-        this.newNote = false
-        this.DV_facility.notes.unshift(note)
-      },
-      noteUpdated(note) {
-        var index = this.DV_facility.notes.findIndex(n=> n.id == note.id)
-        if (index > -1) {
-          this.DV_facility.notes[index] = note
-        }
-        this.$forceUpdate()
-      },
-      noteDeleted(note) {
-        _.remove(this.DV_facility.notes, (n) => n.id == note.id)
-        this.$forceUpdate()
-      },
       isBlockedStatus(status) {
         return status && status.name.toLowerCase().includes('complete') && this.DV_facility.progress < 100
       },
@@ -254,14 +282,6 @@
       ...mapGetters([
         'currentProject'
       ]),
-      filteredNotes() {
-        if (this.notesQuery.trim() !== '') {
-          const resp = new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i')
-          const isMatch = (result) => resp.test(result.body)
-          return _.filter(this.DV_facility.notes, isMatch)
-        }
-        return this.DV_facility.notes;
-      },
       taskStats() {
         var tasks = new Array
         var group = _.groupBy(this.DV_facility.tasks, 'taskType')
@@ -286,6 +306,32 @@
         return {
           count: incompleted.length,
           avg: this.getAverage(incompleted.length, this.DV_facility.tasks.length)
+        }
+      },
+      issueStats() {
+        var issues = new Array
+        var group = _.groupBy(this.DV_facility.issues, 'issueType')
+        for (var type in group) {
+          issues.push({
+            name: type,
+            count: group[type].length,
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+          })
+        }
+        return issues
+      },
+      completedIssues() {
+        var completed = _.filter(this.DV_facility.issues, (t) => t && t.progress && t.progress == 100)
+        return {
+          count: completed.length,
+          avg: this.getAverage(completed.length, this.DV_facility.issues.length)
+        }
+      },
+      incompletedIssues() {
+        var incompleted = _.filter(this.DV_facility.issues, (t) => t == undefined || t.progress == null || t.progress != 100)
+        return {
+          count: incompleted.length,
+          avg: this.getAverage(incompleted.length, this.DV_facility.issues.length)
         }
       },
       _isallowed() {

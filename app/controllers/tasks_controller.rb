@@ -1,6 +1,6 @@
 class TasksController < AuthenticatedController
   before_action :set_resources
-  before_action :set_task, only: [:show, :update, :destroy, :destroy_file]
+  before_action :set_task, only: [:show, :update, :destroy]
 
   def index
     render json: {tasks: @facility_project.tasks.map(&:to_json)}
@@ -12,6 +12,7 @@ class TasksController < AuthenticatedController
   end
 
   def update
+    destroy_files_first if destroy_file_ids.present?
     @task.update(task_params)
     render json: {task: @task.to_json}
   end
@@ -25,12 +26,6 @@ class TasksController < AuthenticatedController
     render json: {}, status: 200
   rescue
     render json: {}, status: 500
-  end
-
-  def destroy_file
-    file = @task.task_files.find_by(id: file_params[:id])
-    file.purge if file.present?
-    render json: {task: @task.to_json}
   end
 
   private
@@ -58,12 +53,17 @@ class TasksController < AuthenticatedController
         :id,
         :_destroy,
         :text,
+        :user_id,
         :checked
       ]
     )
   end
 
-  def file_params
-    params.require(:file).permit(:id, :uri)
+  def destroy_file_ids
+    params[:task][:destroy_file_ids].split(',').map(&:to_i)
+  end
+
+  def destroy_files_first
+    @task.task_files.where(id: destroy_file_ids).map(&:purge)
   end
 end

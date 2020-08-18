@@ -350,7 +350,7 @@ export default {
           {
             name: type,
             length: types[type].length,
-            progress: _.meanBy(types[type], 'progress')
+            progress: Number(_.meanBy(types[type], 'progress').toFixed(2))
           }
         )
       }

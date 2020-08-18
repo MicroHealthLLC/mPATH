@@ -1,22 +1,27 @@
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-3">
-        <div class="task-filters mx-2" :class="{'w-75': _isallowed('write'), 'w-100': !_isallowed('write') }">
-          <select
-            name="Task Type"
-            class="form-control form-control-sm"
-            v-model="filters.taskType"
+      <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+        <div class="simple-select w-100">
+          <multiselect
+            v-model="C_taskTypeFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Task Type"
+            :options="taskTypes"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
             >
-            <option selected value="">Filter by Task Type</option>
-            <option v-for="opt in taskTypes" :value="opt.id">
-              {{opt.name}}
-            </option>
-          </select>
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
-        <div v-if="_isallowed('write')" class="new-tasks-btn mr-2">
-          <a class="btn btn-sm btn-light" href="javascript:;" @click.prevent.stop="addNewTask">Add Task</a>
-        </div>
+        <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button>
       </div>
       <div class="m-3">
         <div class="form-check-inline">
@@ -87,19 +92,20 @@
 </template>
 
 <script>
+  import {mapGetters, mapMutations} from "vuex"
   export default {
     name: 'TasksIndex',
     props: ['facility', 'project', 'taskTypes'],
     data() {
       return {
         DV_project: this.project,
-        filters: {
-          taskType: ''
-        },
         viewList: 'active'
       }
     },
     methods: {
+      ...mapMutations([
+        'setTaskTypeFilter'
+      ]),
       addNewTask() {
         this.$emit('show-hide')
       },
@@ -114,13 +120,17 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'taskTypeFilter'
+      ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredTasks() {
+        var typeIds = _.map(this.C_taskTypeFilter, 'id')
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           var valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (this.filters.taskType) valid = valid && task.taskTypeId == this.filters.taskType
+          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           switch (this.viewList) {
             case "active": {
               valid = valid && task.progress < 100
@@ -138,7 +148,15 @@
         }), ['dueDate'])
 
         return tasks
-      }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
     },
     watch: {
       project: {
@@ -153,8 +171,8 @@
 
 <style lang="scss" scoped>
   .new-tasks-btn {
-    display: flex;
-    justify-content: flex-end;
+    height: max-content;
+    width: 20%;
   }
   .t_actions span {
     font-size: 13px;

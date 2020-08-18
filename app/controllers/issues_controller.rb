@@ -1,6 +1,6 @@
 class IssuesController < AuthenticatedController
   before_action :set_resources
-  before_action :set_issue, only: [:show, :update, :destroy, :destroy_file]
+  before_action :set_issue, only: [:show, :update, :destroy]
 
   def index
     render json: {issues: @facility_project.issues.map(&:to_json)}
@@ -12,6 +12,7 @@ class IssuesController < AuthenticatedController
   end
 
   def update
+    destroy_files_first if destroy_file_ids.present?
     @issue.update(issue_params)
     render json: {issue: @issue.to_json}
   end
@@ -25,12 +26,6 @@ class IssuesController < AuthenticatedController
     render json: {}, status: 200
   rescue
     render json: {}, status: 500
-  end
-
-  def destroy_file
-    file = @issue.issue_files.find_by(id: file_params[:id])
-    file.purge if file.present?
-    render json: {issue: @issue.to_json}
   end
 
   private
@@ -59,12 +54,17 @@ class IssuesController < AuthenticatedController
         :id,
         :_destroy,
         :text,
+        :user_id,
         :checked
       ]
     )
   end
 
-  def file_params
-    params.require(:file).permit(:id, :uri)
+  def destroy_file_ids
+    params[:issue][:destroy_file_ids].split(',').map(&:to_i)
+  end
+
+  def destroy_files_first
+    @issue.issue_files.where(id: destroy_file_ids).map(&:purge)
   end
 end

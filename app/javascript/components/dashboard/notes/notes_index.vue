@@ -58,15 +58,11 @@
         this.DV_facility.notes.unshift(note)
       },
       noteUpdated(note) {
-        var index = this.DV_facility.notes.findIndex(n=> n.id == note.id)
-        if (index > -1) {
-          this.DV_facility.notes[index] = note
-        }
-        this.$forceUpdate()
+        var index = this.DV_facility.notes.findIndex(n => n.id == note.id)
+        if (index > -1) Vue.set(this.DV_facility.notes, index, note)
       },
       noteDeleted(note) {
-        _.remove(this.DV_facility.notes, (n) => n.id == note.id)
-        this.$forceUpdate()
+        this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }
     },
     computed: {

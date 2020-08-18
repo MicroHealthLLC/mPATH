@@ -19,30 +19,48 @@
       />
     </div>
     <div v-else>
-      <div class="d-flex justify-content-between">
-        <div class="issue-filters ml-2 d-flex justify-content-between align-items-center" :class="{'w-70': _isallowed('write'), 'w-100': !_isallowed('write') }">
-          <select
-            name="Issue Type"
-            class="form-control form-control-sm"
-            v-model="filters.issueType"
-            >
-            <option selected value="">Filter by Issue Type</option>
-            <option v-for="opt in issueTypes" :value="opt.id">
-              {{opt.name}}
-            </option>
-          </select>
-          <select
-            name="Issue Severity"
-            class="form-control form-control-sm ml-2"
-            v-model="filters.issueSeverity"
-            >
-            <option selected value="">Filter by Issue Severity</option>
-            <option v-for="opt in issueSeverities" :value="opt.id">
-              {{opt.name}}
-            </option>
-          </select>
+      <div class="d-flex align-item-center justify-content-between">
+        <div class="d-flex w-100">
+          <div class="simple-select w-100 mr-2">
+            <multiselect
+              v-model="C_issueTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Issue Type"
+              :options="issueTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+          <div class="simple-select w-100 mr-2">
+            <multiselect
+              v-model="C_issueSeverityFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Issue Severity"
+              :options="issueSeverities"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
         </div>
-        <button v-if="_isallowed('write')" class="btn btn-sm btn-light" @click.stop="reportNew">Report an Issue</button>
+        <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-light" @click.prevent="reportNew">Add Issue</button>
       </div>
       <div class="m-3">
         <div class="form-check-inline">
@@ -86,7 +104,7 @@
   import http from './../../../common/http'
   import IssueForm from './issue_form'
   import IssueShow from './issue_show'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'ProjectShow',
@@ -98,17 +116,17 @@
         loading: true,
         newIssue: false,
         viewList: 'active',
-        currentIssue: null,
-        filters: {
-          issueType: '',
-          issueSeverity: ''
-        }
+        currentIssue: null
       }
     },
     mounted() {
-      this.loading= false
+      this.loading = false
     },
     methods: {
+       ...mapMutations([
+        'setIssueTypeFilter',
+        'setIssueSeverityFilter'
+      ]),
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
         this.newIssue = false
@@ -144,15 +162,19 @@
         'currentProject',
         'issueTypes',
         'issueSeverities',
+        'issueTypeFilter',
+        'issueSeverityFilter'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       filteredIssues() {
+        var typeIds = _.map(this.C_issueTypeFilter, 'id')
+        var severityIds = _.map(this.C_issueSeverityFilter, 'id')
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.filters.issueType) valid = valid && issue.issueTypeId == this.filters.issueType
-          if (this.filters.issueSeverity) valid = valid && issue.issueSeverityId == this.filters.issueSeverity
+          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
             case "active": {
               valid = valid && issue.progress < 100
@@ -170,11 +192,30 @@
         })), ['dueDate'])
 
         return issues
-      }
+      },
+      C_issueTypeFilter: {
+        get() {
+          return this.issueTypeFilter
+        },
+        set(value) {
+          this.setIssueTypeFilter(value)
+        }
+      },
+      C_issueSeverityFilter: {
+        get() {
+          return this.issueSeverityFilter
+        },
+        set(value) {
+          this.setIssueSeverityFilter(value)
+        }
+      },
     }
   }
 </script>
 
 <style lang="scss" scoped>
-
+  .new-issue-btn {
+    width: 20%;
+    height: max-content;
+  }
 </style>

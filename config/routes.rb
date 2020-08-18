@@ -23,15 +23,9 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
     resources :facilities do
-      resources :issues do
-        put :destroy_file, on: :member
-      end
-      resources :notes, module: :facilities do
-        put :destroy_file, on: :member
-      end
-      resources :tasks do
-        put :destroy_file, on: :member
-      end
+      resources :issues
+      resources :notes, module: :facilities
+      resources :tasks
     end
   end
   resources :facilities, only: [] do
