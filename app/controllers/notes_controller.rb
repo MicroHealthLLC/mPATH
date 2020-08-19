@@ -35,10 +35,10 @@ class NotesController < AuthenticatedController
   end
 
   def destroy_file_ids
-    params[:note][:destroy_file_ids].split(',').map(&:to_i)
+    params[:note][:destroy_file_ids]&.split(',')&.map(&:to_i)
   end
 
   def destroy_files_first
-    @note.note_files.where(id: destroy_file_ids).map(&:purge)
+    @note.note_files.where(id: destroy_file_ids)&.map(&:purge)
   end
 end

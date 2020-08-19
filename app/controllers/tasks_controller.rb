@@ -60,10 +60,10 @@ class TasksController < AuthenticatedController
   end
 
   def destroy_file_ids
-    params[:task][:destroy_file_ids].split(',').map(&:to_i)
+    params[:task][:destroy_file_ids]&.split(',')&.map(&:to_i)
   end
 
   def destroy_files_first
-    @task.task_files.where(id: destroy_file_ids).map(&:purge)
+    @task.task_files.where(id: destroy_file_ids)&.map(&:purge)
   end
 end

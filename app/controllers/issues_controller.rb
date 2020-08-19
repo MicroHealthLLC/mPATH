@@ -61,10 +61,10 @@ class IssuesController < AuthenticatedController
   end
 
   def destroy_file_ids
-    params[:issue][:destroy_file_ids].split(',').map(&:to_i)
+    params[:issue][:destroy_file_ids]&.split(',')&.map(&:to_i)
   end
 
   def destroy_files_first
-    @issue.issue_files.where(id: destroy_file_ids).map(&:purge)
+    @issue.issue_files.where(id: destroy_file_ids)&.map(&:purge)
   end
 end

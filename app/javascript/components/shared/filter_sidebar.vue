@@ -2,7 +2,7 @@
   <div id="filterbar" :style="filterBarStyle">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
-        <button @click.prevent="exportData" :disabled="!enableExport && !exporting" class="btn btn-sm btn-link">export</button>
+        <button @click.prevent="exportData" :disabled="!enableExport || exporting" class="btn btn-sm btn-link">export</button>
         <h4>Filter View</h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
@@ -253,7 +253,8 @@
         'issueTypes',
         'issueSeverities',
         'unFilterFacilities',
-        'filterFacilitiesWithActiveFacilityGroups'
+        'filterFacilitiesWithActiveFacilityGroups',
+        'ganttData'
       ]),
       enableExport() {
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
@@ -348,6 +349,12 @@
         return {
           transform: 'translateX(-320px)'
         }
+      },
+      isMapView() {
+        return this.$route.name === 'ProjectMapView'
+      },
+      isGanttView() {
+        return this.$route.name === 'ProjectGanttChart'
       }
     },
     methods: {
@@ -412,7 +419,10 @@
       exportData() {
         if (!this.enableExport || this.exporting) return;
         this.exporting = true
-
+        if (this.isMapView) this.exportMapData()
+        else if (this.isGanttView) this.exportGanttData()
+      },
+      exportMapData() {
         try {
           var filters = [`Map Filters: ${this.currentProject.name} \n
             Facility Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
@@ -445,6 +455,30 @@
           var wb = XLSX.utils.book_new()
           var ws = XLSX.utils.aoa_to_sheet(new Array(filters))
           XLSX.utils.sheet_add_json(ws, ex_data, {header: header,  origin: "A3"})
+          XLSX.utils.book_append_sheet(wb, ws, "MGIS")
+          XLSX.writeFile(wb, `${this.random()}.xlsx`)
+          this.exporting = false
+        }
+        catch(err) {
+          console.error(err)
+        }
+      },
+      exportGanttData() {
+        try {
+          var header = ["Name", "Duration", "% Complete", "Start Date", "End Date"]
+          var ex_data = []
+          for (var facility of this.ganttData) {
+            ex_data.push({
+              "Name": facility.name,
+              "Duration": facility.durationInDays,
+              "% Complete": facility.progress,
+              "Start Date": this.formatDate(facility.startDate),
+              "End Date": this.formatDate(facility.endDate)
+            })
+          }
+
+          var wb = XLSX.utils.book_new()
+          var ws = XLSX.utils.json_to_sheet(ex_data, {header: header})
           XLSX.utils.book_append_sheet(wb, ws, "MGIS")
           XLSX.writeFile(wb, `${this.random()}.xlsx`)
           this.exporting = false

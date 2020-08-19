@@ -208,7 +208,7 @@ export default new Vuex.Store({
       return _.filter(group.facilities, f => ids.includes(f.facilityId) && f.projectId === getters.currentProject.id)
     },
 
-    // gantt chart view
+    // for gantt chart view
     ganttData: (state, getters) => {
       var hash = new Array
 
