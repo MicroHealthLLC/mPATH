@@ -465,15 +465,17 @@
       },
       exportGanttData() {
         try {
-          var header = ["Name", "Duration", "% Complete", "Start Date", "End Date"]
+          var header = ["Sr.", "Name", "Duration", "% Complete", "Start Date", "End Date", "Assigned To"]
           var ex_data = []
-          for (var facility of this.ganttData) {
+          for (var row of this.ganttData) {
             ex_data.push({
-              "Name": facility.name,
-              "Duration": facility.durationInDays,
-              "% Complete": facility.progress,
-              "Start Date": this.formatDate(facility.startDate),
-              "End Date": this.formatDate(facility.endDate)
+              "Sr.": row._id,
+              "Name": row.name,
+              "Duration": row.durationInDays,
+              "% Complete": row.progress,
+              "Start Date": this.formatDate(row.startDate),
+              "End Date": this.formatDate(row.endDate),
+              "Assigned To": row._users ? row._users.join(', ') : ''
             })
           }
 

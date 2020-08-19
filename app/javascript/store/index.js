@@ -214,6 +214,7 @@ export default new Vuex.Store({
 
       // for project
       var p_id = `p_${getters.currentProject.id}`
+      var _p_id = '1'
       var p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
       var p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
       var p_duration = getSimpleDate(p_e_date) - getSimpleDate(p_s_date) || 0
@@ -222,6 +223,7 @@ export default new Vuex.Store({
       hash.push(
         {
           id: p_id,
+          _id: _p_id,
           name: getters.currentProject.name,
           duration: p_duration,
           durationInDays: `${Math.ceil(p_duration / (1000 * 3600 * 24)) || 0} days`,
@@ -235,7 +237,9 @@ export default new Vuex.Store({
 
       // for facility_groups
       var groups = _.groupBy(getters.filterFacilitiesWithActiveFacilityGroups, 'facilityGroupName')
+      var group_count = 1
       for (var group in groups) {
+        var _fg_id = _p_id + "." + group_count
         var fg_id = `${p_id}_fg_${group}`.replace(/ /i, '_')
         var fg_tasks = _.flatten(_.map(groups[group], 'tasks'))
         var fg_s_date = _.min(_.map(fg_tasks, 'startDate')) || 'N/A'
@@ -246,6 +250,7 @@ export default new Vuex.Store({
         hash.push(
           {
             id: fg_id,
+            _id: _fg_id,
             parentId: p_id,
             name: group,
             duration: fg_duration,
@@ -260,8 +265,10 @@ export default new Vuex.Store({
 
         var f_read = Vue.prototype.$permissions.overview.read || false
         // for facilities under facility_groups
+        var facility_count = 1
         for (var facility of groups[group]) {
           var f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id
+          var _f_id = _fg_id + "." + facility_count
           var f_s_date = _.min(_.map(facility.tasks, 'startDate')) || 'N/A'
           var f_e_date = _.max(_.map(facility.tasks, 'dueDate')) || 'N/A'
           var f_duration = getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0
@@ -270,6 +277,7 @@ export default new Vuex.Store({
           hash.push(
             {
               id: f_id,
+              _id: _f_id,
               parentId: fg_id,
               name: facility.facility.facilityName,
               duration: f_duration,
@@ -287,10 +295,12 @@ export default new Vuex.Store({
             // for task_types under facilities
             var types = _.groupBy(facility.tasks, 'taskType')
             var filteredTaskTypes = _.map(getters.taskTypeFilter, 'name')
+            var types_count = 1
             for (var type in types) {
               if (filteredTaskTypes.length > 0 && !filteredTaskTypes.includes(type)) continue
               var tasks = types[type]
               var tt_id = `${f_id}_tt_${type}`.replace(/ /i, '_')
+              var _tt_id = _f_id + "." + types_count
               var tt_s_date = _.min(_.map(tasks, 'startDate'))
               var tt_e_date = _.max(_.map(tasks, 'dueDate'))
               var tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
@@ -299,6 +309,7 @@ export default new Vuex.Store({
               hash.push(
                 {
                   id: tt_id,
+                  _id: _tt_id,
                   parentId: f_id,
                   name: type,
                   duration: tt_duration,
@@ -314,6 +325,7 @@ export default new Vuex.Store({
               var ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
 
               // for tasks under task_types
+              var task_count = 1
               for (var task of tasks) {
                 if (ranges && ranges.length > 0) {
                   let is_valid = false
@@ -324,6 +336,7 @@ export default new Vuex.Store({
                   if (!is_valid) continue
                 }
                 var t_id = `${tt_id}_t_${task.id}`
+                var _t_id = _tt_id + "." + task_count
                 var t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
 
                 hash.push(
@@ -332,6 +345,7 @@ export default new Vuex.Store({
                     facilityId: facility.id,
                     projectId: getters.currentProject.id,
                     id: t_id,
+                    _id: _t_id,
                     parentId: tt_id,
                     name: task.text,
                     duration: t_duration,
@@ -340,17 +354,21 @@ export default new Vuex.Store({
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
+                    _users: task.users,
                     type: 'task',
                     collapsed: true
                   }
                 )
 
                 // for checklists under tasks
+                var checklist_count = 1
                 for (var checklist of task.checklists) {
                   var c_id = `${t_id}_t_${checklist.id}`
+                  var _c_id = _t_id + "." + checklist_count
                   hash.push(
                     {
                       id: c_id,
+                      _id: _c_id,
                       parentId: t_id,
                       name: checklist.text,
                       duration: t_duration,
@@ -360,14 +378,20 @@ export default new Vuex.Store({
                       startDate: task.startDate,
                       endDate: task.dueDate,
                       type: 'task',
-                      dependentOn: [t_id]
+                      dependentOn: [t_id],
+                      _users: checklist.user ? [checklist.user.fullName] : null
                     }
                   )
+                  checklist_count++
                 }
+                task_count++
               }
+              types_count++
             }
           }
+          facility_count++
         }
+        group_count++
       }
 
       return hash

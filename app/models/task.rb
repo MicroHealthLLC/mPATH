@@ -32,6 +32,7 @@ class Task < ApplicationRecord
       attach_files: attach_files,
       task_type: self.task_type.try(:name),
       user_ids: self.users.pluck(:id),
+      users: self.users.map(&:full_name),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}})
     ).as_json
   end
