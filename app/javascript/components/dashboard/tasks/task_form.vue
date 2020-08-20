@@ -1,205 +1,210 @@
 <template>
-  <form
-    id="tasks-form"
-    @submit.prevent="saveTask"
-    class="mx-auto"
-    accept-charset="UTF-8"
-    >
-    <h5 class="title d-flex justify-content-center">{{title}}</h5>
-    <div
-      v-if="showErrors"
-      class="text-danger mb-3"
+  <div>
+    <form
+      id="tasks-form"
+      @submit.prevent="saveTask"
+      class="mx-auto"
+      :class="{'_disabled': loading}"
+      accept-charset="UTF-8"
       >
-      Please fill the required fields before submitting
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Name:</label>
-      <input
-        name="Name"
-        v-validate="'required'"
-        type="text"
-        class="form-control form-control-sm"
-        v-model="DV_task.text"
-        placeholder="Task Name"
-        :class="{'form-control': true, 'error': errors.has('Name') }"
-      />
-      <div v-show="errors.has('Name')" class="text-danger">
-        {{errors.first('Name')}}
-      </div>
-    </div>
-    <div class="simple-select form-group mx-4">
-      <label class="font-sm">Task Type:</label>
-      <multiselect
-        v-model="selectedTaskType"
-        v-validate="'required'"
-        track-by="id"
-        label="name"
-        placeholder="Task Type"
-        :options="taskTypes"
-        :searchable="false"
-        select-label="Select"
-        deselect-label="Remove"
-        :class="{'error': errors.has('Task Type')}"
+      <h5 class="title d-flex justify-content-center">{{title}}</h5>
+      <div
+        v-if="showErrors"
+        class="text-danger mb-3"
         >
-        <template slot="singleLabel" slot-scope="{option}">
-          <div class="d-flex">
-            <span class='select__tag-name'>{{option.name}}</span>
-          </div>
-        </template>
-      </multiselect>
-      <div v-show="errors.has('Task Type')" class="text-danger">
-        {{errors.first('Task Type')}}
+        Please fill the required fields before submitting
       </div>
-    </div>
-    <div class="form-row mx-4">
-      <div class="form-group col-md-6 pl-0">
-        <label class="font-sm">Start Date:</label>
-        <v2-date-picker
+      <div class="form-group mx-4">
+        <label class="font-sm">Name:</label>
+        <input
+          name="Name"
           v-validate="'required'"
-          v-model="DV_task.startDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="DD MM YYYY"
-          name="Start Date"
-          class="w-100 vue2-datepicker"
-          :disabled-date="disabledStartDate"
+          type="text"
+          class="form-control form-control-sm"
+          v-model="DV_task.text"
+          placeholder="Task Name"
+          :class="{'form-control': true, 'error': errors.has('Name') }"
         />
-        <div v-show="errors.has('Start Date')" class="text-danger">
-          {{errors.first('Start Date')}}
+        <div v-show="errors.has('Name')" class="text-danger">
+          {{errors.first('Name')}}
         </div>
       </div>
-      <div class="form-group col-md-6 pr-0">
-        <label class="font-sm">Due Date:</label>
-        <v2-date-picker
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Task Type:</label>
+        <multiselect
+          v-model="selectedTaskType"
           v-validate="'required'"
-          v-model="DV_task.dueDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="DD MM YYYY"
-          name="Due Date"
-          class="w-100 vue2-datepicker"
-          :disabled="DV_task.startDate === '' || DV_task.startDate === null"
-          :disabled-date="disabledDueDate"
-        />
-        <div v-show="errors.has('Due Date')" class="text-danger">
-          {{errors.first('Due Date')}}
+          track-by="id"
+          label="name"
+          placeholder="Task Type"
+          :options="taskTypes"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Remove"
+          :class="{'error': errors.has('Task Type')}"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Task Type')" class="text-danger">
+          {{errors.first('Task Type')}}
         </div>
       </div>
-    </div>
-    <div class="form-group user-select mx-4">
-      <label class="font-sm mb-0">Assign Users:</label>
-      <multiselect
-        v-model="taskUsers"
-        track-by="id"
-        label="fullName"
-        placeholder="Search and select users"
-        :options="projectUsers"
-        :searchable="true"
-        :multiple="true"
-        select-label="Select"
-        deselect-label="Remove"
-        :close-on-select="false"
-        >
-        <template slot="singleLabel" slot-scope="{option}">
-          <div class="d-flex">
-            <span class='select__tag-name'>{{option.fullName}}</span>
-          </div>
-        </template>
-      </multiselect>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm mb-0">Progress: (in %)</label>
-      <span class="ml-3">
-        <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-      </span>
-      <vue-slide-bar
-        v-model="DV_task.progress"
-        :line-height="8"
-        :is-disabled="DV_task.autoCalculate"
-        :draggable="!DV_task.autoCalculate"
-      ></vue-slide-bar>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Checklists:</label>
-      <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
-      <div v-if="filteredChecks.length > 0">
-        <div v-for="(check, index) in DV_task.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy">
-          <div class="form-control h-100" :key="index">
-            <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
-            <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
-            <div class="simple-select form-group m-0">
-              <label class="font-sm">Assigned To:</label>
-              <multiselect
-                v-model="check.user"
-                track-by="id"
-                label="fullName"
-                placeholder="Search and select users"
-                :options="taskUsers"
-                :searchable="true"
-                select-label="Select"
-                deselect-label="Remove"
-                >
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-          </div>
-          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
-        </div>
-      </div>
-      <p v-else class="text-danger font-sm">No checks..</p>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Description:</label>
-      <textarea
-        class="form-control"
-        placeholder="task brief description"
-        v-model="DV_task.notes"
-        rows="4"
-      />
-    </div>
-    <div class="mx-4">
-      <div class="input-group mb-2">
-        <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
-          <div class="input-group-prepend">
-            <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
-              <i class="fas fa-file-image"></i>
-            </div>
-          </div>
-          <input
-            readonly
-            type="text"
-            class="form-control form-control-sm mw-95"
-            :value="file.name || file.uri"
+      <div class="form-row mx-4">
+        <div class="form-group col-md-6 pl-0">
+          <label class="font-sm">Start Date:</label>
+          <v2-date-picker
+            v-validate="'required'"
+            v-model="DV_task.startDate"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            name="Start Date"
+            class="w-100 vue2-datepicker"
+            :disabled-date="disabledStartDate"
           />
-          <div
-            class="del-check clickable"
-            @click.prevent="deleteFile(file)"
-            >
-            <i class="fas fa-times"></i>
+          <div v-show="errors.has('Start Date')" class="text-danger">
+            {{errors.first('Start Date')}}
+          </div>
+        </div>
+        <div class="form-group col-md-6 pr-0">
+          <label class="font-sm">Due Date:</label>
+          <v2-date-picker
+            v-validate="'required'"
+            v-model="DV_task.dueDate"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            name="Due Date"
+            class="w-100 vue2-datepicker"
+            :disabled="DV_task.startDate === '' || DV_task.startDate === null"
+            :disabled-date="disabledDueDate"
+          />
+          <div v-show="errors.has('Due Date')" class="text-danger">
+            {{errors.first('Due Date')}}
           </div>
         </div>
       </div>
-    </div>
-    <div class="form-group mx-4" >
-      <label class="font-sm">Files:</label>
-      <attachment-input
-        @input="addFile"
-        :show-label="true"
-      />
-    </div>
-    <div class="d-flex form-group mt-4 ml-4">
-      <button
-        :disabled="!readyToSave"
-        class="btn btn-success"
-        >
-        Save
-      </button>
-    </div>
-  </form>
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Assign Users:</label>
+        <multiselect
+          v-model="taskUsers"
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="projectUsers"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm mb-0">Progress: (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"
+          :is-disabled="DV_task.autoCalculate"
+          :draggable="!DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm">Checklists:</label>
+        <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+        <div v-if="filteredChecks.length > 0">
+          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy && isMyCheck(check)">
+            <div class="form-control h-100" :key="index">
+              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
+              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+              <div class="simple-select form-group m-0">
+                <label class="font-sm">Assigned To:</label>
+                <multiselect
+                  v-model="check.user"
+                  track-by="id"
+                  label="fullName"
+                  placeholder="Search and select users"
+                  :options="taskUsers"
+                  :searchable="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </div>
+            <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
+          </div>
+        </div>
+        <p v-else class="text-danger font-sm">No checks..</p>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm">Description:</label>
+        <textarea
+          class="form-control"
+          placeholder="task brief description"
+          v-model="DV_task.notes"
+          rows="4"
+        />
+      </div>
+      <div class="mx-4">
+        <div class="input-group mb-2">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+            <div class="input-group-prepend">
+              <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                <i class="fas fa-file-image"></i>
+              </div>
+            </div>
+            <input
+              readonly
+              type="text"
+              class="form-control form-control-sm mw-95"
+              :value="file.name || file.uri"
+            />
+            <div
+              :class="{'_disabled': loading}"
+              class="del-check clickable"
+              @click.prevent="deleteFile(file)"
+              >
+              <i class="fas fa-times"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group mx-4" >
+        <label class="font-sm">Files:</label>
+        <attachment-input
+          @input="addFile"
+          :show-label="true"
+        />
+      </div>
+      <div class="d-flex form-group mt-4 ml-4">
+        <button
+          :disabled="!readyToSave"
+          class="btn btn-success"
+          >
+          Save
+        </button>
+      </div>
+    </form>
+    <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
+  </div>
 </template>
 
 <script>
@@ -230,7 +235,8 @@
         selectedTaskType: null,
         taskUsers: [],
         _ismounted: false,
-        showErrors: false
+        showErrors: false,
+        loading: true
       }
     },
     mounted() {
@@ -240,6 +246,7 @@
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.addFile(this.task.attachFiles)
       }
+      this.loading = false
       this._ismounted = true
     },
     methods: {
@@ -268,11 +275,12 @@
       saveTask() {
         this.$validator.validate().then((success) =>
         {
-          if (!success) {
-            this.showErrors = true
+          if (!success || this.loading) {
+            this.showErrors = !success
             return;
           }
 
+          this.loading = true
           var formData = new FormData()
           formData.append('task[text]', this.DV_task.text)
           formData.append('task[due_date]', this.DV_task.dueDate)
@@ -320,11 +328,14 @@
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
             }
           })
-          .then((response)=> {
+          .then((response) => {
             this.$emit(callback, humps.camelizeKeys(response.data.task))
           })
-          .catch((err)=> {
+          .catch((err) => {
             console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
           })
         })
       },
@@ -371,12 +382,16 @@
         } else if (name === 'check' && this.DV_task.checklists[index].text) {
           this.DV_task.checklists[index].checked = event.target.checked
         }
+      },
+      isMyCheck(check) {
+        return this.C_myTasks && check.id ? check.user.id == this.$currentUser.id : true
       }
     },
     computed: {
       ...mapGetters([
         'currentProject',
-        'projectUsers'
+        'projectUsers',
+        'myActionsFilter'
       ]),
       readyToSave() {
         return (
@@ -392,6 +407,9 @@
       },
       filteredFiles() {
         return _.filter(this.DV_task.taskFiles, f => !f._destroy)
+      },
+      C_myTasks() {
+        return _.map(this.myActionsFilter, 'value').includes('tasks')
       }
     },
     watch: {

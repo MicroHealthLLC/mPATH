@@ -39,6 +39,11 @@
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
         </div>
+        <div class="form-check-inline ml-5">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+          </label>
+        </div>
       </div>
       <ul v-if="filteredTasks.length > 0" class="list-group mx-2 rounded-lg">
         <li
@@ -104,7 +109,8 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskTypeFilter'
+        'setTaskTypeFilter',
+        'setMyActionsFilter'
       ]),
       addNewTask() {
         this.$emit('show-hide')
@@ -115,13 +121,13 @@
       deleteTask(task) {
         var confirm = window.confirm(`Are you sure, you want to delete "${task.text}"?`)
         if (!confirm) return;
-
         this.$emit('delete-task', task)
       }
     },
     computed: {
       ...mapGetters([
-        'taskTypeFilter'
+        'taskTypeFilter',
+        'myActionsFilter'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
@@ -130,6 +136,10 @@
         var typeIds = _.map(this.C_taskTypeFilter, 'id')
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           var valid = Boolean(task && task.hasOwnProperty('progress'))
+          if (this.C_myTasks) {
+            var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            valid  = valid && userIds.includes(this.$currentUser.id)
+          }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           switch (this.viewList) {
             case "active": {
@@ -144,6 +154,7 @@
               break
             }
           }
+
           return valid
         }), ['dueDate'])
 
@@ -157,6 +168,15 @@
           this.setTaskTypeFilter(value)
         }
       },
+      C_myTasks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('tasks')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
+        }
+      }
     },
     watch: {
       project: {

@@ -78,6 +78,11 @@
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
         </div>
+        <div class="form-check-inline ml-5">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
+          </label>
+        </div>
       </div>
       <div class="mt-1">
         <hr>
@@ -125,7 +130,8 @@
     methods: {
        ...mapMutations([
         'setIssueTypeFilter',
-        'setIssueSeverityFilter'
+        'setIssueSeverityFilter',
+        'setMyActionsFilter'
       ]),
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
@@ -163,7 +169,8 @@
         'issueTypes',
         'issueSeverities',
         'issueTypeFilter',
-        'issueSeverityFilter'
+        'issueSeverityFilter',
+        'myActionsFilter'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -173,6 +180,10 @@
         var severityIds = _.map(this.C_issueSeverityFilter, 'id')
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
+          if (this.C_myIssues) {
+            var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            valid  = valid && userIds.includes(this.$currentUser.id)
+          }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
@@ -209,6 +220,15 @@
           this.setIssueSeverityFilter(value)
         }
       },
+      C_myIssues: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('issues')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Issues", value: "issues"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
+        }
+      }
     }
   }
 </script>

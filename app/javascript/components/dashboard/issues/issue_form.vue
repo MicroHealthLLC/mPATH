@@ -1,228 +1,233 @@
 <template>
-  <form
-    id="issues-form"
-    @submit.prevent="saveIssue"
-    class="mx-auto"
-    accept-charset="UTF-8"
-    >
-    <div
-      v-if="showErrors"
-      class="text-danger mb-3"
+  <div>
+    <form
+      id="issues-form"
+      @submit.prevent="saveIssue"
+      :class="{'_disabled': loading}"
+      class="mx-auto"
+      accept-charset="UTF-8"
       >
-      Please fill the required feilds before submitting
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Title:</label>
-      <input
-        name="title"
-        v-validate="'required'"
-        type="text"
-        class="form-control form-control-sm"
-        v-model="DV_issue.title"
-        placeholder="Title"
-        :class="{'form-control': true, 'error': errors.has('title') }"
-      />
-      <div v-show="errors.has('title')" class="text-danger">
-        {{errors.first('title')}}
-      </div>
-    </div>
-    <div class="simple-select form-group mx-4">
-      <label class="font-sm">Issue Type:</label>
-      <multiselect
-        v-model="selectedIssueType"
-        v-validate="'required'"
-        track-by="id"
-        label="name"
-        placeholder="Issue Type"
-        :options="issueTypes"
-        :searchable="false"
-        select-label="Select"
-        deselect-label="Remove"
-        :class="{'error': errors.has('Issue Type')}"
+      <div
+        v-if="showErrors"
+        class="text-danger mb-3"
         >
-        <template slot="singleLabel" slot-scope="{option}">
-          <div class="d-flex">
-            <span class='select__tag-name'>{{option.name}}</span>
-          </div>
-        </template>
-      </multiselect>
-      <div v-show="errors.has('Issue Type')" class="text-danger">
-        {{errors.first('Issue Type')}}
+        Please fill the required feilds before submitting
       </div>
-    </div>
-    <div class="simple-select form-group mx-4">
-      <label class="font-sm">Issue Severity:</label>
-      <multiselect
-        v-model="selectedIssueSeverity"
-        v-validate="'required'"
-        track-by="id"
-        label="name"
-        placeholder="Issue Severity"
-        :options="issueSeverities"
-        :searchable="false"
-        select-label="Select"
-        deselect-label="Remove"
-        :class="{'error': errors.has('Issue Severity')}"
-        >
-        <template slot="singleLabel" slot-scope="{option}">
-          <div class="d-flex">
-            <span class='select__tag-name'>{{option.name}}</span>
-          </div>
-        </template>
-      </multiselect>
-      <div v-show="errors.has('Issue Severity')" class="text-danger">
-        {{errors.first('Issue Severity')}}
-      </div>
-    </div>
-    <div class="form-row mx-4">
-      <div class="form-group col-md-6 pl-0">
-        <label class="font-sm">Start Date:</label>
-        <v2-date-picker
+      <div class="form-group mx-4">
+        <label class="font-sm">Title:</label>
+        <input
+          name="title"
           v-validate="'required'"
-          v-model="DV_issue.startDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="DD MM YYYY"
-          name="Start Date"
-          class="w-100 vue2-datepicker"
-          :disabled-date="disabledStartDate"
+          type="text"
+          class="form-control form-control-sm"
+          v-model="DV_issue.title"
+          placeholder="Title"
+          :class="{'form-control': true, 'error': errors.has('title') }"
         />
-        <div v-show="errors.has('Start Date')" class="text-danger">
-          {{errors.first('Start Date')}}
+        <div v-show="errors.has('title')" class="text-danger">
+          {{errors.first('title')}}
         </div>
       </div>
-      <div class="form-group col-md-6 pr-0">
-        <label class="font-sm">Due Date:</label>
-        <v2-date-picker
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Issue Type:</label>
+        <multiselect
+          v-model="selectedIssueType"
           v-validate="'required'"
-          v-model="DV_issue.dueDate"
-          value-type="YYYY-MM-DD"
-          format="DD MMM YYYY"
-          placeholder="DD MM YYYY"
-          name="Due Date"
-          class="w-100 vue2-datepicker"
-          :disabled="DV_issue.startDate === '' || DV_issue.startDate === null"
-          :disabled-date="disabledDueDate"
-        />
-        <div v-show="errors.has('Due Date')" class="text-danger">
-          {{errors.first('Due Date')}}
+          track-by="id"
+          label="name"
+          placeholder="Issue Type"
+          :options="issueTypes"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Remove"
+          :class="{'error': errors.has('Issue Type')}"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Issue Type')" class="text-danger">
+          {{errors.first('Issue Type')}}
         </div>
       </div>
-    </div>
-    <div class="form-group user-select mx-4">
-      <label class="font-sm mb-0">Assign Users:</label>
-      <multiselect
-        v-model="issueUsers"
-        track-by="id"
-        label="fullName"
-        placeholder="Search and select users"
-        :options="projectUsers"
-        :searchable="true"
-        :multiple="true"
-        select-label="Select"
-        deselect-label="Remove"
-        :close-on-select="false"
-        >
-        <template slot="singleLabel" slot-scope="{option}">
-          <div class="d-flex">
-            <span class='select__tag-name'>{{option.fullName}}</span>
-          </div>
-        </template>
-      </multiselect>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm mb-0">Progress: (in %)</label>
-      <span class="ml-3">
-        <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_issue.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-      </span>
-      <vue-slide-bar
-        v-model="DV_issue.progress"
-        :line-height="8"
-        :is-disabled="DV_issue.autoCalculate"
-        :draggable="!DV_issue.autoCalculate"
-      ></vue-slide-bar>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Checklists:</label>
-      <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
-      <div v-if="filteredChecks.length > 0">
-        <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy">
-          <div class="form-control h-100" :key="index">
-            <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
-            <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
-            <div class="simple-select form-group m-0">
-              <label class="font-sm">Assigned To:</label>
-              <multiselect
-                v-model="check.user"
-                track-by="id"
-                label="fullName"
-                placeholder="Search and select users"
-                :options="issueUsers"
-                :searchable="true"
-                select-label="Select"
-                deselect-label="Remove"
-                >
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
-                  </div>
-                </template>
-              </multiselect>
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Issue Severity:</label>
+        <multiselect
+          v-model="selectedIssueSeverity"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Issue Severity"
+          :options="issueSeverities"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Remove"
+          :class="{'error': errors.has('Issue Severity')}"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
             </div>
-          </div>
-          <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Issue Severity')" class="text-danger">
+          {{errors.first('Issue Severity')}}
         </div>
       </div>
-      <p v-else class="text-danger font-sm">No checks..</p>
-    </div>
-    <div class="form-group mx-4">
-      <label class="font-sm">Description:</label>
-      <textarea
-        class="form-control"
-        placeholder="issue brief description"
-        v-model="DV_issue.description"
-        rows="4"
-      />
-    </div>
-    <div class="mx-4">
-      <div class="input-group mb-2">
-        <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
-          <div class="input-group-prepend">
-            <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
-              <i class="fas fa-file-image"></i>
-            </div>
-          </div>
-          <input
-            readonly
-            type="text"
-            class="form-control form-control-sm mw-95"
-            :value="file.name || file.uri"
+      <div class="form-row mx-4">
+        <div class="form-group col-md-6 pl-0">
+          <label class="font-sm">Start Date:</label>
+          <v2-date-picker
+            v-validate="'required'"
+            v-model="DV_issue.startDate"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            name="Start Date"
+            class="w-100 vue2-datepicker"
+            :disabled-date="disabledStartDate"
           />
-          <div
-            class="del-check clickable"
-            @click.prevent="deleteFile(file)"
-            >
-            <i class="fas fa-times"></i>
+          <div v-show="errors.has('Start Date')" class="text-danger">
+            {{errors.first('Start Date')}}
+          </div>
+        </div>
+        <div class="form-group col-md-6 pr-0">
+          <label class="font-sm">Due Date:</label>
+          <v2-date-picker
+            v-validate="'required'"
+            v-model="DV_issue.dueDate"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            name="Due Date"
+            class="w-100 vue2-datepicker"
+            :disabled="DV_issue.startDate === '' || DV_issue.startDate === null"
+            :disabled-date="disabledDueDate"
+          />
+          <div v-show="errors.has('Due Date')" class="text-danger">
+            {{errors.first('Due Date')}}
           </div>
         </div>
       </div>
-    </div>
-    <div class="form-group mx-4" >
-      <label class="font-sm">Files:</label>
-      <attachment-input
-        @input="addFile"
-        :show-label="true"
-      />
-    </div>
-    <div class="d-flex form-group mt-4 ml-4">
-      <button
-        :disabled="!readyToSave"
-        class="btn btn-success"
-        >
-        Save
-      </button>
-    </div>
-  </form>
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Assign Users:</label>
+        <multiselect
+          v-model="issueUsers"
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="projectUsers"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm mb-0">Progress: (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_issue.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_issue.progress"
+          :line-height="8"
+          :is-disabled="DV_issue.autoCalculate"
+          :draggable="!DV_issue.autoCalculate"
+        ></vue-slide-bar>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm">Checklists:</label>
+        <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+        <div v-if="filteredChecks.length > 0">
+          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy && isMyCheck(check)">
+            <div class="form-control h-100" :key="index">
+              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
+              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+              <div class="simple-select form-group m-0">
+                <label class="font-sm">Assigned To:</label>
+                <multiselect
+                  v-model="check.user"
+                  track-by="id"
+                  label="fullName"
+                  placeholder="Search and select users"
+                  :options="issueUsers"
+                  :searchable="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </div>
+            <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
+          </div>
+        </div>
+        <p v-else class="text-danger font-sm">No checks..</p>
+      </div>
+      <div class="form-group mx-4">
+        <label class="font-sm">Description:</label>
+        <textarea
+          class="form-control"
+          placeholder="issue brief description"
+          v-model="DV_issue.description"
+          rows="4"
+        />
+      </div>
+      <div class="mx-4">
+        <div class="input-group mb-2">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+            <div class="input-group-prepend">
+              <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                <i class="fas fa-file-image"></i>
+              </div>
+            </div>
+            <input
+              readonly
+              type="text"
+              class="form-control form-control-sm mw-95"
+              :value="file.name || file.uri"
+            />
+            <div
+              :class="{'_disabled': loading}"
+              class="del-check clickable"
+              @click.prevent="deleteFile(file)"
+              >
+              <i class="fas fa-times"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group mx-4" >
+        <label class="font-sm">Files:</label>
+        <attachment-input
+          @input="addFile"
+          :show-label="true"
+        />
+      </div>
+      <div class="d-flex form-group mt-4 ml-4">
+        <button
+          :disabled="!readyToSave"
+          class="btn btn-success"
+          >
+          Save
+        </button>
+      </div>
+    </form>
+    <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
+  </div>
 </template>
 
 <script>
@@ -254,7 +259,8 @@
         selectedIssueType: null,
         selectedIssueSeverity: null,
         issueUsers: [],
-        showErrors: false
+        showErrors: false,
+        loading: true
       }
     },
     mounted() {
@@ -265,6 +271,7 @@
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
         this.addFile(this.issue.attachFiles)
       }
+      this.loading = false
     },
     methods: {
       addFile(files=[]) {
@@ -291,11 +298,12 @@
       },
       saveIssue() {
         this.$validator.validate().then((success) => {
-          if (!success) {
-            this.showErrors = true
+          if (!success || this.loading) {
+            this.showErrors = !success
             return;
           }
 
+          this.loading = true
           var formData = new FormData()
           formData.append('issue[title]', this.DV_issue.title)
           formData.append('issue[due_date]', this.DV_issue.dueDate)
@@ -344,11 +352,14 @@
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
             }
           })
-          .then((response)=> {
+          .then((response) => {
             this.$emit(callback, humps.camelizeKeys(response.data.issue))
           })
-          .catch((err)=> {
+          .catch((err) => {
             console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
           })
         })
       },
@@ -395,12 +406,16 @@
         } else if (name === 'check' && this.DV_issue.checklists[index].text) {
           this.DV_issue.checklists[index].checked = event.target.checked
         }
+      },
+      isMyCheck(check) {
+        return this.C_myIssues && check.id ? check.user.id == this.$currentUser.id : true
       }
     },
     computed: {
       ...mapGetters([
         'currentProject',
-        'projectUsers'
+        'projectUsers',
+        'myActionsFilter'
       ]),
       readyToSave() {
         return (
@@ -417,6 +432,9 @@
       },
       filteredFiles() {
         return _.filter(this.DV_issue.issueFiles, f => !f._destroy)
+      },
+      C_myIssues() {
+        return _.map(this.myActionsFilter, 'value').includes('issues')
       }
     },
     watch: {

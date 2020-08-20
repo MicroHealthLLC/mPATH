@@ -208,6 +208,25 @@
             </template>
           </multiselect>
         </div>
+        <div class="actions-select my-3 mx-1">
+          <multiselect
+            v-model="C_myActionsFilter"
+            track-by="name"
+            label="name"
+            placeholder="My-actions Filter"
+            :options="myActions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
       </div>
     </div>
     <div class="knocker" @click="showFilters=!showFilters">
@@ -228,6 +247,10 @@
         exporting: false,
         showFilters: false,
         facilities: [],
+        myActions: [
+          {name: 'My Tasks', value: 'tasks'},
+          {name: 'My Issues', value: 'issues'}
+        ],
         DV_progressRanges: this.progressRanges(),
         DV_issueProgressRanges: this.progressRanges(),
         DV_taskProgressRanges: this.progressRanges()
@@ -254,7 +277,8 @@
         'issueSeverities',
         'unFilterFacilities',
         'filterFacilitiesWithActiveFacilityGroups',
-        'ganttData'
+        'ganttData',
+        'myActionsFilter'
       ]),
       enableExport() {
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
@@ -344,6 +368,14 @@
           this.setTaskProgressFilter(value)
         }
       },
+      C_myActionsFilter: {
+        get() {
+          return this.myActionsFilter
+        },
+        set(value) {
+          this.setMyActionsFilter(value)
+        }
+      },
       filterBarStyle() {
         if (this.showFilters) return {}
         return {
@@ -370,6 +402,7 @@
         'setIssueSeverityFilter',
         'setIssueProgressFilter',
         'setTaskProgressFilter',
+        'setMyActionsFilter',
         'setMapFilters'
       ]),
       updateProjectQuery(selected, index) {
@@ -414,6 +447,7 @@
         this.setIssueSeverityFilter(null)
         this.setIssueProgressFilter(null)
         this.setTaskProgressFilter(null)
+        this.setMyActionsFilter(null)
         this.setMapFilters([])
       },
       exportData() {
@@ -520,6 +554,9 @@
       },
       issueSeverityFilter(value) {
         this.updateMapFilters({key: 'issueSeverityIds', filter: value})
+      },
+      myActionsFilter(value) {
+        this.updateMapFilters({key: 'myActions', filter: value, _k: 'value'})
       }
     }
   }
@@ -544,6 +581,7 @@
   .project-select {
     width: 280px;
   }
+  .actions-select /deep/ .multiselect,
   .issetype-select /deep/ .multiselect,
   .issueSeverity-select /deep/ .multiselect,
   .issueProgress-select /deep/ .multiselect,

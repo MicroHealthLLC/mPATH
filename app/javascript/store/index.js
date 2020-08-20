@@ -39,7 +39,8 @@ export default new Vuex.Store({
     issueTypeFilter: null,
     issueSeverityFilter: null,
     issueProgressFilter: null,
-    taskProgressFilter: null
+    taskProgressFilter: null,
+    myActionsFilter: null
   },
 
   mutations: {
@@ -78,7 +79,8 @@ export default new Vuex.Store({
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
     setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
-    setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter
+    setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
+    setMyActionsFilter: (state, filter) => state.myActionsFilter = filter
   },
 
   getters: {
@@ -105,6 +107,7 @@ export default new Vuex.Store({
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
+    myActionsFilter: state => state.myActionsFilter,
     mapFilters: state => state.mapFilters,
     filteredFacilities: (state, getters) => (_status='active') => {
       return _.filter(getters.facilities, (facility) => {
@@ -167,6 +170,15 @@ export default new Vuex.Store({
             }
             case "statusIds": {
               valid = valid && f[k].includes(facility.statusId)
+              break
+            }
+            case "myActions": {
+              var is_valid = false
+              for (var act of f[k]) {
+                var userIds = _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
+                is_valid = is_valid || userIds.includes(Vue.prototype.$currentUser.id)
+              }
+              valid = valid && is_valid
               break
             }
             default: {
@@ -560,6 +572,7 @@ export default new Vuex.Store({
         'issueSeverityFilter',
         'issueProgressFilter',
         'taskProgressFilter',
+        'myActionsFilter',
         'mapFilters'
       ]
     })

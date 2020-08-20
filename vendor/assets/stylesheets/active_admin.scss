@@ -191,7 +191,12 @@ body {
   .align-center {
     align-items: center;
   }
-  #edit_task {
+  #facility_projects {
+    padding: 0 10px;
+    .inputs {
+      margin: 0;
+      padding: 0;
+    }
     .input {
       fieldset {
         box-shadow: none;

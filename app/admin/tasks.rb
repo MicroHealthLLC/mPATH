@@ -1,6 +1,6 @@
 ActiveAdmin.register Task do
   menu priority: 8
-  actions :all, except: [:show, :new]
+  actions :all, except: [:show]
 
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Tasks', admin_tasks_path)]
@@ -88,9 +88,11 @@ ActiveAdmin.register Task do
 
     f.inputs 'Basic Details' do
       f.input :text, label: 'Name'
-      f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-          fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
-          fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}
+      div id: 'facility_projects' do
+        f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}
+        end
       end
       f.input :task_type
       f.input :start_date, as: :datepicker

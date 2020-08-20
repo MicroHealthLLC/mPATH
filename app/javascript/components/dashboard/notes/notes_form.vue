@@ -1,49 +1,53 @@
 <template>
-  <div class="notes_input mt-2">
-    <span class="close-icon" @click.stop="$emit('close-note-input')">
-      <i class="fas fa-times"></i>
-    </span>
-    <center>{{title}}</center>
-    <div class="form-group">
-      <label class="badge badge-secondary">Note</label>
-      <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
-    </div>
-    <div class="input-group mb-2">
-      <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
-        <div class="input-group-prepend">
-          <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
-            <i class="fas fa-file-image"></i>
+  <div>
+    <div class="notes_input mt-2" :class="{'_disabled': loading}">
+      <span class="close-icon" @click.stop="$emit('close-note-input')" :class="{'_disabled': loading}">
+        <i class="fas fa-times"></i>
+      </span>
+      <center>{{title}}</center>
+      <div class="form-group">
+        <label class="badge badge-secondary">Note</label>
+        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
+      </div>
+      <div class="input-group mb-2">
+        <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+          <div class="input-group-prepend">
+            <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+              <i class="fas fa-file-image"></i>
+            </div>
+          </div>
+          <input
+            readonly
+            type="text"
+            class="form-control form-control-sm mw-95"
+            :value="file.name || file.uri"
+          />
+          <div
+            :class="{'_disabled': loading}"
+            class="del-check clickable"
+            @click.prevent="deleteFile(file)"
+            >
+            <i class="fas fa-times"></i>
           </div>
         </div>
-        <input
-          readonly
-          type="text"
-          class="form-control form-control-sm mw-95"
-          :value="file.name || file.uri"
+      </div>
+      <div class="form-group" >
+        <attachment-input
+          @input="addFile"
+          :show-label="true"
         />
-        <div
-          class="del-check clickable"
-          @click.prevent="deleteFile(file)"
+      </div>
+      <div class="d-flex form-group mt-4">
+        <button
+          :disabled="!readyToSave || loading"
+          class="btn btn-success btn-sm"
+          @click.prevent.stop="saveNote"
           >
-          <i class="fas fa-times"></i>
-        </div>
+          Save
+        </button>
       </div>
     </div>
-    <div class="form-group" >
-      <attachment-input
-        @input="addFile"
-        :show-label="true"
-      />
-    </div>
-    <div class="d-flex form-group mt-4">
-      <button
-        :disabled="!readyToSave"
-        class="btn btn-success btn-sm"
-        @click.prevent.stop="saveNote"
-        >
-        Save
-      </button>
-    </div>
+    <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
 </template>
 
@@ -62,6 +66,7 @@
           body: '',
           noteFiles: []
         },
+        loading: true,
         destroyedFiles: []
       }
     },
@@ -70,6 +75,7 @@
         this.DV_note = {...this.DV_note, ..._.cloneDeep(this.note)}
         this.addFile(this.note.attachFiles)
       }
+      this.loading = false
     },
     methods: {
       addFile(files) {
@@ -98,11 +104,12 @@
       saveNote() {
         this.$validator.validate().then((success) =>
         {
-          if (!success) {
-            this.showErrors = true
+          if (!success || this.loading) {
+            this.showErrors = !success
             return;
           }
 
+          this.loading = true
           var formData = new FormData()
           formData.append('note[body]', this.DV_note.body)
           formData.append('note[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
@@ -130,11 +137,14 @@
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
             }
           })
-          .then((response)=> {
+          .then((response) => {
             this.$emit(callback, humps.camelizeKeys(response.data))
           })
-          .catch((err)=> {
+          .catch((err) => {
             console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
           })
         })
       },
