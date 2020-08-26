@@ -353,6 +353,12 @@ input[type=button]:focus {
     margin-bottom: 4px;
   }
 }
+body /deep/ .multiselect--disabled {
+  background: transparent;
+  .multiselect__select {
+    background: transparent;
+  }
+}
 .input-group-text.clickable {
   padding: 0.375rem 0.75rem 0.375rem 0;
   background-color: transparent;

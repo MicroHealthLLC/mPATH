@@ -170,6 +170,7 @@ ActiveAdmin.register User do
   filter :phone_number
   filter :address
   filter :status, as: :select, collection: User.statuses, label: "State"
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :lat
   remove_filter :lng
 end

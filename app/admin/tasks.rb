@@ -53,7 +53,11 @@ ActiveAdmin.register Task do
     column "Description", :notes, sortable: false
     column "Files" do |task|
       task.task_files.map do |file|
-        raw "<a href='#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}' target='_blank'>#{file.blob.filename}</a>"
+        if current_user.admin_write?
+          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+        else
+          "<span>#{file.blob.filename}</span>".html_safe
+        end
       end
     end
     column :project, nil, sortable: 'projects.name' do |task|
@@ -123,8 +127,9 @@ ActiveAdmin.register Task do
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
   filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To'
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :progress
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do
     before_action :check_readability, only: [:index, :show]

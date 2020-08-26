@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     resources :statuses, only: [:index]
     resources :issue_severities, only: [:index]
     resources :issue_types, only: [:index]
+    resources :users, only: [:index]
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
   end

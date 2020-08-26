@@ -339,6 +339,10 @@ export default new Vuex.Store({
               // for tasks under task_types
               var task_count = 1
               for (var task of tasks) {
+                if (_.map(getters.myActionsFilter, 'value').includes('tasks')) {
+                  var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+                  if (!userIds.includes(Vue.prototype.$currentUser.id)) continue
+                }
                 if (ranges && ranges.length > 0) {
                   let is_valid = false
                   for (var range of ranges) {
@@ -375,6 +379,7 @@ export default new Vuex.Store({
                 // for checklists under tasks
                 var checklist_count = 1
                 for (var checklist of task.checklists) {
+                  if (_.map(getters.myActionsFilter, 'value').includes('tasks') && checklist.userId !== Vue.prototype.$currentUser.id) continue
                   var c_id = `${t_id}_t_${checklist.id}`
                   var _c_id = _t_id + "." + checklist_count
                   hash.push(

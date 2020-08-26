@@ -260,6 +260,7 @@ ActiveAdmin.register Facility do
   filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Type'
   filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   filter :projects
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :creator
   remove_filter :country_code
   remove_filter :tasks

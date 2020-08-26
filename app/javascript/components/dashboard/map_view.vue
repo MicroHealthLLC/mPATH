@@ -66,7 +66,7 @@
                 <div class="text-center">
                   <h2>{{facilityCount}} Facilities</h2>
                   <p class="mt-2 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityProgress <= 0 }">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': facilityProgress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
                     </span>
                   </p>
@@ -85,16 +85,16 @@
                 <div class="my-1">
                   <h5 class="text-center">Facility Project Status</h5>
                   <div v-if="facilityCount > 0">
-                    <div v-for="(_f, s) in facilitiesByProjectStatus">
+                    <div v-for="status in facilitiesByProjectStatus">
                       <div class="row">
                         <div class="col-md-9">
-                          <span class="badge badge-pill" :style="`background: ${_f[0].color}`" style="height: 10px">&nbsp;</span>
-                          <span> {{s.replace('null', 'No Status')}}</span>
-                          <span class="badge badge-secondary badge-pill">{{_f.length}}</span>
+                          <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
+                          <span> {{status.name}}</span>
+                          <span class="badge badge-secondary badge-pill">{{status.length}}</span>
                         </div>
                         <div class="col-md-3 d-flex align-items-center">
-                          <span class="w-100 progress pg-content" :class="{ 'progress-0': getAverage(_f.length, filteredFacilities('active').length) <= 0 }">
-                            <div class="progress-bar bg-info" :style="`width: ${getAverage(_f.length, filteredFacilities('active').length)}%`">{{getAverage(_f.length, filteredFacilities('active').length)}} %</div>
+                          <span class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}">
+                            <div class="progress-bar bg-info" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
                           </span>
                         </div>
                       </div>
@@ -111,7 +111,7 @@
                         <span class="badge badge-secondary badge-pill">{{completedTasks().count}}</span>
                       </div>
                       <div class="col-md-3 d-flex align-items-center">
-                        <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks().avg <= 0 }">
+                        <span class="w-100 progress pg-content" :class="{'progress-0': completedTasks().avg <= 0}">
                           <div class="progress-bar bg-info" :style="`width: ${completedTasks().avg}%`">{{completedTasks().avg}} %</div>
                         </span>
                       </div>
@@ -122,16 +122,16 @@
                         <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
                       </div>
                       <div class="col-md-3 d-flex align-items-center">
-                        <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
+                        <span class="w-100 progress pg-content" :class="{'progress-0': incompletedTasks.avg <= 0}">
                           <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
                         </span>
                       </div>
                     </div>
                   </div>
                   <br>
-                  <div class="text-info font-weight-bold text-center">Task Types</div>
+                  <div v-if="currentTasks.length" class="text-info font-weight-bold text-center">Task Types</div>
                   <div v-for="task in currentTaskTypes">
-                    <div class="row">
+                    <div class="row" v-if="task._display">
                       <div class="col-md-9">
                         <span> {{task.name}}</span>
                         <span class="badge badge-secondary badge-pill">{{task.length}}</span>
@@ -147,14 +147,40 @@
                 <hr>
                 <div class="my-1">
                   <h5 class="text-center">{{currentIssues.length}} Issues</h5>
-                  <div v-for="issue in currentIssueTypes">
+                  <div>
                     <div class="row">
+                      <div class="col-md-9">
+                        <span>Complete</span>
+                        <span class="badge badge-secondary badge-pill">{{completedIssues().count}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{'progress-0': completedIssues().avg <= 0}">
+                          <div class="progress-bar bg-info" :style="`width: ${completedIssues().avg}%`">{{completedIssues().avg}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-9">
+                        <span>Incomplete</span>
+                        <span class="badge badge-secondary badge-pill">{{incompletedIssues.count}}</span>
+                      </div>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <span class="w-100 progress pg-content" :class="{'progress-0': incompletedIssues.avg <= 0}">
+                          <div class="progress-bar bg-info" :style="`width: ${incompletedIssues.avg}%`">{{incompletedIssues.avg}} %</div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <div v-if="currentIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
+                  <div v-for="issue in currentIssueTypes">
+                    <div class="row" v-if="issue._display">
                       <div class="col-md-9">
                         <span> {{issue.name}}</span>
                         <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
                       </div>
                       <div class="col-md-3 d-flex align-items-center">
-                        <span class="w-100 progress pg-content" :class="{ 'progress-0': issue.progress <= 0 }">
+                        <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                           <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
                         </span>
                       </div>
@@ -174,7 +200,7 @@
                       <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': facilityGroupProgress(facilityGroup) <= 0 }">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
                       </span>
                     </div>
@@ -231,7 +257,7 @@
                   :statuses="statuses"
                   :facility-group="currentFacilityGroup"
                   @update-expanded="updateExpanded"
-                />
+                ></accordion>
               </div>
             </div>
           </div>
@@ -300,9 +326,10 @@ export default {
       'facilityCount',
       'facilityProgress',
       'filterFacilitiesWithActiveFacilityGroups',
-      'unFilterFacilities',
       'filteredFacilities',
-      'facilityGroupFacilities'
+      'facilityGroupFacilities',
+      'taskTypeFilter',
+      'issueTypeFilter'
     ]),
     facilitiesByStatus() {
       return {
@@ -320,7 +347,19 @@ export default {
       }
     },
     facilitiesByProjectStatus() {
-      return _.groupBy(this.filteredFacilities('active'), 'projectStatus')
+      var statuses = new Array
+      const active = this.filteredFacilities('active')
+      for (var [key, value] of Object.entries(_.groupBy(active, 'projectStatus'))) {
+        statuses.push(
+          {
+            name: key.replace('null', 'No Status'),
+            length: value.length,
+            color: value[0].color,
+            progress: this.getAverage(value.length, active.length)
+          }
+        )
+      }
+      return statuses
     },
     currentTasks() {
       return _.flatten(_.map(this.filteredFacilities('active'), 'tasks'))
@@ -330,11 +369,13 @@ export default {
     },
     currentTaskTypes() {
       var types = _.groupBy(this.currentTasks, 'taskType')
+      var _names = this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
       var taskTypes = new Array
       for (var type in types) {
         taskTypes.push(
           {
             name: type,
+            _display: _names ? _names.includes(type) : true,
             length: types[type].length,
             progress: this.completedTasks(type, types[type]).avg
           }
@@ -344,13 +385,15 @@ export default {
     },
     currentIssueTypes() {
       var types = _.groupBy(this.currentIssues, 'issueType')
+      var _names = this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
       var issueTypes = new Array
       for (var type in types) {
         issueTypes.push(
           {
             name: type,
+            _display: _names ? _names.includes(type) : true,
             length: types[type].length,
-            progress: Number(_.meanBy(types[type], 'progress').toFixed(2))
+            progress: this.completedIssues(type, types[type]).avg
           }
         )
       }
@@ -378,19 +421,33 @@ export default {
         avg: this.getAverage(incompleted.length, tasks.length)
       }
     },
-    knockerStyle() {
-      if (this.openSidebar) {
-        return {}
-      } else {
-        return {transform: "translateX(calc(100% - 12px))"}
+    completedIssues() {
+      return (issueType=null, child=null) => {
+        var issues = child ? child : this.currentIssues
+        var completed = _.filter(issues, (t) => {
+          var valid = t && t.progress && t.progress == 100
+          if (issueType) valid = valid && t.issueType == issueType
+          return valid
+        })
+        return {
+          count: completed.length,
+          avg: this.getAverage(completed.length, issues.length)
+        }
       }
     },
-    rollupStyle() {
-      if (this.openSidebar) {
-        return {right: '12px'}
-      } else {
-        return {right: '0'}
+    incompletedIssues() {
+      var issues = this.currentIssues
+      var incompleted = _.filter(issues, (t) => t == undefined || t.progress == null || t.progress != 100)
+      return {
+        count: incompleted.length,
+        avg: this.getAverage(incompleted.length, issues.length)
       }
+    },
+    knockerStyle() {
+      return this.openSidebar ? {} : {transform: "translateX(calc(100% - 12px))"}
+    },
+    rollupStyle() {
+      return this.openSidebar ? {right: '12px'} : {right: '0'}
     },
     currentFacilityStatus() {
       var status = this.currentFacility && _.map(this.filteredFacilities('active'), 'id').includes(this.currentFacility.id)
@@ -407,7 +464,6 @@ export default {
       'setCurrentFacilityGroup',
       'setCurrentFacility'
     ]),
-
     getLatLngForFacility(facility) {
       return {lat: Number(facility.lat), lng: Number(facility.lng)}
     },
@@ -580,5 +636,9 @@ export default {
   .vue-map-container /deep/ button.gm-ui-hover-effect {
     display: none;
     visibility: hidden;
+  }
+  .badge-color {
+    height: 12px;
+    padding-top: 2px;
   }
 </style>

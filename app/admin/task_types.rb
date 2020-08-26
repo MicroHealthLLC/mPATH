@@ -50,6 +50,7 @@ ActiveAdmin.register TaskType do
   filter :name
   filter :created_at
   filter :updated_at
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :tasks
 
 end

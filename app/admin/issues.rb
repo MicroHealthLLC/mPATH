@@ -64,7 +64,11 @@ ActiveAdmin.register Issue do
     column "Description", :notes, sortable: false
     column "Files" do |issue|
       issue.issue_files.map do |file|
-        raw "<a href='#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}' target='_blank'>#{file.blob.filename}</a>"
+        if current_user.admin_write?
+          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+        else
+          "<span>#{file.blob.filename}</span>".html_safe
+        end
       end
     end
     actions defaults: false do |issue|
@@ -108,7 +112,8 @@ ActiveAdmin.register Issue do
   filter :progress
   filter :start_date
   filter :due_date
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To'
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do
     before_action :check_readability, only: [:index, :show]

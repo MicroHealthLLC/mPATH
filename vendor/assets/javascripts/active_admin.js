@@ -347,7 +347,7 @@ jQuery(function($) {
           return this.isEditing ? 'text' : 'password'
         },
         permitted() {
-          return $("#__privileges").data('privilege').includes('W');
+          return $.__privileges_element.includes('W');
         }
       },
       methods: {
@@ -774,9 +774,11 @@ jQuery(function($) {
       localStorage.removeItem('vuex');
     });
 
-    if ($("#__privileges").is(":visible")) {
-      var p_write = $("#__privileges").data('privilege').includes("W");
-      var p_delete = $("#__privileges").data('privilege').includes("D");
+    if ($("#__privileges").is(":visible") || $("#__privileges_id").length) {
+      $.__privileges_element = $("#__privileges").is(":visible") ? $("#__privileges").data('privilege') : $("#__privileges_id").val();
+      $("#q_id_input").length && $("#q_id_input").remove();
+      var p_write = $.__privileges_element.includes("W");
+      var p_delete = $.__privileges_element.includes("D");
       if (p_write) {
         $("#titlebar_right .action_items").show();
       } else {
@@ -784,8 +786,7 @@ jQuery(function($) {
       }
       if (!p_delete && !p_write) {
         $(".batch_actions_selector").remove();
-      }
-      else {
+      } else {
         $(".batch_actions_selector").show();
       }
     }
@@ -1045,6 +1046,73 @@ jQuery(function($) {
             </ol>
           </fieldset>
         </fieldset>
+      </div>`
+    });
+  }
+
+  // user filters
+  if ($("#__users_filters").is(":visible"))
+  {
+    var select = $("#__users_filters");
+    var parent = select.parent();
+    select.css({display: 'none'});
+    parent.append("<div id='__users_filters_multiselect'></div>");
+
+    Vue.component('multiselect', VueMultiselect.Multiselect);
+    $.Vue_users_filter_select = new Vue({
+      el: "#__users_filters_multiselect",
+      data() {
+        return {
+          loading: true,
+          selected_users: [],
+          users: []
+        }
+      },
+      created() {
+        this.fetchUsers();
+      },
+      methods: {
+        fetchUsers() {
+          $.get(`/api/users.json`, (data) => {
+            this.users = data;
+            this.loading = false;
+          });
+        },
+        setSelectedUsers() {
+          var user_ids = $("#__users_filters").val().map(Number);
+          this.selected_users = this.users.filter(u => user_ids.includes(u.id));
+        }
+      },
+      watch: {
+        selected_users: {
+          handler(value) {
+            if (value) $("#__users_filters").val(value.map(u => u.id));
+          }, deep: true
+        },
+        users: {
+          handler(value) {
+            if (value) this.setSelectedUsers();
+          }, deep: true
+        }
+      },
+      template: `<div v-if="!loading" class="user_multiselect">
+        <multiselect
+          v-model="selected_users"
+          track-by="id"
+          label="full_name"
+          placeholder="Search and select users"
+          :options="users"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.full_name}}</span>
+            </div>
+          </template>
+        </multiselect>
       </div>`
     });
   }

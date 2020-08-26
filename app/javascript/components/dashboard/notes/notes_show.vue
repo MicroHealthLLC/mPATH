@@ -71,17 +71,19 @@
         http
           .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`)
           .then((res) => {
-            this.loading = false;
-            this.$emit('note-deleted', this.note);
+            this.loading = false
+            this.$emit('note-deleted', this.note)
           })
           .catch((err) => {
-            this.loading = false;
-            console.error(err);
+            this.loading = false
+            console.error(err)
           })
       },
       downloadFile(file) {
-        let url = window.location.origin + file.uri
-        window.open(url, '_blank');
+        if (this._isallowed('write')) {
+          let url = window.location.origin + file.uri
+          window.open(url, '_blank')
+        }
       }
     },
     computed: {

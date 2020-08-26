@@ -75,4 +75,5 @@ ActiveAdmin.register FacilityGroup do
   filter :name
   filter :code
   filter :status, label: "State", as: :select, collection: FacilityGroup.statuses
+  filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end
