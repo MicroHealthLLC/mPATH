@@ -369,7 +369,7 @@ export default {
     },
     currentTaskTypes() {
       var types = _.groupBy(this.currentTasks, 'taskType')
-      var _names = this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
+      var _names = (this.taskTypeFilter ? this.taskTypeFilter.length : 0 ) && _.map(this.taskTypeFilter, 'name')
       var taskTypes = new Array
       for (var type in types) {
         taskTypes.push(
