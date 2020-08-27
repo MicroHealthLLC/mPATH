@@ -385,7 +385,7 @@ export default {
     },
     currentIssueTypes() {
       var types = _.groupBy(this.currentIssues, 'issueType')
-      var _names = this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
+      var _names = (this.issueTypeFilter ? this.issueTypeFilter.length : 0 ) && _.map(this.issueTypeFilter, 'name')
       var issueTypes = new Array
       for (var type in types) {
         issueTypes.push(
