@@ -159,8 +159,9 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="issueUsers"
+                  :options="projectUsers"
                   :searchable="true"
+                  :disabled="!check.text"
                   select-label="Select"
                   deselect-label="Remove"
                   >
@@ -315,12 +316,18 @@
           formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
           formData.append('issue[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-          for (var u_id of this.DV_issue.userIds) {
-            formData.append('issue[user_ids][]', u_id)
+          if (this.DV_issue.userIds.length) {
+            for (var u_id of this.DV_issue.userIds) {
+              formData.append('issue[user_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[user_ids][]', [])
           }
 
           for (var i in this.DV_issue.checklists) {
             var check = this.DV_issue.checklists[i]
+            if (!check.text && !check._destroy) continue
             for (var key in check) {
               if (key === 'user') key = 'user_id'
               var value = key == 'user_id' ? check.user.id : check[key]

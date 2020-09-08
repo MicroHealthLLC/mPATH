@@ -151,6 +151,25 @@
             </template>
           </multiselect>
         </div>
+        <div class="taskUser-select my-3 mx-1">
+          <multiselect
+            v-model="C_taskUserFilter"
+            track-by="id"
+            label="fullName"
+            placeholder="Task Users"
+            :options="projectUsers"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
         <div class="issetype-select my-3 mx-1">
           <multiselect
             v-model="C_issueTypeFilter"
@@ -204,6 +223,25 @@
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="issueUser-select my-3 mx-1">
+          <multiselect
+            v-model="C_issueUserFilter"
+            track-by="id"
+            label="fullName"
+            placeholder="Issue Users"
+            :options="projectUsers"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
           </multiselect>
@@ -270,6 +308,7 @@
         'taskProgressFilter',
         'projects',
         'currentProject',
+        'projectUsers',
         'statuses',
         'activeFacilityGroups',
         'taskTypes',
@@ -278,7 +317,9 @@
         'unFilterFacilities',
         'filterFacilitiesWithActiveFacilityGroups',
         'ganttData',
-        'myActionsFilter'
+        'myActionsFilter',
+        'taskUserFilter',
+        'issueUserFilter'
       ]),
       enableExport() {
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
@@ -368,6 +409,22 @@
           this.setTaskProgressFilter(value)
         }
       },
+      C_taskUserFilter: {
+        get() {
+          return this.taskUserFilter
+        },
+        set(value) {
+          this.setTaskUserFilter(value)
+        }
+      },
+      C_issueUserFilter: {
+        get() {
+          return this.issueUserFilter
+        },
+        set(value) {
+          this.setIssueUserFilter(value)
+        }
+      },
       C_myActionsFilter: {
         get() {
           return this.myActionsFilter
@@ -403,7 +460,9 @@
         'setIssueProgressFilter',
         'setTaskProgressFilter',
         'setMyActionsFilter',
-        'setMapFilters'
+        'setMapFilters',
+        'setTaskUserFilter',
+        'setIssueUserFilter'
       ]),
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
@@ -499,11 +558,11 @@
       },
       exportGanttData() {
         try {
-          var header = ["Sr.", "Name", "Duration", "% Complete", "Start Date", "End Date", "Assigned To"]
+          var header = ["WBS", "Name", "Duration", "% Complete", "Start Date", "End Date", "Assigned To"]
           var ex_data = []
           for (var row of this.ganttData) {
             ex_data.push({
-              "Sr.": row._id,
+              "WBS": row._id,
               "Name": row.name,
               "Duration": row.durationInDays,
               "% Complete": row.progress,
@@ -555,6 +614,12 @@
       issueSeverityFilter(value) {
         this.updateMapFilters({key: 'issueSeverityIds', filter: value})
       },
+      issueUserFilter(value) {
+        this.updateMapFilters({key: 'issueUserIds', filter: value})
+      },
+      taskUserFilter(value) {
+        this.updateMapFilters({key: 'taskUserIds', filter: value})
+      },
       myActionsFilter(value) {
         this.updateMapFilters({key: 'myActions', filter: value, _k: 'value'})
       }
@@ -581,6 +646,8 @@
   .project-select {
     width: 280px;
   }
+  .issueUser-select /deep/ .multiselect,
+  .taskUser-select /deep/ .multiselect,
   .actions-select /deep/ .multiselect,
   .issetype-select /deep/ .multiselect,
   .issueSeverity-select /deep/ .multiselect,

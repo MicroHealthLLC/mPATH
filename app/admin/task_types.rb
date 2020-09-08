@@ -7,6 +7,14 @@ ActiveAdmin.register TaskType do
     permitted
   end
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Task Types', admin_task_types_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(task_type.name, edit_admin_task_type_path)
+    end
+    links
+  end
+
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?

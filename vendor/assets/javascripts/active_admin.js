@@ -954,6 +954,79 @@ jQuery(function($) {
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
     });
 
+    // projects_users tab
+    if ($("#projects_users-tab").is(":visible"))
+    {
+      Vue.component('multiselect', VueMultiselect.Multiselect);
+      $.Vue_projects_users_select = new Vue({
+        el: "#projects_users-tab",
+        data() {
+          return {
+            loading: true,
+            project_id: '',
+            task_users: [],
+            project_users: [],
+            u_ids: []
+          }
+        },
+        mounted() {
+          this.setProjectConsts();
+        },
+        methods: {
+          setProjectConsts() {
+            this.project_id = $("#task_facility_project_attributes_project_id").val();
+            this.u_ids = $("#task_user_ids").val().map(Number);
+          },
+          fetchProjectUsers() {
+            $.get(`/projects/${this.project_id}.json`, (data) => {
+              this.project_users = data.users;
+              this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
+              this.loading = false;
+            });
+          }
+        },
+        watch: {
+          project_id(value) {
+            if (value) this.fetchProjectUsers();
+          },
+          task_users: {
+            handler(value) {
+              this.u_ids = value.map(u => u.id);
+              if (value) $("#task_user_ids").val(this.u_ids);
+            }, deep: true
+          }
+        },
+        template: `<li class='select input optional d-flex' id='task_users_input_multiple'>
+          <label for='task_users_input_multiple' class='label'>Assigned Users</label>
+          <div v-if="!loading" class="user_multiselect">
+            <multiselect
+              v-model="task_users"
+              track-by="id"
+              label="full_name"
+              placeholder="Search and select users"
+              :options="project_users"
+              :searchable="true"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              :close-on-select="false"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.full_name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </li>`
+      });
+
+      // on change project
+      $("body").on('change', "#task_facility_project_attributes_project_id", function() {
+        $.Vue_projects_users_select && $.Vue_projects_users_select.setProjectConsts();
+      });
+    }
+
   }());
 
   // password generator tab
@@ -1004,7 +1077,9 @@ jQuery(function($) {
       },
       watch: {
         password(value) {
+          $("#user_password").prop("disabled", false);
           $("#user_password").val(value);
+          $("#user_password_confirmation").prop("disabled", false);
           $("#user_password_confirmation").val(value);
         }
       },

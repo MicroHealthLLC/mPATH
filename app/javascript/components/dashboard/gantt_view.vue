@@ -201,6 +201,25 @@
                 events: {
                   click: this.handleClick
                 }
+              },
+              {
+                id: 6,
+                width: 90,
+                label: "Assigned To",
+                value: "_users",
+                value: task => task._users ? task._users.join(', ') : '',
+                style: {
+                  'task-list-item-column': {
+                    height: '200px'
+                  },
+                  'task-list-header-label': {
+                    'text-align': 'center',
+                    width: '100%'
+                  },
+                  'task-list-item-value': {
+                    'white-space': 'unset'
+                  }
+                }
               }
             ]
           }
@@ -312,6 +331,10 @@
     }
     .gantt-elastic__task-list-header {
       min-height: 28px;
+    }
+    .gantt-elastic__task-list-item-column {
+      min-height: 29px;
+      height: max-content !important;
     }
   }
 </style>

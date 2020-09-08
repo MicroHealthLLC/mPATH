@@ -262,11 +262,11 @@ ActiveAdmin.setup do |config|
       # admin.download_links = false
 
       # Only show XML & PDF options
-      admin.download_links = [:csv, :json]
+      # admin.download_links = [:csv, :json]
 
       # Enable/disable the links based on block
       #   (for example, with cancan)
-      # admin.download_links = proc { can?(:view_download_links) }
+      admin.download_links = proc {current_user.download_links?}
     end
 
   # == Pagination

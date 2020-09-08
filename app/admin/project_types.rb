@@ -7,6 +7,14 @@ ActiveAdmin.register ProjectType do
     permitted
   end
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Project Types', admin_project_types_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(project_type.name, edit_admin_project_type_path)
+    end
+    links
+  end
+
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?

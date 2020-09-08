@@ -136,8 +136,9 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="taskUsers"
+                  :options="projectUsers"
                   :searchable="true"
+                  :disabled="!check.text"
                   select-label="Select"
                   deselect-label="Remove"
                   >
@@ -291,12 +292,18 @@
           formData.append('task[notes]', this.DV_task.notes)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-          for (var u_id of this.DV_task.userIds) {
-            formData.append('task[user_ids][]', u_id)
+          if (this.DV_task.userIds.length) {
+            for (var u_id of this.DV_task.userIds) {
+              formData.append('task[user_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[user_ids][]', [])
           }
 
           for (var i in this.DV_task.checklists) {
             var check = this.DV_task.checklists[i]
+            if (!check.text && !check._destroy) continue
             for (var key in check) {
               if (key === 'user') key = 'user_id'
               var value = key == 'user_id' ? check.user.id : check[key]

@@ -8,6 +8,14 @@ ActiveAdmin.register IssueSeverity do
     permitted
   end
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Issue Severities', admin_issue_severities_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(issue_severity.name, edit_admin_issue_severity_path)
+    end
+    links
+  end
+
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?

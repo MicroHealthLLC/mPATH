@@ -11,6 +11,14 @@ ActiveAdmin.register FacilityGroup do
     permitted
   end
 
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Facility Groups', admin_facility_groups_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(facility_group.name, edit_admin_facility_group_path)
+    end
+    links
+  end
+
   form do |f|
     f.semantic_errors *f.object.errors.keys
 

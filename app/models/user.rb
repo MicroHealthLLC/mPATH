@@ -82,4 +82,8 @@ class User < ApplicationRecord
   def admin_privilege
     superadmin? ? "RWD" : privilege.admin
   end
+
+  def download_links?
+    admin_write? ? [:csv, :json] : false
+  end
 end

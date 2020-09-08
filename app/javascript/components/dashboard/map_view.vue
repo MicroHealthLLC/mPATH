@@ -369,7 +369,7 @@ export default {
     },
     currentTaskTypes() {
       var types = _.groupBy(this.currentTasks, 'taskType')
-      var _names = (this.taskTypeFilter ? this.taskTypeFilter.length : 0 ) && _.map(this.taskTypeFilter, 'name')
+      var _names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
       var taskTypes = new Array
       for (var type in types) {
         taskTypes.push(
@@ -385,7 +385,7 @@ export default {
     },
     currentIssueTypes() {
       var types = _.groupBy(this.currentIssues, 'issueType')
-      var _names = (this.issueTypeFilter ? this.issueTypeFilter.length : 0 ) && _.map(this.issueTypeFilter, 'name')
+      var _names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
       var issueTypes = new Array
       for (var type in types) {
         issueTypes.push(

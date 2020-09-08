@@ -40,6 +40,8 @@ export default new Vuex.Store({
     issueSeverityFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
+    taskUserFilter: null,
+    issueUserFilter: null,
     myActionsFilter: null
   },
 
@@ -80,6 +82,8 @@ export default new Vuex.Store({
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
     setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
     setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
+    setTaskUserFilter: (state, filter) => state.taskUserFilter = filter,
+    setIssueUserFilter: (state, filter) => state.issueUserFilter = filter,
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter
   },
 
@@ -107,6 +111,8 @@ export default new Vuex.Store({
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
+    taskUserFilter: state => state.taskUserFilter,
+    issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
     mapFilters: state => state.mapFilters,
     filteredFacilities: (state, getters) => (_status='active') => {
@@ -157,6 +163,16 @@ export default new Vuex.Store({
             }
             case "issueSeverityIds": {
               var ids = _.map(facility.issues, 'issueSeverityId')
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "issueUserIds": {
+              var ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "taskUserIds": {
+              var ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -578,6 +594,8 @@ export default new Vuex.Store({
         'issueProgressFilter',
         'taskProgressFilter',
         'myActionsFilter',
+        'taskUserFilter',
+        'issueUserFilter',
         'mapFilters'
       ]
     })
