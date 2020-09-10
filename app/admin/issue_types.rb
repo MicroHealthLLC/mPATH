@@ -34,6 +34,7 @@ ActiveAdmin.register IssueType do
 
   controller do
     before_action :check_readability, only: [:index, :show]
+    before_action :check_order, only: [:index]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
 
     def check_readability
@@ -47,6 +48,11 @@ ActiveAdmin.register IssueType do
     def destroy
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
+    end
+
+    def check_order
+      order = IssueType.sort_order?
+      redirect_to admin_issue_types_path(order: order) and return unless params[:order] == order
     end
 
     def index

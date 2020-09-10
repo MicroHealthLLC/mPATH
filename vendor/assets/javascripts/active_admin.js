@@ -1027,6 +1027,21 @@ jQuery(function($) {
       });
     }
 
+    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin").is(":visible"))
+    {
+      $("body").on("click", ".sortable", function() {
+        if ($(this.firstElementChild).is('a')) {
+          var href = $(this.firstElementChild).attr('href').split('/').pop();
+          var model = href.split('?')[0];
+          var sort_col = href.split('?')[1].split('=').pop();
+          var order = sort_col.split('_').pop();
+          sort_col = sort_col.replace(`_${order}`, '');
+          var data = {relation: model, order: order, column: sort_col}
+          $.post("/api/sort-by.json", data, (res) => {/* Noops */});
+        }
+      });
+    }
+
   }());
 
   // password generator tab

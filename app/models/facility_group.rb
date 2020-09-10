@@ -1,4 +1,5 @@
-class FacilityGroup < ApplicationRecord
+class FacilityGroup < SortableRecord
+  default_scope {order(FacilityGroup.order_humanize)}
   has_many :facilities
   has_many :facility_projects, through: :facilities
 
@@ -18,5 +19,4 @@ class FacilityGroup < ApplicationRecord
   def progress
     self.facility_projects.map(&:progress).sum / self.facility_projects.count rescue 0
   end
-
 end

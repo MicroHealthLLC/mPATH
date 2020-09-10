@@ -123,7 +123,9 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm">Checklists:</label>
-        <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+        <span class="ml-2 clickable" @click.prevent="addChecks">
+          <i class="fas fa-plus-circle"></i>
+        </span>
         <div v-if="filteredChecks.length > 0">
           <div v-for="(check, index) in DV_task.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
@@ -150,7 +152,9 @@
                 </multiselect>
               </div>
             </div>
-            <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
+            <span class="del-check clickable" @click.prevent="destroyCheck(check, index)">
+              <i class="fas fa-times"></i>
+            </span>
           </div>
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
@@ -306,7 +310,7 @@
             if (!check.text && !check._destroy) continue
             for (var key in check) {
               if (key === 'user') key = 'user_id'
-              var value = key == 'user_id' ? check.user.id : check[key]
+              var value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
             }
           }

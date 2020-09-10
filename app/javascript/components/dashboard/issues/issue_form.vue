@@ -330,7 +330,7 @@
             if (!check.text && !check._destroy) continue
             for (var key in check) {
               if (key === 'user') key = 'user_id'
-              var value = key == 'user_id' ? check.user.id : check[key]
+              var value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               formData.append(`issue[checklists_attributes][${i}][${key}]`, value)
             }
           }

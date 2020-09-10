@@ -329,7 +329,9 @@ export default {
       'filteredFacilities',
       'facilityGroupFacilities',
       'taskTypeFilter',
-      'issueTypeFilter'
+      'issueTypeFilter',
+      'taskTypes',
+      'issueTypes'
     ]),
     facilitiesByStatus() {
       return {
@@ -368,32 +370,32 @@ export default {
       return _.flatten(_.map(this.filteredFacilities('active'), 'issues'))
     },
     currentTaskTypes() {
-      var types = _.groupBy(this.currentTasks, 'taskType')
-      var _names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
+      var names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
       var taskTypes = new Array
-      for (var type in types) {
+      for (var type of this.taskTypes) {
+        var tasks = _.filter(this.currentTasks, t => t.taskTypeId == type.id)
         taskTypes.push(
           {
-            name: type,
-            _display: _names ? _names.includes(type) : true,
-            length: types[type].length,
-            progress: this.completedTasks(type, types[type]).avg
+            name: type.name,
+            _display: names ? names.includes(type.name) : true,
+            length: tasks.length,
+            progress: this.completedTasks(type.name, tasks).avg
           }
         )
       }
       return taskTypes
     },
     currentIssueTypes() {
-      var types = _.groupBy(this.currentIssues, 'issueType')
-      var _names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
+      var names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
       var issueTypes = new Array
-      for (var type in types) {
+      for (var type of this.issueTypes) {
+        var issues = _.filter(this.currentIssues, t => t.issueTypeId == type.id)
         issueTypes.push(
           {
-            name: type,
-            _display: _names ? _names.includes(type) : true,
-            length: types[type].length,
-            progress: this.completedIssues(type, types[type]).avg
+            name: type.name,
+            _display: names ? names.includes(type.name) : true,
+            length: issues.length,
+            progress: this.completedIssues(type.name, issues).avg
           }
         )
       }

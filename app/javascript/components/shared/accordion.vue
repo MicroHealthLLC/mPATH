@@ -10,7 +10,7 @@
           :facility="facility"
           :facility-group="facilityGroup"
           :extras="false"
-        />
+        ></facility-show>
       </div>
     </transition>
   </div>
@@ -60,10 +60,10 @@
     transition: all .4s ease;
   }
   .slide-fade-leave-active {
-    transition: all .3s ease;
+    /*transition: all .1s ease;*/
   }
   .slide-fade-enter {
-    transform: translateY(-300px);
+    transform: translateY(50%);
   }
   .slide-fade-leave-to {
     transform: translateY(-300px);
