@@ -12,6 +12,7 @@ class Issue < ApplicationRecord
   validates :title, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
   scope :complete, -> {where("progress = ?", 100)}
   scope :incomplete, -> {where("progress < ?", 100)}

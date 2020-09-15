@@ -78,6 +78,7 @@ body {
   #task_progress_input,
   #issue_progress_input,
   #task_users_input,
+  #issue_users_input,
   #user_privilege_attributes_overview_input,
   #user_privilege_attributes_tasks_input,
   #user_privilege_attributes_notes_input,
@@ -203,6 +204,8 @@ body {
         box-shadow: none;
       }
     }
+    #issue_facility_project_attributes_project_id_input,
+    #issue_facility_project_attributes_facility_id_input,
     #task_facility_project_attributes_project_id_input,
     #task_facility_project_attributes_facility_id_input {
       padding: 10px 0;

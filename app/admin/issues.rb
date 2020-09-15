@@ -23,6 +23,11 @@ ActiveAdmin.register Issue do
       :auto_calculate,
       issue_files: [],
       user_ids: [],
+      facility_project_attributes: [
+        :id,
+        :project_id,
+        :facility_id
+      ],
       checklists_attributes: [
         :id,
         :_destroy,
@@ -53,7 +58,7 @@ ActiveAdmin.register Issue do
     end
     column :progress
     column :start_date
-    column :due_date
+    column "Estimated Completion Date", :due_date
     column "Assigned To", :users do |issue|
       if current_user.admin_write?
         issue.users
@@ -82,11 +87,18 @@ ActiveAdmin.register Issue do
 
     f.inputs 'Basic Details' do
       f.input :title
+      div id: 'facility_projects' do
+        f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+        end
+      end
       f.input :issue_type
       f.input :issue_severity
       f.input :start_date, as: :datepicker
-      f.input :due_date, as: :datepicker
-      f.input :users, label: 'Assigned Users', as: :select, collection: User.client.map{|u| [u.full_name, u.id]}
+      f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
+      f.input :users, label: 'Assigned Users', as: :select, collection: User.all.map{|u| [u.full_name, u.id]}
+      div id: 'projects_users-tab'
       f.input :progress
       div id: 'progress_slider-tab'
       f.input :auto_calculate
@@ -111,7 +123,7 @@ ActiveAdmin.register Issue do
   filter :issue_severity
   filter :progress
   filter :start_date
-  filter :due_date
+  filter :due_date, label: 'Estimated Completion Date'
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 

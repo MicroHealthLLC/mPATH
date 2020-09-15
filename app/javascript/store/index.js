@@ -42,7 +42,7 @@ export default new Vuex.Store({
     taskProgressFilter: null,
     taskUserFilter: null,
     issueUserFilter: null,
-    myActionsFilter: null
+    myActionsFilter: []
   },
 
   mutations: {

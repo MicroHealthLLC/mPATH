@@ -94,20 +94,20 @@
           </div>
         </div>
         <div class="form-group col-md-6 pr-0">
-          <label class="font-sm">Due Date:</label>
+          <label class="font-sm">Estimated Completion Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_issue.dueDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
-            name="Due Date"
+            name="Estimated Completion Date"
             class="w-100 vue2-datepicker"
             :disabled="DV_issue.startDate === '' || DV_issue.startDate === null"
             :disabled-date="disabledDueDate"
           />
-          <div v-show="errors.has('Due Date')" class="text-danger">
-            {{errors.first('Due Date')}}
+          <div v-show="errors.has('Estimated Completion Date')" class="text-danger">
+            {{errors.first('Estimated Completion Date')}}
           </div>
         </div>
       </div>

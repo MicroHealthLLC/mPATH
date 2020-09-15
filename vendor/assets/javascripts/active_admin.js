@@ -964,6 +964,7 @@ jQuery(function($) {
           return {
             loading: true,
             project_id: '',
+            type: '',
             task_users: [],
             project_users: [],
             u_ids: []
@@ -974,8 +975,9 @@ jQuery(function($) {
         },
         methods: {
           setProjectConsts() {
-            this.project_id = $("#task_facility_project_attributes_project_id").val();
-            this.u_ids = $("#task_user_ids").val().map(Number);
+            this.type = $('form').attr('id').split('_').pop();
+            this.project_id = $(`#${this.type}_facility_project_attributes_project_id`).val();
+            this.u_ids = $(`#${this.type}_user_ids`).val().map(Number);
           },
           fetchProjectUsers() {
             $.get(`/projects/${this.project_id}.json`, (data) => {
@@ -992,7 +994,7 @@ jQuery(function($) {
           task_users: {
             handler(value) {
               this.u_ids = value.map(u => u.id);
-              if (value) $("#task_user_ids").val(this.u_ids);
+              if (value) $(`#${this.type}_user_ids`).val(this.u_ids);
             }, deep: true
           }
         },
@@ -1022,7 +1024,8 @@ jQuery(function($) {
       });
 
       // on change project
-      $("body").on('change', "#task_facility_project_attributes_project_id", function() {
+      $("body").on('change', "#task_facility_project_attributes_project_id, #issue_facility_project_attributes_project_id", function() {
+        debugger
         $.Vue_projects_users_select && $.Vue_projects_users_select.setProjectConsts();
       });
     }

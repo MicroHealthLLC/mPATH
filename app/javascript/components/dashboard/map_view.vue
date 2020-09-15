@@ -108,11 +108,11 @@
                     <div class="row">
                       <div class="col-md-9">
                         <span>Complete</span>
-                        <span class="badge badge-secondary badge-pill">{{completedTasks().count}}</span>
+                        <span class="badge badge-secondary badge-pill">{{completedTasks.count}}</span>
                       </div>
                       <div class="col-md-3 d-flex align-items-center">
-                        <span class="w-100 progress pg-content" :class="{'progress-0': completedTasks().avg <= 0}">
-                          <div class="progress-bar bg-info" :style="`width: ${completedTasks().avg}%`">{{completedTasks().avg}} %</div>
+                        <span class="w-100 progress pg-content" :class="{'progress-0': completedTasks.avg <= 0}">
+                          <div class="progress-bar bg-info" :style="`width: ${completedTasks.avg}%`">{{completedTasks.avg}} %</div>
                         </span>
                       </div>
                     </div>
@@ -151,11 +151,11 @@
                     <div class="row">
                       <div class="col-md-9">
                         <span>Complete</span>
-                        <span class="badge badge-secondary badge-pill">{{completedIssues().count}}</span>
+                        <span class="badge badge-secondary badge-pill">{{completedIssues.count}}</span>
                       </div>
                       <div class="col-md-3 d-flex align-items-center">
-                        <span class="w-100 progress pg-content" :class="{'progress-0': completedIssues().avg <= 0}">
-                          <div class="progress-bar bg-info" :style="`width: ${completedIssues().avg}%`">{{completedIssues().avg}} %</div>
+                        <span class="w-100 progress pg-content" :class="{'progress-0': completedIssues.avg <= 0}">
+                          <div class="progress-bar bg-info" :style="`width: ${completedIssues.avg}%`">{{completedIssues.avg}} %</div>
                         </span>
                       </div>
                     </div>
@@ -377,9 +377,9 @@ export default {
         taskTypes.push(
           {
             name: type.name,
-            _display: names ? names.includes(type.name) : true,
+            _display: tasks.length > 0 && (names ? names.includes(type.name) : true),
             length: tasks.length,
-            progress: this.completedTasks(type.name, tasks).avg
+            progress: Number(_.meanBy(tasks, 'progress').toFixed(2))
           }
         )
       }
@@ -393,56 +393,40 @@ export default {
         issueTypes.push(
           {
             name: type.name,
-            _display: names ? names.includes(type.name) : true,
+            _display: (names ? names.includes(type.name) : true) && issues.length > 0,
             length: issues.length,
-            progress: this.completedIssues(type.name, issues).avg
+            progress: Number(_.meanBy(issues, 'progress').toFixed(2))
           }
         )
       }
       return issueTypes
     },
     completedTasks() {
-      return (taskType=null, child=null) => {
-        var tasks = child ? child : this.currentTasks
-        var completed = _.filter(tasks, (t) => {
-          var valid = t && t.progress && t.progress == 100
-          if (taskType) valid = valid && t.taskType == taskType
-          return valid
-        })
-        return {
-          count: completed.length,
-          avg: this.getAverage(completed.length, tasks.length)
-        }
+      var completed = _.filter(this.currentTasks, (t) => t && t.progress && t.progress == 100)
+      return {
+        count: completed.length,
+        avg: this.getAverage(completed.length, this.currentTasks.length)
       }
     },
     incompletedTasks() {
-      var tasks = this.currentTasks
-      var incompleted = _.filter(tasks, (t) => t == undefined || t.progress == null || t.progress != 100)
+      var incompleted = _.filter(this.currentTasks, (t) => t == undefined || t.progress == null || t.progress != 100)
       return {
         count: incompleted.length,
-        avg: this.getAverage(incompleted.length, tasks.length)
+        avg: this.getAverage(incompleted.length, this.currentTasks.length)
       }
     },
     completedIssues() {
-      return (issueType=null, child=null) => {
-        var issues = child ? child : this.currentIssues
-        var completed = _.filter(issues, (t) => {
-          var valid = t && t.progress && t.progress == 100
-          if (issueType) valid = valid && t.issueType == issueType
-          return valid
-        })
-        return {
-          count: completed.length,
-          avg: this.getAverage(completed.length, issues.length)
-        }
+      var completed = _.filter(this.currentIssues, (t) => t && t.progress && t.progress == 100)
+      return {
+        count: completed.length,
+        avg: this.getAverage(completed.length, this.currentIssues.length)
       }
     },
     incompletedIssues() {
-      var issues = this.currentIssues
-      var incompleted = _.filter(issues, (t) => t == undefined || t.progress == null || t.progress != 100)
+      var incompleted = _.filter(this.currentIssues, (t) => t == undefined || t.progress == null || t.progress != 100)
       return {
         count: incompleted.length,
-        avg: this.getAverage(incompleted.length, issues.length)
+        avg: this.getAverage(incompleted.length, this.currentIssues.length)
       }
     },
     knockerStyle() {
