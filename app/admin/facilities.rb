@@ -174,12 +174,15 @@ ActiveAdmin.register Facility do
     "Due Date": :datepicker,
     "Assign Users": :text,
     "Progress": :number,
+    "AutoCalculate": :checkbox,
+    "Checklists": :text,
     "Description": :textarea
   }} do |ids, inputs|
     user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
+    checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: false, user_ids: user_ids)
+        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
       end
     end
     redirect_to collection_path, notice: "Task added"

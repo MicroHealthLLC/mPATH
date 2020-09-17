@@ -813,71 +813,111 @@ jQuery(function($) {
       e.stopPropagation();
       e.preventDefault();
 
-      // #add slider
-      var input = $("form#dialog_confirm input[name=Progress]");
-      var parent = input.parent();
-      input.css({display: 'none'});
-      parent.append("<div id='progress_slider'></div>");
+      // #add progress_bar auto_calculate plus checklists items
+      var progress_input = $("form#dialog_confirm input[name=Progress]");
+      progress_input.parent().parent().addClass("__batch_task_form");
 
-      if ($("#progress_slider").is(":visible"))
+      var assign_user_input = $("form#dialog_confirm input[name='Assign Users']");
+      var auto_calculate_input = $("form#dialog_confirm input[name=AutoCalculate]");
+      var checklists_input = $("form#dialog_confirm input[name=Checklists]");
+      var progress_parent = progress_input.parent();
+      $(progress_parent).children().hide();
+      $(assign_user_input.parent()).children().hide();
+      $(auto_calculate_input.parent()).children().hide();
+      $(checklists_input.parent()).children().hide();
+
+      progress_parent.append("<div id='add_task_popup'></div>");
+
+      if ($("#add_task_popup").is(":visible"))
       {
         Vue.component('vue-slide-bar', vueSlideBar);
-        var progress_slider = new Vue({
-          el: "#progress_slider",
-          data() {
-            return {
-              progress: 0
-            }
-          },
-          mounted() {
-            $("input[name=Progress]").val(this.progress);
-          },
-          watch: {
-            progress(value) {
-              $("input[name=Progress]").val(value);
-            }
-          },
-          template: `<div class="progress-slide"><vue-slide-bar v-model="progress" :line-height="8" /></div>`
-        });
-      }
-
-      // #add user_ids
-      var input = $("form#dialog_confirm input[name='Assign Users']");
-      input.parent().parent().addClass("__batch_task_form");
-      var parent = input.parent();
-      input.css({display: 'none'});
-      parent.append("<div id='__user_ids'></div>");
-
-      if ($("#__user_ids").is(":visible"))
-      {
         Vue.component('multiselect', VueMultiselect.Multiselect);
-        $.Vue_users_select = new Vue({
-          el: "#__user_ids",
+        $.Vue_task_popup = new Vue({
+          el: "#add_task_popup",
           data() {
             return {
               loading: true,
               project_id: '',
-              task_users: [],
-              project_users: []
+              progress: 0,
+              auto_calculate: false,
+              checklists: [],
+              project_users: [],
+              task_users: []
             }
           },
           mounted() {
-            this.setProjectId();
+            this.auto_calculate = true
+            this.setProgressVal();
+            this.setProjectConsts();
           },
           methods: {
-            setProjectId() {
+            setProgressVal() {
+              $("input[name=Progress]").val(this.progress);
+            },
+            setProjectConsts() {
               this.project_id = $("select[name=Project]").children("option:selected").val();
             },
-            fetchProject() {
+            fetchProjectUsers() {
               $.get(`/projects/${this.project_id}.json`, (data) => {
                 this.project_users = data.users;
                 this.loading = false;
               });
+            },
+            addCheck() {
+              this.checklists.push({text: '', checked: false})
+            },
+            updateCheckItem(event, name, index) {
+              if (name === 'text') {
+                this.checklists[index].text = event.target.value;
+                if (!event.target.value) this.checklists[index].checked = false;
+              } else if (name === 'check' && this.checklists[index].text) {
+                this.checklists[index].checked = event.target.checked;
+              }
+            },
+            destroyCheck(check, index) {
+              var i = check.id ? this.checklists.findIndex(c => c.id === check.id) : index;
+              Vue.set(this.checklists, i, {...check, _destroy: true});
+            },
+            calculateProgress(checks=null) {
+              try {
+                if (!checks) checks = this.checklists;
+                var checked = checks.filter(v => !v._destroy && v.checked && v.text.trim()).length;
+                var total = checks.filter(v => !v._destroy && v.text.trim()).length;
+                this.progress = Number((((checked / total) * 100) || 0).toFixed(2));
+              } catch {
+                this.progress = 0;
+              }
+            },
+            updateChecklistUsers() {
+              var u_ids = this.project_users.map(p => p.id)
+              for (var check of this.checklists) {
+                check.user = check.user && u_ids.includes(check.user.id) ? check.user : null;
+              }
+            },
+            updatechecklistUsersHash() {
+              var checklists = [];
+              for (var check of this.checklists) {
+                if (check.text && !check._destroy) checklists.push({checked: check.checked, text: check.text, user_id: check.user ? check.user.id : null});
+              }
+              $("input[name=Checklists]").val(JSON.stringify(checklists));
             }
           },
           watch: {
             project_id(value) {
-              this.fetchProject();
+              this.fetchProjectUsers();
+            },
+            progress(value) {
+              this.setProgressVal();
+            },
+            checklists: {
+              handler: function(value) {
+                if (this.auto_calculate) this.calculateProgress(value);
+                this.updatechecklistUsersHash();
+              }, deep: true
+            },
+            auto_calculate(value) {
+              $("input[name=AutoCalculate]").prop('checked', value);
+              if (value) this.calculateProgress();
             },
             task_users: {
               handler(value) {
@@ -888,34 +928,79 @@ jQuery(function($) {
               handler(value) {
                 let u_ids = value.map(u => u.id);
                 this.task_users = this.task_users.filter(u => u_ids.includes(u.id));
+                this.updateChecklistUsers();
               }, deep: true
             }
           },
-          template: `<div v-if="!loading" class="user_multiselect">
-            <multiselect
-              v-model="task_users"
-              track-by="id"
-              label="full_name"
-              placeholder="Search and select users"
-              :options="project_users"
-              :searchable="true"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              :close-on-select="false"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.full_name}}</span>
+          template: `<div v-if="!loading" class="task_progression">
+            <div class="__users_tab">
+              <label>Assign Users</label>
+              <div class="user_multiselect">
+                <multiselect
+                  v-model="task_users"
+                  track-by="id"
+                  label="full_name"
+                  placeholder="Search and select users"
+                  :options="project_users"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  :close-on-select="false"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.full_name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </div>
+            <label class="ml-20 mt-10" id="auto-calculate"><input type="checkbox" v-model="auto_calculate">Auto Calculate Progress</label>
+            <div class="progress_tab">
+              <label>Progress</label>
+              <div class='w-80'>
+                <vue-slide-bar v-model="progress" :line-height="8" :is-disabled="auto_calculate" :draggable="!auto_calculate" />
+              </div>
+            </div>
+            <div class='checklist_tab'>
+              <label>Checklist Items</label>
+              <span @click="addCheck" class='plus-button mln-20'></span>
+            </div>
+            <div>
+              <div v-for="(check, index) in checklists" class="check_item_tab mt-10" v-if="!check._destroy">
+                <span class='close-icon' @click.prevent="destroyCheck(check, index)"></span>
+                <div class="check_text w-100" :key="index">
+                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="index" :disabled="!check.text.trim()" class="w-20">
+                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="index+999" placeholder="Check point" type="text" class="checklist-text">
                 </div>
-              </template>
-            </multiselect>
+                <div class="user_multiselect checklist_select mt-10">
+                  <multiselect
+                    v-model="check.user"
+                    track-by="id"
+                    label="full_name"
+                    placeholder="Search and Assign User"
+                    :options="project_users"
+                    :searchable="true"
+                    :disabled="!check.text"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.full_name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+              </div>
+            </div>
           </div>`
         });
 
-        // on chnage project
+        // on change project
         $("body").on('change', ".__batch_task_form select[name=Project]", function() {
-          $.Vue_users_select && $.Vue_users_select.setProjectId();
+          $.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
         });
       }
     });
@@ -953,6 +1038,82 @@ jQuery(function($) {
       if (!this.value.trim()) this.parentElement.parentElement.querySelector(".checklist_item_checked").checked = false;
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
     });
+
+    $.Vue_checklists_items = [];
+    $.build_user_select_vue = (elem) => {
+      var item = {};
+      item.input_id = $(elem).prop('id');
+      item.app_id = `${$(elem).parent().prop('id')}_Vue`;
+      $(elem).parent().append(`<div id='${item.app_id}'></div>`);
+      $(elem).hide();
+
+      item.user_select = new Vue({
+        el: `#${item.app_id}`,
+        data() {
+          return {
+            app_id: item.app_id,
+            loading: true,
+            type: '',
+            project_id: '',
+            u_id: [],
+            users: [],
+            selected_user: null
+          }
+        },
+        mounted() {
+          this.setProjectConsts();
+        },
+        methods: {
+          setProjectConsts() {
+            this.type = $('form').attr('id').split('_').pop();
+            this.project_id = $(`#${this.type}_facility_project_attributes_project_id`).val();
+            this.u_id = $(`#${item.input_id}`).val();
+          },
+          fetchProjectUsers() {
+            $.get(`/projects/${this.project_id}.json`, (data) => {
+              this.users = data.users;
+              this.loading = false;
+            });
+          }
+        },
+        watch: {
+          project_id(value) {
+            this.fetchProjectUsers();
+          },
+          users: {
+            handler(value) {
+              this.selected_user = this.users.find(u => this.u_id == u.id);
+            }, deep: true
+          },
+          selected_user: {
+            handler(value) {
+              this.u_id = value ? value.id : '';
+              $(`#${item.input_id}`).val(this.u_id);
+            }, deep: true
+          }
+        },
+        template: `<div v-if="!loading" class="user_multiselect w-100" :id="app_id">
+          <multiselect
+            v-model="selected_user"
+            track-by="id"
+            label="full_name"
+            placeholder="Search and assign user"
+            :options="users"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.full_name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>`
+      });
+
+      $.Vue_checklists_items.push(item);
+    };
 
     // projects_users tab
     if ($("#projects_users-tab").is(":visible"))
@@ -1022,13 +1183,33 @@ jQuery(function($) {
           </div>
         </li>`
       });
+    }
 
-      // on change project
-      $("body").on('change', "#task_facility_project_attributes_project_id, #issue_facility_project_attributes_project_id", function() {
-        debugger
-        $.Vue_projects_users_select && $.Vue_projects_users_select.setProjectConsts();
+    if ($(".checklist_user").is(":visible"))
+    {
+      $(".checklist_user").each(function(i) {
+        $.build_user_select_vue(this);
       });
     }
+
+    $.update_checklist_user_wrt_project = () => {
+      for (var item of $.Vue_checklists_items) {
+        if ($(`#${item.app_id}`).is(':visible')) {
+          item.user_select.setProjectConsts();
+        }
+      }
+    };
+
+    $('body').on('DOMNodeInserted', '.has_many_container.checklists', function(e) {
+      var elem = $(e.target).find('.checklist_user').length ? $(e.target).find('.checklist_user') : null;
+      if (elem) $.build_user_select_vue(elem);
+    });
+
+    // on change project_id in tasks/issues
+    $("body").on('change', "#task_facility_project_attributes_project_id, #issue_facility_project_attributes_project_id", function() {
+      $.Vue_projects_users_select && $.Vue_projects_users_select.setProjectConsts();
+      $.Vue_checklists_items.length && $.update_checklist_user_wrt_project();
+    });
 
     if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin").is(":visible"))
     {
