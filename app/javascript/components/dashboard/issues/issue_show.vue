@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="issues_show m-3 pb-2">
+  <div v-if="!loading" class="issues_show mx-3 pb-2">
     <div v-if="show" class="row">
       <div class="col-md-9">
         <div>
@@ -30,12 +30,17 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="crud-actions mx-3">
-          <span v-if="_isallowed('write')" class="mr-2 font-sm edit-action" @click="$emit('issue-edited', issue)">
+        <div class="t_actions my-2" :class="{'justify-content-end': !withActions}">
+          <span v-if="withActions && _isallowed('write')" class="font-sm edit-action" @click="$emit('issue-edited', issue)">
             <i class="fas fa-edit"></i>
           </span>
-          <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
+          <span v-if="withActions && _isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
             <i class="fas fa-trash-alt"></i>
+          </span>
+          <span v-if="_isallowed('write')" class="watch_action" @click.prevent="toggleWatched">
+            <span v-show="DV_issue.watched" class="check_box"><i class="far fa-check-square"></i></span>
+            <span v-show="!DV_issue.watched" class="empty_box"><i class="far fa-square"></i></span>
+            <span class="text-danger"><i class="fa fa-exclamation"></i></span>
           </span>
         </div>
         <div class="row my-3 d-flex">
@@ -53,12 +58,19 @@
 <script>
   export default {
     name: 'IssueShow',
-    props: ['facility', 'issue'],
+    props: {
+      withActions: {
+        type: Boolean,
+        default: true
+      },
+      facility: Object,
+      issue: Object
+    },
     data() {
       return {
         show: true,
         loading: true,
-        DV_issue: null
+        DV_issue: {}
       }
     },
     mounted() {
@@ -72,6 +84,10 @@
         var confirm = window.confirm(`Are you sure, you want to delete this issue?`)
         if (!confirm) return;
         this.$emit('issue-deleted', this.issue)
+      },
+      toggleWatched() {
+        this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
+        this.$emit('toggle-watch-issue', this.DV_issue)
       }
     },
     computed: {
@@ -92,25 +108,18 @@
 
 <style scoped lang="scss">
   .issues_show {
-    border-bottom: 1px solid #ccc;
+    /*border-bottom: 1px solid #ccc;*/
   }
-  .issues_input {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-  }
-  .issue_body {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    word-break: break-word;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  .file-icon {
-    cursor: pointer;
-    font-size: 15px;
-    color: gray;
-    margin-right: 10px;
+  .t_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    span {
+      font-size: 13px;
+    }
+    .empty_box,
+    .check_box {
+      font-size: 16px;
+    }
   }
 </style>

@@ -17,6 +17,8 @@ class Issue < ApplicationRecord
   scope :complete, -> {where("progress = ?", 100)}
   scope :incomplete, -> {where("progress < ?", 100)}
 
+  before_save :check_watched, if: :watched_changed?
+
   def to_json
     attach_files = []
     if self.issue_files.attached?
@@ -34,7 +36,13 @@ class Issue < ApplicationRecord
       issue_type: self.issue_type.try(:name),
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
-      checklists: self.checklists.as_json(include: {user: {methods: :full_name}})
+      checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
+      facility_id: self.facility_project.try(:facility_id),
+      project_id: self.facility_project.try(:project_id)
     ).as_json
+  end
+
+  def check_watched
+    self.watched_at = DateTime.now
   end
 end

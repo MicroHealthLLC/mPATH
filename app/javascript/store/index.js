@@ -18,18 +18,18 @@ export default new Vuex.Store({
   state: {
     mapLoading: true,
     sideLoading: true,
-    projects: [],
-    facilities: [],
-    facilityGroups: [],
-    statuses: [],
-    taskTypes: [],
-    issueTypes: [],
-    issueSeverities: [],
+    projects: new Array,
+    facilities: new Array,
+    facilityGroups: new Array,
+    statuses: new Array,
+    taskTypes: new Array,
+    issueTypes: new Array,
+    issueSeverities: new Array,
     currentProject: null,
-    projectUsers: [],
+    projectUsers: new Array,
     currentFacility: null,
     currentFacilityGroup: null,
-    mapFilters: [],
+    mapFilters: new Array,
     projectStatusFilter: null,
     taskTypeFilter: null,
     facilityGroupFilter: null,
@@ -42,7 +42,7 @@ export default new Vuex.Store({
     taskProgressFilter: null,
     taskUserFilter: null,
     issueUserFilter: null,
-    myActionsFilter: []
+    myActionsFilter: new Array
   },
 
   mutations: {
@@ -61,6 +61,10 @@ export default new Vuex.Store({
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
     setMapFilters: (state, filters) => state.mapFilters = filters,
     updateFacilities: (state, {index, facility}) => Vue.set(state.facilities, index, facility),
+    updateFacilityHash: (state, facility) => {
+      var index = state.facilities.findIndex(f => f.id == facility.id)
+      if (index > -1) Vue.set(state.facilities, index, facility)
+    },
     updateMapFilters: (state, {key, filter, same, _k}) => {
       if (filter && !filter.includes(null) && Array.isArray(filter) && filter.length > 0) {
         var i = state.mapFilters.findIndex(f => f.hasOwnProperty(key))
@@ -428,6 +432,15 @@ export default new Vuex.Store({
       }
 
       return hash
+    },
+
+    on_watched: (state, getters) => {
+      var tasks = _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => t.watched)
+      var issues = _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => t.watched)
+      var ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
+      var facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
+
+      return {tasks, issues, facilities}
     }
   },
 

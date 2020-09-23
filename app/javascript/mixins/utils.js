@@ -46,6 +46,14 @@ export default {
       if (date instanceof Date) date = date.toISOString().slice(0, 10)
       var dates = date.split('-')
       return `${dates[2]} ${this.DV_months[Number(dates[1])-1]} ${dates[0]}`
+    },
+    getColor() {
+      var letters = '0123456789ABCDEF'
+      var color = '#'
+      for (var i=0; i<6; i++) {
+        color += letters[Math.floor(Math.random() * 16)]
+      }
+      return color;
     }
   }
 }

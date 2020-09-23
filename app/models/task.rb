@@ -16,6 +16,8 @@ class Task < ApplicationRecord
   scope :complete, -> {where("progress = ?", 100)}
   scope :incomplete, -> {where("progress < ?", 100)}
 
+  before_save :check_watched, if: :watched_changed?
+
   def to_json
     attach_files = []
     if self.task_files.attached?
@@ -33,7 +35,9 @@ class Task < ApplicationRecord
       task_type: self.task_type.try(:name),
       user_ids: self.users.pluck(:id),
       users: self.users.map(&:full_name),
-      checklists: self.checklists.as_json(include: {user: {methods: :full_name}})
+      checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
+      facility_id: self.facility_project.try(:facility_id),
+      project_id: self.facility_project.try(:project_id)
     ).as_json
   end
 
@@ -43,5 +47,9 @@ class Task < ApplicationRecord
 
   def facility
     self.facility_project.try(:facility)
+  end
+
+  def check_watched
+    self.watched_at = DateTime.now
   end
 end

@@ -4,12 +4,12 @@
       <div>
         <task-index
           v-if="currentProject"
-          :project="currentProject"
           :facility="facility"
           :task-types="taskTypes"
           @show-hide="detailShowHide"
           @delete-task="taskDeleted"
-        />
+          @toggle-watch-task="toogleWatchTask"
+        ></task-index>
       </div>
     </div>
     <div v-else>
@@ -28,7 +28,7 @@
         @task-created="taskCreated"
         @task-updated="taskUpdated"
         class="task-form-modal"
-      />
+      ></task-form>
     </div>
   </div>
 </template>
@@ -37,7 +37,7 @@
   import TaskForm from './../tasks/task_form'
   import TaskIndex from './../tasks/task_index'
   import http from './../../../common/http'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'DetailShow',
@@ -55,16 +55,23 @@
       if (this.facility) this.DV_facility = this.facility
     },
     methods: {
+      ...mapMutations([
+        'updateFacilityHash'
+      ]),
       taskCreated(task) {
         this.DV_facility.tasks.unshift(task)
         this.showDetails = true
         this.$emit('refresh-facility')
       },
-      taskUpdated(task) {
+      taskUpdated(task, refresh=true) {
         var index = this.DV_facility.tasks.findIndex((t) => t.id == task.id)
-        this.DV_facility.tasks[index] = task
-        this.showDetails = true
-        this.$emit('refresh-facility')
+        if (index > -1) Vue.set(this.DV_facility.tasks, index, task)
+        if (refresh) {
+          this.showDetails = true
+          this.$emit('refresh-facility')
+        } else {
+          this.updateFacilityHash(this.DV_facility)
+        }
       },
       taskDeleted(task) {
         http
@@ -73,6 +80,14 @@
             var tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
             this.$emit('refresh-facility')
+          })
+          .catch((err) => console.log(err))
+      },
+      toogleWatchTask(task) {
+        http
+          .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`, {task: task})
+          .then((res) => {
+            this.taskUpdated(res.data.task, false)
           })
           .catch((err) => console.log(err))
       },

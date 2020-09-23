@@ -430,6 +430,7 @@
           return this.myActionsFilter
         },
         set(value) {
+          value = value ? value : []
           this.setMyActionsFilter(value)
         }
       },
@@ -506,7 +507,7 @@
         this.setIssueSeverityFilter(null)
         this.setIssueProgressFilter(null)
         this.setTaskProgressFilter(null)
-        this.setMyActionsFilter(null)
+        this.setMyActionsFilter([])
         this.setMapFilters([])
       },
       exportData() {

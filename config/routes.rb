@@ -18,11 +18,13 @@ Rails.application.routes.draw do
     resources :users, only: [:index]
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
+    post '/sort-by', to: 'sorts#update'
   end
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
+    get :watch_view, on: :member
     resources :facilities do
       resources :issues
       resources :notes, module: :facilities

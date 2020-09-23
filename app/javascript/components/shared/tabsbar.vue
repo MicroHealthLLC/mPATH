@@ -6,6 +6,9 @@
     <router-link :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}">Gantt View</div>
     </router-link>
+    <router-link :to="watchView" tag="div">
+      <div class="badge" :class="{'active': isWatchView}">Watch View</div>
+    </router-link>
     <div class="badge disabled">Task Kanban (Coming Soon)</div>
     <div class="badge disabled">Issues Kanban (Coming Soon)</div>
     <div class="badge disabled">Documents (Coming Soon)</div>
@@ -22,11 +25,17 @@
       isGanttView() {
         return this.$route.name === 'ProjectGanttChart'
       },
+      isWatchView() {
+        return this.$route.name === 'ProjectWatchView'
+      },
       mapView() {
         return `/projects/${this.$route.params.projectId}`
       },
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
+      },
+      watchView() {
+        return `/projects/${this.$route.params.projectId}/watch_view`
       }
     }
   }

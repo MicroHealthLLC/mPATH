@@ -402,7 +402,7 @@
           var checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
           var total = _.filter(checks, v => !v._destroy && v.text.trim()).length
           this.DV_issue.progress = Number((((checked / total) * 100) || 0).toFixed(2))
-        } catch {
+        } catch(err) {
           this.DV_issue.progress = 0
         }
       },

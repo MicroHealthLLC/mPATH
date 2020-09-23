@@ -884,7 +884,7 @@ jQuery(function($) {
                 var checked = checks.filter(v => !v._destroy && v.checked && v.text.trim()).length;
                 var total = checks.filter(v => !v._destroy && v.text.trim()).length;
                 this.progress = Number((((checked / total) * 100) || 0).toFixed(2));
-              } catch {
+              } catch(err) {
                 this.progress = 0;
               }
             },

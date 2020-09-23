@@ -48,6 +48,7 @@ class IssuesController < AuthenticatedController
       :start_date,
       :due_date,
       :auto_calculate,
+      :watched,
       issue_files: [],
       user_ids: [],
       checklists_attributes: [

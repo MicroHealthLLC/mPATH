@@ -89,12 +89,14 @@
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <issue-show
-              v-for="issue in filteredIssues"
+              v-for="(issue, i) in filteredIssues"
+              :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
               :issue="issue"
               :facility="facility"
               @issue-edited="issueEdited"
               @issue-deleted="issueDeleted"
+              @toggle-watch-issue="toggleWatched"
             />
           </div>
           <p v-else class="text-danger ml-2">No issues found..</p>
@@ -131,18 +133,23 @@
        ...mapMutations([
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
-        'setMyActionsFilter'
+        'setMyActionsFilter',
+        'updateFacilityHash'
       ]),
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
         this.newIssue = false
         this.$emit('refresh-facility')
       },
-      issueUpdated(issue) {
+      issueUpdated(issue, refresh=true) {
         var index = this.facility.issues.findIndex((t) => t.id == issue.id)
-        this.facility.issues[index] = issue
-        this.newIssue = false
-        this.$emit('refresh-facility')
+        if (index > -1) Vue.set(this.facility.issues, index, issue)
+        if (refresh) {
+          this.newIssue = false
+          this.$emit('refresh-facility')
+        } else {
+          this.updateFacilityHash(this.facility)
+        }
       },
       issueDeleted(issue) {
         http
@@ -151,6 +158,14 @@
             var issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
+          })
+          .catch((err) => console.log(err))
+      },
+      toggleWatched(issue) {
+        http
+          .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
+          .then((res) => {
+            this.issueUpdated(res.data.issue, false)
           })
           .catch((err) => console.log(err))
       },
