@@ -76,6 +76,24 @@ export default new Vuex.Store({
         state.mapFilters = _.filter(state.mapFilters, f => !f.hasOwnProperty(key))
       }
     },
+    updateTasksHash: (state, task) => {
+      var facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+      if (facility_i > -1) {
+        var facility = Object.assign({}, state.facilities[facility_i])
+        var task_i = facility.tasks.findIndex((t) => t.id == task.id)
+        if (task_i > -1) Vue.set(facility.tasks, task_i, task)
+        Vue.set(state.facilities, facility_i, facility)
+      }
+    },
+    updateIssuesHash: (state, issue) => {
+      var facility_i = state.facilities.findIndex(f => f.id == issue.facilityId)
+      if (facility_i > -1) {
+        var facility = Object.assign({}, state.facilities[facility_i])
+        var issue_i = facility.issues.findIndex((t) => t.id == issue.id)
+        if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
+        Vue.set(state.facilities, facility_i, facility)
+      }
+    },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
@@ -585,6 +603,34 @@ export default new Vuex.Store({
     async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
       await dispatch('fetchFacility', {projectId, facilityId})
       if (cb) return cb()
+    },
+
+    // store actions watch_view
+    updateWatchedTasks({commit}, task) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`, {task: task})
+          .then((res) => {
+            commit('updateTasksHash', res.data.task)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
+    updateWatchedIssues({commit}, issue) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`, {issue: issue})
+          .then((res) => {
+            commit('updateIssuesHash', res.data.issue)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
     }
   },
 

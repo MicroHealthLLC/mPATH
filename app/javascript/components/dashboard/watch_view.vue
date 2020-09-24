@@ -1,10 +1,11 @@
 <template>
   <div id="watch_view">
     <div class="row">
-      <div class="col-md-7">
+      <div class="col">
         <div class="watch-task-timeline p-4 mb-4">
           <h5 class="mb-2">Watch Task Timeline</h5>
-          <div class="row mb-2">
+          <div id="watch_task_timeline"></div>
+          <!-- <div class="row mb-2">
             <div class="col-md-6">% Project Schedule</div>
             <div class="col-md-6">% Business Case</div>
           </div>
@@ -27,9 +28,13 @@
               :issue="watchItem"
               :with-actions="false"
             ></div>
-          </div>
+          </div> -->
         </div>
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col-md-7">
         <div class="row">
           <div class="col-md-4">
             <div class="blue-box w-100 h-100 text-center p-3">
@@ -50,7 +55,6 @@
             </div>
           </div>
         </div>
-
         <div class="row mt-4">
           <div class="col-md-4">
             <div class="d_chart_box">
@@ -79,89 +83,7 @@
         </div>
       </div>
       <div class="col-md-5">
-        <div class="wacthed-task-list">
-          <div class="watched-list">
-            <h5 class="py-2 px-3">Watched Tasks</h5>
-            <div
-              class="p-1 watch-task-item"
-              @click="onWatchedItem(task, 'TaskShow')"
-              v-for="(task, i) in on_watched.tasks"
-              :key="task.id"
-              >
-              <task-show
-                :class="{'b_border': !!on_watched.tasks[i+1]}"
-                :task="task"
-                :with-actions="false"
-                @toggle-watched="onWatchTask(task)"
-              ></task-show>
-            </div>
-          </div>
-        </div>
-        <div class="watched-issue-list mt-4">
-          <div class="watched-list">
-            <h5 class="py-2 px-3">Watched Issues</h5>
-            <div
-              v-for="(issue, i) in on_watched.issues"
-              :key="issue.id"
-              class="p-1 watch-task-item"
-              @click="onWatchedItem(issue, 'IssueShow')"
-              >
-              <issue-show
-                :class="{'b_border': !!on_watched.issues[i+1]}"
-                :issue="issue"
-                :with-actions="false"
-                @toggle-watch-issue="onWatchIssue(issue)"
-              ></issue-show>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-4">
-      <div class="col-md-7">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="border-gray">
-              <h5 class="mb-2">Watched Issue Types</h5>
-              <div v-for="issue in watchedIssueTypes">
-                <div class="row" v-if="issue._display">
-                  <div class="col-md-9">
-                    <span> {{issue.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="border-gray">
-              <h5 class="mb-2">Watched Task Types</h5>
-              <div v-for="task in watchedTaskTypes">
-                <div class="row" v-if="task._display">
-                  <div class="col-md-9">
-                    <span> {{task.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-5">
-        <div class="border-gray">
+        <div class="border-gray h-330">
           <h5 class="mb-2">Watched Facility Status</h5>
           <div v-for="status in watchedFacilityStatus">
             <div class="row">
@@ -185,6 +107,46 @@
       <h5 class="px-3 mb-2">Watched Tasks Stats</h5>
       <div class="row">
         <div class="col-md-6">
+          <div class="border-gray h-330">
+            <h5 class="mb-2">Watched Milestone Progressions</h5>
+            <div v-for="task in watchedTaskTypes">
+              <div class="row" v-if="task._display">
+                <div class="col-md-9">
+                  <span> {{task.name}}</span>
+                  <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                  <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
+                    <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="wacthed-task-list">
+            <div class="watched-list">
+              <h5 class="py-2 px-3">Watched Tasks</h5>
+              <div
+                class="p-1 watch-task-item"
+                @click="onWatchedItem(task, 'TaskShow')"
+                v-for="(task, i) in on_watched.tasks"
+                :key="task.id"
+                >
+                <task-show
+                  :class="{'b_border': !!on_watched.tasks[i+1]}"
+                  :task="task"
+                  :with-actions="false"
+                  @toggle-watched="updateWatchedTasks"
+                ></task-show>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
           <h6 class="px-3 text-center">Milestone Progressions</h6>
           <stacked :chart-data="onWatchedTaskData" :width="300" :height="100" />
         </div>
@@ -197,6 +159,48 @@
 
     <div class="border-gray mt-4">
       <h5 class="px-3 mb-2">Watched Issues Stats</h5>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="border-gray h-330">
+            <h5 class="mb-2">Watched Issue Types</h5>
+            <div v-for="issue in watchedIssueTypes">
+              <div class="row" v-if="issue._display">
+                <div class="col-md-9">
+                  <span> {{issue.name}}</span>
+                  <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+                </div>
+                <div class="col-md-3 d-flex align-items-center">
+                  <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                    <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="watched-issue-list">
+            <div class="watched-list">
+              <h5 class="py-2 px-3">Watched Issues</h5>
+              <div
+                v-for="(issue, i) in on_watched.issues"
+                :key="issue.id"
+                class="p-1 watch-task-item"
+                @click="onWatchedItem(issue, 'IssueShow')"
+                >
+                <issue-show
+                  :class="{'b_border': !!on_watched.issues[i+1]}"
+                  :issue="issue"
+                  :with-actions="false"
+                  @toggle-watch-issue="updateWatchedIssues"
+                ></issue-show>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-md-6">
           <h6 class="px-3 text-center">Milestone Progressions</h6>
@@ -217,7 +221,8 @@
   import Bar from './../shared/bar_chart'
   import TaskShow from './../dashboard/tasks/task_show'
   import IssueShow from './../dashboard/issues/issue_show'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
+  import {Timeline, DataSet} from "vis-timeline/standalone"
 
   export default {
     name: "ProjectWatchView",
@@ -225,8 +230,23 @@
     data() {
       return {
         watchItem: null,
-        watchType: ''
+        watchType: '',
+        timelineOptions: {
+          clickToUse: true,
+          height: '480px',
+          zoomFriction: 10,
+          zoomMax: 315360000000,
+          zoomMin: 864000000,
+          tooltip: {
+            template: (data) => {
+              // noops
+            }
+          }
+        }
       }
+    },
+    mounted() {
+      this.createTimeline()
     },
     computed: {
       ...mapGetters([
@@ -365,18 +385,38 @@
           })
         }
         return u_data
+      },
+      timelineData() {
+        var data = []
+        for (var task of [...this.on_watched.issues, ...this.on_watched.tasks]) {
+          var _hash = {item: {...task}}
+          var is_task = task.hasOwnProperty('taskTypeId')
+          _hash.id = is_task ? 'task_'+task.id : 'issue_'+task.id
+          _hash.content = is_task ? task.text : task.title
+          _hash.start = task.startDate
+          if (task.startDate !== task.endDate) _hash.end = task.endDate
+          _hash.className = is_task ? 'vis-task' : 'vis-issue'
+          data.push(_hash)
+        }
+        return data
       }
     },
     methods: {
-      onWatchTask(task) {
-        // noops
-      },
-      onWatchIssue(issue) {
-        // noops
-      },
+      ...mapActions([
+        'updateWatchedTasks',
+        'updateWatchedIssues'
+      ]),
       onWatchedItem(item, type) {
         this.watchItem = item
         this.watchType = type
+      },
+      createTimeline() {
+        var container = document.getElementById('watch_task_timeline')
+        var items = new DataSet(this.timelineData)
+        var timeline = new Timeline(container, items, this.timelineOptions);
+        var onSelect = (properties) => {
+          alert('selected items: ' + properties.items);
+        }
       }
     }
   }
@@ -409,8 +449,9 @@
     padding: 1em;
   }
   .watch-task-timeline {
-    height: 330px;
+    height: 555px;
     border: 1px solid rgba(0, 0, 0, 0.125);
+    overflow-y: auto;
   }
   .watch-months {
     display: flex;
@@ -431,5 +472,15 @@
     border: 1px solid rgba(0, 0, 0, 0.125);
     padding: 1.5em;
     margin-bottom: 10px;
+  }
+  .vis-task {
+    color: #28a745;
+  }
+  .vis-issue {
+    color: #17a2b8;
+  }
+  .h-330 {
+    height: 330px;
+    overflow-y: auto;
   }
 </style>
