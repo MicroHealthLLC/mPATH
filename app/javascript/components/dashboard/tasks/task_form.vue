@@ -7,7 +7,7 @@
       :class="{'_disabled': loading}"
       accept-charset="UTF-8"
       >
-      <h5 class="title d-flex justify-content-center">{{title}}</h5>
+      <h5 class="text-center mb-2">{{title}}</h5>
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -220,7 +220,7 @@
 
   export default {
     name: 'TaskForm',
-    props: ['facility', 'task', 'title', 'taskTypes'],
+    props: ['facility', 'task', 'title'],
     components: {AttachmentInput},
     data() {
       return {
@@ -401,6 +401,7 @@
     computed: {
       ...mapGetters([
         'currentProject',
+        'taskTypes',
         'projectUsers',
         'myActionsFilter'
       ]),
@@ -466,10 +467,6 @@
 <style lang="scss" scoped>
   .form-control.error {
     border-color: #E84444;
-  }
-  .title {
-    font-size: 15px;
-    margin-left: 65px;
   }
   .checklist-text {
     margin-left: 5px;

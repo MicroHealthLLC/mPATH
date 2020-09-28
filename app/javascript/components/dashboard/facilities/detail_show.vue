@@ -7,7 +7,6 @@
           :facility="facility"
           :task-types="taskTypes"
           @show-hide="detailShowHide"
-          @delete-task="taskDeleted"
           @toggle-watch-task="toogleWatchTask"
         ></task-index>
       </div>
@@ -23,11 +22,9 @@
       <task-form
         :facility="facility"
         :task="currentTask"
-        :task-types="taskTypes"
         :title="taskFormTitle"
         @task-created="taskCreated"
         @task-updated="taskUpdated"
-        class="task-form-modal"
       ></task-form>
     </div>
   </div>

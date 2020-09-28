@@ -7,6 +7,7 @@
       class="mx-auto"
       accept-charset="UTF-8"
       >
+      <h5 class="text-center mb-2">{{title}}</h5>
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -239,7 +240,7 @@
 
   export default {
     name: 'IssueForm',
-    props: ['facility', 'issue', 'title', 'issueTypes', 'issueSeverities'],
+    props: ['facility', 'issue'],
     components: {AttachmentInput},
     data() {
       return {
@@ -422,7 +423,9 @@
       ...mapGetters([
         'currentProject',
         'projectUsers',
-        'myActionsFilter'
+        'myActionsFilter',
+        'issueTypes',
+        'issueSeverities'
       ]),
       readyToSave() {
         return (
@@ -442,6 +445,9 @@
       },
       C_myIssues() {
         return _.map(this.myActionsFilter, 'value').includes('issues')
+      },
+      title() {
+        return this.DV_issue.id ? 'Edit Issue' : 'Report an Issue'
       }
     },
     watch: {

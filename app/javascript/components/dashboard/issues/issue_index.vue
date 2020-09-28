@@ -11,8 +11,6 @@
       <issue-form
         :facility="facility"
         :issue="currentIssue"
-        :issue-types="issueTypes"
-        :issue-severities="issueSeverities"
         @issue-created="issueCreated"
         @issue-updated="issueUpdated"
         class="issue-form-modal"
@@ -93,9 +91,7 @@
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
               :issue="issue"
-              :facility="facility"
               @issue-edited="issueEdited"
-              @issue-deleted="issueDeleted"
               @toggle-watch-issue="toggleWatched"
             />
           </div>
@@ -114,7 +110,7 @@
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
-    name: 'ProjectShow',
+    name: 'IssueIndex',
     props: ['facility'],
     components: {IssueForm, IssueShow},
 

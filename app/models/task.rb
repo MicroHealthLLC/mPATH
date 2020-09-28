@@ -37,6 +37,7 @@ class Task < ApplicationRecord
       users: self.users.map(&:full_name),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
       facility_id: self.facility_project.try(:facility_id),
+      facility_name: self.facility_project.try(:facility).facility_name,
       project_id: self.facility_project.try(:project_id)
     ).as_json
   end

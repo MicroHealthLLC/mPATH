@@ -7,7 +7,7 @@
       <div class="badge" :class="{'active': isGanttView}">Gantt View</div>
     </router-link>
     <router-link :to="watchView" tag="div">
-      <div class="badge" :class="{'active': isWatchView}">Watch View</div>
+      <div class="badge" :class="{'active': isWatchView}">On Watch View</div>
     </router-link>
     <div class="badge disabled">Task Kanban (Coming Soon)</div>
     <div class="badge disabled">Issues Kanban (Coming Soon)</div>

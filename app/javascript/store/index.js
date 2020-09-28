@@ -76,21 +76,23 @@ export default new Vuex.Store({
         state.mapFilters = _.filter(state.mapFilters, f => !f.hasOwnProperty(key))
       }
     },
-    updateTasksHash: (state, task) => {
+    updateTasksHash: (state, {task, action}) => {
       var facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
       if (facility_i > -1) {
         var facility = Object.assign({}, state.facilities[facility_i])
         var task_i = facility.tasks.findIndex((t) => t.id == task.id)
-        if (task_i > -1) Vue.set(facility.tasks, task_i, task)
+        if (action === 'delete') Vue.delete(facility.tasks, task_i)
+        else if (task_i > -1) Vue.set(facility.tasks, task_i, task)
         Vue.set(state.facilities, facility_i, facility)
       }
     },
-    updateIssuesHash: (state, issue) => {
+    updateIssuesHash: (state, {issue, action}) => {
       var facility_i = state.facilities.findIndex(f => f.id == issue.facilityId)
       if (facility_i > -1) {
         var facility = Object.assign({}, state.facilities[facility_i])
         var issue_i = facility.issues.findIndex((t) => t.id == issue.id)
-        if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
+        if (action === 'delete') Vue.delete(facility.issues, issue_i)
+        else if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -610,7 +612,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.put(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`, {task: task})
           .then((res) => {
-            commit('updateTasksHash', res.data.task)
+            commit('updateTasksHash', {task: res.data.task})
             resolve()
           })
           .catch((err) => {
@@ -623,11 +625,39 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.put(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`, {issue: issue})
           .then((res) => {
-            commit('updateIssuesHash', res.data.issue)
+            commit('updateIssuesHash', {issue: res.data.issue})
             resolve()
           })
           .catch((err) => {
             console.error(err)
+            reject()
+          })
+      })
+    },
+    taskDeleted({commit}, task) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
+          .then((res) => {
+            commit('updateTasksHash', {task: task, action: 'delete'})
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject()
+          })
+      })
+    },
+    issueDeleted({commit}, issue) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
+          .then((res) => {
+            commit('updateIssuesHash', {issue: issue, action: 'delete'})
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
             reject()
           })
       })

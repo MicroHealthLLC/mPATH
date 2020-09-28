@@ -375,7 +375,7 @@ export default {
       for (var type of this.taskTypes) {
         var tasks = _.filter(this.currentTasks, t => t.taskTypeId == type.id)
         taskTypes.push(
-          {
+          {x
             name: type.name,
             _display: tasks.length > 0 && (names ? names.includes(type.name) : true),
             length: tasks.length,
@@ -576,14 +576,6 @@ export default {
     top: 10px;
     left: 10px;
     z-index: 800;
-  }
-  .facility_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-    max-height: 80vh;
-    min-width: 50vw;
-    .sweet-title {
-      display: flex;
-      align-items: center;
-    }
   }
   .facility_accordion_modal.sweet-modal-overlay /deep/ .sweet-modal {
     min-width: 50vw;

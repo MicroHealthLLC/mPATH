@@ -125,7 +125,7 @@
                 console.error(err)
               })
           }
-         });
+        });
       },
       isAddressPresent() {
         let valid = false

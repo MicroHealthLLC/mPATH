@@ -52,7 +52,6 @@
           :key="task.id"
           :task="task"
           @edit-task="$emit('show-hide', task)"
-          @delete-task="deleteTask"
           @toggle-watched="toggleWatched"
           ></task-show>
       </div>
@@ -81,9 +80,6 @@
       ]),
       addNewTask() {
         this.$emit('show-hide')
-      },
-      deleteTask(task) {
-        this.$emit('delete-task', task)
       },
       toggleWatched(task) {
         this.$emit('toggle-watch-task', task)

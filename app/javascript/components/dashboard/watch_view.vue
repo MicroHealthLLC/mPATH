@@ -5,30 +5,6 @@
         <div class="watch-task-timeline p-4 mb-4">
           <h5 class="mb-2">Watch Task Timeline</h5>
           <div id="watch_task_timeline"></div>
-          <!-- <div class="row mb-2">
-            <div class="col-md-6">% Project Schedule</div>
-            <div class="col-md-6">% Business Case</div>
-          </div>
-          <div class="watch-months my-3">
-            <span>Jan 2020</span>
-            <span>Feb 2020</span>
-            <span>Mar 2020</span>
-            <span>Apr 2020</span>
-            <span>May 2020</span>
-            <span>Jun 2020</span>
-          </div>
-          <div class="row my-2">
-            <div class="col-md-6">% Project Management Plan</div>
-            <div class="col-md-6">% Powerpoint Breif</div>
-          </div>
-          <div v-if="watchType && watchItem" class="watch-selected-task rounded light-box mt-4 float-right w-75 p-3">
-            <div
-              :is="watchType"
-              :task="watchItem"
-              :issue="watchItem"
-              :with-actions="false"
-            ></div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -38,7 +14,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="blue-box w-100 h-100 text-center p-3">
-              <h6 class="px-3">Total Number of watched Tasks</h6>
+              <h6 class="px-3">Total Number of Watched Tasks</h6>
               <h1 class="px-3">{{on_watched.tasks.length}}</h1>
             </div>
           </div>
@@ -58,7 +34,7 @@
         <div class="row mt-4">
           <div class="col-md-4">
             <div class="d_chart_box">
-              <h6 class="py-2 px-3 text-center">Watched Task Completion</h6>
+              <h6 class="py-2 px-3 text-center">Watched Task Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedTasksCompletionData" :width="200" :height="100" />
                 <h5 class="d_abbr">{{completedTasksInPercent}} %</h5>
@@ -67,7 +43,7 @@
           </div>
           <div class="col-md-4">
             <div class="d_chart_box">
-              <h6 class="py-2 px-3 text-center">Watched Issues Completion</h6>
+              <h6 class="py-2 px-3 text-center">Watched Issue Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedIssuesCompletionData" :width="200" :height="100" />
                 <h5 class="d_abbr">{{completedIssuesInPercent}} %</h5>
@@ -76,7 +52,8 @@
           </div>
           <div class="col-md-4">
             <div class="blue-box w-100 h-75 text-center p-3">
-              <h6 class="px-3">Overdue Tasks and Issues</h6>
+              <div class="warning-icon" v-tooltip="`overdue`"><i class="fa fa-exclamation-triangle"></i></div>
+              <h6 class="px-3">Tasks and Issues</h6>
               <h1 class="px-3">{{overdueTasksNIssues.length}}</h1>
             </div>
           </div>
@@ -84,17 +61,19 @@
       </div>
       <div class="col-md-5">
         <div class="border-gray h-330">
-          <h5 class="mb-2">Watched Facility Status</h5>
-          <div v-for="status in watchedFacilityStatus">
-            <div class="row">
+          <h5 class="mb-2">Watched Facilities and Status</h5>
+          <div v-for="facility in on_watched.facilities">
+            <div class="row my-3">
               <div class="col-md-9">
-                <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
-                <span> {{status.name}}</span>
-                <span class="badge badge-secondary badge-pill">{{status.length}}</span>
+                <div class="d-flex align-items-center">
+                  <div class="fbody-icon mr-2"><i class="fas fa-check"></i></div>
+                  <div class="mr-2">{{facility.facilityName}}</div>
+                  <div class="status-box px-2 text-secondary" :style="`border-color: ${facility.color}`">{{facility.projectStatus || 'No Status'}}</div>
+                </div>
               </div>
               <div class="col-md-3 d-flex align-items-center">
-                <span class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}">
-                  <div class="progress-bar bg-info" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
+                <span class="w-100 progress pg-content" :class="{'progress-0': facility.progress <= 0}">
+                  <div class="progress-bar bg-info" :style="`width: ${facility.progress}%`">{{facility.progress}} %</div>
                 </span>
               </div>
             </div>
@@ -131,13 +110,13 @@
               <div
                 class="p-1 watch-task-item"
                 @click="onWatchedItem(task, 'TaskShow')"
-                v-for="(task, i) in on_watched.tasks"
+                v-for="(task, i) in sortedTasks"
                 :key="task.id"
                 >
                 <task-show
                   :class="{'b_border': !!on_watched.tasks[i+1]}"
                   :task="task"
-                  :with-actions="false"
+                  from-view="watch_view"
                   @toggle-watched="updateWatchedTasks"
                 ></task-show>
               </div>
@@ -147,12 +126,12 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
-          <h6 class="px-3 text-center">Milestone Progressions</h6>
+          <h6 class="px-3 text-center">Watched Milestones vs Total</h6>
           <stacked :chart-data="onWatchedTaskData" :width="300" :height="100" />
         </div>
         <div class="col-md-6">
           <h6 class="px-3 text-center">Assigned Users</h6>
-          <bar :chart-data="watchedTaskUsers" :width="300" :height="100" />
+          <bar :chart-data="watchedTaskUsers" :width="300" :height="watchedUserHeight" />
         </div>
       </div>
     </div>
@@ -184,7 +163,7 @@
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Issues</h5>
               <div
-                v-for="(issue, i) in on_watched.issues"
+                v-for="(issue, i) in sortedIssues"
                 :key="issue.id"
                 class="p-1 watch-task-item"
                 @click="onWatchedItem(issue, 'IssueShow')"
@@ -192,7 +171,7 @@
                 <issue-show
                   :class="{'b_border': !!on_watched.issues[i+1]}"
                   :issue="issue"
-                  :with-actions="false"
+                  from-view="watch_view"
                   @toggle-watch-issue="updateWatchedIssues"
                 ></issue-show>
               </div>
@@ -201,14 +180,14 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row mt-4">
         <div class="col-md-6">
           <h6 class="px-3 text-center">Milestone Progressions</h6>
           <stacked :chart-data="onWatchedIssueData" :width="300" :height="100" />
         </div>
         <div class="col-md-6">
           <h6 class="px-3 text-center">Assigned Users</h6>
-          <bar :chart-data="watchedIssueUsers" :width="300" :height="100" />
+          <bar :chart-data="watchedIssueUsers" :width="300" :height="watchedUserHeight" />
         </div>
       </div>
     </div>
@@ -231,6 +210,7 @@
       return {
         watchItem: null,
         watchType: '',
+        timeline: null,
         timelineOptions: {
           clickToUse: true,
           height: '480px',
@@ -239,8 +219,16 @@
           zoomMin: 864000000,
           tooltip: {
             template: (data) => {
-              // noops
-            }
+              return `<div>
+                        <div>Facility: ${data.item.facilityName}</div>
+                        <div>Type: ${data.taskType}</div>
+                        <div>Start: ${this.formatDate(data.item.startDate)}</div>
+                        <div class="${data.overdue ? 'text-danger' : ''}">Due: ${this.formatDate(data.item.dueDate)}<span>${data.overdue ? '<span class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>' : ''}</span></div>
+                        <div>Progress: ${data.item.progress}%</div>
+                      </div>`
+            },
+            delay: 100,
+            followMouse: true
           }
         }
       }
@@ -264,10 +252,10 @@
         return _.filter(this.on_watched.tasks, i => i.progress && Number(i.progress) == 100)
       },
       completedIssuesInPercent() {
-        return Number(((this.completedIssues.length/this.on_watched.issues.length) * 100).toFixed(0) || 0)
+        return Number(_.meanBy(this.on_watched.issues, 'progress').toFixed(0)) || 0
       },
       completedTasksInPercent() {
-        return Number(((this.completedTasks.length/this.on_watched.tasks.length) * 100).toFixed(0) || 0)
+        return Number(_.meanBy(this.on_watched.tasks, 'progress').toFixed(0)) || 0
       },
       watchedIssuesCompletionData() {
         return {
@@ -386,19 +374,33 @@
         }
         return u_data
       },
+      watchedUserHeight() {
+        return this.projectUsers.length > 10 ? this.projectUsers.length * 10 : 100
+      },
       timelineData() {
         var data = []
         for (var task of [...this.on_watched.issues, ...this.on_watched.tasks]) {
           var _hash = {item: {...task}}
           var is_task = task.hasOwnProperty('taskTypeId')
           _hash.id = is_task ? 'task_'+task.id : 'issue_'+task.id
+          _hash.taskType = is_task ? task.taskType : task.issueType
           _hash.content = is_task ? task.text : task.title
           _hash.start = task.startDate
-          if (task.startDate !== task.endDate) _hash.end = task.endDate
+          if (new Date(task.startDate).getTime() !== new Date(task.endDate).getTime()) _hash.end = task.endDate
           _hash.className = is_task ? 'vis-task' : 'vis-issue'
+          if (task.progress !== 100 && new Date(task.dueDate).getTime() < new Date().getTime()) {
+            _hash.className = 'vis-overdue'
+            _hash.overdue = true
+          }
           data.push(_hash)
         }
         return data
+      },
+      sortedTasks() {
+        return _.sortBy(this.on_watched.tasks, ['dueDate'])
+      },
+      sortedIssues() {
+        return _.sortBy(this.on_watched.issues, ['dueDate'])
       }
     },
     methods: {
@@ -407,16 +409,20 @@
         'updateWatchedIssues'
       ]),
       onWatchedItem(item, type) {
-        this.watchItem = item
-        this.watchType = type
+        // this.watchItem = item
+        // this.watchType = type
       },
       createTimeline() {
         var container = document.getElementById('watch_task_timeline')
-        var items = new DataSet(this.timelineData)
-        var timeline = new Timeline(container, items, this.timelineOptions);
-        var onSelect = (properties) => {
-          alert('selected items: ' + properties.items);
-        }
+        this.timeline = new Timeline(container, new DataSet(this.timelineData), this.timelineOptions)
+      }
+    },
+    watch: {
+      on_watched: {
+        handler(value) {
+          this.timeline.destroy()
+          this.createTimeline()
+        }, deep: true
       }
     }
   }
@@ -449,7 +455,7 @@
     padding: 1em;
   }
   .watch-task-timeline {
-    height: 555px;
+    height: 570px;
     border: 1px solid rgba(0, 0, 0, 0.125);
     overflow-y: auto;
   }
@@ -475,12 +481,26 @@
   }
   .vis-task {
     color: #28a745;
+    background: #c7ffd4;
+    border-color: #28a745;
   }
   .vis-issue {
-    color: #17a2b8;
+    color: #ea9800;
+    background: #ffe5b5;
+    border-color: #ea9800;
+  }
+  .vis-overdue {
+    color: #fff !important;
+    background: #000 !important;
+    border-color: #000 !important;
   }
   .h-330 {
     height: 330px;
     overflow-y: auto;
+  }
+  .status-box {
+    border: 1px solid;
+    border-left: 16px solid;
+    font-size: 12px;
   }
 </style>
