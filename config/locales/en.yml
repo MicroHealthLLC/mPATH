@@ -35,3 +35,6 @@ en:
       region:
         one: Facility Group
         other: Facility Groups
+      task_type:
+        one: Milestone
+        other: Milestones
