@@ -140,7 +140,7 @@
         </div>
         <div class="col-md-6">
           <h6 class="px-3">Assigned Users</h6>
-          <bar :chart-data="watchedTaskUsers" :width="300" :height="watchedUserHeight" />
+          <bar :chart-data="watchedTaskUsers" :width="300" :height="watchedTaskUsersHeight" />
           <p class="mt-2 text-center">Total Assigned Tasks and Checklist Items</p>
         </div>
       </div>
@@ -202,7 +202,7 @@
         </div>
         <div class="col-md-6">
           <h6 class="px-3">Assigned Users</h6>
-          <bar :chart-data="watchedIssueUsers" :width="300" :height="watchedUserHeight" />
+          <bar :chart-data="watchedIssueUsers" :width="300" :height="watchedIssueUsersHeight" />
           <p class="mt-2 text-center">Total Assigned Issues and Checklist Items</p>
         </div>
       </div>
@@ -402,8 +402,11 @@
         }
         return u_data
       },
-      watchedUserHeight() {
-        return this.projectUsers.length > 10 ? this.projectUsers.length * 10 : 100
+      watchedTaskUsersHeight() {
+        return this.watchedTaskUsers.datasets.length > 10 ? this.watchedTaskUsers.datasets.length * 10 : 100
+      },
+      watchedIssueUsersHeight() {
+        return this.watchedIssueUsers.datasets.length > 10 ? this.watchedIssueUsers.datasets.length * 10 : 100
       },
       timelineData() {
         var data = []
@@ -414,7 +417,7 @@
           _hash.taskType = is_task ? task.taskType : task.issueType
           _hash.content = is_task ? task.text : task.title
           _hash.start = task.startDate
-          if (new Date(task.startDate).getTime() !== new Date(task.endDate).getTime()) _hash.end = task.endDate
+          // if (new Date(task.startDate).getTime() !== new Date(task.dueDate).getTime()) _hash.end = task.dueDate
           _hash.className = is_task ? 'vis-task' : 'vis-issue'
           if (task.progress !== 100 && new Date(task.dueDate).getTime() < new Date().getTime()) {
             _hash.className = 'vis-overdue'
