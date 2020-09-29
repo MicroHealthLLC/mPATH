@@ -8,7 +8,7 @@ ActiveAdmin.register TaskType do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Task Types', admin_task_types_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Milestones', admin_task_types_path)]
     if %(show edit).include?(params['action'])
       links << link_to(task_type.name, edit_admin_task_type_path)
     end
@@ -56,9 +56,9 @@ ActiveAdmin.register TaskType do
     end
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Task Types?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Milestones?" do |ids|
     deleted = TaskType.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Task Types"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Milestones"
   end
 
   filter :name

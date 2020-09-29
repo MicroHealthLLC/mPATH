@@ -10,10 +10,11 @@ export default {
         scales: {
           xAxes: [{
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              precision: 0
             },
             gridLines: {
-              color: "rgba(0, 0, 0, 0)",
+              color: "rgba(0, 0, 0, 0.05)",
             }
           }],
           yAxes:[{

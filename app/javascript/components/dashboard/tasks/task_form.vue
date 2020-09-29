@@ -30,18 +30,17 @@
         </div>
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Task Type:</label>
+        <label class="font-sm">Milestone:</label>
         <multiselect
           v-model="selectedTaskType"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Task Type"
+          placeholder="Select milestone"
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
           deselect-label="Remove"
-          :class="{'error': errors.has('Task Type')}"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -49,9 +48,6 @@
             </div>
           </template>
         </multiselect>
-        <div v-show="errors.has('Task Type')" class="text-danger">
-          {{errors.first('Task Type')}}
-        </div>
       </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">

@@ -11,7 +11,11 @@ export default {
           xAxes: [{
             stacked: true,
             gridLines: {
-              color: "rgba(0, 0, 0, 0)",
+              color: "rgba(0, 0, 0, 0.05)",
+            },
+            ticks: {
+              beginAtZero: true,
+              precision: 0
             }
           }],
           yAxes: [{

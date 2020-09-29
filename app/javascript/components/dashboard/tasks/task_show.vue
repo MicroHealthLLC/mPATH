@@ -130,6 +130,10 @@
         this.has_task = false
       },
       toggleWatched() {
+        if (this.DV_task.watched) {
+          var confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+          if (!confirm) {return}
+        }
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
         this.$emit('toggle-watched', this.DV_task)
       },

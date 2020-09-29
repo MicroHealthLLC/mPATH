@@ -60,34 +60,45 @@
               </p>
               <hr>
               <div class="my-1">
-                <h5 class="text-center">{{DV_facility.tasks.length}} Tasks</h5>
+                <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
                 <div>
                   <div class="row">
                     <div class="col-md-9">
                       <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{completedTasks.count}}</span>
+                      <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': completedTasks.avg <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${completedTasks.avg}%`">{{completedTasks.avg}} %</div>
+                      <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-9">
                       <span>Incomplete</span>
-                      <span class="badge badge-secondary badge-pill">{{incompletedTasks.count}}</span>
+                      <span class="badge badge-secondary badge-pill">{{taskVariation.incompleted.count}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': incompletedTasks.avg <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${incompletedTasks.avg}%`">{{incompletedTasks.avg}} %</div>
+                      <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.incompleted.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.incompleted.percentage}%`">{{taskVariation.incompleted.percentage}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Overdue</span>
+                      <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
               <div v-if="taskStats.length > 0">
-                <div class="text-info font-weight-bold text-center">Task Types</div>
+                <div class="text-info font-weight-bold text-center">Milestones</div>
                 <p>
                   <div class="row my-2" v-for="task in taskStats">
                     <div class="col-md-9 font-md">
@@ -104,27 +115,38 @@
               </div>
               <hr>
               <div class="my-1">
-                <h5 class="text-center">{{DV_facility.issues.length}} Issues</h5>
+                <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
                 <div>
                   <div class="row">
                     <div class="col-md-9">
                       <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{completedIssues.count}}</span>
+                      <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': completedIssues.avg <= 0 }">
-                        <div class="progress-bar bg-info" :style="`width: ${completedIssues.avg}%`">{{completedIssues.avg}} %</div>
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-9">
                       <span>Incomplete</span>
-                      <span class="badge badge-secondary badge-pill">{{incompletedIssues.count}}</span>
+                      <span class="badge badge-secondary badge-pill">{{issueVariation.incompleted.count}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': incompletedIssues.avg <= 0}">
-                        <div class="progress-bar bg-info" :style="`width: ${incompletedIssues.avg}%`">{{incompletedIssues.avg}} %</div>
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.incompleted.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.incompleted.percentage}%`">{{issueVariation.incompleted.percentage}} %</div>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <span>Overdue</span>
+                      <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
                       </span>
                     </div>
                   </div>
@@ -280,11 +302,17 @@
     },
     computed: {
       ...mapGetters([
-        'currentProject'
+        'currentProject',
+        'taskTypeFilter',
+        'issueTypeFilter'
       ]),
+      filteredTasks() {
+        var ids = this.taskTypeFilter && this.taskTypeFilter.length ? _.map(this.taskTypeFilter, 'id') : []
+        return _.filter(this.DV_facility.tasks, t => ids.length ? ids.includes(t.taskTypeId) : true)
+      },
       taskStats() {
         var tasks = new Array
-        var group = _.groupBy(this.DV_facility.tasks, 'taskType')
+        var group = _.groupBy(this.filteredTasks, 'taskType')
         for (var type in group) {
           tasks.push({
             name: type,
@@ -294,23 +322,27 @@
         }
         return tasks
       },
-      completedTasks() {
-        var completed = _.filter(this.DV_facility.tasks, (t) => t && t.progress && t.progress == 100)
+      taskVariation() {
+        var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
+        var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
+        var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
+        var incompleted = this.filteredTasks.length - (completed.length + overdue.length)
+        var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
+
         return {
-          count: completed.length,
-          avg: this.getAverage(completed.length, this.DV_facility.tasks.length)
+          completed: {count: completed.length, percentage: completed_percent},
+          incompleted: {count: incompleted, percentage: incompleted_percent},
+          overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
-      incompletedTasks() {
-        var incompleted = _.filter(this.DV_facility.tasks, (t) => t == undefined || t.progress == null || t.progress != 100)
-        return {
-          count: incompleted.length,
-          avg: this.getAverage(incompleted.length, this.DV_facility.tasks.length)
-        }
+      filteredIssues() {
+        var ids = this.issueTypeFilter && this.issueTypeFilter.length ? _.map(this.issueTypeFilter, 'id') : []
+        return _.filter(this.DV_facility.issues, t => ids.length ? ids.includes(t.issueTypeId) : true)
       },
       issueStats() {
         var issues = new Array
-        var group = _.groupBy(this.DV_facility.issues, 'issueType')
+        var group = _.groupBy(this.filteredIssues, 'issueType')
         for (var type in group) {
           issues.push({
             name: type,
@@ -320,18 +352,18 @@
         }
         return issues
       },
-      completedIssues() {
-        var completed = _.filter(this.DV_facility.issues, (t) => t && t.progress && t.progress == 100)
+      issueVariation() {
+        var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
+        var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
+        var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
+        var incompleted = this.filteredIssues.length - (completed.length + overdue.length)
+        var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
+
         return {
-          count: completed.length,
-          avg: this.getAverage(completed.length, this.DV_facility.issues.length)
-        }
-      },
-      incompletedIssues() {
-        var incompleted = _.filter(this.DV_facility.issues, (t) => t == undefined || t.progress == null || t.progress != 100)
-        return {
-          count: incompleted.length,
-          avg: this.getAverage(incompleted.length, this.DV_facility.issues.length)
+          completed: {count: completed.length, percentage: completed_percent},
+          incompleted: {count: incompleted, percentage: incompleted_percent},
+          overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
       _isallowed() {

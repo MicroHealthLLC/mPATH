@@ -7,7 +7,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Type"
+            placeholder="Filter by Milestones"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -64,10 +64,11 @@
 <script>
   import TaskShow from "./task_show"
   import {mapGetters, mapMutations} from "vuex"
+
   export default {
     name: 'TasksIndex',
     components: {TaskShow},
-    props: ['facility', 'taskTypes'],
+    props: ['facility'],
     data() {
       return {
         viewList: 'active'
@@ -88,7 +89,8 @@
     computed: {
       ...mapGetters([
         'taskTypeFilter',
-        'myActionsFilter'
+        'myActionsFilter',
+        'taskTypes'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]

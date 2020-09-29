@@ -118,7 +118,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Type"
+            placeholder="Filter by Milestones"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -524,7 +524,7 @@
             Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
             Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
-            Task Type: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
+            Milestones: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
             Task % Progress Range: ${this.taskProgressFilter ?  _.map(this.taskProgressFilter, 'name').join() : 'all'}\n
             Issue Type: ${this.issueTypeFilter ?  _.map(this.issueTypeFilter, 'name').join() : 'all'}\n
             Issue % Progress Range: ${this.issueProgressFilter ?  _.map(this.issueProgressFilter, 'name').join() : 'all'}\n

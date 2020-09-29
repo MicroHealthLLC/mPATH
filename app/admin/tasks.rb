@@ -40,7 +40,7 @@ ActiveAdmin.register Task do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column "Name", :text
-    column :task_type, nil, sortable: 'task_types.name' do |task|
+    column "Milestone", :task_type, nil, sortable: 'task_types.name' do |task|
       if current_user.admin_write?
         link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
       else
@@ -98,7 +98,7 @@ ActiveAdmin.register Task do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :task_type
+      f.input :task_type, label: 'Milestone'
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :users, label: 'Assigned Users', as: :select, collection: User.all.map{|u| [u.full_name, u.id]}
@@ -123,7 +123,7 @@ ActiveAdmin.register Task do
   end
 
   filter :text, label: 'Name'
-  filter :task_type
+  filter :task_type, label: 'Milestone'
   filter :start_date
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'

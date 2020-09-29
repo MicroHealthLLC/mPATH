@@ -5,7 +5,6 @@
         <task-index
           v-if="currentProject"
           :facility="facility"
-          :task-types="taskTypes"
           @show-hide="detailShowHide"
           @toggle-watch-task="toogleWatchTask"
         ></task-index>

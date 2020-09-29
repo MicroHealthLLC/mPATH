@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <div class="watch-task-timeline p-4 mb-4">
-          <h5 class="mb-2">Watch Task Timeline</h5>
+          <h5 class="mb-2">On Watch Timeline</h5>
           <div id="watch_task_timeline"></div>
         </div>
       </div>
@@ -62,22 +62,25 @@
       <div class="col-md-5">
         <div class="border-gray h-330">
           <h5 class="mb-2">Watched Facilities and Status</h5>
-          <div v-for="facility in on_watched.facilities">
-            <div class="row my-3">
-              <div class="col-md-9">
-                <div class="d-flex align-items-center">
-                  <div class="fbody-icon mr-2"><i class="fas fa-check"></i></div>
-                  <div class="mr-2">{{facility.facilityName}}</div>
-                  <div class="status-box px-2 text-secondary" :style="`border-color: ${facility.color}`">{{facility.projectStatus || 'No Status'}}</div>
+          <div v-if="on_watched.facilities.length > 0">
+            <div v-for="facility in on_watched.facilities">
+              <div class="row my-3">
+                <div class="col-md-9">
+                  <div class="d-flex align-items-center">
+                    <div class="fbody-icon mr-2"><i class="fas fa-check"></i></div>
+                    <div class="mr-2">{{facility.facilityName}}</div>
+                    <div class="status-box px-2 text-secondary" :style="`border-color: ${facility.color}`">{{facility.projectStatus || 'No Status'}}</div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-3 d-flex align-items-center">
-                <span class="w-100 progress pg-content" :class="{'progress-0': facility.progress <= 0}">
-                  <div class="progress-bar bg-info" :style="`width: ${facility.progress}%`">{{facility.progress}} %</div>
-                </span>
+                <div class="col-md-3 d-flex align-items-center">
+                  <span class="w-100 progress pg-content" :class="{'progress-0': facility.progress <= 0}">
+                    <div class="progress-bar bg-info" :style="`width: ${facility.progress}%`">{{facility.progress}} %</div>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
+          <div v-else class="p-2 text-danger">No Data Found..</div>
         </div>
       </div>
     </div>
@@ -88,38 +91,44 @@
         <div class="col-md-6">
           <div class="border-gray h-330">
             <h5 class="mb-2">Watched Milestone Progressions</h5>
-            <div v-for="task in watchedTaskTypes">
-              <div class="row" v-if="task._display">
-                <div class="col-md-9">
-                  <span> {{task.name}}</span>
-                  <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-                </div>
-                <div class="col-md-3 d-flex align-items-center">
-                  <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
-                    <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-                  </span>
+            <div v-if="displayWatchedTaskTypes">
+              <div v-for="task in watchedTaskTypes">
+                <div class="row mt-1" v-if="task._display">
+                  <div class="col-md-9">
+                    <span> {{task.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div v-else class="p-2 text-danger">No Data Found..</div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="wacthed-task-list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Tasks</h5>
-              <div
-                class="p-1 watch-task-item"
-                @click="onWatchedItem(task, 'TaskShow')"
-                v-for="(task, i) in sortedTasks"
-                :key="task.id"
-                >
-                <task-show
-                  :class="{'b_border': !!on_watched.tasks[i+1]}"
-                  :task="task"
-                  from-view="watch_view"
-                  @toggle-watched="updateWatchedTasks"
-                ></task-show>
+              <div v-if="sortedTasks.length > 0">
+                <div
+                  class="p-1 watch-task-item"
+                  @click="onWatchedItem(task, 'TaskShow')"
+                  v-for="(task, i) in sortedTasks"
+                  :key="task.id"
+                  >
+                  <task-show
+                    :class="{'b_border': !!on_watched.tasks[i+1]}"
+                    :task="task"
+                    from-view="watch_view"
+                    @toggle-watched="updateWatchedTasks"
+                  ></task-show>
+                </div>
               </div>
+              <div v-else class="p-2 text-danger">No Data Found..</div>
             </div>
           </div>
         </div>
@@ -130,51 +139,57 @@
           <stacked :chart-data="onWatchedTaskData" :width="300" :height="100" />
         </div>
         <div class="col-md-6">
-          <h6 class="px-3 text-center">Assigned Users</h6>
+          <h6 class="px-3">Assigned Users</h6>
           <bar :chart-data="watchedTaskUsers" :width="300" :height="watchedUserHeight" />
+          <p class="mt-2 text-center">Total Assigned Tasks and Checklist Items</p>
         </div>
       </div>
     </div>
 
     <div class="border-gray mt-4">
       <h5 class="px-3 mb-2">Watched Issues Stats</h5>
-
       <div class="row">
         <div class="col-md-6">
           <div class="border-gray h-330">
             <h5 class="mb-2">Watched Issue Types</h5>
-            <div v-for="issue in watchedIssueTypes">
-              <div class="row" v-if="issue._display">
-                <div class="col-md-9">
-                  <span> {{issue.name}}</span>
-                  <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-                </div>
-                <div class="col-md-3 d-flex align-items-center">
-                  <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                    <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-                  </span>
+            <div v-if="displayWatchedIssueTypes">
+              <div v-for="issue in watchedIssueTypes">
+                <div class="row mt-1" v-if="issue._display">
+                  <div class="col-md-9">
+                    <span> {{issue.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+                  </div>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div v-else class="p-2 text-danger">No Data Found..</div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="watched-issue-list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Issues</h5>
-              <div
-                v-for="(issue, i) in sortedIssues"
-                :key="issue.id"
-                class="p-1 watch-task-item"
-                @click="onWatchedItem(issue, 'IssueShow')"
-                >
-                <issue-show
-                  :class="{'b_border': !!on_watched.issues[i+1]}"
-                  :issue="issue"
-                  from-view="watch_view"
-                  @toggle-watch-issue="updateWatchedIssues"
-                ></issue-show>
+              <div v-if="sortedIssues.length > 0">
+                <div
+                  v-for="(issue, i) in sortedIssues"
+                  :key="issue.id"
+                  class="p-1 watch-task-item"
+                  @click="onWatchedItem(issue, 'IssueShow')"
+                  >
+                  <issue-show
+                    :class="{'b_border': !!on_watched.issues[i+1]}"
+                    :issue="issue"
+                    from-view="watch_view"
+                    @toggle-watch-issue="updateWatchedIssues"
+                  ></issue-show>
+                </div>
               </div>
+              <div v-else class="p-2 text-danger">No Data Found..</div>
             </div>
           </div>
         </div>
@@ -182,12 +197,13 @@
 
       <div class="row mt-4">
         <div class="col-md-6">
-          <h6 class="px-3 text-center">Milestone Progressions</h6>
+          <h6 class="px-3 text-center">Watched Issues vs Total</h6>
           <stacked :chart-data="onWatchedIssueData" :width="300" :height="100" />
         </div>
         <div class="col-md-6">
-          <h6 class="px-3 text-center">Assigned Users</h6>
+          <h6 class="px-3">Assigned Users</h6>
           <bar :chart-data="watchedIssueUsers" :width="300" :height="watchedUserHeight" />
+          <p class="mt-2 text-center">Total Assigned Issues and Checklist Items</p>
         </div>
       </div>
     </div>
@@ -313,6 +329,9 @@
         }
         return issueTypes
       },
+      displayWatchedIssueTypes() {
+        return _.filter(this.watchedIssueTypes, i => i._display).length > 0
+      },
       watchedTaskTypes() {
         var names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
         var taskTypes = new Array
@@ -329,6 +348,9 @@
           )
         }
         return taskTypes
+      },
+      displayWatchedTaskTypes() {
+        return _.filter(this.watchedTaskTypes, t => t._display).length > 0
       },
       onWatchedTaskData() {
         var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: []}, {label: 'total', backgroundColor: '#34edfe', data: []}]}
@@ -355,22 +377,28 @@
       watchedTaskUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          u_data.datasets.push({
-            label: user.fullName,
-            backgroundColor: this.getColor(),
-            data: [_.countBy(this.on_watched.tasks, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true]
-          })
+          var count = _.countBy(this.on_watched.tasks, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true
+          if (count > 0) {
+            u_data.datasets.push({
+              label: user.fullName,
+              backgroundColor: this.getColor(),
+              data: [count]
+            })
+          }
         }
         return u_data
       },
       watchedIssueUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          u_data.datasets.push({
-            label: user.fullName,
-            backgroundColor: this.getColor(),
-            data: [_.countBy(this.on_watched.issues, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true]
-          })
+          var count = _.countBy(this.on_watched.issues, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true
+          if (count > 0) {
+            u_data.datasets.push({
+              label: user.fullName,
+              backgroundColor: this.getColor(),
+              data: [count]
+            })
+          }
         }
         return u_data
       },

@@ -124,7 +124,6 @@
       ...mapActions([
         'issueDeleted'
       ]),
-
       editIssue() {
         if (this.fromView == 'map_view') {
           this.$emit('issue-edited', this.issue)
@@ -143,6 +142,10 @@
         this.has_task = false
       },
       toggleWatched() {
+        if (this.DV_issue.watched) {
+          var confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
+          if (!confirm) {return}
+        }
         this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
         this.$emit('toggle-watch-issue', this.DV_issue)
       },

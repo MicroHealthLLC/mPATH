@@ -169,7 +169,7 @@ ActiveAdmin.register Facility do
   batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
     "Name": :text,
     "Project": Project.pluck(:name, :id),
-    "Task Type": TaskType.pluck(:name, :id),
+    "Milestone": TaskType.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
     "Assign Users": :text,
@@ -182,7 +182,7 @@ ActiveAdmin.register Facility do
     checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Type'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Milestone'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
       end
     end
     redirect_to collection_path, notice: "Task added"
@@ -260,7 +260,7 @@ ActiveAdmin.register Facility do
   filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
-  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Type'
+  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Milestone'
   filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   filter :projects
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false

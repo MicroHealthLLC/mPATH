@@ -453,10 +453,17 @@ export default new Vuex.Store({
 
       return hash
     },
-
+    filteredAllTasks: (state, getters) => {
+      var ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => ids.length ? ids.includes(t.taskTypeId) : true)
+    },
+    filteredAllIssues: (state, getters) => {
+      var ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => ids.length ? ids.includes(t.issueTypeId) : true)
+    },
     on_watched: (state, getters) => {
-      var tasks = _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => t.watched)
-      var issues = _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => t.watched)
+      var tasks = _.filter(getters.filteredAllTasks, t => t.watched)
+      var issues = _.filter(getters.filteredAllIssues, t => t.watched)
       var ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
       var facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 

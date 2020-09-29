@@ -204,20 +204,20 @@
               },
               {
                 id: 6,
-                width: 90,
+                width: 100,
                 label: "Assigned To",
                 value: "_users",
                 value: task => task._users ? task._users.join(', ') : '',
                 style: {
                   'task-list-item-column': {
-                    height: '200px'
+                    // height: '200px'
                   },
                   'task-list-header-label': {
                     'text-align': 'center',
                     width: '100%'
                   },
                   'task-list-item-value': {
-                    'white-space': 'unset'
+                    // 'white-space': 'unset'
                   }
                 }
               }
