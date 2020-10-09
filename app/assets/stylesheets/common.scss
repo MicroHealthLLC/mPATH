@@ -17,6 +17,10 @@ button:focus,
 input[type=button]:focus {
   outline: none;
 }
+.form-control:focus {
+  outline: none;
+  box-shadow: none;
+}
 .font-sm {
   font-size: 13px;
 }
@@ -319,7 +323,7 @@ input[type=button]:focus {
   margin-left: -20px;
 }
 .mx-datepicker-main.mx-datepicker-popup {
-  z-index: 10011 !important;
+  z-index: 10000001 !important;
 }
 .simple-select /deep/ .multiselect,
 .user-select /deep/ .multiselect {

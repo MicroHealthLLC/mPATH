@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_one :privilege, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
+  before_commit :set_color, on: :create
 
   enum role: [:client, :superadmin].freeze
   enum status: [:inactive, :active].freeze
@@ -85,5 +86,9 @@ class User < ApplicationRecord
 
   def download_links?
     admin_write? ? [:csv, :json] : false
+  end
+
+  def set_color
+    self.color = "##{SecureRandom.hex(3)}"
   end
 end

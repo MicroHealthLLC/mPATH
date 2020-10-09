@@ -20,8 +20,7 @@ export default {
           yAxes:[{
             ticks: {
               display: false
-            },
-            'dataset.maxBarThickness': 2,
+            }
           }]
         },
         tooltips: {

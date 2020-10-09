@@ -40,6 +40,23 @@ export default new Vuex.Store({
     issueSeverityFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
+    progressFilter: {
+      facility: {
+        min: '',
+        max: '',
+        error: ''
+      },
+      task: {
+        min: '',
+        max: '',
+        error: ''
+      },
+      issue: {
+        min: '',
+        max: '',
+        error: ''
+      }
+    },
     taskUserFilter: null,
     issueUserFilter: null,
     myActionsFilter: new Array
@@ -108,7 +125,18 @@ export default new Vuex.Store({
     setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
     setTaskUserFilter: (state, filter) => state.taskUserFilter = filter,
     setIssueUserFilter: (state, filter) => state.issueUserFilter = filter,
-    setMyActionsFilter: (state, filter) => state.myActionsFilter = filter
+    setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
+    clearProgressFilters: (state) => {
+      var filters = new Object
+      for (var key of Object.keys(state.progressFilter)) {
+        filters[key] = new Object
+        for (var fil of Object.keys(state.progressFilter[key])) {
+          filters[key][fil] = ""
+        }
+      }
+      state.progressFilter = filters
+    },
+    setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value
   },
 
   getters: {
@@ -139,6 +167,7 @@ export default new Vuex.Store({
     issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
     mapFilters: state => state.mapFilters,
+    progressFilter: state => state.progressFilter,
     filteredFacilities: (state, getters) => (_status='active') => {
       return _.filter(getters.facilities, (facility) => {
         var valid = _status === 'all' || facility.status === _status
@@ -692,6 +721,7 @@ export default new Vuex.Store({
         'myActionsFilter',
         'taskUserFilter',
         'issueUserFilter',
+        'progressFilter',
         'mapFilters'
       ]
     })

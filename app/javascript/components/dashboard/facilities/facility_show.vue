@@ -54,7 +54,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                <span class="w-100 progress pg-content" :class="{ 'progress-0': DV_facility.progress <= 0 }">
+                <span class="w-100 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
@@ -106,7 +106,7 @@
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
                     </div>
                     <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
                       </span>
                     </div>

@@ -33,7 +33,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-4">
-            <div class="d_chart_box">
+            <div class="d_chart_box text-center">
               <h6 class="py-2 px-3 text-center">Watched Task Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedTasksCompletionData" :width="200" :height="100" />
@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="d_chart_box">
+            <div class="d_chart_box text-center">
               <h6 class="py-2 px-3 text-center">Watched Issue Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedIssuesCompletionData" :width="200" :height="100" />
@@ -61,7 +61,7 @@
       </div>
       <div class="col-md-5">
         <div class="border-gray h-330">
-          <h5 class="mb-2">Watched Facilities and Status</h5>
+          <h5 class="mb-2">Watched Facilities, Status and % Progress</h5>
           <div v-if="on_watched.facilities.length > 0">
             <div v-for="facility in on_watched.facilities">
               <div class="row my-3">
@@ -259,7 +259,9 @@
         'taskTypes',
         'issueTypeFilter',
         'taskTypeFilter',
-        'projectUsers'
+        'projectUsers',
+        'filteredAllTasks',
+        'filteredAllIssues'
       ]),
       completedIssues() {
         return _.filter(this.on_watched.issues, i => i.progress && Number(i.progress) == 100)
@@ -268,10 +270,10 @@
         return _.filter(this.on_watched.tasks, i => i.progress && Number(i.progress) == 100)
       },
       completedIssuesInPercent() {
-        return Number(_.meanBy(this.on_watched.issues, 'progress').toFixed(0)) || 0
+        return Number(_.meanBy(this.on_watched.issues, 'progress').toFixed(2)) || 0
       },
       completedTasksInPercent() {
-        return Number(_.meanBy(this.on_watched.tasks, 'progress').toFixed(0)) || 0
+        return Number(_.meanBy(this.on_watched.tasks, 'progress').toFixed(2)) || 0
       },
       watchedIssuesCompletionData() {
         return {
@@ -297,20 +299,6 @@
       },
       overdueTasksNIssues() {
         return _.filter([...this.on_watched.tasks, ...this.on_watched.issues], t => t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      },
-      watchedFacilityStatus() {
-        var status = new Array
-        for (var [key, value] of Object.entries(_.groupBy(this.on_watched.facilities, 'projectStatus'))) {
-          status.push(
-            {
-              name: key.replace('null', 'No Status'),
-              length: value.length,
-              color: value[0].color,
-              progress: this.getAverage(value.length, this.on_watched.facilities.length)
-            }
-          )
-        }
-        return status
       },
       watchedIssueTypes() {
         var names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
@@ -353,35 +341,38 @@
         return _.filter(this.watchedTaskTypes, t => t._display).length > 0
       },
       onWatchedTaskData() {
-        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: []}, {label: 'total', backgroundColor: '#34edfe', data: []}]}
+        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
         for (var type of this.watchedTaskTypes) {
           if (!type._display) continue
+          var total = _.filter(this.filteredAllTasks, t => t.taskTypeId == type._id)
           var tasks = _.filter(this.on_watched.tasks, t => t.taskTypeId == type._id)
           c_data.labels.push(type.name)
-          c_data.datasets[0].data.push(_.filter(tasks, t => t.watched).length)
-          c_data.datasets[1].data.push(tasks.length)
+          c_data.datasets[0].data.push(tasks.length)
+          c_data.datasets[1].data.push(total.length - tasks.length)
         }
         return c_data
       },
       onWatchedIssueData() {
-        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: []}, {label: 'total', backgroundColor: '#34edfe', data: []}]}
+        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
         for (var type of this.watchedIssueTypes) {
           if (!type._display) continue
+          var total = _.filter(this.filteredAllIssues, t => t.issueTypeId == type._id)
           var issues = _.filter(this.on_watched.issues, t => t.issueTypeId == type._id)
           c_data.labels.push(type.name)
-          c_data.datasets[0].data.push(_.filter(issues, t => t.watched).length)
-          c_data.datasets[1].data.push(issues.length)
+          c_data.datasets[0].data.push(issues.length)
+          c_data.datasets[1].data.push(total.length - issues.length)
         }
         return c_data
       },
       watchedTaskUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          var count = _.countBy(this.on_watched.tasks, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true
+          var count = this.getUserCount(user, 'tasks')
           if (count > 0) {
             u_data.datasets.push({
               label: user.fullName,
-              backgroundColor: this.getColor(),
+              backgroundColor: user.color,
+              maxBarThickness: 14,
               data: [count]
             })
           }
@@ -391,11 +382,12 @@
       watchedIssueUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          var count = _.countBy(this.on_watched.issues, t => t.userIds.includes(user.id) || _.map(t.checklists, 'userId').includes(user.id)).true
+          var count = this.getUserCount(user, 'issues')
           if (count > 0) {
             u_data.datasets.push({
               label: user.fullName,
-              backgroundColor: this.getColor(),
+              backgroundColor: user.color,
+              maxBarThickness: 14,
               data: [count]
             })
           }
@@ -420,7 +412,7 @@
           // if (new Date(task.startDate).getTime() !== new Date(task.dueDate).getTime()) _hash.end = task.dueDate
           _hash.className = is_task ? 'vis-task' : 'vis-issue'
           if (task.progress !== 100 && new Date(task.dueDate).getTime() < new Date().getTime()) {
-            _hash.className = 'vis-overdue'
+            _hash.className = 'vis-overdue-' + (is_task ? 'task' : 'issue')
             _hash.overdue = true
           }
           data.push(_hash)
@@ -446,6 +438,9 @@
       createTimeline() {
         var container = document.getElementById('watch_task_timeline')
         this.timeline = new Timeline(container, new DataSet(this.timelineData), this.timelineOptions)
+      },
+      getUserCount(user, key) {
+        return _.countBy(this.on_watched[key], t => t.userIds.includes(user.id)).true +  _.compact(_.map(_.flatten(_.map(this.on_watched[key], 'checklists')), t => t.userId == user.id)).length
       }
     },
     watch: {
@@ -467,11 +462,12 @@
     overflow-y: auto;
   }
   .d_chart {
+    margin: 0 auto;
     width: 200px;
     .d_abbr {
       position: relative;
       bottom: 25px;
-      left: 42%;
+      /*left: 42%;*/
     }
   }
 
@@ -520,10 +516,15 @@
     background: #ffe5b5;
     border-color: #ea9800;
   }
-  .vis-overdue {
+  .vis-overdue-task {
     color: #fff !important;
-    background: #000 !important;
-    border-color: #000 !important;
+    background: #014011 !important;
+    border-color: #014011 !important;
+  }
+  .vis-overdue-issue {
+    color: #fff !important;
+    background: #ff5c5c !important;
+    border-color: #ff5c5c !important;
   }
   .h-330 {
     height: 330px;

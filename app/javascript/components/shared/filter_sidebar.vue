@@ -87,25 +87,20 @@
             </template>
           </multiselect>
         </div>
-        <div class="progress-ranges-select my-3 mx-1">
-          <multiselect
-            v-model="C_facilityProgressFilter"
-            track-by="name"
-            label="name"
-            placeholder="Facility % Progress Range"
-            :options="DV_progressRanges"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+
+        <div class="progress_ranges my-3 mx-1">
+          <label class="mb-0">Facility % Progress Range</label>
+          <div class="form-row">
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+            </div>
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+            </div>
+          </div>
+          <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
         </div>
+
         <div class="duedate-range my-3 mx-1">
           <v2-date-picker
             v-model="C_facilityDueDateFilter"
@@ -132,25 +127,20 @@
             </template>
           </multiselect>
         </div>
-        <div class="taskProgress-select my-3 mx-1">
-          <multiselect
-            v-model="C_taskProgressFilter"
-            track-by="name"
-            label="name"
-            placeholder="Task % Progress Range"
-            :options="DV_taskProgressRanges"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+
+        <div class="progress_ranges my-3 mx-1">
+          <label class="mb-0">Task % Progress Range</label>
+          <div class="form-row">
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'min'})" :value="C_taskProgress.min">
+            </div>
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'max'})" :value="C_taskProgress.max">
+            </div>
+          </div>
+          <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
         </div>
+
         <div class="taskUser-select my-3 mx-1">
           <multiselect
             v-model="C_taskUserFilter"
@@ -189,25 +179,20 @@
             </template>
           </multiselect>
         </div>
-        <div class="issueProgress-select my-3 mx-1">
-          <multiselect
-            v-model="C_issueProgressFilter"
-            track-by="name"
-            label="name"
-            placeholder="Issue % Progress Range"
-            :options="DV_issueProgressRanges"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+
+        <div class="progress_ranges my-3 mx-1">
+          <label class="mb-0">Issue % Progress Range</label>
+          <div class="form-row">
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'min'})" :value="C_issueProgress.min">
+            </div>
+            <div class="form-group col mb-0">
+              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'max'})" :value="C_issueProgress.max">
+            </div>
+          </div>
+          <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>
         </div>
+
         <div class="issueSeverity-select my-3 mx-1">
           <multiselect
             v-model="C_issueSeverityFilter"
@@ -288,10 +273,7 @@
         myActions: [
           {name: 'My Tasks', value: 'tasks'},
           {name: 'My Issues', value: 'issues'}
-        ],
-        DV_progressRanges: this.progressRanges(),
-        DV_issueProgressRanges: this.progressRanges(),
-        DV_taskProgressRanges: this.progressRanges()
+        ]
       }
     },
     computed: {
@@ -319,7 +301,8 @@
         'ganttData',
         'myActionsFilter',
         'taskUserFilter',
-        'issueUserFilter'
+        'issueUserFilter',
+        'progressFilter'
       ]),
       enableExport() {
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
@@ -360,14 +343,6 @@
           this.setFacilityNameFilter(value)
         }
       },
-      C_facilityProgressFilter: {
-        get() {
-          return this.facilityProgressFilter
-        },
-        set(value) {
-          this.setFacilityProgressFilter(value)
-        }
-      },
       C_facilityDueDateFilter: {
         get() {
           if (!this.facilityDueDateFilter) return this.facilityDueDateFilter
@@ -393,22 +368,6 @@
           this.setIssueSeverityFilter(value)
         }
       },
-      C_issueProgressFilter: {
-        get() {
-          return this.issueProgressFilter
-        },
-        set(value) {
-          this.setIssueProgressFilter(value)
-        }
-      },
-      C_taskProgressFilter: {
-        get() {
-          return this.taskProgressFilter
-        },
-        set(value) {
-          this.setTaskProgressFilter(value)
-        }
-      },
       C_taskUserFilter: {
         get() {
           return this.taskUserFilter
@@ -432,6 +391,21 @@
         set(value) {
           value = value ? value : []
           this.setMyActionsFilter(value)
+        }
+      },
+      C_facilityProgress: {
+        get() {
+          return this.progressFilter.facility
+        }
+      },
+      C_taskProgress: {
+        get() {
+          return this.progressFilter.task
+        }
+      },
+      C_issueProgress: {
+        get() {
+          return this.progressFilter.issue
         }
       },
       filterBarStyle() {
@@ -463,25 +437,12 @@
         'setMyActionsFilter',
         'setMapFilters',
         'setTaskUserFilter',
-        'setIssueUserFilter'
+        'setIssueUserFilter',
+        'setProgressFilters',
+        'clearProgressFilters'
       ]),
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
-      },
-      progressRanges() {
-        return [
-          {name: '0', value: '0'},
-          {name: '11-20', value: '11-20'},
-          {name: '21-30', value: '21-30'},
-          {name: '31-40', value: '31-40'},
-          {name: '41-50', value: '41-50'},
-          {name: '51-60', value: '51-60'},
-          {name: '61-70', value: '61-70'},
-          {name: '71-80', value: '71-80'},
-          {name: '81-90', value: '81-90'},
-          {name: '91-99', value: '91-99'},
-          {name: '100', value: '100'}
-        ]
       },
       findFacility(query) {
         this.isLoading = true
@@ -509,6 +470,7 @@
         this.setTaskProgressFilter(null)
         this.setMyActionsFilter([])
         this.setMapFilters([])
+        this.clearProgressFilters()
       },
       exportData() {
         if (!this.enableExport || this.exporting) return;
@@ -582,6 +544,24 @@
         catch(err) {
           console.error(err)
         }
+      },
+      onChangeProgress(event, option) {
+        var input = event.target.value
+        var hash = Object.assign({}, this.progressFilter[option.variable])
+        var error = ""
+
+        if (input != "") {
+          if (input < 0) input = 0
+          if (input > 100) input = 100
+          if ((option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) error = "Min should not be greator than Max."
+        }
+
+        hash[option.type] = input == "" ? input : Number(input)
+        if (hash.max == "" || hash.min == "") error = "Both fields are required."
+        if (hash.max == "" && hash.min == "") error = ""
+        hash.error = error
+
+        this.setProgressFilters({key: option.variable, value: hash})
       }
     },
     watch: {
@@ -623,6 +603,36 @@
       },
       myActionsFilter(value) {
         this.updateMapFilters({key: 'myActions', filter: value, _k: 'value'})
+      },
+      "progressFilter.facility": {
+        handler(value) {
+          if (value.error == "" && value.min && value.max && value.min <= value.max) {
+            value = {name: value.min + "-" + value.max, value: value.min + "-" + value.max}
+            this.setFacilityProgressFilter([value])
+          } else if (value.min == "" && value.max == "") {
+            this.setFacilityProgressFilter([])
+          }
+        }, deep: true
+      },
+      "progressFilter.task": {
+        handler(value) {
+          if (value.error == "" && value.min && value.max && value.min <= value.max) {
+            value = {name: value.min + "-" + value.max, value: value.min + "-" + value.max}
+            this.setTaskProgressFilter([value])
+          } else if (value.min == "" && value.max == "") {
+            this.setTaskProgressFilter([])
+          }
+        }, deep: true
+      },
+      "progressFilter.issue": {
+        handler(value) {
+          if (value.error == "" && value.min && value.max && value.min <= value.max) {
+            value = {name: value.min + "-" + value.max, value: value.min + "-" + value.max}
+            this.setIssueProgressFilter([value])
+          } else if (value.min == "" && value.max == "") {
+            this.setIssueProgressFilter([])
+          }
+        }, deep: true
       }
     }
   }
@@ -770,5 +780,18 @@
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
+  }
+  .progress_ranges {
+    label {
+      margin-left: 0.5em;
+      font-size: 14px;
+      color: #adadad;
+    }
+    input {
+      border-color: #e8e8e8;
+    }
+    ::placeholder {
+      color: #adadad;
+    }
   }
 </style>
