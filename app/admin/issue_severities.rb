@@ -1,6 +1,5 @@
 ActiveAdmin.register IssueSeverity do
-
-  menu priority: 12
+  menu parent: "Issues", priority: 2
   actions :all, except: [:show]
 
   permit_params do

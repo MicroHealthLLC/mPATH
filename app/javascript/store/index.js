@@ -284,6 +284,9 @@ export default new Vuex.Store({
     currentTasks: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'tasks'))
     },
+    currentIssues: (state, getters) => {
+      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
+    },
     facilityGroupFacilities: (state, getters) => (group) => {
       var ids = _.map(getters.filteredFacilities('active'), 'id')
       return _.filter(group.facilities, f => ids.includes(f.facilityId) && f.projectId === getters.currentProject.id)

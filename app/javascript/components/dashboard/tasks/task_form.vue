@@ -195,6 +195,51 @@
           :show-label="true"
         />
       </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Tasks:</label>
+        <multiselect
+          v-model="relatedTasks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-tasks"
+          :options="filteredTasks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Issues:</label>
+        <multiselect
+          v-model="relatedIssues"
+          track-by="id"
+          label="title"
+          placeholder="Search and select Related-issues"
+          :options="filteredIssues"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.title}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
       <div class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
@@ -226,6 +271,8 @@
           dueDate: '',
           taskTypeId: '',
           userIds: [],
+          subTaskIds: [],
+          subIssueIds: [],
           notes: '',
           progress: 0,
           autoCalculate: true,
@@ -235,6 +282,8 @@
         destroyedFiles: [],
         selectedTaskType: null,
         taskUsers: [],
+        relatedIssues: [],
+        relatedTasks: [],
         _ismounted: false,
         showErrors: false,
         loading: true
@@ -244,6 +293,8 @@
       if (this.task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
         this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
+        this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.addFile(this.task.attachFiles)
       }
@@ -298,7 +349,25 @@
             }
           }
           else {
-            formData.append('issue[user_ids][]', [])
+            formData.append('task[user_ids][]', [])
+          }
+
+          if (this.DV_task.subTaskIds.length) {
+            for (var u_id of this.DV_task.subTaskIds) {
+              formData.append('task[sub_task_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('task[sub_task_ids][]', [])
+          }
+
+          if (this.DV_task.subIssueIds.length) {
+            for (var u_id of this.DV_task.subIssueIds) {
+              formData.append('task[sub_issue_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('task[sub_issue_ids][]', [])
           }
 
           for (var i in this.DV_task.checklists) {
@@ -399,7 +468,9 @@
         'currentProject',
         'taskTypes',
         'projectUsers',
-        'myActionsFilter'
+        'myActionsFilter',
+        'currentTasks',
+        'currentIssues'
       ]),
       readyToSave() {
         return (
@@ -418,6 +489,12 @@
       },
       C_myTasks() {
         return _.map(this.myActionsFilter, 'value').includes('tasks')
+      },
+      filteredTasks() {
+        return _.filter(this.currentTasks, t => t.facilityId == this.facility.id && t.id !== this.DV_task.id)
+      },
+      filteredIssues() {
+        return _.filter(this.currentIssues, t => t.facilityId == this.facility.id)
       }
     },
     watch: {
@@ -449,6 +526,16 @@
       taskUsers: {
         handler: function(value) {
           if (value) this.DV_task.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      relatedIssues: {
+        handler: function(value) {
+          if (value) this.DV_task.subIssueIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      relatedTasks: {
+        handler: function(value) {
+          if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
       selectedTaskType: {

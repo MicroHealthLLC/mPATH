@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :projects, through: :project_users
   has_many :facilities
   has_one :privilege, dependent: :destroy
+  belongs_to :organization, optional: true
 
   validates :first_name, :last_name, presence: true
   before_commit :set_color, on: :create
@@ -91,4 +92,9 @@ class User < ApplicationRecord
   def set_color
     self.color = "##{SecureRandom.hex(3)}"
   end
+
+  def project_names
+    projects.active.pluck :name
+  end
+
 end

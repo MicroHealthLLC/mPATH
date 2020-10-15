@@ -8,6 +8,7 @@ body {
   font-style: normal;
   font-weight: 300;
   overflow-x: hidden;
+  letter-spacing: .035em;
   /*overflow-y: hidden;*/
 }
 p {
@@ -16,6 +17,10 @@ p {
 button:focus,
 input[type=button]:focus {
   outline: none;
+}
+.body-wrapper {
+  border-top: 1px solid #dee2e6;
+  padding: 7px 70px;
 }
 .form-control:focus {
   outline: none;
@@ -387,4 +392,36 @@ body /deep/ .multiselect--disabled {
 }
 .b_border {
   border-bottom: 1px solid #ccc;
+}
+.table {
+  th {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 10px;
+    font-size: 0.9em;
+  }
+  td {
+    padding: 6px;
+  }
+}
+.badge-active {
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 3px 5px 2px 5px;
+  font-size: 0.8em;
+  background: #08A510;
+  width: max-content;
+  display: inline-block;
+}
+.badge-inactive {
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 3px 5px 2px 5px;
+  font-size: 0.8em;
+  background: #FF0000;
+  width: max-content;
+  display: inline-block;
 }

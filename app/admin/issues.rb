@@ -1,5 +1,5 @@
 ActiveAdmin.register Issue do
-  menu priority: 10
+  menu priority: 5
   actions :all, except: [:show, :new]
 
   breadcrumb do
@@ -23,6 +23,8 @@ ActiveAdmin.register Issue do
       :auto_calculate,
       issue_files: [],
       user_ids: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
       facility_project_attributes: [
         :id,
         :project_id,
@@ -84,8 +86,9 @@ ActiveAdmin.register Issue do
 
   form do |f|
     f.semantic_errors *f.object.errors.keys
-
+    div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     f.inputs 'Basic Details' do
+      f.input :id, input_html: { value: f.object.id }, as: :hidden
       f.input :title
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -108,7 +111,11 @@ ActiveAdmin.register Issue do
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.where(id: f.object.user_ids).map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
       end
       f.input :description
-      f.input :issue_files, as: :file, input_html: {multiple: true}
+      div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
+      f.input :issue_files
+      f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
+      f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
+      div id: 'related_tasks-issues-tab'
     end
     f.actions
   end
@@ -124,12 +131,14 @@ ActiveAdmin.register Issue do
   filter :progress
   filter :start_date
   filter :due_date, label: 'Estimated Completion Date'
+  filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
+    before_action :handle_files, only: [:update, :create]
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -137,6 +146,11 @@ ActiveAdmin.register Issue do
 
     def check_writeability
       redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+
+    def handle_files
+      resource.manipulate_files(params)
+      params[:issue].delete(:issue_files)
     end
 
     def destroy

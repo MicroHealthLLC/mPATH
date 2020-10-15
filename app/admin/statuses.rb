@@ -1,5 +1,5 @@
 ActiveAdmin.register Status do
-  menu priority: 7
+  menu parent: "Facilities"
   actions :all, except: [:show]
 
   permit_params do

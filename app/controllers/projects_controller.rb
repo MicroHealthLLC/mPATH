@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update]
+  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list]
 
   def index
     respond_to do |format|
@@ -35,6 +35,8 @@ class ProjectsController < AuthenticatedController
       format.html {render action: :index}
     end
   end
+
+  def member_list; end
 
   private
   def set_project

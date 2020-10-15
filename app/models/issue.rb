@@ -9,6 +9,11 @@ class Issue < ApplicationRecord
   has_many :checklists, as: :listable
   has_many_attached :issue_files, dependent: :destroy
 
+  has_many :related_tasks, as: :relatable
+  has_many :related_issues, as: :relatable
+  has_many :sub_tasks, through: :related_tasks
+  has_many :sub_issues, through: :related_issues
+
   validates :title, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
@@ -39,8 +44,31 @@ class Issue < ApplicationRecord
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
       facility_id: self.facility_project.try(:facility_id),
       facility_name: self.facility_project.try(:facility).facility_name,
-      project_id: self.facility_project.try(:project_id)
+      project_id: self.facility_project.try(:project_id),
+      sub_task_ids: self.sub_task_ids,
+      sub_issue_ids: self.sub_issue_ids
     ).as_json
+  end
+
+  def files_as_json
+    issue_files.map do |file|
+      {
+        id: file.id,
+        name: file.blob.filename,
+        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
+      }
+    end.as_json
+  end
+
+  def manipulate_files(params)
+    file_blobs = JSON.parse(params[:issue][:issue_files])
+    file_blobs.each do |file|
+      if file['_destroy']
+        self&.issue_files.find_by_id(file['id'])&.purge
+      elsif file['_new']
+        self&.issue_files.create(blob_id: file['id'])
+      end
+    end
   end
 
   def check_watched

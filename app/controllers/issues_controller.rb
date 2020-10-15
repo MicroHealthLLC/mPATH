@@ -51,6 +51,8 @@ class IssuesController < AuthenticatedController
       :watched,
       issue_files: [],
       user_ids: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,

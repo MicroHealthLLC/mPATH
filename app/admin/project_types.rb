@@ -1,5 +1,5 @@
 ActiveAdmin.register ProjectType do
-  menu priority: 4
+  menu parent: "Projects"
   actions :all, except: [:show]
 
   permit_params do

@@ -1,6 +1,5 @@
 ActiveAdmin.register IssueType do
-
-  menu priority: 11
+  menu parent: "Issues", priority: 1
   actions :all, except: [:show]
 
   permit_params do

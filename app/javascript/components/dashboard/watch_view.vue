@@ -367,13 +367,14 @@
       watchedTaskUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          var count = this.getUserCount(user, 'tasks')
-          if (count > 0) {
+          var stat = this.getUserTaskInfo(user, 'tasks')
+          if (stat.count > 0) {
             u_data.datasets.push({
+              _meta: {stat},
               label: user.fullName,
               backgroundColor: user.color,
               maxBarThickness: 14,
-              data: [count]
+              data: [stat.count]
             })
           }
         }
@@ -382,13 +383,14 @@
       watchedIssueUsers() {
         var u_data = {labels: [], datasets: []}
         for (var user of this.projectUsers) {
-          var count = this.getUserCount(user, 'issues')
-          if (count > 0) {
+          var stat = this.getUserTaskInfo(user, 'issues')
+          if (stat.count > 0) {
             u_data.datasets.push({
+              _meta: {stat},
               label: user.fullName,
               backgroundColor: user.color,
               maxBarThickness: 14,
-              data: [count]
+              data: [stat.count]
             })
           }
         }
@@ -439,8 +441,11 @@
         var container = document.getElementById('watch_task_timeline')
         this.timeline = new Timeline(container, new DataSet(this.timelineData), this.timelineOptions)
       },
-      getUserCount(user, key) {
-        return _.countBy(this.on_watched[key], t => t.userIds.includes(user.id)).true +  _.compact(_.map(_.flatten(_.map(this.on_watched[key], 'checklists')), t => t.userId == user.id)).length
+      getUserTaskInfo(user, key) {
+        var tasks = _.filter(this.on_watched[key], t => t.userIds.includes(user.id))
+        var checklists = _.filter(_.compact(_.flatten(_.map(this.on_watched[key], 'checklists'))), t => t.userId == user.id)
+        var count = tasks.length + checklists.length
+        return {tasks, checklists, count, type: _.startCase(key)}
       }
     },
     watch: {

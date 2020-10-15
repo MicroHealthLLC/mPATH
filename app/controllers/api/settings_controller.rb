@@ -25,7 +25,8 @@ class Api::SettingsController < AuthenticatedController
       :office365_secret,
       :google_map_key,
       :google_oauth_key,
-      :google_oauth_secret
+      :google_oauth_secret,
+      :passwords_key
     )
   end
 end

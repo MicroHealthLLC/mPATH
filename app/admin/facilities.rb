@@ -1,5 +1,5 @@
 ActiveAdmin.register Facility do
-  menu priority: 6
+  menu priority: 4
   actions :all, except: [:show]
 
   breadcrumb do
@@ -36,6 +36,7 @@ ActiveAdmin.register Facility do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
+    div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :facility_name
     column :address
@@ -49,7 +50,7 @@ ActiveAdmin.register Facility do
         "<span>#{facility.facility_group&.name}</span>".html_safe
       end
     end
-    column "State", :status
+    tag_column "State", :status
     column :projects do |facility|
       if current_user.admin_write?
         facility.projects.active
@@ -176,13 +177,16 @@ ActiveAdmin.register Facility do
     "Progress": :number,
     "AutoCalculate": :checkbox,
     "Checklists": :text,
+    "Task Files": :text,
     "Description": :textarea
   }} do |ids, inputs|
     user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
+    file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []
     checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Milestone'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Milestone'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], notes: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        task.task_files.create(file_blobs) if file_blobs.present?
       end
     end
     redirect_to collection_path, notice: "Task added"

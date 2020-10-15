@@ -39,7 +39,7 @@ ActiveAdmin.register Project do
         "<span>#{project.project_type&.name}</span>".html_safe
       end
     end
-    column "State", :status
+    tag_column "State", :status
     actions defaults: false do |project|
       item "Edit", edit_admin_project_path(project), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_project_path(project), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
@@ -61,7 +61,7 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
-          f.input :users, label: 'Project Users', as: :select, collection: User.client.map{|u| [u.email, u.id]}
+          f.input :users, label: 'Project Users', as: :select, collection: User.client.map{|u| [u.email, u.id]}, multiple: true
         end
       end
 

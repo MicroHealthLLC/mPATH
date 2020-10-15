@@ -429,7 +429,7 @@ export default {
 
       return {
         completed: {count: completed.length, percentage: completed_percent},
-        incompleted: {count: incompleted, percentage: incompleted_percent},
+        incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     },
@@ -443,7 +443,7 @@ export default {
 
       return {
         completed: {count: completed.length, percentage: completed_percent},
-        incompleted: {count: incompleted, percentage: incompleted_percent},
+        incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     },

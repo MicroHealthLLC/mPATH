@@ -76,9 +76,12 @@
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
         </div>
-        <div class="form-check-inline ml-5">
+        <div class="form-check-inline ml-4">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
+          </label>
+          <label class="form-check-label ml-3 text-primary">
+            Total: {{filteredIssues.length}}
           </label>
         </div>
       </div>

@@ -36,7 +36,7 @@
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"
-            :searchable="false"
+            :searchable="true"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -148,7 +148,7 @@
             label="fullName"
             placeholder="Task Users"
             :options="projectUsers"
-            :searchable="false"
+            :searchable="true"
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"
@@ -219,7 +219,7 @@
             label="fullName"
             placeholder="Issue Users"
             :options="projectUsers"
-            :searchable="false"
+            :searchable="true"
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"

@@ -1,5 +1,5 @@
 ActiveAdmin.register TaskType do
-  menu priority: 9
+  menu parent: "Tasks"
   actions :all, except: [:show]
 
   permit_params do

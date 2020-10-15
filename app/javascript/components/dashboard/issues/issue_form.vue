@@ -219,6 +219,51 @@
           :show-label="true"
         />
       </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Issues:</label>
+        <multiselect
+          v-model="relatedIssues"
+          track-by="id"
+          label="title"
+          placeholder="Search and select Related-issues"
+          :options="filteredIssues"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.title}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Tasks:</label>
+        <multiselect
+          v-model="relatedTasks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-tasks"
+          :options="filteredTasks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Remove"
+          :close-on-select="false"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
       <div class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
@@ -254,6 +299,8 @@
           description: '',
           autoCalculate: true,
           userIds: [],
+          subTaskIds: [],
+          subIssueIds: [],
           issueFiles: [],
           checklists: []
         },
@@ -261,6 +308,8 @@
         selectedIssueType: null,
         selectedIssueSeverity: null,
         issueUsers: [],
+        relatedIssues: [],
+        relatedTasks: [],
         showErrors: false,
         loading: true
       }
@@ -269,6 +318,8 @@
       if (this.issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(this.issue)}
         this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
+        this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
         this.addFile(this.issue.attachFiles)
@@ -324,6 +375,24 @@
           }
           else {
             formData.append('issue[user_ids][]', [])
+          }
+
+          if (this.DV_issue.subTaskIds.length) {
+            for (var u_id of this.DV_issue.subTaskIds) {
+              formData.append('issue[sub_task_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[sub_task_ids][]', [])
+          }
+
+          if (this.DV_issue.subIssueIds.length) {
+            for (var u_id of this.DV_issue.subIssueIds) {
+              formData.append('issue[sub_issue_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[sub_issue_ids][]', [])
           }
 
           for (var i in this.DV_issue.checklists) {
@@ -425,7 +494,9 @@
         'projectUsers',
         'myActionsFilter',
         'issueTypes',
-        'issueSeverities'
+        'issueSeverities',
+        'currentTasks',
+        'currentIssues'
       ]),
       readyToSave() {
         return (
@@ -448,6 +519,12 @@
       },
       title() {
         return this.DV_issue.id ? 'Edit Issue' : 'Report an Issue'
+      },
+      filteredTasks() {
+        return _.filter(this.currentTasks, t => t.facilityId == this.facility.id)
+      },
+      filteredIssues() {
+        return _.filter(this.currentIssues, t => t.facilityId == this.facility.id && t.id !== this.DV_issue.id)
       }
     },
     watch: {
@@ -472,6 +549,16 @@
       issueUsers: {
         handler: function(value) {
           if (value) this.DV_issue.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      relatedIssues: {
+        handler: function(value) {
+          if (value) this.DV_issue.subIssueIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      relatedTasks: {
+        handler: function(value) {
+          if (value) this.DV_issue.subTaskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
       selectedIssueType: {

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :issue_severities, only: [:index]
     resources :issue_types, only: [:index]
     resources :users, only: [:index]
+    get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'
@@ -25,6 +26,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
     get :watch_view, on: :member
+    get :member_list, on: :member
     resources :facilities do
       resources :issues
       resources :notes, module: :facilities

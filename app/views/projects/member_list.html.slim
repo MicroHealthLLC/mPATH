@@ -1,0 +1,26 @@
+- content_for :title
+  | Members
+
+.body-wrapper
+  #member-list.container.mt-4
+    .table-responsive-md
+      table.table.table-sm.table-bordered
+        thead
+          tr
+            th
+            th Title
+            th Email
+            th Ph Number
+            th Organization
+            th Status
+        tbody
+          -@project.users.each_with_index do |user, i|
+            tr
+              td.text-center = i+1
+              td = user.full_name
+              td = mail_to user.email
+              td = tel_to user.phone_number
+              td = user.organization&.title
+              td.text-center
+                span class="badge-#{user.status}"
+                  = user.status.upcase

@@ -1,5 +1,7 @@
 //= require active_admin/base
+//= require activeadmin_addons/all
 //= require jquery_ujs
+//= require activestorage
 //= require 'node_modules/vue2-google-maps/dist/vue-google-maps.js'
 //= require 'node_modules/vue-slide-bar/lib/vue-slide-bar.min.js'
 //= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
@@ -17,6 +19,18 @@ jQuery(function($) {
     this.parentElement.classList.value = "";
     this.parentElement.classList.add(`status_${$(this).text()}`);
   });
+
+  // direct file-upload for tasks/issues
+  $.directFileUpload = (file) => {
+    const url = $("#direct-upload-url").data('directUploadUrl');
+    const upload = new ActiveStorage.DirectUpload(file, url);
+    return new Promise((resolve, reject) => {
+      upload.create((error, blob) => {
+        if (error) reject(error);
+        else resolve(blob);
+      });
+    });
+  }
 
   // facility form google-map
   if ($("#gmaps-tab").is(":visible"))
@@ -317,97 +331,6 @@ jQuery(function($) {
         }
       },
       template: `<li class='string input required stringish' id='task_progress_input_slider'><label  class='label'>Progress<abbr title="required">*</abbr></label><div class="task-progress-slide"><vue-slide-bar v-model="progress" :line-height="8" :is-disabled="autoCalculate" :draggable="!autoCalculate" /></div></li>`
-    });
-  }
-
-  // settings page
-  if ($("#settings_container").is(":visible"))
-  {
-    var settings = new Vue({
-      el: "#settings_container",
-      data() {
-        return {
-          currentTab: 1,
-          isEditing: false,
-          loading: true,
-          settings: {
-            office365_key: '',
-            office365_secret: '',
-            google_map_key: '',
-            google_oauth_key: '',
-            google_oauth_secret: ''
-          }
-        }
-      },
-      mounted() {
-        this.fetchSettings();
-      },
-      computed: {
-        textType() {
-          return this.isEditing ? 'text' : 'password'
-        },
-        permitted() {
-          return $.__privileges_element.includes('W');
-        }
-      },
-      methods: {
-        submitSettings() {
-          if (!permitted) return;
-          $.post("/api/settings.json", {settings: this.settings}, (data) => {
-            window.location.href = "/admin/settings";
-          });
-        },
-        fetchSettings() {
-          $.get("/api/settings.json", (data) => {
-            for (var key in this.settings) {
-              this.settings[key] = data[key] || ''
-            }
-            this.loading = false;
-          });
-        }
-      },
-      template: `<div>
-        <button v-if="permitted" class="edit-creds" :class="{'vue__disabled': isEditing}" @click.stop="isEditing=true">Edit</button>
-        <form v-if="!loading" class="formtastic settings" @submit.prevent="submitSettings">
-          <div class="tabs ui-tabs ui-corner-all ui-widget ui-widget-content">
-            <ul class="nav nav-tabs ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
-              <li role="tab" tabindex="0" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="office365" aria-labelledby="ui-id-1" :class="{'ui-tabs-active ui-state-active': currentTab == 1}"><a @click.stop.prevent="currentTab = 1" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-1">Office 365</a></li>
-              <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_oauth" aria-labelledby="ui-id-2" :class="{'ui-tabs-active ui-state-active': currentTab == 2}"><a @click.stop.prevent="currentTab = 2" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-2">Google OAuth</a></li>
-              <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_map" aria-labelledby="ui-id-3" :class="{'ui-tabs-active ui-state-active': currentTab == 3}"><a @click.stop.prevent="currentTab = 3" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-3">Google Maps</a></li>
-            </ul>
-            <div class="tab-content">
-              <div id="office365" aria-labelledby="ui-id-1" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false" v-show="currentTab === 1">
-                <fieldset class="inputs"><legend><span>Office 365</span></legend>
-                  <ol>
-                    <li class="string input required stringish" id="office365_key_input"><label class="label">Office 365 key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_key" v-model="settings.office365_key" type="text"></li>
-                    <li class="string input required stringish" id="office365_secret_input"><label class="label">Office 365 secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_secret" v-model="settings.office365_secret" :type="textType"></li>
-                  </ol>
-                </fieldset>
-              </div>
-              <div id="google_oauth" aria-labelledby="ui-id-2" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 2">
-                <fieldset class="inputs"><legend><span>Google OAuth</span></legend>
-                  <ol>
-                    <li class="string input required stringish" id="google_oauth_key_input"><label class="label">Google oauth key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_key" v-model="settings.google_oauth_key" type="text"></li>
-                    <li class="string input required stringish" id="google_oauth_secret_input"><label class="label">Google oauth secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_secret" v-model="settings.google_oauth_secret" :type="textType"></li>
-                  </ol>
-                </fieldset>
-              </div>
-              <div id="google_map" aria-labelledby="ui-id-3" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 3">
-                <fieldset class="inputs"><legend><span>Google Maps</span></legend>
-                  <ol>
-                    <li class="string input required stringish" id="google_maps_key_input"><label class="label">Google maps key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_maps_key" v-model="settings.google_map_key" type="text"></li>
-                  </ol>
-                </fieldset>
-              </div>
-            </div>
-          </div>
-          <fieldset class="actions" v-if="permitted && isEditing">
-            <ol>
-              <li class="action input_action " id="submit_settings"><input :readOnly="!isEditing" type="submit"></li>
-            </ol>
-          </fieldset>
-        </form>
-      </div>`
     });
   }
 
@@ -791,6 +714,142 @@ jQuery(function($) {
       }
     }
 
+    // settings page
+    if ($("#settings_container").is(":visible"))
+    {
+      var settings = new Vue({
+        el: "#settings_container",
+        data() {
+          return {
+            currentTab: 1,
+            isEditing: false,
+            loading: true,
+            settings: {
+              office365_key: '',
+              office365_secret: '',
+              google_map_key: '',
+              google_oauth_key: '',
+              google_oauth_secret: '',
+              passwords_key: ''
+            },
+            passwords: {
+              range: 8,
+              uppercase: false,
+              lowercase: false,
+              numbers: false,
+              special_chars: false
+            }
+          }
+        },
+        mounted() {
+          this.fetchSettings();
+        },
+        computed: {
+          textType() {
+            return this.isEditing ? 'text' : 'password';
+          },
+          permitted() {
+            return $.__privileges_element.includes('W');
+          }
+        },
+        methods: {
+          submitSettings() {
+            if (!this.permitted) return;
+            $.post("/api/settings.json", {settings: this.settings}, (data) => {
+              window.location.href = "/admin/settings";
+            });
+          },
+          fetchSettings() {
+            $.get("/api/settings.json", (data) => {
+              for (var key in this.settings) {
+                this.settings[key] = data[key] || '';
+              }
+              if (this.settings.passwords_key) {
+                for (var [key, value] of Object.entries(JSON.parse(this.settings.passwords_key))) {
+                  this.passwords[key] = value || '';
+                }
+              }
+              this.loading = false;
+            });
+          }
+        },
+        watch: {
+          passwords: {
+            handler(value) {
+              this.settings.passwords_key = JSON.stringify(value);
+            }, deep: true
+          }
+        },
+        template: `<div>
+          <button v-if="permitted" class="edit-creds" :class="{'vue__disabled': isEditing}" @click.stop="isEditing=true">Edit</button>
+          <form v-if="!loading" class="formtastic settings" @submit.prevent="submitSettings">
+            <div class="tabs ui-tabs ui-corner-all ui-widget ui-widget-content">
+              <ul class="nav nav-tabs ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
+                <li role="tab" tabindex="0" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="office365" aria-labelledby="ui-id-1" :class="{'ui-tabs-active ui-state-active': currentTab == 1}"><a @click.stop.prevent="currentTab = 1" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-1">Office 365</a></li>
+                <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_oauth" aria-labelledby="ui-id-2" :class="{'ui-tabs-active ui-state-active': currentTab == 2}"><a @click.stop.prevent="currentTab = 2" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-2">Google OAuth</a></li>
+                <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="google_map" aria-labelledby="ui-id-3" :class="{'ui-tabs-active ui-state-active': currentTab == 3}"><a @click.stop.prevent="currentTab = 3" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-3">Google Maps</a></li>
+                <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="password_generator" aria-labelledby="ui-id-3" :class="{'ui-tabs-active ui-state-active': currentTab == 4}"><a @click.stop.prevent="currentTab = 4" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-3">Password Generator</a></li>
+              </ul>
+              <div class="tab-content">
+                <div id="office365" aria-labelledby="ui-id-1" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false" v-show="currentTab === 1">
+                  <fieldset class="inputs"><legend><span>Office 365</span></legend>
+                    <ol>
+                      <li class="string input required stringish" id="office365_key_input"><label class="label">Office 365 key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_key" v-model="settings.office365_key" type="text"></li>
+                      <li class="string input required stringish" id="office365_secret_input"><label class="label">Office 365 secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="office365_secret" v-model="settings.office365_secret" :type="textType"></li>
+                    </ol>
+                  </fieldset>
+                </div>
+                <div id="google_oauth" aria-labelledby="ui-id-2" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 2">
+                  <fieldset class="inputs"><legend><span>Google OAuth</span></legend>
+                    <ol>
+                      <li class="string input required stringish" id="google_oauth_key_input"><label class="label">Google oauth key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_key" v-model="settings.google_oauth_key" type="text"></li>
+                      <li class="string input required stringish" id="google_oauth_secret_input"><label class="label">Google oauth secret<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_oauth_secret" v-model="settings.google_oauth_secret" :type="textType"></li>
+                    </ol>
+                  </fieldset>
+                </div>
+                <div id="google_map" aria-labelledby="ui-id-3" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" v-show="currentTab === 3">
+                  <fieldset class="inputs"><legend><span>Google Maps</span></legend>
+                    <ol>
+                      <li class="string input required stringish" id="google_maps_key_input"><label class="label">Google maps key<abbr title="required">*</abbr></label><input :readOnly="!isEditing" id="google_maps_key" v-model="settings.google_map_key" type="text"></li>
+                    </ol>
+                  </fieldset>
+                </div>
+                <div id="password_generator" aria-labelledby="ui-id-1" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false" v-show="currentTab === 4">
+                  <fieldset class="inputs"><legend><span>Password Generator</span></legend>
+                    <div class='p-generator'>
+                      <ul class="choices-group">
+                        <li class="choice range">
+                          <label>Length ({{passwords.range}})</label>
+                          <input :readOnly="!isEditing" :disabled="!isEditing" type="range" v-model="passwords.range" min="8" max="25">
+                        </li>
+                        <li class="choice">
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.uppercase">A-Z</label>
+                        </li>
+                        <li class="choice">
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.lowercase">a-z</label>
+                        </li>
+                        <li class="choice">
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.numbers">0-9</label>
+                        </li>
+                        <li class="choice">
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.special_chars">!@#$%^&*</label>
+                        </li>
+                      </ul>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+            <fieldset class="actions" v-if="permitted && isEditing">
+              <ol>
+                <li class="action input_action " id="submit_settings"><input :readOnly="!isEditing" type="submit"></li>
+              </ol>
+            </fieldset>
+          </form>
+        </div>`
+      });
+    }
+
     // hide batch_action after click
     $('a.batch_action').click(function(e) {
       $('.dropdown_menu_list_wrapper').css({display: 'none'});
@@ -1002,6 +1061,24 @@ jQuery(function($) {
         $("body").on('change', ".__batch_task_form select[name=Project]", function() {
           $.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
         });
+
+        // upload file
+        var uploadfile_text = $("form#dialog_confirm input[name='Task Files']");
+        uploadfile_text.css({display: 'none'});
+        uploadfile_text.after("<input id='_task_files_upload' type='file' name='task_files' multiple='multiple'>");
+
+        $("body").on('change', "#_task_files_upload", async function() {
+          var file_blobs = [];
+          for (var file of this.files) {
+            try {
+              var blob = await $.directFileUpload(file);
+              if (!(blob instanceof Error)) file_blobs.push(blob);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          $(uploadfile_text).val(JSON.stringify(file_blobs.map(f => f.id)));
+        });
       }
     });
 
@@ -1185,6 +1262,142 @@ jQuery(function($) {
       });
     }
 
+    // related tasks/issues multiselect
+    if ($("#related_tasks-issues-tab").is(":visible"))
+    {
+      Vue.component('multiselect', VueMultiselect.Multiselect);
+      $.Vue_related_tasks_issues = new Vue({
+        el: "#related_tasks-issues-tab",
+        data() {
+          return {
+            loading: true,
+            type: '',
+            _id: '',
+            project_id: '',
+            facility_id: '',
+            sub_tasks: [],
+            sub_issues: [],
+            sub_task_ids: [],
+            sub_issue_ids: [],
+            persist: {
+              task_ids: [],
+              issue_ids: [],
+              project_id: '',
+              facility_id: ''
+            },
+            tasks: [],
+            issues: []
+          }
+        },
+        mounted() {
+          this.setProjectConsts({persist: true});
+        },
+        methods: {
+          setProjectConsts(opt={}) {
+            this.type = $('form').attr('id').split('_').pop();
+            this._id = Number($(`#${this.type}_id`).val()) || 0;
+            this.project_id = $(`#${this.type}_facility_project_attributes_project_id`).val();
+            this.facility_id = $(`#${this.type}_facility_project_attributes_facility_id`).val();
+            this.sub_task_ids = $(`#${this.type}_sub_task_ids`).val().map(Number);
+            this.sub_issue_ids = $(`#${this.type}_sub_issue_ids`).val().map(Number);
+            if (opt.persist) {
+              this.persist.task_ids = this.sub_task_ids;
+              this.persist.issue_ids = this.sub_issue_ids;
+              this.persist.project_id = this.project_id;
+              this.persist.facility_id = this.facility_id;
+            }
+          },
+          checkForPersistance() {
+            if (this.facility_id == this.persist.facility_id && this.project_id == this.persist.project_id) {
+              this.sub_task_ids = this.persist.task_ids;
+              this.sub_issue_ids = this.persist.issue_ids;
+            }
+            this.fetchProjectTaskIssues()
+          },
+          fetchProjectTaskIssues() {
+            $.get(`/api/facility_projects/${this.project_id}/${this.facility_id}.json`, (data) => {
+              this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
+              this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
+              this.sub_tasks = this.tasks.filter(t => t.id && this.sub_task_ids.includes(t.id));
+              this.sub_issues = this.issues.filter(t => this.sub_issue_ids.includes(t.id));
+              this.loading = false;
+            });
+          }
+        },
+        watch: {
+          project_id(value) {
+            if (value) this.checkForPersistance();
+          },
+          facility_id(value) {
+            if (value) this.checkForPersistance();
+          },
+          sub_tasks: {
+            handler(value) {
+              this.sub_task_ids = value.map(u => u.id);
+              if (value) $(`#${this.type}_sub_task_ids`).val(this.sub_task_ids);
+            }, deep: true
+          },
+          sub_issues: {
+            handler(value) {
+              this.sub_issue_ids = value.map(u => u.id);
+              if (value) $(`#${this.type}_sub_issue_ids`).val(this.sub_issue_ids);
+            }, deep: true
+          }
+        },
+        template: `<li>
+          <ol>
+            <li class='select input optional d-flex p-0' id='sub_task_multiple'>
+              <label for='sub_task_multiple' class='label'>Related Tasks</label>
+              <div v-if="!loading" class="user_multiselect">
+                <multiselect
+                  v-model="sub_tasks"
+                  track-by="id"
+                  label="text"
+                  placeholder="Search and select Related-tasks"
+                  :options="tasks"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  :close-on-select="false"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.text}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </li>
+
+            <li class='select input optional d-flex mt-10 p-0' id='sub_issue_multiple'>
+              <label for='sub_issue_multiple' class='label'>Related Issues</label>
+              <div v-if="!loading" class="user_multiselect">
+                <multiselect
+                  v-model="sub_issues"
+                  track-by="id"
+                  label="title"
+                  placeholder="Search and select Related-issues"
+                  :options="issues"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  :close-on-select="false"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.title}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </li>
+          </ol>
+        </li>`
+      });
+    }
+
     if ($(".checklist_user").is(":visible"))
     {
       $(".checklist_user").each(function(i) {
@@ -1205,10 +1418,79 @@ jQuery(function($) {
       if (elem) $.build_user_select_vue(elem);
     });
 
+    // task/issues files handling
+    if ($('#uploaded-task-files').is(':visible'))
+    {
+      var upload_type = $('form').attr('id').split('_').pop();
+      $(`#${upload_type}_${upload_type}_files`).after("<div id='vue-uploaded-task-files'></div>");
+      $.Vue_uploadedTaskFiles = new Vue({
+        el: "#vue-uploaded-task-files",
+        data() {
+          return {
+            files: []
+          }
+        },
+        mounted() {
+          var files_data = $('#uploaded-task-files').data('files').length ? $('#uploaded-task-files').data('files').replace(/=>/gi, ':') : "[]";
+          for (var file of JSON.parse(files_data)) this.addFile(file);
+        },
+        methods: {
+          addFile(file) {
+            this.files.push(file);
+          },
+          downloadFile(file) {
+            if (file.uri) {
+              let url = window.location.origin + file.uri
+              window.open(url, '_blank');
+            }
+          },
+          destroyFile(file, index) {
+            Vue.set(this.files, index, {...file, _destroy: true})
+          },
+          uploadFile() {
+            this.$refs.fileInput.click();
+          }
+        },
+        watch: {
+          files: {
+            handler(value) {
+              $(`#${upload_type}_${upload_type}_files`).val(JSON.stringify(this.files));
+            }, deep: true
+          }
+        },
+        template: `<div>
+          <input ref="fileInput" id='vue_task_task_files' type='file' multiple='multiple' style="visibility: hidden" />
+          <div class='upload_file_holder ml-20' @click.stop="uploadFile">UPLOAD FILES</div>
+          <ul class='ml-20 mt-10'>
+            <li v-for="(file, i) in files" :key="file.id+'_'+i" class='p-5' v-if="!file._destroy">
+              <div :is="file.uri ? 'a' : 'span'" @click.prevent="downloadFile(file)">{{file.name || file.filename}}</div>
+              <span class='close-icon' @click.prevent="destroyFile(file, i)"></span>
+            </li>
+          </ul>
+        </div>`
+      });
+    }
+
+    $("body").on('change', "#vue_task_task_files", async function() {
+      for (var file of this.files) {
+        try {
+          var blob = await $.directFileUpload(file);
+          if (!(blob instanceof Error)) $.Vue_uploadedTaskFiles.addFile({...blob, _new: true});
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    });
+
     // on change project_id in tasks/issues
     $("body").on('change', "#task_facility_project_attributes_project_id, #issue_facility_project_attributes_project_id", function() {
       $.Vue_projects_users_select && $.Vue_projects_users_select.setProjectConsts();
       $.Vue_checklists_items.length && $.update_checklist_user_wrt_project();
+    });
+
+    // on change project_id or facility_id in tasks/issues
+    $("body").on('change', "#task_facility_project_attributes_project_id, #issue_facility_project_attributes_project_id, #task_facility_project_attributes_facility_id, #issue_facility_project_attributes_facility_id", function() {
+      $.Vue_related_tasks_issues && $.Vue_related_tasks_issues.setProjectConsts();
     });
 
     if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin").is(":visible"))
@@ -1226,6 +1508,89 @@ jQuery(function($) {
       });
     }
 
+    // user filters
+    if ($("#__users_filters").is(":visible"))
+    {
+      var select = $("#__users_filters");
+      var parent = select.parent();
+      select.css({display: 'none'});
+      parent.append("<div id='__users_filters_multiselect'></div>");
+      var email_select = $("#__users_filter_emails").siblings()[1];
+      email_select.id = "__users_filter_emails_select";
+
+      Vue.component('multiselect', VueMultiselect.Multiselect);
+      $.Vue_users_filter_select = new Vue({
+        el: "#__users_filters_multiselect",
+        data() {
+          return {
+            loading: true,
+            selected_users: [],
+            users: [],
+            filtered_users: []
+          }
+        },
+        created() {
+          this.fetchUsers();
+        },
+        methods: {
+          fetchUsers() {
+            $.get(`/api/users.json`, (data) => {
+              this.users = data;
+              var user_ids = $("#__users_filters").val().map(Number);
+              this.selected_users = this.users.filter(u => user_ids.includes(u.id));
+              this.setEmailCheck();
+              this.loading = false;
+            });
+          },
+          setEmailCheck() {
+            var value = $("#__users_filter_emails").val();
+            if (value) {
+              var operator = $(email_select).val();
+              operator = operator.replace("users_email_", '')
+              if (operator == "contains") this.filtered_users = this.users.filter(u => u.email.includes(value))
+              else if (operator == "equals") this.filtered_users = this.users.filter(u => u.email == value)
+              else if (operator == "starts_with") this.filtered_users = this.users.filter(u => u.email.startsWith(value))
+              else if (operator == "ends_with") this.filtered_users = this.users.filter(u => u.email.endsWith(value))
+            } else {
+              this.filtered_users = this.users
+            }
+            var user_ids = this.filtered_users.map(u => u.id);
+            this.selected_users = this.selected_users.filter(u => user_ids.includes(u.id));
+          }
+        },
+        watch: {
+          selected_users: {
+            handler(value) {
+              if (value) $("#__users_filters").val(value.map(u => u.id));
+            }, deep: true
+          }
+        },
+        template: `<div v-if="!loading" class="user_multiselect">
+          <multiselect
+            v-model="selected_users"
+            track-by="id"
+            label="full_name"
+            placeholder="Search and select users"
+            :options="filtered_users"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.full_name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>`
+      });
+
+      $("body").on('change', "#__users_filter_emails, #__users_filter_emails_select", function() {
+        $.Vue_users_filter_select && $.Vue_users_filter_select.setEmailCheck();
+      });
+    }
+
   }());
 
   // password generator tab
@@ -1237,15 +1602,20 @@ jQuery(function($) {
         return {
           password: '',
           confirm_password: '',
-          range: 12,
-          uppercase: true,
-          lowercase: true,
-          numbers: true,
-          special_chars: true
+          range: 8,
+          uppercase: false,
+          lowercase: false,
+          numbers: false,
+          special_chars: false
         }
       },
       mounted() {
         var user_id = $("#user_email").data().id;
+        if ($("#passwords-key").data('key')) {
+          for (var [key, value] of Object.entries($("#passwords-key").data('key'))) {
+            this[key] = value;
+          }
+        }
         if (!user_id) this.generatePassword();
       },
       methods: {
@@ -1298,95 +1668,7 @@ jQuery(function($) {
               </div>
             </li>
           </ol>
-          <fieldset class="choices ml-20 p-5">
-            <legend class="label"><label>Password Strength</label></legend>
-            <ol class="choices-group">
-              <li class="choice">
-                <label>Length ({{range}})</label>
-                <input type="range" v-model="range" min="8" max="25">
-              </li>
-              <li class="choice">
-                <label><input type="checkbox" v-model="uppercase">A-Z</label>
-              </li>
-              <li class="choice">
-                <label><input type="checkbox" v-model="lowercase">a-z</label>
-              </li>
-              <li class="choice">
-                <label><input type="checkbox" v-model="numbers">0-9</label>
-              </li>
-              <li class="choice">
-                <label><input type="checkbox" v-model="special_chars">!@#$%^&*</label>
-              </li>
-            </ol>
-          </fieldset>
         </fieldset>
-      </div>`
-    });
-  }
-
-  // user filters
-  if ($("#__users_filters").is(":visible"))
-  {
-    var select = $("#__users_filters");
-    var parent = select.parent();
-    select.css({display: 'none'});
-    parent.append("<div id='__users_filters_multiselect'></div>");
-
-    Vue.component('multiselect', VueMultiselect.Multiselect);
-    $.Vue_users_filter_select = new Vue({
-      el: "#__users_filters_multiselect",
-      data() {
-        return {
-          loading: true,
-          selected_users: [],
-          users: []
-        }
-      },
-      created() {
-        this.fetchUsers();
-      },
-      methods: {
-        fetchUsers() {
-          $.get(`/api/users.json`, (data) => {
-            this.users = data;
-            this.loading = false;
-          });
-        },
-        setSelectedUsers() {
-          var user_ids = $("#__users_filters").val().map(Number);
-          this.selected_users = this.users.filter(u => user_ids.includes(u.id));
-        }
-      },
-      watch: {
-        selected_users: {
-          handler(value) {
-            if (value) $("#__users_filters").val(value.map(u => u.id));
-          }, deep: true
-        },
-        users: {
-          handler(value) {
-            if (value) this.setSelectedUsers();
-          }, deep: true
-        }
-      },
-      template: `<div v-if="!loading" class="user_multiselect">
-        <multiselect
-          v-model="selected_users"
-          track-by="id"
-          label="full_name"
-          placeholder="Search and select users"
-          :options="users"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.full_name}}</span>
-            </div>
-          </template>
-        </multiselect>
       </div>`
     });
   }

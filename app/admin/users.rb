@@ -1,5 +1,5 @@
 ActiveAdmin.register User do
-  menu priority: 2
+  menu parent: "Organizations"
   actions :all, except: [:show]
 
   breadcrumb do
@@ -25,6 +25,7 @@ ActiveAdmin.register User do
       :status,
       :privileges,
       :country_code,
+      :organization_id,
       project_ids: [],
       privilege_attributes: [
         :id,
@@ -56,8 +57,10 @@ ActiveAdmin.register User do
           f.input :lat
           f.input :lng
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
+          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
+          f.input :organization, include_blank: false, include_hidden: false
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
               p.input :overview
               p.input :tasks
@@ -87,9 +90,17 @@ ActiveAdmin.register User do
     column :first_name
     column :last_name
     column :email
-    column "State", :status
+    column :organization, nil, sortable: 'organizations.title' do |user|
+      if current_user.admin_write?
+        link_to "#{user.organization.title}", "#{edit_admin_organization_path(user.organization)}" if user.organization.present?
+      else
+        "<span>#{user.organization&.title}</span>".html_safe
+      end
+    end
+    tag_column "State", :status
     column :phone_number
     column :address
+    # list_column :projects {|user| user.projects.active.pluck(:name) }
     column :projects do |user|
       if current_user.admin_write?
         user.projects.active
@@ -159,6 +170,10 @@ ActiveAdmin.register User do
       super do |format|
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
+    end
+
+    def scoped_collection
+      super.includes(:organization)
     end
   end
 

@@ -2,6 +2,7 @@
 /* Active Admin's got SASS! */
 
 @import "active_admin/mixins";
+@import "activeadmin_addons/all";
 @import "active_admin/base";
 @import "node_modules/vue-phone-number-input.scss";
 @import "node_modules/vue-multiselect.min.scss";
@@ -15,6 +16,7 @@ body {
   font-family: 'FuturaPTBook';
   font-style: normal;
   font-weight: 300;
+  letter-spacing: .04em;
 }
 
 .active_admin {
@@ -83,7 +85,13 @@ body {
   #user_privilege_attributes_tasks_input,
   #user_privilege_attributes_notes_input,
   #user_privilege_attributes_issues_input,
-  #user_privilege_attributes_admin_input {
+  #user_privilege_attributes_admin_input,
+  #task_sub_issues_input,
+  #task_sub_tasks_input,
+  #issue_sub_tasks_input,
+  #issue_sub_issues_input,
+  #task_task_files,
+  #issue_issue_files {
     display: none;
   }
   input[type=tel]:focus {
@@ -399,7 +407,9 @@ body {
       border-color: black;
     }
   }
-
+  .p-0 {
+    padding: 0;
+  }
   .close-icon {
     opacity: 0.6;
   }
@@ -422,4 +432,53 @@ body {
     transform: rotate(-45deg);
   }
 
+  .status_tag {
+    &.active {
+      background: #08A510;
+    }
+    &.inactive {
+      background: #FF0000;
+    }
+  }
+
+  .upload_file_holder {
+    padding: 10px 15px;
+    text-align: center;
+    width: max-content;
+    letter-spacing: 0.45em;
+    border: 1px dashed darkcyan;
+    cursor: pointer;
+    &:hover {
+      background: #fff;
+      font-weight: bold;
+    }
+  }
+  li#issue_issue_files_input,
+  li#task_task_files_input {
+    label {
+      margin-top: 20px;
+    }
+  }
+  .p-generator {
+    padding: 5px;
+    margin-left: 20px;
+    li.choice {
+      label {
+        padding: 2px;
+        width: max-content;
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.2em;
+      }
+    }
+    li.range {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      input {
+        margin-left: 25px;
+        width: 15em;
+      }
+    }
+  }
 }

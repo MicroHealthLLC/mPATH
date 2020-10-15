@@ -1,5 +1,5 @@
 ActiveAdmin.register FacilityGroup do
-  menu priority: 5
+  menu parent: "Facilities"
   actions :all, except: [:show]
 
   permit_params do
@@ -36,7 +36,7 @@ ActiveAdmin.register FacilityGroup do
     column :id
     column :name
     column :code
-    column "State", :status
+    tag_column "State", :status
     actions defaults: false do |facility_group|
       item "Edit", edit_admin_facility_group_path(facility_group), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_facility_group_path(facility_group), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
