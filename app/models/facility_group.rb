@@ -19,4 +19,8 @@ class FacilityGroup < SortableRecord
   def progress
     self.facility_projects.map(&:progress).sum / self.facility_projects.count rescue 0
   end
+
+  def destroy
+    raise ActiveRecord::StatementInvalid.new "asasas" if facilities.present?
+  end
 end

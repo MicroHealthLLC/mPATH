@@ -1,7 +1,6 @@
 .container.signin-section
   .row.d-flex.justify-content-center
     =form_for(resource, as: resource_name, url: password_path(resource_name), html: {class: 'form-signin mg-btm', method: :put}) do |f|
-      = devise_error_messages!
       = f.hidden_field :reset_password_token
       h3.heading-desc.text-center
         a.navbar-brand href="/"

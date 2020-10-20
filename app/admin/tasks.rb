@@ -129,6 +129,17 @@ ActiveAdmin.register Task do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Tasks"
   end
 
+  batch_action :add_checklist_to_tasks, if: proc {current_user.admin_write?}, form: -> {{
+    "Title": :text,
+    "Checked": :checkbox,
+    "User Assigned": User.all.map{|u| [u.full_name, u.id]}
+  }} do |ids, inputs|
+    Task.where(id: ids).each do |task|
+      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'])
+    end
+    redirect_to collection_path, notice: "Successfully created Task checklists"
+  end
+
   filter :text, label: 'Name'
   filter :task_type, label: 'Milestone'
   filter :start_date
@@ -161,6 +172,9 @@ ActiveAdmin.register Task do
     def destroy
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
+    rescue ActiveRecord::StatementInvalid
+      flash[:error] = "Can't able to delete this! violates foreign key constraint"
+      redirect_back fallback_location: root_path
     end
 
     def scoped_collection

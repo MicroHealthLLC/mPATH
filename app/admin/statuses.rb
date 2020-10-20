@@ -47,6 +47,9 @@ ActiveAdmin.register Status do
     def destroy
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
+    rescue ActiveRecord::StatementInvalid
+      flash[:error] = "Can't able to delete this! violates foreign key constraint"
+      redirect_back fallback_location: root_path
     end
 
     def check_order

@@ -60,6 +60,7 @@ class Task < ApplicationRecord
   end
 
   def manipulate_files(params)
+    return unless params[:task][:task_files].present?
     file_blobs = JSON.parse(params[:task][:task_files])
     file_blobs.each do |file|
       if file['_destroy']

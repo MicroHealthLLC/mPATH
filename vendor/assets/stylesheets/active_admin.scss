@@ -20,6 +20,9 @@ body {
 }
 
 .active_admin {
+  #header {
+    text-shadow: none;
+  }
   select {
     min-height: 25px;
     width: calc(80% - 20px);
@@ -53,6 +56,78 @@ body {
   .comments.custom_made {
     label {
       width: 10%;
+    }
+  }
+  .comments .active_admin_comment {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    max-width: 70%;
+  }
+  .comments {
+
+  }
+  .has_many_container.comments {
+    fieldset.has_many_fields {
+      ol {
+        padding: 20px;
+      }
+      li {
+        padding: 2px;
+      }
+      label {
+        width: 10%;
+      }
+      li.select > select {
+        border: 0;
+        background: #f4f4f4;
+      }
+      select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        text-indent: 1px;
+        text-overflow: '';
+      }
+      input[type=text] {
+        background: #f4f4f4;
+        border: 0;
+        padding-left: 0;
+      }
+    }
+    li.boolean {
+      label {
+        color: #fff;
+        display: flex;
+        position: absolute;
+        top: 22px;
+        right: 40px;
+        width: max-content;
+        background: #ff0000;
+        justify-content: center;
+        padding: 0px 6px;
+        text-transform: uppercase !important;
+        font-size: 10px;
+        input {
+          display: none;
+        }
+      }
+    }
+    a.has_many_remove {
+      color: #fff;
+      display: flex;
+      position: absolute;
+      top: 22px;
+      right: 40px;
+      width: max-content;
+      background: #ff0000;
+      justify-content: center;
+      padding: 0px 6px;
+      text-transform: uppercase !important;
+      font-size: 10px;
+      border: 0;
+      text-shadow: none;
+      line-height: unset;
+      border-radius: inherit;
+      font-weight: normal;
     }
   }
   .gmap-input {
@@ -134,6 +209,9 @@ body {
       }
       input {
         width: 80%;
+      }
+      input[type=checkbox] {
+        width: max-content;
       }
       textarea {
         height: 100px;

@@ -61,6 +61,7 @@ class Issue < ApplicationRecord
   end
 
   def manipulate_files(params)
+    return unless params[:issue][:issue_files].present?
     file_blobs = JSON.parse(params[:issue][:issue_files])
     file_blobs.each do |file|
       if file['_destroy']
@@ -69,6 +70,14 @@ class Issue < ApplicationRecord
         self&.issue_files.create(blob_id: file['id'])
       end
     end
+  end
+
+  def project
+    self.facility_project.try(:project)
+  end
+
+  def facility
+    self.facility_project.try(:facility)
   end
 
   def check_watched

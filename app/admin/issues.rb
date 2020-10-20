@@ -61,6 +61,20 @@ ActiveAdmin.register Issue do
     column :progress
     column :start_date
     column "Estimated Completion Date", :due_date
+    column :project, nil, sortable: 'projects.name' do |issue|
+      if current_user.admin_write?
+        link_to "#{issue.project.name}", "#{edit_admin_project_path(issue.project)}" if issue.project.present?
+      else
+        "<span>#{issue.project&.name}</span>".html_safe
+      end
+    end
+    column :facility, nil, sortable: 'facilities.facility_name' do |issue|
+      if current_user.admin_write?
+        link_to "#{issue.facility.facility_name}", "#{edit_admin_facility_path(issue.facility)}" if issue.facility.present?
+      else
+        "<span>#{issue.facility&.facility_name}</span>".html_safe
+      end
+    end
     column "Assigned To", :users do |issue|
       if current_user.admin_write?
         issue.users
@@ -131,6 +145,8 @@ ActiveAdmin.register Issue do
   filter :progress
   filter :start_date
   filter :due_date, label: 'Estimated Completion Date'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
+  filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
@@ -156,6 +172,9 @@ ActiveAdmin.register Issue do
     def destroy
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
+    rescue ActiveRecord::StatementInvalid
+      flash[:error] = "Can't able to delete this! violates foreign key constraint"
+      redirect_back fallback_location: root_path
     end
 
     def scoped_collection

@@ -26,10 +26,12 @@ ActiveAdmin.register Facility do
       :status,
       project_ids: [],
       comments_attributes: [
+        :id,
         :namespace,
         :author_id,
         :author_type,
-        :body
+        :body,
+        :_destroy
       ]
     ]
   end
@@ -71,7 +73,7 @@ ActiveAdmin.register Facility do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :facility_name
-          f.input :facility_group
+          f.input :facility_group, include_blank: false, include_hidden: false
           f.input :address
           f.input :lat
           f.input :lng
@@ -94,30 +96,13 @@ ActiveAdmin.register Facility do
       end
 
       tab 'Comments' do
-        panel "Comments" do
-          div class: 'comments custom_made' do
-            resource.comments.each do |comment|
-              div for: comment do
-                div class: 'active_admin_comment_meta' do
-                  h4 class: 'active_admin_comment_author' do
-                    comment.author ? auto_link(comment.author) : I18n.t('active_admin.comments.author_missing')
-                  end
-                  div pretty_format comment.created_at
-                  if authorized?(ActiveAdmin::Auth::DESTROY, comment)
-                    text_node link_to I18n.t('active_admin.comments.delete'), admin_comment_url(comment.id), method: :delete, data: { confirm: I18n.t('active_admin.comments.delete_confirmation') }
-                  end
-                end
-                div class: 'active_admin_comment_body' do
-                  simple_format comment.body
-                end
-              end
-            end
-
-            f.semantic_fields_for :comments, ActiveAdmin::Comment.new do |c|
-              c.inputs :class => "" do
-                c.input :body, label: "Comment", required: false, input_html: {rows: 8}
-              end
-            end
+        f.inputs 'Comments' do
+          f.has_many :comments, heading: false do |c|
+            c.input :author, as: :select, label: "Comments by", collection: User.where(id: c.object.author_id).map {|u| [u.full_name, u.id]} if c.object.id?
+            c.input :created_at, as: :string, label: 'Created at', input_html: {value: pretty_format(c.object.created_at)} if c.object.id?
+            c.input :updated_at, as: :string, label: 'Last Updated at', input_html: {value: pretty_format(c.object.updated_at)} if (c.object.id? and c.object.updated_at > c.object.created_at)
+            c.input :body, label: "Comment body", input_html: {readonly: (c.object.id? and c.object.author_id != current_user.id), disabled: (c.object.id? and c.object.author_id != current_user.id), rows: 7}
+            c.input :_destroy, as: :boolean, label: "Delete" if (c.object.id? and c.object.author_id == current_user.id)
           end
         end
       end
@@ -227,21 +212,33 @@ ActiveAdmin.register Facility do
     def destroy
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
+    rescue ActiveRecord::StatementInvalid
+      flash[:error] = "Can't able to delete this! violates foreign key constraint"
+      redirect_back fallback_location: root_path
     end
 
     def create
       params[:facility][:creator_id] = current_user.id
+      normalize_comment_params
       super
     end
 
     def update(options={}, &block)
-      params[:facility][:comments_attributes]['0']['namespace'] = 'admin'
-      params[:facility][:comments_attributes]['0']['author_id'] = current_user.id
-      params[:facility][:comments_attributes]['0']['author_type'] = 'User'
+      normalize_comment_params
       super do |success, failure|
         block.call(success, failure) if block
         failure.html {render :edit}
       end
+    end
+
+    def normalize_comment_params
+      i = 0
+      while params[:facility][:comments_attributes][i.to_s].present?
+        params[:facility][:comments_attributes][i.to_s]['namespace'] = 'admin'
+        params[:facility][:comments_attributes][i.to_s]['author_id'] = current_user.id
+        params[:facility][:comments_attributes][i.to_s]['author_type'] = 'User'
+        i = i+1
+      end if params[:facility][:comments_attributes].present?
     end
 
     def index

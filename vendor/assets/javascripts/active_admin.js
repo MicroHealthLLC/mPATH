@@ -1090,7 +1090,7 @@ jQuery(function($) {
       $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
     });
 
-    $("body").on("click", "a.button.has_many_remove", function() {
+    $("body").on("click", ".checklists a.button.has_many_remove", function() {
       $(this.parentElement.parentElement.parentElement).hide();
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
     });
@@ -1108,6 +1108,26 @@ jQuery(function($) {
 
     $("body").on('change', "input.checklist_item_checked", function() {
       if ($.Vue_task_slider.autoCalculate) $.Vue_task_slider.calculateProgress();
+    });
+
+
+    // delete comments
+    $("body").on("change", ".comments li.boolean input[type=checkbox]", function(e) {
+      var confirm = window.confirm(`Are you sure, you want to delete this comment?`)
+      if (!confirm) {
+        e.preventDefault();
+        e.stopPropagation();
+        return $(this).prop('checked', false);
+      }
+      $(this.parentElement.parentElement.parentElement).hide();
+    });
+
+    $("body").on("click", ".comments a.button.has_many_remove", function(e) {
+      var confirm = window.confirm(`Are you sure, you want to delete this comment?`)
+      if (!confirm) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     });
 
     $("body").on("input", "input.checklist_item_text", function() {
@@ -1432,6 +1452,7 @@ jQuery(function($) {
         },
         mounted() {
           var files_data = $('#uploaded-task-files').data('files').length ? $('#uploaded-task-files').data('files').replace(/=>/gi, ':') : "[]";
+          $(`#${upload_type}_${upload_type}_files`).val('');
           for (var file of JSON.parse(files_data)) this.addFile(file);
         },
         methods: {
@@ -1493,7 +1514,7 @@ jQuery(function($) {
       $.Vue_related_tasks_issues && $.Vue_related_tasks_issues.setProjectConsts();
     });
 
-    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin").is(":visible"))
+    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin, .admin_projects.active_admin").is(":visible"))
     {
       $("body").on("click", ".sortable", function() {
         if ($(this.firstElementChild).is('a')) {

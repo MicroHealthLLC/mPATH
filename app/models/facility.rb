@@ -7,9 +7,9 @@ class Facility < ApplicationRecord
   has_many :tasks, through: :facility_projects
   has_many :task_types, through: :tasks
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
-  accepts_nested_attributes_for :comments, reject_if: :reject_comment
+  accepts_nested_attributes_for :comments, reject_if: :reject_comment, allow_destroy: true
 
-  validates_presence_of :facility_name, :address, :point_of_contact, :phone_number, :email
+  validates_presence_of :facility_name, :address, :point_of_contact, :phone_number, :email, :facility_group_id
 
   enum status: [:inactive, :active].freeze
 

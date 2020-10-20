@@ -1,4 +1,5 @@
-class Project < ApplicationRecord
+class Project < SortableRecord
+  default_scope {order(Project.order_humanize)}
   has_many :tasks, through: :facilities
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
@@ -7,7 +8,7 @@ class Project < ApplicationRecord
   has_many :facility_groups, through: :facilities
   has_many :tasks, through: :facility_projects
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
-  accepts_nested_attributes_for :comments, reject_if: :reject_comment
+  accepts_nested_attributes_for :comments, reject_if: :reject_comment, allow_destroy: true
 
   belongs_to :project_type
 
