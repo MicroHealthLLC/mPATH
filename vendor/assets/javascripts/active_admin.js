@@ -1623,6 +1623,7 @@ jQuery(function($) {
         return {
           password: '',
           confirm_password: '',
+          editPass: false,
           range: 8,
           uppercase: false,
           lowercase: false,
@@ -1641,6 +1642,7 @@ jQuery(function($) {
       },
       methods: {
         generatePassword() {
+          this.editPass = true;
           var chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
           var pass = "";
           if (this.uppercase || this.lowercase || this.numbers || this.special_chars) {
@@ -1665,8 +1667,22 @@ jQuery(function($) {
           document.execCommand("copy");
         }
       },
+      computed: {
+        C_passValidationCheck() {
+          var errors = {};
+          if (this.editPass) {
+            if (this.password.length < this.range) errors.length = true;
+            if (this.uppercase && !(/([A-Z])/g).test(this.password)) errors.uppercase = true;
+            if (this.lowercase && !(/([a-z])/g).test(this.password)) errors.smallcase = true;
+            if (this.numbers && !(/([\d])/g).test(this.password)) errors.digits = true;
+            if (this.special_chars && !(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g).test(this.password)) errors.specialcase = true;
+          }
+          return errors;
+        }
+      },
       watch: {
         password(value) {
+          this.editPass = true;
           $("#user_password").prop("disabled", false);
           $("#user_password").val(value);
           $("#user_password_confirmation").prop("disabled", false);
@@ -1679,8 +1695,15 @@ jQuery(function($) {
           <ol>
             <li class="string input optional stringish">
               <label class="label">Password</label>
-              <input id="__password" maxlength="25" type="text" v-model="password" readOnly="true">
-              <input maxlength="25" v-model="confirm_password" type="hidden">
+              <input id="__password" :maxlength="range" type="password" v-model="password">
+              <div v-if="editPass" class="text-danger ml-20 p-5">
+                <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must contains {{range}} characters.</div>
+                <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
+                <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain atleast 1 Lowercase letter.</div>
+                <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain atleast 1 digit.</div>
+                <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain atleast 1 special character.</div>
+              </div>
+              <input v-model="confirm_password" type="hidden">
             </li>
             <li>
               <div class="ml-20">

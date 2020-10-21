@@ -10,6 +10,7 @@ class User < ApplicationRecord
   belongs_to :organization, optional: true
 
   validates :first_name, :last_name, presence: true
+  validate :password_complexity
   before_commit :set_color, on: :create
 
   enum role: [:client, :superadmin].freeze
@@ -35,6 +36,20 @@ class User < ApplicationRecord
     else
       nil
     end
+  end
+
+  def password_complexity
+    pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
+    error_message = []
+    error_message.push "Length should be #{pass_settings['range']} characters" unless pass_settings['range'].to_i == password&.size
+    error_message.push "Should include 1 uppercase letter! " unless pass_settings['uppercase'] and password =~ /^(?=.*?[A-Z]).{1,}$/
+    error_message.push "Should include 1 lowercase letter! " unless pass_settings['lowercase'] and password =~ /^(?=.*?[a-z]).{1,}$/
+    error_message.push "Should include 1 number! " unless pass_settings['numbers'] and password =~ /^(?=.*?[0-9]).{1,}$/
+    error_message.push "Should include 1 special character! " unless pass_settings['special_chars'] and password =~ /^(?=.*?[#?!@$%^&*-]).{1,}$/
+    return if password.blank? || error_message.empty?
+    errors.add(:password, error_message.join(', '))
+  rescue
+    errors.add(:password, "Password validations failed!")
   end
 
   def full_name

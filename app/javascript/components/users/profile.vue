@@ -36,7 +36,13 @@
         <label class="col-sm-2 col-form-label">Password <span class="font-sm text-success" @click.prevent.stop="editPass=true">(click to edit)</span></label>
         <div class="col-sm-10">
           <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off">
-          <span v-if="!C_passValidationCheck" class="font-sm text-danger">{{passError}}</span>
+          <div class="ml-1">
+            <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must be atleast 12 characters.</div>
+            <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
+            <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain atleast 1 Lowercase letter.</div>
+            <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain atleast 1 digit.</div>
+            <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain atleast 1 special character.</div>
+          </div>
         </div>
       </div>
       <div class="form-group row">
@@ -120,7 +126,6 @@
           passwordConfirmation: '',
           countryCode: ''
         },
-        passError: "",
         phoneData: {},
         gmap_address: {},
         center: {lat: 40.64, lng: -74.66}
@@ -200,30 +205,25 @@
       },
       C_passValidationCheck() {
         var pass = this.profile.password
+        var errors = {}
         if (this.editPass) {
           if (pass.length < 12) {
-            this.passError = "Must be atleast 12 characters"
-            return false
+            errors.length = true
           }
           if (!(/([A-Z])/g).test(pass)) {
-            this.passError = "Must contain atleast 1 Uppercase letter"
-            return false
+            errors.uppercase = true
           }
           if (!(/([a-z])/g).test(pass)) {
-            this.passError = "Must contain atleast 1 Lowercase letter"
-            return false
+            errors.smallcase = true
           }
           if (!(/([\d])/g).test(pass)) {
-            this.passError = "Must contain atleast 1 digit"
-            return false
+            errors.digits = true
           }
           if (!(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g).test(pass)) {
-            this.passError = "Must contain atleast 1 special character"
-            return false
+            errors.specialcase = true
           }
         }
-        this.passError = ""
-        return true
+        return errors
       },
       enableEdit() {
         let pass = this.editPass ? this.C_passCheck && this.C_passValidationCheck : true

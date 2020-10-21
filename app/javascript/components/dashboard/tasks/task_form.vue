@@ -40,7 +40,7 @@
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
-          deselect-label="Remove"
+          deselect-label="Enter to remove"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -95,7 +95,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Remove"
+          deselect-label="Enter to remove"
           :close-on-select="false"
           >
           <template slot="singleLabel" slot-scope="{option}">
@@ -138,7 +138,7 @@
                   :searchable="true"
                   :disabled="!check.text"
                   select-label="Select"
-                  deselect-label="Remove"
+                  deselect-label="Enter to remove"
                   >
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -207,7 +207,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Remove"
+          deselect-label="Enter to remove"
           :close-on-select="false"
           >
           <template slot="singleLabel" slot-scope="{option}">
@@ -229,7 +229,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Remove"
+          deselect-label="Enter to remove"
           :close-on-select="false"
           >
           <template slot="singleLabel" slot-scope="{option}">

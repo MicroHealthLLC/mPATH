@@ -34,6 +34,9 @@ body {
   input[type=checkbox] {
     margin-right: 1em;
   }
+  input[type=password] {
+    letter-spacing: 0.5em;
+  }
 
   #main_content_wrapper .index_content {
     max-width: 75vw;
@@ -558,5 +561,9 @@ body {
         width: 15em;
       }
     }
+  }
+
+  .text-danger {
+    color: #FF0000;
   }
 }

@@ -21,6 +21,6 @@ class FacilityGroup < SortableRecord
   end
 
   def destroy
-    raise ActiveRecord::StatementInvalid.new "asasas" if facilities.present?
+    raise ActiveRecord::StatementInvalid.new "Can't destroy" if facilities.present?
   end
 end
