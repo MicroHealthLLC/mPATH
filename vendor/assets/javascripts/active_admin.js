@@ -1698,10 +1698,10 @@ jQuery(function($) {
               <input id="__password" :maxlength="range" type="password" v-model="password">
               <div v-if="editPass" class="text-danger ml-20 p-5">
                 <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must contains {{range}} characters.</div>
-                <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
-                <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain atleast 1 Lowercase letter.</div>
-                <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain atleast 1 digit.</div>
-                <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain atleast 1 special character.</div>
+                <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain at least 1 uppercase letter.</div>
+                <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain at least 1 lowercase letter.</div>
+                <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain at least 1 digit.</div>
+                <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain at least 1 special character.</div>
               </div>
               <input v-model="confirm_password" type="hidden">
             </li>
