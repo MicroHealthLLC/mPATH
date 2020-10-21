@@ -37,11 +37,11 @@
         <div class="col-sm-10">
           <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off">
           <div class="ml-1">
-            <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must be atleast 12 characters.</div>
-            <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
-            <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain atleast 1 Lowercase letter.</div>
-            <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain atleast 1 digit.</div>
-            <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain atleast 1 special character.</div>
+            <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must be at least 12 characters.</div>
+            <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain at least 1 uppercase letter.</div>
+            <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain at least 1 lowercase letter.</div>
+            <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain at least 1 digit.</div>
+            <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain at least 1 special character.</div>
           </div>
         </div>
       </div>
