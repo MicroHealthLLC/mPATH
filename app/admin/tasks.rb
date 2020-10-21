@@ -173,7 +173,7 @@ ActiveAdmin.register Task do
       redirect_to '/not_found' and return unless current_user.admin_delete?
       super
     rescue ActiveRecord::StatementInvalid
-      flash[:error] = "Can't able to delete this! violates foreign key constraint"
+      flash[:error] = "Not able to delete this! Violates foreign key constraint."
       redirect_back fallback_location: root_path
     end
 
