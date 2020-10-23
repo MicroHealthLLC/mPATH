@@ -16,7 +16,7 @@ on:
 jobs:
   test:
 
-    runs-on: centos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
