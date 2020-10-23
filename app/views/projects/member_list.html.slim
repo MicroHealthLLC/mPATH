@@ -8,6 +8,7 @@
         thead
           tr
             th
+            th Name
             th Title
             th Email
             th Ph Number
@@ -16,8 +17,9 @@
         tbody
           -@project.users.each_with_index do |user, i|
             tr
-              td.text-center = i+1
+              td.text-center = i+1              
               td = user.full_name
+              td = user.title
               td = mail_to user.email
               td = tel_to user.phone_number
               td = user.organization&.title
