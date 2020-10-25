@@ -41,11 +41,17 @@ class User < ApplicationRecord
   def password_complexity
     pass_settings = JSON.parse(Setting['PASSWORDS_KEY'])
     error_message = []
-    error_message.push "Length should be #{pass_settings['range']} characters" unless pass_settings['range'].to_i == password&.size
-    error_message.push "Should include 1 uppercase letter! " unless pass_settings['uppercase'] and password =~ /^(?=.*?[A-Z]).{1,}$/
-    error_message.push "Should include 1 lowercase letter! " unless pass_settings['lowercase'] and password =~ /^(?=.*?[a-z]).{1,}$/
-    error_message.push "Should include 1 number! " unless pass_settings['numbers'] and password =~ /^(?=.*?[0-9]).{1,}$/
-    error_message.push "Should include 1 special character! " unless pass_settings['special_chars'] and password =~ /^(?=.*?[#?!@$%^&*-]).{1,}$/
+    if pass_settings['range'].to_i != password&.size
+      error_message.push "Length should be #{pass_settings['range']} characters"
+    elsif pass_settings['uppercase']
+      error_message.push "Should include 1 uppercase letter! " unless password =~ /^(?=.*?[A-Z]).{1,}$/
+    elsif pass_settings['lowercase']
+      error_message.push "Should include 1 lowercase letter! " unless password =~ /^(?=.*?[a-z]).{1,}$/
+    elsif pass_settings['numbers']
+      error_message.push "Should include 1 number! " unless password =~ /^(?=.*?[0-9]).{1,}$/
+    elsif pass_settings['special_chars']
+      error_message.push "Should include 1 special character! " unless password =~ /^(?=.*?[#?!@$%^&*-]).{1,}$/
+    end
     return if password.blank? || error_message.empty?
     errors.add(:password, error_message.join(', '))
   rescue
@@ -80,8 +86,8 @@ class User < ApplicationRecord
   end
 
   def initialize(*args)
-     privilege ||= Privilege.new
-     super
+    privilege ||= Privilege.new
+    super
   end
 
   def admin_read?
@@ -112,4 +118,7 @@ class User < ApplicationRecord
     projects.active.pluck :name
   end
 
+  def allowed?(view)
+    self.privilege.send(view)&.include?("R")
+  end
 end

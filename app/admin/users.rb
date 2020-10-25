@@ -33,7 +33,12 @@ ActiveAdmin.register User do
         :tasks,
         :issues,
         :notes,
-        :admin
+        :admin,
+        :map_view,
+        :gantt_view,
+        :watch_view,
+        :documents,
+        :members
       ]
     ]
   end
@@ -62,11 +67,16 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, include_blank: false, include_hidden: false
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-              p.input :overview
-              p.input :tasks
-              p.input :issues
-              p.input :notes
-              p.input :admin
+            p.input :map_view
+            p.input :gantt_view
+            p.input :watch_view
+            p.input :overview
+            p.input :tasks
+            p.input :issues
+            p.input :notes
+            p.input :documents
+            p.input :members
+            p.input :admin
           end
         end
         div id: 'user-role_privilege-tab'

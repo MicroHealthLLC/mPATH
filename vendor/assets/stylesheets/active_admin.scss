@@ -164,6 +164,10 @@ body {
   #user_privilege_attributes_notes_input,
   #user_privilege_attributes_issues_input,
   #user_privilege_attributes_admin_input,
+  #user_privilege_attributes_map_view_input,
+  #user_privilege_attributes_gantt_view_input,
+  #user_privilege_attributes_watch_view_input,
+  #user_privilege_attributes_documents_input,
   #task_sub_issues_input,
   #task_sub_tasks_input,
   #issue_sub_tasks_input,
@@ -565,5 +569,9 @@ body {
 
   .text-danger {
     color: #FF0000;
+  }
+  .pass-copied {
+    color: #08A510;
+    margin-left: 5px;
   }
 }

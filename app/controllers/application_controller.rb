@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
     render_error({message: :notice_file_not_found, status: 404}.merge(options))
   end
 
+  def raise_403
+    raise CanCan::AccessDenied.new("Not authorized!")
+  end
+
   def render_error(arg)
     arg = {message: arg} unless arg.is_a?(Hash)
 

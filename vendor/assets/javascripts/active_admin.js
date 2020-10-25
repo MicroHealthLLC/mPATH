@@ -461,6 +461,31 @@ jQuery(function($) {
       data() {
         return {
           loading: true,
+          map_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          gantt_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          watch_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          documents: {
+            read: false,
+            write: false,
+            delete: false
+          },
+          members: {
+            read: false,
+            write: false,
+            delete: false
+          },
           overview: {
             read: false,
             write: false,
@@ -501,6 +526,11 @@ jQuery(function($) {
           var issues = $("#user_privilege_attributes_issues").val() || ""
           var notes = $("#user_privilege_attributes_notes").val() || ""
           var admin = $("#user_privilege_attributes_admin").val() || ""
+          var map_view = $("#user_privilege_attributes_map_view").val() || ""
+          var gantt_view = $("#user_privilege_attributes_gantt_view").val() || ""
+          var watch_view = $("#user_privilege_attributes_watch_view").val() || ""
+          var documents = $("#user_privilege_attributes_documents").val() || ""
+          var members = $("#user_privilege_attributes_members").val() || ""
           this.overview = {
             read: overview.includes("R"),
             write: overview.includes("W"),
@@ -525,6 +555,31 @@ jQuery(function($) {
             read: admin.includes("R"),
             write: admin.includes("W"),
             delete: admin.includes("D")
+          }
+          this.map_view = {
+            read: map_view.includes("R"),
+            write: map_view.includes("W"),
+            delete: map_view.includes("D")
+          }
+          this.gantt_view = {
+            read: gantt_view.includes("R"),
+            write: gantt_view.includes("W"),
+            delete: gantt_view.includes("D")
+          }
+          this.watch_view = {
+            read: watch_view.includes("R"),
+            write: watch_view.includes("W"),
+            delete: watch_view.includes("D")
+          }
+          this.documents = {
+            read: documents.includes("R"),
+            write: documents.includes("W"),
+            delete: documents.includes("D")
+          }
+          this.members = {
+            read: members.includes("R"),
+            write: members.includes("W"),
+            delete: members.includes("D")
           }
         }
       },
@@ -649,11 +704,150 @@ jQuery(function($) {
           if (value) this.admin.read = value;
           $("#user_privilege_attributes_admin").val(v);
         },
+        "map_view.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_map_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.map_view.write = false;
+            this.map_view.delete = false;
+          }
+          $("#user_privilege_attributes_map_view").val(v);
+        },
+        "map_view.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_map_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.map_view.read = value;
+          $("#user_privilege_attributes_map_view").val(v);
+        },
+        "map_view.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_map_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.map_view.read = value;
+          $("#user_privilege_attributes_map_view").val(v);
+        },
+        "gantt_view.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_gantt_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.gantt_view.write = false;
+            this.gantt_view.delete = false;
+          }
+          $("#user_privilege_attributes_gantt_view").val(v);
+        },
+        "gantt_view.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_gantt_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.gantt_view.read = value;
+          $("#user_privilege_attributes_gantt_view").val(v);
+        },
+        "gantt_view.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_gantt_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.gantt_view.read = value;
+          $("#user_privilege_attributes_gantt_view").val(v);
+        },
+
+        "watch_view.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_watch_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.watch_view.write = false;
+            this.watch_view.delete = false;
+          }
+          $("#user_privilege_attributes_watch_view").val(v);
+        },
+        "watch_view.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_watch_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.watch_view.read = value;
+          $("#user_privilege_attributes_watch_view").val(v);
+        },
+        "watch_view.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_watch_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.watch_view.read = value;
+          $("#user_privilege_attributes_watch_view").val(v);
+        },
+        "documents.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_documents").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.documents.write = false;
+            this.documents.delete = false;
+          }
+          $("#user_privilege_attributes_documents").val(v);
+        },
+        "documents.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_documents").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.documents.read = value;
+          $("#user_privilege_attributes_documents").val(v);
+        },
+        "documents.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_documents").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.documents.read = value;
+          $("#user_privilege_attributes_documents").val(v);
+        },
+        "members.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_members").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.members.write = false;
+            this.members.delete = false;
+          }
+          $("#user_privilege_attributes_members").val(v);
+        },
+        "members.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_members").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.members.read = value;
+          $("#user_privilege_attributes_members").val(v);
+        },
+        "members.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_members").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.members.read = value;
+          $("#user_privilege_attributes_members").val(v);
+        }
       },
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
         <fieldset v-if="!loading" class="inputs">
           <legend><span>Privileges</span></legend>
           <ol class="choices-group">
+            <li class="choice d-flex">
+              <label>Map View</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Gantt View</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>On Watch View</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.delete">Delete</label>
+            </li>
             <li class="choice d-flex">
               <label>Overview</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
@@ -677,6 +871,18 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Documents</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="documents.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="documents.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="documents.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Members</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="members.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="members.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Admin</label>
@@ -1623,6 +1829,7 @@ jQuery(function($) {
         return {
           password: '',
           confirm_password: '',
+          copied: false,
           editPass: false,
           range: 8,
           uppercase: false,
@@ -1661,10 +1868,14 @@ jQuery(function($) {
           this.password = pass;
         },
         copyPassword() {
-          var copyText = document.getElementById("__password");
-          copyText.select();
-          copyText.setSelectionRange(0, 99999);
-          document.execCommand("copy");
+          const copyText = document.getElementById("__password");
+          const el = document.createElement('textarea');
+          el.value = copyText.value;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          this.copied = el.value != "";
+          document.body.removeChild(el);
         }
       },
       computed: {
@@ -1698,10 +1909,10 @@ jQuery(function($) {
               <input id="__password" :maxlength="range" type="password" v-model="password">
               <div v-if="editPass" class="text-danger ml-20 p-5">
                 <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must contains {{range}} characters.</div>
-                <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain at least 1 uppercase letter.</div>
-                <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain at least 1 lowercase letter.</div>
-                <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain at least 1 digit.</div>
-                <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain at least 1 special character.</div>
+                <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
+                <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain atleast 1 Lowercase letter.</div>
+                <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain atleast 1 digit.</div>
+                <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain atleast 1 special character.</div>
               </div>
               <input v-model="confirm_password" type="hidden">
             </li>
@@ -1709,6 +1920,7 @@ jQuery(function($) {
               <div class="ml-20">
                 <a href="javascript:;" @click.prevent="generatePassword">Regenerate Password</a>
                 <a href="javascript:;" style="margin-left: 20px" @click.prevent="copyPassword">Copy Password</a>
+                <span v-if="copied" class="pass-copied"><sup>copied!</sup></span>
               </div>
             </li>
           </ol>

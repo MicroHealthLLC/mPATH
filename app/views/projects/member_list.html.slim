@@ -8,19 +8,21 @@
         thead
           tr
             th
+            th Name
             th Title
+            th Organization
             th Email
             th Ph Number
-            th Organization
             th Status
         tbody
           -@project.users.each_with_index do |user, i|
             tr
               td.text-center = i+1
-              td = user.full_name
-              td = mail_to user.email
-              td = tel_to user.phone_number
-              td = user.organization&.title
+              td.text-center = user.full_name
+              td.text-center = user.title
+              td.text-center = user.organization&.title
+              td.text-center = mail_to user.email
+              td.text-center = tel_to user.phone_number
               td.text-center
                 span class="badge-#{user.status}"
                   = user.status.upcase

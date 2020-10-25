@@ -9,6 +9,7 @@ class ProjectsController < AuthenticatedController
   end
 
   def show
+    check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
         format.json {render json: {project: @project, users: @project.users}, status: 200}
@@ -23,6 +24,7 @@ class ProjectsController < AuthenticatedController
   end
 
   def gantt_chart
+    check_permit("gantt_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
@@ -30,16 +32,23 @@ class ProjectsController < AuthenticatedController
   end
 
   def watch_view
+    check_permit("watch_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
     end
   end
 
-  def member_list; end
+  def member_list
+    check_permit("members")
+  end
 
   private
   def set_project
     @project = current_user.projects.active.find_by(id: params[:id])
+  end
+
+  def check_permit(view)
+    raise_403 and return unless current_user.allowed?(view)
   end
 end
