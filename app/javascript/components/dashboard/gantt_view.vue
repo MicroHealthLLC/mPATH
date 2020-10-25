@@ -36,8 +36,7 @@
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
-            name="Start Date"
-            :disabled-date="disabledStartDate"
+            name="Start Date"         
           />
         </div>
         <div v-if="tab == 'End Date'" class="form-group">
@@ -253,13 +252,7 @@
         this.DV_task = {startDate: data.startDate, dueDate: data.endDate, progress: data.progress}
         this.AC_task = Object.assign({}, data)
         this.$refs.taskFormModal.open()
-      },
-      disabledStartDate(date) {
-        date.setHours(0,0,0,0)
-        const today = new Date()
-        today.setHours(0,0,0,0)
-        return date < today
-      },
+      },     
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
