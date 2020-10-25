@@ -1906,7 +1906,7 @@ jQuery(function($) {
           <ol>
             <li class="string input optional stringish">
               <label class="label">Password</label>
-              <input id="__password" :maxlength="range" type="password" v-model="password">
+              <input id="__password" :maxlength="range" type="text" v-model="password">
               <div v-if="editPass" class="text-danger ml-20 p-5">
                 <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must contains {{range}} characters.</div>
                 <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>
