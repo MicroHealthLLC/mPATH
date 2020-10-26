@@ -65,7 +65,8 @@ class User < ApplicationRecord
   def as_json(options=nil)
     json = super(options)
     json.merge(
-      full_name: full_name
+      full_name: full_name,
+      organization: organization.try(:title)
     ).as_json
   end
 

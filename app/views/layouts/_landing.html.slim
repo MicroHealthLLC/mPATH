@@ -17,10 +17,6 @@
                         ="#{project.name} "
                       span.font-weight-bold
                         ="(#{project.facilities.count} Facilities)"
-                    -if current_user.allowed?("members")
-                      span
-                        =link_to member_list_project_path(project) do
-                          .i.fa.fa-users aria-hidden="true"
                 .mt-2.d-flex.align-items-center
                   -progs = project.facility_projects.map(&:progress)
                   -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0

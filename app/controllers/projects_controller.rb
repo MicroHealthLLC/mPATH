@@ -41,6 +41,10 @@ class ProjectsController < AuthenticatedController
 
   def member_list
     check_permit("members")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
   end
 
   private

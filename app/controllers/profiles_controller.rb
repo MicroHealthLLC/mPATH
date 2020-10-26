@@ -21,7 +21,6 @@ class ProfilesController < AuthenticatedController
       :title,
       :phone_number,
       :address,
-      :role,
       :lat,
       :lng,
       :password,

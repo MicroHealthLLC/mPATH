@@ -168,6 +168,7 @@ body {
   #user_privilege_attributes_gantt_view_input,
   #user_privilege_attributes_watch_view_input,
   #user_privilege_attributes_documents_input,
+  #user_privilege_attributes_members_input,
   #task_sub_issues_input,
   #task_sub_tasks_input,
   #issue_sub_tasks_input,
@@ -175,6 +176,7 @@ body {
   #task_task_files,
   #issue_issue_files {
     display: none;
+    width: 0;
   }
   input[type=tel]:focus {
     border: none;
