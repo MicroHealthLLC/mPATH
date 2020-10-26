@@ -1831,7 +1831,7 @@ jQuery(function($) {
           confirm_password: '',
           copied: false,
           editPass: false,
-          range: 8,
+          range: 12,
           uppercase: false,
           lowercase: false,
           numbers: false,
