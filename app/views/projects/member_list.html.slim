@@ -23,6 +23,6 @@
               td = mail_to user.email
               td = tel_to user.phone_number
               td = user.organization&.title
-              td.text-center
+              td
                 span class="badge-#{user.status}"
                   = user.status.upcase
