@@ -939,7 +939,7 @@ jQuery(function($) {
               passwords_key: ''
             },
             passwords: {
-              range: 8,
+              range: 12,
               uppercase: false,
               lowercase: false,
               numbers: false,
@@ -1026,19 +1026,19 @@ jQuery(function($) {
                       <ul class="choices-group">
                         <li class="choice range">
                           <label>Length ({{passwords.range}})</label>
-                          <input :readOnly="!isEditing" :disabled="!isEditing" type="range" v-model="passwords.range" min="8" max="25">
+                          <input type="range" v-model="passwords.range" min="12" max="25">
                         </li>
                         <li class="choice">
-                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.uppercase">A-Z</label>
+                          <label><input type="checkbox" v-model="passwords.uppercase">A-Z</label>
                         </li>
                         <li class="choice">
-                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.lowercase">a-z</label>
+                          <label><input type="checkbox" v-model="passwords.lowercase">a-z</label>
                         </li>
                         <li class="choice">
-                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.numbers">0-9</label>
+                          <label><input type="checkbox" v-model="passwords.numbers">0-9</label>
                         </li>
                         <li class="choice">
-                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.special_chars">!@#$%^&*</label>
+                          <label><input type="checkbox" v-model="passwords.special_chars">!@#$%^&*</label>
                         </li>
                       </ul>
                     </div>
@@ -1831,7 +1831,7 @@ jQuery(function($) {
           confirm_password: '',
           copied: false,
           editPass: false,
-          range: 8,
+          range: 12,
           uppercase: false,
           lowercase: false,
           numbers: false,
