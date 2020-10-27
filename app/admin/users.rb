@@ -1,6 +1,11 @@
 ActiveAdmin.register User do
-  menu parent: "Organizations"
+  menu priority: 2
   actions :all, except: [:show]
+
+  permit_params do
+    permitted = [:title]
+    permitted
+  end
 
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Users', admin_users_path)]
