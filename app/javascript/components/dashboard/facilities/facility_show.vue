@@ -202,6 +202,7 @@
           <div>
             <detail-show
               :facility="DV_facility"
+              :from="from"
               @refresh-facility="refreshFacility"
             ></detail-show>
           </div>
@@ -209,6 +210,7 @@
         <tab title="Issues" key="issues">
           <issue-index
             :facility="DV_facility"
+            :from="from"
             @refresh-facility="refreshFacility"
           ></issue-index>
         </tab>
@@ -236,13 +238,13 @@
         default: null,
         type: Object
       },
-      statuses: {
-        default: () => [],
-        type: Array
-      },
       extras: {
         default: true,
         type: Boolean
+      },
+      from: {
+        default: "",
+        type: String
       }
     },
     data() {
@@ -255,21 +257,27 @@
       }
     },
     mounted() {
-      this.fetchFacility()
+      if (this.from == "manager_view") {
+        this.DV_facility = Object.assign({}, this.facility)
+        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this.loading = false
+      } else {
+        this.fetchFacility()
+      }
     },
     methods: {
       fetchFacility(opt={}) {
         http
           .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
           .then((res) => {
-            this.DV_facility = {...res.data.facility, ...res.data.facility.facility},
+            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
             this.selectedStatus = this.statuses.find(s => s.id === this.DV_facility.statusId)
             if (opt.cb) this.$emit('facility-update', this.DV_facility)
-            this.loading = false;
+            this.loading = false
           })
           .catch((err) => {
-            this.loading = false;
-            console.error(err);
+            this.loading = false
+            console.error(err)
           })
       },
       updateFacility(e) {
@@ -304,7 +312,8 @@
       ...mapGetters([
         'currentProject',
         'taskTypeFilter',
-        'issueTypeFilter'
+        'issueTypeFilter',
+        'statuses'
       ]),
       filteredTasks() {
         var ids = this.taskTypeFilter && this.taskTypeFilter.length ? _.map(this.taskTypeFilter, 'id') : []
@@ -375,8 +384,10 @@
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
           this.DV_updated = false
-          this.loading = true
-          this.fetchFacility()
+          if (this.from != "manager_view") {
+            this.loading = true
+            this.fetchFacility()
+          }
         },
         deep: true
       },

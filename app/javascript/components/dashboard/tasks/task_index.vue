@@ -39,11 +39,11 @@
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
         </div>
-        <div class="form-check-inline ml-4">
+        <div class="form-check-inline ml-auto mr-0">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
           </label>
-          <label class="form-check-label ml-3 text-primary">
+          <label class="form-check-label ml-2 text-primary">
             Total: {{filteredTasks.length}}
           </label>
         </div>
@@ -54,6 +54,7 @@
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :task="task"
+          :from-view="from"
           @edit-task="$emit('show-hide', task)"
           @toggle-watched="toggleWatched"
           ></task-show>
@@ -71,7 +72,7 @@
   export default {
     name: 'TasksIndex',
     components: {TaskShow},
-    props: ['facility'],
+    props: ['facility', 'from'],
     data() {
       return {
         viewList: 'active'

@@ -425,3 +425,15 @@ body /deep/ .multiselect--disabled {
   width: max-content;
   display: inline-block;
 }
+
+.hide-to-edit {
+  opacity: 0.1;
+  pointer-events: none;
+}
+.blur_show {
+  position: absolute;
+  right: 20px;
+  svg {
+    font-size: 5em;
+  }
+}

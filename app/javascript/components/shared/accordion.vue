@@ -6,7 +6,6 @@
     <transition name="slide-fade">
       <div v-if="expand" class="accordion_body">
         <facility-show
-          :statuses="statuses"
           :facility="facility"
           :facility-group="facilityGroup"
           :extras="false"

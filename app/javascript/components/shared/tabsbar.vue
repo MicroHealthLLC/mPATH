@@ -1,5 +1,8 @@
 <template>
   <div id="tabbar">
+    <router-link v-if="permitted('overview')" :to="facilityManagerView" tag="div">
+      <div class="badge" :class="{'active': isFacilityManagerView}">Facility View</div>
+    </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}">Map View</div>
     </router-link>
@@ -34,6 +37,9 @@
       isMembersView() {
         return this.$route.name === 'TeamMembersView'
       },
+      isFacilityManagerView() {
+        return this.$route.name === 'FacilityManagerView'
+      },
       mapView() {
         return `/projects/${this.$route.params.projectId}`
       },
@@ -45,6 +51,9 @@
       },
       membersView() {
         return `/projects/${this.$route.params.projectId}/member_list`
+      },
+      facilityManagerView() {
+        return `/projects/${this.$route.params.projectId}/facility_manager`
       },
       permitted() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions[salut]['read']

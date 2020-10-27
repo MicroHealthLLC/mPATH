@@ -1,6 +1,12 @@
 <template>
   <div>
-    <div v-if="!loading" class="issues_show mx-3 pb-2">
+    <div v-if="C_editForManager" class="blur_show text-center">
+      <div class="text-danger d-flex align-items-center">
+        <p class="mr-2 mb-0">Edit</p>
+        <i class="fas fa-long-arrow-alt-right"></i>
+      </div>
+    </div>
+    <div v-if="!loading" class="issues_show mx-3 pb-2" :class="{'hide-to-edit': C_editForManager}">
       <div v-if="show" class="row">
         <div class="col-md-9">
           <div>
@@ -120,6 +126,7 @@
     methods: {
       ...mapMutations([
         'updateIssuesHash',
+        'setTaskForManager'
       ]),
       ...mapActions([
         'issueDeleted'
@@ -127,7 +134,11 @@
       editIssue() {
         if (this.fromView == 'map_view') {
           this.$emit('issue-edited', this.issue)
-        } else {
+        }
+        else if (this.fromView == 'manager_view') {
+          this.setTaskForManager({key: 'issue', value: this.DV_issue})
+        }
+        else {
           this.has_issue = Object.entries(this.DV_issue).length > 0
           this.$refs.issueFormModal && this.$refs.issueFormModal.open()
         }
@@ -158,7 +169,8 @@
     computed: {
       ...mapGetters([
         'facilities',
-        'facilityGroups'
+        'facilityGroups',
+        'managerView'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -171,6 +183,9 @@
       },
       facilityGroup() {
         return this.facilityGroups.find(f => f.id == this.facility.facilityGroupId)
+      },
+      C_editForManager() {
+        return this.managerView.issue && this.managerView.issue.id == this.DV_issue.id
       }
     },
     watch: {

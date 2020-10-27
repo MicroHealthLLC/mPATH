@@ -1,6 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4">
-    <div v-if="newIssue">
+    <div v-if="newIssue && from != 'manager_view'">
       <button
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
@@ -76,11 +76,11 @@
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
         </div>
-        <div class="form-check-inline ml-4">
+        <div class="form-check-inline ml-auto mr-0">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
           </label>
-          <label class="form-check-label ml-3 text-primary">
+          <label class="form-check-label ml-2 text-primary">
             Total: {{filteredIssues.length}}
           </label>
         </div>
@@ -94,6 +94,7 @@
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
               :issue="issue"
+              :from-view="from"
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
             />
@@ -114,7 +115,7 @@
 
   export default {
     name: 'IssueIndex',
-    props: ['facility'],
+    props: ['facility', 'from'],
     components: {IssueForm, IssueShow},
 
     data() {
