@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_14_064709) do
+ActiveRecord::Schema.define(version: 2020_10_23_114005) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -64,6 +64,17 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "checklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "listable_type"
+    t.integer "listable_id"
+    t.boolean "checked"
+    t.string "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_checklists_on_user_id"
+  end
+
   create_table "facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
     t.string "address"
@@ -77,6 +88,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.string "lat"
     t.string "lng"
     t.integer "status", default: 1
+    t.string "country_code", default: ""
     t.index ["creator_id"], name: "index_facilities_on_creator_id"
     t.index ["facility_group_id"], name: "index_facilities_on_facility_group_id"
   end
@@ -88,7 +100,9 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center"
+    t.string "center", default: "[]"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
   create_table "facility_projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -103,14 +117,77 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
   end
 
+  create_table "issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "issue_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id"], name: "index_issue_users_on_issue_id"
+    t.index ["user_id"], name: "index_issue_users_on_user_id"
+  end
+
+  create_table "issues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "title"
+    t.text "description", limit: 4294967295
+    t.bigint "issue_type_id"
+    t.bigint "issue_severity_id"
+    t.bigint "facility_project_id"
+    t.date "start_date"
+    t.date "due_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "progress", default: 0
+    t.boolean "auto_calculate", default: true
+    t.boolean "watched", default: false
+    t.datetime "watched_at"
+    t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
+    t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
+    t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
+  end
+
   create_table "notes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "noteable_type"
     t.integer "noteable_id"
     t.bigint "user_id"
-    t.text "body"
+    t.text "body", limit: 4294967295
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_notes_on_user_id"
+  end
+
+  create_table "organizations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "title", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "overview", default: "R"
+    t.string "tasks", default: "R"
+    t.string "notes", default: "R"
+    t.string "issues", default: "R"
+    t.string "admin", default: ""
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "map_view", default: "R"
+    t.string "gantt_view", default: "R"
+    t.string "watch_view", default: "R"
+    t.string "documents", default: "R"
+    t.string "members", default: "R"
+    t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
   create_table "project_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -130,7 +207,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
 
   create_table "projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
-    t.text "description"
+    t.text "description", limit: 4294967295
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
@@ -149,12 +226,39 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.index ["state_id"], name: "index_region_states_on_state_id"
   end
 
+  create_table "related_issues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "relatable_type"
+    t.integer "relatable_id"
+    t.bigint "issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_id"], name: "index_related_issues_on_issue_id"
+  end
+
+  create_table "related_tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "relatable_type"
+    t.integer "relatable_id"
+    t.bigint "task_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_related_tasks_on_task_id"
+  end
+
   create_table "settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "office365_key"
     t.text "office365_secret"
     t.text "google_map_key"
     t.text "google_oauth_key"
     t.text "google_oauth_secret"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "passwords_key"
+  end
+
+  create_table "sorts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "relation"
+    t.string "column", default: "id"
+    t.string "order", default: "asc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -171,6 +275,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "color"
   end
 
   create_table "task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -179,9 +284,18 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "task_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "task_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_task_users_on_task_id"
+    t.index ["user_id"], name: "index_task_users_on_user_id"
+  end
+
   create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "text"
-    t.text "notes"
+    t.text "notes", limit: 4294967295
     t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -189,6 +303,9 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.bigint "task_type_id"
     t.date "start_date"
     t.bigint "facility_project_id"
+    t.boolean "auto_calculate", default: true
+    t.boolean "watched", default: false
+    t.datetime "watched_at"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
@@ -218,21 +335,38 @@ ActiveRecord::Schema.define(version: 2020_05_14_064709) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.text "privileges"
+    t.string "privileges", default: ""
+    t.string "country_code", default: ""
+    t.string "color"
+    t.bigint "organization_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "checklists", "users"
   add_foreign_key "facilities", "users", column: "creator_id"
+  add_foreign_key "facility_groups", "projects"
   add_foreign_key "facility_projects", "facilities"
   add_foreign_key "facility_projects", "projects"
   add_foreign_key "facility_projects", "statuses"
+  add_foreign_key "issue_users", "issues"
+  add_foreign_key "issue_users", "users"
+  add_foreign_key "issues", "facility_projects"
+  add_foreign_key "issues", "issue_severities"
+  add_foreign_key "issues", "issue_types"
+  add_foreign_key "privileges", "users"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
   add_foreign_key "projects", "project_types"
   add_foreign_key "region_states", "facility_groups"
   add_foreign_key "region_states", "states"
+  add_foreign_key "related_issues", "issues"
+  add_foreign_key "related_tasks", "tasks"
+  add_foreign_key "task_users", "tasks"
+  add_foreign_key "task_users", "users"
   add_foreign_key "tasks", "facility_projects"
   add_foreign_key "tasks", "task_types"
+  add_foreign_key "users", "organizations"
 end

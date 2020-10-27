@@ -939,7 +939,7 @@ jQuery(function($) {
               passwords_key: ''
             },
             passwords: {
-              range: 12,
+              range: 8,
               uppercase: false,
               lowercase: false,
               numbers: false,
@@ -1026,19 +1026,19 @@ jQuery(function($) {
                       <ul class="choices-group">
                         <li class="choice range">
                           <label>Length ({{passwords.range}})</label>
-                          <input type="range" v-model="passwords.range" min="12" max="25">
+                          <input :readOnly="!isEditing" :disabled="!isEditing" type="range" v-model="passwords.range" min="8" max="25">
                         </li>
                         <li class="choice">
-                          <label><input type="checkbox" v-model="passwords.uppercase">A-Z</label>
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.uppercase">A-Z</label>
                         </li>
                         <li class="choice">
-                          <label><input type="checkbox" v-model="passwords.lowercase">a-z</label>
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.lowercase">a-z</label>
                         </li>
                         <li class="choice">
-                          <label><input type="checkbox" v-model="passwords.numbers">0-9</label>
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.numbers">0-9</label>
                         </li>
                         <li class="choice">
-                          <label><input type="checkbox" v-model="passwords.special_chars">!@#$%^&*</label>
+                          <label><input :readOnly="!isEditing" :disabled="!isEditing" type="checkbox" v-model="passwords.special_chars">!@#$%^&*</label>
                         </li>
                       </ul>
                     </div>
@@ -1831,7 +1831,7 @@ jQuery(function($) {
           confirm_password: '',
           copied: false,
           editPass: false,
-          range: 12,
+          range: 8,
           uppercase: false,
           lowercase: false,
           numbers: false,
@@ -1906,7 +1906,7 @@ jQuery(function($) {
           <ol>
             <li class="string input optional stringish">
               <label class="label">Password</label>
-              <input id="__password" :maxlength="range" type="password" v-model="password">
+              <input id="__password" :maxlength="range" type="text" v-model="password">
               <div v-if="editPass" class="text-danger ml-20 p-5">
                 <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must contains {{range}} characters.</div>
                 <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain atleast 1 Uppercase letter.</div>

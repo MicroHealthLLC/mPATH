@@ -2,6 +2,11 @@ ActiveAdmin.register Organization do
   menu parent: "Users"
   actions :all, except: [:show]
 
+  permit_params do
+    permitted = [:title]
+    permitted
+  end
+
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Organizations', admin_organizations_path)]
     if %(show edit).include?(params['action'])
