@@ -55,7 +55,7 @@ class User < ApplicationRecord
     return if password.blank? || error_message.empty?
     errors.add(:password, error_message.join(', '))
   rescue
-    # errors.add(:password, "Password validations failed!")
+    errors.add(:password, "Password validations failed!")
   end
 
   def full_name
