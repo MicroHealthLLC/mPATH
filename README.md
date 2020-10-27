@@ -134,7 +134,7 @@ nano /etc/nginx/nginx.conf
 add these
 
         passenger_enabled on;
-        rails_env development;
+        rails_env production;
 
 # restart nginx
 service nginx restart

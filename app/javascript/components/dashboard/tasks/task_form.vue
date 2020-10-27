@@ -59,7 +59,8 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             name="Start Date"
-            class="w-100 vue2-datepicker"          
+            class="w-100 vue2-datepicker"
+            :disabled-date="disabledStartDate"
           />
           <div v-show="errors.has('Start Date')" class="text-danger">
             {{errors.first('Start Date')}}
@@ -427,7 +428,13 @@
 
         var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
-      },     
+      },
+      disabledStartDate(date) {
+        date.setHours(0,0,0,0)
+        const today = new Date()
+        today.setHours(0,0,0,0)
+        return date < today
+      },
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)

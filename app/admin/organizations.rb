@@ -1,7 +1,6 @@
 ActiveAdmin.register Organization do
   menu parent: "Users"
   actions :all, except: [:show]
- 
 
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Organizations', admin_organizations_path)]

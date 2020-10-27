@@ -1,17 +1,20 @@
 <template>
   <div id="tabbar">
-    <router-link :to="mapView" tag="div">
+    <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}">Map View</div>
     </router-link>
-    <router-link :to="ganttView" tag="div">
+    <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}">Gantt View</div>
     </router-link>
-    <router-link :to="watchView" tag="div">
+    <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}">On Watch View</div>
     </router-link>
-    <div class="badge disabled">Task Kanban (Coming Soon)</div>
-    <div class="badge disabled">Issues Kanban (Coming Soon)</div>
-    <div class="badge disabled">Documents (Coming Soon)</div>
+    <div v-if="permitted('tasks')" class="badge disabled">Task Kanban (Coming Soon)</div>
+    <div v-if="permitted('issues')" class="badge disabled">Issues Kanban (Coming Soon)</div>
+    <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
+    <router-link v-if="permitted('members')" :to="membersView" tag="div">
+      <div class="badge" :class="{'active': isMembersView}">Team Members</div>
+    </router-link>
   </div>
 </template>
 
@@ -28,6 +31,9 @@
       isWatchView() {
         return this.$route.name === 'ProjectWatchView'
       },
+      isMembersView() {
+        return this.$route.name === 'TeamMembersView'
+      },
       mapView() {
         return `/projects/${this.$route.params.projectId}`
       },
@@ -36,6 +42,12 @@
       },
       watchView() {
         return `/projects/${this.$route.params.projectId}/watch_view`
+      },
+      membersView() {
+        return `/projects/${this.$route.params.projectId}/member_list`
+      },
+      permitted() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions[salut]['read']
       }
     }
   }

@@ -1,6 +1,7 @@
 import ProjectMapView from './../components/dashboard/map_view'
 import GanttChartView from './../components/dashboard/gantt_view'
 import WatchView from './../components/dashboard/watch_view'
+import MembersView from './../components/dashboard/members_view'
 
 export default new VueRouter({
   routes: [
@@ -18,6 +19,11 @@ export default new VueRouter({
       name: 'ProjectWatchView',
       path: '/projects/:projectId/watch_view',
       component: WatchView
+    },
+    {
+      name: 'TeamMembersView',
+      path: '/projects/:projectId/member_list',
+      component: MembersView
     }
   ],
   hashbang: false,
