@@ -5,12 +5,13 @@
         <task-index
           v-if="currentProject"
           :facility="facility"
+          :from="from"
           @show-hide="detailShowHide"
           @toggle-watch-task="toogleWatchTask"
         ></task-index>
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="from != 'manager_view'">
       <button
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
@@ -37,7 +38,7 @@
 
   export default {
     name: 'DetailShow',
-    props: ['facility'],
+    props: ['facility', 'from'],
     components: {TaskIndex, TaskForm},
     data() {
       return {

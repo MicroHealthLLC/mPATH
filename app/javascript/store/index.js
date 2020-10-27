@@ -59,7 +59,11 @@ export default new Vuex.Store({
     },
     taskUserFilter: null,
     issueUserFilter: null,
-    myActionsFilter: new Array
+    myActionsFilter: new Array,
+    managerView: {
+      task: null,
+      issue: null
+    }
   },
 
   mutations: {
@@ -136,7 +140,12 @@ export default new Vuex.Store({
       }
       state.progressFilter = filters
     },
-    setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value
+    setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value,
+    setTaskForManager: (state, {key, value}) => {
+      for (let k in state.managerView) {
+        state.managerView[k] = k == key ? value : null
+      }
+    }
   },
 
   getters: {
@@ -168,6 +177,7 @@ export default new Vuex.Store({
     myActionsFilter: state => state.myActionsFilter,
     mapFilters: state => state.mapFilters,
     progressFilter: state => state.progressFilter,
+    managerView: state => state.managerView,
     filteredFacilities: (state, getters) => (_status='active') => {
       return _.filter(getters.facilities, (facility) => {
         var valid = _status === 'all' || facility.status === _status
@@ -288,8 +298,7 @@ export default new Vuex.Store({
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
     },
     facilityGroupFacilities: (state, getters) => (group) => {
-      var ids = _.map(getters.filteredFacilities('active'), 'id')
-      return _.filter(group.facilities, f => ids.includes(f.facilityId) && f.projectId === getters.currentProject.id)
+      return _.filter(getters.filteredFacilities('active'), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
     },
 
     // for gantt chart view
