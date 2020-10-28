@@ -15,7 +15,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, i) in projectUsers">
+            <tr v-for="(user, i) in orderedUsers">
               <td class="text-center">{{i+1}}</td>
               <td>{{user.fullName}}</td>
               <td>{{user.title}}</td>
@@ -40,7 +40,10 @@
     computed: {
       ...mapGetters([
         'projectUsers'
-      ])
+      ]),
+      orderedUsers: () => {
+        return _.orderBy(this.projectUsers, 'lastName', 'asc')
+      }
     }
   }
 </script>
