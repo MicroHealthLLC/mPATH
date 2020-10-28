@@ -43,6 +43,10 @@ body {
     overflow: auto;
   }
 
+  .index_as_table {
+    overflow-x: auto;
+  }
+
   form.filter_form .filter_form_field.select_and_search {
     select {
       width: 40%;
