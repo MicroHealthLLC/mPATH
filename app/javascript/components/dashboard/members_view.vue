@@ -41,7 +41,7 @@
       ...mapGetters([
         'projectUsers'
       ]),
-      orderedUsers: () => {
+      orderedUsers: function() {
         return _.orderBy(this.projectUsers, 'lastName', 'asc')
       }
     }
