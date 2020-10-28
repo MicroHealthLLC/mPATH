@@ -290,7 +290,7 @@
       }
     },
     mounted() {
-      if (this.task) {
+      if (!_.isEmpty(this.task)) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
         this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))

@@ -23,7 +23,7 @@
         </div>
         <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button>
       </div>
-      <div class="m-3">
+      <div class="m-3 d-flex">
         <div class="form-check-inline">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
@@ -57,7 +57,7 @@
           :from-view="from"
           @edit-task="$emit('show-hide', task)"
           @toggle-watched="toggleWatched"
-          ></task-show>
+        ></task-show>
       </div>
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>
@@ -81,10 +81,15 @@
     methods: {
       ...mapMutations([
         'setTaskTypeFilter',
-        'setMyActionsFilter'
+        'setMyActionsFilter',
+        'setTaskForManager'
       ]),
       addNewTask() {
-        this.$emit('show-hide')
+        if (this.from == "manager_view") {
+          this.setTaskForManager({key: 'task', value: {}})
+        } else {
+          this.$emit('show-hide')
+        }
       },
       toggleWatched(task) {
         this.$emit('toggle-watch-task', task)

@@ -9,7 +9,6 @@ import FadeLoader          from 'vue-spinner/src/FadeLoader.vue'
 import VuePhoneNumberInput from 'vue-phone-number-input'
 import 'vue-phone-number-input/dist/vue-phone-number-input.css'
 
-
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('loader', FadeLoader)
 Vue.use(VeeValidate)
@@ -24,6 +23,7 @@ Vue.use(VueGoogleMaps, {
 
 Vue.config.productionTip = false
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+var password_key = JSON.parse(window.password_key.replace(/&quot;/g,'"'))
 var permissions = {}
 for (var key in current_user.privilege) {
   if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
@@ -37,6 +37,7 @@ for (var key in current_user.privilege) {
 
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$permissions = permissions
+Vue.prototype.$password_key = password_key
 
 // eslint-disable-next-line no-unused-vars
 const app = new Vue({

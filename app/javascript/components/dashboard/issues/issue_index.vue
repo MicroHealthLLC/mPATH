@@ -60,7 +60,7 @@
         </div>
         <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-light" @click.prevent="reportNew">Add Issue</button>
       </div>
-      <div class="m-3">
+      <div class="m-3 d-flex">
         <div class="form-check-inline">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
@@ -134,7 +134,8 @@
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
-        'updateFacilityHash'
+        'updateFacilityHash',
+        'setTaskForManager'
       ]),
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
@@ -174,8 +175,12 @@
         this.newIssue = true
       },
       reportNew() {
-        this.currentIssue = null
-        this.newIssue = true
+        if (this.from == "manager_view") {
+          this.setTaskForManager({key: 'issue', value: {}})
+        } else {
+          this.currentIssue = null
+          this.newIssue = true
+        }
       }
     },
     computed: {

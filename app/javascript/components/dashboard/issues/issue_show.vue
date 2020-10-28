@@ -6,7 +6,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 pb-2" :class="{'hide-to-edit': C_editForManager}">
+    <div v-if="!loading" class="issues_show mx-3 py-2" :class="{'hide-to-edit': C_editForManager}">
       <div v-if="show" class="row">
         <div class="col-md-9">
           <div>
@@ -192,8 +192,7 @@
       issue: {
         handler: function(value) {
           this.DV_issue = Object.assign({}, value)
-        },
-        deep: true
+        }, deep: true
       }
     }
   }
