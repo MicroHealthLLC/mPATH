@@ -388,8 +388,7 @@
             this.loading = true
             this.fetchFacility()
           }
-        },
-        deep: true
+        }, deep: true
       },
       "DV_facility.statusId"(value) {
         if (!value) this.DV_facility.dueDate = null

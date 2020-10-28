@@ -2,10 +2,10 @@
   <div id="facility_view">
     <div class="row">
       <div class="col-md-3 facility-groups-tab">
-        <h4 class="mt-4 text-center">Facility Manager</h4>
+        <h4 class="mt-4 text-center text-info">Facility Manager</h4>
         <div class="my-4 ml-2">
-          <div v-for="group in filteredFacilityGroups">
-            <div class="d-flex align-items-center expandable" @click="toggleExpanded(group)" :class="{'active': group.id == currentFacilityGroup.id}">
+          <div v-for="group in filteredFacilityGroups" class="my-3">
+            <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
                 <i class="fa fa-plus font-sm mr-2"></i>
               </span>
@@ -37,11 +37,13 @@
       </div>
       <div class="col-md-5 facility-forms-tab">
         <div class="mt-4">
+          <span v-if="managerView.task || managerView.issue" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
             v-if="managerView.task"
             :facility="currentFacility"
             :task="managerView.task"
             title="Edit Task"
+            @task-created="updateFacilityTask"
             @task-updated="updateFacilityTask"
           ></task-form>
 
@@ -50,6 +52,7 @@
             :facility="currentFacility"
             :issue="managerView.issue"
             @issue-updated="updateFacilityIssue"
+            @issue-created="updateFacilityIssue"
           ></issue-form>
         </div>
       </div>
@@ -58,7 +61,7 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from "vuex"
+  import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilityShow from './facilities/facility_show'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
@@ -89,13 +92,20 @@
         return !(_.isEmpty(this.currentFacility) && _.isEmpty(this.currentFacility))
       }
     },
+    mounted() {
+      // make the first facility_group expanded
+      if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+    },
     methods: {
       ...mapMutations([
         'updateTasksHash',
         'updateIssuesHash',
         'setTaskForManager'
       ]),
-      toggleExpanded(group) {
+      ...mapActions([
+        'taskUpdated'
+      ]),
+      expandFacilityGroup(group) {
         if (group.id == this.expanded.id) {
           this.expanded.id = ''
           this.currentFacilityGroup = {}
@@ -110,18 +120,24 @@
         this.currentFacility = facility
       },
       updateFacilityTask(task) {
-        this.updateTasksHash({task: task})
+        var cb = () => this.updateTasksHash({task: task})
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'task', value: null})
       },
       updateFacilityIssue(issue) {
-        this.updateIssuesHash({issue: issue})
+        var cb = () => this.updateIssuesHash({issue: issue})
+        this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.setTaskForManager({key: 'issue', value: null})
+      },
+      goBackFromEdits() {
+        this.setTaskForManager({key: 'task', value: null})
         this.setTaskForManager({key: 'issue', value: null})
       }
     },
     watch: {
       currentFacility: {
         handler(value) {
-          if (!value.id) {
+          if (_.isEmpty(value)) {
             this.setTaskForManager({key: 'task', value: null})
             this.setTaskForManager({key: 'issue', value: null})
           }
@@ -135,8 +151,7 @@
   #facility_view {
     padding: 0 70px;
     .facility-groups-tab {
-      background: #4472C4;
-      color: #fff;
+      background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow-y: auto;

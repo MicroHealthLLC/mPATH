@@ -37,11 +37,11 @@
         <div class="col-sm-10">
           <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off">
           <div class="ml-1">
-            <div v-if="C_passValidationCheck.length" class="font-sm text-danger">Password must be at least 12 characters.</div>
-            <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">Contain at least 1 uppercase letter.</div>
-            <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">Contain at least 1 lowercase letter.</div>
-            <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">Contain at least 1 digit.</div>
-            <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">Contain at least 1 special character.</div>
+            <div v-if="C_passValidationCheck.length" class="font-sm text-danger">{{C_passValidationCheck.length}}</div>
+            <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">{{C_passValidationCheck.uppercase}}</div>
+            <div v-if="C_passValidationCheck.smallcase" class="font-sm text-danger">{{C_passValidationCheck.smallcase}}</div>
+            <div v-if="C_passValidationCheck.digits" class="font-sm text-danger">{{C_passValidationCheck.digits}}</div>
+            <div v-if="C_passValidationCheck.specialcase" class="font-sm text-danger">{{C_passValidationCheck.specialcase}}</div>
           </div>
         </div>
       </div>
@@ -204,23 +204,24 @@
         }
       },
       C_passValidationCheck() {
+        let validations = Vue.prototype.$password_key || {}
         var pass = this.profile.password
         var errors = {}
         if (this.editPass) {
-          if (pass.length < 12) {
-            errors.length = true
+          if (pass.length < Number(validations.range)) {
+            errors.length = `Password should be at least ${Number(validations.range)} characters.`
           }
-          if (!(/([A-Z])/g).test(pass)) {
-            errors.uppercase = true
+          if (validations.uppercase && !(/([A-Z])/g).test(pass)) {
+            errors.uppercase = "Contain at least 1 uppercase letter."
           }
-          if (!(/([a-z])/g).test(pass)) {
-            errors.smallcase = true
+          if (validations.lowercase && !(/([a-z])/g).test(pass)) {
+            errors.smallcase = "Contain at least 1 lowercase letter."
           }
-          if (!(/([\d])/g).test(pass)) {
-            errors.digits = true
+          if (validations.numbers && !(/([\d])/g).test(pass)) {
+            errors.digits = "Contain at least 1 digit."
           }
-          if (!(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g).test(pass)) {
-            errors.specialcase = true
+          if (validations.special_chars && !(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g).test(pass)) {
+            errors.specialcase = "Contain at least 1 special character."
           }
         }
         return errors

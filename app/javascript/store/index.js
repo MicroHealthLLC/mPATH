@@ -81,7 +81,9 @@ export default new Vuex.Store({
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
     setMapFilters: (state, filters) => state.mapFilters = filters,
-    updateFacilities: (state, {index, facility}) => Vue.set(state.facilities, index, facility),
+    updateFacilities: (state, {index, facility}) => {
+      Vue.set(state.facilities, index, facility)
+    },
     updateFacilityHash: (state, facility) => {
       var index = state.facilities.findIndex(f => f.id == facility.id)
       if (index > -1) Vue.set(state.facilities, index, facility)
@@ -551,11 +553,11 @@ export default new Vuex.Store({
             var facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
             var index = getters.facilities.findIndex(f => f.id == facility.id)
             if (index > -1) commit('updateFacilities', {index, facility})
-            resolve()
+            return resolve(facility)
           })
           .catch((err) => {
             console.error(err)
-            reject()
+            reject(err)
           })
       })
     },
@@ -651,8 +653,12 @@ export default new Vuex.Store({
       if (cb) return cb()
     },
     async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
-      await dispatch('fetchFacility', {projectId, facilityId})
-      if (cb) return cb()
+      return new Promise(async (resolve, reject) => {
+        let facility = await dispatch('fetchFacility', {projectId, facilityId})
+        if (cb) cb()
+        if (facility instanceof Error) return reject(facility)
+        return resolve(facility)
+      })
     },
 
     // store actions watch_view
