@@ -54,7 +54,7 @@ ActiveAdmin.register User do
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
-          f.input :title,
+          f.input :title
           f.input :first_name
           f.input :last_name
           f.input :email, input_html: {disabled: user.id?, :'data-id' => user.id, autocomplete: :off}
