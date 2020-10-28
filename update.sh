@@ -1,8 +1,8 @@
 cd /var/www/mGis
 git pull
 bundle install
-rake db:migrate RAILS_ENV=production
+rake db:migrate 
 yarn install
-rake assets:precompile RAILS_ENV=production
+rake assets:precompile
 chown -R nginx:nginx *
 systemctl restart nginx
