@@ -1,12 +1,17 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
 
-exec &> >(tee date $LOGFILE) 2>&1
+timestamp()
+{
+ date +"%Y-%m-%d %T"
+}
+
+exec &> >(tee $timestamp $LOGFILE) 2>&1
 
 set -x
 
 echo "Deploying mGis"
-
+echo $(timestamp)
 cd /var/www/mGis \
 && sudo git pull \
 && bundle install \
@@ -16,4 +21,5 @@ cd /var/www/mGis \
 && sudo chown -R nginx:nginx * \
 && sudo nginx -s reload \
 && echo "mGis deployed successfully"
+echo $(timestamp)
 set +x
