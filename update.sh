@@ -7,7 +7,7 @@ adddate() {
     done
 }
 
-exec &> >(tee $adddate $LOGFILE)
+exec &> >(tee date -u $LOGFILE) 2>&1
 
 set -x
 
