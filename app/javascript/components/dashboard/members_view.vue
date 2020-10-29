@@ -17,7 +17,7 @@
               <th>Title</th>
               <th>Organization</th>
               <th>Email</th>
-              <th>Ph Number</th>
+              <th>Phone</th>
               <th>Status</th>
             </tr>
           </thead>
