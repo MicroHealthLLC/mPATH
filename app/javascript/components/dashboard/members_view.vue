@@ -48,7 +48,7 @@
     name: "TeamMembersView",
     methods: {      
       download(){
-        const doc = new jsPDF()
+        const doc = new jsPDF("l")
         const html = this.$refs.content.innerHTML
 
        doc.autoTable({ html: '#teamMembersList' })
