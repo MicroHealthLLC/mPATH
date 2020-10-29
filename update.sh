@@ -1,13 +1,7 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
 
-adddate() {
-    while IFS= read -r line; do
-        printf '%s %s\n' "$(date)" "$line";
-    done
-}
-
-exec &> >(tee date -u $LOGFILE) 2>&1
+exec &> >(tee date $LOGFILE) 2>&1
 
 set -x
 
