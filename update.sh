@@ -21,4 +21,6 @@ cd /var/www/mGis \
 && sudo chown -R nginx:nginx * \
 && sudo nginx -s reload \
 
+echo "$(timestamp): mGis Deployed"
+
 set +x
