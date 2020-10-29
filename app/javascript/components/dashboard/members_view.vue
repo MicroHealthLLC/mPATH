@@ -1,15 +1,16 @@
 <template>
-  <div id="members">
-    <div class="container mt-4" ref="content">
+  <div id="members">   
+       <div class="container mt-4">
       <button @click="download" 
       id="printBtn" 
       class="btn btn-sm btn-outline-dark mt-1 mr-1 mb-1"
-      style="font-size:.80rem" >EXPORT TO PDF</button>
-       <button class="btn btn-sm btn-outline-dark m-1"
-      style="font-size:.80rem"
-      disabled>EXPORT TO CSV</button>
+      style="font-size:.70rem" >EXPORT TO PDF</button>
+       <button @click="tableToExcel('table', 'Team Members')"
+       class="btn btn-sm btn-outline-dark m-1"
+      style="font-size:.70rem"
+      >EXPORT TO EXCEL</button>         
       <div class="table-responsive-md">
-        <table class="table table-sm table-bordered" id="teamMembersList">        
+        <table class="table table-sm table-bordered" ref="table" id="teamMembersList">        
           <thead>
             <tr>
               <th></th>
@@ -46,16 +47,30 @@
   import 'jspdf-autotable';
   export default {
     name: "TeamMembersView",
+    data(){
+    return{
+      uri :'data:application/vnd.ms-excel;base64,',
+      template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+      format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    }
+    },
+    
     methods: {      
+      //download method for PDF
+      //tableToExcel method for excel
       download(){
         const doc = new jsPDF("l")
-        const html = this.$refs.content.innerHTML
-
+        const html = this.$refs.table.innerHTML
        doc.autoTable({ html: '#teamMembersList' })
-
        doc.save("Team_Members_list.pdf")
-      }
-    },
+      },
+      tableToExcel(table, name){      
+      if (!table.nodeType) table = this.$refs.table
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+        }
+    },    
     computed: {
       ...mapGetters([
         'projectUsers'
