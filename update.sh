@@ -11,7 +11,7 @@ exec &> >(tee $timestamp $LOGFILE) 2>&1
 set -x
 
 echo "$(timestamp): Deploying mGis"
-echo "$
+
 cd /var/www/mGis \
 && sudo git pull \
 && bundle install \
