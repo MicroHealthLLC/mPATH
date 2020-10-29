@@ -1,7 +1,7 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
-date >> $LOGFILE
-/bin/sh -x /var/www/mGis/update.sh 1> $LOGFILE
+exec &> >(tee $LOGFILE)
+set -x
 
 echo "Deploying mGis"
 
@@ -14,3 +14,4 @@ cd /var/www/mGis \
 && sudo chown -R nginx:nginx * \
 && sudo nginx -s reload \
 && echo "mGis deployed successfully"
+set +x
