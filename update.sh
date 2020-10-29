@@ -10,8 +10,8 @@ exec &> >(tee $timestamp $LOGFILE) 2>&1
 
 set -x
 
-echo "Deploying mGis"
-echo $(timestamp)
+echo "$(timestamp): Deploying mGis"
+echo "$
 cd /var/www/mGis \
 && sudo git pull \
 && bundle install \
@@ -20,6 +20,5 @@ cd /var/www/mGis \
 && rake assets:precompile \
 && sudo chown -R nginx:nginx * \
 && sudo nginx -s reload \
-&& echo "mGis deployed successfully"
-echo $(timestamp)
+
 set +x
