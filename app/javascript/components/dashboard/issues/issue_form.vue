@@ -87,7 +87,7 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             name="Start Date"
-            class="w-100 vue2-datepicker"           
+            class="w-100 vue2-datepicker"
           />
           <div v-show="errors.has('Start Date')" class="text-danger">
             {{errors.first('Start Date')}}
@@ -315,17 +315,20 @@
     },
     mounted() {
       if (!_.isEmpty(this.issue)) {
-        this.DV_issue = {...this.DV_issue, ..._.cloneDeep(this.issue)}
+        this.loadIssue(this.issue)
+      }
+      this.loading = false
+    },
+    methods: {
+      loadIssue(issue) {
+        this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
         this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
-        this.addFile(this.issue.attachFiles)
-      }
-      this.loading = false
-    },
-    methods: {
+        this.addFile(issue.attachFiles)
+      },
       addFile(files=[]) {
         let _files = [...this.DV_issue.issueFiles]
         for (let file of files) {
@@ -442,7 +445,7 @@
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
-      },     
+      },
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_issue.startDate)
@@ -523,10 +526,10 @@
     watch: {
       issue: {
         handler: function(value) {
-          this.DV_issue = {...this.DV_issue, ..._.cloneDeep(value)}
+          this.DV_issue.issueFiles = []
           this.destroyedFiles = []
-        },
-        deep: true
+          this.loadIssue(value)
+        }, deep: true
       },
       "DV_issue.startDate"(value) {
         if (!value) this.DV_issue.dueDate = ''

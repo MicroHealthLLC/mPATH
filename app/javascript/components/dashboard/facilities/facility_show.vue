@@ -194,6 +194,7 @@
           <div>
             <notes-index
               :facility="DV_facility"
+              :from="from"
               @refresh-facility="refreshFacility"
             ></notes-index>
           </div>
