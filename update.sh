@@ -7,7 +7,8 @@ adddate() {
     done
 }
 
-y
+exec &> >(tee $adddate $LOGFILE)
+
 set -x
 
 echo "Deploying mGis"
