@@ -2,7 +2,7 @@
 LOGFILE=/var/log/mgisupdate.log
 date >> $LOGFILE
 x=$(( 3 + 1 ))
-echo value of x is $x >> $log
+echo value of x is $x >> $LOGFILE
 
 echo "Deploying mGis"
 
