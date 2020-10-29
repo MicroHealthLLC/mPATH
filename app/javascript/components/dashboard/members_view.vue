@@ -1,8 +1,15 @@
 <template>
   <div id="members">
-    <div class="container mt-4">
+    <div class="container mt-4" ref="content">
+      <button @click="download" 
+      id="printBtn" 
+      class="btn btn-sm btn-outline-dark mt-1 mr-1 mb-1"
+      style="font-size:.80rem" >EXPORT TO PDF</button>
+       <button class="btn btn-sm btn-outline-dark m-1"
+      style="font-size:.80rem"
+      disabled>EXPORT TO CSV</button>
       <div class="table-responsive-md">
-        <table class="table table-sm table-bordered">
+        <table class="table table-sm table-bordered" id="teamMembersList">        
           <thead>
             <tr>
               <th></th>
@@ -34,9 +41,21 @@
 </template>
 
 <script>
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex';
+  import  {jsPDF} from "jspdf";
+  import 'jspdf-autotable';
   export default {
     name: "TeamMembersView",
+    methods: {      
+      download(){
+        const doc = new jsPDF()
+        const html = this.$refs.content.innerHTML
+
+       doc.autoTable({ html: '#teamMembersList' })
+
+       doc.save("Team_Members_list.pdf")
+      }
+    },
     computed: {
       ...mapGetters([
         'projectUsers'
