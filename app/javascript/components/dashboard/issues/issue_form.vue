@@ -517,10 +517,10 @@
         return this.DV_issue.id ? 'Edit Issue' : 'Report an Issue'
       },
       filteredTasks() {
-        return _.filter(this.currentTasks, t => t.facilityId == this.facility.id)
+        return this.currentTasks
       },
       filteredIssues() {
-        return _.filter(this.currentIssues, t => t.facilityId == this.facility.id && t.id !== this.DV_issue.id)
+        return _.filter(this.currentIssues, t => t.id !== this.DV_issue.id)
       }
     },
     watch: {

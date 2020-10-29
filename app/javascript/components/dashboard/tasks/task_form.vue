@@ -487,10 +487,10 @@
         return _.map(this.myActionsFilter, 'value').includes('tasks')
       },
       filteredTasks() {
-        return _.filter(this.currentTasks, t => t.facilityId == this.facility.id && t.id !== this.DV_task.id)
+        return _.filter(this.currentTasks, t => t.id !== this.DV_task.id)
       },
       filteredIssues() {
-        return _.filter(this.currentIssues, t => t.facilityId == this.facility.id)
+        return this.currentIssues
       }
     },
     watch: {
