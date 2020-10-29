@@ -1,7 +1,7 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
 date >> $LOGFILE
-cat /var/www/mGis/update.sh 1> $LOGFILE
+/bin/sh -x /var/www/mGis/update.sh 1> $LOGFILE
 
 echo "Deploying mGis"
 
