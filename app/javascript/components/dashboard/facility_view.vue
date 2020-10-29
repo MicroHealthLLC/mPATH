@@ -37,7 +37,7 @@
       </div>
       <div class="col-md-5 facility-forms-tab">
         <div class="mt-4">
-          <span v-if="managerView.task || managerView.issue" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
+          <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
             v-if="managerView.task"
             :facility="currentFacility"
@@ -54,6 +54,16 @@
             @issue-updated="updateFacilityIssue"
             @issue-created="updateFacilityIssue"
           ></issue-form>
+
+          <notes-form
+            v-if="managerView.note"
+            from="manager_view"
+            :facility="currentFacility"
+            :note="managerView.note"
+            @close-note-input=""
+            @note-created="createdFacilityNote"
+            @note-updated="updatedFacilityNote"
+          ></notes-form>
         </div>
       </div>
     </div>
@@ -65,13 +75,15 @@
   import FacilityShow from './facilities/facility_show'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
+  import NotesForm from "./notes/notes_form"
 
   export default {
     name: "FacilityManagerView",
     components: {
       FacilityShow,
       TaskForm,
-      IssueForm
+      IssueForm,
+      NotesForm
     },
     data() {
       return {
@@ -129,17 +141,26 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'issue', value: null})
       },
+      createdFacilityNote(note) {
+        this.currentFacility.notes.unshift(note)
+        this.setTaskForManager({key: 'note', value: null})
+      },
+      updatedFacilityNote(note) {
+        var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+        if (index > -1) Vue.set(this.currentFacility.notes, index, note)
+        this.setTaskForManager({key: 'note', value: null})
+      },
       goBackFromEdits() {
         this.setTaskForManager({key: 'task', value: null})
         this.setTaskForManager({key: 'issue', value: null})
+        this.setTaskForManager({key: 'note', value: null})
       }
     },
     watch: {
       currentFacility: {
         handler(value) {
           if (_.isEmpty(value)) {
-            this.setTaskForManager({key: 'task', value: null})
-            this.setTaskForManager({key: 'issue', value: null})
+            this.goBackFromEdits()
           }
         }, deep: true
       }
@@ -166,7 +187,9 @@
       cursor: pointer;
       &.active,
       &:hover {
-        text-decoration: underline;
+        h5, h6 {
+          text-decoration: underline;
+        }
       }
     }
   }

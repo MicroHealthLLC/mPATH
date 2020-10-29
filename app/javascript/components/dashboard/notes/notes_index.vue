@@ -17,7 +17,7 @@
           <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
         </div>
         <div v-if="_isallowed('write')">
-          <button @click.stop="newNote=true" class="btn btn-sm btn-light">Add Note</button>
+          <button @click.stop="addNewNote" class="btn btn-sm btn-light">Add Note</button>
         </div>
       </div>
       <div v-if="_isallowed('read')">
@@ -25,9 +25,10 @@
           <notes-show
             :facility="DV_facility"
             :note="note"
+            :from="from"
             @note-updated="noteUpdated"
             @note-deleted="noteDeleted"
-          />
+          ></notes-show>
         </div>
         <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
       </div>
@@ -37,13 +38,14 @@
 </template>
 
 <script>
+  import {mapMutations} from "vuex"
   import NotesForm from './notes_form'
   import NotesShow from './notes_show'
 
   export default {
     name: 'NotesIndex',
     components: {NotesForm, NotesShow},
-    props: ['facility'],
+    props: ['facility', 'from'],
     data() {
       return {
         loading: true,
@@ -53,6 +55,16 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'setTaskForManager'
+      ]),
+      addNewNote() {
+        if (this.from == "manager_view") {
+          this.setTaskForManager({key: 'note', value: {}})
+        } else {
+          this.newNote = true
+        }
+      },
       noteCreated(note) {
         this.newNote = false
         this.DV_facility.notes.unshift(note)

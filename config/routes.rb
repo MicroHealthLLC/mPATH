@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     resources :issue_types, only: [:index]
     resources :users, only: [:index]
     get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
+    get '/projects/:id/task_issues', to: 'projects#index'
     get '/settings', to: 'settings#index'
     post '/settings', to: 'settings#update'
     post '/sort-by', to: 'sorts#update'

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="notes_input mt-2" :class="{'_disabled': loading}">
-      <span class="close-icon" @click.stop="$emit('close-note-input')" :class="{'_disabled': loading}">
+    <div class="notes_input mt-2" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
+      <span v-if="from !== 'manager_view'" class="close-icon" @click.stop="$emit('close-note-input')" :class="{'_disabled': loading}">
         <i class="fas fa-times"></i>
       </span>
-      <center>{{title}}</center>
+      <center>{{titleText}}</center>
       <div class="form-group">
         <label class="badge badge-secondary">Note</label>
         <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
@@ -58,7 +58,7 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    props: ['facility', 'note', 'title'],
+    props: ['facility', 'note', 'title', 'from'],
     components: {AttachmentInput},
     data() {
       return {
@@ -71,13 +71,16 @@
       }
     },
     mounted() {
-      if (this.note) {
-        this.DV_note = {...this.DV_note, ..._.cloneDeep(this.note)}
-        this.addFile(this.note.attachFiles)
+      if (!_.isEmpty(this.note)) {
+        this.loadNote(this.note)
       }
       this.loading = false
     },
     methods: {
+      loadNote(note) {
+        this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}
+        this.addFile(note.attachFiles)
+      },
       addFile(files) {
         let _files = [...this.DV_note.noteFiles]
         for (let file of files) {
@@ -163,8 +166,20 @@
           this.DV_note.body !== ''
         )
       },
+      titleText() {
+        return _.isEmpty(this.note) ? "Add Note" : "Edit Note"
+      },
       filteredFiles() {
         return _.filter(this.DV_note.noteFiles, f => !f._destroy)
+      }
+    },
+    watch: {
+      note: {
+        handler: function(value) {
+          this.DV_note.noteFiles = []
+          this.destroyedFiles = []
+          this.loadNote(value)
+        }, deep: true
       }
     }
   }

@@ -59,7 +59,7 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             name="Start Date"
-            class="w-100 vue2-datepicker"           
+            class="w-100 vue2-datepicker"
           />
           <div v-show="errors.has('Start Date')" class="text-danger">
             {{errors.first('Start Date')}}
@@ -290,17 +290,20 @@
     },
     mounted() {
       if (!_.isEmpty(this.task)) {
-        this.DV_task = {...this.DV_task, ..._.cloneDeep(this.task)}
-        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
-        this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
-        this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
-        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
-        this.addFile(this.task.attachFiles)
+        this.loadTask(this.task)
       }
       this.loading = false
       this._ismounted = true
     },
     methods: {
+      loadTask(task) {
+        this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
+        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
+        this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
+        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
+        this.addFile(task.attachFiles)
+      },
       addFile(files) {
         let _files = [...this.DV_task.taskFiles]
         for (let file of files) {
@@ -427,7 +430,7 @@
 
         var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
-      },     
+      },
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
@@ -484,19 +487,19 @@
         return _.map(this.myActionsFilter, 'value').includes('tasks')
       },
       filteredTasks() {
-        return _.filter(this.currentTasks, t => t.facilityId == this.facility.id && t.id !== this.DV_task.id)
+        return _.filter(this.currentTasks, t => t.id !== this.DV_task.id)
       },
       filteredIssues() {
-        return _.filter(this.currentIssues, t => t.facilityId == this.facility.id)
+        return this.currentIssues
       }
     },
     watch: {
       task: {
         handler: function(value) {
-          this.DV_task = {...this.DV_task, ..._.cloneDeep(value)}
+          this.DV_task.taskFiles = []
           this.destroyedFiles = []
-        },
-        deep: true
+          this.loadTask(value)
+        }, deep: true
       },
       "DV_task.startDate"(value) {
         if (this._ismounted && !value) this.DV_task.dueDate = ''

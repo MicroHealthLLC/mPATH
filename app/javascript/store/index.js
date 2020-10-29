@@ -62,7 +62,8 @@ export default new Vuex.Store({
     myActionsFilter: new Array,
     managerView: {
       task: null,
-      issue: null
+      issue: null,
+      note: null
     }
   },
 

@@ -1534,14 +1534,14 @@ jQuery(function($) {
             }
           },
           checkForPersistance() {
-            if (this.facility_id == this.persist.facility_id && this.project_id == this.persist.project_id) {
+            if (this.project_id == this.persist.project_id) {
               this.sub_task_ids = this.persist.task_ids;
               this.sub_issue_ids = this.persist.issue_ids;
             }
             this.fetchProjectTaskIssues()
           },
           fetchProjectTaskIssues() {
-            $.get(`/api/facility_projects/${this.project_id}/${this.facility_id}.json`, (data) => {
+            $.get(`/api/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
               this.sub_tasks = this.tasks.filter(t => t.id && this.sub_task_ids.includes(t.id));
@@ -1552,9 +1552,6 @@ jQuery(function($) {
         },
         watch: {
           project_id(value) {
-            if (value) this.checkForPersistance();
-          },
-          facility_id(value) {
             if (value) this.checkForPersistance();
           },
           sub_tasks: {
