@@ -8,5 +8,5 @@ cd /var/www/mGis \
 && yarn install \
 && rake assets:precompile \
 && sudo chown -R nginx:nginx * \
-&& sudo systemctl restart nginx \
+&& sudo nginx -s reload \
 && echo "mGis deployed successfully"
