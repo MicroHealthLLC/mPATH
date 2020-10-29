@@ -1,6 +1,13 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
-exec &> >(tee $LOGFILE)
+
+adddate() {
+    while IFS= read -r line; do
+        printf '%s %s\n' "$(date)" "$line";
+    done
+}
+
+y
 set -x
 
 echo "Deploying mGis"
