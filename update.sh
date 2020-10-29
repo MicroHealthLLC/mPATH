@@ -6,7 +6,7 @@ timestamp()
  date +"%Y-%m-%d %T"
 }
 
-exec &> >(tee $timestamp $LOGFILE) 2>&1
+exec &> >(tee $LOGFILE) 2>&1
 
 set -x
 
