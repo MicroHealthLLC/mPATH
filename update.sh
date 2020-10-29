@@ -1,4 +1,6 @@
 #!/bin/bash
+LOGFILE=/var/log/mgisupdate.log
+
 echo "Deploying mGis"
 
 cd /var/www/mGis \
