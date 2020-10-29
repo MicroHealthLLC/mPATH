@@ -1,8 +1,7 @@
 #!/bin/bash
 LOGFILE=/var/log/mgisupdate.log
 date >> $LOGFILE
-x=$(( 3 + 1 ))
-echo value of x is $x >> $LOGFILE
+cat /var/www/mGis/update.sh 1> $LOGFILE
 
 echo "Deploying mGis"
 
