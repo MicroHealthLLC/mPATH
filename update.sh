@@ -14,15 +14,10 @@ echo "$(timestamp): Deploying mGis"
 
 cd /var/www/mGis \
 && sudo git pull \
-&& cd /var/www/mGis \
 && bundle install \
-&& cd /var/www/mGis \
 && rake db:migrate \
-&& cd /var/www/mGis \
 && yarn install \
-&& cd /var/www/mGis \
 && rake assets:precompile \
-&& cd /var/www/mGis \
 && sudo chown -R nginx:nginx * \
 && sudo nginx -s reload \
 
