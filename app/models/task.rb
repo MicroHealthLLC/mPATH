@@ -8,8 +8,8 @@ class Task < ApplicationRecord
   has_many :checklists, as: :listable
   has_many_attached :task_files, dependent: :destroy
 
-  has_many :related_tasks, as: :relatable
-  has_many :related_issues, as: :relatable
+  has_many :related_tasks, as: :relatable, dependent: :destroy
+  has_many :related_issues, as: :relatable, dependent: :destroy
   has_many :sub_tasks, through: :related_tasks
   has_many :sub_issues, through: :related_issues
 
@@ -81,5 +81,14 @@ class Task < ApplicationRecord
 
   def check_watched
     self.watched_at = DateTime.now
+  end
+
+  def nuke_it!
+    RelatedTask.where(task_id: self.id).destroy_all
+  end
+
+  def destroy
+    nuke_it!
+    super
   end
 end

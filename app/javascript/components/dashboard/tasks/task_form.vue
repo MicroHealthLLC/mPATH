@@ -538,6 +538,18 @@
         handler: function(value) {
           this.DV_task.taskTypeId = value ? value.id : null
         }, deep: true
+      },
+      filteredTasks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedTasks = _.filter(this.relatedTasks, t => ids.includes(t.id))
+        }, deep: true
+      },
+      filteredIssues: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
+        }, deep: true
       }
     }
   }

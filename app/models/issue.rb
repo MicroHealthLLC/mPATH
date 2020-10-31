@@ -83,4 +83,14 @@ class Issue < ApplicationRecord
   def check_watched
     self.watched_at = DateTime.now
   end
+
+  def nuke_it!
+    RelatedIssue.where(issue_id: self.id).destroy_all
+  end
+
+  def destroy
+    nuke_it!
+    super
+  end
+
 end
