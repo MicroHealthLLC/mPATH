@@ -89,11 +89,25 @@
         <hr>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
+             <button    
+            @click="download"        
+            id="printBtn" 
+            class="btn btn-sm btn-outline-dark m-2" 
+            style="font-size:.70rem" >
+            EXPORT TO PDF
+          </button>
+           <button    
+            disabled
+            id="printBtn" 
+            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2" 
+            style="font-size:.70rem" >
+            EXPORT TO EXCEL
+          </button>
             <issue-show
               v-for="(issue, i) in filteredIssues"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
-              :issue="issue"
+              :issue="issue"            
               :from-view="from"
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
@@ -104,6 +118,27 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
+     <table style="display:none" 
+            class="table table-sm table-bordered" 
+            ref="table" id="issueList1" 
+            v-for="(issue, i) in filteredIssues">        
+          <thead>
+            <tr>   
+              <th></th>          
+              <th>Issue</th>    
+              <th>Start Date</th>  
+              <th>Due Date</th>              
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-center">{{i+1}}</td>
+                <td>{{issue.title}}</td>  
+                <td>{{issue.startDate}}</td>   
+                <td>{{issue.dueDate}}</td>               
+            </tr>
+          </tbody>
+        </table>
   </div>
 </template>
 
@@ -111,6 +146,8 @@
   import http from './../../../common/http'
   import IssueForm from './issue_form'
   import IssueShow from './issue_show'
+  import  {jsPDF} from "jspdf";
+  import 'jspdf-autotable';
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
@@ -141,7 +178,7 @@
         this.facility.issues.unshift(issue)
         this.newIssue = false
         this.$emit('refresh-facility')
-      },
+      },    
       issueUpdated(issue, refresh=true) {
         var index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -169,6 +206,12 @@
             this.issueUpdated(res.data.issue, false)
           })
           .catch((err) => console.log(err))
+      },
+      download(){   
+      const doc = new jsPDF()   
+      const html =  this.$refs.table.innerHTML 
+      doc.autoTable({html: "#issueList1"})
+      doc.save("Issues_List.pdf")           
       },
       issueEdited(issue) {
         this.currentIssue = issue

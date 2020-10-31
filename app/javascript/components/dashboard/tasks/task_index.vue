@@ -49,25 +49,68 @@
         </div>
       </div>
       <div v-if="filteredTasks.length > 0">
-        <task-show
-          v-for="(task, i) in filteredTasks"
+          <button    
+            @click="download"        
+            id="printBtn" 
+            class="btn btn-sm btn-outline-dark m-2" 
+            style="font-size:.70rem" >
+            EXPORT TO PDF
+          </button>
+           <button    
+            disabled
+            id="printBtn" 
+            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2" 
+            style="font-size:.70rem" >
+            EXPORT TO EXCEL
+          </button>
+        <task-show           
+          v-for="(task, i) in filteredTasks"        
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
-          :task="task"
+          :load="log(task)"
+          :task="task"          
           :from-view="from"
           @edit-task="$emit('show-hide', task)"
           @toggle-watched="toggleWatched"
-        ></task-show>
-      </div>
+        >{{ task.text }}</task-show>
+      </div>              
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>    
+     <table style="display:none" 
+            class="table table-sm table-bordered" 
+            ref="table" id="taskList1" 
+            v-for="(task, i) in filteredTasks">             
+         
+          <thead>                    
+            <tr>  
+              <!-- <th>Facility: {{task.facilityName}}  </th>           -->
+              <th></th>  
+              <th>Task</th>      
+              <th>Start Date</th>  
+              <th>Due Date</th>                 
+            </tr>
+          </thead>
+          <tbody>
+          
+            <tr>
+              <td class="text-center">{{i+1}}</td>
+              <td>{{task.text}}</td>    
+              <td>{{task.startDate}}</td>   
+              <td>{{task.dueDate}}</td>              
+            </tr>
+          
+          </tbody>
+        </table>
   </div>
+  
 </template>
 
 <script>
   import TaskShow from "./task_show"
   import {mapGetters, mapMutations} from "vuex"
+  import  {jsPDF} from "jspdf";
+  import 'jspdf-autotable';
 
   export default {
     name: 'TasksIndex',
@@ -79,11 +122,16 @@
       }
     },
     methods: {
+      
       ...mapMutations([
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setTaskForManager'
       ]),
+      log(task) {
+        console.log(task)
+      },
+   
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -92,9 +140,16 @@
         }
       },
       toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
-      }
+        this.$emit('toggle-watch-task', task)   
     },
+      download(){   
+      const doc = new jsPDF()   
+      const html =  this.$refs.table.innerHTML 
+      doc.autoTable({html: "#taskList1"})
+      doc.save("Task_List.pdf")           
+      },
+    },
+    
     computed: {
       ...mapGetters([
         'taskTypeFilter',
@@ -103,7 +158,7 @@
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
+      },      
       filteredTasks() {
         var typeIds = _.map(this.C_taskTypeFilter, 'id')
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
