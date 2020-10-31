@@ -259,7 +259,7 @@
         'taskTypes',
         'issueTypeFilter',
         'taskTypeFilter',
-        'projectUsers',
+        'activeProjectUsers',
         'filteredAllTasks',
         'filteredAllIssues'
       ]),
@@ -366,7 +366,7 @@
       },
       watchedTaskUsers() {
         var u_data = {labels: [], datasets: []}
-        for (var user of this.projectUsers) {
+        for (var user of this.activeProjectUsers) {
           var stat = this.getUserTaskInfo(user, 'tasks')
           if (stat.count > 0) {
             u_data.datasets.push({
@@ -382,7 +382,7 @@
       },
       watchedIssueUsers() {
         var u_data = {labels: [], datasets: []}
-        for (var user of this.projectUsers) {
+        for (var user of this.activeProjectUsers) {
           var stat = this.getUserTaskInfo(user, 'issues')
           if (stat.count > 0) {
             u_data.datasets.push({

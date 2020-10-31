@@ -238,6 +238,7 @@
                     v-if="currentFacilityStatus"
                     :facility="currentFacility"
                     :facility-group="currentFacilityGroup"
+                    from="map_view"
                     @close-side-bar="closeSidebar"
                     @edit-facility="editFacility"
                     @facility-update="updateFacility"

@@ -118,7 +118,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="projectUsers"
+          :options="activeProjectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -159,7 +159,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="projectUsers"
+                  :options="activeProjectUsers"
                   :searchable="true"
                   :disabled="!check.text"
                   select-label="Select"
@@ -263,6 +263,17 @@
         </multiselect>
       </div>
 
+      <div class="form-group mx-4">
+        <label class="font-sm">Updates:</label>
+        <span class="ml-2 clickable" @click.prevent="addNote">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <div v-for="note in filteredNotes" class="form-group">
+          <span><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span></span>
+          <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here."></textarea>
+        </div>
+      </div>
+
       <div class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
@@ -301,7 +312,8 @@
           subTaskIds: [],
           subIssueIds: [],
           issueFiles: [],
-          checklists: []
+          checklists: [],
+          notes: []
         },
         destroyedFiles: [],
         selectedIssueType: null,
@@ -322,7 +334,7 @@
     methods: {
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
@@ -407,6 +419,15 @@
             }
           }
 
+          for (let i in this.DV_issue.notes) {
+            let note = this.DV_issue.notes[i]
+            if (!note.body && !note._destroy) continue
+            for (let key in note) {
+              let value = key == 'user_id' ? note.user_id ? note.user_id : this.$currentUser.id : note[key]
+              formData.append(`issue[notes_attributes][${i}][${key}]`, value)
+            }
+          }
+
           for (var file of this.DV_issue.issueFiles) {
             if (!file.id) {
               formData.append('issue[issue_files][]', file)
@@ -441,6 +462,12 @@
             this.loading = false
           })
         })
+      },
+      addNote() {
+        this.DV_issue.notes.unshift({body: '', user_id: ''})
+      },
+      noteBy(note) {
+        return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
       },
       downloadFile(file) {
         let url = window.location.origin + file.uri
@@ -487,7 +514,7 @@
     computed: {
       ...mapGetters([
         'currentProject',
-        'projectUsers',
+        'activeProjectUsers',
         'myActionsFilter',
         'issueTypes',
         'issueSeverities',
@@ -521,7 +548,10 @@
       },
       filteredIssues() {
         return _.filter(this.currentIssues, t => t.id !== this.DV_issue.id)
-      }
+      },
+      filteredNotes() {
+        return _.orderBy(_.filter(this.DV_issue.notes, n => !n._destroy), 'createdAt', 'desc')
+      },
     },
     watch: {
       issue: {
@@ -565,6 +595,18 @@
       selectedIssueSeverity: {
         handler: function(value) {
           this.DV_issue.issueSeverityId = value ? value.id : null
+        }, deep: true
+      },
+      filteredTasks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedTasks = _.filter(this.relatedTasks, t => ids.includes(t.id))
+        }, deep: true
+      },
+      filteredIssues: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
         }, deep: true
       }
     }

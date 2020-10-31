@@ -5,7 +5,7 @@
   #users
 
 = javascript_tag nonce: true do
-  |var current_user = "#{JSON.generate(current_user.as_json(include: :privilege))}";
+  |var current_user = "#{JSON.generate(current_user.as_json(include: :privilege, methods: :full_name))}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
   |var password_key = "#{Setting['PASSWORDS_KEY']}";
 

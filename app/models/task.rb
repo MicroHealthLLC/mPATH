@@ -8,14 +8,17 @@ class Task < ApplicationRecord
   has_many :checklists, as: :listable
   has_many_attached :task_files, dependent: :destroy
 
-  has_many :related_tasks, as: :relatable
-  has_many :related_issues, as: :relatable
+  has_many :related_tasks, as: :relatable, dependent: :destroy
+  has_many :related_issues, as: :relatable, dependent: :destroy
   has_many :sub_tasks, through: :related_tasks
   has_many :sub_issues, through: :related_issues
+
+  has_many :notes, as: :noteable
 
   validates :text, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
   scope :complete, -> {where("progress = ?", 100)}
@@ -41,6 +44,7 @@ class Task < ApplicationRecord
       user_ids: self.users.pluck(:id),
       users: self.users.map(&:full_name),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
+      notes: self.notes.as_json(include: {user: {methods: :full_name}}),
       facility_id: self.facility_project.try(:facility_id),
       facility_name: self.facility_project.try(:facility).facility_name,
       project_id: self.facility_project.try(:project_id),
@@ -81,5 +85,14 @@ class Task < ApplicationRecord
 
   def check_watched
     self.watched_at = DateTime.now
+  end
+
+  def nuke_it!
+    RelatedTask.where(task_id: self.id).destroy_all
+  end
+
+  def destroy
+    nuke_it!
+    super
   end
 end

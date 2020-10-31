@@ -105,7 +105,12 @@ export default new Vuex.Store({
       if (facility_i > -1) {
         var facility = Object.assign({}, state.facilities[facility_i])
         var task_i = facility.tasks.findIndex((t) => t.id == task.id)
-        if (action === 'delete') Vue.delete(facility.tasks, task_i)
+        if (action === 'delete') {
+          for (let t of _.flatten(_.map(state.facilities, 'tasks'))) {
+            _.remove(t.subTaskIds, id => id == t.id)
+          }
+          Vue.delete(facility.tasks, task_i)
+        }
         else if (task_i > -1) Vue.set(facility.tasks, task_i, task)
         Vue.set(state.facilities, facility_i, facility)
       }
@@ -115,7 +120,12 @@ export default new Vuex.Store({
       if (facility_i > -1) {
         var facility = Object.assign({}, state.facilities[facility_i])
         var issue_i = facility.issues.findIndex((t) => t.id == issue.id)
-        if (action === 'delete') Vue.delete(facility.issues, issue_i)
+        if (action === 'delete') {
+          for (let t of _.flatten(_.map(state.facilities, 'issues'))) {
+            _.remove(t.subIssueIds, id => id == t.id)
+          }
+          Vue.delete(facility.issues, issue_i)
+        }
         else if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
         Vue.set(state.facilities, facility_i, facility)
       }
@@ -163,6 +173,7 @@ export default new Vuex.Store({
     issueSeverities: state => state.issueSeverities,
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
+    activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,

@@ -13,7 +13,7 @@ ActiveAdmin.register Task do
   permit_params do
     permitted = [
       :text,
-      :notes,
+      :description,
       :due_date,
       :progress,
       :task_type_id,
@@ -52,7 +52,7 @@ ActiveAdmin.register Task do
     column :start_date
     column :due_date
     column :progress
-    column "Description", :notes, sortable: false
+    column :description, sortable: false
     column "Files" do |task|
       task.task_files.map do |file|
         if current_user.admin_write?
@@ -104,7 +104,7 @@ ActiveAdmin.register Task do
       f.input :task_type, label: 'Milestone'
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
-      f.input :users, label: 'Assigned Users', as: :select, collection: User.all.map{|u| [u.full_name, u.id]}
+      f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
       div id: 'projects_users-tab'
       f.input :progress
       div id: 'progress_slider-tab'
@@ -112,9 +112,9 @@ ActiveAdmin.register Task do
       f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
-        c.input :user_id, as: :select, label: 'Assigned To', collection: User.all.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
       end
-      f.input :notes, label: 'Description'
+      f.input :description
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :task_files
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
@@ -132,7 +132,7 @@ ActiveAdmin.register Task do
   batch_action :add_checklist_to_tasks, if: proc {current_user.admin_write?}, form: -> {{
     "Title": :text,
     "Checked": :checkbox,
-    "User Assigned": User.all.map{|u| [u.full_name, u.id]}
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]}
   }} do |ids, inputs|
     Task.where(id: ids).each do |task|
       task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'])
