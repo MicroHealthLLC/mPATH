@@ -14,9 +14,12 @@ class Issue < ApplicationRecord
   has_many :sub_tasks, through: :related_tasks
   has_many :sub_issues, through: :related_issues
 
+  has_many :notes, as: :noteable
+
   validates :title, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
   scope :complete, -> {where("progress = ?", 100)}
@@ -42,6 +45,7 @@ class Issue < ApplicationRecord
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
+      notes: self.notes.as_json(include: {user: {methods: :full_name}}),
       facility_id: self.facility_project.try(:facility_id),
       facility_name: self.facility_project.try(:facility).facility_name,
       project_id: self.facility_project.try(:project_id),

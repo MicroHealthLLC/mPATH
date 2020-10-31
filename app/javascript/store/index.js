@@ -173,6 +173,7 @@ export default new Vuex.Store({
     issueSeverities: state => state.issueSeverities,
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
+    activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,

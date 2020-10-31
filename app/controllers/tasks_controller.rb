@@ -44,7 +44,7 @@ class TasksController < AuthenticatedController
       :task_type_id,
       :due_date,
       :start_date,
-      :notes,
+      :description,
       :progress,
       :auto_calculate,
       :watched,
@@ -58,6 +58,12 @@ class TasksController < AuthenticatedController
         :text,
         :user_id,
         :checked
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
       ]
     )
   end

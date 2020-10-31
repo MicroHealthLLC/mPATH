@@ -1124,7 +1124,7 @@ jQuery(function($) {
             },
             fetchProjectUsers() {
               $.get(`/projects/${this.project_id}.json`, (data) => {
-                this.project_users = data.users;
+                this.project_users = data.users.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
@@ -1374,7 +1374,7 @@ jQuery(function($) {
           },
           fetchProjectUsers() {
             $.get(`/projects/${this.project_id}.json`, (data) => {
-              this.users = data.users;
+              this.users = data.users.filter(u => u.status == "active");
               this.loading = false;
             });
           }
@@ -1445,7 +1445,7 @@ jQuery(function($) {
           },
           fetchProjectUsers() {
             $.get(`/projects/${this.project_id}.json`, (data) => {
-              this.project_users = data.users;
+              this.project_users = data.users.filter(u => u.status == "active");
               this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
               this.loading = false;
             });
@@ -1759,7 +1759,7 @@ jQuery(function($) {
         methods: {
           fetchUsers() {
             $.get(`/api/users.json`, (data) => {
-              this.users = data;
+              this.users = data.filter(u => u.status == "active");
               var user_ids = $("#__users_filters").val().map(Number);
               this.selected_users = this.users.filter(u => user_ids.includes(u.id));
               this.setEmailCheck();

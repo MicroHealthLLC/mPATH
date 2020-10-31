@@ -82,7 +82,7 @@ ActiveAdmin.register Issue do
         "<span>#{issue.users.map(&:full_name).join(', ')}</span>".html_safe
       end
     end
-    column "Description", :notes, sortable: false
+    column :description, sortable: false
     column "Files" do |issue|
       issue.issue_files.map do |file|
         if current_user.admin_write?
@@ -114,7 +114,7 @@ ActiveAdmin.register Issue do
       f.input :issue_severity
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
-      f.input :users, label: 'Assigned Users', as: :select, collection: User.all.map{|u| [u.full_name, u.id]}
+      f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
       div id: 'projects_users-tab'
       f.input :progress
       div id: 'progress_slider-tab'

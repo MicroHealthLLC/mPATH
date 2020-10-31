@@ -120,8 +120,8 @@
         'taskDeleted'
       ]),
       deleteTask() {
-        // var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
-        // if (!confirm) {return}
+        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
+        if (!confirm) {return}
         this.taskDeleted(this.DV_task)
       },
       editTask() {

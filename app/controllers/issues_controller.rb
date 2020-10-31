@@ -59,7 +59,13 @@ class IssuesController < AuthenticatedController
         :text,
         :user_id,
         :checked
-      ]
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+       ]
     )
   end
 

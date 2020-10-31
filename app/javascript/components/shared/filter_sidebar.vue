@@ -1,7 +1,7 @@
 <template>
   <div id="filterbar" :style="filterBarStyle">
     <div id="filter_bar" class="shadow-sm">
-      <div class="d-flex m-3 align-items-center justify-content-between">     
+      <div class="d-flex m-3 align-items-center justify-content-between">
         <h4>Filter View</h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
@@ -146,7 +146,7 @@
             track-by="id"
             label="fullName"
             placeholder="Search By Task Users"
-            :options="projectUsers"
+            :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
             select-label="Select"
@@ -217,7 +217,7 @@
             track-by="id"
             label="fullName"
             placeholder="Search By Issue Users"
-            :options="projectUsers"
+            :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
             select-label="Select"
@@ -289,7 +289,7 @@
         'taskProgressFilter',
         'projects',
         'currentProject',
-        'projectUsers',
+        'activeProjectUsers',
         'statuses',
         'activeFacilityGroups',
         'taskTypes',

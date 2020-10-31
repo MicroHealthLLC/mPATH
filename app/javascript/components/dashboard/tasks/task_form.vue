@@ -90,7 +90,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="projectUsers"
+          :options="activeProjectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -133,7 +133,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="projectUsers"
+                  :options="activeProjectUsers"
                   :searchable="true"
                   :disabled="!check.text"
                   select-label="Select"
@@ -159,7 +159,7 @@
         <textarea
           class="form-control"
           placeholder="task brief description"
-          v-model="DV_task.notes"
+          v-model="DV_task.description"
           rows="4"
         />
       </div>
@@ -239,6 +239,17 @@
         </multiselect>
       </div>
 
+      <div class="form-group mx-4">
+        <label class="font-sm">Updates:</label>
+        <span class="ml-2 clickable" @click.prevent="addNote">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <div v-for="note in filteredNotes" class="form-group">
+          <span><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span></span>
+          <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here."></textarea>
+        </div>
+      </div>
+
       <div class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
@@ -272,11 +283,12 @@
           userIds: [],
           subTaskIds: [],
           subIssueIds: [],
-          notes: '',
+          description: '',
           progress: 0,
           autoCalculate: true,
           taskFiles: [],
-          checklists: []
+          checklists: [],
+          notes: []
         },
         destroyedFiles: [],
         selectedTaskType: null,
@@ -298,7 +310,7 @@
     methods: {
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
@@ -342,7 +354,7 @@
           formData.append('task[task_type_id]', this.DV_task.taskTypeId)
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
-          formData.append('task[notes]', this.DV_task.notes)
+          formData.append('task[description]', this.DV_task.description)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
           if (this.DV_task.userIds.length) {
@@ -379,6 +391,15 @@
               if (key === 'user') key = 'user_id'
               var value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
+            }
+          }
+
+          for (let i in this.DV_task.notes) {
+            let note = this.DV_task.notes[i]
+            if (!note.body && !note._destroy) continue
+            for (let key in note) {
+              let value = key == 'user_id' ? note.user_id ? note.user_id : this.$currentUser.id : note[key]
+              formData.append(`task[notes_attributes][${i}][${key}]`, value)
             }
           }
 
@@ -419,6 +440,12 @@
       },
       addChecks() {
         this.DV_task.checklists.push({text: '', checked: false})
+      },
+      addNote() {
+        this.DV_task.notes.unshift({body: '', user_id: ''})
+      },
+      noteBy(note) {
+        return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
       },
       downloadFile(file) {
         let url = window.location.origin + file.uri
@@ -463,7 +490,7 @@
       ...mapGetters([
         'currentProject',
         'taskTypes',
-        'projectUsers',
+        'activeProjectUsers',
         'myActionsFilter',
         'currentTasks',
         'currentIssues'
@@ -491,7 +518,10 @@
       },
       filteredIssues() {
         return this.currentIssues
-      }
+      },
+      filteredNotes() {
+        return _.orderBy(_.filter(this.DV_task.notes, n => !n._destroy), 'createdAt', 'desc')
+      },
     },
     watch: {
       task: {
