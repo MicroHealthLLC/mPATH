@@ -832,22 +832,24 @@ jQuery(function($) {
           <ol class="choices-group">
             <li class="choice d-flex">
               <label>Map View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.write">Write</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.delete">Delete</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>           
             </li>
             <li class="choice d-flex">
               <label>Gantt View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.write">Write</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.delete">Delete</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>            
             </li>
             <li class="choice d-flex">
               <label>On Watch View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.write">Write</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.delete">Delete</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>            
             </li>
+            <li class="choice d-flex">
+            <label>Documents</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="documents.read">Read</label>       
+           </li>
+           <li class="choice d-flex">
+            <label>Members</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>        
+           </li>
             <li class="choice d-flex">
               <label>Overview</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
@@ -871,19 +873,7 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
-            </li>
-            <li class="choice d-flex">
-              <label>Documents</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="documents.read">Read</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="documents.write">Write</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="documents.delete">Delete</label>
-            </li>
-            <li class="choice d-flex">
-              <label>Members</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="members.write">Write</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="members.delete">Delete</label>
-            </li>
+            </li>           
             <li class="choice d-flex">
               <label>Admin</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
