@@ -107,6 +107,7 @@
               v-for="(issue, i) in filteredIssues"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
+               :load="log(issue)"
               :issue="issue"            
               :from-view="from"
               @issue-edited="issueEdited"
@@ -121,21 +122,29 @@
      <table style="display:none" 
             class="table table-sm table-bordered" 
             ref="table" id="issueList1" 
-            v-for="(issue, i) in filteredIssues">        
+        >        
           <thead>
             <tr>   
               <th></th>          
               <th>Issue</th>    
+              <th>Issue Type</th>   
+              <th>Issue Severity</th>   
               <th>Start Date</th>  
-              <th>Due Date</th>              
+              <th>Due Date</th>           
+              <!-- <th>Assigned Users</th>  -->
+              <th>Completion Progress</th>                  
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="(issue, i) in filteredIssues">
               <td class="text-center">{{i+1}}</td>
                 <td>{{issue.title}}</td>  
+                <td>{{issue.issueType}}
+                <td>{{issue.issueSeverity}}
                 <td>{{issue.startDate}}</td>   
-                <td>{{issue.dueDate}}</td>               
+                <td>{{issue.dueDate}}</td>     
+                <!-- <td>{{issue.users.join(', ')}}</td>    -->
+                <td>{{issue.progress + "%"}}</td>                         
             </tr>
           </tbody>
         </table>
@@ -207,11 +216,14 @@
           })
           .catch((err) => console.log(err))
       },
+      log(issues) {
+        console.log(issues)
+      }, 
       download(){   
-      const doc = new jsPDF()   
+      const doc = new jsPDF("l")   
       const html =  this.$refs.table.innerHTML 
       doc.autoTable({html: "#issueList1"})
-      doc.save("Issues_List.pdf")           
+      doc.save("Issue_Log.pdf")           
       },
       issueEdited(issue) {
         this.currentIssue = issue

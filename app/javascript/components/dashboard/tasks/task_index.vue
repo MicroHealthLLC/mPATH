@@ -80,26 +80,29 @@
      <table style="display:none" 
             class="table table-sm table-bordered" 
             ref="table" id="taskList1" 
-            v-for="(task, i) in filteredTasks">             
-         
+          >              
           <thead>                    
             <tr>  
               <!-- <th>Facility: {{task.facilityName}}  </th>           -->
               <th></th>  
-              <th>Task</th>      
+               <th>Task</th>    
+              <th>Milestone</th>  
               <th>Start Date</th>  
-              <th>Due Date</th>                 
+              <th>Due Date</th>  
+              <th>Assigned Users</th> 
+              <th>Completion Progress</th>                         
             </tr>
           </thead>
-          <tbody>
-          
-            <tr>
+          <tbody>          
+            <tr v-for="(task, i) in filteredTasks">
               <td class="text-center">{{i+1}}</td>
               <td>{{task.text}}</td>    
+              <td>{{task.taskType}}
               <td>{{task.startDate}}</td>   
-              <td>{{task.dueDate}}</td>              
-            </tr>
-          
+              <td>{{task.dueDate}}</td>   
+              <td>{{task.users.join(', ')}}</td>   
+              <td>{{task.progress + "%"}}</td>               
+            </tr>                 
           </tbody>
         </table>
   </div>
@@ -146,7 +149,7 @@
         this.$emit('toggle-watch-task', task)   
     },
       download(){   
-      const doc = new jsPDF()   
+      const doc = new jsPDF("l")   
       const html =  this.$refs.table.innerHTML 
       doc.autoTable({html: "#taskList1"})
       doc.save("Task_List.pdf")           
