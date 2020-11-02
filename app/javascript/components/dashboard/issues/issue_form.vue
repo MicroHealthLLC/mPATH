@@ -29,6 +29,15 @@
           {{errors.first('title')}}
         </div>
       </div>
+        <div class="form-group mx-4">
+        <label class="font-sm">Description:</label>
+        <textarea
+          class="form-control"
+          placeholder="issue brief description"
+          v-model="DV_issue.description"
+          rows="4"
+        />
+      </div>
       <div class="simple-select form-group mx-4">
         <label class="font-sm">Issue Type:</label>
         <multiselect
@@ -177,16 +186,7 @@
           </div>
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
-      </div>
-      <div class="form-group mx-4">
-        <label class="font-sm">Description:</label>
-        <textarea
-          class="form-control"
-          placeholder="issue brief description"
-          v-model="DV_issue.description"
-          rows="4"
-        />
-      </div>
+      </div>    
       <div class="mx-4">
         <div class="input-group mb-2">
           <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
