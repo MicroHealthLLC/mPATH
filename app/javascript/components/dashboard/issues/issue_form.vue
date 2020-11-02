@@ -439,7 +439,7 @@
           var callback = "issue-created"
 
           if (this.issue && this.issue.id) {
-            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${this.issue.id}.json`
+            url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}.json`
             method = "PUT"
             callback = "issue-updated"
           }

@@ -70,7 +70,7 @@
           :load="log(task)"
           :task="task"          
           :from-view="from"
-          @edit-task="$emit('show-hide', task)"
+          @edit-task="editTask"
           @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>              
@@ -138,6 +138,9 @@
         } else {
           this.$emit('show-hide')
         }
+      },
+      editTask(task) {
+        this.$emit('show-hide', task)
       },
       toggleWatched(task) {
         this.$emit('toggle-watch-task', task)   

@@ -49,6 +49,8 @@ class Issue < ApplicationRecord
       facility_id: self.facility_project.try(:facility_id),
       facility_name: self.facility_project.try(:facility).facility_name,
       project_id: self.facility_project.try(:project_id),
+      sub_tasks: self.sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: self.sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: self.sub_task_ids,
       sub_issue_ids: self.sub_issue_ids
     ).as_json

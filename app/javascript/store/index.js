@@ -82,9 +82,7 @@ export default new Vuex.Store({
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
     setMapFilters: (state, filters) => state.mapFilters = filters,
-    updateFacilities: (state, {index, facility}) => {
-      Vue.set(state.facilities, index, facility)
-    },
+    updateFacilities: (state, {index, facility}) => Vue.set(state.facilities, index, facility),
     updateFacilityHash: (state, facility) => {
       var index = state.facilities.findIndex(f => f.id == facility.id)
       if (index > -1) Vue.set(state.facilities, index, facility)
