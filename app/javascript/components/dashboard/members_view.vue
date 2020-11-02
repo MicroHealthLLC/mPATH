@@ -18,21 +18,17 @@
               <th>Job Title</th>
               <th>Organization</th>
               <th>Email</th>
-              <th>Phone</th>
-              <th>Status</th>
+              <th>Phone</th>             
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, i) in orderedUsers">
+            <tr v-for="(user, i) in orderedUsers"  v-if="(user.status) === 'active'" :load="log(user)">        
               <td class="text-center">{{i+1}}</td>
               <td>{{user.fullName}}</td>
               <td>{{user.title}}</td>
               <td>{{user.organization}}</td>
               <td><a :href="`mailto:${user.email}`">{{user.email}}</a></td>
-              <td><a :href="`tel:${user.phoneNumber}`">{{user.phoneNumber}}</a></td>
-              <td class="text-center">
-                <span :class="`badge-${user.status}`">{{user.status}}</span>
-              </td>
+              <td><a :href="`tel:${user.phoneNumber}`">{{user.phoneNumber}}</a></td>            
             </tr>
           </tbody>
         </table>
@@ -65,6 +61,9 @@
        doc.autoTable({ html: '#teamMembersList' })
        doc.save("Team_Members_list.pdf")
       },
+       log(user) {
+        console.log(user)
+      },
       tableToExcel(table, name){      
       if (!table.nodeType) table = this.$refs.table
       var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
@@ -76,7 +75,9 @@
         'projectUsers'
       ]),
       orderedUsers: function() {
+        // if (this.projectUsers.status == active) {
         return _.orderBy(this.projectUsers, 'lastName', 'asc')
+        // }
       }
     }
   }
