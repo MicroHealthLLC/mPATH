@@ -414,7 +414,7 @@
           var callback = "task-created"
 
           if (this.task && this.task.id) {
-            url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.task.id}.json`
+            url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
             method = "PUT"
             callback = "task-updated"
           }

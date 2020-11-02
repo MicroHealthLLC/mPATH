@@ -60,6 +60,24 @@
           </div>
         </div>
       </div>
+      <div v-if="fromView == 'watch_view'" class="mt-3 font-sm row">
+        <div class="col-6">
+          <div class="text-info">Related Tasks: </div>
+          <ol class="pl-4">
+            <li v-for="subTask in DV_task.subTasks">
+              <span class="btn btn-link btn-sm p-0 clickable" @click="openSubTask(subTask)">{{getTask(subTask).text}}</span>
+            </li>
+          </ol>
+        </div>
+        <div class="col-6">
+          <div class="text-info">Related Issues: </div>
+          <ol class="pl-4">
+            <li v-for="subIssue in DV_task.subIssues">
+              <span class="btn btn-link btn-sm p-0 clickable" @click="openSubIssue(subIssue)">{{getIssue(subIssue).title}}</span>
+            </li>
+          </ol>
+        </div>
+      </div>
     </div>
 
     <sweet-modal
@@ -73,11 +91,19 @@
           <i class="fa fa-times"></i>
         </div>
         <task-form
+          v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
-          :task="DV_task"
+          :task="DV_edit_task"
           title="Edit Task"
-          @task-updated="updatedTask"
+          @task-updated="updateRelatedTaskIssue"
         ></task-form>
+
+        <issue-form
+          v-if="Object.entries(DV_edit_issue).length"
+          :facility="facility"
+          :issue="DV_edit_issue"
+          @issue-updated="updateRelatedTaskIssue"
+        ></issue-form>
       </div>
     </sweet-modal>
   </div>
@@ -86,11 +112,12 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import TaskForm from "./task_form"
+  import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'TaskShow',
-    components: {TaskForm, SweetModal},
+    components: {TaskForm, SweetModal, IssueForm},
     props: {
       fromView: {
         type: String,
@@ -102,6 +129,8 @@
       return {
         loading: true,
         DV_task: {},
+        DV_edit_task: {},
+        DV_edit_issue: {},
         has_task: false
       }
     },
@@ -117,12 +146,27 @@
         'setTaskForManager'
       ]),
       ...mapActions([
-        'taskDeleted'
+        'taskDeleted',
+        'taskUpdated'
       ]),
       deleteTask() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
+      },
+      openSubTask(subTask) {
+        let task = this.currentTasks.find(t => t.id == subTask.id)
+        if (!task) return
+        this.has_task = Object.entries(task).length > 0
+        this.DV_edit_task = task
+        this.$refs.taskFormModal && this.$refs.taskFormModal.open()
+      },
+      openSubIssue(subIssue) {
+        let issue = this.currentIssues.find(t => t.id == subIssue.id)
+        if (!issue) return
+        this.has_task = Object.entries(issue).length > 0
+        this.DV_edit_issue = issue
+        this.$refs.taskFormModal && this.$refs.taskFormModal.open()
       },
       editTask() {
         if (this.fromView == 'map_view') {
@@ -133,12 +177,15 @@
         }
         else {
           this.has_task = Object.entries(this.DV_task).length > 0
+          this.DV_edit_task = this.DV_task
           this.$refs.taskFormModal && this.$refs.taskFormModal.open()
         }
       },
       onCloseForm() {
         this.$refs.taskFormModal && this.$refs.taskFormModal.close()
         this.has_task = false
+        this.DV_edit_task = {}
+        this.DV_edit_issue = {}
       },
       toggleWatched() {
         if (this.DV_task.watched) {
@@ -148,17 +195,23 @@
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
         this.$emit('toggle-watched', this.DV_task)
       },
-      updatedTask(task) {
-        this.onCloseForm()
-        this.DV_task = Object.assign({}, task)
-        this.updateTasksHash({task: this.DV_task})
+      updateRelatedTaskIssue(task) {
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
+      },
+      getTask(task) {
+        return this.currentTasks.find(t => t.id == task.id) || {}
+      },
+      getIssue(issue) {
+        return this.currentIssues.find(t => t.id == issue.id) || {}
       }
     },
     computed: {
       ...mapGetters([
         'facilities',
         'facilityGroups',
-        'managerView'
+        'managerView',
+        'currentTasks',
+        'currentIssues'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
