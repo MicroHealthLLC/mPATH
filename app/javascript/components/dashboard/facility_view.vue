@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-5 facility-show-tab" style="border-top: solid #ededed 15px">
+      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -35,7 +35,7 @@
           <facility-rollup v-else></facility-rollup>
         </div>
       </div>
-      <div class="col-md-5 facility-forms-tab" style="border-top: solid #ededed 15px">
+      <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
         <div class="mt-4">
           <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
