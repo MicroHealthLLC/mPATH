@@ -33,6 +33,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
+          <facility-rollup v-else></facility-rollup>
         </div>
       </div>
       <div class="col-md-5 facility-forms-tab">
@@ -73,6 +74,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilityShow from './facilities/facility_show'
+  import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
@@ -81,6 +83,7 @@
     name: "FacilityManagerView",
     components: {
       FacilityShow,
+      FacilityRollup,
       TaskForm,
       IssueForm,
       NotesForm

@@ -461,6 +461,11 @@ jQuery(function($) {
       data() {
         return {
           loading: true,
+          facility_manager_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           map_view: {
             read: false,
             write: false,
@@ -527,6 +532,7 @@ jQuery(function($) {
           var notes = $("#user_privilege_attributes_notes").val() || ""
           var admin = $("#user_privilege_attributes_admin").val() || ""
           var map_view = $("#user_privilege_attributes_map_view").val() || ""
+          var facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || ""
           var gantt_view = $("#user_privilege_attributes_gantt_view").val() || ""
           var watch_view = $("#user_privilege_attributes_watch_view").val() || ""
           var documents = $("#user_privilege_attributes_documents").val() || ""
@@ -560,6 +566,11 @@ jQuery(function($) {
             read: map_view.includes("R"),
             write: map_view.includes("W"),
             delete: map_view.includes("D")
+          }
+          this.facility_manager_view = {
+            read: facility_manager_view.includes("R"),
+            write: facility_manager_view.includes("W"),
+            delete: facility_manager_view.includes("D")
           }
           this.gantt_view = {
             read: gantt_view.includes("R"),
@@ -753,6 +764,31 @@ jQuery(function($) {
           $("#user_privilege_attributes_gantt_view").val(v);
         },
 
+        "facility_manager_view.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_facility_manager_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.facility_manager_view.write = false;
+            this.facility_manager_view.delete = false;
+          }
+          $("#user_privilege_attributes_facility_manager_view").val(v);
+        },
+        "facility_manager_view.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_facility_manager_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.facility_manager_view.read = value;
+          $("#user_privilege_attributes_facility_manager_view").val(v);
+        },
+        "facility_manager_view.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_facility_manager_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.facility_manager_view.read = value;
+          $("#user_privilege_attributes_facility_manager_view").val(v);
+        },
+
         "watch_view.read"(value) {
           if (this.loading) return;
           var v = $("#user_privilege_attributes_watch_view").val();
@@ -831,24 +867,28 @@ jQuery(function($) {
           <legend><span>Privileges</span></legend>
           <ol class="choices-group">
             <li class="choice d-flex">
+              <label>Facility View</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="facility_manager_view.read">Read</label>
+            </li>
+            <li class="choice d-flex">
               <label>Map View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>           
+              <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
             </li>
             <li class="choice d-flex">
               <label>Gantt View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>            
+              <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
             </li>
             <li class="choice d-flex">
               <label>On Watch View</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>            
+              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
             </li>
             <li class="choice d-flex">
             <label>Documents</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="documents.read">Read</label>       
+            <label class="d-flex align-center"><input type="checkbox" v-model="documents.read">Read</label>
            </li>
            <li class="choice d-flex">
             <label>Members</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>        
+            <label class="d-flex align-center"><input type="checkbox" v-model="members.read">Read</label>
            </li>
             <li class="choice d-flex">
               <label>Overview</label>
@@ -873,7 +913,7 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
-            </li>           
+            </li>
             <li class="choice d-flex">
               <label>Admin</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
@@ -1776,6 +1816,89 @@ jQuery(function($) {
           selected_users: {
             handler(value) {
               if (value) $("#__users_filters").val(value.map(u => u.id));
+            }, deep: true
+          }
+        },
+        template: `<div v-if="!loading" class="user_multiselect">
+          <multiselect
+            v-model="selected_users"
+            track-by="id"
+            label="full_name"
+            placeholder="Search and select users"
+            :options="filtered_users"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.full_name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>`
+      });
+
+      $("body").on('change', "#__users_filter_emails, #__users_filter_emails_select", function() {
+        $.Vue_users_filter_select && $.Vue_users_filter_select.setEmailCheck();
+      });
+    }
+
+    // checklists_user filters
+    if ($("#__checklist_users_filters").is(":visible"))
+    {
+      var select = $("#__checklist_users_filters");
+      var parent = select.parent();
+      select.css({display: 'none'});
+      parent.append("<div id='__checklist_users_filters_multiselect'></div>");
+      var email_select = $("#__users_filter_emails").siblings()[1];
+      email_select.id = "__users_filter_emails_select";
+
+      Vue.component('multiselect', VueMultiselect.Multiselect);
+      $.Vue_users_filter_select = new Vue({
+        el: "#__checklist_users_filters_multiselect",
+        data() {
+          return {
+            loading: true,
+            selected_users: [],
+            users: [],
+            filtered_users: []
+          }
+        },
+        created() {
+          this.fetchUsers();
+        },
+        methods: {
+          fetchUsers() {
+            $.get(`/api/users.json`, (data) => {
+              this.users = data.filter(u => u.status == "active");
+              var user_ids = $("#__checklist_users_filters").val().map(Number);
+              this.selected_users = this.users.filter(u => user_ids.includes(u.id));
+              this.setEmailCheck();
+              this.loading = false;
+            });
+          },
+          setEmailCheck() {
+            var value = $("#__users_filter_emails").val();
+            if (value) {
+              var operator = $(email_select).val();
+              operator = operator.replace("users_email_", '')
+              if (operator == "contains") this.filtered_users = this.users.filter(u => u.email.includes(value))
+              else if (operator == "equals") this.filtered_users = this.users.filter(u => u.email == value)
+              else if (operator == "starts_with") this.filtered_users = this.users.filter(u => u.email.startsWith(value))
+              else if (operator == "ends_with") this.filtered_users = this.users.filter(u => u.email.endsWith(value))
+            } else {
+              this.filtered_users = this.users
+            }
+            var user_ids = this.filtered_users.map(u => u.id);
+            this.selected_users = this.selected_users.filter(u => user_ids.includes(u.id));
+          }
+        },
+        watch: {
+          selected_users: {
+            handler(value) {
+              if (value) $("#__checklist_users_filters").val(value.map(u => u.id));
             }, deep: true
           }
         },
