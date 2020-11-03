@@ -162,7 +162,7 @@
           </div>
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
-      </div>     
+      </div>
       <div class="mx-4">
         <div class="input-group mb-2">
           <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
@@ -238,18 +238,23 @@
           </template>
         </multiselect>
       </div>
-
-      <div class="form-group mx-4">
+      <div class="form-group mx-4 paginated-updates">
         <label class="font-sm">Updates:</label>
         <span class="ml-2 clickable" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
-        <div v-for="note in filteredNotes" class="form-group">
-          <span><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span></span>
-          <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here."></textarea>
-        </div>
+        <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
+          <div v-for="note in paginated('filteredNotes')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
+              <span v-if="_isallowed('delete')" class="clickable font-sm delete-action float-right" @click.stop="destroyNote(note)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here."></textarea>
+          </div>
+        </paginate>
       </div>
-
       <div class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
@@ -290,6 +295,7 @@
           checklists: [],
           notes: []
         },
+        paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedTaskType: null,
         taskUsers: [],
@@ -442,7 +448,13 @@
         this.DV_task.checklists.push({text: '', checked: false})
       },
       addNote() {
-        this.DV_task.notes.unshift({body: '', user_id: ''})
+        this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
+      },
+      destroyNote(note) {
+        var confirm = window.confirm(`Are you sure, you want to delete this update note?`)
+        if (!confirm) return;
+        var i = note.id ? this.DV_task.notes.findIndex(n => n.id === note.id) : this.DV_task.notes.findIndex(n => n.guid === note.guid)
+        Vue.set(this.DV_task.notes, i, {...note, _destroy: true})
       },
       noteBy(note) {
         return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
@@ -522,6 +534,9 @@
       filteredNotes() {
         return _.orderBy(_.filter(this.DV_task.notes, n => !n._destroy), 'createdAt', 'desc')
       },
+      _isallowed() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+      }
     },
     watch: {
       task: {
@@ -580,6 +595,13 @@
           let ids = _.map(value, 'id')
           this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
         }, deep: true
+      },
+      "filteredNotes.length"(value) {
+        this.$nextTick(() => {
+          if (this.$refs.paginator && value === 1) {
+            this.$refs.paginator.goToPage(1)
+          }
+        })
       }
     }
   }
@@ -603,5 +625,9 @@
     background: #fff;
     height: fit-content;
     color: red;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
   }
 </style>

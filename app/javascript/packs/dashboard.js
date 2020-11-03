@@ -23,12 +23,14 @@ import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
+import VuePaginate          from 'vue-paginate'
 
 Vue.mixin(utils)
 Vue.use(VTooltip)
 Vue.use(Tabs)
 Vue.use(VModal)
 Vue.use(VueTelInput)
+Vue.use(VuePaginate)
 Vue.component('loader', FadeLoader)
 Vue.component('gantt-elastic', GanttElastic)
 Vue.component('gantt-elastic-header', GanttElasticHeader)

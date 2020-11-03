@@ -168,6 +168,7 @@ body {
   #user_privilege_attributes_notes_input,
   #user_privilege_attributes_issues_input,
   #user_privilege_attributes_admin_input,
+  #user_privilege_attributes_facility_manager_view_input,
   #user_privilege_attributes_map_view_input,
   #user_privilege_attributes_gantt_view_input,
   #user_privilege_attributes_watch_view_input,
@@ -395,6 +396,7 @@ body {
       }
     }
   }
+  #q_checklists_user_id_input .user_multiselect,
   #q_users_input .user_multiselect {
     width: 98%;
   }

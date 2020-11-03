@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_23_114005) do
+ActiveRecord::Schema.define(version: 2020_11_02_162746) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -187,6 +187,7 @@ ActiveRecord::Schema.define(version: 2020_10_23_114005) do
     t.string "watch_view", default: "R"
     t.string "documents", default: "R"
     t.string "members", default: "R"
+    t.string "facility_manager_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -295,7 +296,7 @@ ActiveRecord::Schema.define(version: 2020_10_23_114005) do
 
   create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "text"
-    t.text "notes", limit: 4294967295
+    t.text "description", limit: 4294967295
     t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
