@@ -437,3 +437,29 @@ body /deep/ .multiselect--disabled {
     font-size: 5em;
   }
 }
+.paginated-updates /deep/ .paginate-links {
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  li {
+    margin: 0 6px;
+  }
+  a {
+    cursor: pointer;
+  }
+  .active a {
+    color: #007bff;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  .next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+  }
+  .disabled a {
+    color: #ccc;
+    cursor: no-drop;
+  }
+}
