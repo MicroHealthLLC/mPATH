@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 facility-show-tab">
+      <div class="col-md-5 facility-show-tab" style="border-top: solid #ededed 15px">
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -35,7 +35,7 @@
           <facility-rollup v-else></facility-rollup>
         </div>
       </div>
-      <div class="col-md-6 facility-forms-tab" style="border-left: solid #ededed 2px">
+      <div class="col-md-5 facility-forms-tab" style="border-top: solid #ededed 15px">
         <div class="mt-4">
           <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
@@ -172,18 +172,18 @@
 
 <style lang="scss">
   #facility_view {
-    padding: 0 70px;
+    padding: 0 10px;
     .facility-groups-tab {
-      background: #ededed;
+      background: #ededed;     
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
-      overflow-y: auto;
+      overflow: hidden;
     }
     .facility-forms-tab,
     .facility-show-tab {
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
-      overflow-y: auto;
+      overflow-y: scroll;
     }
     .fac-manager-sidebar {
       cursor: pointer;

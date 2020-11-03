@@ -8,16 +8,32 @@
       <tabs>
         <tab title="Overview" key="overview">
           <div v-if="_isallowed('read')">
-            <h5 v-if="extras" class="text-center">Facility Summary</h5>
+            <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
-                <span class="fbody-icon"><i class="fas fa-globe"></i></span>
-                <span>{{facilityGroup.name}}</span>
+                <span class="fbody-icon"><i class="fas fa-globe mr-0"></i></span>
+                <span style="font-weight:700">Facility Group: </span>  
+                <span> {{facilityGroup.name}}</span>
               </p>
               <div>
+                   <p class="mt-2 d-flex align-items-center">
+                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                    <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>  
+                  <v2-date-picker
+                    v-model="DV_facility.dueDate"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    class="w-80 vue2-datepicker"
+                    @input="onChange"
+                    placeholder="DD MM YYYY"
+                    :disabled="!_isallowed('write') || !DV_facility.statusId"
+                  />
+                </p>
+                <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                  <span class="simple-select w-100">
+                  <span style="font-weight:700; margin-right: 4px">Project Status: </span>  
+                  <span class="simple-select w-70 mt-2">
                     <multiselect
                       v-model="selectedStatus"
                       track-by="id"
@@ -37,24 +53,12 @@
                       </template>
                     </multiselect>
                   </span>
-                </p>
-                <p class="mt-2 d-flex align-items-center">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                  <v2-date-picker
-                    v-model="DV_facility.dueDate"
-                    value-type="YYYY-MM-DD"
-                    format="DD MMM YYYY"
-                    class="w-100 vue2-datepicker"
-                    @input="onChange"
-                    placeholder="DD MM YYYY"
-                    :disabled="!_isallowed('write') || !DV_facility.statusId"
-                  />
-                </p>
-                <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
+                </p>             
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                <span class="w-100 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
+                   <span style="font-weight:700; margin-right: 4px">Task & Issue Completion: </span>  
+                <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
