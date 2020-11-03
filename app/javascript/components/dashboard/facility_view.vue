@@ -1,24 +1,23 @@
 <template>
   <div id="facility_view">
     <div class="row">
-      <div class="col-md-3 facility-groups-tab">
+      <div class="col-md-2 facility-groups-tab">
         <h4 class="mt-4 text-center text-info">Facility Manager</h4>
         <div class="my-4 ml-2">
           <div v-for="group in filteredFacilityGroups" class="my-3">
             <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
-                <i class="fa fa-plus font-sm mr-2"></i>
+                <i class="fa fa-angle-right font-sm mr-2"></i>
               </span>
               <span v-show="expanded.id == group.id">
-                <i class="fa fa-minus font-sm mr-2"></i>
+               <i class="fa fa-angle-down font-md mr-2"></i>
               </span>
               <h5>{{group.name}}</h5>
             </div>
             <div v-show="expanded.id == group.id" class="ml-2">
               <div v-for="item in facilityGroupFacilities(group)">
                 <div class="d-flex align-items-center expandable" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
-                  <i class="fa fa-minus font-sm mr-2" aria-hidden="true"></i>
-                  <h6>{{item.facility.facilityName}}</h6>
+                <h6 class="fac-manager-sidebar">{{item.facility.facilityName}}</h6>
                 </div>
               </div>
             </div>
@@ -35,7 +34,7 @@
           ></facility-show>
         </div>
       </div>
-      <div class="col-md-5 facility-forms-tab">
+      <div class="col-md-6 facility-forms-tab" style="border-left: solid #ededed 2px">
         <div class="mt-4">
           <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
@@ -183,14 +182,38 @@
       height: calc(100vh - 94px);
       overflow-y: auto;
     }
-    .expandable {
+    .fac-manager-sidebar {
       cursor: pointer;
+      font-weight: 400 !important;
+    
+    }
+
+    h6.fac-manager-sidebar {
+      padding: 0 8px;
+    }
+
+     .fac-manager-sidebar:hover {
+      cursor: pointer;
+      font-weight: 900 !important;
+      background-color: rgba(91, 192, 222, 0.3); 
+    }
+
+      .expandable {     
+      &.active {
+        h6 {        
+           background-color: rgba(211, 211, 211, 10%);          
+        }
+       }
+      }
+
+    .expandable {     
       &.active,
       &:hover {
         h5, h6 {
-          text-decoration: underline;
+          font-weight: 900 !important;         
         }
       }
+    
     }
   }
 </style>
