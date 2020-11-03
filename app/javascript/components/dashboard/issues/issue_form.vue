@@ -286,6 +286,12 @@
           >
           Save
         </button>
+        <button             
+          class="btn btn-danger ml-3"
+          v-if="managerView.task || managerView.issue || managerView.note" @click="cancelIssueSave"
+          >
+          Cancel
+        </button>
       </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -296,11 +302,11 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'IssueForm',
-    props: ['facility', 'issue'],
+    props: ['facility', 'issue', 'task'],
     components: {AttachmentInput},
     data() {
       return {
@@ -338,6 +344,9 @@
       this.loading = false
     },
     methods: {
+        ...mapMutations([        
+        'setTaskForManager'
+      ]),
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
         this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
@@ -368,6 +377,11 @@
         else if (file.name) {
           this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
         }
+      },
+      cancelIssueSave() {
+        this.setTaskForManager({key: 'task', value: null})
+        this.setTaskForManager({key: 'issue', value: null})
+        this.setTaskForManager({key: 'note', value: null})
       },
       saveIssue() {
         this.$validator.validate().then((success) => {
@@ -531,7 +545,8 @@
         'issueTypes',
         'issueSeverities',
         'currentTasks',
-        'currentIssues'
+        'currentIssues',
+        'managerView'
       ]),
       readyToSave() {
         return (

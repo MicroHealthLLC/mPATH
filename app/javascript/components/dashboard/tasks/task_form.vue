@@ -262,6 +262,12 @@
           >
           Save
         </button>
+         <button             
+          class="btn btn-danger ml-3"
+          v-if="managerView.task || managerView.issue || managerView.note" @click="cancelSave"
+          >
+          Cancel
+        </button>
       </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -272,7 +278,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'TaskForm',
@@ -314,6 +320,9 @@
       this._ismounted = true
     },
     methods: {
+       ...mapMutations([        
+        'setTaskForManager'
+      ]),
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
         this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
@@ -343,6 +352,11 @@
         else if (file.name) {
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
         }
+      },
+        cancelSave() {
+        this.setTaskForManager({key: 'task', value: null})
+        this.setTaskForManager({key: 'issue', value: null})
+        this.setTaskForManager({key: 'note', value: null})
       },
       saveTask() {
         this.$validator.validate().then((success) =>
@@ -505,7 +519,8 @@
         'activeProjectUsers',
         'myActionsFilter',
         'currentTasks',
-        'currentIssues'
+        'currentIssues', 
+        'managerView'
       ]),
       readyToSave() {
         return (
