@@ -12,8 +12,9 @@
     <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}">On Watch View</div>
     </router-link>
-    <div v-if="permitted('tasks')" class="badge disabled">Task Kanban (Coming Soon)</div>
-    <div v-if="permitted('issues')" class="badge disabled">Issues Kanban (Coming Soon)</div>
+    
+    <div v-if="permitted('issues')" class="badge disabled">Kanban View (Coming Soon)</div>
+      <div v-if="permitted('issues')" class="badge disabled">Mindmap View (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
       <div class="badge" :class="{'active': isMembersView}">Team Members</div>
