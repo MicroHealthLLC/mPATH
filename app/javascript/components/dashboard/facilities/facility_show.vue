@@ -73,17 +73,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-9">
-                      <span>Incomplete</span>
-                      <span class="badge badge-secondary badge-pill">{{taskVariation.incompleted.count}}</span>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.incompleted.percentage <= 0}">
-                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.incompleted.percentage}%`">{{taskVariation.incompleted.percentage}} %</div>
-                      </span>
-                    </div>
-                  </div>
+    
                   <div class="row">
                     <div class="col-md-9">
                       <span>Overdue</span>
@@ -127,18 +117,7 @@
                         <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                       </span>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-9">
-                      <span>Incomplete</span>
-                      <span class="badge badge-secondary badge-pill">{{issueVariation.incompleted.count}}</span>
-                    </div>
-                    <div class="col-md-3 d-flex align-items-center">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.incompleted.percentage <= 0}">
-                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.incompleted.percentage}%`">{{issueVariation.incompleted.percentage}} %</div>
-                      </span>
-                    </div>
-                  </div>
+                  </div>              
                   <div class="row">
                     <div class="col-md-9">
                       <span>Overdue</span>
@@ -336,13 +315,10 @@
         var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
         var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
         var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
-        var incompleted = this.filteredTasks.length - (completed.length + overdue.length)
-        var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
+        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)     
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
+          completed: {count: completed.length, percentage: completed_percent},     
           overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
@@ -366,13 +342,10 @@
         var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
         var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
         var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
-        var incompleted = this.filteredIssues.length - (completed.length + overdue.length)
-        var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
+        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)    
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
+          completed: {count: completed.length, percentage: completed_percent},      
           overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
