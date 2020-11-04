@@ -154,6 +154,7 @@ ActiveAdmin.register Facility do
 
   batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
     "Name": :text,
+    "Description": :textarea,
     "Project": Project.pluck(:name, :id),
     "Milestone": TaskType.pluck(:name, :id),
     "Start Date": :datepicker,
@@ -162,8 +163,7 @@ ActiveAdmin.register Facility do
     "Progress": :number,
     "AutoCalculate": :checkbox,
     "Checklists": :text,
-    "Task Files": :text,
-    "Description": :textarea
+    "Task Files": :text
   }} do |ids, inputs|
     user_ids = inputs["Assign Users"].split(',').map(&:to_i) rescue []
     file_blobs = JSON.parse(inputs["Task Files"]).map{|id| {:blob_id => id}} rescue []

@@ -241,6 +241,9 @@
       ]),
       isUpdated() {
         return this.DV_task.dueDate != this.AC_task.endDate || this.DV_task.startDate != this.AC_task.startDate || this.DV_task.progress != this.AC_task.progress
+      },
+      _isallowed() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       }
     },
     methods: {
@@ -248,6 +251,7 @@
         'taskUpdated'
       ]),
       handleClick({column, data}) {
+        if (!this._isallowed("write")) return
         if (!data.taskUrl || !column.label) return
         this.tab = column.label
         this.DV_task = {startDate: data.startDate, dueDate: data.endDate, progress: data.progress}

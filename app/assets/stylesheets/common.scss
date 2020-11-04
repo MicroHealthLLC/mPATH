@@ -372,6 +372,11 @@ body /deep/ .multiselect--disabled {
     background: transparent;
   }
 }
+body /deep/ .mx-input:disabled,
+body /deep/ .mx-input.disabled {
+  background-color: transparent;
+  color: #555;
+}
 .input-group-text.clickable {
   padding: 0.375rem 0.75rem 0.375rem 0;
   background-color: transparent;
@@ -435,5 +440,31 @@ body /deep/ .multiselect--disabled {
   right: 20px;
   svg {
     font-size: 5em;
+  }
+}
+.paginated-updates /deep/ .paginate-links {
+  float: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  li {
+    margin: 0 6px;
+  }
+  a {
+    cursor: pointer;
+  }
+  .active a {
+    color: #007bff;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+  .next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+  }
+  .disabled a {
+    color: #ccc;
+    cursor: no-drop;
   }
 }

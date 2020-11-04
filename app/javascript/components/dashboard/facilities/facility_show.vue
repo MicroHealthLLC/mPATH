@@ -12,13 +12,13 @@
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe mr-0"></i></span>
-                <span style="font-weight:700">Facility Group: </span>  
+                <span style="font-weight:700">Facility Group: </span>
                 <span> {{facilityGroup.name}}</span>
               </p>
               <div>
                    <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                    <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>  
+                    <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>
                   <v2-date-picker
                     v-model="DV_facility.dueDate"
                     value-type="YYYY-MM-DD"
@@ -32,7 +32,7 @@
                 <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
-                  <span style="font-weight:700; margin-right: 4px">Project Status: </span>  
+                  <span style="font-weight:700; margin-right: 4px">Project Status: </span>
                   <span class="simple-select w-70 mt-2">
                     <multiselect
                       v-model="selectedStatus"
@@ -53,11 +53,11 @@
                       </template>
                     </multiselect>
                   </span>
-                </p>             
+                </p>
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                   <span style="font-weight:700; margin-right: 4px">Task & Issue Completion: </span>  
+                   <span style="font-weight:700; margin-right: 4px">Task & Issue Completion: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
@@ -77,7 +77,6 @@
                       </span>
                     </div>
                   </div>
-    
                   <div class="row">
                     <div class="col-md-9">
                       <span>Overdue</span>
@@ -121,7 +120,7 @@
                         <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                       </span>
                     </div>
-                  </div>              
+                  </div>
                   <div class="row">
                     <div class="col-md-9">
                       <span>Overdue</span>
@@ -208,7 +207,7 @@
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './detail_show'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'FacilitiesShow',
@@ -250,6 +249,9 @@
       }
     },
     methods: {
+      ...mapMutations([
+        'updateFacilityHash'
+      ]),
       fetchFacility(opt={}) {
         http
           .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
@@ -273,6 +275,7 @@
           .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
             this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
+            if (this.from == "manager_view") this.updateFacilityHash(this.DV_facility)
             this.$emit('facility-update', this.DV_facility)
           })
           .catch((err) => {
@@ -319,10 +322,10 @@
         var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
         var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
         var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)     
+        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},     
+          completed: {count: completed.length, percentage: completed_percent},
           overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
@@ -346,10 +349,10 @@
         var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
         var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
         var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)    
+        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},      
+          completed: {count: completed.length, percentage: completed_percent},
           overdue: {count: overdue.length, percentage: overdue_percent},
         }
       },
@@ -382,12 +385,6 @@
 
 <style lang="scss" scoped>
 
-#facility-show {
-  z-index: 10;
-  width: 100%;
-  position: absolute;
-  background-color: #fff; 
-}
   .f-head {
     word-break: break-word;
     text-overflow: ellipsis;

@@ -89,26 +89,27 @@
         <hr>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
-             <button    
-            @click="download"        
-            id="printBtn" 
-            class="btn btn-sm btn-outline-dark m-2" 
+             <button
+            @click="download"
+            id="printBtn"
+            class="btn btn-sm btn-outline-dark m-2"
             style="font-size:.70rem" >
             EXPORT TO PDF
           </button>
-           <button    
+           <button
             disabled
-            id="printBtn" 
-            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2" 
+            id="printBtn"
+            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
             <issue-show
               v-for="(issue, i) in filteredIssues"
+              id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
                :load="log(issue)"
-              :issue="issue"            
+              :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
@@ -119,32 +120,32 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
-     <table style="display:none" 
-            class="table table-sm table-bordered" 
-            ref="table" id="issueList1" 
-        >        
+     <table style="display:none"
+            class="table table-sm table-bordered"
+            ref="table" id="issueList1"
+        >
           <thead>
-            <tr>   
-              <th></th>          
-              <th>Issue</th>    
-              <th>Issue Type</th>   
-              <th>Issue Severity</th>   
-              <th>Start Date</th>  
-              <th>Due Date</th>           
+            <tr>
+              <th></th>
+              <th>Issue</th>
+              <th>Issue Type</th>
+              <th>Issue Severity</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
               <!-- <th>Assigned Users</th>  -->
-              <th>Completion Progress</th>                  
+              <th>Completion Progress</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(issue, i) in filteredIssues">
               <td class="text-center">{{i+1}}</td>
-                <td>{{issue.title}}</td>  
+                <td>{{issue.title}}</td>
                 <td>{{issue.issueType}}
                 <td>{{issue.issueSeverity}}
-                <td>{{issue.startDate}}</td>   
-                <td>{{issue.dueDate}}</td>     
+                <td>{{issue.startDate}}</td>
+                <td>{{issue.dueDate}}</td>
                 <!-- <td>{{issue.users.join(', ')}}</td>    -->
-                <td>{{issue.progress + "%"}}</td>                         
+                <td>{{issue.progress + "%"}}</td>
             </tr>
           </tbody>
         </table>
@@ -187,7 +188,7 @@
         this.facility.issues.unshift(issue)
         this.newIssue = false
         this.$emit('refresh-facility')
-      },    
+      },
       issueUpdated(issue, refresh=true) {
         var index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -218,12 +219,12 @@
       },
       log(issues) {
         console.log(issues)
-      }, 
-      download(){   
-      const doc = new jsPDF("l")   
-      const html =  this.$refs.table.innerHTML 
-      doc.autoTable({html: "#issueList1"})
-      doc.save("Issue_Log.pdf")           
+      },
+      download() {
+        const doc = new jsPDF("l")
+        const html =  this.$refs.table.innerHTML
+        doc.autoTable({html: "#issueList1"})
+        doc.save("Issue_Log.pdf")
       },
       issueEdited(issue) {
         this.currentIssue = issue
@@ -317,5 +318,10 @@
   .new-issue-btn {
     width: 20%;
     height: max-content;
+  }
+   #issueHover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3); 
+    border-left: solid rgb(91, 192, 222);
   }
 </style>

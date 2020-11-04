@@ -1,6 +1,6 @@
 <template>
   <div id="tabbar">
-    <router-link v-if="permitted('overview')" :to="facilityManagerView" tag="div">
+    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
       <div class="badge" :class="{'active': isFacilityManagerView}">Facility View</div>
     </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
@@ -12,7 +12,7 @@
     <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}">On Watch View</div>
     </router-link>
-    
+
     <div v-if="permitted('issues')" class="badge disabled">Kanban View (Coming Soon)</div>
       <div v-if="permitted('issues')" class="badge disabled">Mindmap View (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
@@ -58,6 +58,11 @@
       },
       permitted() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions[salut]['read']
+      }
+    },
+    watch: {
+      $route (to, from) {
+        this.$store && this.$store.commit('nullifyTasksForManager')
       }
     }
   }

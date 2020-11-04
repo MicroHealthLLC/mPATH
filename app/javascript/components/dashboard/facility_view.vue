@@ -26,8 +26,7 @@
       </div>
       <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
 
-        <div class="default-background">
-       
+     
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -35,8 +34,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-        <div class="centeredDiv text-center"> <i class="fa fa-building font-lg text-center" style="font-size:1.8rem"></i> <p>Select A Facility To Manage</p></div>
-        </div>
+           <facility-rollup v-else></facility-rollup>     
         </div>
       </div>
       <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
@@ -81,6 +79,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilityShow from './facilities/facility_show'
+  import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
@@ -89,6 +88,7 @@
     name: "FacilityManagerView",
     components: {
       FacilityShow,
+      FacilityRollup,
       TaskForm,
       IssueForm,
       NotesForm
@@ -183,7 +183,7 @@
       cursor: pointer;
     }
     .facility-groups-tab {
-      background: #ededed;     
+      background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow: hidden;
@@ -197,20 +197,15 @@
     .fac-manager-sidebar {
       cursor: pointer;
       font-weight: 400 !important;
-    
-    }
+    } 
 
-  
-
-    .default-background {
-      // padding: 20px;
+    .default-background {   
       background-color: #ededed;     
       height: 100%;       
       position: relative;     
       border-radius: 4px;
       z-index: 1;
     }
-
     .centeredDiv {
     position: absolute;
     border: 1px solid #383838;
@@ -225,29 +220,25 @@
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }
-
-     .fac-manager-sidebar:hover {
+    .fac-manager-sidebar:hover {
       cursor: pointer;
       font-weight: 900 !important;
-      background-color: rgba(91, 192, 222, 0.3); 
+      background-color: rgba(91, 192, 222, 0.3);
     }
-
-      .expandable {     
+    .expandable {
       &.active {
-        h6 {        
-           background-color: rgba(211, 211, 211, 10%);          
+        h6 {
+          background-color: rgba(211, 211, 211, 10%);
         }
-       }
       }
-
-    .expandable {     
+    }
+    .expandable {
       &.active,
       &:hover {
         h5, h6 {
-          font-weight: 900 !important;         
+          font-weight: 900 !important;
         }
       }
-    
     }
   }
 </style>

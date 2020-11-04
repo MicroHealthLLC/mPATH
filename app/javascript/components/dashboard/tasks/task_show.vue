@@ -2,7 +2,7 @@
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
       <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Edit</p>
+        <p class="mr-2 mb-0">Details</p>
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
@@ -43,7 +43,7 @@
         </div>
         <div class="col-md-3">
           <div class="t_actions my-2">
-            <span v-if="_isallowed('write')" class="edit-action" @click.prevent="editTask">
+            <span class="edit-action" @click.prevent="editTask">
               <i class="fas fa-edit"></i>
             </span>
             <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">

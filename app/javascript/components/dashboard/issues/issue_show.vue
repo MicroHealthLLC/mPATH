@@ -2,7 +2,7 @@
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
       <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Edit</p>
+        <p class="mr-2 mb-0">Details</p>
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
@@ -11,7 +11,7 @@
         <div class="row">
           <div class="col-md-9">
             <div>
-              <div class="mb-1 d-flex">
+              <div class="mb-1 d-flex font-sm">
                 <span class="fbody-icon"><i class="fas fa-check"></i></span>
                 {{issue.title}}
                 <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
@@ -52,7 +52,7 @@
           </div>
           <div class="col-md-3">
             <div class="t_actions my-2">
-              <span v-if="_isallowed('write')" class="font-sm edit-action" @click="editIssue">
+              <span class="font-sm edit-action" @click="editIssue">
                 <i class="fas fa-edit"></i>
               </span>
               <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">

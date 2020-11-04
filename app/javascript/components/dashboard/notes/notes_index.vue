@@ -6,7 +6,7 @@
         :facility="DV_facility"
         @close-note-input="newNote=false"
         @note-created="noteCreated"
-      />
+      ></notes-form>
     </div>
     <div v-else>
       <div class="mb-4 d-flex mx-2" :class="{'align-items-center justify-content-between': _isallowed('write')}">
@@ -19,6 +19,14 @@
         <div v-if="_isallowed('write')">
           <button @click.stop="addNewNote" class="btn btn-sm btn-light">Add Note</button>
         </div>
+      </div>
+      <div class="form-check-inline justify-content-end w-100 pr-3 mb-2">
+        <label class="form-check-label">
+          <input type="checkbox" class="form-check-input" v-model="C_myNotes">My Notes
+        </label>
+        <label class="form-check-label ml-2 text-primary">
+          Total: {{filteredNotes.length}}
+        </label>
       </div>
       <div v-if="_isallowed('read')">
         <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
@@ -38,7 +46,7 @@
 </template>
 
 <script>
-  import {mapMutations} from "vuex"
+  import {mapMutations, mapGetters} from "vuex"
   import NotesForm from './notes_form'
   import NotesShow from './notes_show'
 
@@ -56,7 +64,8 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager'
+        'setTaskForManager',
+        'setMyActionsFilter'
       ]),
       addNewNote() {
         if (this.from == "manager_view") {
@@ -78,16 +87,28 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'myActionsFilter'
+      ]),
       filteredNotes() {
-        if (this.notesQuery.trim() !== '') {
-          const resp = new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i')
-          const isMatch = (result) => resp.test(result.body)
-          return _.filter(this.DV_facility.notes, isMatch)
-        }
-        return this.DV_facility.notes;
+        const resp = this.notesQuery.trim() !== '' ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
+        return _.filter(this.DV_facility.notes, n => {
+          let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
+          if (resp) valid = valid && resp.test(n.body)
+          return valid
+        })
       },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
+      },
+      C_myNotes: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('notes')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Notes", value: "notes"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "notes"))
+        }
       }
     },
     watch: {
