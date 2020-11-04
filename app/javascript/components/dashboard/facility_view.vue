@@ -24,9 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
-
-     
+      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">     
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
