@@ -44,6 +44,7 @@ class Issue < ApplicationRecord
       issue_type: self.issue_type.try(:name),
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
+      users: self.users.map(&:full_name),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
       notes: self.notes.as_json(include: {user: {methods: :full_name}}),
       facility_id: self.facility_project.try(:facility_id),
