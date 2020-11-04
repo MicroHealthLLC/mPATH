@@ -25,9 +25,7 @@
         </div>
       </div>
       <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
-
-        <div class="default-background">
-       
+        <div class="default-background">       
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -35,6 +33,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
+          <facility-rollup v-else></facility-rollup>
         <div class="centeredDiv text-center"> <i class="fa fa-building font-lg text-center" style="font-size:1.8rem"></i> <p>Select A Facility To Manage</p></div>
         </div>
         </div>
@@ -81,6 +80,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilityShow from './facilities/facility_show'
+  import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
@@ -89,6 +89,7 @@
     name: "FacilityManagerView",
     components: {
       FacilityShow,
+      FacilityRollup,
       TaskForm,
       IssueForm,
       NotesForm
@@ -196,12 +197,8 @@
     }
     .fac-manager-sidebar {
       cursor: pointer;
-      font-weight: 400 !important;
-    
+      font-weight: 400 !important;    
     }
-
-  
-
     .default-background {
       // padding: 20px;
       background-color: #ededed;     
@@ -210,7 +207,6 @@
       border-radius: 4px;
       z-index: 1;
     }
-
     .centeredDiv {
     position: absolute;
     border: 1px solid #383838;
@@ -231,7 +227,6 @@
       font-weight: 900 !important;
       background-color: rgba(91, 192, 222, 0.3); 
     }
-
       .expandable {     
       &.active {
         h6 {        
@@ -239,7 +234,6 @@
         }
        }
       }
-
     .expandable {     
       &.active,
       &:hover {

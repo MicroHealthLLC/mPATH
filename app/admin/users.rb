@@ -38,6 +38,7 @@ ActiveAdmin.register User do
         :gantt_view,
         :watch_view,
         :documents,
+        :facility_manager_view,
         :members
       ]
     ]
@@ -67,6 +68,7 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, :prompt =>"Please select organization", include_hidden: false
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :facility_manager_view
             p.input :map_view
             p.input :gantt_view
             p.input :watch_view

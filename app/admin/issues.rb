@@ -104,6 +104,7 @@ ActiveAdmin.register Issue do
     f.inputs 'Basic Details' do
       f.input :id, input_html: { value: f.object.id }, as: :hidden
       f.input :title
+      f.input :description
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
             fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
@@ -122,9 +123,8 @@ ActiveAdmin.register Issue do
       f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
-        c.input :user_id, as: :select, label: 'Assigned To', collection: User.where(id: f.object.user_ids).map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
       end
-      f.input :description
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :issue_files
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
@@ -149,6 +149,7 @@ ActiveAdmin.register Issue do
   filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
   controller do

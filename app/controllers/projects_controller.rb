@@ -48,7 +48,7 @@ class ProjectsController < AuthenticatedController
   end
 
   def facility_manager
-    check_permit("overview")
+    check_permit("facility_manager_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}

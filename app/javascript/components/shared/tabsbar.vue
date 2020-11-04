@@ -1,6 +1,6 @@
 <template>
   <div id="tabbar">
-    <router-link v-if="permitted('overview')" :to="facilityManagerView" tag="div">
+    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
       <div class="badge" :class="{'active': isFacilityManagerView}">Facility View</div>
     </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
