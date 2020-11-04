@@ -23,6 +23,7 @@
           class="form-control form-control-sm"
           v-model="DV_issue.title"
           placeholder="Title"
+          :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('title') }"
         />
         <div v-show="errors.has('title')" class="text-danger">
@@ -36,6 +37,7 @@
           placeholder="issue brief description"
           v-model="DV_issue.description"
           rows="4"
+          :readonly="!_isallowed('write')"
         />
       </div>
       <div class="simple-select form-group mx-4">
@@ -50,6 +52,7 @@
           :searchable="false"
           select-label="Select"
           deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
           :class="{'error': errors.has('Issue Type')}"
           >
           <template slot="singleLabel" slot-scope="{option}">
@@ -74,6 +77,7 @@
           :searchable="false"
           select-label="Select"
           deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
           :class="{'error': errors.has('Issue Severity')}"
           >
           <template slot="singleLabel" slot-scope="{option}">
@@ -97,6 +101,7 @@
             placeholder="DD MM YYYY"
             name="Start Date"
             class="w-100 vue2-datepicker"
+            :disabled="!_isallowed('write')"
           />
           <div v-show="errors.has('Start Date')" class="text-danger">
             {{errors.first('Start Date')}}
@@ -112,7 +117,7 @@
             placeholder="DD MM YYYY"
             name="Estimated Completion Date"
             class="w-100 vue2-datepicker"
-            :disabled="DV_issue.startDate === '' || DV_issue.startDate === null"
+            :disabled="!_isallowed('write') || DV_issue.startDate === '' || DV_issue.startDate === null"
             :disabled-date="disabledDueDate"
           />
           <div v-show="errors.has('Estimated Completion Date')" class="text-danger">
@@ -133,6 +138,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :close-on-select="false"
+          :disabled="!_isallowed('write')"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -144,23 +150,23 @@
       <div class="form-group mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_issue.autoCalculate"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_issue.autoCalculate" :disabled="!_isallowed('write')" :readonly="!_isallowed('write')"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
         </span>
         <vue-slide-bar
           v-model="DV_issue.progress"
           :line-height="8"
-          :is-disabled="DV_issue.autoCalculate"
-          :draggable="!DV_issue.autoCalculate"
+          :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
+          :draggable="_isallowed('write') && !DV_issue.autoCalculate"
         ></vue-slide-bar>
       </div>
       <div class="form-group mx-4">
         <label class="font-sm">Checklists:</label>
-        <span class="ml-2 clickable" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
           <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
-              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!check.text.trim()">
-              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text">
+              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
               <div class="simple-select form-group m-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
@@ -170,7 +176,7 @@
                   placeholder="Search and select users"
                   :options="activeProjectUsers"
                   :searchable="true"
-                  :disabled="!check.text"
+                  :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
                   deselect-label="Enter to remove"
                   >
@@ -182,7 +188,7 @@
                 </multiselect>
               </div>
             </div>
-            <span class="del-check clickable" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
+            <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
           </div>
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
@@ -202,7 +208,7 @@
               :value="file.name || file.uri"
             />
             <div
-              :class="{'_disabled': loading}"
+              :class="{'_disabled': loading || !_isallowed('write')}"
               class="del-check clickable"
               @click.prevent="deleteFile(file)"
               >
@@ -211,12 +217,12 @@
           </div>
         </div>
       </div>
-      <div class="form-group mx-4" >
+      <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
         <attachment-input
           @input="addFile"
           :show-label="true"
-        />
+        ></attachment-input>
       </div>
 
       <div class="form-group user-select mx-4">
@@ -232,6 +238,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :close-on-select="false"
+          :disabled="!_isallowed('write')"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -254,6 +261,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :close-on-select="false"
+          :disabled="!_isallowed('write')"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -264,7 +272,7 @@
       </div>
       <div class="form-group mx-4 paginated-updates">
         <label class="font-sm">Updates:</label>
-        <span class="ml-2 clickable" @click.prevent="addNote">
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
         <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
@@ -275,18 +283,18 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here."></textarea>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!_isallowed('write')"></textarea>
           </div>
         </paginate>
       </div>
-      <div class="d-flex form-group mt-4 ml-4">
+      <div v-if="_isallowed('write')" class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
           class="btn btn-success"
           >
           Save
         </button>
-        <button             
+        <button
           class="btn btn-danger ml-3"
           v-if="managerView.task || managerView.issue || managerView.note" @click="cancelIssueSave"
           >
@@ -344,7 +352,7 @@
       this.loading = false
     },
     methods: {
-        ...mapMutations([        
+        ...mapMutations([
         'setTaskForManager'
       ]),
       loadIssue(issue) {
@@ -568,7 +576,7 @@
         return _.map(this.myActionsFilter, 'value').includes('issues')
       },
       title() {
-        return this.DV_issue.id ? 'Edit Issue' : 'Report an Issue'
+        return this._isallowed('write') ? this.DV_issue.id ? 'Edit Issue' : 'Report an Issue' : 'Issue'
       },
       filteredTasks() {
         return this.currentTasks
