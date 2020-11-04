@@ -152,6 +152,7 @@ export default new Vuex.Store({
       state.progressFilter = filters
     },
     setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value,
+    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null},
     setTaskForManager: (state, {key, value}) => {
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
@@ -266,7 +267,7 @@ export default new Vuex.Store({
             case "myActions": {
               var is_valid = false
               for (var act of f[k]) {
-                var userIds = _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
+                let userIds = act == "notes" ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
                 is_valid = is_valid || userIds.includes(Vue.prototype.$currentUser.id)
               }
               valid = valid && is_valid
