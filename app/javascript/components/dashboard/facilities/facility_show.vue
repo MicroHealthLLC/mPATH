@@ -384,10 +384,12 @@
 </script>
 
 <style lang="scss" scoped>
+
   .f-head {
     word-break: break-word;
     text-overflow: ellipsis;
   }
+
   .f-notes {
     border: 1px solid #ccc;
     padding: 5px 10px;

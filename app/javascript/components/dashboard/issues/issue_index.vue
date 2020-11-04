@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4">
+  <div v-if="!loading" class="mt-4 issues-index">
     <div v-if="newIssue && from != 'manager_view'">
       <button
         class="btn btn-sm btn-link float-right"
@@ -105,6 +105,7 @@
           </button>
             <issue-show
               v-for="(issue, i) in filteredIssues"
+              id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
                :load="log(issue)"
@@ -245,7 +246,8 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
-        'myActionsFilter'
+        'myActionsFilter', 
+        'managerView'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -309,8 +311,17 @@
 </script>
 
 <style lang="scss" scoped>
+
+  .issues-index {
+    height: 500px;
+  }
   .new-issue-btn {
     width: 20%;
     height: max-content;
+  }
+   #issueHover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3); 
+    border-left: solid rgb(91, 192, 222);
   }
 </style>

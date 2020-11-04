@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="notes-index">
     <div v-if="_isallowed('write') && newNote" class="mb-3">
       <notes-form
         title="Add Note"
@@ -124,6 +124,10 @@
 </script>
 
 <style lang="scss" scoped>
+
+  #notes-index {
+    height: 500px;
+  }
   .search-tab {
     width: 80%;
   }

@@ -64,7 +64,8 @@
             EXPORT TO EXCEL
           </button>
         <task-show           
-          v-for="(task, i) in filteredTasks"        
+          v-for="(task, i) in filteredTasks"
+          id="taskHover"        
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :load="log(task)"
@@ -215,8 +216,20 @@
 </script>
 
 <style lang="scss" scoped>
+
+  #tasks-index {
+    height: 500px;
+    background-color: #ffffff;
+    z-index: 100;   
+  }
   .new-tasks-btn {
     height: max-content;
     width: 20%;
+  }
+
+  #taskHover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3); 
+    border-left: solid rgb(91, 192, 222);
   }
 </style>

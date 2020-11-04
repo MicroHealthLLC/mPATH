@@ -659,6 +659,13 @@
 </script>
 
 <style lang="scss" scoped>
+
+ #issues-form {
+  z-index: 10;
+  width: 100%;
+  position: absolute;
+  background-color: #fff; 
+}
   .form-control.error {
     border-color: #E84444;
   }
