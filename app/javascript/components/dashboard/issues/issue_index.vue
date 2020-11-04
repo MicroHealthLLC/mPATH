@@ -108,7 +108,7 @@
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
-               :load="log(issue)"
+              :load="log(issue)"
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
@@ -132,8 +132,9 @@
               <th>Issue Severity</th>
               <th>Start Date</th>
               <th>Due Date</th>
-              <!-- <th>Assigned Users</th>  -->
-              <th>Completion Progress</th>
+              <th>Assigned Users</th> 
+              <th>Progress</th>
+              <th>Last Update</th>
             </tr>
           </thead>
           <tbody>
@@ -144,8 +145,10 @@
                 <td>{{issue.issueSeverity}}
                 <td>{{issue.startDate}}</td>
                 <td>{{issue.dueDate}}</td>
-                <!-- <td>{{issue.users.join(', ')}}</td>    -->
+                <td>{{issue.users.join(', ')}}</td>   
                 <td>{{issue.progress + "%"}}</td>
+                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+                <td v-else>No Updates</td>
             </tr>
           </tbody>
         </table>

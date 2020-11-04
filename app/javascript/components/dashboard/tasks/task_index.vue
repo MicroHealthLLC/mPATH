@@ -86,12 +86,13 @@
             <tr>  
               <!-- <th>Facility: {{task.facilityName}}  </th>           -->
               <th></th>  
-               <th>Task</th>    
+              <th>Task</th>    
               <th>Milestone</th>  
               <th>Start Date</th>  
               <th>Due Date</th>  
               <th>Assigned Users</th> 
-              <th>Completion Progress</th>                         
+              <th>Progress</th>   
+              <th>Last Update</th>                      
             </tr>
           </thead>
           <tbody>          
@@ -102,7 +103,9 @@
               <td>{{task.startDate}}</td>   
               <td>{{task.dueDate}}</td>   
               <td>{{task.users.join(', ')}}</td>   
-              <td>{{task.progress + "%"}}</td>               
+              <td>{{task.progress + "%"}}</td>   
+              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+              <td v-else>No Updates</td>
             </tr>                 
           </tbody>
         </table>
