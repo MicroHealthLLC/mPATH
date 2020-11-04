@@ -174,7 +174,7 @@
   #facility_view {
     padding: 0 10px;
     .facility-groups-tab {
-      background: #ededed;     
+      background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow: hidden;
@@ -188,35 +188,30 @@
     .fac-manager-sidebar {
       cursor: pointer;
       font-weight: 400 !important;
-    
-    }
 
+    }
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }
-
-     .fac-manager-sidebar:hover {
+    .fac-manager-sidebar:hover {
       cursor: pointer;
       font-weight: 900 !important;
-      background-color: rgba(91, 192, 222, 0.3); 
+      background-color: rgba(91, 192, 222, 0.3);
     }
-
-      .expandable {     
+    .expandable {
       &.active {
-        h6 {        
-           background-color: rgba(211, 211, 211, 10%);          
+        h6 {
+          background-color: rgba(211, 211, 211, 10%);
         }
-       }
       }
-
-    .expandable {     
+    }
+    .expandable {
       &.active,
       &:hover {
         h5, h6 {
-          font-weight: 900 !important;         
+          font-weight: 900 !important;
         }
       }
-    
     }
   }
 </style>
