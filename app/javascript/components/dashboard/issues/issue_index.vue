@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4">
+  <div v-if="!loading" class="mt-4 issues-index">
     <div v-if="newIssue && from != 'manager_view'">
       <button
         class="btn btn-sm btn-link float-right"
@@ -245,7 +245,8 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
-        'myActionsFilter'
+        'myActionsFilter', 
+        'managerView'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -309,6 +310,10 @@
 </script>
 
 <style lang="scss" scoped>
+
+  .issues-index {
+    height: 500px;
+  }
   .new-issue-btn {
     width: 20%;
     height: max-content;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="notes-form">
     <div class="notes_input mt-2" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
       <span v-if="from !== 'manager_view'" class="close-icon" @click.stop="$emit('close-note-input')" :class="{'_disabled': loading}">
         <i class="fas fa-times"></i>
@@ -45,6 +45,13 @@
           >
           Save
         </button>
+
+         <button             
+          class="btn btn-danger ml-3"
+          v-if="managerView.task || managerView.issue || managerView.note" @click="cancelNoteSave"
+          >
+          Cancel
+        </button>
       </div>
     </div>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -55,7 +62,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     props: ['facility', 'note', 'title', 'from'],
@@ -77,6 +84,9 @@
       this.loading = false
     },
     methods: {
+       ...mapMutations([        
+        'setTaskForManager'
+      ]),
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}
         this.addFile(note.attachFiles)
@@ -92,7 +102,7 @@
       deleteFile(file) {
         if (!file) return;
 
-        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
@@ -151,6 +161,11 @@
           })
         })
       },
+      cancelNoteSave() {
+        this.setTaskForManager({key: 'task', value: null})
+        this.setTaskForManager({key: 'issue', value: null})
+        this.setTaskForManager({key: 'note', value: null})
+      },
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
@@ -158,7 +173,8 @@
     },
     computed: {
       ...mapGetters([
-        'currentProject'
+        'currentProject',
+         'managerView'
       ]),
       readyToSave() {
         return (
@@ -186,6 +202,14 @@
 </script>
 
 <style scoped lang="scss">
+
+  .notes-form {
+  z-index: 10;
+  width: 100%;
+  height: 600px;
+  position: absolute;
+  background-color: #fff; 
+  }
   .notes_input {
     border: 1px solid #ccc;
     border-radius: 5px;

@@ -2,17 +2,17 @@
   <div id="facility_view">
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
-        <h4 class="mt-4 text-center text-info">Facility Manager</h4>
+        <h4 class="mt-4 ml-4 text-info">Facility Manager</h4>
         <div class="my-4 ml-2">
           <div v-for="group in filteredFacilityGroups" class="my-3">
             <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
-                <i class="fa fa-angle-right font-sm mr-2"></i>
+                <i class="fa fa-angle-right font-sm mr-2 cursor"></i>
               </span>
               <span v-show="expanded.id == group.id">
-               <i class="fa fa-angle-down font-md mr-2"></i>
+               <i class="fa fa-angle-down font-md mr-2 cursor"></i>
               </span>
-              <h5>{{group.name}}</h5>
+              <h5 class="cursor">{{group.name}}</h5>
             </div>
             <div v-show="expanded.id == group.id" class="ml-2">
               <div v-for="item in facilityGroupFacilities(group)">
@@ -25,6 +25,9 @@
         </div>
       </div>
       <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
+
+        <div class="default-background">
+       
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -32,10 +35,14 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
+        <div class="centeredDiv text-center"> <i class="fa fa-building font-lg text-center" style="font-size:1.8rem"></i> <p>Select A Facility To Manage</p></div>
+        </div>
         </div>
       </div>
       <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
-        <div class="mt-4">
+      
+        <div class="default-background">
+        <div class="mt-4" style="background-color:white">
           <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
           <task-form
             v-if="managerView.task"
@@ -63,6 +70,8 @@
             @note-created="createdFacilityNote"
             @note-updated="updatedFacilityNote"
           ></notes-form>
+           <div class="centeredDiv text-center"> <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i> <p>Add or Edit Tasks, Issues, and Notes here.</p></div>
+            </div>
         </div>
       </div>
     </div>
@@ -170,6 +179,9 @@
 <style lang="scss">
   #facility_view {
     padding: 0 10px;
+     .cursor {
+      cursor: pointer;
+    }
     .facility-groups-tab {
       background: #ededed;     
       max-height: calc(100vh - 94px);
@@ -186,6 +198,28 @@
       cursor: pointer;
       font-weight: 400 !important;
     
+    }
+
+  
+
+    .default-background {
+      // padding: 20px;
+      background-color: #ededed;     
+      height: 100%;       
+      position: relative;     
+      border-radius: 4px;
+      z-index: 1;
+    }
+
+    .centeredDiv {
+    position: absolute;
+    border: 1px solid #383838;
+    border-radius: 4px;
+    padding: 10px;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
     }
 
     h6.fac-manager-sidebar {

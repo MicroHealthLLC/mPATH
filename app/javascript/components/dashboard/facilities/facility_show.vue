@@ -381,10 +381,18 @@
 </script>
 
 <style lang="scss" scoped>
+
+#facility-show {
+  z-index: 10;
+  width: 100%;
+  position: absolute;
+  background-color: #fff; 
+}
   .f-head {
     word-break: break-word;
     text-overflow: ellipsis;
   }
+
   .f-notes {
     border: 1px solid #ccc;
     padding: 5px 10px;
