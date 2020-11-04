@@ -2,7 +2,7 @@
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
       <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Edit</p>
+        <p class="mr-2 mb-0">Details</p>
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
