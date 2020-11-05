@@ -296,7 +296,7 @@
         </button>
         <button
           class="btn btn-danger ml-3"
-          v-if="managerView.task || managerView.issue || managerView.note" @click="cancelIssueSave"
+          v-if="managerView.issue" @click.prevent="cancelIssueSave"
           >
           Cancel
         </button>
@@ -318,22 +318,7 @@
     components: {AttachmentInput},
     data() {
       return {
-        DV_issue: {
-          title: '',
-          startDate: '',
-          dueDate: '',
-          issueTypeId: '',
-          progress: 0,
-          issueSeverityId: '',
-          description: '',
-          autoCalculate: true,
-          userIds: [],
-          subTaskIds: [],
-          subIssueIds: [],
-          issueFiles: [],
-          checklists: [],
-          notes: []
-        },
+        DV_issue: this.INITIAL_ISSUE_STATE(),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedIssueType: null,
@@ -352,9 +337,27 @@
       this.loading = false
     },
     methods: {
-        ...mapMutations([
+      ...mapMutations([
         'setTaskForManager'
       ]),
+      INITIAL_ISSUE_STATE() {
+        return {
+          title: '',
+          startDate: '',
+          dueDate: '',
+          issueTypeId: '',
+          progress: 0,
+          issueSeverityId: '',
+          description: '',
+          autoCalculate: true,
+          userIds: [],
+          subTaskIds: [],
+          subIssueIds: [],
+          issueFiles: [],
+          checklists: [],
+          notes: []
+        }
+      },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
         this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
@@ -362,7 +365,11 @@
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
-        this.addFile(issue.attachFiles)
+        if (issue.attachFiles) this.addFile(issue.attachFiles)
+        this.$nextTick(() => {
+          this.errors.clear()
+          this.$validator.reset()
+        })
       },
       addFile(files=[]) {
         let _files = [...this.DV_issue.issueFiles]
@@ -594,6 +601,7 @@
     watch: {
       issue: {
         handler: function(value) {
+          if (!('id' in value)) this.DV_issue = this.INITIAL_ISSUE_STATE()
           this.DV_issue.issueFiles = []
           this.destroyedFiles = []
           this.loadIssue(value)
@@ -659,13 +667,12 @@
 </script>
 
 <style lang="scss" scoped>
-
- #issues-form {
-  z-index: 10;
-  width: 100%;
-  position: absolute;
-  background-color: #fff; 
-}
+  #issues-form {
+    z-index: 10;
+    width: 100%;
+    position: absolute;
+    background-color: #fff;
+  }
   .form-control.error {
     border-color: #E84444;
   }

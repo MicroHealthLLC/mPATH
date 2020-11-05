@@ -5,8 +5,11 @@
         <span class="fbody-icon"><i class="fas fa-check"></i></span>
         <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
       </div>
-      <tabs>
-        <tab :onSelect="onSelectTab" title="Overview" key="overview">
+      <div class="facility-tab mb-4">
+        <vue-tabs-chrome theme="custom" ref="tab" :gap="2" v-model="currentTab" :tabs="tabs" />
+      </div>
+      <div>
+        <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div class="f-body mt-3 p-2">
@@ -171,8 +174,8 @@
             </div>
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
-        </tab>
-        <tab :onSelect="onSelectTab" title="Notes" key="notes">
+        </div>
+        <div v-if="currentTab == 'notes'">
           <div>
             <notes-index
               :facility="DV_facility"
@@ -180,8 +183,8 @@
               @refresh-facility="refreshFacility"
             ></notes-index>
           </div>
-        </tab>
-        <tab :onSelect="onSelectTab" title="Tasks" key="tasks">
+        </div>
+        <div v-if="currentTab == 'tasks'">
           <div>
             <detail-show
               :facility="DV_facility"
@@ -189,15 +192,15 @@
               @refresh-facility="refreshFacility"
             ></detail-show>
           </div>
-        </tab>
-        <tab :onSelect="onSelectTab" title="Issues" key="issues">
+        </div>
+        <div v-if="currentTab == 'issues'">
           <issue-index
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
           ></issue-index>
-        </tab>
-      </tabs>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -208,6 +211,9 @@
   import IssueIndex from './../issues/issue_index'
   import DetailShow from './detail_show'
   import {mapGetters, mapMutations} from 'vuex'
+  import VueTabsChrome from 'vue-tabs-chrome'
+
+  Vue.use(VueTabsChrome)
 
   export default {
     name: 'FacilitiesShow',
@@ -236,7 +242,30 @@
         DV_updated: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
-        selectedStatus: null
+        selectedStatus: null,
+        currentTab: 'overview',
+        tabs: [
+          {
+            label: 'Overview',
+            key: 'overview',
+            closable: false
+          },
+          {
+            label: 'Notes',
+            key: 'notes',
+            closable: false
+          },
+          {
+            label: 'Tasks',
+            key: 'tasks',
+            closable: false
+          },
+          {
+            label: 'Issues',
+            key: 'issues',
+            closable: false
+          }
+        ]
       }
     },
     mounted() {
@@ -250,7 +279,8 @@
     },
     methods: {
       ...mapMutations([
-        'updateFacilityHash'
+        'updateFacilityHash',
+        'nullifyTasksForManager'
       ]),
       fetchFacility(opt={}) {
         http
@@ -293,9 +323,6 @@
         this.$nextTick(() => {
           this.DV_updated = true
         })
-      },
-      onSelectTab() {
-        debugger
       }
     },
     computed: {
@@ -381,6 +408,9 @@
         handler(value) {
           this.DV_facility.statusId = value ? value.id : null
         }, deep: true
+      },
+      currentTab(value) {
+        this.nullifyTasksForManager()
       }
     }
   }
@@ -440,6 +470,59 @@
     .multiselect__placeholder {
       color: #dc3545;
       text-overflow: ellipsis;
+    }
+  }
+
+  .facility-tab /deep/ .vue-tabs-chrome.theme-custom {
+    padding-top: 0;
+    background-color: transparent;
+    overflow: hidden;
+    .tabs-footer,
+    .tabs-divider,
+    .tabs-background-before,
+    .tabs-background-after {
+      display: none;
+    }
+    .tabs-item {
+      cursor: pointer;
+    }
+    .tabs-content {
+      overflow: unset;
+      border-bottom: 1px solid #e4e7ed;
+    }
+    .tabs-background {
+      padding: 0;
+    }
+    .tabs-background-content {
+      border-top: 1px solid #e4e7ed;
+      border-left: 1px solid #e4e7ed;
+      border-right: 1px solid #e4e7ed;
+      border-radius: 0;
+      background-color: #fff;
+    }
+    .tabs-content {
+      height: 40px;
+    }
+    .active {
+      color: #409eff;
+      .tabs-background {
+        &::before,
+        &::after {
+          top: 100%;
+          left: 0;
+          content: '';
+          width: 100%;
+          height: 1px;
+          background-color: #fff;
+          z-index: 1;
+          position: absolute;
+        }
+        &::before {
+          top: 0;
+          height: 2px;
+          background-color: #409eff;
+        }
+      }
     }
   }
 </style>
