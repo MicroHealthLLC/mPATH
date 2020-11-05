@@ -295,10 +295,17 @@
           Save
         </button>
         <button
-          class="btn btn-danger ml-3"
+          class="btn btn-warning ml-3"
           v-if="managerView.issue" @click.prevent="cancelIssueSave"
           >
           Cancel
+        </button>
+          <button
+          v-if="_isallowed('delete')" 
+          @click.stop="deleteIssue"
+          class="btn btn-danger ml-auto mr-3"        
+          >
+         Delete
         </button>
       </div>
     </form>
@@ -310,7 +317,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     name: 'IssueForm',
@@ -339,6 +346,10 @@
     methods: {
       ...mapMutations([
         'setTaskForManager'
+      ]),
+       ...mapActions([
+        'issueDeleted',
+        'taskUpdated'
       ]),
       INITIAL_ISSUE_STATE() {
         return {
@@ -379,9 +390,14 @@
         }
         this.DV_issue.issueFiles = _files
       },
+       deleteIssue() {
+        var confirm = window.confirm(`Are you sure you want to delete this issue?`)
+        if (!confirm) {return}
+        this.issueDeleted(this.DV_issue)
+      },
       deleteFile(file) {
         if (!file) return;
-        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
