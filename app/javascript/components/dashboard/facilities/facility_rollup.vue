@@ -54,18 +54,7 @@
               <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
             </span>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Incomplete</span>
-            <span class="badge badge-secondary badge-pill">{{taskVariation.incompleted.count}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.incompleted.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${taskVariation.incompleted.percentage}%`">{{taskVariation.incompleted.percentage}} %</div>
-            </span>
-          </div>
-        </div>
+        </div>      
         <div class="row">
           <div class="col-md-9">
             <span>Overdue</span>
@@ -108,18 +97,7 @@
               <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
             </span>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Incomplete</span>
-            <span class="badge badge-secondary badge-pill">{{issueVariation.incompleted.count}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.incompleted.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${issueVariation.incompleted.percentage}%`">{{issueVariation.incompleted.percentage}} %</div>
-            </span>
-          </div>
-        </div>
+        </div>       
         <div class="row">
           <div class="col-md-9">
             <span>Overdue</span>
@@ -248,12 +226,9 @@ export default {
       var completed_percent = this.getAverage(completed.length, this.filteredAllTasks.length)
       var overdue = _.filter(this.filteredAllTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       var overdue_percent = this.getAverage(overdue.length, this.filteredAllTasks.length)
-      var incompleted = this.filteredAllTasks.length - (completed.length + overdue.length)
-      var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
-
+    
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
+        completed: {count: completed.length, percentage: completed_percent},     
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     },
@@ -261,13 +236,10 @@ export default {
       var completed = _.filter(this.filteredAllIssues, (t) => t && t.progress && t.progress == 100)
       var completed_percent = this.getAverage(completed.length, this.filteredAllIssues.length)
       var overdue = _.filter(this.filteredAllIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      var overdue_percent = this.getAverage(overdue.length, this.filteredAllIssues.length)
-      var incompleted = this.filteredAllIssues.length - (completed.length + overdue.length)
-      var incompleted_percent = incompleted > 0 ? 100 - (completed_percent + overdue_percent) : 0
+      var overdue_percent = this.getAverage(overdue.length, this.filteredAllIssues.length)    
 
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        incompleted: {count: incompleted, percentage: Number(incompleted_percent.toFixed(2))},
+        completed: {count: completed.length, percentage: completed_percent},     
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     }

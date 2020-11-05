@@ -2,11 +2,11 @@
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
       <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Details</p>
+        <p class="mr-2 mb-0">Editing</p>
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="m-3 pb-2" :class="{'hide-to-edit': C_editForManager}">
+    <div v-if="!loading" class="mx-3 mb-3 mt-0 py-4 edit-action" :class="{'hide-to-edit': C_editForManager}" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
@@ -42,12 +42,9 @@
           </div>
         </div>
         <div class="col-md-3">
-          <div class="t_actions my-2">
-            <span class="edit-action" @click.prevent="editTask">
-              <i class="fas fa-edit"></i>
-            </span>
+          <div class="t_actions my-2">         
             <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-trash-alt" style="float:right"></i>
             </span>
             <span v-if="_isallowed('write')" class="watch_action" @click.prevent="toggleWatched">
               <span v-show="DV_task.watched" class="check_box"><i class="far fa-check-square"></i></span>
@@ -277,6 +274,13 @@
       font-size: 20px;
       cursor: pointer;
     }
+
+    
+  .onHover:hover {
+    cursor: pointer !important;
+    background-color: rgba(91, 192, 222, 0.3) !important; 
+    border-left: solid rgb(91, 192, 222) !important;
+  }
   }
 </style>
 

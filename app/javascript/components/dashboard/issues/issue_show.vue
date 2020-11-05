@@ -6,7 +6,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 py-2" :class="{'hide-to-edit': C_editForManager}">
+    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" :class="{'hide-to-edit': C_editForManager}" @click="editIssue">
       <div v-if="show">
         <div class="row">
           <div class="col-md-9">
@@ -51,10 +51,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="t_actions my-2">
-              <span class="font-sm edit-action" @click="editIssue">
-                <i class="fas fa-edit"></i>
-              </span>
+            <div class="t_actions my-2">            
               <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
                 <i class="fas fa-trash-alt"></i>
               </span>
