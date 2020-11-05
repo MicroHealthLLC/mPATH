@@ -265,16 +265,25 @@
       <div v-if="_isallowed('write')" class="d-flex form-group mt-4 ml-4">
         <button
           :disabled="!readyToSave"
-          class="btn btn-success"
+          class="btn btn-success"        
           >
           Save
         </button>
          <button
-          class="btn btn-danger ml-3"
+          class="btn btn-warning ml-3"
+          style="float:left"
           v-if="managerView.task" @click.prevent="cancelSave"
           >
           Cancel
+        </button>     
+         <button
+          v-if="_isallowed('delete')" 
+          @click="deleteTask"
+          class="btn btn-danger ml-auto mr-3"        
+          >
+         Delete
         </button>
+
       </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -285,7 +294,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     name: 'TaskForm',
@@ -316,6 +325,10 @@
        ...mapMutations([
         'setTaskForManager'
       ]),
+      ...mapActions([
+        'taskDeleted',
+        'taskUpdated'
+      ]),
       INITIAL_TASK_STATE() {
         return {
           text: '',
@@ -332,6 +345,11 @@
           checklists: [],
           notes: []
         }
+      },
+       deleteTask() {
+        var confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
+        if (!confirm) {return}
+        this.taskDeleted(this.DV_task)
       },
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
@@ -355,7 +373,7 @@
       },
       deleteFile(file) {
         if (!file) return;
-        var confirm = window.confirm(`Are you sure, you want to delete attachment?`)
+        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
@@ -478,7 +496,7 @@
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
       destroyNote(note) {
-        var confirm = window.confirm(`Are you sure, you want to delete this update note?`)
+        var confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
         var i = note.id ? this.DV_task.notes.findIndex(n => n.id === note.id) : this.DV_task.notes.findIndex(n => n.guid === note.guid)
         Vue.set(this.DV_task.notes, i, {...note, _destroy: true})
@@ -491,7 +509,7 @@
         window.open(url, '_blank');
       },
       destroyCheck(check, index) {
-        var confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
+        var confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
         if (!confirm) return;
 
         var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
