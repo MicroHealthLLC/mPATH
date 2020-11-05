@@ -60,18 +60,18 @@
         </div>
         <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-light" @click.prevent="reportNew">Add Issue</button>
       </div>
-      <div class="m-3 d-flex">
-        <div class="form-check-inline">
+      <div class="m-1 d-flex">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
           </label>
         </div>
-        <div class="form-check-inline">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
           </label>
         </div>
-        <div class="form-check-inline">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
@@ -79,6 +79,9 @@
         <div class="form-check-inline ml-auto mr-0">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
+          </label>
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
           </label>
           <label class="form-check-label ml-2 text-primary">
             Total: {{filteredIssues.length}}
@@ -89,7 +92,7 @@
         <hr>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
-             <button
+            <button
             @click="download"
             id="printBtn"
             class="btn btn-sm btn-outline-dark m-2"
@@ -132,7 +135,7 @@
               <th>Issue Severity</th>
               <th>Start Date</th>
               <th>Due Date</th>
-              <th>Assigned Users</th> 
+              <th>Assigned Users</th>
               <th>Progress</th>
               <th>Last Update</th>
             </tr>
@@ -145,7 +148,7 @@
                 <td>{{issue.issueSeverity}}
                 <td>{{issue.startDate}}</td>
                 <td>{{issue.dueDate}}</td>
-                <td>{{issue.users.join(', ')}}</td>   
+                <td>{{issue.users.join(', ')}}</td>
                 <td>{{issue.progress + "%"}}</td>
                 <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
                 <td v-else>No Updates</td>
@@ -180,12 +183,13 @@
       this.loading = false
     },
     methods: {
-       ...mapMutations([
+      ...mapMutations([
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
         'updateFacilityHash',
-        'setTaskForManager'
+        'setTaskForManager',
+        'setOnWatchFilter'
       ]),
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
@@ -249,8 +253,10 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
-        'myActionsFilter', 
-        'managerView'
+        'myActionsFilter',
+        'managerView',
+        'onWatchFilter',
+        'viewPermit'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -263,6 +269,9 @@
           if (this.C_myIssues) {
             var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             valid  = valid && userIds.includes(this.$currentUser.id)
+          }
+          if (this.C_onWatchIssues) {
+            valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
@@ -308,6 +317,15 @@
           if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Issues", value: "issues"}])
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
         }
+      },
+      C_onWatchIssues: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('issues')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Issues", value: "issues"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
+        }
       }
     }
   }
@@ -324,7 +342,7 @@
   }
    #issueHover:hover {
     cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3); 
+    background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
 </style>

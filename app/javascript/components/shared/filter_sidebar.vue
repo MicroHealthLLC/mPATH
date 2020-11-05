@@ -249,6 +249,27 @@
             </template>
           </multiselect>
         </div>
+
+        <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select my-3 mx-1">
+          <multiselect
+            v-model="C_onWatchFilter"
+            track-by="name"
+            label="name"
+            placeholder="On-Watch Filter"
+            :options="onWatch"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
       </div>
     </div>
     <div class="knocker" @click="showFilters=!showFilters">
@@ -273,6 +294,10 @@
           {name: 'My Tasks', value: 'tasks'},
           {name: 'My Issues', value: 'issues'},
           {name: 'My Notes', value: 'notes'}
+        ],
+        onWatch: [
+          {name: 'On Watch Tasks', value: 'tasks'},
+          {name: 'On Watch Issues', value: 'issues'}
         ]
       }
     },
@@ -300,9 +325,11 @@
         'filterFacilitiesWithActiveFacilityGroups',
         'ganttData',
         'myActionsFilter',
+        'onWatchFilter',
         'taskUserFilter',
         'issueUserFilter',
-        'progressFilter'
+        'progressFilter',
+        'viewPermit'
       ]),
       enableExport() {
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
@@ -393,6 +420,15 @@
           this.setMyActionsFilter(value)
         }
       },
+      C_onWatchFilter: {
+        get() {
+          return this.onWatchFilter
+        },
+        set(value) {
+          value = value ? value : []
+          this.setOnWatchFilter(value)
+        }
+      },
       C_facilityProgress: {
         get() {
           return this.progressFilter.facility
@@ -435,6 +471,7 @@
         'setIssueProgressFilter',
         'setTaskProgressFilter',
         'setMyActionsFilter',
+        'setOnWatchFilter',
         'setMapFilters',
         'setTaskUserFilter',
         'setIssueUserFilter',
@@ -469,6 +506,7 @@
         this.setIssueProgressFilter(null)
         this.setTaskProgressFilter(null)
         this.setMyActionsFilter([])
+        this.setOnWatchFilter([])
         this.setMapFilters([])
         this.clearProgressFilters()
       },
@@ -603,6 +641,9 @@
       },
       myActionsFilter(value) {
         this.updateMapFilters({key: 'myActions', filter: value, _k: 'value'})
+      },
+      onWatchFilter(value) {
+        this.updateMapFilters({key: 'onWatch', filter: value, _k: 'value'})
       },
       "progressFilter.facility": {
         handler(value) {

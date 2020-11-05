@@ -46,7 +46,7 @@
             <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
               <i class="fas fa-trash-alt" style="float:right"></i>
             </span>
-            <span v-if="_isallowed('write')" class="watch_action" @click.prevent="toggleWatched">
+            <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent="toggleWatched">
               <span v-show="DV_task.watched" class="check_box"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box"><i class="far fa-square"></i></span>
               <span class="text-danger"><i class="fa fa-exclamation"></i></span>
@@ -208,7 +208,8 @@
         'facilityGroups',
         'managerView',
         'currentTasks',
-        'currentIssues'
+        'currentIssues',
+        'viewPermit'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]

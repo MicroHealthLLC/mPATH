@@ -6,7 +6,7 @@
         <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
       </div>
       <tabs>
-        <tab title="Overview" key="overview" active>
+        <tab :onSelect="onSelectTab" title="Overview" key="overview">
           <div v-if="_isallowed('read')">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div class="f-body mt-3 p-2">
@@ -171,8 +171,17 @@
             </div>
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
-        </tab>       
-        <tab title="Tasks" key="tasks">
+        </tab>
+        <tab :onSelect="onSelectTab" title="Notes" key="notes">
+          <div>
+            <notes-index
+              :facility="DV_facility"
+              :from="from"
+              @refresh-facility="refreshFacility"
+            ></notes-index>
+          </div>
+        </tab>
+        <tab :onSelect="onSelectTab" title="Tasks" key="tasks">
           <div>
             <detail-show
               :facility="DV_facility"
@@ -181,21 +190,12 @@
             ></detail-show>
           </div>
         </tab>
-        <tab title="Issues" key="issues">
+        <tab :onSelect="onSelectTab" title="Issues" key="issues">
           <issue-index
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
           ></issue-index>
-        </tab>
-         <tab title="Notes" key="notes">
-          <div>
-            <notes-index
-              :facility="DV_facility"
-              :from="from"
-              @refresh-facility="refreshFacility"
-            ></notes-index>
-          </div>
         </tab>
       </tabs>
     </div>
@@ -293,6 +293,9 @@
         this.$nextTick(() => {
           this.DV_updated = true
         })
+      },
+      onSelectTab() {
+        debugger
       }
     },
     computed: {
