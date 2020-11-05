@@ -175,15 +175,17 @@
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </div>
-        <div v-if="currentTab == 'notes'">
+     
+         
+        <div v-if="currentTab == 'notes'">       
           <div>
             <notes-index
               :facility="DV_facility"
               :from="from"
               @refresh-facility="refreshFacility"
             ></notes-index>
-          </div>
-        </div>
+          </div>      
+        </div>            
         <div v-if="currentTab == 'tasks'">
           <div>
             <detail-show
@@ -249,12 +251,7 @@
             label: 'Overview',
             key: 'overview',
             closable: false
-          },
-          {
-            label: 'Notes',
-            key: 'notes',
-            closable: false
-          },
+          },         
           {
             label: 'Tasks',
             key: 'tasks',
@@ -264,7 +261,12 @@
             label: 'Issues',
             key: 'issues',
             closable: false
-          }
+          },
+           {
+            label: 'Notes',
+            key: 'notes',
+            closable: false
+          },
         ]
       }
     },
@@ -451,6 +453,9 @@
   }
   .search-tab {
     width: 80%;
+  }
+  .displayNone {
+    display: none !important;
   }
   .close-sidebar-btn {
     z-index: 800;

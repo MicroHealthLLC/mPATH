@@ -66,7 +66,7 @@
             @note-created="createdFacilityNote"
             @note-updated="updatedFacilityNote"
           ></notes-form>
-           <div class="centeredDiv text-center"> <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i> <p>Add or Edit Tasks, Issues, and Notes here.</p></div>
+           <div class="centeredDiv text-center"> <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i> <p>View, Add or Edit Tasks, Issues, and Notes here.</p></div>
             </div>
         </div>
       </div>
@@ -206,6 +206,7 @@
     }
     .centeredDiv {
     position: absolute;
+    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
     border: 1px solid #383838;
     border-radius: 4px;
     padding: 10px;
