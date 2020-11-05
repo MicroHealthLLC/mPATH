@@ -15,7 +15,7 @@
             <tr>
               <th></th>
               <th>Name</th>
-              <th>Job Title</th>
+              <th>Position</th>
               <th>Organization</th>
               <th>Email</th>
               <th>Phone</th>             

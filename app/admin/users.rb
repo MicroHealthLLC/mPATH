@@ -50,7 +50,7 @@ ActiveAdmin.register User do
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
-          f.input :title, label: "Job Title"
+          f.input :title, label: "Position"
           f.input :first_name
           f.input :last_name
           f.input :email, input_html: {disabled: user.id?, :'data-id' => user.id, autocomplete: :off}
@@ -98,7 +98,7 @@ ActiveAdmin.register User do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
-    column :title
+    column "Position", :title
     column :first_name
     column :last_name
     column :email
@@ -194,7 +194,8 @@ ActiveAdmin.register User do
 
   filter :email
   filter :projects, as: :select, collection: -> {Project.active}
-  filter :title
+  filter :title, label: "Position"
+  filter :organization
   filter :first_name
   filter :last_name
   filter :phone_number
