@@ -64,11 +64,11 @@
             EXPORT TO EXCEL
           </button>
         <task-show           
-          v-for="(task, i) in filteredTasks"
-          id="taskHover"        
+          v-for="(task, i) in filteredTasks"         
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :load="log(task)"
+           id="taskHover"
           :task="task"          
           :from-view="from"
           @edit-task="editTask"
@@ -229,7 +229,6 @@
     height: max-content;
     width: 20%;
   }
-
   #taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3); 
