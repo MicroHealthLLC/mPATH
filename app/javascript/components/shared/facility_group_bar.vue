@@ -1,6 +1,5 @@
 <template>
-  <div class="d-flex">
-    <div v-if="!facilityGroupBar" class="map-icon-btn mr-2" @click="facilityGroupBar= true"><i class="fas fa-info"></i></div>
+  <div class="d-flex">   
     <transition name="slide-fade">
       <div v-if="facilityGroupBar" id="facility_group-bar">
         <div class="r-header px-3">
@@ -90,17 +89,6 @@
         width: 15vw;
       }
     }
-  }
-  .map-icon-btn {
-    width: 26px;
-    height: 26px;
-    background: white;
-    text-align: center;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
-    border-radius: 2px;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 2px;
   }
   .region-minus-btn {
     cursor: pointer;
