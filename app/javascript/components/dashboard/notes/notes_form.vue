@@ -46,7 +46,7 @@
           Save
         </button>
 
-         <button             
+         <button
           class="btn btn-danger ml-3"
           v-if="managerView.task || managerView.issue || managerView.note" @click="cancelNoteSave"
           >
@@ -69,10 +69,7 @@
     components: {AttachmentInput},
     data() {
       return {
-        DV_note: {
-          body: '',
-          noteFiles: []
-        },
+        DV_note: this.INITIAL_NOTE_STATE(),
         loading: true,
         destroyedFiles: []
       }
@@ -84,12 +81,22 @@
       this.loading = false
     },
     methods: {
-       ...mapMutations([        
+       ...mapMutations([
         'setTaskForManager'
       ]),
+      INITIAL_NOTE_STATE() {
+        return {
+          body: '',
+          noteFiles: []
+        }
+      },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}
-        this.addFile(note.attachFiles)
+        if (note.attachFiles) this.addFile(note.attachFiles)
+        this.$nextTick(() => {
+          this.errors.clear()
+          this.$validator.reset()
+        })
       },
       addFile(files) {
         let _files = [...this.DV_note.noteFiles]
@@ -192,6 +199,7 @@
     watch: {
       note: {
         handler: function(value) {
+          if (!('id' in value)) this.DV_note = this.INITIAL_NOTE_STATE()
           this.DV_note.noteFiles = []
           this.destroyedFiles = []
           this.loadNote(value)
@@ -208,7 +216,7 @@
   width: 100%;
   height: 600px;
   position: absolute;
-  background-color: #fff; 
+  background-color: #fff;
   }
   .notes_input {
     border: 1px solid #ccc;

@@ -271,7 +271,7 @@
         </button>
          <button
           class="btn btn-danger ml-3"
-          v-if="managerView.task" @click="cancelSave"
+          v-if="managerView.task" @click.prevent="cancelSave"
           >
           Cancel
         </button>
@@ -293,21 +293,7 @@
     components: {AttachmentInput},
     data() {
       return {
-        DV_task: {
-          text: '',
-          startDate: '',
-          dueDate: '',
-          taskTypeId: '',
-          userIds: [],
-          subTaskIds: [],
-          subIssueIds: [],
-          description: '',
-          progress: 0,
-          autoCalculate: true,
-          taskFiles: [],
-          checklists: [],
-          notes: []
-        },
+        DV_task: this.INITIAL_TASK_STATE(),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedTaskType: null,
@@ -330,13 +316,34 @@
        ...mapMutations([
         'setTaskForManager'
       ]),
+      INITIAL_TASK_STATE() {
+        return {
+          text: '',
+          startDate: '',
+          dueDate: '',
+          taskTypeId: '',
+          userIds: [],
+          subTaskIds: [],
+          subIssueIds: [],
+          description: '',
+          progress: 0,
+          autoCalculate: true,
+          taskFiles: [],
+          checklists: [],
+          notes: []
+        }
+      },
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
         this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
-        this.addFile(task.attachFiles)
+        if (task.attachFiles) this.addFile(task.attachFiles)
+        this.$nextTick(() => {
+          this.errors.clear()
+          this.$validator.reset()
+        })
       },
       addFile(files) {
         let _files = [...this.DV_task.taskFiles]
@@ -559,12 +566,13 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       C_title() {
-        return this._isallowed('write') ? this.title : "Task"
+        return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
       }
     },
     watch: {
       task: {
         handler: function(value) {
+          if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()
           this.DV_task.taskFiles = []
           this.destroyedFiles = []
           this.loadTask(value)
@@ -634,10 +642,10 @@
 <style lang="scss" scoped>
 
   #tasks-form {
-  z-index: 10;
-  width: 100%;
-  position: absolute;
-  background-color: #fff; 
+    z-index: 10;
+    width: 100%;
+    position: absolute;
+    background-color: #fff;
   }
   .form-control.error {
     border-color: #E84444;

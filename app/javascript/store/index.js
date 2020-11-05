@@ -60,6 +60,7 @@ export default new Vuex.Store({
     taskUserFilter: null,
     issueUserFilter: null,
     myActionsFilter: new Array,
+    onWatchFilter: new Array,
     managerView: {
       task: null,
       issue: null,
@@ -141,6 +142,7 @@ export default new Vuex.Store({
     setTaskUserFilter: (state, filter) => state.taskUserFilter = filter,
     setIssueUserFilter: (state, filter) => state.issueUserFilter = filter,
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
+    setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
     clearProgressFilters: (state) => {
       var filters = new Object
       for (var key of Object.keys(state.progressFilter)) {
@@ -188,6 +190,7 @@ export default new Vuex.Store({
     taskUserFilter: state => state.taskUserFilter,
     issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
+    onWatchFilter: state => state.onWatchFilter,
     mapFilters: state => state.mapFilters,
     progressFilter: state => state.progressFilter,
     managerView: state => state.managerView,
@@ -269,6 +272,14 @@ export default new Vuex.Store({
               for (var act of f[k]) {
                 let userIds = act == "notes" ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
                 is_valid = is_valid || userIds.includes(Vue.prototype.$currentUser.id)
+              }
+              valid = valid && is_valid
+              break
+            }
+            case "onWatch": {
+              let is_valid = false
+              for (let act of f[k]) {
+                is_valid = is_valid || _.uniq(_.map(facility[act], 'watched')).includes(true)
               }
               valid = valid && is_valid
               break
@@ -522,6 +533,9 @@ export default new Vuex.Store({
       var facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 
       return {tasks, issues, facilities}
+    },
+    viewPermit: () => (view, req) => {
+      return Vue.prototype.$permissions[view][req]
     }
   },
 
@@ -748,6 +762,7 @@ export default new Vuex.Store({
         'issueProgressFilter',
         'taskProgressFilter',
         'myActionsFilter',
+        'onWatchFilter',
         'taskUserFilter',
         'issueUserFilter',
         'progressFilter',

@@ -23,18 +23,18 @@
         </div>
         <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button>
       </div>
-      <div class="m-3 d-flex">
-        <div class="form-check-inline">
+      <div class="m-1 d-flex">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
           </label>
         </div>
-        <div class="form-check-inline">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
           </label>
         </div>
-        <div class="form-check-inline">
+        <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
           </label>
@@ -43,74 +43,76 @@
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
           </label>
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
+          </label>
           <label class="form-check-label ml-2 text-primary">
             Total: {{filteredTasks.length}}
           </label>
         </div>
       </div>
       <div v-if="filteredTasks.length > 0">
-          <button    
-            @click="download"        
-            id="printBtn" 
-            class="btn btn-sm btn-outline-dark m-2" 
+          <button
+            @click="download"
+            id="printBtn"
+            class="btn btn-sm btn-outline-dark m-2"
             style="font-size:.70rem" >
             EXPORT TO PDF
           </button>
-           <button    
+          <button
             disabled
-            id="printBtn" 
-            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2" 
+            id="printBtn"
+            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
-        <task-show           
-          v-for="(task, i) in filteredTasks"         
+        <task-show
+          v-for="(task, i) in filteredTasks"
+          id="taskHover"
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :load="log(task)"
-           id="taskHover"
-          :task="task"          
+          :task="task"
           :from-view="from"
           @edit-task="editTask"
           @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
-      </div>              
+      </div>
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>    
-     <table style="display:none" 
-            class="table table-sm table-bordered" 
-            ref="table" id="taskList1" 
-          >              
-          <thead>                    
-            <tr>  
-              <!-- <th>Facility: {{task.facilityName}}  </th>           -->
-              <th></th>  
-              <th>Task</th>    
-              <th>Milestone</th>  
-              <th>Start Date</th>  
-              <th>Due Date</th>  
-              <th>Assigned Users</th> 
-              <th>Progress</th>   
-              <th>Last Update</th>                      
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+     <table style="display:none"
+            class="table table-sm table-bordered"
+            ref="table" id="taskList1"
+          >
+          <thead>
+            <tr>
+              <th></th>
+              <th>Task</th>
+              <th>Milestone</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Assigned Users</th>
+              <th>Progress</th>
+              <th>Last Update</th>
             </tr>
           </thead>
-          <tbody>          
+          <tbody>
             <tr v-for="(task, i) in filteredTasks">
               <td class="text-center">{{i+1}}</td>
-              <td>{{task.text}}</td>    
+              <td>{{task.text}}</td>
               <td>{{task.taskType}}
-              <td>{{task.startDate}}</td>   
-              <td>{{task.dueDate}}</td>   
-              <td>{{task.users.join(', ')}}</td>   
-              <td>{{task.progress + "%"}}</td>   
+              <td>{{task.startDate}}</td>
+              <td>{{task.dueDate}}</td>
+              <td>{{task.users.join(', ')}}</td>
+              <td>{{task.progress + "%"}}</td>
               <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
               <td v-else>No Updates</td>
-            </tr>                 
+            </tr>
           </tbody>
         </table>
   </div>
-  
+
 </template>
 
 <script>
@@ -129,16 +131,15 @@
       }
     },
     methods: {
-      
       ...mapMutations([
         'setTaskTypeFilter',
         'setMyActionsFilter',
+        'setOnWatchFilter',
         'setTaskForManager'
       ]),
       log(task) {
         console.log(task)
       },
-   
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -150,25 +151,26 @@
         this.$emit('show-hide', task)
       },
       toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)   
-    },
-      download(){   
-      const doc = new jsPDF("l")   
-      const html =  this.$refs.table.innerHTML 
-      doc.autoTable({html: "#taskList1"})
-      doc.save("Task_List.pdf")           
+        this.$emit('toggle-watch-task', task)
+      },
+      download() {
+        const doc = new jsPDF("l")
+        const html =  this.$refs.table.innerHTML
+        doc.autoTable({html: "#taskList1"})
+        doc.save("Task_List.pdf")
       },
     },
-    
     computed: {
       ...mapGetters([
         'taskTypeFilter',
         'myActionsFilter',
-        'taskTypes'
+        'onWatchFilter',
+        'taskTypes',
+        'viewPermit'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },      
+      },
       filteredTasks() {
         var typeIds = _.map(this.C_taskTypeFilter, 'id')
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
@@ -176,6 +178,9 @@
           if (this.C_myTasks) {
             var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
             valid  = valid && userIds.includes(this.$currentUser.id)
+          }
+          if (this.C_onWatchTasks) {
+            valid  = valid && task.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           switch (this.viewList) {
@@ -191,7 +196,6 @@
               break
             }
           }
-
           return valid
         }), ['dueDate'])
 
@@ -213,6 +217,15 @@
           if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
         }
+      },
+      C_onWatchTasks: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('tasks')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
+        }
       }
     }
   }
@@ -223,7 +236,7 @@
   #tasks-index {
     height: 500px;
     background-color: #ffffff;
-    z-index: 100;   
+    z-index: 100;
   }
   .new-tasks-btn {
     height: max-content;
@@ -231,7 +244,7 @@
   }
   #taskHover:hover {
     cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3); 
+    background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
 </style>
