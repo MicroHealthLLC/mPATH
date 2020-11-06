@@ -1,12 +1,12 @@
 <template>
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
-      <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Details</p>
+      <div class="text-primary align-items-center blur_show mb-3">
+        <!-- <p class="mr-2 mb-0">Details</p> -->
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="mx-3 mb-3 mt-0 py-4 edit-action" :class="{'hide-to-edit': C_editForManager}" @click.prevent="editTask">
+    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click="editTask">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
@@ -41,15 +41,15 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="t_actions my-2">         
-            <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
+        <div class="col-md-3 mt-2">
+          <div class="t_actions my-3 mr-0">         
+            <!-- <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
               <i class="fas fa-trash-alt" style="float:right"></i>
-            </span>
+            </span> -->
             <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent="toggleWatched">
               <span v-show="DV_task.watched" class="check_box"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box"><i class="far fa-square"></i></span>
-              <span class="text-danger"><i class="fa fa-exclamation"></i></span>
+              <span class="text-danger"><i class="fa fa-exclamation"></i></span><small> On Watch</small>
             </span>
           </div>
           <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
@@ -123,6 +123,7 @@
       task: Object
     },
     data() {
+      
       return {
         loading: true,
         DV_task: {},
@@ -130,6 +131,9 @@
         DV_edit_issue: {},
         has_task: false
       }
+    },
+       styleObject: {
+       backgroundColor: 'red',      
     },
     mounted() {
       if (this.task) {
@@ -275,8 +279,12 @@
       font-size: 20px;
       cursor: pointer;
     }
-
-    
+   .fa-long-arrow-alt-right { 
+    margin-bottom: 1rem !important;
+    margin-left: 1rem !important;
+    height: .8em !important;
+   }
+   
   .onHover:hover {
     cursor: pointer !important;
     background-color: rgba(91, 192, 222, 0.3) !important; 

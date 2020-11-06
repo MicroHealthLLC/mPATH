@@ -66,9 +66,11 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
+          
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"
+          id="taskHover"    
+          href="#"      
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :load="log(task)"
@@ -234,7 +236,7 @@
 <style lang="scss" scoped>
 
   #tasks-index {
-    height: 500px;
+    height: 465px;
     background-color: #ffffff;
     z-index: 100;
   }
@@ -247,4 +249,11 @@
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
+
+  // #taskHover:focus-within, #taskHover:active, #taskHover:visited {
+  // cursor: pointer;
+  // background-color: black !important;
+  // border-left: solid rgb(91, 192, 222);
+  // } 
+
 </style>

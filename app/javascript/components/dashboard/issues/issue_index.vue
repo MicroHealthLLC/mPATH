@@ -334,7 +334,7 @@
 <style lang="scss" scoped>
 
   .issues-index {
-    height: 500px;
+    height: 465px;
   }
   .new-issue-btn {
     width: 20%;
