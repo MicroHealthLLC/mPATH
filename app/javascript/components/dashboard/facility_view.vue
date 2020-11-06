@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
         <h4 class="mt-4 ml-4 text-info">Facility Manager</h4>
-        <div class="my-4 ml-2">
+        <div class="my-4 ml-2 scrollBar">
           <div v-for="group in filteredFacilityGroups" class="my-3">
             <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
@@ -38,8 +38,8 @@
       <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
       
         <div class="default-background">
-        <div class="mt-4" style="background-color:white">
-          <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span>
+        <div class="mt-2" style="background-color:white">
+          <!-- <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span> -->
           <task-form
             v-if="managerView.task"
             :facility="currentFacility"
@@ -184,7 +184,7 @@
       background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
-      overflow: hidden;
+      overflow-y: scroll;
     }
     .facility-forms-tab,
     .facility-show-tab {

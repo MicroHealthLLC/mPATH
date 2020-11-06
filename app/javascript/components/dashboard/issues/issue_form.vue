@@ -7,7 +7,32 @@
       class="mx-auto"
       accept-charset="UTF-8"
       >
-      <h5 class="text-center mb-2">{{title}}</h5>
+        <div v-if="_isallowed('write')" class="d-flex form-group sticky my-4">
+        <button
+          :disabled="!readyToSave"
+           class="btn btn-sm sticky-btn btn-success"     
+          >
+          Save
+        </button>
+         <button      
+          class="btn btn-sm sticky-btn btn-warning ml-2" 
+          v-if="managerView.issue" @click.prevent="cancelIssueSave"
+          >
+          Cancel
+        </button>   
+        <button 
+          v-if="_isallowed('delete')" 
+          @click.stop="deleteIssue"
+          class="btn btn-sm btn-danger sticky-btn ml-auto "         
+          >  
+           <i class="fas fa-trash-alt"></i>        
+         Delete           
+        </button>
+         
+
+      </div>
+      <div class="paperLook formTitle ">
+      <!-- <h5 class="text-center mt-3">{{title}}</h5> -->
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -15,7 +40,7 @@
         Please fill the required feilds before submitting
       </div>
       <div class="form-group mx-4">
-        <label class="font-sm">Title:</label>
+        <label class="font-sm"><h5>Issue Name:</h5></label>
         <input
           name="title"
           v-validate="'required'"
@@ -286,28 +311,8 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!_isallowed('write')"></textarea>
           </div>
         </paginate>
-      </div>
-      <div v-if="_isallowed('write')" class="d-flex form-group mt-4 ml-4">
-        <button
-          :disabled="!readyToSave"
-          class="btn btn-success"
-          >
-          Save
-        </button>
-        <button
-          class="btn btn-warning ml-3"
-          v-if="managerView.issue" @click.prevent="cancelIssueSave"
-          >
-          Cancel
-        </button>
-          <button
-          v-if="_isallowed('delete')" 
-          @click.stop="deleteIssue"
-          class="btn btn-danger ml-auto mr-3"        
-          >
-         Delete
-        </button>
-      </div>
+      </div>  
+      </div>   
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -715,4 +720,30 @@
     list-style-type: none;
     padding: 0;
   }
+ .formTitle { 
+  padding-top: 85px;
+  }
+
+.paperLook {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+   padding-bottom: 20px;
+   margin-bottom: 10px;
+}
+
+.sticky-btn {
+  margin-top: 5px;  
+  margin-bottom: 5px;  
+  box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);    
+}
+.sticky {
+  position: fixed;
+  justify-content: center;
+  z-index: 1000;
+  left: 15;
+  top: 11.6%;   
+  width: 47.3%;
+  padding: 6px; 
+  background-color: rgba(237, 237, 237, 0.85);   
+  box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);    
+}
 </style>
