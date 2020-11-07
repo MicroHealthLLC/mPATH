@@ -3,7 +3,7 @@ class Note < ApplicationRecord
 
   belongs_to :noteable, polymorphic: true
   belongs_to :user
-  has_many_attached :note_files
+  has_many_attached :note_files, dependent: :destroy
 
   def to_json
     attach_files = []

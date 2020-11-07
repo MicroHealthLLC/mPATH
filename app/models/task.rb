@@ -5,7 +5,7 @@ class Task < ApplicationRecord
   belongs_to :task_type
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
-  has_many :checklists, as: :listable
+  has_many :checklists, as: :listable, dependent: :destroy
   has_many_attached :task_files, dependent: :destroy
 
   has_many :related_tasks, as: :relatable, dependent: :destroy
@@ -13,7 +13,7 @@ class Task < ApplicationRecord
   has_many :sub_tasks, through: :related_tasks
   has_many :sub_issues, through: :related_issues
 
-  has_many :notes, as: :noteable
+  has_many :notes, as: :noteable, dependent: :destroy
 
   validates :text, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100

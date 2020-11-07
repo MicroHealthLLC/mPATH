@@ -6,15 +6,15 @@ class Issue < ApplicationRecord
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users
-  has_many :checklists, as: :listable
+  has_many :checklists, as: :listable, dependent: :destroy
   has_many_attached :issue_files, dependent: :destroy
 
-  has_many :related_tasks, as: :relatable
-  has_many :related_issues, as: :relatable
+  has_many :related_tasks, as: :relatable, dependent: :destroy
+  has_many :related_issues, as: :relatable, dependent: :destroy
   has_many :sub_tasks, through: :related_tasks
   has_many :sub_issues, through: :related_issues
 
-  has_many :notes, as: :noteable
+  has_many :notes, as: :noteable, dependent: :destroy
 
   validates :title, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100

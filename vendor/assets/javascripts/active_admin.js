@@ -597,6 +597,7 @@ jQuery(function($) {
       watch: {
         "overview.read"(value) {
           if (this.loading) return;
+          if (!value) this.overview.read = true;
           var v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -621,6 +622,7 @@ jQuery(function($) {
         },
         "tasks.read"(value) {
           if (this.loading) return;
+          if (!value) this.tasks.read = true;
           var v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -645,6 +647,7 @@ jQuery(function($) {
         },
         "issues.read"(value) {
           if (this.loading) return;
+          if (!value) this.issues.read = true;
           var v = $("#user_privilege_attributes_issues").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -669,6 +672,7 @@ jQuery(function($) {
         },
         "notes.read"(value) {
           if (this.loading) return;
+          if (!value) this.notes.read = true;
           var v = $("#user_privilege_attributes_notes").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -892,25 +896,25 @@ jQuery(function($) {
            </li>
             <li class="choice d-flex">
               <label>Overview</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="overview.read">Read</label>
+              <label class="d-flex align-center" :readOnly="overview.read"><input type="checkbox" v-model="overview.read" :readOnly="overview.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Tasks</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="tasks.read">Read</label>
+              <label class="d-flex align-center" :readOnly="tasks.read"><input type="checkbox" v-model="tasks.read" :readOnly="tasks.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="tasks.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="tasks.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Issues</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="issues.read">Read</label>
+              <label class="d-flex align-center" :readOnly="issues.read"><input type="checkbox" v-model="issues.read" :readOnly="issues.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="issues.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Notes</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="notes.read">Read</label>
+              <label class="d-flex align-center" :readOnly="notes.read"><input type="checkbox" v-model="notes.read" :readOnly="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
             </li>
@@ -1945,7 +1949,11 @@ jQuery(function($) {
           uppercase: false,
           lowercase: false,
           numbers: false,
-          special_chars: false
+          special_chars: false,
+          UPPERCASE: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          NUMBERS: "1234567890",
+          SPECIALCASE: "!@#$%^&*()",
+          LOWERCASE: "abcdefghijklmnopqrstuvwxyz"
         }
       },
       mounted() {
@@ -1960,20 +1968,38 @@ jQuery(function($) {
       methods: {
         generatePassword() {
           this.editPass = true;
-          var chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
-          var pass = "";
+          let chars = [...Array(Number(this.range))].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+          let pass = "";
+          let i = 0;
           if (this.uppercase || this.lowercase || this.numbers || this.special_chars) {
             chars = "";
-            if (this.uppercase) chars = chars + "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (this.numbers) chars = chars + "1234567890";
-            if (this.special_chars) chars = chars + "!@#$%^&*()";
-            if (this.lowercase) chars = chars + "abcdefghijklmnopqrstuvwxyz";
-            for (var i=0; i<Number(this.range); i++) {
+            if (this.uppercase) {
+              pass = pass + this.UPPERCASE.charAt(Math.floor(Math.random() * this.UPPERCASE.length));
+              chars = chars + this.UPPERCASE;
+              i++;
+            }
+            if (this.numbers) {
+              pass = pass + this.NUMBERS.charAt(Math.floor(Math.random() * this.NUMBERS.length));
+              chars = chars + this.NUMBERS;
+              i++;
+            }
+            if (this.special_chars) {
+              pass = pass + this.SPECIALCASE.charAt(Math.floor(Math.random() * this.SPECIALCASE.length));
+              chars = chars + this.SPECIALCASE;
+              i++;
+            }
+            if (this.lowercase) {
+              pass = pass + this.LOWERCASE.charAt(Math.floor(Math.random() * this.LOWERCASE.length));
+              chars = chars + this.LOWERCASE;
+              i++;
+            }
+            while (i<Number(this.range)) {
               pass += chars.charAt(Math.floor(Math.random() * chars.length));
+              i++;
             }
           }
           else {
-            var pass = chars;
+            pass = chars;
           }
           this.password = pass;
         },

@@ -32,4 +32,9 @@ class Facility < ApplicationRecord
   def end_date
     tasks.where(due_date: tasks.select('MAX(tasks.due_date)')).first.try(:due_date)
   end
+
+  def delete_nested_projects ids
+    ids = ids.reject(&:blank?)
+    facility_projects.where.not(project_id: ids).destroy_all
+  end
 end

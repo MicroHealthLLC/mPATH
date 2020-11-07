@@ -50,9 +50,7 @@ Rails.application.routes.draw do
   root 'landing#index'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
-  if Rails.env.production?
-    get '*all', to: "not_found#index", constraints: -> (req) do
-      req.path.exclude? 'rails/active_storage'
-    end
+  get '*all', to: "not_found#index", constraints: -> (req) do
+    req.path.exclude? 'rails/active_storage'
   end
 end
