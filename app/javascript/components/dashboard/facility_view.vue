@@ -37,8 +37,8 @@
       </div>
       <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
       
-        <div class="default-background">
-        <div class="mt-2" style="background-color:white">
+        <div class="default-background mt-3">
+        <div style="background-color:white">
           <!-- <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span> -->
           <task-form
             v-if="managerView.task"

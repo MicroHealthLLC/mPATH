@@ -7,7 +7,7 @@
       :class="{'_disabled': loading}"
       accept-charset="UTF-8"
       >
-       <div v-if="_isallowed('write')" class="d-flex form-group sticky my-4">
+       <div v-if="_isallowed('write')" class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"        
@@ -693,13 +693,14 @@
   }
 
  .formTitle { 
-  padding-top: 85px;
+  padding-top: 65px;
   }
 
 .paperLook {
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   padding-bottom: 20px;
   margin-bottom: 10px;
+  position: relative;
 }
 
 .sticky-btn {
@@ -708,12 +709,14 @@
   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);    
 }
 .sticky {
-  position: fixed;
+  position: sticky;
+  position: -webkit-sticky;
   justify-content: center;
+  margin-bottom: -2.5rem;
   z-index: 1000;
   left: 15;
-  top: 11.6%;   
-  width: 47.3%;
+  top: 0;   
+  width: 100%;
   padding: 6px; 
   background-color: rgba(237, 237, 237, 0.85);   
   box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);    
