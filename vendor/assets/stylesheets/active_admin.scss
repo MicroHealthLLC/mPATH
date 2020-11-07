@@ -34,6 +34,10 @@ body {
   input[type=checkbox] {
     margin-right: 1em;
   }
+  label[readonly],
+  input[type="checkbox"][readonly] {
+    pointer-events: none;
+  }
   input[type=password] {
     letter-spacing: 0.5em;
   }

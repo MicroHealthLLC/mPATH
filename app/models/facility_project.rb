@@ -5,7 +5,7 @@ class FacilityProject < ApplicationRecord
   has_many :tasks, dependent: :destroy
   has_many :task_types, through: :tasks
   has_many :issues, dependent: :destroy
-  has_many :notes, as: :noteable
+  has_many :notes, as: :noteable, dependent: :destroy
 
   scope :active, -> {joins(:facility).where("facilities.status = ?", 1).distinct}
 
@@ -34,5 +34,4 @@ class FacilityProject < ApplicationRecord
   def progress
     self.tasks.map(&:progress).sum / self.tasks.count rescue 0
   end
-
 end
