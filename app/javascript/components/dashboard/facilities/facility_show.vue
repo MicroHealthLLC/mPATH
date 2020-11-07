@@ -60,7 +60,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                   <span style="font-weight:700; margin-right: 4px">Task & Issue Completion: </span>
+                   <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
