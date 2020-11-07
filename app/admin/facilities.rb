@@ -225,7 +225,7 @@ ActiveAdmin.register Facility do
 
     def update(options={}, &block)
       normalize_comment_params
-      resource.delete_nested_projects(params[:facility][:project_ids])
+      resource.delete_nested_projects(params[:facility][:project_ids]) if params[:facility][:project_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
         failure.html {render :edit}
