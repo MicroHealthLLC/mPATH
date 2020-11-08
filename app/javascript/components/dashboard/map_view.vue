@@ -286,10 +286,10 @@ export default {
   #rollup-sidebar {
     > div {
       height: calc(100vh - 94px);
-      overflow: auto;
     }
     position: absolute;
     top: 0;
+    overflow: auto;
   }
   #map-sidebar {
     z-index: 800;
