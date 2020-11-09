@@ -17,7 +17,7 @@ class Note < ApplicationRecord
       end
     end
     self.as_json.merge(
-      user: self.user.as_json,
+      user: self.user.as_json(only: [:id, :full_name]),
       attach_files: attach_files
     ).as_json
   end

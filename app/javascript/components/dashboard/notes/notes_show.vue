@@ -112,7 +112,7 @@
       ]),
       noteBy() {
         if (this.loading) return null
-        return `${this.DV_note.user.firstName} ${this.DV_note.user.lastName} at ${new Date(this.DV_note.createdAt).toLocaleString()}`
+        return `${this.DV_note.user.fullName} at ${new Date(this.DV_note.createdAt).toLocaleString()}`
       },
       permitted() {
         return salut => !this.loading && this.note.userId === this.$currentUser.id && this._isallowed(salut)

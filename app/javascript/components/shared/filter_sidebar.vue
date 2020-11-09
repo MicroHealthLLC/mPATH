@@ -509,6 +509,8 @@
         this.setOnWatchFilter([])
         this.setMapFilters([])
         this.clearProgressFilters()
+        this.setIssueUserFilter(null)
+        this.setTaskUserFilter(null)
       },
       exportData() {
         if (!this.enableExport || this.exporting) return;

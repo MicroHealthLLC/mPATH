@@ -10,26 +10,24 @@
         <div v-if="_isallowed('write')" class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave"
-           class="btn btn-sm sticky-btn btn-success"     
+           class="btn btn-sm sticky-btn btn-success"
           >
           Save
         </button>
-         <button      
-          class="btn btn-sm sticky-btn btn-warning ml-2" 
-          v-if="managerView.issue" @click.prevent="cancelIssueSave"
+        <button
+          class="btn btn-sm sticky-btn btn-warning ml-2"
+          @click.prevent="cancelIssueSave"
           >
           Cancel
-        </button>   
-        <button 
-          v-if="_isallowed('delete')" 
-          @click.stop="deleteIssue"
-          class="btn btn-sm btn-danger sticky-btn ml-auto "         
-          >  
-           <i class="fas fa-trash-alt"></i>        
-         Delete           
         </button>
-         
-
+        <button
+          v-if="_isallowed('delete')"
+          @click.stop="deleteIssue"
+          class="btn btn-sm btn-danger sticky-btn ml-auto "
+          >
+          <i class="fas fa-trash-alt mr-2"></i>
+          Delete
+        </button>
       </div>
       <div class="paperLook formTitle ">
       <!-- <h5 class="text-center mt-3">{{title}}</h5> -->
@@ -311,8 +309,8 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!_isallowed('write')"></textarea>
           </div>
         </paginate>
-      </div>  
-      </div>   
+      </div>
+      </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -399,6 +397,7 @@
         var confirm = window.confirm(`Are you sure you want to delete this issue?`)
         if (!confirm) {return}
         this.issueDeleted(this.DV_issue)
+        this.cancelIssueSave()
       },
       deleteFile(file) {
         if (!file) return;
@@ -415,9 +414,8 @@
         }
       },
       cancelIssueSave() {
-        this.setTaskForManager({key: 'task', value: null})
+        this.$emit('on-close-form')
         this.setTaskForManager({key: 'issue', value: null})
-        this.setTaskForManager({key: 'note', value: null})
       },
       saveIssue() {
         this.$validator.validate().then((success) => {
@@ -720,7 +718,7 @@
     list-style-type: none;
     padding: 0;
   }
- .formTitle { 
+ .formTitle {
   padding-top: 65px;
   }
 
@@ -732,9 +730,9 @@
 }
 
 .sticky-btn {
-  margin-top: 5px;  
-  margin-bottom: 5px;  
-  box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);    
+  margin-top: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
 }
 .sticky {
   position: sticky;
@@ -743,10 +741,10 @@
   margin-bottom: -2.5rem;
   z-index: 1000;
   left: 15;
-  top: 0;   
+  top: 0;
   width: 100%;
-  padding: 6px; 
-  background-color: rgba(237, 237, 237, 0.85);   
-  box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);    
+  padding: 6px;
+  background-color: rgba(237, 237, 237, 0.85);
+  box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 </style>

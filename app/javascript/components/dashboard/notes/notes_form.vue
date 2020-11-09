@@ -1,9 +1,6 @@
 <template>
   <div class="notes-form">
     <div class="notes_input mt-2" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
-      <span v-if="from !== 'manager_view'" class="close-icon" @click.stop="$emit('close-note-input')" :class="{'_disabled': loading}">
-        <i class="fas fa-times"></i>
-      </span>
       <center>{{titleText}}</center>
       <div class="form-group">
         <label class="badge badge-secondary">Note</label>
@@ -45,12 +42,19 @@
           >
           Save
         </button>
-
-         <button
-          class="btn btn-danger ml-3"
-          v-if="managerView.task || managerView.issue || managerView.note" @click="cancelNoteSave"
+        <button
+          class="btn btn-sm btn-warning ml-2"
+          @click.prevent="cancelNoteSave"
           >
           Cancel
+        </button>
+        <button
+          v-if="_isallowed('delete')"
+          @click.prevent="deleteNote"
+          class="btn btn-sm btn-danger ml-auto"
+          >
+          <i class="fas fa-trash-alt mr-2"></i>
+          Delete
         </button>
       </div>
     </div>
@@ -62,7 +66,7 @@
   import axios from 'axios'
   import humps from 'humps'
   import AttachmentInput from './../../shared/attachment_input'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     props: ['facility', 'note', 'title', 'from'],
@@ -81,8 +85,11 @@
       this.loading = false
     },
     methods: {
-       ...mapMutations([
+      ...mapMutations([
         'setTaskForManager'
+      ]),
+      ...mapActions([
+        'noteDeleted'
       ]),
       INITIAL_NOTE_STATE() {
         return {
@@ -168,9 +175,13 @@
           })
         })
       },
+      deleteNote() {
+        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
+        if (!confirm) return;
+        this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+      },
       cancelNoteSave() {
-        this.setTaskForManager({key: 'task', value: null})
-        this.setTaskForManager({key: 'issue', value: null})
+        this.$emit('close-note-input')
         this.setTaskForManager({key: 'note', value: null})
       },
       downloadFile(file) {
@@ -194,6 +205,9 @@
       },
       filteredFiles() {
         return _.filter(this.DV_note.noteFiles, f => !f._destroy)
+      },
+      _isallowed() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
       }
     },
     watch: {
@@ -210,13 +224,12 @@
 </script>
 
 <style scoped lang="scss">
-
   .notes-form {
-  z-index: 10;
-  width: 100%;
-  height: 600px;
-  position: absolute;
-  background-color: #fff;
+    z-index: 10;
+    width: 100%;
+    height: 600px;
+    position: absolute;
+    background-color: #fff;
   }
   .notes_input {
     border: 1px solid #ccc;

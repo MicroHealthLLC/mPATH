@@ -289,7 +289,8 @@ export default {
     }
     position: absolute;
     top: 0;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   #map-sidebar {
     z-index: 800;
@@ -300,7 +301,7 @@ export default {
   }
   .knocker_side {
     position: absolute;
-    width: 100%;
+    width: 95%;
     top: 0;
     transition: .3s ease;
     height: 100%;
