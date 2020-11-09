@@ -129,6 +129,18 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility)
       }
     },
+    updateNotesHash: (state, {note, facilityId, action}) => {
+      var facility_i = state.facilities.findIndex(f => f.id == facilityId)
+      if (facility_i > -1) {
+        var facility = Object.assign({}, state.facilities[facility_i])
+        var note_i = facility.notes.findIndex((t) => t.id == note.id)
+        if (action === 'delete') {
+          Vue.delete(facility.notes, note_i)
+        }
+        else if (note_i > -1) Vue.set(facility.notes, note_i, note)
+        Vue.set(state.facilities, facility_i, facility)
+      }
+    },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
@@ -295,7 +307,7 @@ export default new Vuex.Store({
     },
     filteredFacilityGroups: (state, getters) => {
       var ids = _.map(getters.filteredFacilities('active'), 'facilityGroupId')
-      return _.filter(getters.facilityGroups, fg => ids.includes(fg.id))
+      return _.filter(getters.facilityGroups, fg => ids.includes(fg.id) && fg.status == "active")
     },
     facilityCount: (state, getters) => {
       return getters.filteredFacilities('all').length
@@ -719,6 +731,21 @@ export default new Vuex.Store({
           .delete(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
           .then((res) => {
             commit('updateTasksHash', {task: task, action: 'delete'})
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject()
+          })
+      })
+    },
+    noteDeleted({commit}, {note, projectId, facilityId, cb}) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`/projects/${projectId}/facilities/${facilityId}/notes/${note.id}.json`)
+          .then((res) => {
+            commit('updateNotesHash', {note: note, facilityId, action: 'delete'})
+            if (cb) cb()
             resolve()
           })
           .catch((err) => {

@@ -6,7 +6,7 @@
         <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
       </div>
       <div class="facility-tab mb-4">
-        <vue-tabs-chrome theme="custom" ref="tab" :gap="2" v-model="currentTab" :tabs="tabs" />
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" />
       </div>
       <div>
         <div v-if="currentTab == 'overview'">
@@ -175,17 +175,17 @@
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </div>
-     
-         
-        <div v-if="currentTab == 'notes'">       
+
+
+        <div v-if="currentTab == 'notes'">
           <div>
             <notes-index
               :facility="DV_facility"
               :from="from"
               @refresh-facility="refreshFacility"
             ></notes-index>
-          </div>      
-        </div>            
+          </div>
+        </div>
         <div v-if="currentTab == 'tasks'">
           <div>
             <detail-show
@@ -211,15 +211,13 @@
   import http from './../../../common/http'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
+  import CustomTabs from './../../shared/custom-tabs'
   import DetailShow from './detail_show'
   import {mapGetters, mapMutations} from 'vuex'
-  import VueTabsChrome from 'vue-tabs-chrome'
-
-  Vue.use(VueTabsChrome)
 
   export default {
     name: 'FacilitiesShow',
-    components: {DetailShow, NotesIndex, IssueIndex},
+    components: {DetailShow, NotesIndex, IssueIndex, CustomTabs},
     props: {
       facility: {
         default: null,
@@ -251,7 +249,7 @@
             label: 'Overview',
             key: 'overview',
             closable: false
-          },         
+          },
           {
             label: 'Tasks',
             key: 'tasks',
@@ -284,6 +282,9 @@
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
+      onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'overview'
+      },
       fetchFacility(opt={}) {
         http
           .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
@@ -475,59 +476,6 @@
     .multiselect__placeholder {
       color: #dc3545;
       text-overflow: ellipsis;
-    }
-  }
-
-  .facility-tab /deep/ .vue-tabs-chrome.theme-custom {
-    padding-top: 0;
-    background-color: transparent;
-    overflow: hidden;
-    .tabs-footer,
-    .tabs-divider,
-    .tabs-background-before,
-    .tabs-background-after {
-      display: none;
-    }
-    .tabs-item {
-      cursor: pointer;
-    }
-    .tabs-content {
-      overflow: unset;
-      border-bottom: 1px solid #e4e7ed;
-    }
-    .tabs-background {
-      padding: 0;
-    }
-    .tabs-background-content {
-      border-top: 1px solid #e4e7ed;
-      border-left: 1px solid #e4e7ed;
-      border-right: 1px solid #e4e7ed;
-      border-radius: 0;
-      background-color: #fff;
-    }
-    .tabs-content {
-      height: 40px;
-    }
-    .active {
-      color: #409eff;
-      .tabs-background {
-        &::before,
-        &::after {
-          top: 100%;
-          left: 0;
-          content: '';
-          width: 100%;
-          height: 1px;
-          background-color: #fff;
-          z-index: 1;
-          position: absolute;
-        }
-        &::before {
-          top: 0;
-          height: 2px;
-          background-color: #409eff;
-        }
-      }
     }
   }
 </style>

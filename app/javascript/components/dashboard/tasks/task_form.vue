@@ -10,26 +10,24 @@
        <div v-if="_isallowed('write')" class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave"
-          class="btn btn-sm sticky-btn btn-success"        
+          class="btn btn-sm sticky-btn btn-success"
           >
           Save
         </button>
-         <button
-          class="btn btn-sm sticky-btn btn-warning ml-2"         
-          v-if="managerView.task" @click.prevent="cancelSave"
+        <button
+          class="btn btn-sm sticky-btn btn-warning ml-2"
+          @click.prevent="cancelSave"
           >
           Cancel
-        </button>     
-         <button
-          v-if="_isallowed('delete')" 
-          @click="deleteTask"
-          class="btn btn-sm btn-danger sticky-btn ml-auto"        
-          >
-          <i class="fas fa-trash-alt"></i>       
-         Delete
         </button>
-         
-
+        <button
+          v-if="_isallowed('delete')"
+          @click.prevent="deleteTask"
+          class="btn btn-sm btn-danger sticky-btn ml-auto"
+          >
+          <i class="fas fa-trash-alt mr-2"></i>
+          Delete
+        </button>
       </div>
      <div class="paperLook formTitle">
       <!-- <h5 class="text-center formTitle mt-3">{{C_title}}</h5> -->
@@ -286,8 +284,8 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!_isallowed('write')"></textarea>
           </div>
         </paginate>
-      </div> 
-     </div>    
+      </div>
+     </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -349,10 +347,11 @@
           notes: []
         }
       },
-       deleteTask() {
+      deleteTask() {
         var confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
+        this.cancelSave()
       },
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
@@ -389,6 +388,7 @@
         }
       },
       cancelSave() {
+        this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
       },
       saveTask() {
@@ -661,7 +661,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   #tasks-form {
     z-index: 100;
     width: 100%;
@@ -671,7 +670,6 @@
   .form-control.error {
     border-color: #E84444;
   }
-
   .checklist-text {
     margin-left: 5px;
     border: 0;
@@ -691,34 +689,32 @@
     list-style-type: none;
     padding: 0;
   }
-
- .formTitle { 
-  padding-top: 65px;
+ .formTitle {
+    padding-top: 65px;
+  }
+  .paperLook {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    position: relative;
   }
 
-.paperLook {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  padding-bottom: 20px;
-  margin-bottom: 10px;
-  position: relative;
-}
-
-.sticky-btn {
-  margin-top: 5px;  
-  margin-bottom: 5px;  
-  box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);    
-}
-.sticky {
-  position: sticky;
-  position: -webkit-sticky;
-  justify-content: center;
-  margin-bottom: -2.5rem;
-  z-index: 1000;
-  left: 15;
-  top: 0;   
-  width: 100%;
-  padding: 6px; 
-  background-color: rgba(237, 237, 237, 0.85);   
-  box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);    
-}
+  .sticky-btn {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .sticky {
+    position: sticky;
+    position: -webkit-sticky;
+    justify-content: center;
+    margin-bottom: -2.5rem;
+    z-index: 1000;
+    left: 15;
+    top: 0;
+    width: 100%;
+    padding: 6px;
+    background-color: rgba(237, 237, 237, 0.85);
+    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
 </style>

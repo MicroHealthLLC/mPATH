@@ -16,7 +16,6 @@ import VeeValidate          from 'vee-validate'
 import GmapCluster          from 'vue2-google-maps/dist/components/cluster'
 import VueTelInput          from 'vue-tel-input'
 import DatePicker           from 'vuejs-datepicker'
-import * as Tabs            from 'vue-slim-tabs'
 import VueSlideBar          from 'vue-slide-bar'
 import FadeLoader           from 'vue-spinner/src/FadeLoader.vue'
 import VTooltip             from 'v-tooltip'
@@ -27,7 +26,6 @@ import VuePaginate          from 'vue-paginate'
 
 Vue.mixin(utils)
 Vue.use(VTooltip)
-Vue.use(Tabs)
 Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.use(VuePaginate)

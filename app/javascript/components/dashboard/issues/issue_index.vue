@@ -1,16 +1,17 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index">
     <div v-if="newIssue && from != 'manager_view'">
-      <button
+      <!-- <button
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
         @click.prevent.stop="newIssue=false"
         >
         back
-      </button>
+      </button> -->
       <issue-form
         :facility="facility"
         :issue="currentIssue"
+        @on-close-form="newIssue=false"
         @issue-created="issueCreated"
         @issue-updated="issueUpdated"
         class="issue-form-modal"

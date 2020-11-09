@@ -12,17 +12,18 @@
       </div>
     </div>
     <div v-else-if="from != 'manager_view'">
-      <button
+      <!-- <button
         class="btn btn-sm btn-link float-right"
         style="margin-top:-20px"
         @click.prevent.stop="showDetails=true"
         >
         back
-      </button>
+      </button> -->
       <task-form
         :facility="facility"
         :task="currentTask"
         :title="taskFormTitle"
+        @on-close-form="showDetails=true"
         @task-created="taskCreated"
         @task-updated="taskUpdated"
       ></task-form>
