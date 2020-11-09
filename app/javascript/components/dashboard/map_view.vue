@@ -193,7 +193,7 @@ export default {
       }
     },
     knockerStyle() {
-      return this.openSidebar ? {} : {transform: "translateX(calc(100% - 12px))"}
+      return this.openSidebar ? {} : {transform: "translateX(calc(105% - 12px))"}
     },
     rollupStyle() {
       return this.openSidebar ? {right: '12px'} : {right: '0'}
