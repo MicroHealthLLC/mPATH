@@ -466,6 +466,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          sheets_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           map_view: {
             read: false,
             write: false,
@@ -533,6 +538,7 @@ jQuery(function($) {
           var admin = $("#user_privilege_attributes_admin").val() || ""
           var map_view = $("#user_privilege_attributes_map_view").val() || ""
           var facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || ""
+          var sheets_view = $("#user_privilege_attributes_sheets_view").val() || ""
           var gantt_view = $("#user_privilege_attributes_gantt_view").val() || ""
           var watch_view = $("#user_privilege_attributes_watch_view").val() || ""
           var documents = $("#user_privilege_attributes_documents").val() || ""
@@ -571,6 +577,11 @@ jQuery(function($) {
             read: facility_manager_view.includes("R"),
             write: facility_manager_view.includes("W"),
             delete: facility_manager_view.includes("D")
+          }
+          this.sheets_view = {
+            read: sheets_view.includes("R"),
+            write: sheets_view.includes("W"),
+            delete: sheets_view.includes("D")
           }
           this.gantt_view = {
             read: gantt_view.includes("R"),
@@ -767,7 +778,6 @@ jQuery(function($) {
           if (value) this.gantt_view.read = value;
           $("#user_privilege_attributes_gantt_view").val(v);
         },
-
         "facility_manager_view.read"(value) {
           if (this.loading) return;
           var v = $("#user_privilege_attributes_facility_manager_view").val();
@@ -792,7 +802,30 @@ jQuery(function($) {
           if (value) this.facility_manager_view.read = value;
           $("#user_privilege_attributes_facility_manager_view").val(v);
         },
-
+        "sheets_view.read"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_sheets_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.sheets_view.write = false;
+            this.sheets_view.delete = false;
+          }
+          $("#user_privilege_attributes_sheets_view").val(v);
+        },
+        "sheets_view.write"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_sheets_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.sheets_view.read = value;
+          $("#user_privilege_attributes_sheets_view").val(v);
+        },
+        "sheets_view.delete"(value) {
+          if (this.loading) return;
+          var v = $("#user_privilege_attributes_sheets_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.sheets_view.read = value;
+          $("#user_privilege_attributes_sheets_view").val(v);
+        },
         "watch_view.read"(value) {
           if (this.loading) return;
           var v = $("#user_privilege_attributes_watch_view").val();
@@ -918,6 +951,12 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
             </li>
+            <li class="choice d-flex">
+            <label>Sheets</label>
+            <label class="d-flex align-center" :readOnly="sheets_view"><input type="checkbox" v-model="sheets_view.read" :readOnly="sheets_view.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.write">Write</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.delete">Delete</label>
+           </li>
             <li class="choice d-flex">
               <label>Admin</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>

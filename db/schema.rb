@@ -188,6 +188,7 @@ ActiveRecord::Schema.define(version: 2020_11_02_162746) do
     t.string "documents", default: "R"
     t.string "members", default: "R"
     t.string "facility_manager_view", default: "R"
+    t.string "sheets_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 

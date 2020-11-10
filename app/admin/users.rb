@@ -39,6 +39,7 @@ ActiveAdmin.register User do
         :watch_view,
         :documents,
         :facility_manager_view,
+        :sheets_view,
         :members
       ]
     ]
@@ -69,6 +70,7 @@ ActiveAdmin.register User do
           f.input :organization, :prompt =>"Please select organization", include_hidden: false
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :facility_manager_view
+            p.input :sheets_view
             p.input :map_view
             p.input :gantt_view
             p.input :watch_view
