@@ -3,6 +3,7 @@ import GanttChartView from './../components/dashboard/gantt_view'
 import WatchView from './../components/dashboard/watch_view'
 import MembersView from './../components/dashboard/members_view'
 import FacilityView from './../components/dashboard/facility_view'
+import Sheets from './../components/dashboard/sheets'
 
 export default new VueRouter({
   routes: [
@@ -30,7 +31,12 @@ export default new VueRouter({
       name: 'FacilityManagerView',
       path: '/projects/:projectId/facility_manager',
       component: FacilityView
-    }
+    },
+    {
+      name: 'ProjectSheets',
+      path: '/projects/:projectId/sheets',
+      component: Sheets
+    },
   ],
   hashbang: false,
   mode: 'history',

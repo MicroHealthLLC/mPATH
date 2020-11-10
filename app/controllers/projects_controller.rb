@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager]
+  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheets]
 
   def index
     respond_to do |format|
@@ -49,6 +49,14 @@ class ProjectsController < AuthenticatedController
 
   def facility_manager
     check_permit("facility_manager_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
+  def sheets
+    check_permit("sheets_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
