@@ -1,6 +1,6 @@
 <template>
   <div id="facility-show">
-    <div v-if="!loading">
+    <div class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-check"></i></span>
         <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
@@ -19,7 +19,7 @@
                 <span> {{facilityGroup.name}}</span>
               </p>
               <div>
-                   <p class="mt-2 d-flex align-items-center">
+                <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                     <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>
                   <v2-date-picker
@@ -175,7 +175,6 @@
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </div>
-
 
         <div v-if="currentTab == 'notes'">
           <div>
@@ -333,11 +332,45 @@
         'currentProject',
         'taskTypeFilter',
         'issueTypeFilter',
-        'statuses'
+        'issueSeverityFilter',
+        'statuses',
+        'myActionsFilter',
+        'onWatchFilter'
       ]),
+      C_myTasks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('tasks')
+        }
+      },
+      C_myIssues: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('issues')
+        }
+      },
+      C_onWatchTasks: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('tasks')
+        }
+      },
+      C_onWatchIssues: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('issues')
+        }
+      },
       filteredTasks() {
-        var ids = this.taskTypeFilter && this.taskTypeFilter.length ? _.map(this.taskTypeFilter, 'id') : []
-        return _.filter(this.DV_facility.tasks, t => ids.length ? ids.includes(t.taskTypeId) : true)
+        var typeIds = _.map(this.taskTypeFilter, 'id')
+        return _.filter(this.DV_facility.tasks, (task) => {
+          let valid = true
+          if (this.C_myTasks) {
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            valid = valid && userIds.includes(this.$currentUser.id)
+          }
+          if (this.C_onWatchTasks) {
+            valid  = valid && task.watched
+          }
+          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          return valid
+        })
       },
       taskStats() {
         var tasks = new Array
@@ -363,8 +396,21 @@
         }
       },
       filteredIssues() {
-        var ids = this.issueTypeFilter && this.issueTypeFilter.length ? _.map(this.issueTypeFilter, 'id') : []
-        return _.filter(this.DV_facility.issues, t => ids.length ? ids.includes(t.issueTypeId) : true)
+        let typeIds = _.map(this.issueTypeFilter, 'id')
+        let severityIds = _.map(this.issueSeverityFilter, 'id')
+        return _.filter(this.facility.issues, ((issue) => {
+          let valid = true
+          if (this.C_myIssues) {
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            valid  = valid && userIds.includes(this.$currentUser.id)
+          }
+          if (this.C_onWatchIssues) {
+            valid  = valid && issue.watched
+          }
+          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          return valid
+        }))
       },
       issueStats() {
         var issues = new Array

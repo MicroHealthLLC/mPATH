@@ -690,7 +690,7 @@
     padding: 0;
   }
  .formTitle {
-    padding-top: 65px;
+    padding-top: 25px;
   }
   .paperLook {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);

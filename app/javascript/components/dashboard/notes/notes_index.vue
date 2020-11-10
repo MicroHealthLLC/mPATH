@@ -20,7 +20,7 @@
           <button @click.stop="addNewNote" class="btn btn-sm btn-light">Add Note</button>
         </div>
       </div>
-      <div class="form-check-inline justify-content-end w-100 pr-3 mb-2">
+      <div class="form-check-inline justify-content-end w-100 pr-3 mb-2 font-sm">
         <label class="form-check-label">
           <input type="checkbox" class="form-check-input" v-model="C_myNotes">My Notes
         </label>

@@ -23,7 +23,7 @@
         </div>
         <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button>
       </div>
-      <div class="m-1 d-flex">
+      <div class="mx-2 my-3 d-flex font-sm">
         <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
@@ -52,25 +52,25 @@
         </div>
       </div>
       <div v-if="filteredTasks.length > 0">
-          <button
-            @click="download"
-            id="printBtn"
-            class="btn btn-sm btn-outline-dark m-2"
-            style="font-size:.70rem" >
-            EXPORT TO PDF
-          </button>
-          <button
-            disabled
-            id="printBtn"
-            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
-            style="font-size:.70rem" >
-            EXPORT TO EXCEL
-          </button>
-          
+        <button
+          @click="download"
+          id="printBtn"
+          class="btn btn-sm btn-outline-dark m-2"
+          style="font-size:.70rem" >
+          EXPORT TO PDF
+        </button>
+        <button
+          disabled
+          id="printBtn"
+          class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
+          style="font-size:.70rem" >
+          EXPORT TO EXCEL
+        </button>
+
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"    
-          href="#"      
+          id="taskHover"
+          href="#"
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :load="log(task)"
@@ -83,36 +83,37 @@
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-     <table style="display:none"
-            class="table table-sm table-bordered"
-            ref="table" id="taskList1"
-          >
-          <thead>
-            <tr>
-              <th></th>
-              <th>Task</th>
-              <th>Milestone</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(task, i) in filteredTasks">
-              <td class="text-center">{{i+1}}</td>
-              <td>{{task.text}}</td>
-              <td>{{task.taskType}}
-              <td>{{task.startDate}}</td>
-              <td>{{task.dueDate}}</td>
-              <td>{{task.users.join(', ')}}</td>
-              <td>{{task.progress + "%"}}</td>
-              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
-              <td v-else>No Updates</td>
-            </tr>
-          </tbody>
-        </table>
+
+    <table style="display:none"
+      class="table table-sm table-bordered"
+      ref="table" id="taskList1"
+      >
+      <thead>
+        <tr>
+          <th></th>
+          <th>Task</th>
+          <th>Milestone</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(task, i) in filteredTasks">
+          <td class="text-center">{{i+1}}</td>
+          <td>{{task.text}}</td>
+          <td>{{task.taskType}}
+          <td>{{task.startDate}}</td>
+          <td>{{task.dueDate}}</td>
+          <td>{{task.users.join(', ')}}</td>
+          <td>{{task.progress + "%"}}</td>
+          <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+          <td v-else>No Updates</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
 </template>
@@ -234,7 +235,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   #tasks-index {
     height: 465px;
     background-color: #ffffff;
@@ -254,6 +254,6 @@
   // cursor: pointer;
   // background-color: black !important;
   // border-left: solid rgb(91, 192, 222);
-  // } 
+  // }
 
 </style>

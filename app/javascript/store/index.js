@@ -7,10 +7,10 @@ import * as Cookies from 'js-cookie'
 
 // utility function
 const getSimpleDate = (date) => {
-  var dt = [undefined, null, 'N/A'].includes(date) ? new Date : new Date(date)
-  var y = dt.getFullYear()
-  var m = dt.getMonth()
-  var d = dt.getDate()
+  let dt = [undefined, null, 'N/A'].includes(date) ? new Date : new Date(date)
+  let y = dt.getFullYear()
+  let m = dt.getMonth()
+  let d = dt.getDate()
   return new Date(y, m, d, 0, 0, 0).getTime()
 }
 
@@ -85,14 +85,14 @@ export default new Vuex.Store({
     setMapFilters: (state, filters) => state.mapFilters = filters,
     updateFacilities: (state, {index, facility}) => Vue.set(state.facilities, index, facility),
     updateFacilityHash: (state, facility) => {
-      var index = state.facilities.findIndex(f => f.id == facility.id)
+      let index = state.facilities.findIndex(f => f.id == facility.id)
       if (index > -1) Vue.set(state.facilities, index, facility)
     },
     updateMapFilters: (state, {key, filter, same, _k}) => {
       if (filter && !filter.includes(null) && Array.isArray(filter) && filter.length > 0) {
-        var i = state.mapFilters.findIndex(f => f.hasOwnProperty(key))
+        let i = state.mapFilters.findIndex(f => f.hasOwnProperty(key))
         if (i < 0) i = state.mapFilters.length
-        var value = {[key]: same ? filter : _.map(filter, _k || 'id')}
+        let value = {[key]: same ? filter : _.map(filter, _k || 'id')}
         Vue.set(state.mapFilters, i, value)
       }
       else {
@@ -100,10 +100,10 @@ export default new Vuex.Store({
       }
     },
     updateTasksHash: (state, {task, action}) => {
-      var facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
+      let facility_i = state.facilities.findIndex(f => f.id == task.facilityId)
       if (facility_i > -1) {
-        var facility = Object.assign({}, state.facilities[facility_i])
-        var task_i = facility.tasks.findIndex((t) => t.id == task.id)
+        let facility = Object.assign({}, state.facilities[facility_i])
+        let task_i = facility.tasks.findIndex((t) => t.id == task.id)
         if (action === 'delete') {
           for (let t of _.flatten(_.map(state.facilities, 'tasks'))) {
             _.remove(t.subTaskIds, id => id == t.id)
@@ -115,10 +115,10 @@ export default new Vuex.Store({
       }
     },
     updateIssuesHash: (state, {issue, action}) => {
-      var facility_i = state.facilities.findIndex(f => f.id == issue.facilityId)
+      let facility_i = state.facilities.findIndex(f => f.id == issue.facilityId)
       if (facility_i > -1) {
-        var facility = Object.assign({}, state.facilities[facility_i])
-        var issue_i = facility.issues.findIndex((t) => t.id == issue.id)
+        let facility = Object.assign({}, state.facilities[facility_i])
+        let issue_i = facility.issues.findIndex((t) => t.id == issue.id)
         if (action === 'delete') {
           for (let t of _.flatten(_.map(state.facilities, 'issues'))) {
             _.remove(t.subIssueIds, id => id == t.id)
@@ -130,10 +130,10 @@ export default new Vuex.Store({
       }
     },
     updateNotesHash: (state, {note, facilityId, action}) => {
-      var facility_i = state.facilities.findIndex(f => f.id == facilityId)
+      let facility_i = state.facilities.findIndex(f => f.id == facilityId)
       if (facility_i > -1) {
-        var facility = Object.assign({}, state.facilities[facility_i])
-        var note_i = facility.notes.findIndex((t) => t.id == note.id)
+        let facility = Object.assign({}, state.facilities[facility_i])
+        let note_i = facility.notes.findIndex((t) => t.id == note.id)
         if (action === 'delete') {
           Vue.delete(facility.notes, note_i)
         }
@@ -156,10 +156,10 @@ export default new Vuex.Store({
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
     setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
     clearProgressFilters: (state) => {
-      var filters = new Object
-      for (var key of Object.keys(state.progressFilter)) {
+      let filters = new Object
+      for (let key of Object.keys(state.progressFilter)) {
         filters[key] = new Object
-        for (var fil of Object.keys(state.progressFilter[key])) {
+        for (let fil of Object.keys(state.progressFilter[key])) {
           filters[key][fil] = ""
         }
       }
@@ -208,20 +208,21 @@ export default new Vuex.Store({
     managerView: state => state.managerView,
     filteredFacilities: (state, getters) => (_status='active') => {
       return _.filter(getters.facilities, (facility) => {
-        var valid = _status === 'all' || facility.status === _status
+        let valid = _status === 'all' || facility.status === _status
+        valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
         _.each(state.mapFilters, (f) => {
-          var k = Object.keys(f)[0]
+          let k = Object.keys(f)[0]
           switch(k) {
             case "dueDate": {
-              var range = moment.range(f[k][0], f[k][1])
+              let range = moment.range(f[k][0], f[k][1])
               valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
               break
             }
             case "progress": {
-              var ranges = f[k].map(r => r.split("-").map(Number))
-              var is_valid = false
-              for (var range of ranges) {
+              let ranges = f[k].map(r => r.split("-").map(Number))
+              let is_valid = false
+              for (let range of ranges) {
                 is_valid = range[1] !== undefined ? range[0] <= facility[k] && range[1] >= facility[k] : facility[k] == range[0]
                 if (is_valid) break
               }
@@ -229,23 +230,23 @@ export default new Vuex.Store({
               break
             }
             case "taskTypeIds": {
-              var ids = _.map(facility.tasks, 'taskTypeId')
+              let ids = _.map(facility.tasks, 'taskTypeId')
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "issueTypeIds": {
-              var ids = _.map(facility.issues, 'issueTypeId')
+              let ids = _.map(facility.issues, 'issueTypeId')
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "issueProgress":
             case "taskProgress": {
-              var progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
-              var progress = _.uniq(_.map(progressFor, 'progress'))
-              var ranges = f[k].map(r => r.split("-").map(Number))
-              var is_valid = false
-              for (var range of ranges) {
-                var size = range[1] ? (range[1] - range[0]) + 1 : 1
+              let progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
+              let progress = _.uniq(_.map(progressFor, 'progress'))
+              let ranges = f[k].map(r => r.split("-").map(Number))
+              let is_valid = false
+              for (let range of ranges) {
+                let size = range[1] ? (range[1] - range[0]) + 1 : 1
                 is_valid = _.intersection(progress, Array.from(Array(size), (_, i) => i + range[0])).length > 0
                 if (is_valid) break
               }
@@ -253,17 +254,17 @@ export default new Vuex.Store({
               break
             }
             case "issueSeverityIds": {
-              var ids = _.map(facility.issues, 'issueSeverityId')
+              let ids = _.map(facility.issues, 'issueSeverityId')
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "issueUserIds": {
-              var ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
+              let ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "taskUserIds": {
-              var ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
+              let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -280,8 +281,8 @@ export default new Vuex.Store({
               break
             }
             case "myActions": {
-              var is_valid = false
-              for (var act of f[k]) {
+              let is_valid = false
+              for (let act of f[k]) {
                 let userIds = act == "notes" ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
                 is_valid = is_valid || userIds.includes(Vue.prototype.$currentUser.id)
               }
@@ -306,22 +307,22 @@ export default new Vuex.Store({
       })
     },
     filteredFacilityGroups: (state, getters) => {
-      var ids = _.map(getters.filteredFacilities('active'), 'facilityGroupId')
+      let ids = _.map(getters.filteredFacilities('active'), 'facilityGroupId')
       return _.filter(getters.facilityGroups, fg => ids.includes(fg.id) && fg.status == "active")
     },
     facilityCount: (state, getters) => {
       return getters.filteredFacilities('all').length
     },
     facilityProgress: (state, getters) => {
-      var mean = _.meanBy(getters.filteredFacilities('active'), 'progress') || 0
+      let mean = _.meanBy(getters.filteredFacilities('active'), 'progress') || 0
       return Number(mean.toFixed(2))
     },
     filterFacilitiesWithActiveFacilityGroups: (state, getters) => {
-      var ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
+      let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
       return _.filter(getters.filteredFacilities('active'), (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
     },
     unFilterFacilities: (state) => {
-      var ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
+      let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
       return _.filter(state.facilities, (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
     },
     activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
@@ -339,15 +340,15 @@ export default new Vuex.Store({
 
     // for gantt chart view
     ganttData: (state, getters) => {
-      var hash = new Array
+      let hash = new Array
 
       // for project
-      var p_id = `p_${getters.currentProject.id}`
-      var _p_id = '1'
-      var p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
-      var p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
-      var p_duration = getSimpleDate(p_e_date) - getSimpleDate(p_s_date) || 0
-      var p_progress = _.meanBy(getters.currentTasks, 'progress') || 0
+      let p_id = `p_${getters.currentProject.id}`
+      let _p_id = '1'
+      let p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
+      let p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
+      let p_duration = getSimpleDate(p_e_date) - getSimpleDate(p_s_date) || 0
+      let p_progress = _.meanBy(getters.currentTasks, 'progress') || 0
 
       hash.push(
         {
@@ -365,16 +366,16 @@ export default new Vuex.Store({
       )
 
       // for facility_groups
-      var groups = _.groupBy(getters.filterFacilitiesWithActiveFacilityGroups, 'facilityGroupName')
-      var group_count = 1
-      for (var group in groups) {
-        var _fg_id = _p_id + "." + group_count
-        var fg_id = `${p_id}_fg_${group}`.replace(/ /i, '_')
-        var fg_tasks = _.flatten(_.map(groups[group], 'tasks'))
-        var fg_s_date = _.min(_.map(fg_tasks, 'startDate')) || 'N/A'
-        var fg_e_date = _.max(_.map(fg_tasks, 'dueDate')) || 'N/A'
-        var fg_duration = getSimpleDate(fg_e_date) - getSimpleDate(fg_s_date) || 0
-        var fg_progress = _.meanBy(fg_tasks, 'progress') || 0
+      let groups = _.groupBy(getters.filterFacilitiesWithActiveFacilityGroups, 'facilityGroupName')
+      let group_count = 1
+      for (let group in groups) {
+        let _fg_id = _p_id + "." + group_count
+        let fg_id = `${p_id}_fg_${group}`.replace(/ /i, '_')
+        let fg_tasks = _.flatten(_.map(groups[group], 'tasks'))
+        let fg_s_date = _.min(_.map(fg_tasks, 'startDate')) || 'N/A'
+        let fg_e_date = _.max(_.map(fg_tasks, 'dueDate')) || 'N/A'
+        let fg_duration = getSimpleDate(fg_e_date) - getSimpleDate(fg_s_date) || 0
+        let fg_progress = _.meanBy(fg_tasks, 'progress') || 0
 
         hash.push(
           {
@@ -392,16 +393,16 @@ export default new Vuex.Store({
           }
         )
 
-        var f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$permissions.overview.read || false
         // for facilities under facility_groups
-        var facility_count = 1
-        for (var facility of groups[group]) {
-          var f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id
-          var _f_id = _fg_id + "." + facility_count
-          var f_s_date = _.min(_.map(facility.tasks, 'startDate')) || 'N/A'
-          var f_e_date = _.max(_.map(facility.tasks, 'dueDate')) || 'N/A'
-          var f_duration = getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0
-          var f_progress = _.meanBy(facility.tasks, 'progress') || 0
+        let facility_count = 1
+        for (let facility of groups[group]) {
+          let f_id = f_read ? `${fg_id}_f_${facility.id}` : fg_id
+          let _f_id = _fg_id + "." + facility_count
+          let f_s_date = _.min(_.map(facility.tasks, 'startDate')) || 'N/A'
+          let f_e_date = _.max(_.map(facility.tasks, 'dueDate')) || 'N/A'
+          let f_duration = getSimpleDate(f_e_date) - getSimpleDate(f_s_date) || 0
+          let f_progress = _.meanBy(facility.tasks, 'progress') || 0
 
           hash.push(
             {
@@ -422,18 +423,18 @@ export default new Vuex.Store({
           if (Vue.prototype.$permissions.tasks.read)
           {
             // for task_types under facilities
-            var types = _.groupBy(facility.tasks, 'taskType')
-            var filteredTaskTypes = _.map(getters.taskTypeFilter, 'name')
-            var types_count = 1
-            for (var type in types) {
+            let types = _.groupBy(facility.tasks, 'taskType')
+            let filteredTaskTypes = _.map(getters.taskTypeFilter, 'name')
+            let types_count = 1
+            for (let type in types) {
               if (filteredTaskTypes.length > 0 && !filteredTaskTypes.includes(type)) continue
-              var tasks = types[type]
-              var tt_id = `${f_id}_tt_${type}`.replace(/ /i, '_')
-              var _tt_id = _f_id + "." + types_count
-              var tt_s_date = _.min(_.map(tasks, 'startDate'))
-              var tt_e_date = _.max(_.map(tasks, 'dueDate'))
-              var tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
-              var tt_progress = _.meanBy(tasks, 'progress')
+              let tasks = types[type]
+              let tt_id = `${f_id}_tt_${type}`.replace(/ /i, '_')
+              let _tt_id = _f_id + "." + types_count
+              let tt_s_date = _.min(_.map(tasks, 'startDate'))
+              let tt_e_date = _.max(_.map(tasks, 'dueDate'))
+              let tt_duration = getSimpleDate(tt_e_date) - getSimpleDate(tt_s_date)
+              let tt_progress = _.meanBy(tasks, 'progress')
 
               hash.push(
                 {
@@ -451,26 +452,26 @@ export default new Vuex.Store({
                 }
               )
 
-              var ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
+              let ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
 
               // for tasks under task_types
-              var task_count = 1
-              for (var task of tasks) {
+              let task_count = 1
+              for (let task of tasks) {
                 if (_.map(getters.myActionsFilter, 'value').includes('tasks')) {
-                  var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+                  let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
                   if (!userIds.includes(Vue.prototype.$currentUser.id)) continue
                 }
                 if (ranges && ranges.length > 0) {
                   let is_valid = false
-                  for (var range of ranges) {
+                  for (let range of ranges) {
                     is_valid = range[1] !== undefined ? range[0] <= task.progress && range[1] >= task.progress : task.progress == range[0]
                     if (is_valid) break
                   }
                   if (!is_valid) continue
                 }
-                var t_id = `${tt_id}_t_${task.id}`
-                var _t_id = _tt_id + "." + task_count
-                var t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
+                let t_id = `${tt_id}_t_${task.id}`
+                let _t_id = _tt_id + "." + task_count
+                let t_duration = getSimpleDate(task.dueDate) - getSimpleDate(task.startDate)
 
                 hash.push(
                   {
@@ -494,11 +495,11 @@ export default new Vuex.Store({
                 )
 
                 // for checklists under tasks
-                var checklist_count = 1
-                for (var checklist of task.checklists) {
+                let checklist_count = 1
+                for (let checklist of task.checklists) {
                   if (_.map(getters.myActionsFilter, 'value').includes('tasks') && checklist.userId !== Vue.prototype.$currentUser.id) continue
-                  var c_id = `${t_id}_t_${checklist.id}`
-                  var _c_id = _t_id + "." + checklist_count
+                  let c_id = `${t_id}_t_${checklist.id}`
+                  let _c_id = _t_id + "." + checklist_count
                   hash.push(
                     {
                       id: c_id,
@@ -531,18 +532,18 @@ export default new Vuex.Store({
       return hash
     },
     filteredAllTasks: (state, getters) => {
-      var ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
+      let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => ids.length ? ids.includes(t.taskTypeId) : true)
     },
     filteredAllIssues: (state, getters) => {
-      var ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
+      let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => ids.length ? ids.includes(t.issueTypeId) : true)
     },
     on_watched: (state, getters) => {
-      var tasks = _.filter(getters.filteredAllTasks, t => t.watched)
-      var issues = _.filter(getters.filteredAllIssues, t => t.watched)
-      var ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
-      var facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
+      let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
+      let issues = _.filter(getters.filteredAllIssues, t => t.watched)
+      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
+      let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 
       return {tasks, issues, facilities}
     },
@@ -556,8 +557,8 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.get(`/projects/${id}/facilities.json`)
           .then((res) => {
-            var facilities = []
-            for (var facility of res.data.facilities) {
+            let facilities = []
+            for (let facility of res.data.facilities) {
               facilities.push({...facility, ...facility.facility})
             }
             commit('setFacilities', facilities)
@@ -587,8 +588,8 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.get(`/projects/${projectId}/facilities/${facilityId}.json`)
           .then((res) => {
-            var facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
-            var index = getters.facilities.findIndex(f => f.id == facility.id)
+            let facility = Object.assign({}, {...res.data.facility, ...res.data.facility.facility})
+            let index = getters.facilities.findIndex(f => f.id == facility.id)
             if (index > -1) commit('updateFacilities', {index, facility})
             return resolve(facility)
           })

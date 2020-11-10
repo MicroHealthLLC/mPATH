@@ -17,6 +17,7 @@ class Facility < ApplicationRecord
     json = super(options)
     json.merge(
       facility_group_name: self.facility_group.try(:name),
+      facility_group_status: self.facility_group.try(:status),
       creator: self.creator.as_json
     ).as_json
   end

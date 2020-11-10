@@ -42,7 +42,7 @@
     </div>
     <hr>
     <div class="my-1">
-      <h5 class="text-center">{{filteredAllTasks.length}} Tasks</h5>
+      <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
       <div>
         <div class="row">
           <div class="col-md-9">
@@ -54,7 +54,7 @@
               <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
             </span>
           </div>
-        </div>      
+        </div>
         <div class="row">
           <div class="col-md-9">
             <span>Overdue</span>
@@ -68,7 +68,7 @@
         </div>
       </div>
       <br>
-      <div v-if="filteredAllTasks.length" class="text-info font-weight-bold text-center">Milestones</div>
+      <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Milestones</div>
       <div v-for="task in currentTaskTypes">
         <div class="row" v-if="task._display">
           <div class="col-md-9">
@@ -85,7 +85,7 @@
     </div>
     <hr>
     <div class="my-1">
-      <h5 class="text-center">{{filteredAllIssues.length}} Issues</h5>
+      <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
       <div>
         <div class="row">
           <div class="col-md-9">
@@ -97,7 +97,7 @@
               <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
             </span>
           </div>
-        </div>       
+        </div>
         <div class="row">
           <div class="col-md-9">
             <span>Overdue</span>
@@ -111,7 +111,7 @@
         </div>
       </div>
       <br>
-      <div v-if="filteredAllIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
+      <div v-if="filteredIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
       <div v-for="issue in currentIssueTypes">
         <div class="row" v-if="issue._display">
           <div class="col-md-9">
@@ -163,11 +163,66 @@ export default {
       'facilityGroupFacilities',
       'taskTypeFilter',
       'issueTypeFilter',
+      'issueSeverityFilter',
       'taskTypes',
       'issueTypes',
       'filteredAllTasks',
-      'filteredAllIssues'
+      'filteredAllIssues',
+      'myActionsFilter',
+      'onWatchFilter'
     ]),
+    C_myTasks: {
+      get() {
+        return _.map(this.myActionsFilter, 'value').includes('tasks')
+      }
+    },
+    C_myIssues: {
+      get() {
+        return _.map(this.myActionsFilter, 'value').includes('issues')
+      }
+    },
+    C_onWatchTasks: {
+      get() {
+        return _.map(this.onWatchFilter, 'value').includes('tasks')
+      }
+    },
+    C_onWatchIssues: {
+      get() {
+        return _.map(this.onWatchFilter, 'value').includes('issues')
+      }
+    },
+    filteredTasks() {
+      let typeIds = _.map(this.taskTypeFilter, 'id')
+      return _.filter(this.filteredAllTasks, (task) => {
+        let valid = true
+        if (this.C_myTasks) {
+          let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+          valid  = valid && userIds.includes(this.$currentUser.id)
+        }
+        if (this.C_onWatchTasks) {
+          valid  = valid && task.watched
+        }
+        if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+        return valid
+      })
+    },
+    filteredIssues() {
+      let typeIds = _.map(this.issueTypeFilter, 'id')
+      let severityIds = _.map(this.issueSeverityFilter, 'id')
+      return _.filter(this.filteredAllIssues, (issue) => {
+        let valid = true
+        if (this.C_myIssues) {
+          let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+          valid  = valid && userIds.includes(this.$currentUser.id)
+        }
+        if (this.C_onWatchIssues) {
+          valid  = valid && issue.watched
+        }
+        if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+        if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+        return valid
+      })
+    },
     facilitiesByStatus() {
       return {
         active: this.filteredFacilities('active').length,
@@ -193,7 +248,7 @@ export default {
       var names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
       var taskTypes = new Array
       for (var type of this.taskTypes) {
-        var tasks = _.filter(this.filteredAllTasks, t => t.taskTypeId == type.id)
+        var tasks = _.filter(this.filteredTasks, t => t.taskTypeId == type.id)
         taskTypes.push(
           {
             name: type.name,
@@ -209,7 +264,7 @@ export default {
       var names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
       var issueTypes = new Array
       for (var type of this.issueTypes) {
-        var issues = _.filter(this.filteredAllIssues, t => t.issueTypeId == type.id)
+        var issues = _.filter(this.filteredIssues, t => t.issueTypeId == type.id)
         issueTypes.push(
           {
             name: type.name,
@@ -222,24 +277,24 @@ export default {
       return issueTypes
     },
     taskVariation() {
-      var completed = _.filter(this.filteredAllTasks, (t) => t && t.progress && t.progress == 100)
-      var completed_percent = this.getAverage(completed.length, this.filteredAllTasks.length)
-      var overdue = _.filter(this.filteredAllTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      var overdue_percent = this.getAverage(overdue.length, this.filteredAllTasks.length)
-    
+      var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
+      var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
+      var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
+
       return {
-        completed: {count: completed.length, percentage: completed_percent},     
+        completed: {count: completed.length, percentage: completed_percent},
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     },
     issueVariation() {
-      var completed = _.filter(this.filteredAllIssues, (t) => t && t.progress && t.progress == 100)
-      var completed_percent = this.getAverage(completed.length, this.filteredAllIssues.length)
-      var overdue = _.filter(this.filteredAllIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      var overdue_percent = this.getAverage(overdue.length, this.filteredAllIssues.length)    
+      var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
+      var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
+      var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
       return {
-        completed: {count: completed.length, percentage: completed_percent},     
+        completed: {count: completed.length, percentage: completed_percent},
         overdue: {count: overdue.length, percentage: overdue_percent},
       }
     }
