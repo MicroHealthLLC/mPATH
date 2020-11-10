@@ -61,7 +61,7 @@
         </div>
         <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-light" @click.prevent="reportNew">Add Issue</button>
       </div>
-      <div class="m-1 d-flex">
+      <div class="mx-2 mt-3 d-flex font-sm">
         <div class="form-check-inline mr-2">
           <label class="form-check-label">
             <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
@@ -125,37 +125,37 @@
       </div>
     </div>
      <table style="display:none"
-            class="table table-sm table-bordered"
-            ref="table" id="issueList1"
-        >
-          <thead>
-            <tr>
-              <th></th>
-              <th>Issue</th>
-              <th>Issue Type</th>
-              <th>Issue Severity</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(issue, i) in filteredIssues">
-              <td class="text-center">{{i+1}}</td>
-                <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}
-                <td>{{issue.issueSeverity}}
-                <td>{{issue.startDate}}</td>
-                <td>{{issue.dueDate}}</td>
-                <td>{{issue.users.join(', ')}}</td>
-                <td>{{issue.progress + "%"}}</td>
-                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-                <td v-else>No Updates</td>
-            </tr>
-          </tbody>
-        </table>
+      class="table table-sm table-bordered"
+      ref="table" id="issueList1"
+      >
+        <thead>
+          <tr>
+            <th></th>
+            <th>Issue</th>
+            <th>Issue Type</th>
+            <th>Issue Severity</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Assigned Users</th>
+            <th>Progress</th>
+            <th>Last Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(issue, i) in filteredIssues">
+            <td class="text-center">{{i+1}}</td>
+            <td>{{issue.title}}</td>
+            <td>{{issue.issueType}}
+            <td>{{issue.issueSeverity}}
+            <td>{{issue.startDate}}</td>
+            <td>{{issue.dueDate}}</td>
+            <td>{{issue.users.join(', ')}}</td>
+            <td>{{issue.progress + "%"}}</td>
+            <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+            <td v-else>No Updates</td>
+          </tr>
+        </tbody>
+      </table>
   </div>
 </template>
 

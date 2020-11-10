@@ -57,7 +57,7 @@ ActiveAdmin.register Facility do
       if current_user.admin_write?
         facility.projects.active
       else
-        "<span>#{facility.projects.active.pluck(:name).join(', ')}</span>".html_safe
+        "<span>#{facility.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
     actions defaults: false do |facility|

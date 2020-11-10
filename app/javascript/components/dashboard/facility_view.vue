@@ -7,12 +7,12 @@
           <div v-for="group in filteredFacilityGroups" class="my-3">
             <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
-                <i class="fa fa-angle-right font-sm mr-2 cursor"></i>
+                <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
               </span>
               <span v-show="expanded.id == group.id">
-               <i class="fa fa-angle-down font-md mr-2 cursor"></i>
+               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
               </span>
-              <h5 class="cursor">{{group.name}}</h5>
+              <h5 class="clickable">{{group.name}}</h5>
             </div>
             <div v-show="expanded.id == group.id" class="ml-2">
               <div v-for="item in facilityGroupFacilities(group)">
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">     
+      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -32,42 +32,44 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-           <facility-rollup v-else></facility-rollup>     
+           <facility-rollup v-else></facility-rollup>
         </div>
       </div>
       <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
-      
         <div class="default-background mt-3">
-        <div style="background-color:white">
-          <!-- <span v-if="managerView.task || managerView.issue || managerView.note" class="btn btn-link clickable btn-sm text-danger" @click="goBackFromEdits"><i class="fa fa-chevron-circle-left mr-1" aria-hidden="true"></i> back</span> -->
-          <task-form
-            v-if="managerView.task"
-            :facility="currentFacility"
-            :task="managerView.task"
-            title="Edit Task"
-            @task-created="updateFacilityTask"
-            @task-updated="updateFacilityTask"
-          ></task-form>
+          <div class="bg-white">
+            <task-form
+              v-if="managerView.task"
+              :facility="currentFacility"
+              :task="managerView.task"
+              title="Edit Task"
+              @task-created="updateFacilityTask"
+              @task-updated="updateFacilityTask"
+            ></task-form>
 
-          <issue-form
-            v-if="managerView.issue"
-            :facility="currentFacility"
-            :issue="managerView.issue"
-            @issue-updated="updateFacilityIssue"
-            @issue-created="updateFacilityIssue"
-          ></issue-form>
+            <issue-form
+              v-else-if="managerView.issue"
+              :facility="currentFacility"
+              :issue="managerView.issue"
+              @issue-updated="updateFacilityIssue"
+              @issue-created="updateFacilityIssue"
+            ></issue-form>
 
-          <notes-form
-            v-if="managerView.note"
-            from="manager_view"
-            :facility="currentFacility"
-            :note="managerView.note"
-            @close-note-input=""
-            @note-created="createdFacilityNote"
-            @note-updated="updatedFacilityNote"
-          ></notes-form>
-           <div class="centeredDiv text-center"> <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i> <p>View, Add or Edit Tasks, Issues, and Notes here.</p></div>
+            <notes-form
+              v-else-if="managerView.note"
+              from="manager_view"
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input=""
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+            ></notes-form>
+
+            <div v-else class="centeredDiv text-center">
+              <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
+              <p>View, Add or Edit Tasks, Issues, and Notes here.</p>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -164,8 +166,8 @@
     },
     watch: {
       currentFacility: {
-        handler(value) {
-          if (_.isEmpty(value)) {
+        handler(value, previous) {
+          if (_.isEmpty(value) || value.id !== previous.id) {
             this.goBackFromEdits()
           }
         }, deep: true
@@ -177,9 +179,6 @@
 <style lang="scss">
   #facility_view {
     padding: 0 10px;
-     .cursor {
-      cursor: pointer;
-    }
     .facility-groups-tab {
       background: #ededed;
       max-height: calc(100vh - 94px);
@@ -195,25 +194,25 @@
     .fac-manager-sidebar {
       cursor: pointer;
       font-weight: 400 !important;
-    } 
-
-    .default-background {   
-      background-color: #ededed;     
-      height: 100%;       
-      position: relative;     
+    }
+    .default-background {
+      background-color: #ededed;
+      height: calc(100vh - 130px);
+      max-height: calc(100vh - 130px);
+      position: relative;
       border-radius: 4px;
       z-index: 1;
     }
     .centeredDiv {
-    position: absolute;
-    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    border: 1px solid #383838;
-    border-radius: 4px;
-    padding: 10px;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+      position: absolute;
+      box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      border: 1px solid #383838;
+      border-radius: 4px;
+      padding: 10px;
+      top: 50%;
+      left: 50%;
+      margin-right: -50%;
+      transform: translate(-50%, -50%);
     }
 
     h6.fac-manager-sidebar {

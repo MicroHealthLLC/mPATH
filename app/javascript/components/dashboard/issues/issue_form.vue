@@ -10,7 +10,7 @@
         <div v-if="_isallowed('write')" class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave"
-           class="btn btn-sm sticky-btn btn-success"
+          class="btn btn-sm sticky-btn btn-success"
           >
           Save
         </button>
@@ -343,8 +343,9 @@
     mounted() {
       if (!_.isEmpty(this.issue)) {
         this.loadIssue(this.issue)
+      } else  {
+        this.loading = false
       }
-      this.loading = false
     },
     methods: {
       ...mapMutations([
@@ -383,6 +384,7 @@
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
+          this.loading = false
         })
       },
       addFile(files=[]) {
@@ -719,32 +721,30 @@
     padding: 0;
   }
  .formTitle {
-  padding-top: 65px;
+    padding-top: 25px;
   }
-
-.paperLook {
-   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-   padding-bottom: 20px;
-   margin-bottom: 10px;
-   position: relative;
-}
-
-.sticky-btn {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
-}
-.sticky {
-  position: sticky;
-  position: -webkit-sticky;
-  justify-content: center;
-  margin-bottom: -2.5rem;
-  z-index: 1000;
-  left: 15;
-  top: 0;
-  width: 100%;
-  padding: 6px;
-  background-color: rgba(237, 237, 237, 0.85);
-  box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-}
+  .paperLook {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .sticky-btn {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .sticky {
+    position: sticky;
+    position: -webkit-sticky;
+    justify-content: center;
+    margin-bottom: -2.5rem;
+    z-index: 1000;
+    left: 15;
+    top: 0;
+    width: 100%;
+    padding: 6px;
+    background-color: rgba(237, 237, 237, 0.85);
+    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
 </style>

@@ -1,7 +1,6 @@
 import                           'core-js/stable'
 import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
-import                           'vue-slim-tabs/themes/default.css'
 import                           'vue2-datepicker/index.css'
 import _                    from 'lodash'
 import Multiselect          from 'vue-multiselect'

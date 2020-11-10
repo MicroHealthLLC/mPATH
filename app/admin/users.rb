@@ -117,7 +117,7 @@ ActiveAdmin.register User do
       if current_user.admin_write?
         user.projects.active
       else
-        "<span>#{user.projects.active.pluck(:name).join(', ')}</span>".html_safe
+        "<span>#{user.projects.active.reorder(:id).pluck(:name).join(', ')}</span>".html_safe
       end
     end
     actions defaults: false do |user|

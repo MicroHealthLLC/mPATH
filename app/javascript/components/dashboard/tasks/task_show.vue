@@ -6,7 +6,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click="editTask">
+    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
@@ -42,11 +42,11 @@
           </div>
         </div>
         <div class="col-md-3 mt-2">
-          <div class="t_actions my-3 mr-0">         
+          <div class="t_actions my-3 mr-0">
             <!-- <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
               <i class="fas fa-trash-alt" style="float:right"></i>
             </span> -->
-            <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent="toggleWatched">
+            <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent.stop="toggleWatched">
               <span v-show="DV_task.watched" class="check_box"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box"><i class="far fa-square"></i></span>
               <span class="text-danger"><i class="fa fa-exclamation"></i></span><small> On Watch</small>
@@ -84,15 +84,17 @@
       :blocking="true"
       >
       <div v-if="has_task" class="w-100">
-        <div class="modal_close_btn" @click="onCloseForm">
+        <!-- <div class="modal_close_btn" @click="onCloseForm">
           <i class="fa fa-times"></i>
-        </div>
+        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
           :task="DV_edit_task"
           title="Edit Task"
           @task-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></task-form>
 
         <issue-form
@@ -100,6 +102,8 @@
           :facility="facility"
           :issue="DV_edit_issue"
           @issue-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></issue-form>
       </div>
     </sweet-modal>
@@ -123,7 +127,6 @@
       task: Object
     },
     data() {
-      
       return {
         loading: true,
         DV_task: {},
@@ -131,9 +134,6 @@
         DV_edit_issue: {},
         has_task: false
       }
-    },
-       styleObject: {
-       backgroundColor: 'red',      
     },
     mounted() {
       if (this.task) {
@@ -279,17 +279,21 @@
       font-size: 20px;
       cursor: pointer;
     }
-   .fa-long-arrow-alt-right { 
-    margin-bottom: 1rem !important;
-    margin-left: 1rem !important;
-    height: .8em !important;
-   }
-   
-  .onHover:hover {
-    cursor: pointer !important;
-    background-color: rgba(91, 192, 222, 0.3) !important; 
-    border-left: solid rgb(91, 192, 222) !important;
-  }
+    .fa-long-arrow-alt-right {
+      margin-bottom: 1rem !important;
+      margin-left: 1rem !important;
+      height: .8em !important;
+    }
+    .onHover:hover {
+      cursor: pointer !important;
+      background-color: rgba(91, 192, 222, 0.3) !important;
+      border-left: solid rgb(91, 192, 222) !important;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
+    }
   }
 </style>
 

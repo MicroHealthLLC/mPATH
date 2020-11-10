@@ -1,11 +1,11 @@
 <template>
   <div>
     <div v-if="C_editForManager" class="blur_show text-center">
-    <div class="text-primary align-items-center blur_show mb-3">      
+    <div class="text-primary align-items-center blur_show mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click="editIssue">
+    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
       <div v-if="show">
         <div class="row">
           <div class="col-md-9">
@@ -50,11 +50,11 @@
             </div>
           </div>
           <div class="col-md-3 mt-2">
-            <div class="t_actions my-2">            
+            <div class="t_actions my-2">
               <!-- <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
                 <i class="fas fa-trash-alt"></i>
               </span> -->
-              <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent="toggleWatched">
+              <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent.stop="toggleWatched">
                 <span v-show="DV_issue.watched" class="check_box"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box"><i class="far fa-square"></i></span>
                 <span class="text-danger"><i class="fa fa-exclamation"></i></span><small> On Watch</small>
@@ -99,15 +99,17 @@
       :blocking="true"
       >
       <div v-if="has_issue" class="w-100">
-        <div class="modal_close_btn" @click="onCloseForm">
+        <!-- <div class="modal_close_btn" @click="onCloseForm">
           <i class="fa fa-times"></i>
-        </div>
+        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
           :task="DV_edit_task"
           title="Edit Task"
           @task-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></task-form>
 
         <issue-form
@@ -115,6 +117,8 @@
           :facility="facility"
           :issue="DV_edit_issue"
           @issue-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></issue-form>
       </div>
     </sweet-modal>
@@ -254,12 +258,11 @@
 </script>
 
 <style scoped lang="scss">
-    .fa-long-arrow-alt-right { 
+  .fa-long-arrow-alt-right {
     margin-bottom: 1rem !important;
     margin-left: 1rem !important;
     height: .8em !important;
-   }
-
+  }
   .t_actions {
     display: flex;
     align-items: center;
@@ -289,6 +292,11 @@
       right: 30px;
       font-size: 20px;
       cursor: pointer;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
     }
   }
 </style>
