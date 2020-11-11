@@ -254,6 +254,7 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
+        'issueUserFilter',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -267,9 +268,10 @@
         var severityIds = _.map(this.C_issueSeverityFilter, 'id')
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues) {
+          if (this.C_myIssues || this.issueUserFilter) {
             var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            valid  = valid && userIds.includes(this.$currentUser.id)
+            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
           if (this.C_onWatchIssues) {
             valid  = valid && issue.watched
@@ -333,7 +335,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   .issues-index {
     height: 465px;
   }
@@ -341,7 +342,7 @@
     width: 20%;
     height: max-content;
   }
-   #issueHover:hover {
+  #issueHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);

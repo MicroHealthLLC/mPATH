@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
         <h4 class="mt-4 ml-4 text-info">Facility Manager</h4>
-        <div class="my-4 ml-2 scrollBar">
+        <div class="my-4 ml-2">
           <div v-for="group in filteredFacilityGroups" class="my-3">
             <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
               <span v-show="expanded.id != group.id">
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 facility-show-tab" style="border-top: solid #ededed 15px">
+      <div class="col-md-4 facility-show-tab bt-light">
         <div class="mt-4">
           <facility-show
             v-if="C_showFacilityTab"
@@ -32,10 +32,10 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-           <facility-rollup v-else></facility-rollup>
+          <facility-rollup v-else></facility-rollup>
         </div>
       </div>
-      <div class="col-md-6 facility-forms-tab" style="border-top: solid #ededed 15px">
+      <div class="col-md-6 facility-forms-tab bt-light">
         <div class="default-background mt-3">
           <div class="bg-white">
             <task-form
@@ -109,7 +109,7 @@
         'managerView'
       ]),
       C_showFacilityTab() {
-        return !(_.isEmpty(this.currentFacility) && _.isEmpty(this.currentFacility))
+        return !_.isEmpty(this.currentFacility) && !_.isEmpty(this.currentFacilityGroup)
       }
     },
     mounted() {
@@ -140,12 +140,12 @@
         this.currentFacility = facility
       },
       updateFacilityTask(task) {
-        var cb = () => this.updateTasksHash({task: task})
+        let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'task', value: null})
       },
       updateFacilityIssue(issue) {
-        var cb = () => this.updateIssuesHash({issue: issue})
+        let cb = () => this.updateIssuesHash({issue: issue})
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'issue', value: null})
       },
@@ -154,7 +154,7 @@
         this.setTaskForManager({key: 'note', value: null})
       },
       updatedFacilityNote(note) {
-        var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+        let index = this.currentFacility.notes.findIndex(n => n.id == note.id)
         if (index > -1) Vue.set(this.currentFacility.notes, index, note)
         this.setTaskForManager({key: 'note', value: null})
       },
@@ -171,6 +171,14 @@
             this.goBackFromEdits()
           }
         }, deep: true
+      },
+      filteredFacilityGroups: {
+        handler(value) {
+          if (!(this.currentFacilityGroup && _.map(value, 'id').includes(this.currentFacilityGroup.id))) {
+            this.currentFacilityGroup = {}
+            this.currentFacility = {}
+          }
+        }, deep: true
       }
     }
   }
@@ -179,17 +187,20 @@
 <style lang="scss">
   #facility_view {
     padding: 0 10px;
+    .bt-light {
+      border-top: solid #ededed 15px;
+    }
     .facility-groups-tab {
       background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
-      overflow-y: scroll;
+      overflow-y: auto;
     }
     .facility-forms-tab,
     .facility-show-tab {
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
-      overflow-y: scroll;
+      overflow-y: auto;
     }
     .fac-manager-sidebar {
       cursor: pointer;
@@ -214,7 +225,6 @@
       margin-right: -50%;
       transform: translate(-50%, -50%);
     }
-
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }

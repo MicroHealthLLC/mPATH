@@ -277,11 +277,11 @@
         <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
           <div v-for="note in paginated('filteredNotes')" class="form-group">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
-              <span v-if="_isallowed('delete')" class="clickable font-sm delete-action float-right" @click.stop="destroyNote(note)">
+              <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!_isallowed('write')"></textarea>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
       </div>
@@ -544,6 +544,12 @@
       },
       isMyCheck(check) {
         return this.C_myTasks && check.id ? check.user.id == this.$currentUser.id : true
+      },
+      allowDeleteNote(note) {
+        return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
+      },
+      allowEditNote(note) {
+        return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       }
     },
     computed: {
@@ -605,7 +611,7 @@
       "DV_task.dueDate"(value) {
         if (this._ismounted && this.facility.dueDate) {
           if (moment(value).isAfter(this.facility.dueDate, 'day')) {
-            confirm('Task Due Date is past Project Due Date!')
+            alert('Task Due Date is past Project Due Date!')
           }
         }
       },
@@ -649,9 +655,9 @@
           this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
         }, deep: true
       },
-      "filteredNotes.length"(value) {
+      "filteredNotes.length"(value, previous) {
         this.$nextTick(() => {
-          if (this.$refs.paginator && value === 1) {
+          if (this.$refs.paginator && (value === 1 || previous === 0)) {
             this.$refs.paginator.goToPage(1)
           }
         })

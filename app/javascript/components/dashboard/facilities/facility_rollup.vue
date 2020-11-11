@@ -164,6 +164,8 @@ export default {
       'taskTypeFilter',
       'issueTypeFilter',
       'issueSeverityFilter',
+      'taskUserFilter',
+      'issueUserFilter',
       'taskTypes',
       'issueTypes',
       'filteredAllTasks',
@@ -195,9 +197,10 @@ export default {
       let typeIds = _.map(this.taskTypeFilter, 'id')
       return _.filter(this.filteredAllTasks, (task) => {
         let valid = true
-        if (this.C_myTasks) {
+        if (this.C_myTasks || this.taskUserFilter) {
           let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-          valid  = valid && userIds.includes(this.$currentUser.id)
+          if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+          if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
         }
         if (this.C_onWatchTasks) {
           valid  = valid && task.watched
@@ -211,9 +214,10 @@ export default {
       let severityIds = _.map(this.issueSeverityFilter, 'id')
       return _.filter(this.filteredAllIssues, (issue) => {
         let valid = true
-        if (this.C_myIssues) {
+        if (this.C_myIssues || this.issueUserFilter) {
           let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-          valid  = valid && userIds.includes(this.$currentUser.id)
+          if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+          if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
         }
         if (this.C_onWatchIssues) {
           valid  = valid && issue.watched
