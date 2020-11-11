@@ -3,11 +3,9 @@
     <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
       <div class="badge" :class="{'active': isFacilityManagerView}">Facility Manager</div>
     </router-link>
-
-   <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
-    <div class="badge" :class="{'active': isSheetsView}">Sheets</div>
-   </router-link>
-
+    <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
+      <div class="badge" :class="{'active': isSheetsView}">Sheets</div>
+    </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}">Map</div>
     </router-link>
@@ -21,7 +19,7 @@
     <div v-if="permitted('issues')" class="badge disabled">Kanban (Coming Soon)</div>
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
- 
+
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
       <div class="badge" :class="{'active': isMembersView}">Team</div>
     </router-link>
@@ -55,7 +53,7 @@
       },
       mapView() {
         return `/projects/${this.$route.params.projectId}`
-      },     
+      },
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
       },
