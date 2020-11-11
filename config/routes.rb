@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
     get :watch_view, on: :member
+    get :sheets, on: :member
     get :member_list, on: :member
     get :facility_manager, on: :member
     resources :facilities do
