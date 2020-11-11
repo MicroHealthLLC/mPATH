@@ -51,7 +51,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="blue-box w-100 h-75 text-center p-3">
+            <div class="blue-box w-100 h-75 text-center p-3 pb-5">
               <div class="warning-icon" v-tooltip="`overdue`"><i class="fa fa-exclamation-triangle"></i></div>
               <h6 class="px-3">Overdue Tasks and Issues</h6>
               <h1 class="px-3">{{overdueTasksNIssues.length}}</h1>

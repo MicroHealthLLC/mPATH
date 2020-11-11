@@ -26,6 +26,7 @@ class Issue < ApplicationRecord
   scope :incomplete, -> {where("progress < ?", 100)}
 
   before_save :check_watched, if: :watched_changed?
+  after_save :handle_related_tasks_issues
 
   def to_json
     attach_files = []
@@ -92,7 +93,7 @@ class Issue < ApplicationRecord
   end
 
   def nuke_it!
-    RelatedIssue.where(issue_id: self.id).destroy_all
+    RelatedIssue.where(issue_id: self.id).or(RelatedIssue.where(relatable: self)).destroy_all
   end
 
   def destroy
@@ -100,4 +101,10 @@ class Issue < ApplicationRecord
     super
   end
 
+  def handle_related_tasks_issues
+    sub_tasks.each{|t| t.sub_issues << self unless t.sub_issues.include? self}
+    sub_issues.each{|i| i.sub_issues << self unless i.sub_issues.include? self}
+    RelatedTask.where(task_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_task_ids).destroy_all
+    RelatedIssue.where(issue_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_issue_ids).destroy_all
+  end
 end

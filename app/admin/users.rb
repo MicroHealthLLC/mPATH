@@ -53,7 +53,7 @@ ActiveAdmin.register User do
           f.input :title, label: "Position"
           f.input :first_name
           f.input :last_name
-          f.input :email, input_html: {disabled: user.id?, :'data-id' => user.id, autocomplete: :off}
+          f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
           f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :phone_number
