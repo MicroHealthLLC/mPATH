@@ -904,19 +904,23 @@ jQuery(function($) {
           <legend><span>Privileges</span></legend>
           <ol class="choices-group">
             <li class="choice d-flex">
-              <label>Facility View</label>
+              <label>Facility Manager</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="facility_manager_view.read">Read</label>
             </li>
             <li class="choice d-flex">
-              <label>Map View</label>
+            <label>Sheets</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.read">Read</label>           
+           </li>
+            <li class="choice d-flex">
+              <label>Map</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
             </li>
             <li class="choice d-flex">
-              <label>Gantt View</label>
+              <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
             </li>
             <li class="choice d-flex">
-              <label>On Watch View</label>
+              <label>On Watch</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
             </li>
             <li class="choice d-flex">
@@ -950,13 +954,7 @@ jQuery(function($) {
               <label class="d-flex align-center" :readOnly="notes.read"><input type="checkbox" v-model="notes.read" :readOnly="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
-            </li>
-            <li class="choice d-flex">
-            <label>Sheets</label>
-            <label class="d-flex align-center" :readOnly="sheets_view"><input type="checkbox" v-model="sheets_view.read" :readOnly="sheets_view.read">Read</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.write">Write</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.delete">Delete</label>
-           </li>
+            </li>           
             <li class="choice d-flex">
               <label>Admin</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
