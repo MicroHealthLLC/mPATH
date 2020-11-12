@@ -3,27 +3,27 @@
     <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
     <br>
     <div class="text-center">
-      <h2>{{facilityCount}} Facilities</h2>
+      <h2>{{C_facilityCount}} Facilities</h2>
       <p class="mt-2 d-flex align-items-center">
-        <span class="w-100 progress pg-content" :class="{'progress-0': facilityProgress <= 0}">
-          <div class="progress-bar bg-info" :style="`width: ${facilityProgress}%`">{{facilityProgress}} %</div>
+        <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
+          <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
         </span>
       </p>
-      <div v-if="facilityCount > 0" class="d-flex justify-content-around">
+      <div v-if="C_facilityCount > 0" class="d-flex justify-content-around">
         <div>
           <span> active</span>
-          <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.active}}</span>
+          <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
         </div>
         <div>
           <span> inactive</span>
-          <span class="badge badge-secondary badge-pill">{{facilitiesByStatus.inactive}}</span>
+          <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
         </div>
       </div>
     </div>
     <hr>
     <div class="my-1">
       <h5 class="text-center">Facility Project Status</h5>
-      <div v-if="facilityCount > 0">
+      <div v-if="C_facilityCount > 0">
         <div v-for="status in facilitiesByProjectStatus">
           <div class="row">
             <div class="col-md-9">
@@ -127,7 +127,7 @@
       </div>
     </div>
     <hr>
-    <div>
+    <div v-if="from !== 'manager_view'">
       <h5 class="text-center">Facility Groups</h5>
       <div class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
         <div class="col-md-9 font-md">
@@ -152,6 +152,7 @@
 import {mapGetters} from 'vuex'
 export default {
   name: 'FacilityRollup',
+  props: ['from', 'facilityGroup'],
   computed: {
     ...mapGetters([
       'facilities',
@@ -193,9 +194,16 @@ export default {
         return _.map(this.onWatchFilter, 'value').includes('issues')
       }
     },
+    C_facilityCount() {
+      return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup).length : this.facilityCount
+    },
+    C_facilityProgress() {
+      return this.facilityGroup ? Number(_.meanBy(this.facilityGroupFacilities(this.facilityGroup), 'progress') || 0).toFixed(2) : this.facilityProgress
+    },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, 'id')
-      return _.filter(this.filteredAllTasks, (task) => {
+      let tasks = this.facilityGroup ? _.flatten(_.map(this.facilityGroupFacilities(this.facilityGroup), 'tasks')) : this.filteredAllTasks
+      return _.filter(tasks, (task) => {
         let valid = true
         if (this.C_myTasks || this.taskUserFilter) {
           let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
@@ -212,7 +220,8 @@ export default {
     filteredIssues() {
       let typeIds = _.map(this.issueTypeFilter, 'id')
       let severityIds = _.map(this.issueSeverityFilter, 'id')
-      return _.filter(this.filteredAllIssues, (issue) => {
+      let issues = this.facilityGroup ? _.flatten(_.map(this.facilityGroupFacilities(this.facilityGroup), 'issues')) : this.filteredAllIssues
+      return _.filter(issues, (issue) => {
         let valid = true
         if (this.C_myIssues || this.issueUserFilter) {
           let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
@@ -227,16 +236,16 @@ export default {
         return valid
       })
     },
-    facilitiesByStatus() {
-      return {
-        active: this.filteredFacilities('active').length,
-        inactive: this.filteredFacilities('inactive').length
-      }
+    activeFacilitiesByStatus() {
+      return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup).length : this.filteredFacilities('active').length
+    },
+    inactiveFacilitiesByStatus() {
+      return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup, 'inactive').length : this.filteredFacilities('inactive').length
     },
     facilitiesByProjectStatus() {
-      var statuses = new Array
-      const active = this.filteredFacilities('active')
-      for (var [key, value] of Object.entries(_.groupBy(active, 'projectStatus'))) {
+      let statuses = new Array
+      const active = this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup) : this.filteredFacilities('active')
+      for (let [key, value] of Object.entries(_.groupBy(active, 'projectStatus'))) {
         statuses.push(
           {
             name: key.replace('null', 'No Status'),
@@ -249,10 +258,10 @@ export default {
       return statuses
     },
     currentTaskTypes() {
-      var names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
-      var taskTypes = new Array
-      for (var type of this.taskTypes) {
-        var tasks = _.filter(this.filteredTasks, t => t.taskTypeId == type.id)
+      let names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
+      let taskTypes = new Array
+      for (let type of this.taskTypes) {
+        let tasks = _.filter(this.filteredTasks, t => t.taskTypeId == type.id)
         taskTypes.push(
           {
             name: type.name,
@@ -265,10 +274,10 @@ export default {
       return taskTypes
     },
     currentIssueTypes() {
-      var names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
-      var issueTypes = new Array
-      for (var type of this.issueTypes) {
-        var issues = _.filter(this.filteredIssues, t => t.issueTypeId == type.id)
+      let names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
+      let issueTypes = new Array
+      for (let type of this.issueTypes) {
+        let issues = _.filter(this.filteredIssues, t => t.issueTypeId == type.id)
         issueTypes.push(
           {
             name: type.name,
@@ -281,10 +290,10 @@ export default {
       return issueTypes
     },
     taskVariation() {
-      var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
-      var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-      var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
+      let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
+      let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
       return {
         completed: {count: completed.length, percentage: completed_percent},
@@ -292,10 +301,10 @@ export default {
       }
     },
     issueVariation() {
-      var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
-      var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-      var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-      var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
+      let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
+      let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
+      let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
       return {
         completed: {count: completed.length, percentage: completed_percent},
@@ -305,8 +314,8 @@ export default {
   },
   methods: {
     facilityGroupProgress(f_group) {
-      var ids = _.map(this.filteredFacilities('active'), 'id')
-      var mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
+      let ids = _.map(this.filteredFacilities('active'), 'id')
+      let mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
       return Number(mean.toFixed(2))
     }
   }

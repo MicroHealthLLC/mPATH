@@ -1,5 +1,5 @@
 <template>
-  <div id="filterbar" :style="filterBarStyle">
+  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
         <h4>Filter View</h4>
@@ -272,7 +272,7 @@
 
       </div>
     </div>
-    <div class="knocker" @click="showFilters=!showFilters">
+    <div class="knocker" @click.prevent="toggleFilters">
       <div class="linner"></div>
     </div>
   </div>
@@ -335,7 +335,7 @@
         return this.filterFacilitiesWithActiveFacilityGroups.length > 0
       },
       C_activeFacilityGroups() {
-        var id = Number(this.$route.params.projectId)
+        let id = Number(this.$route.params.projectId)
         return this.activeFacilityGroups(id)
       },
       C_projectStatusFilter: {
@@ -478,6 +478,12 @@
         'setProgressFilters',
         'clearProgressFilters'
       ]),
+      handleOutsideClick() {
+        if (this.showFilters) this.showFilters = false
+      },
+      toggleFilters() {
+        this.showFilters = !this.showFilters
+      },
       updateProjectQuery(selected, index) {
         window.location.pathname = "/projects/" + selected.id
       },
@@ -520,7 +526,7 @@
       },
       exportMapData() {
         try {
-          var filters = [`Map Filters: ${this.currentProject.name} \n
+          let filters = [`Map Filters: ${this.currentProject.name} \n
             Facility Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
             Facility Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
             Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
@@ -532,10 +538,10 @@
             Issue % Progress Range: ${this.issueProgressFilter ?  _.map(this.issueProgressFilter, 'name').join() : 'all'}\n
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
-          var header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
+          let header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
 
-          var ex_data = []
-          for (var facility of this.filterFacilitiesWithActiveFacilityGroups) {
+          let ex_data = []
+          for (let facility of this.filterFacilitiesWithActiveFacilityGroups) {
             ex_data.push({
               "Facility Name": facility.facilityName || 'N/A',
               "Facility Group": facility.facilityGroupName || 'N/A',
@@ -548,8 +554,8 @@
             })
           }
 
-          var wb = XLSX.utils.book_new()
-          var ws = XLSX.utils.aoa_to_sheet(new Array(filters))
+          let wb = XLSX.utils.book_new()
+          let ws = XLSX.utils.aoa_to_sheet(new Array(filters))
           XLSX.utils.sheet_add_json(ws, ex_data, {header: header,  origin: "A3"})
           XLSX.utils.book_append_sheet(wb, ws, "MGIS")
           XLSX.writeFile(wb, `${this.random()}.xlsx`)
@@ -561,9 +567,9 @@
       },
       exportGanttData() {
         try {
-          var header = ["WBS", "Name", "Duration", "% Complete", "Start Date", "End Date", "Assigned To"]
-          var ex_data = []
-          for (var row of this.ganttData) {
+          let header = ["WBS", "Name", "Duration", "% Complete", "Start Date", "End Date", "Assigned To"]
+          let ex_data = []
+          for (let row of this.ganttData) {
             ex_data.push({
               "WBS": row._id,
               "Name": row.name,
@@ -575,8 +581,8 @@
             })
           }
 
-          var wb = XLSX.utils.book_new()
-          var ws = XLSX.utils.json_to_sheet(ex_data, {header: header})
+          let wb = XLSX.utils.book_new()
+          let ws = XLSX.utils.json_to_sheet(ex_data, {header: header})
           XLSX.utils.book_append_sheet(wb, ws, "MGIS")
           XLSX.writeFile(wb, `${this.random()}.xlsx`)
           this.exporting = false
@@ -586,9 +592,9 @@
         }
       },
       onChangeProgress(event, option) {
-        var input = event.target.value
-        var hash = Object.assign({}, this.progressFilter[option.variable])
-        var error = ""
+        let input = event.target.value
+        let hash = Object.assign({}, this.progressFilter[option.variable])
+        let error = ""
 
         if (input != "") {
           if (input < 0) input = 0

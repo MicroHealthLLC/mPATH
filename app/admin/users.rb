@@ -67,7 +67,7 @@ ActiveAdmin.register User do
           div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
-          f.input :organization, :prompt =>"Please select organization", include_hidden: false
+          f.input :organization, input_html: {class: "select2"}, include_blank: true
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :facility_manager_view
             p.input :sheets_view

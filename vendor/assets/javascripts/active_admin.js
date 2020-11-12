@@ -8,6 +8,13 @@
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
 jQuery(function($) {
+
+  // Add placeholder to for organization select
+  $(".select2").select2({
+    placeholder: "Search and select an organization",
+    allowClear: true
+  });
+
   // project index page
   $("#index_table_projects td.col-status").each(function() {
     this.parentElement.classList.value = "";
