@@ -1,16 +1,17 @@
 <template>
-  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
+    <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
-        <h4>Filter View</h4>
-        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
-      </div>
+        <h4><i class="fas fa-filter"></i>Filter View</h4>
+        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>         
+      </div>   
+     
       <div class="filters_wrap">
-        <div class="project-select my-3 mx-1">
+        <div class="project-select my-3 mx-1 d-flex">
           <multiselect
             v-model="currentProject"
             track-by="name"
-            label="name"
+            label="name"            
             placeholder="Select Project"
             :options="projects"
             :searchable="false"
@@ -23,32 +24,33 @@
                 <span class='select__tag-name selected-opt'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>
-        </div>
-        <div class="facilitygroup-select my-3 mx-1">
+          </multiselect>       
           <multiselect
             v-model="C_facilityGroupFilter"
             track-by="name"
             label="name"
+            class="ml-1 fac-group-filter"
             placeholder="Filter by Facility Group"
             :options="C_activeFacilityGroups"
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"
-            :searchable="true"
+            :searchable="true"            
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>
-        </div>
-        <div class="facilityname-search my-3 mx-1">
+          </multiselect>    
+
+          </div>    
+       
+        <div class="facilitygroup-select my-3 ml-1">
           <multiselect
             placeholder="Search by Facility Name"
             v-model="C_facilityNameFilter"
-            label="facilityName"
+            label="facilityName"            
             track-by="id"
             :multiple="true"
             :options="facilities"
@@ -66,12 +68,12 @@
             </template>
             <span slot="noOptions">...</span>
           </multiselect>
-        </div>
-        <div class="status-select mx-1">
+
           <multiselect
             v-model="C_projectStatusFilter"
             track-by="name"
             label="name"
+            class="ml-1"
             placeholder="Filter by Status"
             :options="statuses"
             :searchable="false"
@@ -103,15 +105,16 @@
         <div class="duedate-range my-3 mx-1">
           <v2-date-picker
             v-model="C_facilityDueDateFilter"
-            placeholder="Due Date Range"
+            class="datepicker"
+            placeholder="Project Completion Date Range"
             range
           />
-        </div>
-        <div class="tasktype-select my-3 mx-1">
+     
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
+            class="ml-1 milestones"
             placeholder="Filter by Milestones"
             :options="taskTypes"
             :searchable="false"
@@ -140,12 +143,13 @@
           <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
         </div>
 
-        <div class="taskUser-select my-3 mx-1">
+        <div class="taskUser-select my-3 mx-1 d-flex">
           <multiselect
             v-model="C_taskUserFilter"
             track-by="id"
             label="fullName"
             placeholder="Search By Task Users"
+            class="mr-1"
             :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
@@ -157,13 +161,13 @@
                 <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
-          </multiselect>
-        </div>
-        <div class="issetype-select my-3 mx-1">
+          </multiselect>        
+        
           <multiselect
             v-model="C_issueTypeFilter"
             track-by="name"
             label="name"
+            class="ml-1"
             placeholder="Filter by Issue Type"
             :options="issueTypes"
             :searchable="false"
@@ -192,7 +196,7 @@
           <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>
         </div>
 
-        <div class="issueSeverity-select my-3 mx-1">
+        <div class="issueSeverity-select my-3 mx-1 d-flex">
           <multiselect
             v-model="C_issueSeverityFilter"
             track-by="name"
@@ -209,13 +213,12 @@
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>
-        </div>
-        <div class="issueUser-select my-3 mx-1">
+          </multiselect>      
           <multiselect
             v-model="C_issueUserFilter"
             track-by="id"
             label="fullName"
+            class="ml-1"
             placeholder="Search By Issue Users"
             :options="activeProjectUsers"
             :searchable="true"
@@ -230,7 +233,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="actions-select my-3 mx-1">
+        <div class="actions-select my-3 mx-1 d-flex">
           <multiselect
             v-model="C_myActionsFilter"
             track-by="name"
@@ -248,9 +251,8 @@
               </div>
             </template>
           </multiselect>
-        </div>
 
-        <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select my-3 mx-1">
+           <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select ml-1">
           <multiselect
             v-model="C_onWatchFilter"
             track-by="name"
@@ -269,9 +271,13 @@
             </template>
           </multiselect>
         </div>
+        </div>
+
+       
 
       </div>
     </div>
+
     <div class="knocker" @click.prevent="toggleFilters">
       <div class="linner"></div>
     </div>
@@ -447,7 +453,7 @@
       filterBarStyle() {
         if (this.showFilters) return {}
         return {
-          transform: 'translateX(-320px)'
+          transform: 'translateX(-640px)'
         }
       },
       isMapView() {
@@ -694,18 +700,29 @@
   }
   #filter_bar {
     overflow-y: auto;
-    background: white;
+    color: #383838;
+    background:white;
     height: calc(100vh - 94px);
     max-height: calc(100vh - 94px);
-    width: 320px;
+    width: 640px;
+    border-top: solid #ededed 1.2px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.19), 0 24px 24px rgba(0,0,0,0.23);
   }
   .filters_wrap {
     width: 90%;
     margin: 0 auto;
   }
   .project-select {
-    width: 280px;
+    width: 100%;
+    min-height: 48px !important;
   }
+  .fac-group-filter {
+    min-height: 48px !important;
+    margin-right: 0px !important;
+    width: 100%;
+  }
+ 
+
   .issueUser-select /deep/ .multiselect,
   .taskUser-select /deep/ .multiselect,
   .actions-select /deep/ .multiselect,
@@ -719,7 +736,7 @@
   .facilitygroup-select /deep/ .multiselect,
   .status-select /deep/ .multiselect {
     font-size: 14px;
-    width: 280px;
+    width: 280px;    
     .multiselect__placeholder {
       margin-bottom: 2px;
       padding-top: 2px;
@@ -739,6 +756,9 @@
     .multiselect__tags {
       padding-top: 6px;
     }
+  }
+  .facilitygroup-select, .duedate-range {
+    display: flex;
   }
   .project-select /deep/ .multiselect {
     font-size: 14px;
@@ -795,6 +815,12 @@
         color: #adadad;
       }
     }
+  }
+ .datepicker, .milestones {
+   width: 100% !important;
+ }
+  .displayFlex {
+    display: flex;
   }
   .knocker {
     cursor: pointer;
