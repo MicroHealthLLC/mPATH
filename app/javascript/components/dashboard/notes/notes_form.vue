@@ -1,10 +1,35 @@
 <template>
-  <div class="notes-form">
-    <div class="notes_input mt-2" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
-      <center>{{titleText}}</center>
+  <div class="notes-form">    
+       <div class="d-flex form-group sticky mb-2">
+        <button
+          :disabled="!readyToSave || loading"
+          class="btn btn-success sticky-btn btn-sm"
+          @click.prevent.stop="saveNote"
+          >
+          Save
+        </button>
+        <button
+          class="btn btn-sm btn-warning sticky-btn ml-2"
+          @click.prevent="cancelNoteSave"
+          >
+          Cancel
+        </button>
+        <button
+          v-if="_isallowed('delete')"
+          @click.prevent="deleteNote"
+          class="btn btn-sm btn-danger sticky-btn ml-auto"
+          >
+          <i class="fas fa-trash-alt mr-2"></i>
+          Delete
+        </button>
+      </div>
+
+   <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
+      <!-- <center>{{titleText}}</center> -->
       <div class="form-group">
-        <label class="badge badge-secondary">Note</label>
-        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="your note comes here..."></textarea>
+        <!-- <label class="badge badge-secondary">Note</label> -->
+       <label class="font-sm"><h5>Note</h5></label>
+        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..."></textarea>
       </div>
       <div class="input-group mb-2">
         <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
@@ -34,29 +59,7 @@
           :show-label="true"
         />
       </div>
-      <div class="d-flex form-group mt-4">
-        <button
-          :disabled="!readyToSave || loading"
-          class="btn btn-success btn-sm"
-          @click.prevent.stop="saveNote"
-          >
-          Save
-        </button>
-        <button
-          class="btn btn-sm btn-warning ml-2"
-          @click.prevent="cancelNoteSave"
-          >
-          Cancel
-        </button>
-        <button
-          v-if="_isallowed('delete')"
-          @click.prevent="deleteNote"
-          class="btn btn-sm btn-danger ml-auto"
-          >
-          <i class="fas fa-trash-alt mr-2"></i>
-          Delete
-        </button>
-      </div>
+     
     </div>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -248,5 +251,32 @@
     background: #fff;
     height: fit-content;
     color: red;
+  }
+  .formTitle {
+    padding-top: 25px;
+  }
+  .paperLook {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .sticky-btn {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .sticky {
+    position: sticky;
+    position: -webkit-sticky;
+    justify-content: center;
+    margin-bottom: -2.5rem;
+    z-index: 1000;
+    left: 15;
+    top: 0;
+    width: 100%;
+    padding: 6px;
+    background-color: rgba(237, 237, 237, 0.85);
+    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
 </style>
