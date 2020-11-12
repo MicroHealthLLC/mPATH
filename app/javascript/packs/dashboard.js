@@ -22,7 +22,9 @@ import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
 import VuePaginate          from 'vue-paginate'
+import vco                  from "v-click-outside"
 
+Vue.use(vco)
 Vue.mixin(utils)
 Vue.use(VTooltip)
 Vue.use(VModal)
