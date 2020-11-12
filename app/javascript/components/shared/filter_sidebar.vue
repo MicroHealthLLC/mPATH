@@ -4,8 +4,7 @@
       <div class="d-flex m-3 align-items-center justify-content-between">
         <h4><i class="fas fa-filter"></i>Filter View</h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>         
-      </div>
-     
+      </div>   
      
       <div class="filters_wrap">
         <div class="project-select my-3 mx-1 d-flex">
@@ -278,7 +277,8 @@
 
       </div>
     </div>
-   <div class="knocker" @click.prevent="toggleFilters">
+
+    <div class="knocker" @click.prevent="toggleFilters">
       <div class="linner"></div>
     </div>
   </div>

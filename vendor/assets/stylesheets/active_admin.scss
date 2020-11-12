@@ -178,6 +178,7 @@ body {
   #user_privilege_attributes_watch_view_input,
   #user_privilege_attributes_documents_input,
   #user_privilege_attributes_members_input,
+  #user_privilege_attributes_sheets_view_input,
   #task_sub_issues_input,
   #task_sub_tasks_input,
   #issue_sub_tasks_input,
@@ -201,7 +202,7 @@ body {
     }
   }
   .gmap-wraper {
-    width: 80%;
+    width: calc(80% - 22px);
     height: 300px;
     margin: 10px 0 10px 20%;
   }
@@ -358,7 +359,7 @@ body {
   }
   .user_multiselect {
     font-size: 13px;
-    width: 80%;
+    width: calc(80% - 22px);
     /deep/ .multiselect {
       .multiselect__input {
         width: 100%;
@@ -405,7 +406,7 @@ body {
     width: 98%;
   }
   #auto-calculate {
-    width: 80%;
+    width: calc(80% - 22px);
     display: flex;
     align-items: center;
     input {
@@ -578,12 +579,28 @@ body {
       }
     }
   }
-
   .text-danger {
     color: #FF0000;
   }
   .pass-copied {
     color: #08A510;
     margin-left: 5px;
+  }
+  .select2-container {
+    width: calc(80% - 22px) !important;
+    .select2-selection--single {
+      min-height: 28px;
+      height: max-content;
+    }
+    .select2-selection__clear {
+      font-size: 1.85rem;
+      color: #FF0000;
+    }
+    .select2-selection__rendered {
+      color: black;
+    }
+  }
+  .vue-phone-number-input {
+    width: calc(80% - 22px) !important;
   }
 }
