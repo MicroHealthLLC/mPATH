@@ -32,7 +32,11 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-          <facility-rollup v-else></facility-rollup>
+          <facility-rollup
+            v-else
+            :facility-group="C_showFacilityRollup ? currentFacilityGroup : null"
+            from="manager_view"
+          ></facility-rollup>
         </div>
       </div>
       <div class="col-md-6 facility-forms-tab bt-light">
@@ -110,6 +114,9 @@
       ]),
       C_showFacilityTab() {
         return !_.isEmpty(this.currentFacility) && !_.isEmpty(this.currentFacilityGroup)
+      },
+      C_showFacilityRollup() {
+        return !_.isEmpty(this.currentFacilityGroup)
       }
     },
     mounted() {
@@ -177,6 +184,7 @@
           if (!(this.currentFacilityGroup && _.map(value, 'id').includes(this.currentFacilityGroup.id))) {
             this.currentFacilityGroup = {}
             this.currentFacility = {}
+            this.expanded.id = ''
           }
         }, deep: true
       }

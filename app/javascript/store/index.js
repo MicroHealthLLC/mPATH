@@ -334,8 +334,8 @@ export default new Vuex.Store({
     currentIssues: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
     },
-    facilityGroupFacilities: (state, getters) => (group) => {
-      return _.filter(getters.filteredFacilities('active'), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
+    facilityGroupFacilities: (state, getters) => (group, status='active') => {
+      return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
     },
 
     // for gantt chart view
