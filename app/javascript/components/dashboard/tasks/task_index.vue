@@ -105,8 +105,8 @@
           <td class="text-center">{{i+1}}</td>
           <td>{{task.text}}</td>
           <td>{{task.taskType}}
-          <td>{{task.startDate}}</td>
-          <td>{{task.dueDate}}</td>
+          <td>{{formatDate(task.startDate)}}</td>
+          <td>{{formatDate(task.dueDate)}}</td>
           <td>{{task.users.join(', ')}}</td>
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>

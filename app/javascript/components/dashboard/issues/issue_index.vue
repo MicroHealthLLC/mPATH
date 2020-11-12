@@ -147,8 +147,8 @@
             <td>{{issue.title}}</td>
             <td>{{issue.issueType}}
             <td>{{issue.issueSeverity}}
-            <td>{{issue.startDate}}</td>
-            <td>{{issue.dueDate}}</td>
+            <td>{{formatDate(issue.startDate)}}</td>
+            <td>{{formatDate(issue.dueDate)}}</td>
             <td>{{issue.users.join(', ')}}</td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
