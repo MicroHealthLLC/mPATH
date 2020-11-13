@@ -243,12 +243,12 @@
             closable: false
           },         
           {
-            label: 'Tasks List',
+            label: 'Tasks',
             key: 'tasks',
             closable: false
           },
           {
-            label: 'Issues Log',
+            label: 'Issues',
             key: 'issues',
             closable: false
           },

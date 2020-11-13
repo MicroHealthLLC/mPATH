@@ -146,6 +146,7 @@
               <th>Due Date</th>
               <th>Assigned Users</th>
               <th>Progress</th>
+              <th>Overdue</th>
               <th>Last Update</th>
             </tr>
           </thead>
@@ -159,6 +160,8 @@
                 <td>{{formatDate(issue.dueDate)}}</td>
                 <td>{{issue.users.join(', ')}}</td>
                 <td>{{issue.progress + "%"}}</td>
+                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+                <td v-else></td>
                 <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
                 <td v-else>No Updates</td>
             </tr>
@@ -186,7 +189,8 @@
         loading: true,
         newIssue: false,
         viewList: 'active',
-        currentIssue: null
+        currentIssue: null, 
+        now: new Date().toISOString()     
       }
     },
     mounted() {

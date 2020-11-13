@@ -97,6 +97,7 @@
           <th>Due Date</th>
           <th>Assigned Users</th>
           <th>Progress</th>
+          <th>Overdue</th>
           <th>Last Update</th>
         </tr>
       </thead>
@@ -109,6 +110,8 @@
           <td>{{formatDate(task.dueDate)}}</td>
           <td>{{task.users.join(', ')}}</td>
           <td>{{task.progress + "%"}}</td>
+          <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+          <td v-else></td>
           <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
           <td v-else>No Updates</td>
         </tr>
@@ -130,7 +133,8 @@
     props: ['facility', 'from'],
     data() {
       return {
-        viewList: 'active'
+        viewList: 'active', 
+        now: new Date().toISOString()        
       }
     },
     methods: {
