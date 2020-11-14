@@ -1,5 +1,22 @@
 <template>
-  <div>
+  <div>     
+         <table class="table table-sm table-bordered table-striped">
+               <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">            
+                <td>{{issue.title}}</td>
+                <td>{{issue.issueType}}
+                <td>{{issue.issueSeverity}}
+                <td>{{formatDate(issue.startDate)}}</td>
+                <td>{{formatDate(issue.dueDate)}}</td>
+                <td>{{issue.users.join(', ')}}</td>
+                <td>{{issue.progress + "%"}}</td>
+                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.watched) == true"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+                <td v-else>No Updates</td>
+            </tr>         
+        </table> 
     <sweet-modal
       class="issue_form_modal"
       ref="issueFormModal"
@@ -34,9 +51,8 @@
   import IssueForm from "./issue_form"
   import TaskForm from "./../tasks/task_form"
   import {SweetModal} from 'sweet-modal-vue'
-
   export default {
-    name: 'IssueSheetsShow',
+    name: 'IssueSheets',
     components: {IssueForm, SweetModal, TaskForm},
     props: {
       fromView: {
@@ -52,7 +68,8 @@
         DV_issue: {},
         DV_edit_task: {},
         DV_edit_issue: {},
-        has_issue: false
+        has_issue: false,
+        now: new Date().toISOString()   
       }
     },
     mounted() {
@@ -162,12 +179,14 @@
 </script>
 
 <style scoped lang="scss">
-    .fa-long-arrow-alt-right { 
-    margin-bottom: 1rem !important;
-    margin-left: 1rem !important;
-    height: .8em !important;
+  table {
+  table-layout: fixed ;
+  width: 100% ;
+  margin-bottom: 0 !important;
    }
-
+  td {
+  width: 25% ;
+   }
   .t_actions {
     display: flex;
     align-items: center;

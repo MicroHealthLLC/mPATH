@@ -111,7 +111,43 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
-            <!-- <issue-sheets
+       <table 
+            class="table table-sm table-bordered table-striped"
+            ref="table" id="issueSheetsList1"
+        >
+          <thead>
+            <tr style="background-color:#ededed">              
+              <th>Issue</th>
+              <th>Issue Type</th>
+              <th>Issue Severity</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Assigned Users</th>
+              <th>Progress</th>
+              <th>Overdue</th>
+              <th>On Watch</th>
+              <th>Last Update</th>
+            </tr>
+          </thead>
+          <tbody style="display:none">
+            <tr v-for="(issue, i) in filteredIssues">            
+                <td>{{issue.title}}</td>
+                <td>{{issue.issueType}}
+                <td>{{issue.issueSeverity}}
+                <td>{{formatDate(issue.startDate)}}</td>
+                <td>{{formatDate(issue.dueDate)}}</td>
+                <td>{{issue.users.join(', ')}}</td>
+                <td>{{issue.progress + "%"}}</td>
+                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.watched) <= now"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+                <td v-else>No Updates</td>
+            </tr>
+          </tbody> 
+        </table> 
+            <issue-sheets
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
@@ -121,7 +157,7 @@
               :from-view="from"
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
-            /> -->
+            />
           </div>
           <p v-else class="text-danger ml-2">No issues found..</p>
         </div>
@@ -132,7 +168,7 @@
         
       </div>
 
-     <table 
+     <!-- <table 
             class="table table-sm table-bordered table-striped"
             ref="table" id="issueSheetsList1"
         >
@@ -166,24 +202,21 @@
                 <td v-else>No Updates</td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
   </div>
 </template>
 
 <script>
   import http from './../../../common/http'  
   import IssueForm from './issue_form'
-  import IssueSheetsShow from './issue_sheets'
+  import IssueSheets from './issue_sheets'
   import  {jsPDF} from "jspdf";
   import 'jspdf-autotable';
   import {mapGetters, mapMutations} from 'vuex'
-
-
   export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
-    components: {IssueForm, IssueSheetsShow},
-
+    components: {IssueForm, IssueSheets},
     data() {
       return {
         loading: true,
@@ -304,7 +337,6 @@
           }
           return valid;
         })), ['dueDate'])
-
         return issues
       },
       C_issueTypeFilter: {
@@ -346,7 +378,14 @@
 </script>
 
 <style lang="scss" scoped>
-
+  table {
+  table-layout: fixed ;
+  width: 100% ;
+  margin-bottom: 0 !important;
+   }
+  td {
+  width: 25% ;
+   }
   .issues-index {
     height: 465px;
   }
