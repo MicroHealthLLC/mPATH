@@ -36,7 +36,8 @@
            <facility-rollup v-else></facility-rollup>     
         </div>
      
-          <div v-if="managerView.task || managerView.issue || managerView.note" class="lazyModal col-md-10" >
+          <div v-if="managerView.task || managerView.issue || managerView.note" class="contain col-md-10" >
+          <div class="lazyModal">
           <task-form
             v-if="managerView.task"
             :facility="currentFacility"
@@ -53,6 +54,7 @@
             @issue-updated="updateFacilityIssue"
             @issue-created="updateFacilityIssue"
           ></issue-form>          
+          </div>
           </div>
 
           </div>
@@ -163,19 +165,29 @@
 
 <style lang="scss">
   #sheets_view {
+    overflow: hidden;
     padding: 0 10px;
      .cursor {
       cursor: pointer;
+      
     }
 
+  .contain {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 530px;
+    height: 515px;
+    left: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);   
+    top: 50%;  
+ 
+  }
     .lazyModal {  
-    position: absolute !important;   
-    left:26%;
-    width: 500px;
-    top:0;    
+    position: absolute !important;     
+    width: 500px;  
     background-color: rgba(0,0, 0,0.50);
     }
-
 
     .facility-groups-tab {
       background: #ededed;

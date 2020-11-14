@@ -111,6 +111,7 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
+           <div style="margin-bottom:50px">
        <table 
             class="table table-sm table-bordered table-striped"
             ref="table" id="issueSheetsList1"
@@ -159,6 +160,7 @@
               @toggle-watch-issue="toggleWatched"
             />
           </div>
+          </div>
           <p v-else class="text-danger ml-2">No issues found..</p>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
@@ -168,41 +170,7 @@
         
       </div>
 
-     <!-- <table 
-            class="table table-sm table-bordered table-striped"
-            ref="table" id="issueSheetsList1"
-        >
-          <thead>
-            <tr>
-              <th></th>
-              <th>Issue</th>
-              <th>Issue Type</th>
-              <th>Issue Severity</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
-              <th>Overdue</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(issue, i) in filteredIssues">
-              <td class="text-center">{{i+1}}</td>
-                <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}
-                <td>{{issue.issueSeverity}}
-                <td>{{formatDate(issue.startDate)}}</td>
-                <td>{{formatDate(issue.dueDate)}}</td>
-                <td>{{issue.users.join(', ')}}</td>
-                <td>{{issue.progress + "%"}}</td>
-                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-                <td v-else>No Updates</td>
-            </tr>
-          </tbody>
-        </table> -->
+    
   </div>
 </template>
 
