@@ -70,10 +70,11 @@
             class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
             style="font-size:.70rem" >
             EXPORT TO EXCEL
-          </button>   
+          </button>  
+          <div style="margin-bottom:50px">
            <table 
             class="table table-sm table-bordered table-striped"
-            ref="table" id="taskSheetsList1"
+            ref="table" id="taskSheetsList1" 
             >
           <thead>            
             <tr style="background-color:#ededed">               
@@ -116,7 +117,8 @@
           :from-view="from"
           @edit-task="editTask"
           @toggle-watched="toggleWatched"
-        />        
+        />       
+       </div> 
       </div>
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>

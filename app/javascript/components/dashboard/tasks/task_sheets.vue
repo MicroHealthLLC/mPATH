@@ -1,6 +1,6 @@
   
 <template>
- <div>   
+ <div id="task-sheets">   
        <table 
             class="table table-sm table-bordered table-striped">             
           <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">            
@@ -188,6 +188,7 @@
 </script>
 
 <style lang="scss" scoped>
+ 
   .t_actions {
     display: flex;
     align-items: center;
@@ -200,15 +201,15 @@
       font-size: 16px;
     }
   }
-
-
-  table {
+ table {
   table-layout: fixed ;
   width: 100% ;
   margin-bottom: 0 !important;
+  overflow: auto;
 }
 td {
   width: 25% ;
+  overflow-wrap: break-word;
 }
   .pg-content {
     width: 100%;

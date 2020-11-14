@@ -186,6 +186,7 @@
    }
   td {
   width: 25% ;
+  overflow-wrap: break-word;
    }
   .t_actions {
     display: flex;
