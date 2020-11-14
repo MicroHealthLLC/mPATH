@@ -1,5 +1,24 @@
+  
 <template>
-  <div>  
+ <div>   
+       <table 
+            class="table table-sm table-bordered table-striped">             
+          <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">            
+              <td>{{task.text}}</td>
+              <td>{{task.taskType}}
+              <td>{{formatDate(task.startDate)}}</td>
+              <td>{{formatDate(task.dueDate)}}</td>
+              <td>{{task.users.join(', ')}}</td>
+              <td>{{task.progress + "%"}}</td>
+              <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+              <td v-else></td>
+              <td v-if="(task.watched) == true"><h5>X</h5></td>
+              <td v-else></td>
+              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+              <td v-else>No Updates</td>                 
+          </tr>     
+    </table>
+
     <sweet-modal
       class="task_form_modal"
       ref="taskFormModal"
@@ -7,15 +26,17 @@
       :blocking="true"
       >
       <div v-if="has_task" class="w-100">
-        <div class="modal_close_btn" @click="onCloseForm">
+        <!-- <div class="modal_close_btn" @click="onCloseForm">
           <i class="fa fa-times"></i>
-        </div>
+        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
           :task="DV_edit_task"
           title="Edit Task"
           @task-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></task-form>
 
         <issue-form
@@ -23,20 +44,22 @@
           :facility="facility"
           :issue="DV_edit_issue"
           @issue-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
         ></issue-form>
       </div>
     </sweet-modal>
   </div>
 </template>
 
+
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import TaskForm from "./task_form"
   import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
-
   export default {
-    name: 'TaskSheetsShow',
+    name: 'TaskSheets',
     components: {TaskForm, SweetModal, IssueForm},
     props: {
       fromView: {
@@ -49,15 +72,14 @@
       
       return {
         loading: true,
+        now: new Date().toISOString(),        
         DV_task: {},
         DV_edit_task: {},
         DV_edit_issue: {},
         has_task: false
       }
     },
-       styleObject: {
-       backgroundColor: 'red',      
-    },
+     
     mounted() {
       if (this.task) {
         this.loading = false
@@ -77,7 +99,7 @@
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
-      },
+      },    
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)
         if (!task) return
@@ -178,6 +200,16 @@
       font-size: 16px;
     }
   }
+
+
+  table {
+  table-layout: fixed ;
+  width: 100% ;
+  margin-bottom: 0 !important;
+}
+td {
+  width: 25% ;
+}
   .pg-content {
     width: 100%;
     height: 20px;
@@ -215,4 +247,3 @@
   }
   }
 </style>
-

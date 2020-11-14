@@ -1,3 +1,4 @@
+  
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
@@ -69,18 +70,13 @@
             class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
             style="font-size:.70rem" >
             EXPORT TO EXCEL
-          </button>     
-      </div>
-      <p v-else class="text-danger m-3">No tasks found..</p>
-    </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-     <table 
+          </button>   
+           <table 
             class="table table-sm table-bordered table-striped"
             ref="table" id="taskSheetsList1"
-          >
-          <thead>
-            <tr>
-              <th></th>
+            >
+          <thead>            
+            <tr style="background-color:#ededed">               
               <th>Task</th>
               <th>Milestone</th>
               <th>Start Date</th>
@@ -88,12 +84,12 @@
               <th>Assigned Users</th>
               <th>Progress</th>
               <th>Overdue</th>
+              <th>On Watch</th>
               <th>Last Update</th>
             </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(task, i) in filteredTasks">
-              <td class="text-center">{{i+1}}</td>
+          </thead>  
+            <tbody style="display:none">
+            <tr  v-for="(task, i) in filteredTasks">            
               <td>{{task.text}}</td>
               <td>{{task.taskType}}
               <td>{{formatDate(task.startDate)}}</td>
@@ -102,24 +98,40 @@
               <td>{{task.progress + "%"}}</td>
               <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
               <td v-else></td>
+              <td v-if="(task.watched) == true"><h5>X</h5></td>
+              <td v-else></td>
               <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
-              <td v-else>No Updates</td>
-            </tr>
-          </tbody>
-        </table>
+              <td v-else>No Updates</td>                 
+            </tr> 
+            </tbody> 
+        </table>       
+         <task-sheets
+          v-for="(task, i) in filteredTasks"
+          id="taskHover"
+          href="#"
+          :class="{'b_border': !!filteredTasks[i+1]}"
+          :key="task.id"
+          :load="log(task)"
+          :task="task"
+          :from-view="from"
+          @edit-task="editTask"
+          @toggle-watched="toggleWatched"
+        />        
+      </div>
+      <p v-else class="text-danger m-3">No tasks found..</p>
+    </div>
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>       
   </div>
-
 </template>
 
 <script>
-  import TaskSheetsShow from "./task_sheets"
+  import TaskSheets from "./task_sheets"
   import {mapGetters, mapMutations} from "vuex" 
   import  {jsPDF} from "jspdf";
   import 'jspdf-autotable';
-
   export default {
     name: 'TasksSheetsIndex',
-    components: {TaskSheetsShow},
+    components: {TaskSheets},
     props: ['facility', 'from'],
     data() {
      
@@ -196,7 +208,6 @@
           }
           return valid
         }), ['dueDate'])
-
         return tasks
       },
       C_taskTypeFilter: {
@@ -230,7 +241,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   #tasks-index {
     height: 465px;
     background-color: #ffffff;
@@ -245,11 +255,20 @@
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
-
+  #hide {
+   display: none;
+  }
+   table {
+   table-layout: fixed ;
+   width: 100% ;
+   margin-bottom: 0 !important;
+   }
+   td {
+   width: 25% ;
+   }
   // #taskHover:focus-within, #taskHover:active, #taskHover:visited {
   // cursor: pointer;
   // background-color: black !important;
   // border-left: solid rgb(91, 192, 222);
   // } 
-
 </style>
