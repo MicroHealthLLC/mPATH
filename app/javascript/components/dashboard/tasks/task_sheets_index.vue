@@ -71,9 +71,9 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>  
-          <div style="margin-bottom:50px">
-           <table 
-            class="table table-sm table-bordered table-striped">
+          <div style="margin-bottom:50px"> 
+                                   
+          <table class="table table-sm table-bordered table-striped mt-2">        
           <thead>            
             <tr style="background-color:#ededed">               
               <th>Task</th>
@@ -87,9 +87,10 @@
               <th>Last Update</th>
             </tr>
           </thead>            
-        </table>       
+        </table>          
+         <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list" :per="15">    
          <task-sheets
-          v-for="(task, i) in filteredTasks"
+          v-for="(task, i) in paginated('filteredTasks')"
           id="taskHover"
           href="#"
           :class="{'b_border': !!filteredTasks[i+1]}"
@@ -99,7 +100,12 @@
           :from-view="from"
           @edit-task="editTask"
           @toggle-watched="toggleWatched"
-        />       
+        /> 
+        </paginate> 
+         <div class="floatRight mt-3 mr-3">
+          <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
+         </div>
+     
        </div> 
       </div>
       <p v-else class="text-danger m-3">No tasks found..</p>
@@ -148,6 +154,8 @@
 <script>
   import TaskSheets from "./task_sheets"
   import {mapGetters, mapMutations} from "vuex" 
+  import VuePaginate from 'vue-paginate'
+   Vue.use(VuePaginate)
   import  {jsPDF} from "jspdf";
   import 'jspdf-autotable';
   export default {
@@ -158,6 +166,8 @@
      
       return {
         viewList: 'active',
+        paginate: ['filteredTasks'],
+        tasks: Object,
         now: new Date().toISOString()        
       }
     },
@@ -261,11 +271,12 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   #tasks-index {
     height: 465px;
     background-color: #ffffff;
     z-index: 100;
+    
   }
   .new-tasks-btn {
     height: max-content;
@@ -287,6 +298,61 @@
    td {
    width: 25% ;
    }
+  .floatRight {
+   text-align: right;
+   position: absolute;
+   right: 0px
+  }
+  .paginate-links.filteredTasks {
+  list-style: none !important;  
+  user-select: none;
+  a {
+   width: 30px;
+   height: 36px;
+   margin-right: 1px;    
+   border-radius: 4px;
+   background-color: #ededed;
+   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+   color: #383838; 
+   padding: 10px 24px; 
+   padding-bottom: 10px !important;
+   cursor: pointer;  
+  }
+  a:hover {
+    background-color: rgba(91, 192, 222, 0.3);
+  }
+  li.active a {
+    font-weight: bold;
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  a.active  {  
+   background-color: rgba(211, 211, 211, 10%);
+  }
+  li.next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+  }
+  li.disabled a {
+    color: #ccc;
+    cursor: no-drop;
+  }
+  li {    
+  display: inline !important;  
+  margin-bottom: 20px !important;   
+  } 
+
+
+
+}
+
+
+
+
+  // ul.paginate-links > li a:hover {
+  // background-color: rgb(2,117,216) !important;
+  // }
+
   // #taskHover:focus-within, #taskHover:active, #taskHover:visited {
   // cursor: pointer;
   // background-color: black !important;

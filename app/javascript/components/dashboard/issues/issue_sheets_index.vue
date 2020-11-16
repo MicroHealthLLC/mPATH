@@ -111,11 +111,8 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
-           <div style="margin-bottom:50px">
-       <table 
-            class="table table-sm table-bordered table-striped"
-           
-        >
+           <div style="margin-bottom:50px">               
+       <table class="table table-sm table-bordered table-striped">
           <thead>
             <tr style="background-color:#ededed">              
               <th>Issue</th>
@@ -131,8 +128,9 @@
             </tr>
           </thead>       
         </table> 
+          <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list" :per="15">  
             <issue-sheets
-              v-for="(issue, i) in filteredIssues"
+              v-for="(issue, i) in paginated('filteredIssues')"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
               :key="issue.id"
@@ -141,7 +139,11 @@
               :from-view="from"
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
-            />
+            /></paginate>
+            <div class="floatRight mt-3 mr-3">
+            <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
+            </div>  
+
           </div>
           </div>
           <p v-else class="text-danger ml-2">No issues found..</p>
@@ -209,7 +211,8 @@
         newIssue: false,
         viewList: 'active',
         currentIssue: null, 
-        now: new Date().toISOString()     
+        now: new Date().toISOString(),
+        paginate: ['filteredIssues']
       }
     },
     mounted() {
@@ -363,7 +366,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   table {
   table-layout: fixed ;
   width: 100% ;
@@ -383,5 +386,51 @@
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
+  }
+  .floatRight {
+   text-align: right;
+   position: absolute;
+   right: 0px
+  }
+
+  .paginate-links.filteredIssues {
+  list-style: none !important;  
+  user-select: none;
+  a {
+   width: 30px;
+   height: 36px;
+   margin-right: 1px;    
+   border-radius: 4px;
+   background-color: #ededed;
+   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+   color: #383838; 
+   padding: 10px 24px; 
+   padding-bottom: 10px !important;
+   cursor: pointer;  
+  }
+  a:hover {
+    background-color: rgba(91, 192, 222, 0.3);
+  }
+  li.active a {
+    font-weight: bold;
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  a.active  {  
+   background-color: rgba(211, 211, 211, 10%);
+  }
+  li.next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+  }
+  li.disabled a {
+    color: #ccc;
+    cursor: no-drop;
+  }
+  li {    
+  display: inline !important;
+  float: left; 
+  margin-bottom: 20px !important;   
+  } 
   }
 </style>
