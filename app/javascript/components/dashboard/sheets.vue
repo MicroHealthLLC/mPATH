@@ -177,7 +177,7 @@
     overflow-x: hidden;
     width: 755px;
     height: 515px;
-    padding-left: 1px !important;
+    padding-left: 2.5px !important;
     padding-right: 15px !important;
     left: 50%;
     position: fixed;
