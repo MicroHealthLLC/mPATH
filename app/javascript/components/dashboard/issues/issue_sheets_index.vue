@@ -111,10 +111,7 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
-           <div style="margin-bottom:50px">
-          <div class="mb-2">
-          <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
-          </div>         
+           <div style="margin-bottom:50px">               
        <table class="table table-sm table-bordered table-striped">
           <thead>
             <tr style="background-color:#ededed">              
@@ -131,7 +128,7 @@
             </tr>
           </thead>       
         </table> 
-          <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list" :per="5">  
+          <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list" :per="15">  
             <issue-sheets
               v-for="(issue, i) in paginated('filteredIssues')"
               id="issueHover"
@@ -143,6 +140,9 @@
               @issue-edited="issueEdited"
               @toggle-watch-issue="toggleWatched"
             /></paginate>
+            <div class="floatRight mt-3 mr-3">
+            <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
+            </div>  
 
           </div>
           </div>
@@ -386,6 +386,11 @@
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
+  }
+  .floatRight {
+   text-align: right;
+   position: absolute;
+   right: 0px
   }
 
   .paginate-links.filteredIssues {

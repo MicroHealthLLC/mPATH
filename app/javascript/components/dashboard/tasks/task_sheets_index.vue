@@ -72,9 +72,7 @@
             EXPORT TO EXCEL
           </button>  
           <div style="margin-bottom:50px"> 
-          <div class="mb-2">
-          <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
-          </div>                          
+                                   
           <table class="table table-sm table-bordered table-striped mt-2">        
           <thead>            
             <tr style="background-color:#ededed">               
@@ -90,7 +88,7 @@
             </tr>
           </thead>            
         </table>          
-         <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list" :per="5">    
+         <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list" :per="15">    
          <task-sheets
           v-for="(task, i) in paginated('filteredTasks')"
           id="taskHover"
@@ -104,6 +102,9 @@
           @toggle-watched="toggleWatched"
         /> 
         </paginate> 
+         <div class="floatRight mt-3">
+          <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
+         </div>
      
        </div> 
       </div>
@@ -275,6 +276,7 @@
     height: 465px;
     background-color: #ffffff;
     z-index: 100;
+    
   }
   .new-tasks-btn {
     height: max-content;
@@ -296,7 +298,11 @@
    td {
    width: 25% ;
    }
-
+  .floatRight {
+   text-align: right;
+   position: absolute;
+   right: 0px
+  }
   .paginate-links.filteredTasks {
   list-style: none !important;  
   user-select: none;
@@ -332,10 +338,11 @@
     cursor: no-drop;
   }
   li {    
-  display: inline !important;
-  float: left; 
+  display: inline !important;  
   margin-bottom: 20px !important;   
   } 
+
+
 
 }
 
