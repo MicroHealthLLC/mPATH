@@ -8,7 +8,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Milestones"
+            placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -73,13 +73,11 @@
           </button>  
           <div style="margin-bottom:50px">
            <table 
-            class="table table-sm table-bordered table-striped"
-            ref="table" id="taskSheetsList1" 
-            >
+            class="table table-sm table-bordered table-striped">
           <thead>            
             <tr style="background-color:#ededed">               
               <th>Task</th>
-              <th>Milestone</th>
+              <th>Task Category</th>             
               <th>Start Date</th>
               <th>Due Date</th>
               <th>Assigned Users</th>
@@ -88,23 +86,7 @@
               <th>On Watch</th>
               <th>Last Update</th>
             </tr>
-          </thead>  
-            <tbody style="display:none">
-            <tr  v-for="(task, i) in filteredTasks">            
-              <td>{{task.text}}</td>
-              <td>{{task.taskType}}
-              <td>{{formatDate(task.startDate)}}</td>
-              <td>{{formatDate(task.dueDate)}}</td>
-              <td>{{task.users.join(', ')}}</td>
-              <td>{{task.progress + "%"}}</td>
-              <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
-              <td v-else></td>
-              <td v-if="(task.watched) == true"><h5>X</h5></td>
-              <td v-else></td>
-              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
-              <td v-else>No Updates</td>                 
-            </tr> 
-            </tbody> 
+          </thead>            
         </table>       
          <task-sheets
           v-for="(task, i) in filteredTasks"
@@ -122,7 +104,44 @@
       </div>
       <p v-else class="text-danger m-3">No tasks found..</p>
     </div>
-    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>       
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>  
+       <table 
+            class="table table-sm table-bordered table-striped"
+            ref="table" id="taskSheetsList1"
+            style="display:none" 
+            >
+          <thead>            
+            <tr style="background-color:#ededed">               
+              <th>Task</th>
+              <th>Task Category</th>
+              <th>Facility</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Assigned Users</th>
+              <th>Progress</th>
+              <th>Overdue</th>
+              <th>On Watch</th>
+              <th>Last Update</th>
+            </tr>
+          </thead>  
+            <tbody>
+            <tr  v-for="(task, i) in filteredTasks">            
+              <td>{{task.text}}</td>
+              <td>{{task.taskType}}</td>
+              <td>{{task.facilityName}}</td>
+              <td>{{formatDate(task.startDate)}}</td>
+              <td>{{formatDate(task.dueDate)}}</td>
+              <td>{{task.users.join(', ')}}</td>
+              <td>{{task.progress + "%"}}</td>
+              <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+              <td v-else></td>
+              <td v-if="(task.watched) == true"><h5>X</h5></td>
+              <td v-else></td>
+              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+              <td v-else>No Updates</td>                 
+            </tr> 
+            </tbody> 
+        </table>            
   </div>
 </template>
 

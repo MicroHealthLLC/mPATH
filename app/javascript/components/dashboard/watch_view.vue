@@ -90,7 +90,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="border-gray h-330">
-            <h5 class="mb-2">Watched Milestone Progressions</h5>
+            <h5 class="mb-2">Watched Task Categories Progressions</h5>
             <div v-if="displayWatchedTaskTypes">
               <div v-for="task in watchedTaskTypes">
                 <div class="row mt-1" v-if="task._display">
@@ -135,7 +135,7 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
-          <h6 class="px-3 text-center">Watched Milestones vs Total</h6>
+          <h6 class="px-3 text-center">Watched Task Categories vs Total</h6>
           <stacked :chart-data="onWatchedTaskData" :width="300" :height="100" />
         </div>
         <div class="col-md-6">

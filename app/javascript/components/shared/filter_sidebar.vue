@@ -115,7 +115,7 @@
             track-by="name"
             label="name"
             class="ml-1 milestones"
-            placeholder="Filter by Milestones"
+            placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"

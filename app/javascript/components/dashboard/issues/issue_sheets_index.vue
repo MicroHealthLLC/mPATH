@@ -114,12 +114,12 @@
            <div style="margin-bottom:50px">
        <table 
             class="table table-sm table-bordered table-striped"
-            ref="table" id="issueSheetsList1"
+           
         >
           <thead>
             <tr style="background-color:#ededed">              
               <th>Issue</th>
-              <th>Issue Type</th>
+              <th>Issue Type</th>            
               <th>Issue Severity</th>
               <th>Start Date</th>
               <th>Due Date</th>
@@ -129,24 +129,7 @@
               <th>On Watch</th>
               <th>Last Update</th>
             </tr>
-          </thead>
-          <tbody style="display:none">
-            <tr v-for="(issue, i) in filteredIssues">            
-                <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}
-                <td>{{issue.issueSeverity}}
-                <td>{{formatDate(issue.startDate)}}</td>
-                <td>{{formatDate(issue.dueDate)}}</td>
-                <td>{{issue.users.join(', ')}}</td>
-                <td>{{issue.progress + "%"}}</td>
-                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.watched) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-                <td v-else>No Updates</td>
-            </tr>
-          </tbody> 
+          </thead>       
         </table> 
             <issue-sheets
               v-for="(issue, i) in filteredIssues"
@@ -167,10 +150,45 @@
       </div>
     </div>
       <div>
-        
-      </div>
-
-    
+         <table 
+            class="table table-sm table-bordered table-striped"
+            ref="table" id="issueSheetsList1"
+            style="display:none">
+          <thead>
+            <tr style="background-color:#ededed">              
+              <th>Issue</th>
+              <th>Issue Type</th>
+              <th>Facility</th>
+              <th>Issue Severity</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Assigned Users</th>
+              <th>Progress</th>
+              <th>Overdue</th>
+              <th>On Watch</th>
+              <th>Last Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(issue, i) in filteredIssues">            
+                <td>{{issue.title}}</td>
+                <td>{{issue.issueType}}</td>
+                <td>{{issue.facilityName}}</td>
+                <td>{{issue.issueSeverity}}</td>
+                <td>{{formatDate(issue.startDate)}}</td>
+                <td>{{formatDate(issue.dueDate)}}</td>
+                <td>{{issue.users.join(', ')}}</td>
+                <td>{{issue.progress + "%"}}</td>
+                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.watched) <= now"><h5>X</h5></td>
+                <td v-else></td>
+                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+                <td v-else>No Updates</td>
+            </tr>
+          </tbody> 
+        </table>         
+      </div>    
   </div>
 </template>
 
