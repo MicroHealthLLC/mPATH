@@ -3,8 +3,8 @@
          <table class="table table-sm table-bordered table-striped">
                <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">            
                 <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}
-                <td>{{issue.issueSeverity}}
+                <td>{{issue.issueType}}</td>           
+                <td>{{issue.issueSeverity}}</td>
                 <td>{{formatDate(issue.startDate)}}</td>
                 <td>{{formatDate(issue.dueDate)}}</td>
                 <td>{{issue.users.join(', ')}}</td>

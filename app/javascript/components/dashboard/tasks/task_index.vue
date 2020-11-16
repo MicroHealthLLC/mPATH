@@ -7,7 +7,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Milestones"
+            placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -92,7 +92,8 @@
         <tr>
           <th></th>
           <th>Task</th>
-          <th>Milestone</th>
+          <th>Task Category</th>
+          <th>Facility</th>
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
@@ -105,7 +106,8 @@
         <tr v-for="(task, i) in filteredTasks">
           <td class="text-center">{{i+1}}</td>
           <td>{{task.text}}</td>
-          <td>{{task.taskType}}
+          <td>{{task.taskType}}</td>
+          <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
           <td>{{task.users.join(', ')}}</td>

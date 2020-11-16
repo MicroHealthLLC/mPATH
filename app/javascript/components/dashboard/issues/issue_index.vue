@@ -133,6 +133,7 @@
             <th></th>
             <th>Issue</th>
             <th>Issue Type</th>
+            <th>Facility</th>
             <th>Issue Severity</th>
             <th>Start Date</th>
             <th>Due Date</th>
@@ -146,8 +147,9 @@
           <tr v-for="(issue, i) in filteredIssues">
             <td class="text-center">{{i+1}}</td>
             <td>{{issue.title}}</td>
-            <td>{{issue.issueType}}
-            <td>{{issue.issueSeverity}}
+            <td>{{issue.issueType}}</td>
+            <td>{{issue.facilityName}}</td>
+            <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
             <td>{{issue.users.join(', ')}}</td>

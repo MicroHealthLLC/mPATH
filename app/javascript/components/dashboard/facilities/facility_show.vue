@@ -94,7 +94,7 @@
                 </div>
               </div>
               <div v-if="taskStats.length > 0">
-                <div class="text-info font-weight-bold text-center">Milestones</div>
+                <div class="text-info font-weight-bold text-center">Task Categories</div>
                 <p>
                   <div class="row my-2" v-for="task in taskStats">
                     <div class="col-md-9 font-md">

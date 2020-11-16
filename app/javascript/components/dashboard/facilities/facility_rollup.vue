@@ -68,7 +68,7 @@
         </div>
       </div>
       <br>
-      <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Milestones</div>
+      <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Task Categories</div>
       <div v-for="task in currentTaskTypes">
         <div class="row" v-if="task._display">
           <div class="col-md-9">

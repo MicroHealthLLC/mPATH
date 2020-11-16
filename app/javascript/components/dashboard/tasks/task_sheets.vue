@@ -5,7 +5,7 @@
             class="table table-sm table-bordered table-striped">             
           <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">            
               <td>{{task.text}}</td>
-              <td>{{task.taskType}}
+              <td>{{task.taskType}}</td>             
               <td>{{formatDate(task.startDate)}}</td>
               <td>{{formatDate(task.dueDate)}}</td>
               <td>{{task.users.join(', ')}}</td>
