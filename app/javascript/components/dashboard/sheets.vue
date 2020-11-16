@@ -175,17 +175,21 @@
   .contain {
     overflow-y: scroll;
     overflow-x: hidden;
-    width: 530px;
+    width: 755px;
     height: 515px;
+    padding-left: 1px !important;
+    padding-right: 15px !important;
     left: 50%;
     position: fixed;
     transform: translate(-50%, -50%);   
     top: 50%;  
+    box-shadow: 0 10px 20px rgba(2,117,216,0.19), 0 6px 6px rgba(2,117,216,0.23);
  
   }
     .lazyModal {  
     position: absolute !important;     
-    width: 500px;  
+    width: 735px;  
+    margin-right: 2px;
     background-color: rgba(0,0, 0,0.50);
     }
 
