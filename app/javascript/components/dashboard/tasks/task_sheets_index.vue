@@ -102,7 +102,7 @@
           @toggle-watched="toggleWatched"
         /> 
         </paginate> 
-         <div class="floatRight mt-3">
+         <div class="floatRight mt-3 mr-3">
           <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
          </div>
      
