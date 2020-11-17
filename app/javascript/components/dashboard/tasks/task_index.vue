@@ -114,10 +114,16 @@
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+          <td v-if="(task.notes.length) > 0">
+            By: {{ task.notes[0].user.fullName}} on 
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}} 
+          </td>
           <td v-else>No Updates</td>
         </tr>
       </tbody>
+      <tfoot>
+       <tr><td> Task List </td></tr>
+      </tfoot>
     </table>
   </div>
 
@@ -165,7 +171,8 @@
       download() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#taskList1"})
+        doc.autoTable({html: "#taskList1"})    
+        doc.text(150,285, "Task List")
         doc.save("Task_List.pdf")
       },
     },
@@ -256,6 +263,9 @@
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
+  }
+  tfoot {
+    text-align: right !important;
   }
 
   // #taskHover:focus-within, #taskHover:active, #taskHover:visited {
