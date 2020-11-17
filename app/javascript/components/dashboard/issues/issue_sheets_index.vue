@@ -106,9 +106,20 @@
             </button>
 
             <div style="margin-bottom:50px">
-              <table class="table table-sm table-bordered table-striped">
-                <thead>
-                  <tr style="background-color:#ededed">
+              <table class="table table-sm table-bordered table-striped">                 
+                  <colgroup>
+                    <col class="seventeen" />
+                    <col class="ten" />                   
+                    <col class="nine" />
+                    <col class="eight" />
+                    <col class="eight" />
+                    <col class="ten" />
+                    <col class="eight" />
+                    <col class="seven" />
+                    <col class="six" />
+                    <col class="seventeen" />
+                  </colgroup>
+                  <tr style="background-color:#ededed; font-size:.90rem">
                     <th>Issue</th>
                     <th>Issue Type</th>
                     <th>Issue Severity</th>
@@ -119,8 +130,7 @@
                     <th>Overdue</th>
                     <th>On Watch</th>
                     <th>Last Update</th>
-                  </tr>
-                </thead>
+                  </tr>           
               </table>
               <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list pl-0" :per="15">
                 <issue-sheets
@@ -367,8 +377,29 @@
     width: 100% ;
     margin-bottom: 0 !important;
   }
-  td {
-    width: 25% ;
+  .five {
+    width: 5%;
+  }
+  .six {
+    width: 6%; 
+  }
+  .seven {
+    width: 7%;
+  }
+  .eight {
+    width: 8%; 
+  }
+  .nine {
+    width: 9%;
+  }
+  .ten {
+    width: 10%; 
+  }
+  .seventeen {
+    width: 17%; 
+  }
+  th {
+    font-size: .70rem !important;
   }
   .issues-index {
     height: 465px;

@@ -74,7 +74,17 @@
         </button>
         <div style="margin-bottom:50px">
           <table class="table table-sm table-bordered table-striped mt-2">
-            <thead>
+               <colgroup>
+                <col class="twenty" />
+                <col class="ten" />              
+                <col class="eight" />
+                <col class="eight" />
+                <col class="ten" />
+                <col class="eight" />
+                <col class="eight" />
+                <col class="eight" />
+                <col class="twenty" />         
+              </colgroup>
               <tr style="background-color:#ededed">
                 <th>Task</th>
                 <th>Task Category</th>
@@ -86,7 +96,7 @@
                 <th>On Watch</th>
                 <th>Last Update</th>
               </tr>
-            </thead>
+          
           </table>
           <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list pl-0" :per="15">
             <task-sheets
@@ -289,9 +299,15 @@
     table-layout: fixed;
     width: 100%;
     margin-bottom: 0 !important;
+  } 
+  .eight {
+    width: 8%; 
   }
-  td {
-    width: 25%;
+  .ten {
+    width: 10%; 
+  }
+  .twenty {
+    width: 20%; 
   }
   .floatRight {
     text-align: right;
