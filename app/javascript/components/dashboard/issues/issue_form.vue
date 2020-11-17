@@ -7,18 +7,26 @@
       class="mx-auto"
       accept-charset="UTF-8"
       >
-        <div v-if="_isallowed('write')" class="d-flex form-group sticky mb-2">
+        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2">
         <button
+          v-if="_isallowed('write')" 
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"
           >
           Save
         </button>
         <button
+          v-else   
+          disabled  
+          class="btn btn-sm sticky-btn btn-light"
+          >
+          Read Only
+        </button>
+        <button
           class="btn btn-sm sticky-btn btn-warning ml-2"
           @click.prevent="cancelIssueSave"
           >
-          Cancel
+          Close
         </button>
         <button
           v-if="_isallowed('delete')"
