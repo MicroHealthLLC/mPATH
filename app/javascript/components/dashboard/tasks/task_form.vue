@@ -64,13 +64,13 @@
         />
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Milestone:</label>
+        <label class="font-sm">Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Select milestone"
+          placeholder="Select task category"
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
@@ -666,7 +666,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   #tasks-form {
     z-index: 100;
     width: 100%;
@@ -704,7 +704,27 @@
     margin-bottom: 10px;
     position: relative;
   }
-
+  .paginate-links.filteredNotes {
+    user-select: none;
+   a {
+    cursor: pointer;
+    color:rgb(2, 117, 216) !important;
+   }
+   li.active a {
+    font-weight: bold !important;
+    text-decoration-line: none;
+    cursor: default !important;
+   }
+   li.next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+   }
+   li.disabled a {
+    color: #ccc;
+    cursor: no-drop;
+   }
+  } 
   .sticky-btn {
     margin-top: 5px;
     margin-bottom: 5px;

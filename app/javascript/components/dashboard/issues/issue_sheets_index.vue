@@ -189,7 +189,10 @@
             <td v-else></td>
             <td v-if="(issue.watched) <= now"><h5>X</h5></td>
             <td v-else></td>
-            <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+            <td v-if="(issue.notes.length) > 0">
+               By: {{ issue.notes[0].user.fullName}} on 
+              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}       
+            </td>
             <td v-else>No Updates</td>
           </tr>
         </tbody>
@@ -205,6 +208,8 @@
   import  {jsPDF} from "jspdf";
   import 'jspdf-autotable';
   import {mapGetters, mapMutations} from 'vuex'
+  import moment from 'moment'
+  Vue.prototype.moment = moment
 
   export default {
     name: 'IssueSheetsIndex',

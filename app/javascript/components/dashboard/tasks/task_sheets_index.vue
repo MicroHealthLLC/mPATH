@@ -152,7 +152,10 @@
           <td v-else></td>
           <td v-if="(task.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+          <td v-if="(task.notes.length) > 0">
+             By: {{ task.notes[0].user.fullName}} on 
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}} 
+          </td>
           <td v-else>No Updates</td>
         </tr>
       </tbody>
@@ -166,6 +169,8 @@
   import VuePaginate from 'vue-paginate'
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
+  import moment from 'moment'
+  Vue.prototype.moment = moment
   Vue.use(VuePaginate)
 
   export default {
