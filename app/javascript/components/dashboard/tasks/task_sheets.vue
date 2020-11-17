@@ -1,22 +1,21 @@
-  
+
 <template>
- <div id="task-sheets">   
-       <table 
-            class="table table-sm table-bordered table-striped">             
-          <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">            
-              <td>{{task.text}}</td>
-              <td>{{task.taskType}}</td>             
-              <td>{{formatDate(task.startDate)}}</td>
-              <td>{{formatDate(task.dueDate)}}</td>
-              <td>{{task.users.join(', ')}}</td>
-              <td>{{task.progress + "%"}}</td>
-              <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
-              <td v-else></td>
-              <td v-if="(task.watched) == true"><h5>X</h5></td>
-              <td v-else></td>
-              <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
-              <td v-else>No Updates</td>                 
-          </tr>     
+  <div id="task-sheets">
+    <table class="table table-sm table-bordered table-striped">
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
+        <td>{{task.text}}</td>
+        <td>{{task.taskType}}</td>
+        <td>{{formatDate(task.startDate)}}</td>
+        <td>{{formatDate(task.dueDate)}}</td>
+        <td>{{task.users.join(', ')}}</td>
+        <td>{{task.progress + "%"}}</td>
+        <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+        <td v-else></td>
+        <td v-if="(task.watched) == true"><h5>X</h5></td>
+        <td v-else></td>
+        <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+        <td v-else>No Updates</td>
+      </tr>
     </table>
 
     <sweet-modal
@@ -26,9 +25,6 @@
       :blocking="true"
       >
       <div v-if="has_task" class="w-100">
-        <!-- <div class="modal_close_btn" @click="onCloseForm">
-          <i class="fa fa-times"></i>
-        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
@@ -58,6 +54,7 @@
   import TaskForm from "./task_form"
   import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
+
   export default {
     name: 'TaskSheets',
     components: {TaskForm, SweetModal, IssueForm},
@@ -69,17 +66,15 @@
       task: Object
     },
     data() {
-      
       return {
         loading: true,
-        now: new Date().toISOString(),        
+        now: new Date().toISOString(),
         DV_task: {},
         DV_edit_task: {},
         DV_edit_issue: {},
         has_task: false
       }
     },
-     
     mounted() {
       if (this.task) {
         this.loading = false
@@ -99,7 +94,7 @@
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
-      },    
+      },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)
         if (!task) return
@@ -188,7 +183,6 @@
 </script>
 
 <style lang="scss" scoped>
- 
   .t_actions {
     display: flex;
     align-items: center;
@@ -201,16 +195,16 @@
       font-size: 16px;
     }
   }
- table {
-  table-layout: fixed ;
-  width: 100% ;
-  margin-bottom: 0 !important;
-  overflow: auto;
-}
-td {
-  width: 25% ;
-  overflow-wrap: break-word;
-}
+  table {
+    table-layout: fixed ;
+    width: 100% ;
+    margin-bottom: 0 !important;
+    overflow: auto;
+  }
+  td {
+    width: 25% ;
+    overflow-wrap: break-word;
+  }
   .pg-content {
     width: 100%;
     height: 20px;
@@ -221,7 +215,6 @@ td {
   }
   .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
     min-width: 30vw;
-    /*margin-top: 65px;*/
     max-height: 80vh;
     .sweet-content {
       padding-top: 30px;
@@ -235,16 +228,20 @@ td {
       font-size: 20px;
       cursor: pointer;
     }
-   .fa-long-arrow-alt-right { 
-    margin-bottom: 1rem !important;
-    margin-left: 1rem !important;
-    height: .8em !important;
-   }
-   
-  .onHover:hover {
-    cursor: pointer !important;
-    background-color: rgba(91, 192, 222, 0.3) !important; 
-    border-left: solid rgb(91, 192, 222) !important;
-  }
+    .fa-long-arrow-alt-right {
+      margin-bottom: 1rem !important;
+      margin-left: 1rem !important;
+      height: .8em !important;
+    }
+    .onHover:hover {
+      cursor: pointer !important;
+      background-color: rgba(91, 192, 222, 0.3) !important;
+      border-left: solid rgb(91, 192, 222) !important;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
+    }
   }
 </style>

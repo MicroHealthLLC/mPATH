@@ -24,8 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-10 facility-show-tab pr-3" style="background-color: solid #ededed 15px">     
-      
+      <div class="col-md-10 facility-show-tab pr-3" style="background-color: solid #ededed 15px">
         <div class="mt-3">
           <facility-sheets
             v-if="C_showFacilityTab"
@@ -33,33 +32,36 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-sheets>
-           <facility-rollup v-else></facility-rollup>     
+          <facility-rollup v-else></facility-rollup>
         </div>
-     
-          <div v-if="managerView.task || managerView.issue || managerView.note" class="contain col-md-10" >
-          <div class="lazyModal">
-          <task-form
-            v-if="managerView.task"
-            :facility="currentFacility"
-            :task="managerView.task"
-            title="Edit Task"
-            @task-created="updateFacilityTask"
-            @task-updated="updateFacilityTask"
-          ></task-form>
 
-          <issue-form
-            v-if="managerView.issue"
-            :facility="currentFacility"
-            :issue="managerView.issue"
-            @issue-updated="updateFacilityIssue"
-            @issue-created="updateFacilityIssue"
-          ></issue-form>          
+        <sweet-modal
+          class="form_modal"
+          ref="formModals"
+          :hide-close-button="true"
+          :blocking="true"
+          >
+          <div v-if="managerView.task || managerView.issue" class="w-100">
+            <task-form
+              v-if="managerView.task"
+              :facility="currentFacility"
+              :task="managerView.task"
+              title="Edit Task"
+              @task-created="updateFacilityTask"
+              @task-updated="updateFacilityTask"
+              class="form-inside-modal"
+            ></task-form>
+            <issue-form
+              v-if="managerView.issue"
+              :facility="currentFacility"
+              :issue="managerView.issue"
+              @issue-updated="updateFacilityIssue"
+              @issue-created="updateFacilityIssue"
+              class="form-inside-modal"
+            ></issue-form>
           </div>
-          </div>
-
-          </div>
-    
-     
+        </sweet-modal>
+      </div>
     </div>
   </div>
 </template>
@@ -68,8 +70,9 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilitySheets from './facilities/facility_sheets'
   import FacilityRollup from './facilities/facility_rollup'
-  import TaskForm from "./tasks/task_form" 
+  import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
+  import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: "ProjectSheets",
@@ -77,8 +80,8 @@
       FacilitySheets,
       FacilityRollup,
       TaskForm,
-      IssueForm, 
-     
+      IssueForm,
+      SweetModal
     },
     data() {
       return {
@@ -158,6 +161,15 @@
             this.goBackFromEdits()
           }
         }, deep: true
+      },
+      managerView: {
+        handler(value) {
+          if (value.task || value.issue) {
+            this.$refs.formModals && this.$refs.formModals.open()
+          } else {
+            this.$refs.formModals && this.$refs.formModals.close()
+          }
+        }, deep: true
       }
     }
   }
@@ -167,32 +179,28 @@
   #sheets_view {
     overflow: hidden;
     padding: 0 10px;
-     .cursor {
+    .cursor {
       cursor: pointer;
-      
     }
-
-  .contain {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    width: 755px;
-    height: 515px;
-    padding-left: 2.5px !important;
-    padding-right: 15px !important;
-    left: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);   
-    top: 50%;  
-    box-shadow: 0 10px 20px rgba(2,117,216,0.19), 0 6px 6px rgba(2,117,216,0.23);
- 
-  }
-    .lazyModal {  
-    position: absolute !important;     
-    width: 735px;  
-    margin-right: 2px;
-    background-color: rgba(0,0, 0,0.50);
+    .contain {
+      overflow-y: scroll;
+      overflow-x: hidden;
+      width: 755px;
+      height: 515px;
+      padding-left: 2.5px !important;
+      padding-right: 15px !important;
+      left: 50%;
+      position: fixed;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      box-shadow: 0 10px 20px rgba(2,117,216,0.19), 0 6px 6px rgba(2,117,216,0.23);
     }
-
+    .lazyModal {
+      position: absolute !important;
+      width: 735px;
+      margin-right: 2px;
+      background-color: rgba(0,0, 0,0.50);
+    }
     .facility-groups-tab {
       background: #ededed;
       max-height: calc(100vh - 94px);
@@ -209,27 +217,25 @@
     .fac-manager-sidebar {
       cursor: pointer;
       font-weight: 400 !important;
-    } 
-
-    .default-background {   
-      background-color: #ededed;     
-      height: 100%;       
-      position: relative;     
+    }
+    .default-background {
+      background-color: #ededed;
+      height: 100%;
+      position: relative;
       border-radius: 4px;
       z-index: 1;
     }
     .centeredDiv {
-    position: absolute;
-    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    border: 1px solid #383838;
-    border-radius: 4px;
-    padding: 10px;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+      position: absolute;
+      box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      border: 1px solid #383838;
+      border-radius: 4px;
+      padding: 10px;
+      top: 50%;
+      left: 50%;
+      margin-right: -50%;
+      transform: translate(-50%, -50%);
     }
-
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }
@@ -250,6 +256,30 @@
       &:hover {
         h5, h6 {
           font-weight: 900 !important;
+        }
+      }
+    }
+    .form_modal.sweet-modal-overlay {
+      z-index: 10000001;
+    }
+    .form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+      min-width: 30vw;
+      max-height: 80vh;
+      .sweet-content {
+        padding-top: 30px;
+        text-align: unset;
+      }
+      .modal_close_btn {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .form-inside-modal {
+        form {
+          position: inherit !important;
         }
       }
     }

@@ -1,13 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index">
     <div v-if="newIssue && from != 'manager_view'">
-      <!-- <button
-        class="btn btn-sm btn-link float-right"
-        style="margin-top:-20px"
-        @click.prevent.stop="newIssue=false"
-        >
-        back
-      </button> -->
       <issue-form
         :facility="facility"
         :issue="currentIssue"
@@ -60,9 +53,9 @@
           </div>
         </div>
         <button v-if="_isallowed('write')"
-        class="new-issue-btn btn btn-sm btn-primary" 
+        class="new-issue-btn btn btn-sm btn-primary"
         @click.prevent="reportNew">
-        <i class="fas fa-plus-circle"></i>         
+        <i class="fas fa-plus-circle"></i>
         Add Issue</button>
       </div>
       <div class="m-1 d-flex">
@@ -98,109 +91,111 @@
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <button
-            @click="download"
-            id="printBtn"
-            class="btn btn-sm btn-dark m-2"
-            style="font-size:.70rem" >
-            EXPORT TO PDF
-          </button>
-           <button
-            disabled
-            id="printBtn"
-            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
-            style="font-size:.70rem" >
-            EXPORT TO EXCEL
-          </button>
-           <div style="margin-bottom:50px">               
-       <table class="table table-sm table-bordered table-striped">
-          <thead>
-            <tr style="background-color:#ededed">              
-              <th>Issue</th>
-              <th>Issue Type</th>            
-              <th>Issue Severity</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
-              <th>Overdue</th>
-              <th>On Watch</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>       
-        </table> 
-          <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list" :per="15">  
-            <issue-sheets
-              v-for="(issue, i) in paginated('filteredIssues')"
-              id="issueHover"
-              :class="{'b_border': !!filteredIssues[i+1]}"
-              :key="issue.id"
-              :load="log(issue)"
-              :issue="issue"
-              :from-view="from"
-              @issue-edited="issueEdited"
-              @toggle-watch-issue="toggleWatched"
-            /></paginate>
-            <div class="floatRight mt-3 mr-3">
-            <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
-            </div>  
+              @click="download"
+              id="printBtn"
+              class="btn btn-sm btn-dark m-2"
+              style="font-size:.70rem" >
+              EXPORT TO PDF
+            </button>
+            <button
+              disabled
+              id="printBtn"
+              class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
+              style="font-size:.70rem" >
+              EXPORT TO EXCEL
+            </button>
 
-          </div>
+            <div style="margin-bottom:50px">
+              <table class="table table-sm table-bordered table-striped">
+                <thead>
+                  <tr style="background-color:#ededed">
+                    <th>Issue</th>
+                    <th>Issue Type</th>
+                    <th>Issue Severity</th>
+                    <th>Start Date</th>
+                    <th>Due Date</th>
+                    <th>Assigned Users</th>
+                    <th>Progress</th>
+                    <th>Overdue</th>
+                    <th>On Watch</th>
+                    <th>Last Update</th>
+                  </tr>
+                </thead>
+              </table>
+              <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list pl-0" :per="15">
+                <issue-sheets
+                  v-for="(issue, i) in paginated('filteredIssues')"
+                  id="issueHover"
+                  :class="{'b_border': !!filteredIssues[i+1]}"
+                  :key="issue.id"
+                  :load="log(issue)"
+                  :issue="issue"
+                  :from-view="from"
+                  @issue-edited="issueEdited"
+                  @toggle-watch-issue="toggleWatched"
+                />
+              </paginate>
+              <div class="floatRight mt-3 mr-3">
+                <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
+              </div>
+            </div>
           </div>
           <p v-else class="text-danger ml-2">No issues found..</p>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
-      <div>
-         <table 
-            class="table table-sm table-bordered table-striped"
-            ref="table" id="issueSheetsList1"
-            style="display:none">
-          <thead>
-            <tr style="background-color:#ededed">              
-              <th>Issue</th>
-              <th>Issue Type</th>
-              <th>Facility</th>
-              <th>Issue Severity</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
-              <th>Overdue</th>
-              <th>On Watch</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(issue, i) in filteredIssues">            
-                <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}</td>
-                <td>{{issue.facilityName}}</td>
-                <td>{{issue.issueSeverity}}</td>
-                <td>{{formatDate(issue.startDate)}}</td>
-                <td>{{formatDate(issue.dueDate)}}</td>
-                <td>{{issue.users.join(', ')}}</td>
-                <td>{{issue.progress + "%"}}</td>
-                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.watched) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-                <td v-else>No Updates</td>
-            </tr>
-          </tbody> 
-        </table>         
-      </div>    
+    <div>
+      <table
+        class="table table-sm table-bordered table-striped"
+        ref="table" id="issueSheetsList1"
+        style="display:none">
+        <thead>
+          <tr style="background-color:#ededed">
+            <th>Issue</th>
+            <th>Issue Type</th>
+            <th>Facility</th>
+            <th>Issue Severity</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Assigned Users</th>
+            <th>Progress</th>
+            <th>Overdue</th>
+            <th>On Watch</th>
+            <th>Last Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(issue, i) in filteredIssues">
+            <td>{{issue.title}}</td>
+            <td>{{issue.issueType}}</td>
+            <td>{{issue.facilityName}}</td>
+            <td>{{issue.issueSeverity}}</td>
+            <td>{{formatDate(issue.startDate)}}</td>
+            <td>{{formatDate(issue.dueDate)}}</td>
+            <td>{{issue.users.join(', ')}}</td>
+            <td>{{issue.progress + "%"}}</td>
+            <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+            <td v-else></td>
+            <td v-if="(issue.watched) <= now"><h5>X</h5></td>
+            <td v-else></td>
+            <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+            <td v-else>No Updates</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
-  import http from './../../../common/http'  
+  import http from './../../../common/http'
   import IssueForm from './issue_form'
   import IssueSheets from './issue_sheets'
   import  {jsPDF} from "jspdf";
   import 'jspdf-autotable';
   import {mapGetters, mapMutations} from 'vuex'
+
   export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
@@ -210,7 +205,7 @@
         loading: true,
         newIssue: false,
         viewList: 'active',
-        currentIssue: null, 
+        currentIssue: null,
         now: new Date().toISOString(),
         paginate: ['filteredIssues']
       }
@@ -368,13 +363,13 @@
 
 <style lang="scss">
   table {
-  table-layout: fixed ;
-  width: 100% ;
-  margin-bottom: 0 !important;
-   }
+    table-layout: fixed ;
+    width: 100% ;
+    margin-bottom: 0 !important;
+  }
   td {
-  width: 25% ;
-   }
+    width: 25% ;
+  }
   .issues-index {
     height: 465px;
   }
@@ -382,55 +377,54 @@
     width: 20%;
     height: max-content;
   }
-   #issueHover:hover {
+  #issueHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
   .floatRight {
-   text-align: right;
-   position: absolute;
-   right: 0px
+    text-align: right;
+    position: absolute;
+    right: 0px
   }
-
   .paginate-links.filteredIssues {
-  list-style: none !important;  
-  user-select: none;
-  a {
-   width: 30px;
-   height: 36px;
-   margin-right: 1px;    
-   border-radius: 4px;
-   background-color: #ededed;
-   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-   color: #383838; 
-   padding: 10px 24px; 
-   padding-bottom: 10px !important;
-   cursor: pointer;  
-  }
-  a:hover {
-    background-color: rgba(91, 192, 222, 0.3);
-  }
-  li.active a {
-    font-weight: bold;
-    background-color: rgba(211, 211, 211, 10%);
-  }
-  a.active  {  
-   background-color: rgba(211, 211, 211, 10%);
-  }
-  li.next:before {
-    content: ' | ';
-    margin-right: 13px;
-    color: #ddd;
-  }
-  li.disabled a {
-    color: #ccc;
-    cursor: no-drop;
-  }
-  li {    
-  display: inline !important;
-  float: left; 
-  margin-bottom: 20px !important;   
-  } 
+    list-style: none !important;
+    user-select: none;
+    a {
+      width: 30px;
+      height: 36px;
+      margin-right: 1px;
+      border-radius: 4px;
+      background-color: #ededed;
+      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      color: #383838;
+      padding: 10px 24px;
+      padding-bottom: 10px !important;
+      cursor: pointer;
+    }
+    a:hover {
+      background-color: rgba(91, 192, 222, 0.3);
+    }
+    li.active a {
+      font-weight: bold;
+      background-color: rgba(211, 211, 211, 10%);
+    }
+    a.active  {
+      background-color: rgba(211, 211, 211, 10%);
+    }
+    li.next:before {
+      content: ' | ';
+      margin-right: 13px;
+      color: #ddd;
+    }
+    li.disabled a {
+      color: #ccc;
+      cursor: no-drop;
+    }
+    li {
+      display: inline !important;
+      float: left;
+      margin-bottom: 20px !important;
+    }
   }
 </style>

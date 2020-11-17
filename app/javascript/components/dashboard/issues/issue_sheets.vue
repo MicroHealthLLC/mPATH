@@ -1,22 +1,23 @@
 <template>
-  <div>     
-         <table class="table table-sm table-bordered table-striped">
-               <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">            
-                <td>{{issue.title}}</td>
-                <td>{{issue.issueType}}</td>           
-                <td>{{issue.issueSeverity}}</td>
-                <td>{{formatDate(issue.startDate)}}</td>
-                <td>{{formatDate(issue.dueDate)}}</td>
-                <td>{{issue.users.join(', ')}}</td>
-                <td>{{issue.progress + "%"}}</td>
-                <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.watched) == true"><h5>X</h5></td>
-                <td v-else></td>
-                <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-                <td v-else>No Updates</td>
-            </tr>         
-        </table> 
+  <div>
+    <table class="table table-sm table-bordered table-striped">
+      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
+        <td>{{issue.title}}</td>
+        <td>{{issue.issueType}}</td>
+        <td>{{issue.issueSeverity}}</td>
+        <td>{{formatDate(issue.startDate)}}</td>
+        <td>{{formatDate(issue.dueDate)}}</td>
+        <td>{{issue.users.join(', ')}}</td>
+        <td>{{issue.progress + "%"}}</td>
+        <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+        <td v-else></td>
+        <td v-if="(issue.watched) == true"><h5>X</h5></td>
+        <td v-else></td>
+        <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+        <td v-else>No Updates</td>
+      </tr>
+    </table>
+
     <sweet-modal
       class="issue_form_modal"
       ref="issueFormModal"
@@ -33,6 +34,7 @@
           :task="DV_edit_task"
           title="Edit Task"
           @task-updated="updateRelatedTaskIssue"
+          class="form-inside-modal"
         ></task-form>
 
         <issue-form
@@ -40,6 +42,7 @@
           :facility="facility"
           :issue="DV_edit_issue"
           @issue-updated="updateRelatedTaskIssue"
+          class="form-inside-modal"
         ></issue-form>
       </div>
     </sweet-modal>
@@ -51,6 +54,7 @@
   import IssueForm from "./issue_form"
   import TaskForm from "./../tasks/task_form"
   import {SweetModal} from 'sweet-modal-vue'
+
   export default {
     name: 'IssueSheets',
     components: {IssueForm, SweetModal, TaskForm},
@@ -69,7 +73,7 @@
         DV_edit_task: {},
         DV_edit_issue: {},
         has_issue: false,
-        now: new Date().toISOString()   
+        now: new Date().toISOString()
       }
     },
     mounted() {
@@ -180,14 +184,14 @@
 
 <style scoped lang="scss">
   table {
-  table-layout: fixed ;
-  width: 100% ;
-  margin-bottom: 0 !important;
-   }
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 0 !important;
+  }
   td {
-  width: 25% ;
-  overflow-wrap: break-word;
-   }
+    width: 25%;
+    overflow-wrap: break-word;
+  }
   .t_actions {
     display: flex;
     align-items: center;
@@ -217,6 +221,11 @@
       right: 30px;
       font-size: 20px;
       cursor: pointer;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
     }
   }
 </style>

@@ -99,9 +99,6 @@
       :blocking="true"
       >
       <div v-if="has_issue" class="w-100">
-        <!-- <div class="modal_close_btn" @click="onCloseForm">
-          <i class="fa fa-times"></i>
-        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"

@@ -1,10 +1,9 @@
 <template>
   <div id="facility-sheets">
     <div v-if="!loading">
-      <div class="d-flex align-items-center my-2">      
+      <div class="d-flex align-items-center my-2">
         <h4 class="text-primary f-head">{{DV_facility.facilityName}}</h4>
       </div>
-      
       <div class="facility-tab mb-4">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" />
       </div>
@@ -19,9 +18,9 @@
                 <span> {{facilityGroup.name}}</span>
               </p>
               <div>
-                   <p class="mt-2 d-flex align-items-center">
+                <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                    <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>
+                  <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>
                   <v2-date-picker
                     v-model="DV_facility.dueDate"
                     value-type="YYYY-MM-DD"
@@ -60,7 +59,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                   <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
+                <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
@@ -174,8 +173,8 @@
             </div>
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
-        </div>               
-              
+        </div>
+
         <div v-if="currentTab == 'tasks'">
           <div>
             <task-sheets-index
@@ -241,7 +240,7 @@
             label: 'Overview',
             key: 'overview',
             closable: false
-          },         
+          },
           {
             label: 'Tasks',
             key: 'tasks',
@@ -255,7 +254,7 @@
            {
             label: 'Risks (Coming Soon)',
             key: 'notes',
-            closable: false, 
+            closable: false,
             disabled: true
           },
         ]
@@ -469,5 +468,5 @@
       color: #dc3545;
       text-overflow: ellipsis;
     }
-  }  
+  }
 </style>
