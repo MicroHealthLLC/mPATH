@@ -13,7 +13,10 @@
         <td class="eight" v-else></td>
         <td class="eight" v-if="(task.watched) == true"><h5>X</h5></td>
         <td class="eight" v-else></td>
-        <td class="twenty" v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+        <td class="twenty" v-if="(task.notes.length) > 0">
+          By: {{ task.notes[0].user.fullName}} on 
+          {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}           
+        </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
     </table>
@@ -54,6 +57,9 @@
   import TaskForm from "./task_form"
   import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
+  import moment from 'moment'
+  Vue.prototype.moment = moment
+
 
   export default {
     name: 'TaskSheets',
