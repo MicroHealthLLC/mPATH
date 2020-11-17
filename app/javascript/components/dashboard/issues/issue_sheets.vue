@@ -209,6 +209,9 @@
   .seventeen {
     width: 17%; 
   }
+  td {
+    overflow-wrap: break-word;
+  }
   .t_actions {
     display: flex;
     align-items: center;

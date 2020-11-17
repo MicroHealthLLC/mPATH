@@ -215,6 +215,9 @@
     height: 20px;
     font-weight: bold;
   }
+  td {
+    overflow-wrap: break-word;
+  }
   .task_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
