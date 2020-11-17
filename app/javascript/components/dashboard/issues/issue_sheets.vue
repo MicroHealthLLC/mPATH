@@ -1,20 +1,20 @@
 <template>
   <div>
     <table class="table table-sm table-bordered table-striped">
-      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
-        <td>{{issue.title}}</td>
-        <td>{{issue.issueType}}</td>
-        <td>{{issue.issueSeverity}}</td>
-        <td>{{formatDate(issue.startDate)}}</td>
-        <td>{{formatDate(issue.dueDate)}}</td>
-        <td>{{issue.users.join(', ')}}</td>
-        <td>{{issue.progress + "%"}}</td>
-        <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-        <td v-else></td>
-        <td v-if="(issue.watched) == true"><h5>X</h5></td>
-        <td v-else></td>
-        <td v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
-        <td v-else>No Updates</td>
+      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">          
+        <td class="seventeen">{{issue.title}}</td>
+        <td class="ten">{{issue.issueType}}</td>
+        <td class="nine">{{issue.issueSeverity}}</td>
+        <td class="eight">{{formatDate(issue.startDate)}}</td>
+        <td class="eight">{{formatDate(issue.dueDate)}}</td>
+        <td class="ten">{{issue.users.join(', ')}}</td>
+        <td class="eight">{{issue.progress + "%"}}</td>
+        <td class="seven" v-if="(issue.dueDate) <= now"><h5>X</h5></td>
+        <td class="seven" v-else></td>
+        <td class="six" v-if="(issue.watched) == true"><h5>X</h5></td>
+        <td class="six" v-else></td>
+        <td class="seventeen" v-if="(issue.notes.length) > 0">{{issue.notes[0].body}}</td>
+        <td class="seventeen" v-else>No Updates</td>
       </tr>
     </table>
 
@@ -188,9 +188,26 @@
     width: 100%;
     margin-bottom: 0 !important;
   }
-  td {
-    width: 25%;
-    overflow-wrap: break-word;
+  .five {
+    width: 5%;
+  }
+  .six {
+    width: 6%; 
+  }
+  .seven {
+    width: 7%; 
+  }
+  .eight {
+    width: 8%;
+  }
+  .nine {
+    width: 9%; 
+  }
+  .ten {
+    width: 10%; 
+  }
+  .seventeen {
+    width: 17%; 
   }
   .t_actions {
     display: flex;

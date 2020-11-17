@@ -2,19 +2,19 @@
 <template>
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped">
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
-        <td>{{task.text}}</td>
-        <td>{{task.taskType}}</td>
-        <td>{{formatDate(task.startDate)}}</td>
-        <td>{{formatDate(task.dueDate)}}</td>
-        <td>{{task.users.join(', ')}}</td>
-        <td>{{task.progress + "%"}}</td>
-        <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
-        <td v-else></td>
-        <td v-if="(task.watched) == true"><h5>X</h5></td>
-        <td v-else></td>
-        <td v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
-        <td v-else>No Updates</td>
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">   
+        <td class="twenty">{{task.text}}</td>
+        <td class="ten">{{task.taskType}}</td>
+        <td class="eight">{{formatDate(task.startDate)}}</td>
+        <td class="eight">{{formatDate(task.dueDate)}}</td>
+        <td class="ten">{{task.users.join(', ')}}</td>
+        <td class="eight">{{task.progress + "%"}}</td>
+        <td class="eight" v-if="(task.dueDate) <= now"><h5>X</h5></td>
+        <td class="eight" v-else></td>
+        <td class="eight" v-if="(task.watched) == true"><h5>X</h5></td>
+        <td class="eight" v-else></td>
+        <td class="twenty" v-if="(task.notes.length) > 0">{{task.notes[0].body}}</td>
+        <td v-else class="twenty">No Updates</td>
       </tr>
     </table>
 
@@ -201,9 +201,14 @@
     margin-bottom: 0 !important;
     overflow: auto;
   }
-  td {
-    width: 25% ;
-    overflow-wrap: break-word;
+  .eight {
+    width: 8%; 
+  }
+  .ten {
+    width: 10%; 
+  }
+  .twenty {
+    width: 20%; 
   }
   .pg-content {
     width: 100%;
