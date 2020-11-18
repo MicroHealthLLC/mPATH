@@ -277,7 +277,8 @@
         </multiselect>
       </div>
       <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Updates:</label>
+        <hr class="my-4"/>
+        <label class="font-sm mb-2">Updates:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
@@ -712,27 +713,49 @@
     margin-bottom: 10px;
     position: relative;
   }
-  .paginate-links.filteredNotes {
-    user-select: none;
-   a {
-    cursor: pointer;
-    color:rgb(2, 117, 216) !important;
-   }
-   li.active a {
-    font-weight: bold !important;
-    text-decoration-line: none;
-    cursor: default !important;
-   }
-   li.next:before {
-    content: ' | ';
-    margin-right: 13px;
-    color: #ddd;
-   }
-   li.disabled a {
-    color: #ccc;
-    cursor: no-drop;
-   }
-  } 
+  .paginate-links.filteredNotes {   
+    list-style: none !important;
+    user-select: none;    
+    text-decoration-line: none !important;
+    margin-bottom: 18px;
+    a {
+      width: 20px;
+      height: 25px;
+      margin-right: 0;
+      border-radius: 2px;
+      background-color: white;
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+      color: #383838;
+      padding: 5px 12px;     
+      cursor: pointer;
+      text-decoration-line: none !important;
+    }
+    a:hover {
+      background-color: #ededed;
+    }
+    li.active a {
+      font-weight: bold;
+      color: #383838;
+      background-color: rgba(211, 211, 211, 10%);      
+    }
+    a.active  {
+      background-color: rgba(211, 211, 211, 10%);
+    }
+    li.next:before {
+      content: ' | ';
+      margin-right: 13px;
+      color: #ddd;
+    }
+    li.disabled a {
+      color: #ccc;
+      cursor: no-drop;
+    }
+    li {
+      display: inline !important;
+      margin: 1px;  
+      color: #383838 !important;  
+    }
+  }
   .sticky-btn {
     margin-top: 5px;
     margin-bottom: 5px;

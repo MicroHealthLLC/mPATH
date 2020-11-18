@@ -55,7 +55,7 @@
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-outline-dark m-2"
+          class="btn btn-sm btn-dark m-2"
           style="font-size:.70rem" >
           EXPORT TO PDF
         </button>
@@ -66,7 +66,7 @@
           style="font-size:.70rem" >
           EXPORT TO EXCEL
         </button>
-
+        <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
           id="taskHover"
@@ -121,9 +121,9 @@
           <td v-else>No Updates</td>
         </tr>
       </tbody>
-      <tfoot>
+      <!-- <tfoot>
        <tr><td> Task List </td></tr>
-      </tfoot>
+      </tfoot> -->
     </table>
   </div>
 
