@@ -96,7 +96,7 @@
             <button
             @click="download"
             id="printBtn"
-            class="btn btn-sm btn-outline-dark m-2"
+            class="btn btn-sm btn-dark m-2"
             style="font-size:.70rem" >
             EXPORT TO PDF
           </button>
@@ -107,6 +107,7 @@
             style="font-size:.70rem" >
             EXPORT TO EXCEL
           </button>
+          <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
               id="issueHover"

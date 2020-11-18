@@ -325,17 +325,16 @@
     a {
       width: 30px;
       height: 36px;
-      margin-right: 1px;
-      border-radius: 4px;
-      background-color: #ededed;
-      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      margin-right: 1px;    
+      background-color: white;
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
       color: #383838;
       padding: 10px 24px;
       padding-bottom: 10px !important;
       cursor: pointer;
     }
     a:hover {
-      background-color: rgba(91, 192, 222, 0.3);
+      background-color: #ededed
     }
     li.active a {
       font-weight: bold;
