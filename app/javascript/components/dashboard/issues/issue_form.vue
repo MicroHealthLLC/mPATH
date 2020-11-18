@@ -194,7 +194,7 @@
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
-          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-104 mb-3" v-if="!check._destroy && isMyCheck(check)">
+          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
               <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
