@@ -182,25 +182,6 @@
     .cursor {
       cursor: pointer;
     }
-    .contain {
-      overflow-y: scroll;
-      overflow-x: hidden;
-      width: 755px;
-      height: 515px;
-      padding-left: 2.5px !important;
-      padding-right: 15px !important;
-      left: 50%;
-      position: fixed;
-      transform: translate(-50%, -50%);
-      top: 50%;
-      box-shadow: 0 10px 20px rgba(2,117,216,0.19), 0 6px 6px rgba(2,117,216,0.23);
-    }
-    .lazyModal {
-      position: absolute !important;
-      width: 735px;
-      margin-right: 2px;
-      background-color: rgba(0,0, 0,0.50);
-    }
     .facility-groups-tab {
       background: #ededed;
       max-height: calc(100vh - 94px);
@@ -224,18 +205,7 @@
       position: relative;
       border-radius: 4px;
       z-index: 1;
-    }
-    .centeredDiv {
-      position: absolute;
-      box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-      border: 1px solid #383838;
-      border-radius: 4px;
-      padding: 10px;
-      top: 50%;
-      left: 50%;
-      margin-right: -50%;
-      transform: translate(-50%, -50%);
-    }
+    }    
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }
@@ -263,8 +233,9 @@
       z-index: 10000001;
     }
     .form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-      min-width: 30vw;
-      max-height: 80vh;
+      min-width: 80vw;
+      max-height: 90vh;
+      background-color: #ededed;
       .sweet-content {
         padding-top: 30px;
         text-align: unset;
