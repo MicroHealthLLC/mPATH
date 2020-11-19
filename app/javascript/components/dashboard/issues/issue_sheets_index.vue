@@ -12,12 +12,13 @@
     </div>
     <div v-else>
       <div class="d-flex align-item-center justify-content-between">
-        <div class="d-flex w-100">
-          <div class="simple-select w-100 mr-2">
+        <div class="simple-select mr-1 d-flex" style="width:35%">  
+            <i class="fas fa-filter filter mr-1"></i>       
             <multiselect
               v-model="C_issueTypeFilter"
               track-by="name"
               label="name"
+              class="issueTypeMs"
               placeholder="Filter by Issue Type"
               :options="issueTypes"
               :searchable="false"
@@ -31,8 +32,8 @@
                 </div>
               </template>
             </multiselect>
-          </div>
-          <div class="simple-select w-100 mr-2">
+         </div>
+          <div class="simple-select mr-1" style="width:25%">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -49,47 +50,44 @@
                   <span class='select__tag-name'>{{option.name}}</span>
                 </div>
               </template>
-            </multiselect>
+            </multiselect>         
           </div>
-        </div>
-        <button v-if="_isallowed('write')"
-        class="new-issue-btn btn btn-sm btn-primary"
-        @click.prevent="reportNew">
-        <i class="fas fa-plus-circle"></i>
-        Add Issue</button>
-      </div>
-      <div class="m-1 d-flex">
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-          </label>
-        </div>
-        <div class="form-check-inline ml-auto mr-0">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
-          </label>
-          <label class="form-check-label ml-2 text-primary">
-            Total: {{filteredIssues.length}}
-          </label>
-        </div>
-      </div>
-      <div class="mt-1">
-        <hr>
-        <div v-if="_isallowed('read')">
+          <div class="simple-select mr-1 d-flex" style="width:20%">
+            <multiselect
+            v-model="viewList"
+            :options="listOptions" 
+            :searchable="false"   
+            :close-on-select="false"
+            :show-labels="false"         
+            placeholder="Filter by Issue Status"     
+            >
+              <template slot="singleLabel">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{viewList}}</span>
+                  </div>
+                </template>
+            </multiselect>  
+           </div>  
+          <div class="form-check-inline ml-2 mr-0">
+            <label class="form-check-label mr-2">
+              <input type="checkbox" class="form-check-input" v-model="C_myIssues">
+              <i class="fas fa-user mr-1"></i>My Issue
+              </label>
+              <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+              <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
+              <i class="fas fa-eye mr-1"></i>On Watch
+            </label>  
+          </div>    
+      </div>    
+      <div class="mt-1">       
+        <div v-if="_isallowed('read')">         
           <div v-if="filteredIssues.length > 0">
+           <button v-if="_isallowed('write')"
+            class="new-issue-btn btn btn-sm btn-primary"
+            @click.prevent="reportNew">
+            <i class="fas fa-plus-circle"></i>
+             Add Issue
+           </button>
             <button
               @click="download"
               id="printBtn"
@@ -100,11 +98,13 @@
             <button
               disabled
               id="printBtn"
-              class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
+              class="btn btn-sm btn-outline-dark my-2"
               style="font-size:.70rem" >
               EXPORT TO EXCEL
-            </button>
-
+            </button>           
+            <label class="form-check-label ml-2 text-primary floatRight">
+              <h5 id="total">Total: {{filteredIssues.length}}</h5>
+            </label>          
             <div style="margin-bottom:50px">
               <table class="table table-sm table-bordered table-striped">                 
                   <colgroup>
@@ -137,8 +137,7 @@
                   v-for="(issue, i) in paginated('filteredIssues')"
                   id="issueHover"
                   :class="{'b_border': !!filteredIssues[i+1]}"
-                  :key="issue.id"
-                  :load="log(issue)"
+                  :key="issue.id"              
                   :issue="issue"
                   :from-view="from"
                   @issue-edited="issueEdited"
@@ -217,6 +216,8 @@
     components: {IssueForm, IssueSheets},
     data() {
       return {
+        viewList:'',
+        listOptions: ['active','completed', 'all'],   
         loading: true,
         newIssue: false,
         viewList: 'active',
@@ -269,10 +270,7 @@
             this.issueUpdated(res.data.issue, false)
           })
           .catch((err) => console.log(err))
-      },
-      log(issues) {
-        console.log(issues)
-      },
+      },     
       download() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -406,6 +404,14 @@
   th {
     font-size: .70rem !important;
   }
+  .floatRight {
+    text-align: right;  
+    right: 0px; 
+  }
+  h5#total {
+    margin-right: 20px;
+    line-height: 3.2 !important;
+  }
   .issues-index {
     height: 465px;
   }
@@ -422,6 +428,9 @@
     text-align: right;
     position: absolute;
     right: 0px
+  }
+  .multiselect__tags {
+    min-height: 25px !important;
   }
   .paginate-links.filteredIssues {
     list-style: none !important;
@@ -462,4 +471,5 @@
       margin-bottom: 20px !important;
     }
   }
+
 </style>

@@ -2,11 +2,12 @@
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
-        <div class="simple-select w-100 mr-1">
+      <div class="d-flex align-item-center justify-content-between mb-2 mr-2">        
+        <div class="simple-select mr-1 d-flex" style="width:50%">
+        <i class="fas fa-filter filter mr-1"></i>
           <multiselect
             v-model="C_taskTypeFilter"
-            track-by="name"
+            track-by="name" 
             label="name"
             placeholder="Filter by Task Category"
             :options="taskTypes"
@@ -20,58 +21,61 @@
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>
-        </div>
-        <button v-if="_isallowed('write')"
-          class="new-tasks-btn btn btn-sm btn-primary"
-          @click.prevent="addNewTask">
-          <i class="fas fa-plus-circle"></i>
-          Add Task
-        </button>
-      </div>
-      <div class="m-1 d-flex">
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-          </label>
-        </div>
-        <div class="form-check-inline ml-auto mr-0">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+          </multiselect>          
+        </div> 
+        <div class="simple-select mr-1 d-flex" style="width:30%">
+        <multiselect
+        v-model="viewList"
+        :options="listOptions" 
+        :searchable="false"   
+        :close-on-select="false"
+        :show-labels="false"         
+        placeholder="Filter by Task Status"     
+        >
+           <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+        </multiselect>  
+        </div>   
+          <div class="form-check-inline ml-2 mr-0">
+          <label class="form-check-label mr-2">
+            <input type="checkbox" class="form-check-input" v-model="C_myTasks">
+            <i class="fas fa-user mr-1"></i>My Tasks
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
-          </label>
-          <label class="form-check-label ml-2 text-primary">
-            Total: {{filteredTasks.length}}
-          </label>
-        </div>
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
+            <i class="fas fa-eye mr-1"></i>On Watch
+          </label>         
+        </div>     
       </div>
+    
       <div v-if="filteredTasks.length > 0">
+        <button v-if="_isallowed('write')"
+            class="new-tasks-btn btn mr-3 btn-sm btn-primary"
+            @click.prevent="addNewTask">
+            <i class="fas fa-plus-circle"></i>
+            Add Task
+        </button>
         <button
           @click="download"
           id="printBtn"
           class="btn btn-sm btn-dark m-2"
-          style="font-size:.70rem" >
+          style="font-size:.70rem" >         
           EXPORT TO PDF
         </button>
         <button
           disabled
           id="printBtn"
-          class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
-          style="font-size:.70rem" >
+          class="btn btn-sm btn-outline-dark my-2"
+          style="font-size:.70rem" >           
           EXPORT TO EXCEL
-        </button>
+        </button>       
+        <label class="form-check-label text-primary floatRight">
+            <h5 id="total">Total: {{filteredTasks.length}}</h5>
+        </label>
+      
         <div style="margin-bottom:50px">
           <table class="table table-sm table-bordered table-striped mt-2">
                <colgroup>
@@ -104,8 +108,7 @@
               class="taskHover"
               href="#"
               :class="{'b_border': !!filteredTasks[i+1]}"
-              :key="task.id"
-              :load="log(task)"
+              :key="task.id"            
               :task="task"
               :from-view="from"
               @edit-task="editTask"
@@ -160,6 +163,7 @@
         </tr>
       </tbody>
     </table>
+     
   </div>
 </template>
 
@@ -169,7 +173,8 @@
   import VuePaginate from 'vue-paginate'
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import moment from 'moment'
+  import moment from 'moment'  
+  
   Vue.prototype.moment = moment
   Vue.use(VuePaginate)
 
@@ -178,8 +183,9 @@
     components: {TaskSheets},
     props: ['facility', 'from'],
     data() {
-      return {
-        viewList: 'active',
+      return {           
+        viewList:'',
+        listOptions: ['active','completed', 'all'],        
         paginate: ['filteredTasks'],
         tasks: Object,
         now: new Date().toISOString()
@@ -191,10 +197,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),
-      log(task) {
-        console.log(task)
-      },
+      ]),    
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -295,6 +298,14 @@
     height: max-content;
     width: 20%;
   }
+  .filter {
+    color: #ced4da !important;
+    border: solid #ced4da .8px !important;
+    padding: 4px;   
+    font-size: 1.97rem;
+    border-radius: 4px;
+    padding: 4px;
+  }
   .taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
@@ -315,9 +326,12 @@
     width: 20%; 
   }
   .floatRight {
-    text-align: right;
-    position: absolute;
-    right: 0px;
+    text-align: right;  
+    right: 0px; 
+  }
+  h5#total {
+    margin-right: 20px;
+    line-height: 3.2 !important;
   }
   .paginate-links.filteredTasks {
     list-style: none !important;
@@ -357,5 +371,4 @@
       margin-bottom: 20px !important;
     }
   }
-
 </style>
