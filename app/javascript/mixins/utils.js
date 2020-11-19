@@ -54,6 +54,9 @@ export default {
         color += letters[Math.floor(Math.random() * 16)]
       }
       return color;
+    },
+    exists(value) {
+      return value !== null && value !== undefined && String(value).trim() !== ''
     }
   }
 }

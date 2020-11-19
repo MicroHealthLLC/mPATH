@@ -63,6 +63,14 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+  def kanban
+    check_permit("kanban_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
   private
   def set_project
     @project = current_user.projects.active.find_by(id: params[:id])

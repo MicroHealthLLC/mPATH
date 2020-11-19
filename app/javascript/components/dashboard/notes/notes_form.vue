@@ -1,5 +1,5 @@
 <template>
-  <div class="notes-form">    
+  <div class="notes-form">
        <div class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave || loading"
@@ -59,7 +59,7 @@
           :show-label="true"
         />
       </div>
-     
+
     </div>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -200,7 +200,7 @@
       readyToSave() {
         return (
           this.DV_note &&
-          this.DV_note.body !== ''
+          this.exists(this.DV_note.body)
         )
       },
       titleText() {

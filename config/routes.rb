@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     resources :statuses, only: [:index]
     resources :issue_severities, only: [:index]
     resources :issue_types, only: [:index]
+    resources :issue_stages, only: [:index]
+    resources :task_stages, only: [:index]
     resources :users, only: [:index]
     get '/facility_projects/:project_id/:facility_id', to: 'facility_projects#index'
     get '/projects/:id/task_issues', to: 'projects#index'
@@ -30,6 +32,7 @@ Rails.application.routes.draw do
     get :sheets, on: :member
     get :member_list, on: :member
     get :facility_manager, on: :member
+    get :kanban, on: :member
     resources :facilities do
       resources :issues
       resources :notes, module: :facilities

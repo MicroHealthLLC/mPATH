@@ -3,6 +3,7 @@ class Issue < ApplicationRecord
 
   belongs_to :facility_project
   belongs_to :issue_type
+  belongs_to :issue_stage
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users
@@ -43,6 +44,7 @@ class Issue < ApplicationRecord
     self.as_json.merge(
       attach_files: attach_files,
       issue_type: self.issue_type.try(:name),
+      issue_stage: self.issue_stage.try(:name),
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
       users: self.users.map(&:full_name),

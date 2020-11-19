@@ -15,11 +15,11 @@
     <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}">On Watch</div>
     </router-link>
-
-    <div v-if="permitted('issues')" class="badge disabled">Kanban (Coming Soon)</div>
+    <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
+      <div class="badge" :class="{'active': isKanbanView}">Kanban</div>
+    </router-link>
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
-
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
       <div class="badge" :class="{'active': isMembersView}">Team</div>
     </router-link>
@@ -42,6 +42,9 @@
       isWatchView() {
         return this.$route.name === 'ProjectWatchView'
       },
+      isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
+      },
       isMembersView() {
         return this.$route.name === 'TeamMembersView'
       },
@@ -59,6 +62,9 @@
       },
       watchView() {
         return `/projects/${this.$route.params.projectId}/watch_view`
+      },
+      kanbanView() {
+        return `/projects/${this.$route.params.projectId}/kanban`
       },
       membersView() {
         return `/projects/${this.$route.params.projectId}/member_list`

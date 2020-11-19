@@ -17,6 +17,7 @@ ActiveAdmin.register Issue do
       :due_date,
       :progress,
       :issue_type_id,
+      :issue_stage_id,
       :issue_severity_id,
       :start_date,
       :facility_project_id,
@@ -56,6 +57,13 @@ ActiveAdmin.register Issue do
         link_to "#{issue.issue_severity.name}", "#{edit_admin_issue_severity_path(issue.issue_severity)}" if issue.issue_severity.present?
       else
         "<span>#{issue.issue_severity&.name}</span>".html_safe
+      end
+    end
+    column :issue_stage, nil, sortable: 'issue_stages.name' do |issue|
+      if current_user.admin_write?
+        link_to "#{issue.issue_stage.name}", "#{edit_admin_issue_stage_path(issue.issue_stage)}" if issue.issue_stage.present?
+      else
+        "<span>#{issue.issue_stage&.name}</span>".html_safe
       end
     end
     column :progress
@@ -111,8 +119,9 @@ ActiveAdmin.register Issue do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :issue_type
-      f.input :issue_severity
+      f.input :issue_type, include_blank: false, include_blank: false
+      f.input :issue_severity, include_blank: false, include_blank: false
+      f.input :issue_stage, include_blank: false, include_blank: false
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
@@ -142,6 +151,7 @@ ActiveAdmin.register Issue do
   filter :title
   filter :issue_type
   filter :issue_severity
+  filter :issue_stage
   filter :progress
   filter :start_date
   filter :due_date, label: 'Estimated Completion Date'
@@ -179,7 +189,7 @@ ActiveAdmin.register Issue do
     end
 
     def scoped_collection
-      super.includes(:issue_type, :issue_severity, facility_project: [:project, :facility])
+      super.includes(:issue_type, :issue_severity, :issue_stage, facility_project: [:project, :facility])
     end
   end
 

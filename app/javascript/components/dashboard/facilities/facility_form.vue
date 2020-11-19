@@ -153,12 +153,12 @@
       readyToSave() {
         return (
           this.DV_facility &&
-          this.DV_facility.facilityName.trim() !== '' &&
-          this.DV_facility.facilityGroupId !== '' &&
-          this.DV_facility.address !== '' &&
-          this.DV_facility.pointOfContact !== '' &&
-          this.DV_facility.phoneNumber !== '' &&
-          this.DV_facility.email.trim() !== ''
+          this.exists(this.DV_facility.facilityName) &&
+          this.exists(this.DV_facility.facilityGroupId) &&
+          this.exists(this.DV_facility.address) &&
+          this.exists(this.DV_facility.pointOfContact) &&
+          this.exists(this.DV_facility.phoneNumber) &&
+          this.exists(this.DV_facility.email)
         );
       },
     },

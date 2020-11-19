@@ -6,7 +6,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">    
+    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
@@ -120,10 +120,10 @@
     name: 'TaskShow',
     components: {TaskForm, SweetModal, IssueForm},
     props: {
-    fromView: {
+      fromView: {
         type: String,
         default: 'map_view'
-    },
+      },
       task: Object
     },
     data() {

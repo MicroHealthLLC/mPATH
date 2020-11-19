@@ -9,15 +9,15 @@
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2">
         <button
-          v-if="_isallowed('write')" 
+          v-if="_isallowed('write')"
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"
           >
           Save
         </button>
         <button
-          v-else   
-          disabled  
+          v-else
+          disabled
           class="btn btn-sm sticky-btn btn-light"
           >
           Read Only
@@ -120,6 +120,27 @@
         <div v-show="errors.has('Issue Severity')" class="text-danger">
           {{errors.first('Issue Severity')}}
         </div>
+      </div>
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Stage:</label>
+        <multiselect
+          v-model="selectedIssueStage"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Select Stage"
+          :options="issueStages"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
       </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
@@ -341,6 +362,7 @@
         destroyedFiles: [],
         selectedIssueType: null,
         selectedIssueSeverity: null,
+        selectedIssueStage: null,
         issueUsers: [],
         relatedIssues: [],
         relatedTasks: [],
@@ -371,6 +393,7 @@
           issueTypeId: '',
           progress: 0,
           issueSeverityId: '',
+          issueStageId: '',
           description: '',
           autoCalculate: true,
           userIds: [],
@@ -388,6 +411,7 @@
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
+        this.selectedIssueStage = this.issueStages.find(t => t.id === this.DV_issue.issueStageId)
         if (issue.attachFiles) this.addFile(issue.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -441,6 +465,7 @@
           formData.append('issue[start_date]', this.DV_issue.startDate)
           formData.append('issue[issue_type_id]', this.DV_issue.issueTypeId)
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
+          formData.append('issue[issue_stage_id]', this.DV_issue.issueStageId)
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
           formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
@@ -593,6 +618,7 @@
         'activeProjectUsers',
         'myActionsFilter',
         'issueTypes',
+        'issueStages',
         'issueSeverities',
         'currentTasks',
         'currentIssues',
@@ -601,11 +627,12 @@
       readyToSave() {
         return (
           this.DV_issue &&
-          this.DV_issue.title !== '' &&
-          this.DV_issue.issueTypeId !== '' &&
-          this.DV_issue.issueSeverityId !== '' &&
-          this.DV_issue.dueDate !== '' &&
-          this.DV_issue.startDate !== ''
+          this.exists(this.DV_issue.title) &&
+          this.exists(this.DV_issue.issueTypeId) &&
+          this.exists(this.DV_issue.issueSeverityId) &&
+          this.exists(this.DV_issue.issueStageId) &&
+          this.exists(this.DV_issue.dueDate) &&
+          this.exists(this.DV_issue.startDate)
         )
       },
       filteredChecks() {
@@ -676,6 +703,11 @@
       selectedIssueSeverity: {
         handler: function(value) {
           this.DV_issue.issueSeverityId = value ? value.id : null
+        }, deep: true
+      },
+      selectedIssueStage: {
+        handler: function(value) {
+          this.DV_issue.issueStageId = value ? value.id : null
         }, deep: true
       },
       filteredTasks: {
