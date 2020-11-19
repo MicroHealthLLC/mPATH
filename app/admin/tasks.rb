@@ -17,6 +17,7 @@ ActiveAdmin.register Task do
       :due_date,
       :progress,
       :task_type_id,
+      :task_stage_id,
       :start_date,
       :auto_calculate,
       task_files: [],
@@ -47,6 +48,13 @@ ActiveAdmin.register Task do
         link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
       else
         "<span>#{task.task_type&.name}</span>".html_safe
+      end
+    end
+    column "Stage", :task_stage, nil, sortable: 'task_stages.name' do |task|
+      if current_user.admin_write?
+        link_to "#{task.task_stage.name}", "#{edit_admin_task_stage_path(task.task_stage)}" if task.task_stage.present?
+      else
+        "<span>#{task.task_stage&.name}</span>".html_safe
       end
     end
     column :start_date
@@ -102,7 +110,8 @@ ActiveAdmin.register Task do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :task_type, label: 'Milestone'
+      f.input :task_type, label: 'Milestone', include_blank: false, include_blank: false
+      f.input :task_stage, label: 'Stage', include_blank: false, include_blank: false
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
@@ -142,6 +151,7 @@ ActiveAdmin.register Task do
 
   filter :text, label: 'Name'
   filter :task_type, label: 'Milestone'
+  filter :task_stage, label: 'Stage'
   filter :start_date
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
@@ -179,7 +189,7 @@ ActiveAdmin.register Task do
     end
 
     def scoped_collection
-      super.includes(:task_type, facility_project: [:project, :facility])
+      super.includes(:task_type, :task_stage, facility_project: [:project, :facility])
     end
   end
 

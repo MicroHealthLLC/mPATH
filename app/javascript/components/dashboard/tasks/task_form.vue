@@ -92,6 +92,27 @@
           </template>
         </multiselect>
       </div>
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Stage:</label>
+        <multiselect
+          v-model="selectedTaskStage"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Select Stage"
+          :options="taskStages"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
           <label class="font-sm">Start Date:</label>
@@ -316,6 +337,7 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedTaskType: null,
+        selectedTaskStage: null,
         taskUsers: [],
         relatedIssues: [],
         relatedTasks: [],
@@ -345,6 +367,7 @@
           startDate: '',
           dueDate: '',
           taskTypeId: '',
+          taskStageId: '',
           userIds: [],
           subTaskIds: [],
           subIssueIds: [],
@@ -368,6 +391,7 @@
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
+        this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         if (task.attachFiles) this.addFile(task.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -415,6 +439,7 @@
           formData.append('task[due_date]', this.DV_task.dueDate)
           formData.append('task[start_date]', this.DV_task.startDate)
           formData.append('task[task_type_id]', this.DV_task.taskTypeId)
+          formData.append('task[task_stage_id]', this.DV_task.taskStageId)
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
@@ -565,6 +590,7 @@
       ...mapGetters([
         'currentProject',
         'taskTypes',
+        'taskStages',
         'activeProjectUsers',
         'myActionsFilter',
         'currentTasks',
@@ -574,10 +600,11 @@
       readyToSave() {
         return (
           this.DV_task &&
-          this.DV_task.text !== '' &&
-          this.DV_task.taskTypeId !== '' &&
-          this.DV_task.dueDate !== '' &&
-          this.DV_task.startDate !== ''
+          this.exists(this.DV_task.text) &&
+          this.exists(this.DV_task.taskTypeId) &&
+          this.exists(this.DV_task.taskStageId) &&
+          this.exists(this.DV_task.dueDate) &&
+          this.exists(this.DV_task.startDate)
         )
       },
       filteredChecks() {
@@ -650,6 +677,11 @@
       selectedTaskType: {
         handler: function(value) {
           this.DV_task.taskTypeId = value ? value.id : null
+        }, deep: true
+      },
+      selectedTaskStage: {
+        handler: function(value) {
+          this.DV_task.taskStageId = value ? value.id : null
         }, deep: true
       },
       filteredTasks: {

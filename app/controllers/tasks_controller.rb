@@ -42,6 +42,7 @@ class TasksController < AuthenticatedController
     params.require(:task).permit(
       :text,
       :task_type_id,
+      :task_stage_id,
       :due_date,
       :start_date,
       :description,

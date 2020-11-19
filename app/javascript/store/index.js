@@ -23,6 +23,8 @@ export default new Vuex.Store({
     facilityGroups: new Array,
     statuses: new Array,
     taskTypes: new Array,
+    taskStages: new Array,
+    issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
     currentProject: null,
@@ -76,6 +78,8 @@ export default new Vuex.Store({
     setFacilityGroups: (state, facilityGroups) => state.facilityGroups = facilityGroups,
     setStatuses: (state, statuses) => state.statuses = statuses,
     setTaskTypes: (state, taskTypes) => state.taskTypes = taskTypes,
+    setTaskStages: (state, taskStages) => state.taskStages = taskStages,
+    setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
     setCurrentProject: (state, project) => state.currentProject = project,
@@ -182,6 +186,8 @@ export default new Vuex.Store({
     facilityGroups: state => state.facilityGroups,
     statuses: state => state.statuses,
     taskTypes: state => state.taskTypes,
+    taskStages: state => state.taskStages,
+    issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
     currentProject: state => state.currentProject,
@@ -653,6 +659,32 @@ export default new Vuex.Store({
           })
       })
     },
+    fetchTaskStages({commit}) {
+      return new Promise((resolve, reject) => {
+        http.get('/api/task_stages.json')
+          .then((res) => {
+            commit('setTaskStages', res.data.taskStages)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
+    fetchIssueStages({commit}) {
+      return new Promise((resolve, reject) => {
+        http.get('/api/issue_stages.json')
+          .then((res) => {
+            commit('setIssueStages', res.data.issueStages)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
     fetchIssueTypes({commit}) {
       return new Promise((resolve, reject) => {
         http.get('/api/issue_types.json')
@@ -686,6 +718,8 @@ export default new Vuex.Store({
       await dispatch('fetchFacilityGroups', id)
       await dispatch('fetchStatuses')
       await dispatch('fetchTaskTypes')
+      await dispatch('fetchTaskStages')
+      await dispatch('fetchIssueStages')
       await dispatch('fetchIssueTypes')
       await dispatch('fetchIssueSeverities')
       if (cb) return cb()

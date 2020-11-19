@@ -91,7 +91,7 @@
         'myActionsFilter'
       ]),
       filteredNotes() {
-        const resp = this.notesQuery.trim() !== '' ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
+        const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         return _.filter(this.DV_facility.notes, n => {
           let valid = this.C_myNotes ? this.$currentUser.id == n.userId : true
           if (resp) valid = valid && resp.test(n.body)

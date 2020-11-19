@@ -37,6 +37,7 @@ ActiveAdmin.register User do
         :map_view,
         :gantt_view,
         :watch_view,
+        :kanban_view,
         :documents,
         :facility_manager_view,
         :sheets_view,
@@ -74,6 +75,7 @@ ActiveAdmin.register User do
             p.input :map_view
             p.input :gantt_view
             p.input :watch_view
+            p.input :kanban_view
             p.input :overview
             p.input :tasks
             p.input :issues
@@ -114,7 +116,6 @@ ActiveAdmin.register User do
     tag_column "State", :status
     column :phone_number
     column :address
-    # list_column :projects {|user| user.projects.active.pluck(:name) }
     column :projects do |user|
       if current_user.admin_write?
         user.projects.active

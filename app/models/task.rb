@@ -3,6 +3,7 @@ class Task < ApplicationRecord
 
   belongs_to :facility_project
   belongs_to :task_type
+  belongs_to :task_stage
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
   has_many :checklists, as: :listable, dependent: :destroy
@@ -42,6 +43,7 @@ class Task < ApplicationRecord
     self.as_json.merge(
       attach_files: attach_files,
       task_type: self.task_type.try(:name),
+      task_stage: self.task_stage.try(:name),
       user_ids: self.users.pluck(:id),
       users: self.users.map(&:full_name),
       checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),

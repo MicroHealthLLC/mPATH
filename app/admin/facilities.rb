@@ -157,6 +157,7 @@ ActiveAdmin.register Facility do
     "Description": :textarea,
     "Project": Project.pluck(:name, :id),
     "Milestone": TaskType.pluck(:name, :id),
+    "Stage": TaskStage.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
     "Assign Users": :text,
@@ -170,7 +171,7 @@ ActiveAdmin.register Facility do
     checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Milestone'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Milestone'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
         task.task_files.create(file_blobs) if file_blobs.present?
       end
     end

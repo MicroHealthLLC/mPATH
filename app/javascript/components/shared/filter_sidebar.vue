@@ -2,16 +2,18 @@
     <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
-        <h4><i class="fas fa-filter"></i>Filter View</h4>
-        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>         
-      </div>   
-     
+        <h4 class="d-flex align-items-center">
+          <i class="fas fa-filter font-sm mr-2"></i><span>Filter View</span>
+        </h4>
+        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
+      </div>
+
       <div class="filters_wrap">
         <div class="project-select my-3 mx-1 d-flex">
           <multiselect
             v-model="currentProject"
             track-by="name"
-            label="name"            
+            label="name"
             placeholder="Select Project"
             :options="projects"
             :searchable="false"
@@ -24,7 +26,7 @@
                 <span class='select__tag-name selected-opt'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>       
+          </multiselect>
           <multiselect
             v-model="C_facilityGroupFilter"
             track-by="name"
@@ -35,22 +37,22 @@
             :multiple="true"
             select-label="Select"
             deselect-label="Remove"
-            :searchable="true"            
+            :searchable="true"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>    
+          </multiselect>
 
-          </div>    
-       
+          </div>
+
         <div class="facilitygroup-select my-3 ml-1">
           <multiselect
             placeholder="Search by Facility Name"
             v-model="C_facilityNameFilter"
-            label="facilityName"            
+            label="facilityName"
             track-by="id"
             :multiple="true"
             :options="facilities"
@@ -109,7 +111,7 @@
             placeholder="Project Completion Date Range"
             range
           />
-     
+
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -161,8 +163,8 @@
                 <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
-          </multiselect>        
-        
+          </multiselect>
+
           <multiselect
             v-model="C_issueTypeFilter"
             track-by="name"
@@ -213,7 +215,7 @@
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>      
+          </multiselect>
           <multiselect
             v-model="C_issueUserFilter"
             track-by="id"
@@ -273,7 +275,7 @@
         </div>
         </div>
 
-       
+
 
       </div>
     </div>
@@ -601,13 +603,11 @@
         let input = event.target.value
         let hash = Object.assign({}, this.progressFilter[option.variable])
         let error = ""
-
-        if (input != "") {
+        if (this.exists(input)) {
           if (input < 0) input = 0
           if (input > 100) input = 100
           if ((option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) error = "Min should not be greator than Max."
         }
-
         hash[option.type] = input == "" ? input : Number(input)
         if (hash.max == "" || hash.min == "") error = "Both fields are required."
         if (hash.max == "" && hash.min == "") error = ""
@@ -721,7 +721,7 @@
     margin-right: 0px !important;
     width: 100%;
   }
- 
+
 
   .issueUser-select /deep/ .multiselect,
   .taskUser-select /deep/ .multiselect,
@@ -736,7 +736,7 @@
   .facilitygroup-select /deep/ .multiselect,
   .status-select /deep/ .multiselect {
     font-size: 14px;
-    width: 280px;    
+    width: 280px;
     .multiselect__placeholder {
       margin-bottom: 2px;
       padding-top: 2px;

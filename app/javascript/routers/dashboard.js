@@ -4,6 +4,7 @@ import WatchView from './../components/dashboard/watch_view'
 import MembersView from './../components/dashboard/members_view'
 import FacilityView from './../components/dashboard/facility_view'
 import Sheets from './../components/dashboard/sheets'
+import KanbanView from './../components/dashboard/kanban_view'
 
 export default new VueRouter({
   routes: [
@@ -37,6 +38,11 @@ export default new VueRouter({
       path: '/projects/:projectId/sheets',
       component: Sheets
     },
+    {
+      name: 'ProjectKanbanView',
+      path: '/projects/:projectId/kanban',
+      component: KanbanView
+    }
   ],
   hashbang: false,
   mode: 'history',

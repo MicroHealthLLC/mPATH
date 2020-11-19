@@ -1,7 +1,7 @@
 <template>
   <div id="customtabs" class="d-flex align-items-center">
     <div v-for="tab in tabs" :key="tab.key">
-      <div class="badge" :class="{active: currentTab == tab.key}" @click.prevent="changeTab(tab)">
+      <div class="badge" :class="{active: currentTab == tab.key, disabled: tab.disabled}" @click.prevent="changeTab(tab)">
         <div>{{tab.label}}</div>
       </div>
     </div>
@@ -34,6 +34,13 @@
       &.active {
         color: #fff;
         background-color: #17a2b8;
+      }
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: not-allowed;
+        border: 0 !important;
+        padding: 7px 10px !important;
       }
       &:hover {
         padding: 6px 9px;

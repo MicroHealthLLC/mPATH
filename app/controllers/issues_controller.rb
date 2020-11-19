@@ -43,6 +43,7 @@ class IssuesController < AuthenticatedController
       :title,
       :description,
       :issue_type_id,
+      :issue_stage_id,
       :issue_severity_id,
       :progress,
       :start_date,
