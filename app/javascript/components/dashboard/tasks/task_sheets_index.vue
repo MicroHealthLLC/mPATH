@@ -40,10 +40,10 @@
         </multiselect>  
         </div>   
           <div class="form-check-inline mr-0" style="width:26%">
-          <label class="form-check-label mx-2">
+          <!-- <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
+          </label> -->
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
@@ -77,7 +77,7 @@
         </label>
       
         <div style="margin-bottom:50px">
-          <table class="table table-sm table-bordered table-striped mt-2">
+          <table class="table table-sm table-bordered table-striped mt-2 stickyTableHeader">
                <colgroup>
                 <col class="twenty" />
                 <col class="ten" />              
@@ -314,8 +314,19 @@
   table {
     table-layout: fixed;
     width: 100%;
+    position: relative;
     margin-bottom: 0 !important;
   } 
+  .stickyTableHeader {
+    position: sticky;
+    position: -webkit-sticky;
+    justify-content: center;
+    margin-bottom: -2.5rem;
+    z-index: 10;
+    left: 15;
+    top: 0;
+    width: 100%;
+  }  
   .eight {
     width: 8%; 
   }

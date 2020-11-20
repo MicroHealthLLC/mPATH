@@ -106,7 +106,7 @@
               <h5 id="totals">Total: {{filteredIssues.length}}</h5>
             </label>          
             <div style="margin-bottom:50px">
-              <table class="table table-sm table-bordered table-striped mt-2">                 
+              <table class="table table-sm table-bordered stickyTableHeader mt-2">                 
                   <colgroup>
                     <col class="seventeen" />
                     <col class="ten" />                   
@@ -217,7 +217,7 @@
     data() {
       return {
         viewList:'',
-        listOptions: ['active','completed', 'all'],   
+        listOptions: ['active','all', 'completed'],   
         loading: true,
         newIssue: false,
         viewList: 'active',
