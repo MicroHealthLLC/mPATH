@@ -78,9 +78,9 @@
           </label>
         </div>
         <div class="form-check-inline ml-auto mr-0">
-          <label class="form-check-label">
+          <!-- <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
-          </label>
+          </label> -->
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
           </label>
