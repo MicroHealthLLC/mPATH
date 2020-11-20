@@ -1,4 +1,3 @@
-
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
@@ -50,26 +49,24 @@
           </label>         
         </div>     
       </div>
-    
-      <div v-if="filteredTasks.length > 0">
         <button v-if="_isallowed('write')"
-            class="new-tasks-btn btn mr-3 btn-sm btn-primary"
-            @click.prevent="addNewTask">
-            <i class="fas fa-plus-circle"></i>
-            Add Task
+          class="new-tasks-btn addBtns btn mr-3 btn-sm btn-primary"
+          @click.prevent="addNewTask">
+          <i class="fas fa-plus-circle"></i>
+          Add Task
         </button>
+    
+      <div v-if="filteredTasks.length > 0">      
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-dark m-2"
-          style="font-size:.70rem" >         
+          class="btn btn-sm btn-dark exportBtn">       
           EXPORT TO PDF
         </button>
         <button
           disabled
           id="printBtn"
-          class="btn btn-sm btn-outline-dark my-2"
-          style="font-size:.70rem" >           
+          class="btn btn-sm btn-outline-dark">           
           EXPORT TO EXCEL
         </button>       
         <label class="form-check-label text-primary floatRight">
@@ -77,7 +74,7 @@
         </label>
       
         <div style="margin-bottom:50px">
-          <table class="table table-sm table-bordered table-striped mt-2 stickyTableHeader">
+          <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
                <colgroup>
                 <col class="twenty" />
                 <col class="ten" />              
@@ -99,8 +96,7 @@
                 <th>Overdue</th>
                 <th>On Watch</th>
                 <th>Last Update</th>
-              </tr>
-          
+              </tr>          
           </table>
           <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list pl-0" :per="15">
             <task-sheets
@@ -120,7 +116,7 @@
           </div>
         </div>
       </div>
-      <p v-else class="text-danger m-3">No tasks found..</p>
+      <h6 v-else class="text-danger alt-text">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
     <table
@@ -177,14 +173,13 @@
   
   Vue.prototype.moment = moment
   Vue.use(VuePaginate)
-
   export default {
     name: 'TasksSheetsIndex',
     components: {TaskSheets},
     props: ['facility', 'from'],
     data() {
       return {           
-        viewList:'',
+        viewList:'active',
         listOptions: ['active','all', 'completed'],        
         paginate: ['filteredTasks'],
         tasks: Object,
@@ -298,6 +293,24 @@
     height: max-content;
     width: 20%;
   }
+  .addBtns {
+    position: absolute;
+  }
+  .alt-text {
+    position: relative; 
+    margin-top: 50px;  
+    margin-left: 2px; 
+  }
+  #printBtn {
+    font-size: .80rem
+  }
+  .exportBtn {
+    margin-left: 275px;
+  }
+  #total {
+    margin-right: 18px;
+    line-height: 3 !important;
+  }
   .filter {
     color: #ced4da !important;
     border: solid #ced4da .8px !important;
@@ -340,10 +353,10 @@
     text-align: right;  
     right: 0px; 
   }
-  h5#total {
-    margin-right: 20px;
-    line-height: 3.2 !important;
-  }
+  // h5#total {
+  //   margin-right: 20px;
+  //   line-height: 3.2 !important;
+  // }
   .paginate-links.filteredTasks {
     list-style: none !important;
     user-select: none;

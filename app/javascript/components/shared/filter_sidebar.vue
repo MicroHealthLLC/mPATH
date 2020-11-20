@@ -303,7 +303,7 @@
         facilities: [],
         myActions: [
           // {name: 'My Tasks', value: 'tasks'},
-          {name: 'My Issues', value: 'issues'},
+          // {name: 'My Issues', value: 'issues'},
           {name: 'My Notes', value: 'notes'}
         ],
         onWatch: [

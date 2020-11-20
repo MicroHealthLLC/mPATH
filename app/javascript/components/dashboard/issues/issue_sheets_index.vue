@@ -33,7 +33,7 @@
               </template>
             </multiselect>
          </div>
-          <div class="simple-select mr-1" style="width:25%">
+          <div class="simple-select mr-1" style="width:30%">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -68,45 +68,43 @@
                 </template>
             </multiselect>  
            </div>  
-          <div class="form-check-inline ml-2 mr-0">
-            <label class="form-check-label mr-2">
+          <div class="form-check-inline mr-3">
+             <!-- <label class="form-check-label mr-2">
               <input type="checkbox" class="form-check-input" v-model="C_myIssues">
               <i class="fas fa-user mr-1"></i>My Issue
-              </label>
+              </label> -->
               <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
               <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
               <i class="fas fa-eye mr-1"></i>On Watch
             </label>  
           </div>    
       </div>    
-      <div class="my-2">       
-        <div v-if="_isallowed('read')">         
-          <div v-if="filteredIssues.length > 0">
-           <button v-if="_isallowed('write')"
-            class="new-issue-btn btn btn-sm btn-primary mr-3"
+      <div class="mt-2">      
+          <button v-if="_isallowed('write')"
+            class="new-issue-btn btn btn-sm btn-primary addBtns"
             @click.prevent="reportNew">
             <i class="fas fa-plus-circle"></i>
              Add Issue
-           </button>
+           </button>      
+        <div v-if="_isallowed('read')">   
+          <div v-if="filteredIssues.length > 0">               
             <button
               @click="download"
               id="printBtn"
-              class="btn btn-sm btn-dark m-2"
-              style="font-size:.70rem" >
+              class="btn btn-sm btn-dark exportBtn">
               EXPORT TO PDF
             </button>
             <button
               disabled
               id="printBtn"
-              class="btn btn-sm btn-outline-dark my-2"
-              style="font-size:.70rem" >
+              class="btn btn-sm btn-outline-dark">
               EXPORT TO EXCEL
             </button>           
-            <label class="form-check-label ml-2 text-primary floatRight">
-              <h5 id="totals">Total: {{filteredIssues.length}}</h5>
-            </label>          
+            <label class="form-check-label text-primary floatRight">
+              <h5 id="total">Total: {{filteredIssues.length}}</h5>
+            </label>              
             <div style="margin-bottom:50px">
-              <table class="table table-sm table-bordered stickyTableHeader mt-2">                 
+              <table class="table table-sm table-bordered stickyTableHeader mt-3">                 
                   <colgroup>
                     <col class="seventeen" />
                     <col class="ten" />                   
@@ -149,7 +147,7 @@
               </div>
             </div>
           </div>
-          <p v-else class="text-danger ml-2">No issues found..</p>
+          <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText">No issues found..</h6>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
@@ -408,16 +406,16 @@
     text-align: right;  
     right: 0px; 
   }
-  h5#totals {
-    margin-right: 20px;
-    line-height: 3.4 !important;
-  }
   .issues-index {
     height: 465px;
   }
   .new-issue-btn {
     width: 20%;
     height: max-content;
+  }
+  #altText {
+    position: absolute;
+    margin-top: 50px
   }
   #issueHover:hover {
     cursor: pointer;
