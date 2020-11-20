@@ -2,8 +2,8 @@
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 mr-2">        
-        <div class="simple-select mr-1 d-flex" style="width:50%">
+      <div class="d-flex align-item-center justify-content-between mb-2">        
+        <div class="simple-select mr-1 d-flex" style="width:38%">
         <i class="fas fa-filter filter mr-1"></i>
           <multiselect
             v-model="C_taskTypeFilter"
@@ -23,7 +23,7 @@
             </template>
           </multiselect>          
         </div> 
-        <div class="simple-select mr-1 d-flex" style="width:30%">
+        <div class="simple-select d-flex" style="width:35%">
         <multiselect
         v-model="viewList"
         :options="listOptions" 
@@ -39,8 +39,8 @@
             </template>
         </multiselect>  
         </div>   
-          <div class="form-check-inline ml-2 mr-0">
-          <label class="form-check-label mr-2">
+          <div class="form-check-inline mr-0" style="width:26%">
+          <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
           </label>
@@ -185,7 +185,7 @@
     data() {
       return {           
         viewList:'',
-        listOptions: ['active','completed', 'all'],        
+        listOptions: ['active','all', 'completed'],        
         paginate: ['filteredTasks'],
         tasks: Object,
         now: new Date().toISOString()
@@ -302,7 +302,7 @@
     color: #ced4da !important;
     border: solid #ced4da .8px !important;
     padding: 4px;   
-    font-size: 1.97rem;
+    font-size: 2rem;
     border-radius: 4px;
     padding: 4px;
   }

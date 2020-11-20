@@ -79,11 +79,11 @@
             </label>  
           </div>    
       </div>    
-      <div class="mt-1">       
+      <div class="my-2">       
         <div v-if="_isallowed('read')">         
           <div v-if="filteredIssues.length > 0">
            <button v-if="_isallowed('write')"
-            class="new-issue-btn btn btn-sm btn-primary"
+            class="new-issue-btn btn btn-sm btn-primary mr-3"
             @click.prevent="reportNew">
             <i class="fas fa-plus-circle"></i>
              Add Issue
@@ -103,10 +103,10 @@
               EXPORT TO EXCEL
             </button>           
             <label class="form-check-label ml-2 text-primary floatRight">
-              <h5 id="total">Total: {{filteredIssues.length}}</h5>
+              <h5 id="totals">Total: {{filteredIssues.length}}</h5>
             </label>          
             <div style="margin-bottom:50px">
-              <table class="table table-sm table-bordered table-striped">                 
+              <table class="table table-sm table-bordered table-striped mt-2">                 
                   <colgroup>
                     <col class="seventeen" />
                     <col class="ten" />                   
@@ -408,9 +408,9 @@
     text-align: right;  
     right: 0px; 
   }
-  h5#total {
+  h5#totals {
     margin-right: 20px;
-    line-height: 3.2 !important;
+    line-height: 3.4 !important;
   }
   .issues-index {
     height: 465px;
