@@ -6,15 +6,16 @@
           v-for="column in columns"
           :key="column.title"
           class="bg-light rounded-lg p-3 column-width mr-4"
-        >
+          >
           <p class="badge"><span>{{column.title}}</span></p>
-          <draggable :move="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" >
+          <draggable :move="handleMove" @change="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
             <div
               :is="cardShow"
               v-for="task in column.tasks"
               :key="task.id"
               :task="task"
               :issue="task"
+              fromView="kanban_view"
               class="mt-3 cursor-move task-card"
             ></div>
           </draggable>
@@ -42,17 +43,12 @@ export default {
     return {
       loading: true,
       stageId: this.kanbanType == 'tasks' ? 'taskStageId' : 'issueStageId',
-      columns: []
+      columns: [],
+      movingSlot: ''
     };
   },
   mounted() {
-    for (let stage of this.stages) {
-      this.columns.push({
-        stage: stage,
-        title: stage.name,
-        tasks: _.filter(this.cards, c => c[this.stageId] == stage.id)
-      })
-    }
+    this.setupColumns(this.cards)
     this.loading = false
   },
   methods: {
@@ -60,17 +56,40 @@ export default {
       'updateWatchedTasks',
       'updateWatchedIssues'
     ]),
+    setupColumns(cards) {
+      this.stageId = this.kanbanType === 'issues' ? 'issueStageId' : 'taskStageId'
+      for (let stage of this.stages) {
+        this.columns.push({
+          stage: stage,
+          title: stage.name,
+          tasks: _.filter(cards, c => c[this.stageId] == stage.id)
+        })
+      }
+    },
+    handleMove(item) {
+      this.movingSlot = item.relatedContext.component.$vnode.key
+      return true
+    },
     handleChange(item) {
-      let task = item.draggedContext.element
-      task[this.stageId] = this.stages.find(s => s.name == item.relatedContext.component.$vnode.key).id
+      if (!('added' in item)) return;
+      let task = item.added.element
+      task[this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
       if (this.kanbanType === 'tasks') this.updateWatchedTasks(task)
       else if (this.kanbanType === 'issues') this.updateWatchedIssues(task)
-      return true;
+      this.movingSlot = ''
     }
   },
   computed: {
     cardShow() {
       return this.kanbanType == 'tasks' ? 'TaskShow' : 'IssueShow'
+    }
+  },
+  watch: {
+    cards: {
+      handler(value) {
+        this.columns = []
+        this.setupColumns(value)
+      }, deep: true
     }
   }
 };
@@ -81,6 +100,9 @@ export default {
     border: 1px solid;
     border-radius: 3px;
     background: #fff;
+  }
+  .kanban-draggable {
+    min-height: calc(100vh - 230px);
   }
   .column-width {
     min-width: 20rem;

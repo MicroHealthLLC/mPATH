@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div v-if="C_editForManager" class="blur_show text-center">
-      <div class="text-primary align-items-center blur_show mb-3">
+    <div v-if="C_editForManager" class="float-right blur_show">
+      <div class="text-primary align-items-center float-right mb-3">
         <!-- <p class="mr-2 mb-0">Details</p> -->
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
+    <div v-if="!loading" class="mx-3 mb-3 mt-2 py-1" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
@@ -197,7 +197,8 @@
         this.$emit('toggle-watched', this.DV_task)
       },
       updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
+        this.onCloseForm()
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getTask(task) {
         return this.currentTasks.find(t => t.id == task.id) || {}
@@ -283,11 +284,6 @@
       margin-bottom: 1rem !important;
       margin-left: 1rem !important;
       height: .8em !important;
-    }
-    .onHover:hover {
-      cursor: pointer !important;
-      background-color: rgba(91, 192, 222, 0.3) !important;
-      border-left: solid rgb(91, 192, 222) !important;
     }
     .form-inside-modal {
       form {

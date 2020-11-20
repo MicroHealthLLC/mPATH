@@ -603,7 +603,7 @@
         }
       },
       isMyCheck(check) {
-        return this.C_myIssues && check.id ? check.user.id == this.$currentUser.id : true
+        return this.C_myIssues && check.id ? (check.user && check.user.id == this.$currentUser.id) : true
       },
       allowDeleteNote(note) {
         return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
