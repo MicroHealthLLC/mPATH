@@ -71,7 +71,7 @@ export default {
       return true
     },
     handleChange(item) {
-      if (!'added' in item) return;
+      if (!('added' in item)) return;
       let task = item.added.element
       task[this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
       if (this.kanbanType === 'tasks') this.updateWatchedTasks(task)
