@@ -50,32 +50,31 @@
           </label>         
         </div>     
       </div>
-    
-      <div v-if="filteredTasks.length > 0">
-        <button v-if="_isallowed('write')"
-            class="new-tasks-btn btn mr-3 btn-sm btn-primary"
-            @click.prevent="addNewTask">
-            <i class="fas fa-plus-circle"></i>
-            Add Task
-        </button>
+
+         <button v-if="_isallowed('write')"            
+          class="new-tasks-btn addBtns btn mr-3 btn-sm btn-primary"
+          @click.prevent="addNewTask">
+          <i class="fas fa-plus-circle"></i>
+          Add Task
+        </button>   
+      <div v-if="filteredTasks.length > 0">          
+        <div class="exportBtns">
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-dark m-2"
-          style="font-size:.70rem" >         
+          class="btn btn-sm btn-dark mx-2">         
           EXPORT TO PDF
         </button>
         <button
           disabled
           id="printBtn"
-          class="btn btn-sm btn-outline-dark my-2"
-          style="font-size:.70rem" >           
+          class="btn btn-sm btn-outline-dark">         
           EXPORT TO EXCEL
-        </button>       
-        <label class="form-check-label text-primary floatRight">
-            <h5 id="total">Total: {{filteredTasks.length}}</h5>
+        </button> 
+         <label class="form-check-label text-primary floatRight mb-3">
+            <h5 class="total">Total: {{filteredTasks.length}}</h5>
         </label>
-      
+        </div>     
         <div style="margin-bottom:50px">
           <table class="table table-sm table-bordered table-striped mt-2 stickyTableHeader">
                <colgroup>
@@ -184,7 +183,7 @@
     props: ['facility', 'from'],
     data() {
       return {           
-        viewList:'',
+        viewList:'active',
         listOptions: ['active','all', 'completed'],        
         paginate: ['filteredTasks'],
         tasks: Object,
@@ -298,13 +297,25 @@
     height: max-content;
     width: 20%;
   }
+  .addBtns {
+    position: absolute;
+  }
+  .exportBtns {
+    margin-left: 300px;
+    margin-bottom: 10px;
+  }
+  #printBtn {
+    font-size: .70rem;
+    padding: 5px;
+  }
   .filter {
     color: #ced4da !important;
     border: solid #ced4da .8px !important;
     padding: 4px;   
-    font-size: 2rem;
+    font-size: 1.7rem;
     border-radius: 4px;
-    padding: 4px;
+    padding: 3px;
+    height: 33px;
   }
   .taskHover:hover {
     cursor: pointer;
@@ -340,9 +351,10 @@
     text-align: right;  
     right: 0px; 
   }
-  h5#total {
-    margin-right: 20px;
-    line-height: 3.2 !important;
+  h5.total {
+    margin-right: 18px;  
+    margin-top: 10px;
+    margin-bottom: 0px; 
   }
   .paginate-links.filteredTasks {
     list-style: none !important;
