@@ -16,8 +16,8 @@
           Save
         </button>
         <button
-          v-else   
-          disabled  
+          v-else
+          disabled
           class="btn btn-sm sticky-btn btn-light"
           >
           Read Only
@@ -577,7 +577,7 @@
         }
       },
       isMyCheck(check) {
-        return this.C_myTasks && check.id ? check.user.id == this.$currentUser.id : true
+        return this.C_myTasks && check.id ? (check.user && check.user.id == this.$currentUser.id) : true
       },
       allowDeleteNote(note) {
         return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
@@ -745,9 +745,9 @@
     margin-bottom: 10px;
     position: relative;
   }
-  .paginate-links.filteredNotes {   
+  .paginate-links.filteredNotes {
     list-style: none !important;
-    user-select: none;    
+    user-select: none;
     text-decoration-line: none !important;
     margin-bottom: 18px;
     a {
@@ -758,7 +758,7 @@
       background-color: white;
       box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
       color: #383838;
-      padding: 5px 12px;     
+      padding: 5px 12px;
       cursor: pointer;
       text-decoration-line: none !important;
     }
@@ -768,7 +768,7 @@
     li.active a {
       font-weight: bold;
       color: #383838;
-      background-color: rgba(211, 211, 211, 10%);      
+      background-color: rgba(211, 211, 211, 10%);
     }
     a.active  {
       background-color: rgba(211, 211, 211, 10%);
@@ -784,8 +784,8 @@
     }
     li {
       display: inline !important;
-      margin: 1px;  
-      color: #383838 !important;  
+      margin: 1px;
+      color: #383838 !important;
     }
   }
   .sticky-btn {

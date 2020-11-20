@@ -7,88 +7,92 @@
         </h4>
         <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
       </div>
-
       <div class="filters_wrap">
-        <div class="project-select my-3 mx-1 d-flex">
-          <multiselect
-            v-model="currentProject"
-            track-by="name"
-            label="name"
-            placeholder="Select Project"
-            :options="projects"
-            :searchable="false"
-            :allow-empty="false"
-            select-label="Select"
-            @select="updateProjectQuery"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name selected-opt'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-          <multiselect
-            v-model="C_facilityGroupFilter"
-            track-by="name"
-            label="name"
-            class="ml-1 fac-group-filter"
-            placeholder="Filter by Facility Group"
-            :options="C_activeFacilityGroups"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            :searchable="true"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-
+        <div class="d-flex my-3 mx-1">
+          <div class="project-select d-flex">
+            <multiselect
+              v-model="currentProject"
+              track-by="name"
+              label="name"
+              placeholder="Select Project"
+              :options="projects"
+              :searchable="false"
+              :allow-empty="false"
+              select-label="Select"
+              @select="updateProjectQuery"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
           </div>
+          <div class="ml-2 facilitygroup-select d-flex">
+            <multiselect
+              v-model="C_facilityGroupFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Facility Group"
+              :options="C_activeFacilityGroups"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              :searchable="true"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </div>
 
-        <div class="facilitygroup-select my-3 ml-1">
-          <multiselect
-            placeholder="Search by Facility Name"
-            v-model="C_facilityNameFilter"
-            label="facilityName"
-            track-by="id"
-            :multiple="true"
-            :options="facilities"
-            :searchable="true"
-            :loading="isLoading"
-            :preserve-search="true"
-            select-label="Select"
-            deselect-label="Remove"
-            @search-change="findFacility"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.facilityName}}</span>
-              </div>
-            </template>
-            <span slot="noOptions">...</span>
-          </multiselect>
-
-          <multiselect
-            v-model="C_projectStatusFilter"
-            track-by="name"
-            label="name"
-            class="ml-1"
-            placeholder="Filter by Status"
-            :options="statuses"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="d-flex my-3 mx-1">
+          <div class="facilitygroup-select d-flex">
+            <multiselect
+              placeholder="Search by Facility Name"
+              v-model="C_facilityNameFilter"
+              label="facilityName"
+              track-by="id"
+              :multiple="true"
+              :options="facilities"
+              :searchable="true"
+              :loading="isLoading"
+              :preserve-search="true"
+              select-label="Select"
+              deselect-label="Remove"
+              @search-change="findFacility"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.facilityName}}</span>
+                </div>
+              </template>
+              <span slot="noOptions">...</span>
+            </multiselect>
+          </div>
+          <div class="facilitygroup-select d-flex">
+            <multiselect
+              v-model="C_projectStatusFilter"
+              track-by="name"
+              label="name"
+              class="ml-2"
+              placeholder="Filter by Status"
+              :options="statuses"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
         </div>
 
         <div class="progress_ranges my-3 mx-1">
@@ -116,7 +120,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            class="ml-1 milestones"
+            class="ml-2 milestones"
             placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
@@ -169,7 +173,7 @@
             v-model="C_issueTypeFilter"
             track-by="name"
             label="name"
-            class="ml-1"
+            class="ml-2"
             placeholder="Filter by Issue Type"
             :options="issueTypes"
             :searchable="false"
@@ -216,11 +220,12 @@
               </div>
             </template>
           </multiselect>
+
           <multiselect
             v-model="C_issueUserFilter"
             track-by="id"
             label="fullName"
-            class="ml-1"
+            class="ml-2"
             placeholder="Search By Issue Users"
             :options="activeProjectUsers"
             :searchable="true"
@@ -235,6 +240,7 @@
             </template>
           </multiselect>
         </div>
+
         <div class="actions-select my-3 mx-1 d-flex">
           <multiselect
             v-model="C_myActionsFilter"
@@ -254,29 +260,26 @@
             </template>
           </multiselect>
 
-           <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select ml-1">
-          <multiselect
-            v-model="C_onWatchFilter"
-            track-by="name"
-            label="name"
-            placeholder="On-Watch Filter"
-            :options="onWatch"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select ml-2">
+            <multiselect
+              v-model="C_onWatchFilter"
+              track-by="name"
+              label="name"
+              placeholder="On-Watch Filter"
+              :options="onWatch"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
         </div>
-        </div>
-
-
-
       </div>
     </div>
 
@@ -712,17 +715,11 @@
     width: 90%;
     margin: 0 auto;
   }
-  .project-select {
-    width: 100%;
-    min-height: 48px !important;
-  }
   .fac-group-filter {
     min-height: 48px !important;
     margin-right: 0px !important;
     width: 100%;
   }
-
-
   .issueUser-select /deep/ .multiselect,
   .taskUser-select /deep/ .multiselect,
   .actions-select /deep/ .multiselect,
@@ -738,8 +735,8 @@
     font-size: 14px;
     width: 280px;
     .multiselect__placeholder {
-      margin-bottom: 2px;
-      padding-top: 2px;
+      margin-bottom: 10px;
+      padding-top: 3px;
     }
     .select__tag-name {
       white-space: nowrap;
@@ -762,6 +759,7 @@
   }
   .project-select /deep/ .multiselect {
     font-size: 14px;
+    width: 280px;
     .multiselect__tags {
       min-height: 20px;
     }
@@ -816,11 +814,9 @@
       }
     }
   }
- .datepicker, .milestones {
-   width: 100% !important;
- }
-  .displayFlex {
-    display: flex;
+  .datepicker,
+  .milestones {
+    width: 100% !important;
   }
   .knocker {
     cursor: pointer;

@@ -1,7 +1,7 @@
 <template>
-  <div id="customtabs" class="d-flex align-items-center">
+  <div id="customtabs" class="d-flex align-items-center" :class="{'tab-shadow': !badgeMargin}">
     <div v-for="tab in tabs" :key="tab.key">
-      <div class="badge" :class="{active: currentTab == tab.key, disabled: tab.disabled}" @click.prevent="changeTab(tab)">
+      <div class="badge" :class="{active: currentTab == tab.key, disabled: tab.disabled}" @click.prevent="changeTab(tab)" :style="badgeStyle">
         <div>{{tab.label}}</div>
       </div>
     </div>
@@ -11,10 +11,15 @@
 <script>
   export default {
     name: "CustomTabs",
-    props: ["tabs", "currentTab"],
+    props: ["tabs", "currentTab", "badgeMargin"],
     methods: {
       changeTab(tab) {
         this.$emit('on-change-tab', tab)
+      }
+    },
+    computed: {
+      badgeStyle() {
+        return this.badgeMargin ? {margin: this.badgeMargin} : {}
       }
     }
   }
@@ -22,9 +27,6 @@
 
 <style scoped lang="scss">
   #customtabs {
-    display: flex;
-    align-items: center;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02), 0 2px 5px 0 rgba(0,0,0,0.03);
     .badge {
       cursor: pointer;
       padding: 7px 10px;
@@ -47,5 +49,8 @@
         border: 1px solid #17a2b8;
       }
     }
+  }
+  .tab-shadow {
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02), 0 2px 5px 0 rgba(0,0,0,0.03);
   }
 </style>

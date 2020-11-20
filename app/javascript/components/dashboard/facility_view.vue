@@ -2,27 +2,14 @@
   <div id="facility_view">
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
-        <h4 class="mt-4 ml-4 text-info">Facility Manager</h4>
-        <div class="my-4 ml-2">
-          <div v-for="group in filteredFacilityGroups" class="my-3">
-            <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
-              <span v-show="expanded.id != group.id">
-                <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
-              </span>
-              <span v-show="expanded.id == group.id">
-               <i class="fa fa-angle-down font-md mr-2 clickable"></i>
-              </span>
-              <h5 class="clickable">{{group.name}}</h5>
-            </div>
-            <div v-show="expanded.id == group.id" class="ml-2">
-              <div v-for="item in facilityGroupFacilities(group)">
-                <div class="d-flex align-items-center expandable" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
-                <h6 class="fac-manager-sidebar">{{item.facility.facilityName}}</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <facility-sidebar
+          title="Facility Manager"
+          :current-facility-group="currentFacilityGroup"
+          :expanded="expanded"
+          :current-facility="currentFacility"
+          @on-expand-facility-group="expandFacilityGroup"
+          @on-expand-facility="showFacility"
+        ></facility-sidebar>
       </div>
       <div class="col-md-4 facility-show-tab bt-light">
         <div class="mt-4">
@@ -69,7 +56,7 @@
               @note-updated="updatedFacilityNote"
             ></notes-form>
 
-            <div v-else class="centeredDiv text-center">
+            <div v-else class="center-section text-center">
               <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
               <p>View, Add or Edit Tasks, Issues, and Notes here.</p>
             </div>
@@ -84,6 +71,7 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import FacilityShow from './facilities/facility_show'
   import FacilityRollup from './facilities/facility_rollup'
+  import FacilitySidebar from './facilities/facility_sidebar'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
@@ -93,6 +81,7 @@
     components: {
       FacilityShow,
       FacilityRollup,
+      FacilitySidebar,
       TaskForm,
       IssueForm,
       NotesForm
@@ -109,7 +98,6 @@
     computed: {
       ...mapGetters([
         'filteredFacilityGroups',
-        'facilityGroupFacilities',
         'managerView'
       ]),
       C_showFacilityTab() {
@@ -192,7 +180,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   #facility_view {
     padding: 0 10px;
     .bt-light {
@@ -210,10 +198,6 @@
       height: calc(100vh - 94px);
       overflow-y: auto;
     }
-    .fac-manager-sidebar {
-      cursor: pointer;
-      font-weight: 400 !important;
-    }
     .default-background {
       background-color: #ededed;
       height: calc(100vh - 130px);
@@ -222,7 +206,7 @@
       border-radius: 4px;
       z-index: 1;
     }
-    .centeredDiv {
+    .center-section {
       position: absolute;
       box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
       border: 1px solid #383838;
@@ -232,29 +216,6 @@
       left: 50%;
       margin-right: -50%;
       transform: translate(-50%, -50%);
-    }
-    h6.fac-manager-sidebar {
-      padding: 0 8px;
-    }
-    .fac-manager-sidebar:hover {
-      cursor: pointer;
-      font-weight: 900 !important;
-      background-color: rgba(91, 192, 222, 0.3);
-    }
-    .expandable {
-      &.active {
-        h6 {
-          background-color: rgba(211, 211, 211, 10%);
-        }
-      }
-    }
-    .expandable {
-      &.active,
-      &:hover {
-        h5, h6 {
-          font-weight: 900 !important;
-        }
-      }
     }
   }
 </style>

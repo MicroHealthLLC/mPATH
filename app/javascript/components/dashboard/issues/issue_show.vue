@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="C_editForManager" class="blur_show text-center">
-    <div class="text-primary align-items-center blur_show mb-3">
+    <div v-if="C_editForManager" class="float-right blur_show">
+    <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
+    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-1" @click.prevent="editIssue">
       <div v-if="show">
         <div class="row">
           <div class="col-md-9">
@@ -210,7 +210,8 @@
         this.$emit('toggle-watch-issue', this.DV_issue)
       },
       updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
+        this.onCloseForm()
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getTask(task) {
         return this.currentTasks.find(t => t.id == task.id) || {}
