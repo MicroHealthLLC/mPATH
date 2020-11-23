@@ -185,8 +185,11 @@ ActiveAdmin.register Facility do
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
   }} do |ids, inputs|
-    Project.find_by_id(inputs['Project'])&.facility_projects.where(facility_id: ids).each do |facility_project|
-      facility_project.update_columns(status_id: inputs['Status'], due_date: inputs['Due Date'])
+    Facility.where(id: ids).each do |facility|
+      facility_project = facility.facility_projects.find_or_initialize_by(project_id: inputs['Project'])
+      facility_project.status_id = inputs['Status']
+      facility_project.due_date = inputs['Due Date']
+      facility_project.save
     end
     redirect_to collection_path, notice: "Due Date and Status is updated"
   rescue => e
