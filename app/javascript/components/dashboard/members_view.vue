@@ -3,14 +3,15 @@
        <div class="container mt-4">
       <button @click="download" 
       id="printBtn" 
-      class="btn btn-sm btn-outline-dark mt-1 mr-1 mb-1"
+      class="btn btn-sm btn-dark mt-1 mr-1 mb-1"
       style="font-size:.70rem" >EXPORT TO PDF</button>
        <button @click="tableToExcel('table', 'Team Members')"
        class="btn btn-sm btn-outline-dark m-1"
+       id="printBtn" 
       style="font-size:.70rem"
       >EXPORT TO EXCEL</button>         
       <div class="table-responsive-md">
-        <table class="table table-sm table-bordered" ref="table" id="teamMembersList">        
+        <table class="table table-sm table-bordered mt-2" ref="table" id="teamMembersList">        
           <thead>
             <tr>
               <th></th>

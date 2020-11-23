@@ -250,7 +250,7 @@ export default {
       this.openSidebar = this.currentFacility ? !this.openSidebar : false
     },
     getStatusIconLink(facility) {
-      return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+ facility.color.split('#')[1]
+      return 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+ facility.color.split('#')[1]
     },
     resetView() {
       if (this.openSidebar) {
