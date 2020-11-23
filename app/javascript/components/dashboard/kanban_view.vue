@@ -20,6 +20,10 @@
               :cards="C_kanban.cards"
             ></kanban>
           </div>
+          <div v-else class="center-section text-center">
+            <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
+            <p>View, Edit, filter Tasks/issues in kanban mode.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -86,6 +90,8 @@
         'taskStages',
         'issueStages',
         'taskTypeFilter',
+        'taskStageFilter',
+        'issueStageFilter',
         'myActionsFilter',
         'onWatchFilter',
         'issueTypeFilter',
@@ -93,9 +99,11 @@
       ]),
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')
+        let stageIds = _.map(this.taskStageFilter, 'id')
         return _.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (this.C_myTasks || this.taskUserFilter) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
             if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
@@ -120,6 +128,7 @@
       filteredIssues() {
         let typeIds = _.map(this.issueTypeFilter, 'id')
         let severityIds = _.map(this.issueSeverityFilter, 'id')
+        let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -131,10 +140,18 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-
           return valid;
         })
+      },
+      filterTaskStages() {
+        let stageIds = _.map(this.taskStageFilter, 'id')
+        return _.filter(this.taskStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
+      },
+      filterIssueStages() {
+        let stageIds = _.map(this.issueStageFilter, 'id')
+        return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
       C_myIssues: {
         get() {
@@ -148,7 +165,7 @@
       },
       C_kanban() {
         return {
-          stages: this.currentTab == 'tasks' ? this.taskStages : this.issueStages,
+          stages: this.currentTab == 'tasks' ? this.filterTaskStages : this.filterIssueStages,
           cards: this.currentTab == 'tasks' ? this.filteredTasks : this.filteredIssues
         }
       }
@@ -177,6 +194,14 @@
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow-y: auto;
+    }
+    .center-section {
+      box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      border: 1px solid #383838;
+      border-radius: 4px;
+      padding: 10px;
+      width: 25rem;
+      margin: 10rem auto;
     }
   }
 </style>

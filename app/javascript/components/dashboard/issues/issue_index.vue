@@ -78,9 +78,9 @@
           </label>
         </div>
         <div class="form-check-inline ml-auto mr-0">
-          <!-- <label class="form-check-label">
+          <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
-          </label> -->
+          </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
           </label>
@@ -158,8 +158,8 @@
             <td v-if="(issue.dueDate) <= now">X</td>
             <td v-else></td>
             <td v-if="(issue.notes.length) > 0">
-              By: {{ issue.notes[0].user.fullName}} on 
-              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}  
+              By: {{ issue.notes[0].user.fullName}} on
+              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
             </td>
             <td v-else>No Updates</td>
           </tr>
@@ -186,8 +186,8 @@
         loading: true,
         newIssue: false,
         viewList: 'active',
-        currentIssue: null, 
-        now: new Date().toISOString()     
+        currentIssue: null,
+        now: new Date().toISOString()
       }
     },
     mounted() {

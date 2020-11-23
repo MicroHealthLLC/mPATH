@@ -40,6 +40,8 @@ export default new Vuex.Store({
     facilityDueDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
+    taskStageFilter: null,
+    issueStageFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
     progressFilter: {
@@ -152,6 +154,8 @@ export default new Vuex.Store({
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
+    setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
+    setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
     setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
     setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
@@ -197,6 +201,8 @@ export default new Vuex.Store({
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
     taskTypeFilter: state => state.taskTypeFilter,
+    taskStageFilter: state => state.taskStageFilter,
+    issueStageFilter: state => state.issueStageFilter,
     facilityGroupFilter: state => state.facilityGroupFilter,
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
@@ -261,6 +267,16 @@ export default new Vuex.Store({
             }
             case "issueSeverityIds": {
               let ids = _.map(facility.issues, 'issueSeverityId')
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "issueStageIds": {
+              let ids = _.map(facility.issues, 'issueStageId')
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "taskStageIds": {
+              let ids = _.map(facility.tasks, 'taskStageId')
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -821,6 +837,8 @@ export default new Vuex.Store({
         'facilityDueDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
+        'issueStageFilter',
+        'taskStageFilter',
         'issueProgressFilter',
         'taskProgressFilter',
         'myActionsFilter',

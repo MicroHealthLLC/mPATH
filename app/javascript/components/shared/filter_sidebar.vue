@@ -280,6 +280,45 @@
             </multiselect>
           </div>
         </div>
+
+        <div v-if="viewPermit('kanban_view', 'read')" class="actions-select my-3 mx-1 d-flex">
+          <multiselect
+            v-model="C_taskStageFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by task stages"
+            :options="taskStages"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+          <div class="actions-select ml-2">
+            <multiselect
+              v-model="C_issueStageFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by issue stages"
+              :options="issueStages"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -302,8 +341,8 @@
         showFilters: false,
         facilities: [],
         myActions: [
-          // {name: 'My Tasks', value: 'tasks'},
-          // {name: 'My Issues', value: 'issues'},
+          {name: 'My Tasks', value: 'tasks'},
+          {name: 'My Issues', value: 'issues'},
           {name: 'My Notes', value: 'notes'}
         ],
         onWatch: [
@@ -332,6 +371,8 @@
         'taskTypes',
         'issueTypes',
         'issueSeverities',
+        'taskStages',
+        'issueStages',
         'unFilterFacilities',
         'filterFacilitiesWithActiveFacilityGroups',
         'ganttData',
@@ -340,6 +381,8 @@
         'taskUserFilter',
         'issueUserFilter',
         'progressFilter',
+        'taskStageFilter',
+        'issueStageFilter',
         'viewPermit'
       ]),
       enableExport() {
@@ -404,6 +447,22 @@
         },
         set(value) {
           this.setIssueSeverityFilter(value)
+        }
+      },
+      C_taskStageFilter: {
+        get() {
+          return this.taskStageFilter
+        },
+        set(value) {
+          this.setTaskStageFilter(value)
+        }
+      },
+      C_issueStageFilter: {
+        get() {
+          return this.issueStageFilter
+        },
+        set(value) {
+          this.setIssueStageFilter(value)
         }
       },
       C_taskUserFilter: {
@@ -487,7 +546,9 @@
         'setTaskUserFilter',
         'setIssueUserFilter',
         'setProgressFilters',
-        'clearProgressFilters'
+        'clearProgressFilters',
+        'setTaskStageFilter',
+        'setIssueStageFilter'
       ]),
       handleOutsideClick() {
         if (this.showFilters) this.showFilters = false
@@ -520,6 +581,8 @@
         this.setFacilityNameFilter(null)
         this.setIssueTypeFilter(null)
         this.setIssueSeverityFilter(null)
+        this.setIssueStageFilter(null)
+        this.setTaskStageFilter(null)
         this.setIssueProgressFilter(null)
         this.setTaskProgressFilter(null)
         this.setMyActionsFilter([])
@@ -649,6 +712,12 @@
       },
       issueSeverityFilter(value) {
         this.updateMapFilters({key: 'issueSeverityIds', filter: value})
+      },
+      issueStageFilter(value) {
+        this.updateMapFilters({key: 'issueStageIds', filter: value})
+      },
+      taskStageFilter(value) {
+        this.updateMapFilters({key: 'taskStageIds', filter: value})
       },
       issueUserFilter(value) {
         this.updateMapFilters({key: 'issueUserIds', filter: value})

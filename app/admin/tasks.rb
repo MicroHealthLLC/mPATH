@@ -165,7 +165,6 @@ ActiveAdmin.register Task do
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
-    before_action :handle_files, only: [:update, :create]
 
     def check_readability
       redirect_to '/not_found' and return unless current_user.admin_read?
@@ -175,8 +174,19 @@ ActiveAdmin.register Task do
       redirect_to '/not_found' and return unless current_user.admin_write?
     end
 
+    def create
+      build_resource
+      handle_files
+      super
+    end
+
+    def update
+      handle_files
+      super
+    end
+
     def handle_files
-      resource.manipulate_files(params)
+      resource.manipulate_files(params) if resource.present?
       params[:task].delete(:task_files)
     end
 
