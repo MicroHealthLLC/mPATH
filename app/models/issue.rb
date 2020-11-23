@@ -17,7 +17,7 @@ class Issue < ApplicationRecord
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  validates :title, presence: true
+  validates :title, :start_date, :due_date, presence: true
   validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
   accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true

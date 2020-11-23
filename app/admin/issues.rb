@@ -119,9 +119,9 @@ ActiveAdmin.register Issue do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :issue_type, include_blank: false, include_blank: false
-      f.input :issue_severity, include_blank: false, include_blank: false
-      f.input :issue_stage, include_blank: false, include_blank: false
+      f.input :issue_type, include_blank: false
+      f.input :issue_severity, include_blank: false
+      f.input :issue_stage, label: 'Stage', include_blank: false
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}

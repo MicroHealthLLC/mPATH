@@ -30,7 +30,7 @@
         </button>
         <button
           v-if="_isallowed('delete')"
-          @click.stop="deleteIssue"
+          @click.prevent="deleteIssue"
           class="btn btn-sm btn-danger sticky-btn ml-auto "
           >
           <i class="fas fa-trash-alt mr-2"></i>
@@ -427,7 +427,7 @@
         }
         this.DV_issue.issueFiles = _files
       },
-       deleteIssue() {
+      deleteIssue() {
         var confirm = window.confirm(`Are you sure you want to delete this issue?`)
         if (!confirm) {return}
         this.issueDeleted(this.DV_issue)

@@ -110,8 +110,8 @@ ActiveAdmin.register Task do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :task_type, label: 'Milestone', include_blank: false, include_blank: false
-      f.input :task_stage, label: 'Stage', include_blank: false, include_blank: false
+      f.input :task_type, label: 'Milestone', include_blank: false
+      f.input :task_stage, label: 'Stage', include_blank: false
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
