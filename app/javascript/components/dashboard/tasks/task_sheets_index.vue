@@ -6,7 +6,7 @@
         <i class="fas fa-filter filter mr-1"></i>
           <multiselect
             v-model="C_taskTypeFilter"
-            track-by="name" 
+            track-by="name"            
             label="name"
             placeholder="Filter by Task Category"
             :options="taskTypes"
@@ -39,10 +39,10 @@
         </multiselect>  
         </div>   
           <div class="form-check-inline mr-0" style="width:26%">
-          <!-- <label class="form-check-label mx-2">
+          <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
-          </label> -->
+          </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
@@ -291,10 +291,10 @@
   }
   .new-tasks-btn {
     height: max-content;
-    width: 20%;
+    width: 100px;
   }
   .addBtns {
-    position: absolute;
+    position: absolute;  
   }
   .alt-text {
     position: relative; 
@@ -302,10 +302,13 @@
     margin-left: 2px; 
   }
   #printBtn {
-    font-size: .80rem
+    font-size: .80rem;   
+  }
+  #printBtn, .addBtns, .paginate-links.filteredTasks {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
   }
   .exportBtn {
-    margin-left: 275px;
+    margin-left: 130px;
   }
   #total {
     margin-right: 18px;
@@ -364,8 +367,7 @@
       width: 30px;
       height: 36px;
       margin-right: 1px;    
-      background-color: white;
-      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+      background-color: white;      
       color: #383838;
       padding: 10px 24px;
       padding-bottom: 10px !important;

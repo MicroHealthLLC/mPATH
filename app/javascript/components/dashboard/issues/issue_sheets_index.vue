@@ -12,8 +12,8 @@
     </div>
     <div v-else>
       <div class="d-flex align-item-center justify-content-between">
-        <div class="simple-select mr-1 d-flex" style="width:35%">  
-            <i class="fas fa-filter filter mr-1"></i>       
+        <div class="simple-select mr-1 d-flex" style="width:30%">  
+            <i class="fas fa-filter filter mr-2"></i>       
             <multiselect
               v-model="C_issueTypeFilter"
               track-by="name"
@@ -33,7 +33,7 @@
               </template>
             </multiselect>
          </div>
-          <div class="simple-select mr-1" style="width:30%">
+          <div class="simple-select mr-1" style="width:28%">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -69,10 +69,10 @@
             </multiselect>  
            </div>  
           <div class="form-check-inline mr-3">
-             <!-- <label class="form-check-label mr-2">
+             <label class="form-check-label mr-2">
               <input type="checkbox" class="form-check-input" v-model="C_myIssues">
               <i class="fas fa-user mr-1"></i>My Issue
-              </label> -->
+              </label>
               <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
               <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
               <i class="fas fa-eye mr-1"></i>On Watch
@@ -410,8 +410,8 @@
     height: 465px;
   }
   .new-issue-btn {
-    width: 20%;
     height: max-content;
+    width: 100px;
   }
   #altText {
     position: absolute;
