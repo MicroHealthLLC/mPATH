@@ -38,3 +38,12 @@ en:
       task_type:
         one: Milestone
         other: Milestones
+    attributes:
+      task:
+        text: ""
+    errors:
+      models:
+        task:
+          attributes:
+            text:
+              blank: "Name is required"
