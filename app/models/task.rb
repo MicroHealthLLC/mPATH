@@ -73,9 +73,9 @@ class Task < ApplicationRecord
     file_blobs = JSON.parse(params[:task][:task_files])
     file_blobs.each do |file|
       if file['_destroy']
-        self&.task_files.find_by_id(file['id'])&.purge
+        task_files.find_by_id(file['id'])&.purge
       elsif file['_new']
-        self&.task_files.create(blob_id: file['id'])
+        task_files.new(blob_id: file['id'])
       end
     end
   end
