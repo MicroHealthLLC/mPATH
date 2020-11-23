@@ -36,8 +36,8 @@ en:
         one: Facility Group
         other: Facility Groups
       task_type:
-        one: Milestone
-        other: Milestones
+        one: Task Category
+        other: Task Categories
     attributes:
       task:
         text: ""
