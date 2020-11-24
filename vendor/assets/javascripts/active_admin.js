@@ -10,8 +10,17 @@
 jQuery(function($) {
 
   // Add placeholder to for organization select
-  $(".select2").select2({
+  $("#user_organization_input .select2").select2({
     placeholder: "Search and select an organization",
+    allowClear: true
+  });
+
+  $("#task_task_stage_input .select2").select2({
+    placeholder: "Search and select a Stage",
+    allowClear: true
+  });
+  $("#issue_issue_stage_input .select2").select2({
+    placeholder: "Search and select a Stage",
     allowClear: true
   });
 

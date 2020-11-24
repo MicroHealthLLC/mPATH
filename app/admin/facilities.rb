@@ -191,7 +191,7 @@ ActiveAdmin.register Facility do
       facility_project.due_date = inputs['Due Date']
       facility_project.save
     end
-    redirect_to collection_path, notice: "Due Date and Status is updated"
+    redirect_to collection_path, notice: "Due Date, Status and Assign project is updated"
   rescue => e
     redirect_to collection_path, flash: {error: e.message}
   end

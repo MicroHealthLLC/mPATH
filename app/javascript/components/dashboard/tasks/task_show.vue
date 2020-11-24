@@ -197,8 +197,8 @@
         this.$emit('toggle-watched', this.DV_task)
       },
       updateRelatedTaskIssue(task) {
-        this.onCloseForm()
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
+        this.onCloseForm()
       },
       getTask(task) {
         return this.currentTasks.find(t => t.id == task.id) || {}

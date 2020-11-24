@@ -125,7 +125,6 @@
         <label class="font-sm">Stage:</label>
         <multiselect
           v-model="selectedIssueStage"
-          v-validate="'required'"
           track-by="id"
           label="name"
           placeholder="Select Stage"
@@ -630,7 +629,6 @@
           this.exists(this.DV_issue.title) &&
           this.exists(this.DV_issue.issueTypeId) &&
           this.exists(this.DV_issue.issueSeverityId) &&
-          this.exists(this.DV_issue.issueStageId) &&
           this.exists(this.DV_issue.dueDate) &&
           this.exists(this.DV_issue.startDate)
         )

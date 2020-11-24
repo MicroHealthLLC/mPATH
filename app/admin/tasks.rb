@@ -111,7 +111,7 @@ ActiveAdmin.register Task do
         end
       end
       f.input :task_type, label: 'Task Category', include_blank: false
-      f.input :task_stage, label: 'Stage', include_blank: false
+      f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
