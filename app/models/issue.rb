@@ -1,9 +1,10 @@
 class Issue < ApplicationRecord
+  include Normalizer
   default_scope {order(due_date: :asc)}
 
   belongs_to :facility_project
   belongs_to :issue_type
-  belongs_to :issue_stage
+  belongs_to :issue_stage, optional: true
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users

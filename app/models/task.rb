@@ -1,9 +1,10 @@
 class Task < ApplicationRecord
+  include Normalizer
   default_scope {order(due_date: :asc)}
 
   belongs_to :facility_project
   belongs_to :task_type
-  belongs_to :task_stage
+  belongs_to :task_stage, optional: true
   has_many :task_users, dependent: :destroy
   has_many :users, through: :task_users
   has_many :checklists, as: :listable, dependent: :destroy
