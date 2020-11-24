@@ -121,7 +121,7 @@ ActiveAdmin.register Issue do
       end
       f.input :issue_type, include_blank: false
       f.input :issue_severity, include_blank: false
-      f.input :issue_stage, label: 'Stage', include_blank: false
+      f.input :issue_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
       f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}

@@ -1,17 +1,90 @@
 <template>
   <div id="kanban-view">
     <div class="row">
-      <div class="col-md-2 facility-groups-tab">
+      <div class="col-md-2 facility-groups-tab" :class="{'col-md-4': expandFilter, 'col-md-2': !expandFilter}">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="mt-4" badge-margin="4px" />
-        <facility-sidebar
-          :current-facility-group="currentFacilityGroup"
-          :expanded="expanded"
-          :current-facility="currentFacility"
-          @on-expand-facility-group="expandFacilityGroup"
-          @on-expand-facility="showFacility"
-        ></facility-sidebar>
+
+        <div class="row">
+          <div class="col d-flex">
+            <facility-sidebar
+              class="facilitySidebar"
+              :current-facility-group="currentFacilityGroup"
+              :expanded="expanded"
+              :current-facility="currentFacility"
+              @on-expand-facility-group="expandFacilityGroup"
+              @on-expand-facility="showFacility"
+            ></facility-sidebar>
+
+            <div v-if="expandFilter" class="mt-4">
+              <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+                <div class="simple-select w-100">
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+                <!-- <button class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button> -->
+              </div>
+              <div class="mx-2 my-3 font-sm">
+                <div class="form-check my-1 float-right">
+                  <label class="form-check-label text-primary">
+                    Total: {{filteredTasks.length}}
+                  </label>
+                </div>
+                <div class="form-check my-1">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+                  </label>
+                </div>
+                <div class="form-check my-1">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+                  </label>
+                </div>
+                <div class="form-check my-1">
+                  <label class="form-check-label">
+                    <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+                  </label>
+                </div>
+                <div class="form-check my-1 mt-3">
+                  <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+                  </label>
+                </div>
+                <div class="form-check my-1">
+                  <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+                    <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-10 kanban-tab bt-light">
+
+      <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
+        <span class="clickable" @click.prevent="expandFilter=!expandFilter">
+          <span v-show="!expandFilter" class="expandBtn">
+            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+          </span>
+          <span v-show="expandFilter" class="expandBtn">
+            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+          </span>
+        </span>
+
         <div class="mt-4">
           <div v-if="'id' in currentFacility">
             <kanban
@@ -34,7 +107,7 @@
   import Kanban from './../shared/kanban'
   import CustomTabs from './../shared/custom-tabs'
   import FacilitySidebar from './facilities/facility_sidebar'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'KanbanView',
@@ -57,8 +130,10 @@
         expanded: {
           id: ''
         },
+        viewList: 'active',
         currentFacility: {},
-        currentFacilityGroup: {}
+        currentFacilityGroup: {},
+        expandFilter: false
       }
     },
     mounted() {
@@ -66,6 +141,11 @@
       if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
     },
     methods: {
+      ...mapMutations([
+        'setMyActionsFilter',
+        'setOnWatchFilter',
+        'setTaskTypeFilter'
+      ]),
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'tasks'
       },
@@ -95,10 +175,12 @@
         'myActionsFilter',
         'onWatchFilter',
         'issueTypeFilter',
-        'issueSeverityFilter'
+        'issueSeverityFilter',
+        'viewPermit',
+        'taskTypes'
       ]),
       filteredTasks() {
-        let typeIds = _.map(this.taskTypeFilter, 'id')
+        let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         return _.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -119,10 +201,26 @@
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
         },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
+        }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
       },
       C_onWatchTasks: {
         get() {
           return _.map(this.onWatchFilter, 'value').includes('tasks')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
         }
       },
       filteredIssues() {
@@ -203,5 +301,31 @@
       width: 25rem;
       margin: 10rem auto;
     }
+  }
+  .row [class*='col-'] {
+    transition: .2s ease-in-out;
+  }
+  .facilitySidebar {
+    width: 200px;
+    max-width: 200px;
+    min-width: 200px;
+  }
+  .expandBtn {
+    position: absolute;
+    top: 50px;
+    left: -12px;
+    padding: 5px;
+    border-radius: 50%;
+    height: 25px;
+    color: #fff;
+    background-color: #17a2b8;
+    font-size: 18px;
+    width: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .simple-select /deep/ .multiselect {
+    width: 230px;
   }
 </style>

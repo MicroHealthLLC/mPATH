@@ -96,7 +96,6 @@
         <label class="font-sm">Stage:</label>
         <multiselect
           v-model="selectedTaskStage"
-          v-validate="'required'"
           track-by="id"
           label="name"
           placeholder="Select Stage"
@@ -602,7 +601,6 @@
           this.DV_task &&
           this.exists(this.DV_task.text) &&
           this.exists(this.DV_task.taskTypeId) &&
-          this.exists(this.DV_task.taskStageId) &&
           this.exists(this.DV_task.dueDate) &&
           this.exists(this.DV_task.startDate)
         )
