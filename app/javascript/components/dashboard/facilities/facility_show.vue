@@ -2,11 +2,11 @@
   <div id="facility-show">
     <div class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
-        <span class="fbody-icon"><i class="fas fa-check"></i></span>
-        <h4 class="text-secondary f-head">{{DV_facility.facilityName}}</h4>
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h3 class="f-head">{{DV_facility.facilityName}}</h3>
       </div>
       <div class="facility-tab mb-4">
-        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" />
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />
       </div>
       <div>
         <div v-if="currentTab == 'overview'">
@@ -447,6 +447,8 @@
       facility: {
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
+          this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+          this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
             this.loading = true
@@ -489,6 +491,15 @@
     font-style: italic;
     display: flex;
     flex-direction: row-reverse;
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
+
+  }
+  .custom-tab {
+    background-color: #ededed !important;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
   }
   .pg-content {
     width: 100%;

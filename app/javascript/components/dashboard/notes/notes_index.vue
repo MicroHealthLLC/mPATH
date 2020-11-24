@@ -14,18 +14,18 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="text" class="form-control form-control-sm" placeholder="type to search.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
+          <input type="text" class="form-control form-control-sm" placeholder="Search notes.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
         </div>
         <div v-if="_isallowed('write')">
-          <button @click.stop="addNewNote" class="btn btn-sm btn-light">Add Note</button>
+          <button @click.stop="addNewNote" class="btn btn-sm btn-primary"><i class="fas fa-plus-circle"></i>Add Note</button>
         </div>
       </div>
-      <div class="form-check-inline justify-content-end w-100 pr-3 mb-2 font-sm">
-        <label class="form-check-label">
-          <input type="checkbox" class="form-check-input" v-model="C_myNotes">My Notes
+      <div class="form-check-inline justify-content-end w-100 mb-2 font-sm">
+        <label class="form-check-label mr-3">
+          <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
         </label>
         <label class="form-check-label ml-2 text-primary">
-          Total: {{filteredNotes.length}}
+          <h5 class="mb-0 mr-2">Total: {{filteredNotes.length}}</h5>
         </label>
       </div>
       <div v-if="_isallowed('read')">
@@ -124,7 +124,9 @@
 </script>
 
 <style lang="scss" scoped>
-
+  #search-addon {
+    background-color: #ededed !important;
+  }
   #notes-index {
     height: 500px;
   }
