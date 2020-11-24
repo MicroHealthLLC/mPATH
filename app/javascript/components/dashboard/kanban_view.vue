@@ -152,14 +152,16 @@
       </div>
 
       <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
-        <span class="clickable" @click.prevent="expandFilter=!expandFilter">
-          <span v-show="!expandFilter" class="expandBtn">
-            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        <div v-if="'id' in currentFacilityGroup">
+          <span class="clickable" @click.prevent="expandFilter=!expandFilter">
+            <span v-show="!expandFilter" class="expandBtn">
+              <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </span>
+            <span v-show="expandFilter" class="expandBtn">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </span>
           </span>
-          <span v-show="expandFilter" class="expandBtn">
-            <i class="fa fa-chevron-left" aria-hidden="true"></i>
-          </span>
-        </span>
+        </div>
 
         <div class="mt-4">
           <div v-if="'id' in currentFacility">
@@ -221,6 +223,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setIssueSeverityFilter',
+        'setIssueTypeFilter',
         'setTaskTypeFilter'
       ]),
       onChangeTab(tab) {
@@ -410,7 +413,12 @@
             this.currentFacility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == this.currentFacility.id)
           }
         }, deep: true
-      }
+      },
+      currentFacilityGroup: {
+        handler(value) {
+          if (!('id' in value)) this.expandFilter = false
+        }
+      }, deep: true
     }
   }
 </script>
