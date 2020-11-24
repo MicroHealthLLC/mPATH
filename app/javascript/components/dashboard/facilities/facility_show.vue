@@ -447,6 +447,8 @@
       facility: {
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
+          this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+          this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
             this.loading = true
