@@ -16,58 +16,134 @@
             ></facility-sidebar>
 
             <div v-if="expandFilter" class="mt-4">
-              <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
-                <div class="simple-select w-100">
-                  <multiselect
-                    v-model="C_taskTypeFilter"
-                    track-by="name"
-                    label="name"
-                    placeholder="Filter by Task Category"
-                    :options="taskTypes"
-                    :searchable="false"
-                    :multiple="true"
-                    select-label="Select"
-                    deselect-label="Remove"
-                    >
-                    <template slot="singleLabel" slot-scope="{option}">
-                      <div class="d-flex">
-                        <span class='select__tag-name'>{{option.name}}</span>
-                      </div>
-                    </template>
-                  </multiselect>
+              <div v-if="currentTab === 'tasks'">
+                <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+                  <div class="simple-select w-100">
+                    <multiselect
+                      v-model="C_taskTypeFilter"
+                      track-by="name"
+                      label="name"
+                      placeholder="Filter by Task Category"
+                      :options="taskTypes"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                  <!-- <button class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button> -->
                 </div>
-                <!-- <button class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button> -->
+                <div class="mx-2 my-3 font-sm">
+                  <div class="form-check my-1 float-right">
+                    <label class="form-check-label text-primary">
+                      Total: {{filteredTasks.length}}
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+                    </label>
+                  </div>
+                  <div class="form-check my-1 mt-3">
+                    <label class="form-check-label">
+                      <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+                      <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
+                    </label>
+                  </div>
+                </div>
               </div>
-              <div class="mx-2 my-3 font-sm">
-                <div class="form-check my-1 float-right">
-                  <label class="form-check-label text-primary">
-                    Total: {{filteredTasks.length}}
-                  </label>
+
+              <div v-if="currentTab === 'issues'">
+                <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+                  <div class="simple-select w-100">
+                    <multiselect
+                      v-model="C_issueTypeFilter"
+                      track-by="name"
+                      label="name"
+                      placeholder="Filter by Issue Type"
+                      :options="issueTypes"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+
+                    <multiselect
+                      v-model="C_issueSeverityFilter"
+                      track-by="name"
+                      label="name"
+                      placeholder="Filter by Issue Severity"
+                      :options="issueSeverities"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
                 </div>
-                <div class="form-check my-1">
-                  <label class="form-check-label">
-                    <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-                  </label>
-                </div>
-                <div class="form-check my-1">
-                  <label class="form-check-label">
-                    <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-                  </label>
-                </div>
-                <div class="form-check my-1">
-                  <label class="form-check-label">
-                    <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-                  </label>
-                </div>
-                <div class="form-check my-1 mt-3">
-                  <label class="form-check-label">
-                    <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
-                  </label>
-                </div>
-                <div class="form-check my-1">
-                  <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                    <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
-                  </label>
+                <div class="mx-2 my-3 font-sm">
+                  <div class="form-check my-1 float-right">
+                    <label class="form-check-label text-primary">
+                      Total: {{filteredIssues.length}}
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label class="form-check-label">
+                      <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
+                    </label>
+                  </div>
+                  <div class="form-check my-1 mt-3">
+                    <label class="form-check-label">
+                      <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issues
+                    </label>
+                  </div>
+                  <div class="form-check my-1">
+                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+                      <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -144,6 +220,7 @@
       ...mapMutations([
         'setMyActionsFilter',
         'setOnWatchFilter',
+        'setIssueSeverityFilter',
         'setTaskTypeFilter'
       ]),
       onChangeTab(tab) {
@@ -177,7 +254,10 @@
         'issueTypeFilter',
         'issueSeverityFilter',
         'viewPermit',
-        'taskTypes'
+        'facilityGroupFacilities',
+        'taskTypes',
+        'issueTypes',
+        'issueSeverities'
       ]),
       filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
@@ -193,6 +273,19 @@
           }
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
+          }
+          switch (this.viewList) {
+            case "active": {
+              valid = valid && task.progress < 100
+              break
+            }
+            case "completed": {
+              valid = valid && task.progress == 100
+              break
+            }
+            default: {
+              break
+            }
           }
           return valid
         })
@@ -224,8 +317,8 @@
         }
       },
       filteredIssues() {
-        let typeIds = _.map(this.issueTypeFilter, 'id')
-        let severityIds = _.map(this.issueSeverityFilter, 'id')
+        let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -240,8 +333,55 @@
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          switch (this.viewList) {
+            case "active": {
+              valid = valid && issue.progress < 100
+              break
+            }
+            case "completed": {
+              valid = valid && issue.progress == 100
+              break
+            }
+            default: {
+              break
+            }
+          }
           return valid;
         })
+      },
+      C_issueTypeFilter: {
+        get() {
+          return this.issueTypeFilter
+        },
+        set(value) {
+          this.setIssueTypeFilter(value)
+        }
+      },
+      C_issueSeverityFilter: {
+        get() {
+          return this.issueSeverityFilter
+        },
+        set(value) {
+          this.setIssueSeverityFilter(value)
+        }
+      },
+      C_myIssues: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('issues')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Issues", value: "issues"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
+        }
+      },
+      C_onWatchIssues: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('issues')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Issues", value: "issues"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
+        }
       },
       filterTaskStages() {
         let stageIds = _.map(this.taskStageFilter, 'id')
@@ -250,16 +390,6 @@
       filterIssueStages() {
         let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
-      },
-      C_myIssues: {
-        get() {
-          return _.map(this.myActionsFilter, 'value').includes('issues')
-        }
-      },
-      C_onWatchIssues: {
-        get() {
-          return _.map(this.onWatchFilter, 'value').includes('issues')
-        }
       },
       C_kanban() {
         return {
@@ -275,6 +405,9 @@
             this.currentFacilityGroup = {}
             this.currentFacility = {}
             this.expanded.id = ''
+          } else {
+            this.currentFacilityGroup = value.find(f => f.id === this.currentFacilityGroup.id)
+            this.currentFacility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == this.currentFacility.id)
           }
         }, deep: true
       }
