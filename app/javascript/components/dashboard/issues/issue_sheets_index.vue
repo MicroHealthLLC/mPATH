@@ -91,14 +91,14 @@
             <button
               @click="download"
               id="printBtn"
-              class="btn btn-sm btn-dark exportBtn">
-              EXPORT TO PDF
+              class="btn btn-sm btn-outline-dark exportBtn">
+              Export to PDF
             </button>
             <button
               disabled
               id="printBtn"
               class="btn btn-sm btn-outline-dark">
-              EXPORT TO EXCEL
+              Export to Excel
             </button>           
             <label class="form-check-label text-primary floatRight">
               <h5 id="total">Total: {{filteredIssues.length}}</h5>
@@ -142,7 +142,7 @@
                   @toggle-watch-issue="toggleWatched"
                 />
               </paginate>
-              <div class="floatRight mt-3 mr-3">
+              <div class="floatRight my-3 mr-3">
                 <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
               </div>
             </div>
@@ -213,8 +213,7 @@
     props: ['facility', 'from'],
     components: {IssueForm, IssueSheets},
     data() {
-      return {
-        viewList:'',
+      return {    
         listOptions: ['active','all', 'completed'],   
         loading: true,
         newIssue: false,

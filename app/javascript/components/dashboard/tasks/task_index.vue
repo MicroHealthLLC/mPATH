@@ -79,7 +79,7 @@
           @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>
-      <h6 v-else class="text-danger alt-text ml-2">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text ml-1">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
 

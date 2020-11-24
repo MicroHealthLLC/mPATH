@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3">
+  <div id="tasks-index" class="my-4">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">        
         <div class="simple-select mr-1 d-flex" style="width:38%">
@@ -60,20 +60,20 @@
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-dark exportBtn">       
-          EXPORT TO PDF
+          class="btn btn-sm btn-outline-dark exportBtn">       
+         Export to PDF
         </button>
         <button
           disabled
           id="printBtn"
           class="btn btn-sm btn-outline-dark">           
-          EXPORT TO EXCEL
+          Export to Excel
         </button>       
         <label class="form-check-label text-primary floatRight">
             <h5 id="total">Total: {{filteredTasks.length}}</h5>
         </label>
       
-        <div style="margin-bottom:50px">
+        <div style="margin-bottom:100px">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
                <colgroup>
                 <col class="twenty" />
@@ -111,7 +111,7 @@
               @toggle-watched="toggleWatched"
             />
           </paginate>
-          <div class="floatRight mt-3 mr-3">
+          <div class="floatRight pagination mr-3 my-3">
             <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
           </div>
         </div>
@@ -284,10 +284,10 @@
 </script>
 
 <style lang="scss">
-  #tasks-index {
-    height: 465px;
+  #tasks-index {    
     background-color: #ffffff;
-    z-index: 100;
+    z-index: 100;    
+    height: 500px
   }
   .new-tasks-btn {
     height: max-content;
@@ -336,8 +336,7 @@
   .stickyTableHeader {
     position: sticky;
     position: -webkit-sticky;
-    justify-content: center;
-    margin-bottom: -2.5rem;
+    justify-content: center;    
     z-index: 10;
     left: 15;
     top: 0;
@@ -356,10 +355,9 @@
     text-align: right;  
     right: 0px; 
   }
-  // h5#total {
-  //   margin-right: 20px;
-  //   line-height: 3.2 !important;
-  // }
+  .pagination {
+    margin-bottom: 50px !important;
+  }
   .paginate-links.filteredTasks {
     list-style: none !important;
     user-select: none;

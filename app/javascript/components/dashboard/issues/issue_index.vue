@@ -90,8 +90,7 @@
         </div>
       </div>
       <div class="mt-3">
-          <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-primary" @click.prevent="reportNew"><i class="fas fa-plus-circle"></i>Add Issue</button>
-       
+          <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-primary" @click.prevent="reportNew"><i class="fas fa-plus-circle"></i>Add Issue</button>       
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <button
@@ -122,7 +121,7 @@
               @toggle-watch-issue="toggleWatched"
             />
           </div>
-          <p v-else class="text-danger ml-2">No issues found..</p>
+          <h6 v-else class="text-danger ml-1 alt-text">No issues found..</h6>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
@@ -356,7 +355,7 @@
   }
   .new-issue-btn {
     width: 100px; 
-    position: absolute;    
+    position: absolute !important;    
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);     
   }
   #issueHover:hover {
@@ -367,5 +366,9 @@
   .total {   
     float: right;
     text-align: right;
+  }
+ .alt-text {
+    position: relative; 
+    padding-top: 80px !important;    
   }
 </style>

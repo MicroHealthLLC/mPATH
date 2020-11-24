@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="bg-light rounded-lg p-3 column-width mr-4"
+          class="rounded-lg kan-col p-3 column-width mr-4"
           >
           <p class="badge"><span>{{column.title}}</span></p>
           <draggable :move="handleMove" @change="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
@@ -96,13 +96,17 @@ export default {
 </script>
 
 <style scoped>
-  .task-card {
-    border: 1px solid;
+  .task-card {   
     border-radius: 3px;
     background: #fff;
+    border: none !important;
+    border-top: solid 8px #41b883 !important;
+    padding: 6px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;  
   }
   .kanban-draggable {
-    min-height: calc(100vh - 230px);
+    min-height: calc(100vh - 230px);   
+    
   }
   .column-width {
     min-width: 20rem;
@@ -119,16 +123,23 @@ export default {
   .overflow-x-auto {
     overflow-x: auto;
   }
+  .kan-col {
+    background-color: #ededed !important;    
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);    
+  }
   .badge {
     display: flex;
+    margin-bottom: 20px !important;
     cursor: pointer;
     padding: 5px;
     transition: auto;
     color: #fff;
     padding: 5px;
     font-size: 1rem;
-    background-color: #17a2b8;
+    background-color: #41b883;
     justify-content: center;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+    
   }
   .cursor-move {
     cursor: move;
