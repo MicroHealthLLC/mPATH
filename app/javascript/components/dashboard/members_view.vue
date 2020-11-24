@@ -11,18 +11,23 @@
       style="font-size:.70rem"
       >EXPORT TO EXCEL</button>         
       <div class="table-responsive-md">
-        <table class="table table-sm table-bordered mt-2" ref="table" id="teamMembersList">        
-          <thead>
-            <tr>
+        <table class="table teamTable table-sm table-bordered mt-2" ref="table" id="teamMembersList">        
+             <colgroup>
+              <col class="five" />
+              <col class="twenty" />              
+              <col class="fifteen" />
+              <col class="twenty" />
+              <col class="twenty" />            
+              <col class="twenty" />         
+             </colgroup>    
+             <tr class="tableHead">
               <th></th>
               <th>Name</th>
               <th>Position</th>
               <th>Organization</th>
               <th>Email</th>
               <th>Phone</th>             
-            </tr>
-          </thead>
-          <tbody>
+            </tr> 
             <tr v-for="(user, i) in orderedUsers"  v-if="(user.status) === 'active'" :load="log(user)">        
               <td class="text-center">{{i+1}}</td>
               <td>{{user.fullName}}</td>
@@ -31,7 +36,6 @@
               <td><a :href="`mailto:${user.email}`">{{user.email}}</a></td>
               <td><a :href="`tel:${user.phoneNumber}`">{{user.phoneNumber}}</a></td>            
             </tr>
-          </tbody>
         </table>
       </div>
     </div>
@@ -85,4 +89,30 @@
 </script>
 
 <style lang="scss">
+
+ table {
+    table-layout: fixed ;
+    width: 100% ;
+    margin-bottom: 0 !important;    
+  }
+  .teamTable {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .tableHead {
+    background-color: #ededed;    
+  }
+  .five {
+    width: 5%;
+  }
+  .fifteen {
+    width: 15%; 
+  }
+  .twenty {
+    width: 20%;
+  }
+  td {
+    overflow-wrap: break-word !important;
+  }
+ 
+
 </style>

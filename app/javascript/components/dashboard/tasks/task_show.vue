@@ -9,9 +9,8 @@
     <div v-if="!loading" class="mx-3 mb-3 mt-2 py-1" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
-          <div class="font-sm d-flex mb-1">
-            <span class="fbody-icon"><i class="fas fa-check"></i></span>
-            {{task.text}}
+          <div class="font-sm d-flex mb-1">          
+           <h6>{{task.text}}</h6>
             <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
           </div>
           <div class="row mb-1 d-flex" v-if="fromView == 'watch_view'">

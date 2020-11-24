@@ -10,9 +10,8 @@
         <div class="row">
           <div class="col-md-9">
             <div>
-              <div class="mb-1 d-flex font-sm">
-                <span class="fbody-icon"><i class="fas fa-check"></i></span>
-                {{issue.title}}
+              <div class="mb-1 d-flex font-sm">             
+               <h6> {{issue.title}}</h6>
                 <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
               </div>
 

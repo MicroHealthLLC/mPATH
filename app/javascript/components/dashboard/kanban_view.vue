@@ -17,7 +17,7 @@
 
             <div v-if="expandFilter" class="mt-4">
               <div v-if="currentTab === 'tasks'">
-                <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+                <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -39,42 +39,43 @@
                   </div>
                   <!-- <button class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button> -->
                 </div>
-                <div class="mx-2 my-3 font-sm">
-                  <div class="form-check my-1 float-right">
-                    <label class="form-check-label text-primary">
-                      Total: {{filteredTasks.length}}
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-                    </label>
-                  </div>
+                <div class="mx-2 mb-3 font-sm">    
+                <div class="simple-select w-50">
+                  <multiselect
+                    v-model="viewList"
+                    :options="listOptions" 
+                    :searchable="false"   
+                    :close-on-select="false"
+                    :show-labels="false"         
+                    placeholder="Filter by Task Status"     
+                    >
+                  <template slot="singleLabel">
+                    <div class="d-flex">
+                    <span class='select__tag-name'>{{viewList}}</span>
+                    </div>
+                  </template>
+                </multiselect>  
+                </div>     
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+                      <input type="checkbox" class="form-check-input" v-model="C_myTasks"><span><i class="fas fa-user mr-1"></i></span>My Tasks
                     </label>
                   </div>
                   <div class="form-check my-1">
                     <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
+                      <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"><span><i class="fas fa-eye mr-1"></i></span>On Watch
+                    </label>
+                  </div>
+                  <div class="form-check my-4 pl-0">
+                    <label class="form-check-label text-primary">
+                     <h5> Total: {{filteredTasks.length}}</h5>
                     </label>
                   </div>
                 </div>
               </div>
 
               <div v-if="currentTab === 'issues'">
-                <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
+                <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
                       v-model="C_issueTypeFilter"
@@ -113,35 +114,37 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 my-3 font-sm">
-                  <div class="form-check my-1 float-right">
-                    <label class="form-check-label text-primary">
-                      Total: {{filteredIssues.length}}
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label class="form-check-label">
-                      <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-                    </label>
-                  </div>
+               <div class="mx-2 mb-3 font-sm">
+                  <div class="simple-select w-50">
+                  <multiselect
+                    v-model="viewList"
+                    :options="listOptions" 
+                    :searchable="false"   
+                    :close-on-select="false"
+                    :show-labels="false"         
+                    placeholder="Filter by Issue Status"     
+                    >
+                    <template slot="singleLabel">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{viewList}}</span>
+                        </div>
+                    </template>
+                  </multiselect>     
+                  </div>   
+                 
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issues
+                      <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
                     </label>
                   </div>
                   <div class="form-check my-1">
                     <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
+                      <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues"><span><i class="fas fa-eye mr-1"></i></span>On Watch
+                    </label>
+                  </div>
+                  <div class="form-check my-4 pl-0">
+                    <label class="form-check-label text-primary">
+                      <h5>Total: {{filteredIssues.length}}</h5>
                     </label>
                   </div>
                 </div>
@@ -208,7 +211,8 @@
         expanded: {
           id: ''
         },
-        viewList: 'active',
+        viewList: 'active',    
+        listOptions: ['active','all', 'completed'],              
         currentFacility: {},
         currentFacilityGroup: {},
         expandFilter: false
