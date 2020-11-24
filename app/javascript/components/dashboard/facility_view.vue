@@ -208,7 +208,7 @@
     }
     .center-section {
       position: absolute;
-      box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
       border: 1px solid #383838;
       border-radius: 4px;
       padding: 10px;

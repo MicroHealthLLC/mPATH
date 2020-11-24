@@ -59,54 +59,56 @@
             </multiselect>
           </div>
         </div>
-        <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-light" @click.prevent="reportNew">Add Issue</button>
+      
       </div>
-      <div class="mx-2 mt-3 d-flex font-sm">
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-          </label>
-        </div>
-        <div class="form-check-inline ml-auto mr-0">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">My Issue
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">On Watch
-          </label>
-          <label class="form-check-label ml-2 text-primary">
-            Total: {{filteredIssues.length}}
-          </label>
+      <div class="mr-2 mt-1 d-flex font-sm w-100">
+        <div class="simple-select w-50">
+          <multiselect
+            v-model="viewList"
+            :options="listOptions" 
+            :searchable="false"   
+            :close-on-select="false"
+            :show-labels="false"         
+            placeholder="Filter by Issue Status"     
+            >
+              <template slot="singleLabel">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{viewList}}</span>
+                  </div>
+                </template>
+            </multiselect>     
+        </div>   
+        <div class="form-check-inline w-50 ml-1">
+            <label class="form-check-label ml-4">
+              <input type="checkbox" class="form-check-input" v-model="C_myIssues">
+              <i class="fas fa-user mr-1"></i>My Issue
+            </label>
+            <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
+              <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
+              <i class="fas fa-eye mr-1"></i>On Watch
+            </label>           
         </div>
       </div>
-      <div class="mt-1">
-        <hr>
+      <div class="mt-3">
+          <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-primary" @click.prevent="reportNew"><i class="fas fa-plus-circle"></i>Add Issue</button>
+       
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <button
             @click="download"
             id="printBtn"
-            class="btn btn-sm btn-dark m-2"
-            style="font-size:.70rem" >
-            EXPORT TO PDF
+            class="btn btn-sm btn-outline-dark exportBtn">
+            Export to PDF
           </button>
            <button
             disabled
             id="printBtn"
-            class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
-            style="font-size:.70rem" >
-            EXPORT TO EXCEL
+            class="btn btn-sm btn-outline-dark ml-2">
+            Export to Excel
           </button>
+          <label class="form-check-label mr-2 mt-2 text-primary total">
+            <h5>Total: {{filteredIssues.length}}</h5>
+          </label>
           <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
@@ -185,7 +187,8 @@
       return {
         loading: true,
         newIssue: false,
-        viewList: 'active',
+        viewList: 'active',       
+        listOptions: ['active','all', 'completed'],   
         currentIssue: null,
         now: new Date().toISOString()
       }
@@ -348,13 +351,21 @@
   .issues-index {
     height: 465px;
   }
+  .exportBtn {
+    margin-left: 140px;   
+  }
   .new-issue-btn {
-    width: 20%;
-    height: max-content;
+    width: 100px; 
+    position: absolute;    
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);     
   }
   #issueHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
+  }
+  .total {   
+    float: right;
+    text-align: right;
   }
 </style>

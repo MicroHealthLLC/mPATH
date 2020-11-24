@@ -1,8 +1,8 @@
 <template>
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-3 mx-2">
-        <div class="simple-select w-100">
+      <div class="d-flex align-item-center justify-content-between mb-3">
+        <div class="simple-select w-70 mr-1">        
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -21,51 +21,50 @@
             </template>
           </multiselect>
         </div>
-        <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button>
+        <div class="simple-select w-50">
+            <multiselect
+          v-model="viewList"
+          :options="listOptions" 
+          :searchable="false"   
+          :close-on-select="false"
+          :show-labels="false"         
+          placeholder="Filter by Task Status"     
+          >
+           <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>  
+        </div>       
       </div>
-      <div class="mx-2 my-3 d-flex font-sm">
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="active" name="listoption">Active
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" value="completed" name="listoption">Completed
-          </label>
-        </div>
-        <div class="form-check-inline mr-2">
-          <label class="form-check-label">
-            <input type="radio" class="form-check-input" v-model="viewList" name="listoption" value="all">All
-          </label>
-        </div>
+      <div class="my-3 d-flex font-sm">        
         <div class="form-check-inline ml-auto mr-0">
           <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks">My Tasks
+            <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">On Watch
-          </label>
-          <label class="form-check-label ml-2 text-primary">
-            Total: {{filteredTasks.length}}
-          </label>
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
+          </label>        
         </div>
       </div>
+       <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-dark m-2"
-          style="font-size:.70rem" >
-          EXPORT TO PDF
+          class="btn btn-sm btn-outline-dark mr-1 exportBtn">
+          Export to PDF
         </button>
         <button
           disabled
           id="printBtn"
-          class="btn btn-sm btn-outline-dark ml-1 mt-2 mb-2"
-          style="font-size:.70rem" >
-          EXPORT TO EXCEL
+          class="btn btn-sm btn-outline-dark">
+         Export to Excel
         </button>
+          <label class="form-check-label ml-2 mt-1 text-primary" id="total">
+            <h5>Total: {{filteredTasks.length}}</h5>
+          </label>
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
@@ -80,7 +79,7 @@
           @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>
-      <p v-else class="text-danger m-3">No tasks found..</p>
+      <h6 v-else class="text-danger alt-text ml-2">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
 
@@ -142,6 +141,7 @@
     data() {
       return {
         viewList: 'active',
+        listOptions: ['active','all', 'completed'],       
         now: new Date().toISOString()
       }
     },
@@ -255,9 +255,21 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn {
-    height: max-content;
-    width: 20%;
+  .new-tasks-btn {    
+    width: 100px;
+    position: absolute;    
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);      
+  }
+  .exportBtn {
+    margin-left: 135px;
+  }
+  #total {
+    float: right;
+    margin-right: 0;
+    text-align: right;
+  }
+  .multiselect {
+    border: #1d2124 !important;
   }
   #taskHover:hover {
     cursor: pointer;
@@ -266,5 +278,9 @@
   }
   tfoot {
     text-align: right !important;
+  }
+  .alt-text {
+    position: relative; 
+    margin-top: 80px !important;    
   }
 </style>
