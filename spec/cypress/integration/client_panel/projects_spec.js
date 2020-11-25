@@ -10,8 +10,13 @@ describe('Projects List', function() {
   })
 
   it('Open a particular project', function() {
-    cy.get('[data-cy=project_list_items]').first().click()
-    cy.get('#facility_sidebar').contains('Facility Manager')
+    cy.open_project()
+    cy.contains('Facility Project Status')
+    cy.logout()
+  })
+
+  it('Open a facility of a project', function() {
+    cy.open_facility()
     cy.logout()
   })
 })

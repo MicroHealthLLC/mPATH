@@ -16,7 +16,7 @@
           <div v-show="expanded.id == group.id" class="ml-2">
             <div v-for="item in facilityGroupFacilities(group)">
               <div class="d-flex align-items-center expandable" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
-              <h6 class="facility-header">{{item.facility.facilityName}}</h6>
+              <h6 class="facility-header" data-cy="facilities">{{item.facility.facilityName}}</h6>
               </div>
             </div>
           </div>

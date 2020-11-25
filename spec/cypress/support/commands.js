@@ -14,4 +14,17 @@ Cypress.Commands.add("logout", () => {
   cy.contains('You need to sign in before continuing.')
 })
 
-// Ready state to run the tests
+// Open first Project
+Cypress.Commands.add("open_project", () => {
+  cy.get('[data-cy=project_list_items]').first().click()
+  cy.wait(500)
+  cy.get('#facility_sidebar').contains('Facility Manager')
+})
+
+// Open first Facility of a project
+Cypress.Commands.add("open_facility", () => {
+  cy.open_project()
+  cy.get('[data-cy=facilities]').first().click()
+  cy.wait(50)
+  cy.contains('Facility Summary')
+})
