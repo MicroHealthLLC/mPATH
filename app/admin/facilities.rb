@@ -180,7 +180,7 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :assign_due_date_and_status, if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
+  batch_action :"Assign Project, Duedate and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
     "Project": Project.pluck(:name, :id),
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
