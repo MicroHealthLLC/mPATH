@@ -79,11 +79,11 @@
             </multiselect>     
         </div>   
         <div class="form-check-inline w-50 ml-1">
-            <label class="form-check-label ml-4">
+            <label class="form-check-label ml-3">
               <input type="checkbox" class="form-check-input" v-model="C_myIssues">
               <i class="fas fa-user mr-1"></i>My Issue
             </label>
-            <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
+            <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
               <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
               <i class="fas fa-eye mr-1"></i>On Watch
             </label>           

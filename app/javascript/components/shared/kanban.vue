@@ -100,7 +100,7 @@ export default {
     border-radius: 3px;
     background: #fff;
     border: none !important;
-    border-top: solid 8px #41b883 !important;
+    border-top: solid 8px #17a2b8 !important;
     padding: 6px;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;  
   }
@@ -123,9 +123,9 @@ export default {
   .overflow-x-auto {
     overflow-x: auto;
   }
-  .kan-col {
-    background-color: #ededed !important;    
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);    
+  .kan-col {   
+    background-color: #fafafa;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23); 
   }
   .badge {
     display: flex;
@@ -133,10 +133,10 @@ export default {
     cursor: pointer;
     padding: 5px;
     transition: auto;
-    color: #fff;
+    color: #ffffff;
     padding: 5px;
     font-size: 1rem;
-    background-color: #41b883;
+    background-color: #ffa500;;
     justify-content: center;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
     

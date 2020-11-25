@@ -3,7 +3,7 @@
     <div class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h3 class="f-head">{{DV_facility.facilityName}}</h3>
+        <h4 class="f-head">{{DV_facility.facilityName}}</h4>
       </div>
       <div class="facility-tab mb-4">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />
