@@ -94,7 +94,8 @@
       ]),
       ...mapActions([
         'taskDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedTasks'
       ]),
       deleteTask() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
@@ -140,7 +141,7 @@
           if (!confirm) {return}
         }
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.$emit('toggle-watched', this.DV_task)
+        this.updateWatchedTasks(this.DV_task)
       },
       updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})

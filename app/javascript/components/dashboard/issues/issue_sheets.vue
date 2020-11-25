@@ -94,7 +94,8 @@
       ]),
       ...mapActions([
         'issueDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedIssues'
       ]),
       editIssue() {
         if (this.fromView == 'map_view') {
@@ -110,7 +111,7 @@
         }
       },
       deleteIssue() {
-        var confirm = window.confirm(`Are you sure, you want to delete this issue?`)
+        let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
         if (!confirm) {return}
         this.issueDeleted(this.DV_issue)
       },
@@ -140,7 +141,7 @@
           if (!confirm) {return}
         }
         this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
-        this.$emit('toggle-watch-issue', this.DV_issue)
+        this.updateWatchedIssues(this.DV_issue)
       },
       updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
