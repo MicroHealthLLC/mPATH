@@ -17,7 +17,7 @@
           <input type="text" class="form-control form-control-sm" placeholder="Search notes.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
         </div>
         <div v-if="_isallowed('write')">
-          <button @click.stop="addNewNote" class="btn btn-sm btn-primary"><i class="fas fa-plus-circle"></i>Add Note</button>
+          <button @click.stop="addNewNote" class="btn btn-sm btn-primary ml-1"><i class="fas fa-plus-circle"></i>Add Note</button>
         </div>
       </div>
       <div class="form-check-inline justify-content-end w-100 mb-2 font-sm">

@@ -1,10 +1,11 @@
 <template>
   <div id="members">   
-       <div class="container mt-4">
+      <div class="container mt-4">
+      <h3 class="mt-3 mb-1"><span><i class="fas fa-users mr-1"></i></span>Team</h3>
       <button @click="download" 
       id="printBtn" 
       class="btn btn-sm btn-dark mt-1 mr-1 mb-1"
-      style="font-size:.70rem" >EXPORT TO PDF</button>
+      style="font-size:.70rem">EXPORT TO PDF</button>
        <button @click="tableToExcel('table', 'Team Members')"
        class="btn btn-sm btn-outline-dark m-1"
        id="printBtn" 
@@ -17,8 +18,8 @@
               <col class="twenty" />              
               <col class="fifteen" />
               <col class="twenty" />
-              <col class="twenty" />            
-              <col class="twenty" />         
+              <col class="twenty-five" />            
+              <col class="fifteen" />         
              </colgroup>    
              <tr class="tableHead">
               <th></th>
@@ -89,7 +90,6 @@
 </script>
 
 <style lang="scss">
-
  table {
     table-layout: fixed ;
     width: 100% ;
@@ -109,6 +109,9 @@
   }
   .twenty {
     width: 20%;
+  }
+  .twenty-five {
+    width: 25%;
   }
   td {
     overflow-wrap: break-word !important;
