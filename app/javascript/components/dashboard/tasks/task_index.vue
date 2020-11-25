@@ -2,7 +2,7 @@
   <div id="tasks-index" class="mt-3">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-3">
-        <div class="simple-select w-70 mr-1">        
+        <div class="simple-select w-70 mr-1">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -24,31 +24,31 @@
         <div class="simple-select w-50">
             <multiselect
           v-model="viewList"
-          :options="listOptions" 
-          :searchable="false"   
+          :options="listOptions"
+          :searchable="false"
           :close-on-select="false"
-          :show-labels="false"         
-          placeholder="Filter by Task Status"     
+          :show-labels="false"
+          placeholder="Filter by Task Status"
           >
            <template slot="singleLabel">
               <div class="d-flex">
                 <span class='select__tag-name'>{{viewList}}</span>
               </div>
             </template>
-          </multiselect>  
-        </div>       
+          </multiselect>
+        </div>
       </div>
-      <div class="my-3 d-flex font-sm">        
+      <div class="my-3 d-flex font-sm">
         <div class="form-check-inline ml-auto mr-0">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label>        
+          </label>
         </div>
       </div>
-       <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle"></i>Add Task</button>
+       <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
           @click="download"
@@ -141,7 +141,7 @@
     data() {
       return {
         viewList: 'active',
-        listOptions: ['active','all', 'completed'],       
+        listOptions: ['active','all', 'completed'],
         now: new Date().toISOString()
       }
     },
@@ -255,10 +255,10 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn {    
+  .new-tasks-btn {
     width: 100px;
-    position: absolute;    
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);      
+    position: absolute;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .exportBtn {
     margin-left: 135px;
@@ -280,7 +280,7 @@
     text-align: right !important;
   }
   .alt-text {
-    position: relative; 
-    margin-top: 80px !important;    
+    position: relative;
+    margin-top: 80px !important;
   }
 </style>

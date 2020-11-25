@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-9">
             <div>
-              <div class="mb-1 d-flex font-sm">             
+              <div class="mb-1 d-flex font-sm">
                <h6> {{issue.title}}</h6>
                 <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
               </div>
@@ -50,10 +50,7 @@
           </div>
           <div class="col-md-3 mt-2">
             <div class="t_actions my-2">
-              <!-- <span v-if="_isallowed('delete')" class="font-sm delete-action" @click.stop="deleteIssue">
-                <i class="fas fa-trash-alt"></i>
-              </span> -->
-              <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent.stop="toggleWatched">
+              <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action clickable" @click.prevent.stop="toggleWatched">
                 <span v-show="DV_issue.watched" class="check_box"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box"><i class="far fa-square"></i></span>
                 <span class="text-danger"><i class="fa fa-exclamation"></i></span><small> On Watch</small>
@@ -160,7 +157,8 @@
       ]),
       ...mapActions([
         'issueDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedIssues'
       ]),
       editIssue() {
         if (this.fromView == 'map_view') {
@@ -176,7 +174,7 @@
         }
       },
       deleteIssue() {
-        var confirm = window.confirm(`Are you sure, you want to delete this issue?`)
+        let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
         if (!confirm) {return}
         this.issueDeleted(this.DV_issue)
       },
@@ -202,11 +200,11 @@
       },
       toggleWatched() {
         if (this.DV_issue.watched) {
-          var confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
+          let confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
           if (!confirm) {return}
         }
         this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
-        this.$emit('toggle-watch-issue', this.DV_issue)
+        this.updateWatchedIssues(this.DV_issue)
       },
       updateRelatedTaskIssue(task) {
         this.onCloseForm()
@@ -276,7 +274,7 @@
     z-index: 10000001;
   }
   .issue_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-    min-width: 30vw;
+    min-width: 40vw;
     max-height: 80vh;
     .sweet-content {
       padding-top: 30px;

@@ -12,13 +12,6 @@
       </div>
     </div>
     <div v-else-if="from != 'manager_view'">
-      <!-- <button
-        class="btn btn-sm btn-link float-right"
-        style="margin-top:-20px"
-        @click.prevent.stop="showDetails=true"
-        >
-        back
-      </button> -->
       <task-form
         :facility="facility"
         :task="currentTask"

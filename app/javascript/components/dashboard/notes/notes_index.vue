@@ -9,15 +9,17 @@
       ></notes-form>
     </div>
     <div v-else>
-      <div class="mb-4 d-flex mx-2" :class="{'align-items-center justify-content-between': _isallowed('write')}">
-        <div class="input-group" :class="{'search-tab': _isallowed('write')}">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+      <div class="mb-4 row" :class="{'align-items-center justify-content-between': _isallowed('write')}">
+        <div class="col">
+          <div class="input-group" :class="{'search-tab': _isallowed('write')}">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="text" class="form-control form-control-sm" placeholder="Search notes.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
           </div>
-          <input type="text" class="form-control form-control-sm" placeholder="Search notes.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
         </div>
-        <div v-if="_isallowed('write')">
-          <button @click.stop="addNewNote" class="btn btn-sm btn-primary ml-1"><i class="fas fa-plus-circle"></i>Add Note</button>
+        <div class="col-3 px-0" v-if="_isallowed('write')">
+          <button @click.prevent="addNewNote" class="btn btn-sm btn-primary ml-2"><i class="fas fa-plus-circle mr-2"></i>Add Note</button>
         </div>
       </div>
       <div class="form-check-inline justify-content-end w-100 mb-2 font-sm">
@@ -116,8 +118,7 @@
         handler: function(value) {
           this.DV_facility = Object.assign({}, value)
           this.loading = true
-        },
-        deep: true
+        }, deep: true
       }
     }
   }
@@ -129,8 +130,5 @@
   }
   #notes-index {
     height: 500px;
-  }
-  .search-tab {
-    width: 80%;
   }
 </style>

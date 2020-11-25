@@ -37,25 +37,24 @@
                       </template>
                     </multiselect>
                   </div>
-                  <!-- <button class="new-tasks-btn btn btn-sm btn-light ml-2" @click.prevent="addNewTask">Add Task</button> -->
                 </div>
-                <div class="mx-2 mb-3 font-sm">    
-                <div class="simple-select w-50">
-                  <multiselect
-                    v-model="viewList"
-                    :options="listOptions" 
-                    :searchable="false"   
-                    :close-on-select="false"
-                    :show-labels="false"         
-                    placeholder="Filter by Task Status"     
-                    >
-                  <template slot="singleLabel">
-                    <div class="d-flex">
-                    <span class='select__tag-name'>{{viewList}}</span>
-                    </div>
-                  </template>
-                </multiselect>  
-                </div>     
+                <div class="mx-2 mb-3 font-sm">
+                  <div class="simple-select w-50">
+                    <multiselect
+                      v-model="viewList"
+                      :options="listOptions"
+                      :searchable="false"
+                      :close-on-select="false"
+                      :show-labels="false"
+                      placeholder="Filter by Task Status"
+                      >
+                      <template slot="singleLabel">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{viewList}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" v-model="C_myTasks"><span><i class="fas fa-user mr-1"></i></span>My Tasks
@@ -114,24 +113,24 @@
                     </multiselect>
                   </div>
                 </div>
-               <div class="mx-2 mb-3 font-sm">
+                <div class="mx-2 mb-3 font-sm">
                   <div class="simple-select w-50">
-                  <multiselect
-                    v-model="viewList"
-                    :options="listOptions" 
-                    :searchable="false"   
-                    :close-on-select="false"
-                    :show-labels="false"         
-                    placeholder="Filter by Issue Status"     
-                    >
-                    <template slot="singleLabel">
+                    <multiselect
+                      v-model="viewList"
+                      :options="listOptions"
+                      :searchable="false"
+                      :close-on-select="false"
+                      :show-labels="false"
+                      placeholder="Filter by Issue Status"
+                      >
+                      <template slot="singleLabel">
                         <div class="d-flex">
                           <span class='select__tag-name'>{{viewList}}</span>
                         </div>
-                    </template>
-                  </multiselect>     
-                  </div>   
-                 
+                      </template>
+                    </multiselect>
+                  </div>
+
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
@@ -172,6 +171,7 @@
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
+              @on-add-new="handleAddNew"
             ></kanban>
           </div>
           <div v-else class="center-section text-center">
@@ -181,6 +181,33 @@
         </div>
       </div>
     </div>
+
+    <sweet-modal
+      class="new_form_modal"
+      ref="newFormModal"
+      :hide-close-button="true"
+      :blocking="true"
+      >
+      <div v-if="('id' in currentFacility) && fixedStageId" class="w-100">
+        <task-form
+          v-if="currentTab === 'tasks'"
+          :facility="currentFacility"
+          :fixed-stage="fixedStageId"
+          @on-close-form="onCloseForm"
+          @task-created="handleNewTask"
+          class="form-inside-modal"
+        ></task-form>
+
+        <issue-form
+          v-if="currentTab === 'issues'"
+          :facility="currentFacility"
+          :fixed-stage="fixedStageId"
+          @issue-created="handleNewIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></issue-form>
+      </div>
+    </sweet-modal>
   </div>
 </template>
 
@@ -188,11 +215,14 @@
   import Kanban from './../shared/kanban'
   import CustomTabs from './../shared/custom-tabs'
   import FacilitySidebar from './facilities/facility_sidebar'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import IssueForm from "./issues/issue_form"
+  import TaskForm from "./tasks/task_form"
+  import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'KanbanView',
-    components: {Kanban, CustomTabs, FacilitySidebar},
+    components: {Kanban, CustomTabs, FacilitySidebar, IssueForm, TaskForm, SweetModal},
     data() {
       return {
         tabs: [
@@ -211,8 +241,9 @@
         expanded: {
           id: ''
         },
-        viewList: 'active',    
-        listOptions: ['active','all', 'completed'],              
+        fixedStageId: null,
+        viewList: 'active',
+        listOptions: ['active','all', 'completed'],
         currentFacility: {},
         currentFacilityGroup: {},
         expandFilter: false
@@ -228,7 +259,12 @@
         'setOnWatchFilter',
         'setIssueSeverityFilter',
         'setIssueTypeFilter',
-        'setTaskTypeFilter'
+        'setTaskTypeFilter',
+        'updateTasksHash',
+        'updateIssuesHash'
+      ]),
+      ...mapActions([
+        'taskUpdated'
       ]),
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'tasks'
@@ -246,6 +282,24 @@
           this.currentFacilityGroup = group
         }
         this.currentFacility = {}
+      },
+      handleAddNew(stage) {
+        this.fixedStageId = stage.id
+        this.$refs.newFormModal && this.$refs.newFormModal.open()
+      },
+      onCloseForm() {
+        this.fixedStageId = null
+        this.$refs.newFormModal && this.$refs.newFormModal.close()
+      },
+      handleNewTask(task) {
+        let cb = () => this.updateTasksHash({task: task})
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.onCloseForm()
+      },
+      handleNewIssue(issue) {
+        let cb = () => this.updateIssuesHash({issue: issue})
+        this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.onCloseForm()
       },
     },
     computed: {
@@ -472,5 +526,29 @@
   }
   .simple-select /deep/ .multiselect {
     width: 230px;
+  }
+  .new_form_modal.sweet-modal-overlay {
+    z-index: 10000001;
+  }
+  .new_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+    min-width: 40vw;
+    max-height: 80vh;
+    .sweet-content {
+      padding-top: 30px;
+      text-align: unset;
+    }
+    .modal_close_btn {
+      display: flex;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
+    }
   }
 </style>
