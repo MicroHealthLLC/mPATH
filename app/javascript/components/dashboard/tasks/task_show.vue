@@ -9,7 +9,7 @@
     <div v-if="!loading" class="mx-3 mb-3 mt-2 py-1" @click.prevent="editTask">
       <div class="row">
         <div class="col-md-9">
-          <div class="font-sm d-flex mb-1">          
+          <div class="font-sm d-flex mb-1">
            <h6>{{task.text}}</h6>
             <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
           </div>
@@ -42,10 +42,7 @@
         </div>
         <div class="col-md-3 mt-2">
           <div class="t_actions my-3 mr-0">
-            <!-- <span v-if="_isallowed('delete')" class="delete-action" @click.prevent="deleteTask">
-              <i class="fas fa-trash-alt" style="float:right"></i>
-            </span> -->
-            <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action" @click.prevent.stop="toggleWatched">
+            <span v-if="_isallowed('write') && viewPermit('watch_view', 'read')" class="watch_action clickable" @click.prevent.stop="toggleWatched">
               <span v-show="DV_task.watched" class="check_box"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box"><i class="far fa-square"></i></span>
               <span class="text-danger"><i class="fa fa-exclamation"></i></span><small> On Watch</small>
@@ -83,9 +80,6 @@
       :blocking="true"
       >
       <div v-if="has_task" class="w-100">
-        <!-- <div class="modal_close_btn" @click="onCloseForm">
-          <i class="fa fa-times"></i>
-        </div> -->
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
@@ -147,7 +141,8 @@
       ]),
       ...mapActions([
         'taskDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedTasks'
       ]),
       deleteTask() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
@@ -193,7 +188,7 @@
           if (!confirm) {return}
         }
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.$emit('toggle-watched', this.DV_task)
+        this.updateWatchedTasks(this.DV_task)
       },
       updateRelatedTaskIssue(task) {
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
@@ -264,8 +259,7 @@
     z-index: 10000001;
   }
   .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-    min-width: 30vw;
-    /*margin-top: 65px;*/
+    min-width: 40vw;
     max-height: 80vh;
     .sweet-content {
       padding-top: 30px;

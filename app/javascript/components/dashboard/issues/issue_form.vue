@@ -132,7 +132,7 @@
           :searchable="false"
           select-label="Select"
           deselect-label="Enter to remove"
-          :disabled="!_isallowed('write')"
+          :disabled="!_isallowed('write') || !!fixedStage"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -352,7 +352,7 @@
 
   export default {
     name: 'IssueForm',
-    props: ['facility', 'issue', 'task'],
+    props: ['facility', 'issue', 'task', 'fixedStage'],
     components: {AttachmentInput},
     data() {
       return {
@@ -372,8 +372,11 @@
     mounted() {
       if (!_.isEmpty(this.issue)) {
         this.loadIssue(this.issue)
-      } else  {
+      } else {
         this.loading = false
+      }
+      if (this.fixedStage) {
+        this.selectedIssueStage = this.issueStages.find(t => t.id === this.fixedStage)
       }
     },
     methods: {
@@ -427,18 +430,18 @@
         this.DV_issue.issueFiles = _files
       },
       deleteIssue() {
-        var confirm = window.confirm(`Are you sure you want to delete this issue?`)
+        let confirm = window.confirm(`Are you sure you want to delete this issue?`)
         if (!confirm) {return}
         this.issueDeleted(this.DV_issue)
         this.cancelIssueSave()
       },
       deleteFile(file) {
         if (!file) return;
-        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
+        let confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
-          var index = this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid)
+          let index = this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid)
           Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
           this.destroyedFiles.push(file)
         }
@@ -458,7 +461,7 @@
           }
 
           this.loading = true
-          var formData = new FormData()
+          let formData = new FormData()
           formData.append('issue[title]', this.DV_issue.title)
           formData.append('issue[due_date]', this.DV_issue.dueDate)
           formData.append('issue[start_date]', this.DV_issue.startDate)
@@ -471,7 +474,7 @@
           formData.append('issue[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
           if (this.DV_issue.userIds.length) {
-            for (var u_id of this.DV_issue.userIds) {
+            for (let u_id of this.DV_issue.userIds) {
               formData.append('issue[user_ids][]', u_id)
             }
           }
@@ -480,7 +483,7 @@
           }
 
           if (this.DV_issue.subTaskIds.length) {
-            for (var u_id of this.DV_issue.subTaskIds) {
+            for (let u_id of this.DV_issue.subTaskIds) {
               formData.append('issue[sub_task_ids][]', u_id)
             }
           }
@@ -489,7 +492,7 @@
           }
 
           if (this.DV_issue.subIssueIds.length) {
-            for (var u_id of this.DV_issue.subIssueIds) {
+            for (let u_id of this.DV_issue.subIssueIds) {
               formData.append('issue[sub_issue_ids][]', u_id)
             }
           }
@@ -497,12 +500,12 @@
             formData.append('issue[sub_issue_ids][]', [])
           }
 
-          for (var i in this.DV_issue.checklists) {
-            var check = this.DV_issue.checklists[i]
+          for (let i in this.DV_issue.checklists) {
+            let check = this.DV_issue.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (var key in check) {
+            for (let key in check) {
               if (key === 'user') key = 'user_id'
-              var value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+              let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               formData.append(`issue[checklists_attributes][${i}][${key}]`, value)
             }
           }
@@ -516,15 +519,15 @@
             }
           }
 
-          for (var file of this.DV_issue.issueFiles) {
+          for (let file of this.DV_issue.issueFiles) {
             if (!file.id) {
               formData.append('issue[issue_files][]', file)
             }
           }
 
-          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues.json`
-          var method = "POST"
-          var callback = "issue-created"
+          let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues.json`
+          let method = "POST"
+          let callback = "issue-created"
 
           if (this.issue && this.issue.id) {
             url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}.json`
@@ -555,9 +558,9 @@
         this.DV_issue.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
       destroyNote(note) {
-        var confirm = window.confirm(`Are you sure, you want to delete this update note?`)
+        let confirm = window.confirm(`Are you sure, you want to delete this update note?`)
         if (!confirm) return;
-        var i = note.id ? this.DV_issue.notes.findIndex(n => n.id === note.id) : this.DV_issue.notes.findIndex(n => n.guid === note.guid)
+        let i = note.id ? this.DV_issue.notes.findIndex(n => n.id === note.id) : this.DV_issue.notes.findIndex(n => n.guid === note.guid)
         Vue.set(this.DV_issue.notes, i, {...note, _destroy: true})
       },
       noteBy(note) {
@@ -577,17 +580,17 @@
         this.DV_issue.checklists.push({text: '', checked: false})
       },
       destroyCheck(check, index) {
-        var confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
+        let confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
         if (!confirm) return;
 
-        var i = check.id ? this.DV_issue.checklists.findIndex(c => c.id === check.id) : index
+        let i = check.id ? this.DV_issue.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_issue.checklists, i, {...check, _destroy: true})
       },
       calculateProgress(checks=null) {
         try {
           if (!checks) checks = this.DV_issue.checklists
-          var checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
-          var total = _.filter(checks, v => !v._destroy && v.text.trim()).length
+          let checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
+          let total = _.filter(checks, v => !v._destroy && v.text.trim()).length
           this.DV_issue.progress = Number((((checked / total) * 100) || 0).toFixed(2))
         } catch(err) {
           this.DV_issue.progress = 0

@@ -103,7 +103,7 @@
           :searchable="false"
           select-label="Select"
           deselect-label="Enter to remove"
-          :disabled="!_isallowed('write')"
+          :disabled="!_isallowed('write') || !!fixedStage"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -328,7 +328,7 @@
 
   export default {
     name: 'TaskForm',
-    props: ['facility', 'task', 'title'],
+    props: ['facility', 'task', 'title', 'fixedStage'],
     components: {AttachmentInput},
     data() {
       return {
@@ -348,6 +348,9 @@
     mounted() {
       if (!_.isEmpty(this.task)) {
         this.loadTask(this.task)
+      }
+      if (this.fixedStage) {
+        this.selectedTaskStage = this.taskStages.find(t => t.id === this.fixedStage)
       }
       this.loading = false
       this._ismounted = true
@@ -379,7 +382,7 @@
         }
       },
       deleteTask() {
-        var confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
+        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
         this.cancelSave()
@@ -407,11 +410,11 @@
       },
       deleteFile(file) {
         if (!file) return;
-        var confirm = window.confirm(`Are you sure you want to delete attachment?`)
+        let confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
 
         if (file.uri) {
-          var index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
+          let index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
           Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
           this.destroyedFiles.push(file)
         }
@@ -433,7 +436,7 @@
           }
 
           this.loading = true
-          var formData = new FormData()
+          let formData = new FormData()
           formData.append('task[text]', this.DV_task.text)
           formData.append('task[due_date]', this.DV_task.dueDate)
           formData.append('task[start_date]', this.DV_task.startDate)
@@ -445,7 +448,7 @@
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
           if (this.DV_task.userIds.length) {
-            for (var u_id of this.DV_task.userIds) {
+            for (let u_id of this.DV_task.userIds) {
               formData.append('task[user_ids][]', u_id)
             }
           }
@@ -454,7 +457,7 @@
           }
 
           if (this.DV_task.subTaskIds.length) {
-            for (var u_id of this.DV_task.subTaskIds) {
+            for (let u_id of this.DV_task.subTaskIds) {
               formData.append('task[sub_task_ids][]', u_id)
             }
           }
@@ -463,7 +466,7 @@
           }
 
           if (this.DV_task.subIssueIds.length) {
-            for (var u_id of this.DV_task.subIssueIds) {
+            for (let u_id of this.DV_task.subIssueIds) {
               formData.append('task[sub_issue_ids][]', u_id)
             }
           }
@@ -471,12 +474,12 @@
             formData.append('task[sub_issue_ids][]', [])
           }
 
-          for (var i in this.DV_task.checklists) {
-            var check = this.DV_task.checklists[i]
+          for (let i in this.DV_task.checklists) {
+            let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (var key in check) {
+            for (let key in check) {
               if (key === 'user') key = 'user_id'
-              var value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+              let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
             }
           }
@@ -490,15 +493,15 @@
             }
           }
 
-          for (var file of this.DV_task.taskFiles) {
+          for (let file of this.DV_task.taskFiles) {
             if (!file.id) {
               formData.append('task[task_files][]', file)
             }
           }
 
-          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
-          var method = "POST"
-          var callback = "task-created"
+          let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
+          let method = "POST"
+          let callback = "task-created"
 
           if (this.task && this.task.id) {
             url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
@@ -532,9 +535,9 @@
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
       destroyNote(note) {
-        var confirm = window.confirm(`Are you sure you want to delete this update note?`)
+        let confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
-        var i = note.id ? this.DV_task.notes.findIndex(n => n.id === note.id) : this.DV_task.notes.findIndex(n => n.guid === note.guid)
+        let i = note.id ? this.DV_task.notes.findIndex(n => n.id === note.id) : this.DV_task.notes.findIndex(n => n.guid === note.guid)
         Vue.set(this.DV_task.notes, i, {...note, _destroy: true})
       },
       noteBy(note) {
@@ -545,10 +548,10 @@
         window.open(url, '_blank');
       },
       destroyCheck(check, index) {
-        var confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
+        let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
         if (!confirm) return;
 
-        var i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
+        let i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
       },
       disabledDueDate(date) {
@@ -560,8 +563,8 @@
       calculateProgress(checks=null) {
         try {
           if (!checks) checks = this.DV_task.checklists
-          var checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
-          var total = _.filter(checks, v => !v._destroy && v.text.trim()).length
+          let checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
+          let total = _.filter(checks, v => !v._destroy && v.text.trim()).length
           this.DV_task.progress = Number((((checked / total) * 100) || 0).toFixed(2))
         } catch(err) {
           this.DV_task.progress = 0

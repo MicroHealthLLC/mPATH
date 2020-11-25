@@ -5,9 +5,20 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col p-3 column-width mr-4"
+          class="rounded-lg kan-col p-3 column-width mx-3"
           >
-          <p class="badge"><span>{{column.title}}</span></p>
+          <div class="row mb-4">
+            <div class="col">
+              <div class="badge">
+                <span>{{column.title}}</span>
+              </div>
+            </div>
+            <div class="col-2 px-0">
+              <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
           <draggable :move="handleMove" @change="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
             <div
               :is="cardShow"
@@ -16,7 +27,7 @@
               :task="task"
               :issue="task"
               fromView="kanban_view"
-              class="mt-3 cursor-move task-card"
+              class="mt-3 task-card"
             ></div>
           </draggable>
         </div>
@@ -77,6 +88,9 @@ export default {
       if (this.kanbanType === 'tasks') this.updateWatchedTasks(task)
       else if (this.kanbanType === 'issues') this.updateWatchedIssues(task)
       this.movingSlot = ''
+    },
+    handleAddNew(stage) {
+      this.$emit('on-add-new', stage)
     }
   },
   computed: {
@@ -95,18 +109,18 @@ export default {
 };
 </script>
 
-<style scoped>
-  .task-card {   
+<style scoped lang="scss">
+  .task-card {
     border-radius: 3px;
+    cursor: move;
     background: #fff;
     border: none !important;
     border-top: solid 8px #17a2b8 !important;
     padding: 6px;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;  
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;
   }
   .kanban-draggable {
-    min-height: calc(100vh - 230px);   
-    
+    min-height: calc(100vh - 230px);
   }
   .column-width {
     min-width: 20rem;
@@ -123,25 +137,23 @@ export default {
   .overflow-x-auto {
     overflow-x: auto;
   }
-  .kan-col {   
+  .kan-col {
     background-color: #fafafa;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23); 
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
   }
   .badge {
     display: flex;
-    margin-bottom: 20px !important;
     cursor: pointer;
     padding: 5px;
     transition: auto;
     color: #ffffff;
-    padding: 5px;
     font-size: 1rem;
-    background-color: #ffa500;;
+    background-color: #ffa500;
     justify-content: center;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
-    
-  }
-  .cursor-move {
-    cursor: move;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    &.add {
+      background-color: #17a2b8;
+      width: 40px;
+    }
   }
 </style>
