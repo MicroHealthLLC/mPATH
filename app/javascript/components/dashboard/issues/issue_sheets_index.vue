@@ -294,6 +294,7 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
+        'issueUserFilter',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -307,9 +308,10 @@
         var severityIds = _.map(this.C_issueSeverityFilter, 'id')
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues) {
+          if (this.C_myIssues || this.issueUserFilter) {
             var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            valid  = valid && userIds.includes(this.$currentUser.id)
+            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
           if (this.C_onWatchIssues) {
             valid  = valid && issue.watched
@@ -331,6 +333,7 @@
           }
           return valid;
         })), ['dueDate'])
+
         return issues
       },
       C_issueTypeFilter: {

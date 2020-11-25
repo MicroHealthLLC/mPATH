@@ -218,19 +218,21 @@
         'taskTypeFilter',
         'myActionsFilter',
         'onWatchFilter',
+        'taskUserFilter',
         'taskTypes',
         'viewPermit'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
-      filteredTasks() {
-        var typeIds = _.map(this.C_taskTypeFilter, 'id')
-        var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
-          var valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (this.C_myTasks) {
-            var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            valid  = valid && userIds.includes(this.$currentUser.id)
+     filteredTasks() {
+        let typeIds = _.map(this.C_taskTypeFilter, 'id')
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
+          let valid = Boolean(task && task.hasOwnProperty('progress'))
+          if (this.C_myTasks || this.taskUserFilter) {
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
           }
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched

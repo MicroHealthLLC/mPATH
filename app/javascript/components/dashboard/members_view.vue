@@ -4,13 +4,13 @@
       <h3 class="mt-3 mb-1"><span><i class="fas fa-users mr-1"></i></span>Team</h3>
       <button @click="download" 
       id="printBtn" 
-      class="btn btn-sm btn-dark mt-1 mr-1 mb-1"
-      style="font-size:.70rem">EXPORT TO PDF</button>
+      class="btn btn-sm btn-outline-dark mt-1 mr-1 mb-1"
+      style="font-size:.70rem">Export to PDF</button>
        <button @click="tableToExcel('table', 'Team Members')"
        class="btn btn-sm btn-outline-dark m-1"
        id="printBtn" 
       style="font-size:.70rem"
-      >EXPORT TO EXCEL</button>         
+      >Export to Excel</button>         
       <div class="table-responsive-md">
         <table class="table teamTable table-sm table-bordered mt-2" ref="table" id="teamMembersList">        
              <colgroup>
