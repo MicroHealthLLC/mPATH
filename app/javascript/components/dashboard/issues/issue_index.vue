@@ -88,6 +88,14 @@
               <i class="fas fa-eye mr-1"></i>On Watch
             </label>
         </div>
+        <div class="mt-3">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
+          </div>
+        </div>
       </div>
       <div class="mt-3">
           <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-primary" @click.prevent="reportNew"><i class="fas fa-plus-circle mr-2"></i>Add Issue</button>
@@ -189,7 +197,8 @@
         viewList: 'active',
         listOptions: ['active','all', 'completed'],
         currentIssue: null,
-        now: new Date().toISOString()
+        now: new Date().toISOString(),
+        issuesQuery: ''
       }
     },
     mounted() {
@@ -278,6 +287,7 @@
       filteredIssues() {
         var typeIds = _.map(this.C_issueTypeFilter, 'id')
         var severityIds = _.map(this.C_issueSeverityFilter, 'id')
+        const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -290,6 +300,8 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          if (search_query) valid = valid && search_query.test(issue.title)
+
           switch (this.viewList) {
             case "active": {
               valid = valid && issue.progress < 100
