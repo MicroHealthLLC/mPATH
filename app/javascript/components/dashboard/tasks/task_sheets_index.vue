@@ -36,7 +36,13 @@
                 <span class='select__tag-name'>{{viewList}}</span>
               </div>
             </template>
-        </multiselect>  
+        </multiselect>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+          </div>
+          <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery">
+        </div>  
         </div>   
           <div class="form-check-inline mr-0" style="width:26%">
           <label class="form-check-label mx-2">
@@ -183,7 +189,8 @@
         listOptions: ['active','all', 'completed'],        
         paginate: ['filteredTasks'],
         tasks: Object,
-        now: new Date().toISOString()
+        now: new Date().toISOString(),
+        tasksQuery: ''
       }
     },
     methods: {
@@ -226,6 +233,7 @@
       },
       filteredTasks() {
         var typeIds = _.map(this.C_taskTypeFilter, 'id')
+        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           var valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks) {
@@ -236,6 +244,8 @@
             valid  = valid && task.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          if (search_query) valid = valid && search_query.test(task.text)
+
           switch (this.viewList) {
             case "active": {
               valid = valid && task.progress < 100
