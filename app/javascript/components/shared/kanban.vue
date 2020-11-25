@@ -115,7 +115,7 @@ export default {
     cursor: move;
     background: #fff;
     border: none !important;
-    border-top: solid 8px #17a2b8 !important;
+    border-top: solid 8px #ffa500 !important;
     padding: 6px;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;
   }
@@ -148,7 +148,7 @@ export default {
     transition: auto;
     color: #ffffff;
     font-size: 1rem;
-    background-color: #ffa500;
+    background-color: #17a2b8;
     justify-content: center;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
     &.add {
