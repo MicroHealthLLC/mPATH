@@ -8,7 +8,6 @@
         </div>
       </div>
     </div>
-
     <div class="row">
       <div class="col-md-7">
         <div class="row">
@@ -116,7 +115,6 @@
               <div v-if="sortedTasks.length > 0">
                 <div
                   class="p-1 watch-task-item"
-                  @click="onWatchedItem(task, 'TaskShow')"
                   v-for="(task, i) in sortedTasks"
                   :key="task.id"
                   >
@@ -179,7 +177,6 @@
                   v-for="(issue, i) in sortedIssues"
                   :key="issue.id"
                   class="p-1 watch-task-item"
-                  @click="onWatchedItem(issue, 'IssueShow')"
                   >
                   <issue-show
                     :class="{'b_border': !!on_watched.issues[i+1]}"
@@ -211,17 +208,18 @@
 </template>
 
 <script>
-  import Doughnut from './../shared/doughnut_chart'
-  import Stacked from './../shared/stacked_chart'
-  import Bar from './../shared/bar_chart'
-  import TaskShow from './../dashboard/tasks/task_show'
-  import IssueShow from './../dashboard/issues/issue_show'
   import {mapGetters, mapActions} from 'vuex'
   import {Timeline, DataSet} from "vis-timeline/standalone"
 
   export default {
     name: "ProjectWatchView",
-    components: {Doughnut, Stacked, Bar, TaskShow, IssueShow},
+    components: {
+      Doughnut: () => import('./../shared/doughnut_chart'),
+      Stacked: () => import('./../shared/stacked_chart'),
+      Bar: () => import('./../shared/bar_chart'),
+      TaskShow: () => import('./../dashboard/tasks/task_show'),
+      IssueShow: () => import('./../dashboard/issues/issue_show')
+    },
     data() {
       return {
         watchItem: null,
@@ -301,10 +299,10 @@
         return _.filter([...this.on_watched.tasks, ...this.on_watched.issues], t => t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       },
       watchedIssueTypes() {
-        var names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
-        var issueTypes = new Array
-        for (var type of this.issueTypes) {
-          var issues = _.filter(this.on_watched.issues, t => t.issueTypeId == type.id)
+        let names = this.issueTypeFilter && this.issueTypeFilter.length && _.map(this.issueTypeFilter, 'name')
+        let issueTypes = new Array
+        for (let type of this.issueTypes) {
+          let issues = _.filter(this.on_watched.issues, t => t.issueTypeId == type.id)
           issueTypes.push(
             {
               _id: type.id,
@@ -321,10 +319,10 @@
         return _.filter(this.watchedIssueTypes, i => i._display).length > 0
       },
       watchedTaskTypes() {
-        var names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
-        var taskTypes = new Array
-        for (var type of this.taskTypes) {
-          var tasks = _.filter(this.on_watched.tasks, t => t.taskTypeId == type.id)
+        let names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
+        let taskTypes = new Array
+        for (let type of this.taskTypes) {
+          let tasks = _.filter(this.on_watched.tasks, t => t.taskTypeId == type.id)
           taskTypes.push(
             {
               _id: type.id,
@@ -341,11 +339,11 @@
         return _.filter(this.watchedTaskTypes, t => t._display).length > 0
       },
       onWatchedTaskData() {
-        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
-        for (var type of this.watchedTaskTypes) {
+        let c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
+        for (let type of this.watchedTaskTypes) {
           if (!type._display) continue
-          var total = _.filter(this.filteredAllTasks, t => t.taskTypeId == type._id)
-          var tasks = _.filter(this.on_watched.tasks, t => t.taskTypeId == type._id)
+          let total = _.filter(this.filteredAllTasks, t => t.taskTypeId == type._id)
+          let tasks = _.filter(this.on_watched.tasks, t => t.taskTypeId == type._id)
           c_data.labels.push(type.name)
           c_data.datasets[0].data.push(tasks.length)
           c_data.datasets[1].data.push(total.length - tasks.length)
@@ -353,11 +351,11 @@
         return c_data
       },
       onWatchedIssueData() {
-        var c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
-        for (var type of this.watchedIssueTypes) {
+        let c_data = {labels: [], datasets: [{label: 'watched', backgroundColor: '#ef549a', data: [], maxBarThickness: 14}, {label: 'total', backgroundColor: '#34edfe', data: [], maxBarThickness: 14}]}
+        for (let type of this.watchedIssueTypes) {
           if (!type._display) continue
-          var total = _.filter(this.filteredAllIssues, t => t.issueTypeId == type._id)
-          var issues = _.filter(this.on_watched.issues, t => t.issueTypeId == type._id)
+          let total = _.filter(this.filteredAllIssues, t => t.issueTypeId == type._id)
+          let issues = _.filter(this.on_watched.issues, t => t.issueTypeId == type._id)
           c_data.labels.push(type.name)
           c_data.datasets[0].data.push(issues.length)
           c_data.datasets[1].data.push(total.length - issues.length)
@@ -365,9 +363,9 @@
         return c_data
       },
       watchedTaskUsers() {
-        var u_data = {labels: [], datasets: []}
-        for (var user of this.activeProjectUsers) {
-          var stat = this.getUserTaskInfo(user, 'tasks')
+        let u_data = {labels: [], datasets: []}
+        for (let user of this.activeProjectUsers) {
+          let stat = this.getUserTaskInfo(user, 'tasks')
           if (stat.count > 0) {
             u_data.datasets.push({
               _meta: {stat},
@@ -381,9 +379,9 @@
         return u_data
       },
       watchedIssueUsers() {
-        var u_data = {labels: [], datasets: []}
-        for (var user of this.activeProjectUsers) {
-          var stat = this.getUserTaskInfo(user, 'issues')
+        let u_data = {labels: [], datasets: []}
+        for (let user of this.activeProjectUsers) {
+          let stat = this.getUserTaskInfo(user, 'issues')
           if (stat.count > 0) {
             u_data.datasets.push({
               _meta: {stat},
@@ -403,10 +401,10 @@
         return this.watchedIssueUsers.datasets.length > 10 ? this.watchedIssueUsers.datasets.length * 10 : 100
       },
       timelineData() {
-        var data = []
-        for (var task of [...this.on_watched.issues, ...this.on_watched.tasks]) {
-          var _hash = {item: {...task}}
-          var is_task = task.hasOwnProperty('taskTypeId')
+        let data = []
+        for (let task of [...this.on_watched.issues, ...this.on_watched.tasks]) {
+          let _hash = {item: {...task}}
+          let is_task = task.hasOwnProperty('taskTypeId')
           _hash.id = is_task ? 'task_'+task.id : 'issue_'+task.id
           _hash.taskType = is_task ? task.taskType : task.issueType
           _hash.content = is_task ? task.text : task.title
@@ -433,18 +431,14 @@
         'updateWatchedTasks',
         'updateWatchedIssues'
       ]),
-      onWatchedItem(item, type) {
-        // this.watchItem = item
-        // this.watchType = type
-      },
       createTimeline() {
-        var container = document.getElementById('watch_task_timeline')
+        let container = document.getElementById('watch_task_timeline')
         this.timeline = new Timeline(container, new DataSet(this.timelineData), this.timelineOptions)
       },
       getUserTaskInfo(user, key) {
-        var tasks = _.filter(this.on_watched[key], t => t.userIds.includes(user.id))
-        var checklists = _.filter(_.compact(_.flatten(_.map(this.on_watched[key], 'checklists'))), t => t.userId == user.id)
-        var count = tasks.length + checklists.length
+        let tasks = _.filter(this.on_watched[key], t => t.userIds.includes(user.id))
+        let checklists = _.filter(_.compact(_.flatten(_.map(this.on_watched[key], 'checklists'))), t => t.userId == user.id)
+        let count = tasks.length + checklists.length
         return {tasks, checklists, count, type: _.startCase(key)}
       }
     },
@@ -472,10 +466,8 @@
     .d_abbr {
       position: relative;
       bottom: 25px;
-      /*left: 42%;*/
     }
   }
-
   .bar_chart {
     width: 400px;
     height: 100px;

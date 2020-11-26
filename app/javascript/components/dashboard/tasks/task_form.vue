@@ -38,7 +38,6 @@
         </button>
       </div>
      <div class="paperLook formTitle">
-      <!-- <h5 class="text-center formTitle mt-3">{{C_title}}</h5> -->
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -323,13 +322,14 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
-    components: {AttachmentInput},
+    components: {
+      AttachmentInput: () => import('./../../shared/attachment_input')
+    },
     data() {
       return {
         DV_task: this.INITIAL_TASK_STATE(),

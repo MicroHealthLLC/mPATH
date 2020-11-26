@@ -2,7 +2,7 @@
   <div id="facility-sheets">
     <div v-if="!loading">
       <div class="d-flex align-items-center my-2">
-       <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
         <h3 class="f-head">{{DV_facility.facilityName}}</h3>
       </div>
       <div class="facility-tab mb-4">
@@ -199,17 +199,17 @@
 
 <script>
   import http from './../../../common/http'
-  import NotesIndex from './../notes/notes_index'
-  import IssueSheetsIndex from './../issues/issue_sheets_index'
-  import TaskSheetsIndex from './../tasks/task_sheets_index'
-  import CustomTabs from './../../shared/custom-tabs'
-  import DetailShow from './detail_show'
   import {mapGetters, mapMutations} from 'vuex'
-
 
   export default {
     name: 'FacilitySheets',
-    components: {DetailShow, NotesIndex, IssueSheetsIndex, TaskSheetsIndex, CustomTabs},
+    components: {
+      DetailShow: () => import('./detail_show'),
+      NotesIndex: () => import('./../notes/notes_index'),
+      IssueSheetsIndex: () => import('./../issues/issue_sheets_index'),
+      TaskSheetsIndex: () => import('./../tasks/task_sheets_index'),
+      CustomTabs: () => import('./../../shared/custom-tabs')
+    },
     props: {
       facility: {
         default: null,
@@ -436,7 +436,7 @@
   }
   .custom-tab {
     background-color: #ededed !important;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .pg-content {
     width: 100%;

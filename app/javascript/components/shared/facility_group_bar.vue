@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">   
+  <div class="d-flex">
     <transition name="slide-fade">
       <div v-if="facilityGroupBar" id="facility_group-bar">
         <div class="r-header px-3">
@@ -56,6 +56,7 @@
     }
   }
 </script>
+
 <style scoped lang="scss">
   #facility_group-bar {
     padding: 10px;

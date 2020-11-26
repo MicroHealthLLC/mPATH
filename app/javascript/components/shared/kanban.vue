@@ -38,15 +38,13 @@
 
 <script>
 import Draggable from "vuedraggable"
-import TaskShow from './../dashboard/tasks/task_show'
-import IssueShow from './../dashboard/issues/issue_show'
 import {mapActions} from 'vuex'
 
 export default {
   name: "Kanban",
   components: {
-    TaskShow,
-    IssueShow,
+    TaskShow: () => import('./../dashboard/tasks/task_show'),
+    IssueShow: () => import('./../dashboard/issues/issue_show'),
     Draggable
   },
   props: ['stages', 'cards', 'kanbanType'],

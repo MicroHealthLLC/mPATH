@@ -48,7 +48,7 @@
           </label>
         </div>
       </div>
-       <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
+       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
           @click.prevent="download"
@@ -76,10 +76,12 @@
           :task="task"
           :from-view="from"
           @edit-task="editTask"
-          @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>
-      <h6 v-else class="text-danger mt-4 ml-1">No tasks found..</h6>
+      <div v-else>
+        <br/>
+        <h6 class="text-danger mt-4 ml-1">No tasks found..</h6>
+      </div>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
     <table style="display:none"
@@ -124,14 +126,15 @@
 </template>
 
 <script>
-  import TaskShow from "./task_show"
   import {mapGetters, mapMutations} from "vuex"
-  import {jsPDF} from "jspdf";
-  import 'jspdf-autotable';
+  import {jsPDF} from "jspdf"
+  import 'jspdf-autotable'
 
   export default {
     name: 'TasksIndex',
-    components: {TaskShow},
+    components: {
+      TaskShow: () => import("./task_show")
+    },
     props: ['facility', 'from'],
     data() {
       return {
@@ -159,9 +162,6 @@
       },
       editTask(task) {
         this.$emit('show-hide', task)
-      },
-      toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
       },
       download() {
         const doc = new jsPDF("l")

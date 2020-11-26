@@ -38,7 +38,6 @@
         </button>
       </div>
       <div class="paperLook formTitle ">
-      <!-- <h5 class="text-center mt-3">{{title}}</h5> -->
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -347,13 +346,14 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
-    components: {AttachmentInput},
+    components: {
+      AttachmentInput: () => import('./../../shared/attachment_input')
+    },
     data() {
       return {
         DV_issue: this.INITIAL_ISSUE_STATE(),

@@ -110,7 +110,6 @@
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
-              @toggle-watch-issue="toggleWatched"
             />
           </div>
           <div v-else>
@@ -166,17 +165,17 @@
 
 <script>
   import http from './../../../common/http'
-  import IssueForm from './issue_form'
-  import IssueShow from './issue_show'
-  import {jsPDF} from "jspdf";
-  import 'jspdf-autotable';
+  import {jsPDF} from "jspdf"
+  import 'jspdf-autotable'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'IssueIndex',
     props: ['facility', 'from'],
-    components: {IssueForm, IssueShow},
-
+    components: {
+      IssueForm: () => import('./issue_form'),
+      IssueShow: () => import('./issue_show')
+    },
     data() {
       return {
         loading: true,
@@ -221,14 +220,6 @@
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
-          })
-          .catch((err) => console.log(err))
-      },
-      toggleWatched(issue) {
-        http
-          .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
-          .then((res) => {
-            this.issueUpdated(res.data.issue, false)
           })
           .catch((err) => console.log(err))
       },

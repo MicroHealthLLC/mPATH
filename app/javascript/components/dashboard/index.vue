@@ -11,16 +11,14 @@
     </div>
   </div>
 </template>
-<script>
-  import Tabsbar from './../shared/tabsbar'
-  import FilterSidebar from './../shared/filter_sidebar'
-  import {mapActions} from 'vuex'
 
+<script>
+  import {mapActions} from 'vuex'
   export default {
     name: 'Dashboard',
     components: {
-      Tabsbar,
-      FilterSidebar
+      Tabsbar: () => import('./../shared/tabsbar'),
+      FilterSidebar: () => import('./../shared/filter_sidebar')
     },
     data() {
       return {
@@ -28,8 +26,8 @@
       }
     },
     mounted() {
-      var id = this.$route.params.projectId
-      var cb = () => this.loading = false
+      let id = this.$route.params.projectId
+      let cb = () => this.loading = false
       this.fetchDashboardData({cb, id})
     },
     methods: {
