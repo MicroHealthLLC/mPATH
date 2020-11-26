@@ -30,7 +30,6 @@ body {
   select[multiple=multiple] {
     height: 150px;
   }
-
   input[type=checkbox] {
     margin-right: 1em;
   }
@@ -40,6 +39,9 @@ body {
   }
   input[type=password] {
     letter-spacing: 0.5em;
+  }
+  input[type=range] {
+    width: 20%;
   }
 
   #main_content_wrapper .index_content {

@@ -1,13 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index">
     <div v-if="newIssue && from != 'manager_view'">
-      <!-- <button
-        class="btn btn-sm btn-link float-right"
-        style="margin-top:-20px"
-        @click.prevent.stop="newIssue=false"
-        >
-        back
-      </button> -->
       <issue-form
         :facility="facility"
         :issue="currentIssue"
@@ -59,7 +52,6 @@
             </multiselect>
           </div>
         </div>
-
       </div>
       <div class="mr-2 mt-1 d-flex font-sm w-100">
         <div class="simple-select w-50">
@@ -70,45 +62,45 @@
             :close-on-select="false"
             :show-labels="false"
             placeholder="Filter by Issue Status"
-            >
-              <template slot="singleLabel">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{viewList}}</span>
-                  </div>
-                </template>
-            </multiselect>
+          >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
         <div class="form-check-inline w-50 ml-1">
-            <label class="form-check-label ml-3">
-              <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-              <i class="fas fa-user mr-1"></i>My Issue
-            </label>
-            <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-              <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-              <i class="fas fa-eye mr-1"></i>On Watch
-            </label>
+          <label class="form-check-label ml-3">
+            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
+            <i class="fas fa-user mr-1"></i>My Issue
+          </label>
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
+            <i class="fas fa-eye mr-1"></i>On Watch
+          </label>
         </div>
       </div>
       <div class="mt-3">
-          <button v-if="_isallowed('write')" class="new-issue-btn btn btn-sm btn-primary" @click.prevent="reportNew"><i class="fas fa-plus-circle mr-2"></i>Add Issue</button>
+        <button v-if="_isallowed('write')" class="position-absolute shadow-sm btn btn-sm btn-primary" @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2"></i>Add Issue</button>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <button
-            @click="download"
-            id="printBtn"
-            class="btn btn-sm btn-outline-dark exportBtn">
-            Export to PDF
-          </button>
-           <button
-            disabled
-            id="printBtn"
-            class="btn btn-sm btn-outline-dark ml-2">
-            Export to Excel
-          </button>
-          <label class="form-check-label mr-2 mt-2 text-primary total">
-            <h5>Total: {{filteredIssues.length}}</h5>
-          </label>
-          <hr/>
+              @click.prevent="download"
+              id="printBtn"
+              class="btn btn-sm btn-outline-dark exportBtn">
+              Export to PDF
+            </button>
+            <button
+              disabled
+              id="printBtn"
+              class="btn btn-sm btn-outline-dark ml-2">
+              Export to Excel
+            </button>
+            <label class="form-check-label mr-2 text-primary total">
+              <h5>Total: {{filteredIssues.length}}</h5>
+            </label>
+            <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
@@ -121,51 +113,54 @@
               @toggle-watch-issue="toggleWatched"
             />
           </div>
-          <h6 v-else class="text-danger ml-1 alt-text">No issues found..</h6>
+          <div v-else>
+            <br/>
+            <h6 class="text-danger ml-1 mt-4">No issues found..</h6>
+          </div>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
-     <table style="display:none"
+    <table style="display:none"
       class="table table-sm table-bordered"
       ref="table" id="issueList1"
       >
-        <thead>
-          <tr>
-            <th></th>
-            <th>Issue</th>
-            <th>Issue Type</th>
-            <th>Facility</th>
-            <th>Issue Severity</th>
-            <th>Start Date</th>
-            <th>Due Date</th>
-            <th>Assigned Users</th>
-            <th>Progress</th>
-            <th>Overdue</th>
-            <th>Last Update</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(issue, i) in filteredIssues">
-            <td class="text-center">{{i+1}}</td>
-            <td>{{issue.title}}</td>
-            <td>{{issue.issueType}}</td>
-            <td>{{issue.facilityName}}</td>
-            <td>{{issue.issueSeverity}}</td>
-            <td>{{formatDate(issue.startDate)}}</td>
-            <td>{{formatDate(issue.dueDate)}}</td>
-            <td>{{issue.users.join(', ')}}</td>
-            <td>{{issue.progress + "%"}}</td>
-            <td v-if="(issue.dueDate) <= now">X</td>
-            <td v-else></td>
-            <td v-if="(issue.notes.length) > 0">
-              By: {{ issue.notes[0].user.fullName}} on
-              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
-            </td>
-            <td v-else>No Updates</td>
-          </tr>
-        </tbody>
-      </table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Issue</th>
+          <th>Issue Type</th>
+          <th>Facility</th>
+          <th>Issue Severity</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>
+          <th>Overdue</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(issue, i) in filteredIssues">
+          <td class="text-center">{{i+1}}</td>
+          <td>{{issue.title}}</td>
+          <td>{{issue.issueType}}</td>
+          <td>{{issue.facilityName}}</td>
+          <td>{{issue.issueSeverity}}</td>
+          <td>{{formatDate(issue.startDate)}}</td>
+          <td>{{formatDate(issue.dueDate)}}</td>
+          <td>{{issue.users.join(', ')}}</td>
+          <td>{{issue.progress + "%"}}</td>
+          <td v-if="(issue.dueDate) <= now">X</td>
+          <td v-else></td>
+          <td v-if="(issue.notes.length) > 0">
+            By: {{ issue.notes[0].user.fullName}} on
+            {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
+          </td>
+          <td v-else>No Updates</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -173,7 +168,7 @@
   import http from './../../../common/http'
   import IssueForm from './issue_form'
   import IssueShow from './issue_show'
-  import  {jsPDF} from "jspdf";
+  import {jsPDF} from "jspdf";
   import 'jspdf-autotable';
   import {mapGetters, mapMutations} from 'vuex'
 
@@ -210,7 +205,7 @@
         this.$emit('refresh-facility')
       },
       issueUpdated(issue, refresh=true) {
-        var index = this.facility.issues.findIndex((t) => t.id == issue.id)
+        let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
         if (refresh) {
           this.newIssue = false
@@ -223,7 +218,7 @@
         http
           .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
           .then((res) => {
-            var issues = [...this.facility.issues]
+            let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
           })
@@ -250,7 +245,7 @@
         this.currentIssue = issue
         this.newIssue = true
       },
-      reportNew() {
+      addNewIssue() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
         } else {
@@ -276,12 +271,12 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       filteredIssues() {
-        var typeIds = _.map(this.C_issueTypeFilter, 'id')
-        var severityIds = _.map(this.C_issueSeverityFilter, 'id')
-        var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
+        let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let severityIds = _.map(this.C_issueSeverityFilter, 'id')
+        let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
-            var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
@@ -352,11 +347,6 @@
   }
   .exportBtn {
     margin-left: 140px;
-  }
-  .new-issue-btn {
-    width: 100px;
-    position: absolute !important;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #issueHover:hover {
     cursor: pointer;

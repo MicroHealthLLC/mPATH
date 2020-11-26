@@ -28,6 +28,7 @@ class Issue < ApplicationRecord
   scope :incomplete, -> {where("progress < ?", 100)}
 
   before_save :check_watched, if: :watched_changed?
+  before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   after_save :handle_related_tasks_issues
 
   def to_json
@@ -109,5 +110,12 @@ class Issue < ApplicationRecord
     sub_issues.each{|i| i.sub_issues << self unless i.sub_issues.include? self}
     RelatedTask.where(task_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_task_ids).destroy_all
     RelatedIssue.where(issue_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_issue_ids).destroy_all
+  end
+
+  def update_progress_on_stage_change
+    if issue_stage.present?
+      self.progress = issue_stage.percentage
+      self.auto_calculate = false
+    end
   end
 end

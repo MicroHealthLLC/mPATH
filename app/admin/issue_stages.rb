@@ -3,7 +3,7 @@ ActiveAdmin.register IssueStage do
   actions :all, except: [:show]
 
   permit_params do
-    permitted = [:name]
+    permitted = [:name, :percentage]
     permitted
   end
 
@@ -20,10 +20,20 @@ ActiveAdmin.register IssueStage do
     selectable_column if current_user.admin_delete?
     column :id
     column :name
+    tag_column :percentage
     actions defaults: false do |issue_stage|
       item "Edit", edit_admin_issue_stage_path(issue_stage), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_issue_stage_path(issue_stage), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
     end
+  end
+
+  form do |f|
+    f.semantic_errors *f.object.errors.keys
+    f.inputs do
+      f.input :name
+      f.input :percentage, as: :range, in: 0..100, step: 1
+    end
+    f.actions
   end
 
   batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Issue Stages?" do |ids|
