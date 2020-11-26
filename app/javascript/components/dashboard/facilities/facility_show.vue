@@ -60,7 +60,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                   <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
+                <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
@@ -208,15 +208,16 @@
 
 <script>
   import http from './../../../common/http'
-  import NotesIndex from './../notes/notes_index'
-  import IssueIndex from './../issues/issue_index'
-  import CustomTabs from './../../shared/custom-tabs'
-  import DetailShow from './detail_show'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'FacilitiesShow',
-    components: {DetailShow, NotesIndex, IssueIndex, CustomTabs},
+    components: {
+      DetailShow: () => import('./detail_show'),
+      NotesIndex: () => import('./../notes/notes_index'),
+      IssueIndex: () => import('./../issues/issue_index'),
+      CustomTabs: () => import('./../../shared/custom-tabs')
+    },
     props: {
       facility: {
         default: null,
@@ -499,7 +500,7 @@
   }
   .custom-tab {
     background-color: #ededed !important;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .pg-content {
     width: 100%;

@@ -26,6 +26,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
+
   export default {
     name: 'FacilitySidebar',
     props: ['title', 'currentFacilityGroup', 'expanded', 'currentFacility'],

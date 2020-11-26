@@ -18,7 +18,6 @@
     <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
       <div class="badge" :class="{'active': isKanbanView}">Kanban</div>
     </router-link>
-    <!-- <div v-if="permitted('kanban_view')" class="badge disabled">Kanban (Coming Soon)</div> -->
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
     <router-link v-if="permitted('members')" :to="membersView" tag="div">

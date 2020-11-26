@@ -68,19 +68,15 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import FacilitySheets from './facilities/facility_sheets'
-  import FacilityRollup from './facilities/facility_rollup'
-  import TaskForm from "./tasks/task_form"
-  import IssueForm from "./issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: "ProjectSheets",
     components: {
-      FacilitySheets,
-      FacilityRollup,
-      TaskForm,
-      IssueForm,
+      FacilitySheets: () => import('./facilities/facility_sheets'),
+      FacilityRollup: () => import('./facilities/facility_rollup'),
+      TaskForm: () => import("./tasks/task_form"),
+      IssueForm: () => import("./issues/issue_form"),
       SweetModal
     },
     data() {
@@ -205,7 +201,7 @@
       position: relative;
       border-radius: 4px;
       z-index: 1;
-    }    
+    }
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }

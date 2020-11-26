@@ -123,11 +123,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
 <script>
-import FacilityForm from './facilities/facility_form'
-import FacilityShow from './facilities/facility_show'
-import FacilityRollup from './facilities/facility_rollup'
-import FacilityGroupBar from './../shared/facility_group_bar'
-import Accordion from './../shared/accordion'
 import {SweetModal} from 'sweet-modal-vue'
 import {mapGetters, mapMutations} from 'vuex'
 import * as Moment from 'moment'
@@ -137,11 +132,11 @@ const moment = extendMoment(Moment)
 export default {
   name: 'ProjectMapView',
   components: {
-    FacilityForm,
-    FacilityShow,
-    FacilityGroupBar,
-    Accordion,
-    FacilityRollup,
+    FacilityForm: () => import('./facilities/facility_form'),
+    FacilityShow: () => import('./facilities/facility_show'),
+    FacilityGroupBar: () => import('./../shared/facility_group_bar'),
+    Accordion: () => import('./../shared/accordion'),
+    FacilityRollup: () => import('./facilities/facility_rollup'),
     SweetModal
   },
   data() {
@@ -185,7 +180,7 @@ export default {
     ]),
     currentFacilityGroupFacilities() {
       if (this.currentFacilityGroup && this.currentFacilityGroup.facilities) {
-        var facilityIds = _.map(this.filteredFacilities('active'), 'id')
+        let facilityIds = _.map(this.filteredFacilities('active'), 'id')
         return _.filter(this.currentFacilityGroup.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
       }
       else {
@@ -199,7 +194,7 @@ export default {
       return this.openSidebar ? {right: '12px'} : {right: '0'}
     },
     currentFacilityStatus() {
-      var status = this.currentFacility && _.map(this.filteredFacilities('active'), 'id').includes(this.currentFacility.id)
+      let status = this.currentFacility && _.map(this.filteredFacilities('active'), 'id').includes(this.currentFacility.id)
       if (!status && this.openSidebar) this.openSidebar = false
       return status
     }
@@ -239,7 +234,7 @@ export default {
     },
     updateFacility(facility) {
       this.setCurrentFacility(facility)
-      var index = this.facilities.findIndex(f => f.id == facility.id)
+      let index = this.facilities.findIndex(f => f.id == facility.id)
       if (index > -1) this.updateFacilities({index, facility})
     },
     updateExpanded(facility) {

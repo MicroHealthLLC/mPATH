@@ -25,9 +25,7 @@
       </div>
 
    <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
-      <!-- <center>{{titleText}}</center> -->
       <div class="form-group">
-        <!-- <label class="badge badge-secondary">Note</label> -->
        <label class="font-sm"><h5>Note</h5></label>
         <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..."></textarea>
       </div>
@@ -68,12 +66,13 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     props: ['facility', 'note', 'title', 'from'],
-    components: {AttachmentInput},
+    components: {
+      AttachmentInput: () => import('./../../shared/attachment_input')
+    },
     data() {
       return {
         DV_note: this.INITIAL_NOTE_STATE(),

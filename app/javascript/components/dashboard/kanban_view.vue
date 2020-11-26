@@ -212,17 +212,19 @@
 </template>
 
 <script>
-  import Kanban from './../shared/kanban'
-  import CustomTabs from './../shared/custom-tabs'
-  import FacilitySidebar from './facilities/facility_sidebar'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
-  import IssueForm from "./issues/issue_form"
-  import TaskForm from "./tasks/task_form"
   import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'KanbanView',
-    components: {Kanban, CustomTabs, FacilitySidebar, IssueForm, TaskForm, SweetModal},
+    components: {
+      Kanban: () => import('./../shared/kanban'),
+      CustomTabs: () => import('./../shared/custom-tabs'),
+      FacilitySidebar: () => import('./facilities/facility_sidebar'),
+      IssueForm: () => import("./issues/issue_form"),
+      TaskForm: () => import("./tasks/task_form"),
+      SweetModal
+    },
     data() {
       return {
         tabs: [

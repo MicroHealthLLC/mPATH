@@ -2,20 +2,20 @@
 <template>
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped">
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">   
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
         <td class="twenty">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
         <td class="eight">{{formatDate(task.dueDate)}}</td>
         <td class="ten">{{task.users.join(', ')}}</td>
         <td class="eight">{{task.progress + "%"}}</td>
-        <td class="eight" v-if="(task.dueDate) <= now"><h5>X</h5></td>
+        <td class="eight" v-if="(task.dueDate) <= now"><h5>x</h5></td>
         <td class="eight" v-else></td>
-        <td class="eight" v-if="(task.watched) == true"><h5>X</h5></td>
+        <td class="eight" v-if="(task.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="twenty" v-if="(task.notes.length) > 0">
-          By: {{ task.notes[0].user.fullName}} on 
-          {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}           
+          By: {{ task.notes[0].user.fullName}} on
+          {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -51,19 +51,19 @@
   </div>
 </template>
 
-
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import TaskForm from "./task_form"
-  import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
   import moment from 'moment'
   Vue.prototype.moment = moment
 
-
   export default {
     name: 'TaskSheets',
-    components: {TaskForm, SweetModal, IssueForm},
+    components: {
+      TaskForm: () => import("./task_form"),
+      IssueForm: () => import("./../issues/issue_form"),
+      SweetModal,
+    },
     props: {
       fromView: {
         type: String,
@@ -209,13 +209,13 @@
     overflow: auto;
   }
   .eight {
-    width: 8%; 
+    width: 8%;
   }
   .ten {
-    width: 10%; 
+    width: 10%;
   }
   .twenty {
-    width: 20%; 
+    width: 20%;
   }
   .pg-content {
     width: 100%;

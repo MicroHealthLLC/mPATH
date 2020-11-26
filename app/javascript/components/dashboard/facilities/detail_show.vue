@@ -7,7 +7,6 @@
           :facility="facility"
           :from="from"
           @show-hide="detailShowHide"
-          @toggle-watch-task="toogleWatchTask"
         ></task-index>
       </div>
     </div>
@@ -25,15 +24,16 @@
 </template>
 
 <script>
-  import TaskForm from './../tasks/task_form'
-  import TaskIndex from './../tasks/task_index'
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'DetailShow',
     props: ['facility', 'from'],
-    components: {TaskIndex, TaskForm},
+    components: {
+      TaskIndex: () => import('./../tasks/task_index'),
+      TaskForm: () => import('./../tasks/task_form')
+    },
     data() {
       return {
         loading: true,
@@ -55,7 +55,7 @@
         this.$emit('refresh-facility')
       },
       taskUpdated(task, refresh=true) {
-        var index = this.DV_facility.tasks.findIndex((t) => t.id == task.id)
+        let index = this.DV_facility.tasks.findIndex((t) => t.id == task.id)
         if (index > -1) Vue.set(this.DV_facility.tasks, index, task)
         if (refresh) {
           this.showDetails = true
@@ -68,17 +68,9 @@
         http
           .delete(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`)
           .then((res) => {
-            var tasks = [...this.DV_facility.tasks]
+            let tasks = [...this.DV_facility.tasks]
             _.remove(tasks, (t) => t.id == task.id)
             this.$emit('refresh-facility')
-          })
-          .catch((err) => console.log(err))
-      },
-      toogleWatchTask(task) {
-        http
-          .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}/tasks/${task.id}.json`, {task: task})
-          .then((res) => {
-            this.taskUpdated(res.data.task, false)
           })
           .catch((err) => console.log(err))
       },

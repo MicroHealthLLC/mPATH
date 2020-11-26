@@ -2,7 +2,6 @@
   <div>
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center float-right mb-3">
-        <!-- <p class="mr-2 mb-0">Details</p> -->
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
@@ -105,13 +104,15 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import TaskForm from "./task_form"
-  import IssueForm from "./../issues/issue_form"
   import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'TaskShow',
-    components: {TaskForm, SweetModal, IssueForm},
+    components: {
+      TaskForm: () => import("./task_form"),
+      IssueForm: () => import("./../issues/issue_form"),
+      SweetModal,
+    },
     props: {
       fromView: {
         type: String,
@@ -145,7 +146,7 @@
         'updateWatchedTasks'
       ]),
       deleteTask() {
-        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
+        let confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
       },
@@ -184,7 +185,7 @@
       },
       toggleWatched() {
         if (this.DV_task.watched) {
-          var confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
           if (!confirm) {return}
         }
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}

@@ -150,6 +150,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
+
 export default {
   name: 'FacilityRollup',
   props: ['from', 'facilityGroup'],

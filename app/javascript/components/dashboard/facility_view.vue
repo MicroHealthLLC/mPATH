@@ -69,22 +69,15 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import FacilityShow from './facilities/facility_show'
-  import FacilityRollup from './facilities/facility_rollup'
-  import FacilitySidebar from './facilities/facility_sidebar'
-  import TaskForm from "./tasks/task_form"
-  import IssueForm from "./issues/issue_form"
-  import NotesForm from "./notes/notes_form"
-
   export default {
     name: "FacilityManagerView",
     components: {
-      FacilityShow,
-      FacilityRollup,
-      FacilitySidebar,
-      TaskForm,
-      IssueForm,
-      NotesForm
+      FacilityShow: () => import('./facilities/facility_show'),
+      FacilityRollup: () => import('./facilities/facility_rollup'),
+      FacilitySidebar: () => import('./facilities/facility_sidebar'),
+      TaskForm: () => import("./tasks/task_form"),
+      IssueForm: () => import("./issues/issue_form"),
+      NotesForm: () => import("./notes/notes_form")
     },
     data() {
       return {
@@ -208,7 +201,7 @@
     }
     .center-section {
       position: absolute;
-      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
       border: 1px solid #383838;
       border-radius: 4px;
       padding: 10px;
