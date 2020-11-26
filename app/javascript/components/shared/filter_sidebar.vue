@@ -113,6 +113,8 @@
             v-model="C_facilityDueDateFilter"
             class="datepicker"
             placeholder="Project Completion Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
             range
           />
 
@@ -339,6 +341,7 @@
         isLoading: false,
         exporting: false,
         showFilters: false,
+        datePicker: false,
         facilities: [],
         myActions: [
           {name: 'My Tasks', value: 'tasks'},
@@ -551,7 +554,7 @@
         'setIssueStageFilter'
       ]),
       handleOutsideClick() {
-        if (this.showFilters) this.showFilters = false
+        if (this.showFilters && !this.datePicker) this.showFilters = false
       },
       toggleFilters() {
         this.showFilters = !this.showFilters

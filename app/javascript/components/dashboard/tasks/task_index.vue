@@ -22,13 +22,13 @@
           </multiselect>
         </div>
         <div class="simple-select w-50">
-            <multiselect
-          v-model="viewList"
-          :options="listOptions"
-          :searchable="false"
-          :close-on-select="false"
-          :show-labels="false"
-          placeholder="Filter by Task Status"
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Task Status"
           >
            <template slot="singleLabel">
               <div class="d-flex">
@@ -51,7 +51,7 @@
        <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
-          @click="download"
+          @click.prevent="download"
           id="printBtn"
           class="btn btn-sm btn-outline-dark mr-1 exportBtn">
           Export to PDF
@@ -60,11 +60,11 @@
           disabled
           id="printBtn"
           class="btn btn-sm btn-outline-dark">
-         Export to Excel
+          Export to Excel
         </button>
-          <label class="form-check-label ml-2 mt-1 text-primary" id="total">
-            <h5>Total: {{filteredTasks.length}}</h5>
-          </label>
+        <label class="form-check-label ml-2 mt-1 text-primary" id="total">
+          <h5>Total: {{filteredTasks.length}}</h5>
+        </label>
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
@@ -79,10 +79,9 @@
           @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>
-      <h6 v-else class="text-danger alt-text ml-1">No tasks found..</h6>
+      <h6 v-else class="text-danger mt-4 ml-1">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
     <table style="display:none"
       class="table table-sm table-bordered"
       ref="table" id="taskList1"
@@ -120,18 +119,14 @@
           <td v-else>No Updates</td>
         </tr>
       </tbody>
-      <!-- <tfoot>
-       <tr><td> Task List </td></tr>
-      </tfoot> -->
     </table>
   </div>
-
 </template>
 
 <script>
   import TaskShow from "./task_show"
   import {mapGetters, mapMutations} from "vuex"
-  import  {jsPDF} from "jspdf";
+  import {jsPDF} from "jspdf";
   import 'jspdf-autotable';
 
   export default {
@@ -278,9 +273,5 @@
   }
   tfoot {
     text-align: right !important;
-  }
-  .alt-text {
-    position: relative;
-    margin-top: 80px !important;
   }
 </style>

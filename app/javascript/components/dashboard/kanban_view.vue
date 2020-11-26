@@ -154,7 +154,7 @@
       </div>
 
       <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
-        <div v-if="'id' in currentFacilityGroup">
+        <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">
           <span class="clickable" @click.prevent="expandFilter=!expandFilter">
             <span v-show="!expandFilter" class="expandBtn">
               <i class="fa fa-chevron-right" aria-hidden="true"></i>
@@ -166,7 +166,7 @@
         </div>
 
         <div class="mt-4">
-          <div v-if="'id' in currentFacility">
+          <div v-if="currentFacility && ('id' in currentFacility)">
             <kanban
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
@@ -188,7 +188,7 @@
       :hide-close-button="true"
       :blocking="true"
       >
-      <div v-if="('id' in currentFacility) && fixedStageId" class="w-100">
+      <div v-if="currentFacility && ('id' in currentFacility) && fixedStageId" class="w-100">
         <task-form
           v-if="currentTab === 'tasks'"
           :facility="currentFacility"
@@ -242,7 +242,7 @@
           id: ''
         },
         fixedStageId: null,
-        viewList: 'active',
+        viewList: 'all',
         listOptions: ['active','all', 'completed'],
         currentFacility: {},
         currentFacilityGroup: {},
