@@ -1,5 +1,5 @@
 <template>
-  <div id="facility_sidebar">
+  <div id="facility_sidebar" data-cy="facility_list">
     <h4 class="mt-4 text-info text-center" v-if="title">{{title}}</h4>
     <div class="my-4 ml-2">
       <div v-if="contentLoaded">

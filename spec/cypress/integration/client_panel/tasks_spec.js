@@ -34,18 +34,26 @@ describe('Tasks Page', function() {
     cy.logout()
   })
 
-  // it('Create new task in a Facility', function() {
-  //   cy.get('[data-cy=new_task]').click()
-  //   cy.contains('Task Name:')
-  //   cy.get('[data-cy=new_task_name]').type('New test task').should('have.value', 'New test task')
-  //   cy.get('[data-cy=new_task_description]').type('New test task description').should('have.value', 'New test task description')
-  //   cy.get('[data-cy=new_task_type]').select('Test Task Type(milestone)').should('have.value', 'Test Task Type(milestone)')
-  //   cy.get('[data-cy=new_task_stage]').select('').should('have.value', '')
-  //   cy.get('[data-cy=new_task_start_date]').select('').should('have.value', '')
-  //   cy.get('[data-cy=new_task_due_date]').select('').should('have.value', '')
-  //   cy.get('[data-cy=new_task_user]').select('').should('have.value', '')
-  //   cy.wait(1000)
+  it('Create new task in a Facility', function() {
 
-  //   cy.logout()
-  // })
+    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+    const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+
+    cy.get('[data-cy=new_task]').click()
+    cy.contains('Task Name:')
+    cy.get('[data-cy=new_task_name]').type('New test task').should('have.value', 'New test task')
+    cy.get('[data-cy=new_task_description]').type('New test task description').should('have.value', 'New test task description')
+    cy.get('[data-cy=new_task_type]').click().type('{enter}')
+    cy.get('[data-cy=new_task_stage]').click().type('{enter}')
+
+    cy.get('[data-cy=new_task_start_date]').type(`${start_date}{enter}`)
+    cy.get('[data-cy=new_task_due_date]').type(`${due_date}{enter}`)
+
+    cy.get('[data-cy=new_task_user]').click().type('{enter}')
+    cy.get('[data-cy=task_save_btn]').should('not.be.disabled')
+    cy.get('[data-cy=task_save_btn]').click()
+
+    cy.get('[data-cy=task_list]').contains('New test task')
+    cy.logout()
+  })
 })

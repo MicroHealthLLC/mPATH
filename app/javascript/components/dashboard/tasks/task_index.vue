@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3">
+  <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-3">
         <div class="simple-select w-70 mr-1">
