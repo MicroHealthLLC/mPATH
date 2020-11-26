@@ -17,6 +17,9 @@ describe('Projects List', function() {
 
   it('Open a facility of a project', function() {
     cy.open_facility()
+    cy.contains('Facility Group:')
+    cy.contains('Project Completion Date:')
+    cy.contains('Project Status:')
     cy.logout()
   })
 })

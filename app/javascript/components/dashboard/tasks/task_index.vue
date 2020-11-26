@@ -48,7 +48,7 @@
           </label>
         </div>
       </div>
-       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
+       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
           @click.prevent="download"

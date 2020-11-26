@@ -28,3 +28,9 @@ Cypress.Commands.add("open_facility", () => {
   cy.wait(50)
   cy.contains('Facility Summary')
 })
+
+// Open first Tasks List of a facility
+Cypress.Commands.add("tasks_list", () => {
+  cy.open_facility()
+  cy.get('[data-cy=facility_tabs]').contains('Tasks').click()
+})
