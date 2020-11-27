@@ -32,4 +32,73 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_list]').contains('New test task')
     cy.logout()
   })
+
+  it('Delete the task form facility', function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_delete_btn]').click()
+    cy.get('[data-cy=task_total]').contains('Total: 1')
+    cy.logout()
+  })
+
+  it('Update task name in a Facility', function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_name]').clear().type('Updated new test task').should('have.value', 'Updated new test task')
+    cy.get('[data-cy=task_save_btn]').click()
+    cy.get('[data-cy=task_list]').contains('Updated new test task')
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.logout()
+  })
+
+  it("In Task form if name's field empty error message display and save button must be disabled", function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_name]').clear()
+    cy.get('[data-cy=task_name_error]').contains('The Name field is required.')
+    cy.get('[data-cy=task_save_btn]').should('be.disabled')
+    cy.get('[data-cy=task_close_btn]').click()
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.logout()
+  })
+
+  it("In Task form if task category not selected save button must be disabled", function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_type]').click().type('{enter}')
+    cy.get('[data-cy=task_save_btn]').should('be.disabled')
+    cy.get('[data-cy=task_close_btn]').click()
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.logout()
+  })
+
+  it("In Task form if start date is empty, error display, due date field and save button must be disabled", function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_start_date]').within(() =>{
+      cy.get('.mx-icon-clear').click({ force: true})
+    })
+    cy.get('[data-cy=start_date_error]').contains('The Start Date field is required.')
+    cy.get('[data-cy=task_due_date]').within(() => {
+      cy.get('input').should('be.disabled')
+    })
+    cy.get('[data-cy=task_save_btn]').should('be.disabled')
+    cy.get('[data-cy=task_close_btn]').click()
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.logout()
+  })
+
+  it("In Task form if due date is empty, error display and save button must be disabled", function() {
+    cy.createNewTask()
+    cy.get('[data-cy=task_list]').contains('New test task').click()
+    cy.get('[data-cy=task_due_date]').within(() =>{
+      cy.get('.mx-icon-clear').click({ force: true})
+    })
+    cy.get('[data-cy=due_date_error]').contains('The Due Date field is required.')
+    cy.get('[data-cy=task_save_btn]').should('be.disabled')
+    cy.get('[data-cy=task_close_btn]').click()
+    cy.get('[data-cy=task_total]').contains('Total: 2')
+    cy.logout()
+  })
 })

@@ -59,9 +59,9 @@
           placeholder="Task Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
-          data-cy="new_task_name"
+          data-cy="task_name"
         />
-        <div v-show="errors.has('Name')" class="text-danger">
+        <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
       </div>
@@ -73,7 +73,7 @@
           v-model="DV_task.description"
           rows="4"
           :readonly="!_isallowed('write')"
-          data-cy="new_task_description"
+          data-cy="task_description"
         />
       </div>
       <div class="simple-select form-group mx-4">
@@ -89,7 +89,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write')"
-          data-cy="new_task_type"
+          data-cy="task_type"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -110,7 +110,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write') || !!fixedStage"
-          data-cy="new_task_stage"
+          data-cy="task_stage"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -131,9 +131,9 @@
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
-            data-cy="new_task_start_date"
+            data-cy="task_start_date"
           />
-          <div v-show="errors.has('Start Date')" class="text-danger">
+          <div v-show="errors.has('Start Date')" class="text-danger" data-cy="start_date_error">
             {{errors.first('Start Date')}}
           </div>
         </div>
@@ -149,9 +149,9 @@
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
             :disabled-date="disabledDueDate"
-            data-cy="new_task_due_date"
+            data-cy="task_due_date"
           />
-          <div v-show="errors.has('Due Date')" class="text-danger">
+          <div v-show="errors.has('Due Date')" class="text-danger" data-cy="due_date_error">
             {{errors.first('Due Date')}}
           </div>
         </div>
@@ -170,7 +170,7 @@
           deselect-label="Enter to remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
-          data-cy="new_task_user"
+          data-cy="task_user"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
