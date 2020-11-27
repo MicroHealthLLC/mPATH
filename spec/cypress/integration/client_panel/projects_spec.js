@@ -10,13 +10,13 @@ describe('Projects List', function() {
   })
 
   it('Open a particular project', function() {
-    cy.open_project()
+    cy.openProject()
     cy.contains('Facility Project Status')
     cy.logout()
   })
 
   it('Open a facility of a project', function() {
-    cy.open_facility()
+    cy.openFacility()
     cy.contains('Facility Group:')
     cy.contains('Project Completion Date:')
     cy.contains('Project Status:')

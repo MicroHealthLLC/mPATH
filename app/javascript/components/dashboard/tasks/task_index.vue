@@ -62,7 +62,7 @@
           class="btn btn-sm btn-outline-dark">
           Export to Excel
         </button>
-        <label class="form-check-label ml-2 mt-1 text-primary" id="total">
+        <label class="form-check-label ml-2 mt-1 text-primary" id="total" data-cy="task_total">
           <h5>Total: {{filteredTasks.length}}</h5>
         </label>
         <hr/>
