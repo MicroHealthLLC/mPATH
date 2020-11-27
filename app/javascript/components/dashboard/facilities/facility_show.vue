@@ -12,7 +12,7 @@
         <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
-            <div class="f-body mt-3 p-2">
+            <div v-if="contentLoaded" class="f-body mt-3 p-2">
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe mr-0"></i></span>
                 <span style="font-weight:700">Facility Group: </span>
@@ -172,27 +172,28 @@
               </p>
               <button v-if="_isallowed('write') && DV_updated" class="mt-2 btn btn-success btn-sm" @click="updateFacility" :disabled="!DV_updated">Save</button>
             </div>
+            <div v-else class="m-4">
+              <loader type="code"></loader>
+              <loader type="code"></loader>
+              <loader type="code"></loader>
+            </div>
           </div>
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </div>
 
         <div v-if="currentTab == 'notes'">
-          <div>
-            <notes-index
-              :facility="DV_facility"
-              :from="from"
-              @refresh-facility="refreshFacility"
-            ></notes-index>
-          </div>
+          <notes-index
+            :facility="DV_facility"
+            :from="from"
+            @refresh-facility="refreshFacility"
+          ></notes-index>
         </div>
         <div v-if="currentTab == 'tasks'">
-          <div>
-            <detail-show
-              :facility="DV_facility"
-              :from="from"
-              @refresh-facility="refreshFacility"
-            ></detail-show>
-          </div>
+          <detail-show
+            :facility="DV_facility"
+            :from="from"
+            @refresh-facility="refreshFacility"
+          ></detail-show>
         </div>
         <div v-if="currentTab == 'issues'">
           <issue-index
@@ -208,15 +209,21 @@
 
 <script>
   import http from './../../../common/http'
-  import {mapGetters, mapMutations} from 'vuex'
+  import DetailShow from './detail_show'
+  import NotesIndex from './../notes/notes_index'
+  import IssueIndex from './../issues/issue_index'
+  import CustomTabs from './../../shared/custom-tabs'
+  import Loader from './../../shared/loader'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
 
   export default {
     name: 'FacilitiesShow',
     components: {
-      DetailShow: () => import('./detail_show'),
-      NotesIndex: () => import('./../notes/notes_index'),
-      IssueIndex: () => import('./../issues/issue_index'),
-      CustomTabs: () => import('./../../shared/custom-tabs')
+      DetailShow,
+      NotesIndex,
+      IssueIndex,
+      CustomTabs,
+      Loader
     },
     props: {
       facility: {
@@ -270,11 +277,9 @@
     },
     mounted() {
       if (this.from == "manager_view") {
-        this.DV_facility = Object.assign({}, this.facility)
-        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
-        this.loading = false
+        this.loadFacility(this.facility)
       } else {
-        this.fetchFacility()
+        this.getFacility()
       }
     },
     methods: {
@@ -282,28 +287,29 @@
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
+      ...mapActions([
+        'fetchFacility'
+      ]),
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'overview'
       },
-      fetchFacility(opt={}) {
-        http
-          .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
-          .then((res) => {
-            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
-            this.selectedStatus = this.statuses.find(s => s.id === this.DV_facility.statusId)
-            if (opt.cb) this.$emit('facility-update', this.DV_facility)
-            this.loading = false
-          })
-          .catch((err) => {
-            this.loading = false
-            console.error(err)
-          })
+      loadFacility(facility) {
+        this.DV_facility = Object.assign({}, facility)
+        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this.loading = false
+      },
+      getFacility() {
+        this.fetchFacility({projectId: this.currentProject.id, facilityId: this.DV_facility.id}).then(facility => {
+          this.loadFacility(facility)
+        }).catch((err) => {
+          console.error(err)
+        })
       },
       updateFacility(e) {
         if (e.target) e.target.blur()
         if (!this._isallowed('write') || !this.DV_updated) return
         this.DV_updated = false
-        var data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
+        let data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
           .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
@@ -317,7 +323,7 @@
       },
       refreshFacility() {
         this.loading = true
-        this.fetchFacility({cb: true})
+        this.getFacility()
       },
       isBlockedStatus(status) {
         return status && status.name.toLowerCase().includes('complete') && this.DV_facility.progress < 100
@@ -330,6 +336,7 @@
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'currentProject',
         'taskTypeFilter',
         'issueTypeFilter',
@@ -361,7 +368,7 @@
         }
       },
       filteredTasks() {
-        var typeIds = _.map(this.taskTypeFilter, 'id')
+        let typeIds = _.map(this.taskTypeFilter, 'id')
         return _.filter(this.DV_facility.tasks, (task) => {
           let valid = true
           if (this.C_myTasks || this.taskUserFilter) {
@@ -377,9 +384,9 @@
         })
       },
       taskStats() {
-        var tasks = new Array
-        var group = _.groupBy(this.filteredTasks, 'taskType')
-        for (var type in group) {
+        let tasks = new Array
+        let group = _.groupBy(this.filteredTasks, 'taskType')
+        for (let type in group) {
           tasks.push({
             name: type,
             count: group[type].length,
@@ -389,10 +396,10 @@
         return tasks
       },
       taskVariation() {
-        var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
-        var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-        var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
+        let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
+        let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
+        let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
           completed: {count: completed.length, percentage: completed_percent},
@@ -418,9 +425,9 @@
         }))
       },
       issueStats() {
-        var issues = new Array
-        var group = _.groupBy(this.filteredIssues, 'issueType')
-        for (var type in group) {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'issueType')
+        for (let type in group) {
           issues.push({
             name: type,
             count: group[type].length,
@@ -430,10 +437,10 @@
         return issues
       },
       issueVariation() {
-        var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
-        var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-        var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
+        let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
+        let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
+        let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
           completed: {count: completed.length, percentage: completed_percent},
@@ -446,14 +453,14 @@
     },
     watch: {
       facility: {
-        handler: function(value) {
+        handler(value) {
           this.DV_facility = Object.assign({}, value)
           this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
           this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
             this.loading = true
-            this.fetchFacility()
+            this.getFacility()
           }
         }, deep: true
       },

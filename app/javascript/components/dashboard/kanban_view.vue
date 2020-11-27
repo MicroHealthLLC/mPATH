@@ -3,7 +3,6 @@
     <div class="row">
       <div class="col-md-2 facility-groups-tab" :class="{'col-md-4': expandFilter, 'col-md-2': !expandFilter}">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="mt-4" badge-margin="4px" />
-
         <div class="row">
           <div class="col d-flex">
             <facility-sidebar
@@ -15,7 +14,7 @@
               @on-expand-facility="showFacility"
             ></facility-sidebar>
 
-            <div v-if="expandFilter" class="mt-4">
+            <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
@@ -214,15 +213,20 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import {SweetModal} from 'sweet-modal-vue'
+  import Kanban from './../shared/kanban'
+  import CustomTabs from './../shared/custom-tabs'
+  import FacilitySidebar from './facilities/facility_sidebar'
+  import IssueForm from "./issues/issue_form"
+  import TaskForm from "./tasks/task_form"
 
   export default {
     name: 'KanbanView',
     components: {
-      Kanban: () => import('./../shared/kanban'),
-      CustomTabs: () => import('./../shared/custom-tabs'),
-      FacilitySidebar: () => import('./facilities/facility_sidebar'),
-      IssueForm: () => import("./issues/issue_form"),
-      TaskForm: () => import("./tasks/task_form"),
+      Kanban,
+      CustomTabs,
+      FacilitySidebar,
+      IssueForm,
+      TaskForm,
       SweetModal
     },
     data() {
@@ -306,6 +310,7 @@
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
         'issueStages',

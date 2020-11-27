@@ -1,5 +1,5 @@
 <template>
-    <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
+  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
         <h4 class="d-flex align-items-center">

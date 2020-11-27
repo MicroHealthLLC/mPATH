@@ -69,15 +69,22 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
+  import FacilityShow from './facilities/facility_show'
+  import FacilityRollup from './facilities/facility_rollup'
+  import FacilitySidebar from './facilities/facility_sidebar'
+  import TaskForm from "./tasks/task_form"
+  import IssueForm from "./issues/issue_form"
+  import NotesForm from "./notes/notes_form"
+
   export default {
     name: "FacilityManagerView",
     components: {
-      FacilityShow: () => import('./facilities/facility_show'),
-      FacilityRollup: () => import('./facilities/facility_rollup'),
-      FacilitySidebar: () => import('./facilities/facility_sidebar'),
-      TaskForm: () => import("./tasks/task_form"),
-      IssueForm: () => import("./issues/issue_form"),
-      NotesForm: () => import("./notes/notes_form")
+      FacilityShow,
+      FacilityRollup,
+      FacilitySidebar,
+      TaskForm,
+      IssueForm,
+      NotesForm
     },
     data() {
       return {
@@ -99,10 +106,6 @@
       C_showFacilityRollup() {
         return !_.isEmpty(this.currentFacilityGroup)
       }
-    },
-    mounted() {
-      // make the first facility_group expanded
-      if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
     },
     methods: {
       ...mapMutations([

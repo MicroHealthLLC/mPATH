@@ -112,5 +112,4 @@
       color: #6c757d !important;
     }
   }
-
 </style>
