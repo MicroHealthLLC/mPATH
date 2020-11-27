@@ -172,6 +172,7 @@
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
               @on-add-new="handleAddNew"
+              @on-search-change="handleSearchQueryChange"
             ></kanban>
           </div>
           <div v-else class="center-section text-center">
@@ -246,7 +247,10 @@
         listOptions: ['active','all', 'completed'],
         currentFacility: {},
         currentFacilityGroup: {},
-        expandFilter: false
+        expandFilter: false,
+        searchTasksQuery: '',
+        searchIssuesQuery: '',
+        searchStageId: null
       }
     },
     mounted() {
@@ -301,6 +305,17 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.onCloseForm()
       },
+      handleSearchQueryChange(searchElement){
+        this.searchStageId = $(searchElement).attr("data-stage-id")
+        
+        if($(searchElement).attr("data-kanban-type") == "issues"){
+          this.searchIssuesQuery = $(searchElement).val()
+        }
+        if($(searchElement).attr("data-kanban-type") == "tasks"){
+          this.searchTasksQuery = $(searchElement).val()
+        }
+        
+      }
     },
     computed: {
       ...mapGetters([
@@ -323,6 +338,8 @@
       filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
+        const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
+
         return _.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -335,6 +352,8 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
+          if (search_query) valid = valid && search_query.test(task.text)
+
           switch (this.viewList) {
             case "active": {
               valid = valid && task.progress < 100
@@ -381,6 +400,7 @@
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
+        const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         return _.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -392,7 +412,13 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+          if(this.searchStageId && this.searchStageId == issue.issueStageId){
+            if (search_query) valid = valid && search_query.test(issue.title)
+
+          }else if(stageIds.length > 0  && stageIds.includes(issue.issueStageId)){
+            valid = valid
+          }
+          
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
             case "active": {
@@ -450,6 +476,7 @@
       },
       filterIssueStages() {
         let stageIds = _.map(this.issueStageFilter, 'id')
+
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
       C_kanban() {
