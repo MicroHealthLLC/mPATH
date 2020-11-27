@@ -133,7 +133,7 @@
             :disabled="!_isallowed('write')"
             data-cy="task_start_date"
           />
-          <div v-show="errors.has('Start Date')" class="text-danger" data-cy="start_date_error">
+          <div v-show="errors.has('Start Date')" class="text-danger" data-cy="task_start_date_error">
             {{errors.first('Start Date')}}
           </div>
         </div>
@@ -151,7 +151,7 @@
             :disabled-date="disabledDueDate"
             data-cy="task_due_date"
           />
-          <div v-show="errors.has('Due Date')" class="text-danger" data-cy="due_date_error">
+          <div v-show="errors.has('Due Date')" class="text-danger" data-cy="task_due_date_error">
             {{errors.first('Due Date')}}
           </div>
         </div>
