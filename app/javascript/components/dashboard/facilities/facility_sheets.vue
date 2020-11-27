@@ -200,15 +200,20 @@
 <script>
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
+  import DetailShow from './detail_show'
+  import NotesIndex from './../notes/notes_index'
+  import IssueSheetsIndex from './../issues/issue_sheets_index'
+  import TaskSheetsIndex from './../tasks/task_sheets_index'
+  import CustomTabs from './../../shared/custom-tabs'
 
   export default {
     name: 'FacilitySheets',
     components: {
-      DetailShow: () => import('./detail_show'),
-      NotesIndex: () => import('./../notes/notes_index'),
-      IssueSheetsIndex: () => import('./../issues/issue_sheets_index'),
-      TaskSheetsIndex: () => import('./../tasks/task_sheets_index'),
-      CustomTabs: () => import('./../../shared/custom-tabs')
+      DetailShow,
+      NotesIndex,
+      IssueSheetsIndex,
+      TaskSheetsIndex,
+      CustomTabs
     },
     props: {
       facility: {

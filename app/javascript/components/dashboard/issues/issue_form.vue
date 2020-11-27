@@ -347,12 +347,13 @@
   import axios from 'axios'
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import AttachmentInput from './../../shared/attachment_input'
 
   export default {
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
     components: {
-      AttachmentInput: () => import('./../../shared/attachment_input')
+      AttachmentInput
     },
     data() {
       return {

@@ -50,11 +50,12 @@
 <script>
   import http from './../../../common/http'
   import {mapGetters, mapMutations} from 'vuex'
+  import NotesForm from './notes_form'
 
   export default {
     props: ['facility', 'note', 'from'],
     components: {
-      NotesForm: () => import('./notes_form')
+      NotesForm
     },
     data() {
       return {

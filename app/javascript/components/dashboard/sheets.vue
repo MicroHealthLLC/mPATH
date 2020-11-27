@@ -69,14 +69,18 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import {SweetModal} from 'sweet-modal-vue'
+  import FacilitySheets from './facilities/facility_sheets'
+  import FacilityRollup from './facilities/facility_rollup'
+  import TaskForm from "./tasks/task_form"
+  import IssueForm from "./issues/issue_form"
 
   export default {
     name: "ProjectSheets",
     components: {
-      FacilitySheets: () => import('./facilities/facility_sheets'),
-      FacilityRollup: () => import('./facilities/facility_rollup'),
-      TaskForm: () => import("./tasks/task_form"),
-      IssueForm: () => import("./issues/issue_form"),
+      FacilitySheets,
+      FacilityRollup,
+      TaskForm,
+      IssueForm,
       SweetModal
     },
     data() {

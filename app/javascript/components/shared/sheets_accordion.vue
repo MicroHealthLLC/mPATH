@@ -17,11 +17,12 @@
 </template>
 
 <script>
+  import FacilityShow from './../dashboard/facilities/facility_sheets'
   export default {
     name: 'Accordion',
     props: ['facility', 'facilityGroup', 'expanded', 'statuses'],
     components: {
-      FacilityShow: () => import('./../dashboard/facilities/facility_sheets')
+      FacilityShow
     },
     data() {
       return {

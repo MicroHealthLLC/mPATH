@@ -121,12 +121,14 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import {SweetModal} from 'sweet-modal-vue'
+  import IssueForm from "./issue_form"
+  import TaskForm from "./../tasks/task_form"
 
   export default {
     name: 'IssueShow',
     components: {
-      IssueForm: () => import("./issue_form"),
-      TaskForm: () => import("./../tasks/task_form"),
+      IssueForm,
+      TaskForm,
       SweetModal,
     },
     props: {

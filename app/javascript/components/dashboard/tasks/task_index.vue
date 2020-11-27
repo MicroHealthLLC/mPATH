@@ -129,11 +129,12 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
+  import TaskShow from "./task_show"
 
   export default {
     name: 'TasksIndex',
     components: {
-      TaskShow: () => import("./task_show")
+      TaskShow
     },
     props: ['facility', 'from'],
     data() {

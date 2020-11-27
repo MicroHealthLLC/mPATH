@@ -25,14 +25,16 @@
 
 <script>
   import http from './../../../common/http'
+  import TaskIndex from './../tasks/task_index'
+  import TaskForm from './../tasks/task_form'
   import {mapGetters, mapMutations} from 'vuex'
 
   export default {
     name: 'DetailShow',
     props: ['facility', 'from'],
     components: {
-      TaskIndex: () => import('./../tasks/task_index'),
-      TaskForm: () => import('./../tasks/task_form')
+      TaskIndex,
+      TaskForm
     },
     data() {
       return {

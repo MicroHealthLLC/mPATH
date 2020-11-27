@@ -167,12 +167,13 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   import moment from 'moment'
+  import TaskSheets from "./task_sheets"
   Vue.prototype.moment = moment
 
   export default {
     name: 'TasksSheetsIndex',
     components: {
-      TaskSheets: () => import("./task_sheets")
+      TaskSheets
     },
     props: ['facility', 'from'],
     data() {

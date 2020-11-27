@@ -168,13 +168,15 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   import {mapGetters, mapMutations} from 'vuex'
+  import IssueForm from './issue_form'
+  import IssueShow from './issue_show'
 
   export default {
     name: 'IssueIndex',
     props: ['facility', 'from'],
     components: {
-      IssueForm: () => import('./issue_form'),
-      IssueShow: () => import('./issue_show')
+      IssueForm,
+      IssueShow
     },
     data() {
       return {

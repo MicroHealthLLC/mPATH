@@ -200,9 +200,11 @@
 
 <script>
   import http from './../../../common/http'
-  import  {jsPDF} from "jspdf"
+  import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   import {mapGetters, mapMutations} from 'vuex'
+  import IssueForm from './issue_form'
+  import IssueSheets from './issue_sheets'
   import moment from 'moment'
   Vue.prototype.moment = moment
 
@@ -210,8 +212,8 @@
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
     components: {
-      IssueForm: () => import('./issue_form'),
-      IssueSheets: () => import('./issue_sheets')
+      IssueForm,
+      IssueSheets
     },
     data() {
       return {

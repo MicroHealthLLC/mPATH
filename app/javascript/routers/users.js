@@ -1,10 +1,11 @@
+import Profile from './../components/users/profile'
 
 export default new VueRouter({
   routes: [
     {
       name: 'Profile',
       path: '/profile',
-      component: () => import('./../components/users/profile')
+      component: Profile
     }
   ],
   hashbang: false,

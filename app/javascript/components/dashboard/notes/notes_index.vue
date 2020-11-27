@@ -49,12 +49,14 @@
 
 <script>
   import {mapMutations, mapGetters} from "vuex"
+  import NotesForm from './notes_form'
+  import NotesShow from './notes_show'
 
   export default {
     name: 'NotesIndex',
     components: {
-      NotesForm: () => import('./notes_form'),
-      NotesShow: () => import('./notes_show')
+      NotesForm,
+      NotesShow
     },
     props: ['facility', 'from'],
     data() {
