@@ -61,25 +61,30 @@
       <div class="col-md-5">
         <div class="border-gray h-330">
           <h5 class="mb-2">Watched Facilities, Status and % Progress</h5>
-          <div v-if="on_watched.facilities.length > 0">
-            <div v-for="facility in on_watched.facilities">
-              <div class="row my-3">
-                <div class="col-md-9">
-                  <div class="d-flex align-items-center">
-                    <div class="fbody-icon mr-2"><i class="fas fa-check"></i></div>
-                    <div class="mr-2">{{facility.facilityName}}</div>
-                    <div class="status-box px-2 text-secondary" :style="`border-color: ${facility.color}`">{{facility.projectStatus || 'No Status'}}</div>
+          <div v-if="contentLoaded">
+            <div v-if="on_watched.facilities.length > 0">
+              <div v-for="facility in on_watched.facilities">
+                <div class="row my-3">
+                  <div class="col-md-9">
+                    <div class="d-flex align-items-center">
+                      <div class="fbody-icon mr-2"><i class="fas fa-check"></i></div>
+                      <div class="mr-2">{{facility.facilityName}}</div>
+                      <div class="status-box px-2 text-secondary" :style="`border-color: ${facility.color}`">{{facility.projectStatus || 'No Status'}}</div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-3 d-flex align-items-center">
-                  <span class="w-100 progress pg-content" :class="{'progress-0': facility.progress <= 0}">
-                    <div class="progress-bar bg-info" :style="`width: ${facility.progress}%`">{{facility.progress}} %</div>
-                  </span>
+                  <div class="col-md-3 d-flex align-items-center">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': facility.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${facility.progress}%`">{{facility.progress}} %</div>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div v-else class="p-2 text-danger">No Data Found..</div>
           </div>
-          <div v-else class="p-2 text-danger">No Data Found..</div>
+          <div v-else class="my-4">
+            <loader type="code"></loader>
+          </div>
         </div>
       </div>
     </div>
@@ -90,43 +95,53 @@
         <div class="col-md-6">
           <div class="border-gray h-330">
             <h5 class="mb-2">Watched Task Categories Progressions</h5>
-            <div v-if="displayWatchedTaskTypes">
-              <div v-for="task in watchedTaskTypes">
-                <div class="row mt-1" v-if="task._display">
-                  <div class="col-md-9">
-                    <span> {{task.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-                    </span>
+            <div v-if="contentLoaded">
+              <div v-if="displayWatchedTaskTypes">
+                <div v-for="task in watchedTaskTypes">
+                  <div class="row mt-1" v-if="task._display">
+                    <div class="col-md-9">
+                      <span> {{task.name}}</span>
+                      <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': task.progress <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div v-else class="p-2 text-danger">No Data Found..</div>
             </div>
-            <div v-else class="p-2 text-danger">No Data Found..</div>
+            <div v-else class="my-4">
+              <loader type="code"></loader>
+            </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="wacthed-task-list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Tasks</h5>
-              <div v-if="sortedTasks.length > 0">
-                <div
-                  class="p-1 watch-task-item"
-                  v-for="(task, i) in sortedTasks"
-                  :key="task.id"
-                  >
-                  <task-show
-                    :class="{'b_border': !!on_watched.tasks[i+1]}"
-                    :task="task"
-                    from-view="watch_view"
-                    @toggle-watched="updateWatchedTasks"
-                  ></task-show>
+              <div v-if="contentLoaded">
+                <div v-if="sortedTasks.length > 0">
+                  <div
+                    class="p-1 watch-task-item"
+                    v-for="(task, i) in sortedTasks"
+                    :key="task.id"
+                    >
+                    <task-show
+                      :class="{'b_border': !!on_watched.tasks[i+1]}"
+                      :task="task"
+                      from-view="watch_view"
+                      @toggle-watched="updateWatchedTasks"
+                    ></task-show>
+                  </div>
                 </div>
+                <div v-else class="p-2 text-danger">No Data Found..</div>
               </div>
-              <div v-else class="p-2 text-danger">No Data Found..</div>
+              <div v-else class="my-4">
+                <loader type="code"></loader>
+              </div>
             </div>
           </div>
         </div>
@@ -150,43 +165,53 @@
         <div class="col-md-6">
           <div class="border-gray h-330">
             <h5 class="mb-2">Watched Issue Types</h5>
-            <div v-if="displayWatchedIssueTypes">
-              <div v-for="issue in watchedIssueTypes">
-                <div class="row mt-1" v-if="issue._display">
-                  <div class="col-md-9">
-                    <span> {{issue.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-                  </div>
-                  <div class="col-md-3 d-flex align-items-center">
-                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-                    </span>
+            <div v-if="contentLoaded">
+              <div v-if="displayWatchedIssueTypes">
+                <div v-for="issue in watchedIssueTypes">
+                  <div class="row mt-1" v-if="issue._display">
+                    <div class="col-md-9">
+                      <span> {{issue.name}}</span>
+                      <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div v-else class="p-2 text-danger">No Data Found..</div>
             </div>
-            <div v-else class="p-2 text-danger">No Data Found..</div>
+            <div v-else class="my-4">
+              <loader type="code"></loader>
+            </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="watched-issue-list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Issues</h5>
-              <div v-if="sortedIssues.length > 0">
-                <div
-                  v-for="(issue, i) in sortedIssues"
-                  :key="issue.id"
-                  class="p-1 watch-task-item"
-                  >
-                  <issue-show
-                    :class="{'b_border': !!on_watched.issues[i+1]}"
-                    :issue="issue"
-                    from-view="watch_view"
-                    @toggle-watch-issue="updateWatchedIssues"
-                  ></issue-show>
+              <div v-if="contentLoaded">
+                <div v-if="sortedIssues.length > 0">
+                  <div
+                    v-for="(issue, i) in sortedIssues"
+                    :key="issue.id"
+                    class="p-1 watch-task-item"
+                    >
+                    <issue-show
+                      :class="{'b_border': !!on_watched.issues[i+1]}"
+                      :issue="issue"
+                      from-view="watch_view"
+                      @toggle-watch-issue="updateWatchedIssues"
+                    ></issue-show>
+                  </div>
                 </div>
+                <div v-else class="p-2 text-danger">No Data Found..</div>
               </div>
-              <div v-else class="p-2 text-danger">No Data Found..</div>
+              <div v-else class="my-4">
+                <loader type="code"></loader>
+              </div>
             </div>
           </div>
         </div>
@@ -210,15 +235,22 @@
 <script>
   import {mapGetters, mapActions} from 'vuex'
   import {Timeline, DataSet} from "vis-timeline/standalone"
+  import Doughnut from './../shared/doughnut_chart'
+  import Stacked from './../shared/stacked_chart'
+  import Loader from './../shared/loader'
+  import Bar from './../shared/bar_chart'
+  import TaskShow from './../dashboard/tasks/task_show'
+  import IssueShow from './../dashboard/issues/issue_show'
 
   export default {
     name: "ProjectWatchView",
     components: {
-      Doughnut: () => import('./../shared/doughnut_chart'),
-      Stacked: () => import('./../shared/stacked_chart'),
-      Bar: () => import('./../shared/bar_chart'),
-      TaskShow: () => import('./../dashboard/tasks/task_show'),
-      IssueShow: () => import('./../dashboard/issues/issue_show')
+      Doughnut,
+      Stacked,
+      Bar,
+      TaskShow,
+      IssueShow,
+      Loader
     },
     data() {
       return {
@@ -252,6 +284,7 @@
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'on_watched',
         'issueTypes',
         'taskTypes',
@@ -409,7 +442,6 @@
           _hash.taskType = is_task ? task.taskType : task.issueType
           _hash.content = is_task ? task.text : task.title
           _hash.start = task.startDate
-          // if (new Date(task.startDate).getTime() !== new Date(task.dueDate).getTime()) _hash.end = task.dueDate
           _hash.className = is_task ? 'vis-task' : 'vis-issue'
           if (task.progress !== 100 && new Date(task.dueDate).getTime() < new Date().getTime()) {
             _hash.className = 'vis-overdue-' + (is_task ? 'task' : 'issue')

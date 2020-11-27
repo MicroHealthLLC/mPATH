@@ -16,7 +16,6 @@ class FacilitiesController < AuthenticatedController
   end
 
   def update
-    @facility.update(facility_params)
     @facility_project.update(facility_project_params)
     render json: {facility: @facility_project.as_json}
   end

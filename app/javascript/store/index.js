@@ -16,6 +16,7 @@ const getSimpleDate = (date) => {
 
 export default new Vuex.Store({
   state: {
+    contentLoaded: false,
     mapLoading: true,
     sideLoading: true,
     projects: new Array,
@@ -73,6 +74,7 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setMapLoading: (state, loading) => state.mapLoading = loading,
     setSideLoading: (state, loading) => state.sideLoading = loading,
     setProjects: (state, projects) => state.projects = projects,
@@ -183,6 +185,7 @@ export default new Vuex.Store({
   },
 
   getters: {
+    contentLoaded: state => state.contentLoaded,
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,
     projects: state => state.projects,
@@ -727,7 +730,7 @@ export default new Vuex.Store({
           })
       })
     },
-    async fetchDashboardData({dispatch}, {id, cb}) {
+    async fetchDashboardData({dispatch, commit}, {id, cb}) {
       await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
       await dispatch('fetchFacilities', id)
@@ -738,8 +741,10 @@ export default new Vuex.Store({
       await dispatch('fetchIssueStages')
       await dispatch('fetchIssueTypes')
       await dispatch('fetchIssueSeverities')
+      await commit('setContentLoaded', true)
       if (cb) return cb()
     },
+
     async taskUpdated({dispatch}, {projectId, facilityId, cb}) {
       return new Promise(async (resolve, reject) => {
         let facility = await dispatch('fetchFacility', {projectId, facilityId})
