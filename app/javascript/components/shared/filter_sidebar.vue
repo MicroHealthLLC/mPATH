@@ -1,5 +1,5 @@
 <template>
-    <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
+  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="shadow-sm">
       <div class="d-flex m-3 align-items-center justify-content-between">
         <h4 class="d-flex align-items-center">
@@ -113,6 +113,8 @@
             v-model="C_facilityDueDateFilter"
             class="datepicker"
             placeholder="Project Completion Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
             range
           />
 
@@ -339,6 +341,7 @@
         isLoading: false,
         exporting: false,
         showFilters: false,
+        datePicker: false,
         facilities: [],
         myActions: [
           {name: 'My Tasks', value: 'tasks'},
@@ -551,7 +554,7 @@
         'setIssueStageFilter'
       ]),
       handleOutsideClick() {
-        if (this.showFilters) this.showFilters = false
+        if (this.showFilters && !this.datePicker) this.showFilters = false
       },
       toggleFilters() {
         this.showFilters = !this.showFilters

@@ -12,62 +12,62 @@
     </div>
     <div v-else>
       <div class="d-flex align-item-center justify-content-between">
-        <div class="simple-select mr-1 d-flex" style="width:30%">  
-            <i class="fas fa-filter filter mr-2"></i>       
-            <multiselect
-              v-model="C_issueTypeFilter"
-              track-by="name"
-              label="name"
-              class="issueTypeMs"
-              placeholder="Filter by Issue Type"
-              :options="issueTypes"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-         </div>
-          <div class="simple-select mr-1" style="width:28%">
-            <multiselect
-              v-model="C_issueSeverityFilter"
-              track-by="name"
-              label="name"
-              placeholder="Filter by Issue Severity"
-              :options="issueSeverities"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>         
-          </div>
-          <div class="simple-select mr-1 d-flex" style="width:20%">
-            <multiselect
-            v-model="viewList"
-            :options="listOptions" 
-            :searchable="false"   
-            :close-on-select="false"
-            :show-labels="false"         
-            placeholder="Filter by Issue Status"     
+        <div class="simple-select mr-1 d-flex" style="width:30%">
+          <i class="fas fa-filter filter mr-2"></i>
+          <multiselect
+            v-model="C_issueTypeFilter"
+            track-by="name"
+            label="name"
+            class="issueTypeMs"
+            placeholder="Filter by Issue Type"
+            :options="issueTypes"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+          >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="simple-select mr-1" style="width:28%">
+          <multiselect
+            v-model="C_issueSeverityFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Issue Severity"
+            :options="issueSeverities"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
             >
-              <template slot="singleLabel">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{viewList}}</span>
-                  </div>
-                </template>
-            </multiselect>  
-           </div>  
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="simple-select mr-1 d-flex" style="width:20%">
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Issue Status"
+          >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
           <div class="mt-3">
             <div class="input-group">
               <div class="input-group-prepend">
@@ -76,28 +76,28 @@
               <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
             </div>
           </div>
-          <div class="form-check-inline mr-3">
-             <label class="form-check-label mr-2">
-              <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-              <i class="fas fa-user mr-1"></i>My Issue
-              </label>
-              <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-              <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-              <i class="fas fa-eye mr-1"></i>On Watch
-            </label>  
-          </div>    
-      </div>    
-      <div class="mt-2">      
-          <button v-if="_isallowed('write')"
-            class="new-issue-btn btn btn-sm btn-primary addBtns"
-            @click.prevent="reportNew">
-            <i class="fas fa-plus-circle"></i>
-             Add Issue
-           </button>      
-        <div v-if="_isallowed('read')">   
-          <div v-if="filteredIssues.length > 0">               
+        <div class="form-check-inline mr-3">
+          <label class="form-check-label mr-2">
+            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
+            <i class="fas fa-user mr-2"></i>My Issue
+          </label>
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
+            <i class="fas fa-eye mr-2"></i>On Watch
+          </label>
+        </div>
+      </div>
+      <div class="mt-2">
+        <button v-if="_isallowed('write')"
+          class="new-issue-btn btn btn-sm btn-primary addBtns"
+          @click.prevent="reportNew">
+          <i class="fas fa-plus-circle mr-2"></i>
+          Add Issue
+        </button>
+        <div v-if="_isallowed('read')">
+          <div v-if="filteredIssues.length > 0">
             <button
-              @click="download"
+              @click.prevent="download"
               id="printBtn"
               class="btn btn-sm btn-outline-dark exportBtn">
               Export to PDF
@@ -107,43 +107,43 @@
               id="printBtn"
               class="btn btn-sm btn-outline-dark">
               Export to Excel
-            </button>           
+            </button>
             <label class="form-check-label text-primary floatRight">
               <h5 id="total">Total: {{filteredIssues.length}}</h5>
-            </label>              
+            </label>
             <div style="margin-bottom:50px">
-              <table class="table table-sm table-bordered stickyTableHeader mt-3">                 
-                  <colgroup>
-                    <col class="seventeen" />
-                    <col class="ten" />                   
-                    <col class="nine" />
-                    <col class="eight" />
-                    <col class="eight" />
-                    <col class="ten" />
-                    <col class="eight" />
-                    <col class="seven" />
-                    <col class="six" />
-                    <col class="seventeen" />
-                  </colgroup>
-                  <tr style="background-color:#ededed; font-size:.90rem">
-                    <th>Issue</th>
-                    <th>Issue Type</th>
-                    <th>Issue Severity</th>
-                    <th>Start Date</th>
-                    <th>Due Date</th>
-                    <th>Assigned Users</th>
-                    <th>Progress</th>
-                    <th>Overdue</th>
-                    <th>On Watch</th>
-                    <th>Last Update</th>
-                  </tr>           
+              <table class="table table-sm table-bordered stickyTableHeader mt-3">
+                <colgroup>
+                  <col class="seventeen" />
+                  <col class="ten" />
+                  <col class="nine" />
+                  <col class="eight" />
+                  <col class="eight" />
+                  <col class="ten" />
+                  <col class="eight" />
+                  <col class="seven" />
+                  <col class="six" />
+                  <col class="seventeen" />
+                </colgroup>
+                <tr style="background-color:#ededed; font-size:.90rem">
+                  <th>Issue</th>
+                  <th>Issue Type</th>
+                  <th>Issue Severity</th>
+                  <th>Start Date</th>
+                  <th>Due Date</th>
+                  <th>Assigned Users</th>
+                  <th>Progress</th>
+                  <th>Overdue</th>
+                  <th>On Watch</th>
+                  <th>Last Update</th>
+                </tr>
               </table>
               <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list pl-0" :per="15">
                 <issue-sheets
                   v-for="(issue, i) in paginated('filteredIssues')"
                   id="issueHover"
                   :class="{'b_border': !!filteredIssues[i+1]}"
-                  :key="issue.id"              
+                  :key="issue.id"
                   :issue="issue"
                   :from-view="from"
                   @issue-edited="issueEdited"
@@ -195,8 +195,8 @@
             <td v-if="(issue.watched) <= now"><h5>X</h5></td>
             <td v-else></td>
             <td v-if="(issue.notes.length) > 0">
-               By: {{ issue.notes[0].user.fullName}} on 
-              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}       
+               By: {{ issue.notes[0].user.fullName}} on
+              {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
             </td>
             <td v-else>No Updates</td>
           </tr>
@@ -208,21 +208,24 @@
 
 <script>
   import http from './../../../common/http'
+  import {jsPDF} from "jspdf"
+  import 'jspdf-autotable'
+  import {mapGetters, mapMutations} from 'vuex'
   import IssueForm from './issue_form'
   import IssueSheets from './issue_sheets'
-  import  {jsPDF} from "jspdf";
-  import 'jspdf-autotable';
-  import {mapGetters, mapMutations} from 'vuex'
   import moment from 'moment'
   Vue.prototype.moment = moment
 
   export default {
     name: 'IssueSheetsIndex',
     props: ['facility', 'from'],
-    components: {IssueForm, IssueSheets},
+    components: {
+      IssueForm,
+      IssueSheets
+    },
     data() {
-      return {    
-        listOptions: ['active','all', 'completed'],   
+      return {
+        listOptions: ['active','all', 'completed'],
         loading: true,
         newIssue: false,
         viewList: 'active',
@@ -260,16 +263,6 @@
           this.updateFacilityHash(this.facility)
         }
       },
-      issueDeleted(issue) {
-        http
-          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
-          .then((res) => {
-            var issues = [...this.facility.issues]
-            _.remove(issues, (t) => t.id == issue.id)
-            this.$emit('refresh-facility')
-          })
-          .catch((err) => console.log(err))
-      },
       toggleWatched(issue) {
         http
           .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
@@ -277,7 +270,7 @@
             this.issueUpdated(res.data.issue, false)
           })
           .catch((err) => console.log(err))
-      },     
+      },
       download() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -304,6 +297,7 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
+        'issueUserFilter',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -318,9 +312,10 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues) {
+          if (this.C_myIssues || this.issueUserFilter) {
             var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            valid  = valid && userIds.includes(this.$currentUser.id)
+            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
           if (this.C_onWatchIssues) {
             valid  = valid && issue.watched
@@ -343,6 +338,7 @@
           }
           return valid;
         })), ['dueDate'])
+
         return issues
       },
       C_issueTypeFilter: {
@@ -393,29 +389,29 @@
     width: 5%;
   }
   .six {
-    width: 6%; 
+    width: 6%;
   }
   .seven {
     width: 7%;
   }
   .eight {
-    width: 8%; 
+    width: 8%;
   }
   .nine {
     width: 9%;
   }
   .ten {
-    width: 10%; 
+    width: 10%;
   }
   .seventeen {
-    width: 17%; 
+    width: 17%;
   }
   th {
     font-size: .70rem !important;
   }
   .floatRight {
-    text-align: right;  
-    right: 0px; 
+    text-align: right;
+    right: 0px;
   }
   .issues-index {
     height: 465px;
@@ -447,7 +443,7 @@
     a {
       width: 30px;
       height: 36px;
-      margin-right: 1px;    
+      margin-right: 1px;
       background-color: white;
       box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
       color: #383838;

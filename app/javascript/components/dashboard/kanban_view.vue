@@ -3,7 +3,6 @@
     <div class="row">
       <div class="col-md-2 facility-groups-tab" :class="{'col-md-4': expandFilter, 'col-md-2': !expandFilter}">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="mt-4" badge-margin="4px" />
-
         <div class="row">
           <div class="col d-flex">
             <facility-sidebar
@@ -15,7 +14,7 @@
               @on-expand-facility="showFacility"
             ></facility-sidebar>
 
-            <div v-if="expandFilter" class="mt-4">
+            <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="input-group">
@@ -170,7 +169,7 @@
       </div>
 
       <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
-        <div v-if="'id' in currentFacilityGroup">
+        <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">
           <span class="clickable" @click.prevent="expandFilter=!expandFilter">
             <span v-show="!expandFilter" class="expandBtn">
               <i class="fa fa-chevron-right" aria-hidden="true"></i>
@@ -182,7 +181,7 @@
         </div>
 
         <div class="mt-4">
-          <div v-if="'id' in currentFacility">
+          <div v-if="currentFacility && ('id' in currentFacility)">
             <kanban
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
@@ -204,8 +203,9 @@
       ref="newFormModal"
       :hide-close-button="true"
       :blocking="true"
+      v-if="viewPermit(currentTab, 'write')"
       >
-      <div v-if="('id' in currentFacility) && fixedStageId" class="w-100">
+      <div v-if="currentFacility && ('id' in currentFacility) && fixedStageId" class="w-100">
         <task-form
           v-if="currentTab === 'tasks'"
           :facility="currentFacility"
@@ -229,17 +229,24 @@
 </template>
 
 <script>
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import {SweetModal} from 'sweet-modal-vue'
   import Kanban from './../shared/kanban'
   import CustomTabs from './../shared/custom-tabs'
   import FacilitySidebar from './facilities/facility_sidebar'
-  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
-  import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'KanbanView',
-    components: {Kanban, CustomTabs, FacilitySidebar, IssueForm, TaskForm, SweetModal},
+    components: {
+      Kanban,
+      CustomTabs,
+      FacilitySidebar,
+      IssueForm,
+      TaskForm,
+      SweetModal
+    },
     data() {
       return {
         tabs: [
@@ -259,7 +266,7 @@
           id: ''
         },
         fixedStageId: null,
-        viewList: 'active',
+        viewList: 'all',
         listOptions: ['active','all', 'completed'],
         currentFacility: {},
         currentFacilityGroup: {},
@@ -307,6 +314,7 @@
         this.currentFacility = {}
       },
       handleAddNew(stage) {
+        if (!this.viewPermit(this.currentTab, 'write')) return
         this.fixedStageId = stage.id
         this.$refs.newFormModal && this.$refs.newFormModal.open()
       },
@@ -338,6 +346,7 @@
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
         'issueStages',
@@ -360,7 +369,7 @@
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
 
-        return _.filter(this.currentFacility.tasks, (task) => {
+        return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
@@ -389,7 +398,7 @@
             }
           }
           return valid
-        })
+        }), 'kanbanOrder', 'asc')
       },
       C_myTasks: {
         get() {
@@ -424,7 +433,8 @@
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
 
-        return _.filter(this.currentFacility.issues, (issue) => {
+        return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
+
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
@@ -458,8 +468,8 @@
               break
             }
           }
-          return valid;
-        })
+          return valid
+        }), 'kanbanOrder', 'asc')
       },
       C_issueTypeFilter: {
         get() {

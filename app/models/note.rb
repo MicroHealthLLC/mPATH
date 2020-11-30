@@ -21,4 +21,11 @@ class Note < ApplicationRecord
       attach_files: attach_files
     ).as_json
   end
+
+  def as_json(options=nil)
+    json = super(options)
+    json.merge(
+      user: self.user.as_json(only: [:id, :full_name]),
+    ).as_json
+  end
 end

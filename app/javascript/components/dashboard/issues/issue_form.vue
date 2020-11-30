@@ -7,11 +7,12 @@
       class="mx-auto"
       accept-charset="UTF-8"
       >
-        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2">
+        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"
+          data-cy="issue_save_btn"
           >
           Save
         </button>
@@ -19,26 +20,28 @@
           v-else
           disabled
           class="btn btn-sm sticky-btn btn-light"
+          data-cy="issue_read_only_btn"
           >
           Read Only
         </button>
         <button
           class="btn btn-sm sticky-btn btn-warning ml-2"
           @click.prevent="cancelIssueSave"
+          data-cy="issue_close_btn"
           >
           Close
         </button>
         <button
-          v-if="_isallowed('delete')"
+          v-if="_isallowed('delete') && DV_issue.id"
           @click.prevent="deleteIssue"
           class="btn btn-sm btn-danger sticky-btn ml-auto "
+          data-cy="issue_delete_btn"
           >
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
         </button>
       </div>
       <div class="paperLook formTitle ">
-      <!-- <h5 class="text-center mt-3">{{title}}</h5> -->
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -56,8 +59,9 @@
           placeholder="Title"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('title') }"
+          data-cy="issue_title"
         />
-        <div v-show="errors.has('title')" class="text-danger">
+        <div v-show="errors.has('title')" class="text-danger" data-cy="issue_title_error">
           {{errors.first('title')}}
         </div>
       </div>
@@ -69,6 +73,7 @@
           v-model="DV_issue.description"
           rows="4"
           :readonly="!_isallowed('write')"
+          data-cy="issue_description"
         />
       </div>
       <div class="simple-select form-group mx-4">
@@ -85,6 +90,7 @@
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write')"
           :class="{'error': errors.has('Issue Type')}"
+          data-cy="issue_type"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -92,7 +98,7 @@
             </div>
           </template>
         </multiselect>
-        <div v-show="errors.has('Issue Type')" class="text-danger">
+        <div v-show="errors.has('Issue Type')" class="text-danger" data-cy="issue_type_error">
           {{errors.first('Issue Type')}}
         </div>
       </div>
@@ -110,6 +116,7 @@
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write')"
           :class="{'error': errors.has('Issue Severity')}"
+          data-cy="issue_severity"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -117,7 +124,7 @@
             </div>
           </template>
         </multiselect>
-        <div v-show="errors.has('Issue Severity')" class="text-danger">
+        <div v-show="errors.has('Issue Severity')" class="text-danger" data-cy="issue_severity_error">
           {{errors.first('Issue Severity')}}
         </div>
       </div>
@@ -133,6 +140,7 @@
           select-label="Select"
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write') || !!fixedStage"
+          data-cy="issue_stage"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -153,8 +161,9 @@
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
+            data-cy="issue_start_date"
           />
-          <div v-show="errors.has('Start Date')" class="text-danger">
+          <div v-show="errors.has('Start Date')" class="text-danger" data-cy="issue_start_date_error">
             {{errors.first('Start Date')}}
           </div>
         </div>
@@ -170,8 +179,9 @@
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write') || DV_issue.startDate === '' || DV_issue.startDate === null"
             :disabled-date="disabledDueDate"
+            data-cy="issue_due_date"
           />
-          <div v-show="errors.has('Estimated Completion Date')" class="text-danger">
+          <div v-show="errors.has('Estimated Completion Date')" class="text-danger" data-cy="issue_due_date_error">
             {{errors.first('Estimated Completion Date')}}
           </div>
         </div>
@@ -190,6 +200,7 @@
           deselect-label="Enter to remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
+          data-cy="issue_user"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -347,13 +358,15 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import AttachmentInput from './../../shared/attachment_input'
 
   export default {
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
-    components: {AttachmentInput},
+    components: {
+      AttachmentInput
+    },
     data() {
       return {
         DV_issue: this.INITIAL_ISSUE_STATE(),

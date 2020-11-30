@@ -1,4 +1,4 @@
-import Profile  from '../components/users/profile'
+import Profile from './../components/users/profile'
 
 export default new VueRouter({
   routes: [

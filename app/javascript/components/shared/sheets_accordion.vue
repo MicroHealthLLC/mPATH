@@ -15,6 +15,7 @@
     </transition>
   </div>
 </template>
+
 <script>
   import FacilityShow from './../dashboard/facilities/facility_sheets'
   export default {
@@ -40,6 +41,7 @@
     }
   }
 </script>
+
 <style lang="scss" scoped>
   .accordion_header {
     cursor: pointer;
@@ -55,12 +57,8 @@
     color: #fff;
     background: #7092BF;
   }
-
   .slide-fade-enter-active {
     transition: all .4s ease;
-  }
-  .slide-fade-leave-active {
-    /*transition: all .1s ease;*/
   }
   .slide-fade-enter {
     transform: translateY(50%);

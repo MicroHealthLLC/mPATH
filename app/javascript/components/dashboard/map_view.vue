@@ -2,9 +2,10 @@
   <div id="_wrapper">
     <div class="col p-0">
       <div class="row m-0 mw-100">
-        <div v-if="!mapLoading" id="map-wrap" class="col-8 p-0">
+        <div id="map-wrap" class="col-8 p-0">
           <div class="regions-bar">
             <facility-group-bar
+              v-if="contentLoaded"
               :facility-groups="filteredFacilityGroups"
               :facilities="filteredFacilities('active')"
               :project="currentProject"
@@ -56,35 +57,25 @@
             </GmapInfoWindow>
           </GmapMap>
         </div>
-        <div v-else class="col-8 p-0"></div>
         <div id="rollup-sidebar" class="col-4 p-0" :style="rollupStyle">
           <div style="margin-left: 12px;">
-            <div v-if="!sideLoading">
+            <div>
               <facility-rollup v-show="!openSidebar"></facility-rollup>
               <div class="knocker_side" :style="knockerStyle">
-                <div v-if="currentFacilityStatus" class="knocker" @click="toggleOpenSideBar">
+                <div v-if="currentFacility && currentFacility.id" class="knocker" @click="toggleOpenSideBar">
                   <div class="linner"></div>
                 </div>
                 <div id="map-sidebar" class="shadow-sm">
                   <facility-show
-                    v-if="currentFacilityStatus"
+                    v-if="currentFacility && currentFacility.id"
                     :facility="currentFacility"
                     :facility-group="currentFacilityGroup"
                     from="map_view"
                     @close-side-bar="closeSidebar"
-                    @edit-facility="editFacility"
                     @facility-update="updateFacility"
                   />
-                  <div v-else class="d-flex justify-content-center align-items-center h-75">
-                    <loader :loading="true" color="black"></loader>
-                    <p class="__loading">Loading</p>
-                  </div>
                 </div>
               </div>
-            </div>
-            <div v-else class="d-flex justify-content-center align-items-center h-75">
-              <loader :loading="true" color="black"></loader>
-              <p class="__loading">Loading</p>
             </div>
           </div>
         </div>
@@ -96,15 +87,15 @@
           :blocking="true"
           >
           <div v-if="currentFacilityGroup && currentFacilityGroup.id">
-            <div class="facility_grp_close_btn" @click="onCloseAccordion">
+            <div class="facility_grp_close_btn" @click.prevent="onCloseAccordion">
               <i class="fa fa-times"></i>
             </div>
-            <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{currentFacilityGroupFacilities.length}}</span></h3>
-            <div v-if="currentFacilityGroupFacilities && currentFacilityGroupFacilities.length == 0" class="mt-3 text-danger">
+            <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(currentFacilityGroup).length}}</span></h3>
+            <div v-if="facilityGroupFacilities(currentFacilityGroup) && facilityGroupFacilities(currentFacilityGroup).length == 0" class="mt-3 text-danger">
               There is no facility under this group
             </div>
             <div v-else>
-              <div v-for="facility in currentFacilityGroupFacilities">
+              <div v-for="facility in facilityGroupFacilities(currentFacilityGroup)">
                 <accordion
                   :expanded="expandedFacility.id"
                   :facility="facility.facility"
@@ -123,11 +114,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markerclustererplus/2.1.4/markerclusterer.js"></script>
 <script>
-import FacilityForm from './facilities/facility_form'
 import FacilityShow from './facilities/facility_show'
-import FacilityRollup from './facilities/facility_rollup'
 import FacilityGroupBar from './../shared/facility_group_bar'
 import Accordion from './../shared/accordion'
+import FacilityRollup from './facilities/facility_rollup'
 import {SweetModal} from 'sweet-modal-vue'
 import {mapGetters, mapMutations} from 'vuex'
 import * as Moment from 'moment'
@@ -137,7 +127,6 @@ const moment = extendMoment(Moment)
 export default {
   name: 'ProjectMapView',
   components: {
-    FacilityForm,
     FacilityShow,
     FacilityGroupBar,
     Accordion,
@@ -164,14 +153,9 @@ export default {
       }
     }
   },
-  mounted() {
-    this.setMapLoading(false)
-    this.setSideLoading(false)
-  },
   computed: {
     ...mapGetters([
-      'mapLoading',
-      'sideLoading',
+      'contentLoaded',
       'facilities',
       'facilityGroups',
       'statuses',
@@ -183,32 +167,16 @@ export default {
       'filteredFacilities',
       'facilityGroupFacilities'
     ]),
-    currentFacilityGroupFacilities() {
-      if (this.currentFacilityGroup && this.currentFacilityGroup.facilities) {
-        var facilityIds = _.map(this.filteredFacilities('active'), 'id')
-        return _.filter(this.currentFacilityGroup.facilities, (f => facilityIds.includes(f.facilityId) && f.projectId == this.currentProject.id))
-      }
-      else {
-        return []
-      }
-    },
     knockerStyle() {
       return this.openSidebar ? {} : {transform: "translateX(calc(105% - 12px))"}
     },
     rollupStyle() {
       return this.openSidebar ? {right: '12px'} : {right: '0'}
     },
-    currentFacilityStatus() {
-      var status = this.currentFacility && _.map(this.filteredFacilities('active'), 'id').includes(this.currentFacility.id)
-      if (!status && this.openSidebar) this.openSidebar = false
-      return status
-    }
   },
   methods: {
     ...mapMutations([
       'updateFacilities',
-      'setMapLoading',
-      'setSideLoading',
       'setCurrentFacilityGroup',
       'setCurrentFacility'
     ]),
@@ -232,14 +200,9 @@ export default {
       this.setCurrentFacilityGroup(facilityGroup)
       this.$refs.facilitiesAccordion.open()
     },
-    editFacility(facility) {
-      this.setCurrentFacility(facility)
-      this.openSidebar = false
-      this.$refs.facilityForm.open()
-    },
     updateFacility(facility) {
       this.setCurrentFacility(facility)
-      var index = this.facilities.findIndex(f => f.id == facility.id)
+      let index = this.facilities.findIndex(f => f.id == facility.id)
       if (index > -1) this.updateFacilities({index, facility})
     },
     updateExpanded(facility) {

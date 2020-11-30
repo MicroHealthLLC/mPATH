@@ -28,7 +28,11 @@ class Issue < ApplicationRecord
   scope :incomplete, -> {where("progress < ?", 100)}
 
   before_save :check_watched, if: :watched_changed?
+  before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   after_save :handle_related_tasks_issues
+  before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
+  before_update :handle_kanban_order_changes
+  after_destroy :update_siblings_kanban_order
 
   def to_json
     attach_files = []
@@ -49,8 +53,8 @@ class Issue < ApplicationRecord
       issue_severity: self.issue_severity.try(:name),
       user_ids: self.users.pluck(:id),
       users: self.users.map(&:full_name),
-      checklists: self.checklists.as_json(include: {user: {methods: :full_name}}),
-      notes: self.notes.as_json(include: {user: {methods: :full_name}}),
+      checklists: self.checklists.as_json,
+      notes: self.notes.as_json,
       facility_id: self.facility_project.try(:facility_id),
       facility_name: self.facility_project.try(:facility).facility_name,
       project_id: self.facility_project.try(:project_id),
@@ -104,10 +108,43 @@ class Issue < ApplicationRecord
     super
   end
 
+  def update_siblings_kanban_order
+    siblings.where("kanban_order > ?", kanban_order).update_all("kanban_order = kanban_order - 1")
+  end
+
   def handle_related_tasks_issues
     sub_tasks.each{|t| t.sub_issues << self unless t.sub_issues.include? self}
     sub_issues.each{|i| i.sub_issues << self unless i.sub_issues.include? self}
     RelatedTask.where(task_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_task_ids).destroy_all
     RelatedIssue.where(issue_id: self.id, relatable_type: 'Issue').where.not(relatable_id: sub_issue_ids).destroy_all
+  end
+
+  def update_progress_on_stage_change
+    if issue_stage.present?
+      self.progress = issue_stage.percentage
+      self.auto_calculate = false
+    end
+  end
+
+  def handle_kanban_order_changes
+    if issue_stage_id_changed?
+      siblings.where("kanban_order >= ?", kanban_order).update_all("kanban_order = kanban_order + 1")
+      was_siblings.where("kanban_order > ?", kanban_order_was).update_all("kanban_order = kanban_order - 1")
+    elsif kanban_order_changed?
+      siblings.where("kanban_order >= ? AND kanban_order < ?", kanban_order, kanban_order_was).update_all("kanban_order = kanban_order + 1") if kanban_order < kanban_order_was
+      siblings.where("kanban_order > ? AND kanban_order <= ?", kanban_order_was, kanban_order).update_all("kanban_order = kanban_order - 1") if kanban_order > kanban_order_was
+    end
+  end
+
+  def siblings
+    facility_project.issues.where("id != ? AND issue_stage_id = ?", id, issue_stage_id)
+  end
+
+  def was_siblings
+    facility_project.issues.where("id != ? AND issue_stage_id = ?", id, issue_stage_id_was)
+  end
+
+  def init_kanban_order
+    self.kanban_order = facility_project.issues.where(issue_stage_id: issue_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.issue_stage_id.present?
   end
 end

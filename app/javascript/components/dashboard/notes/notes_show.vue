@@ -9,10 +9,10 @@
     <div v-if="!loading" class="notes_show mb-5 mx-2" :class="{'hide-to-edit': C_editForManager}">
       <div v-if="show">
         <div class="crud-actions mx-3 float-right">
-          <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="editNoteMode">
+          <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
             <i class="fas fa-edit"></i>
           </span>
-          <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote">
+          <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
           </span>
         </div>
@@ -49,12 +49,14 @@
 
 <script>
   import http from './../../../common/http'
-  import NotesForm from './notes_form'
   import {mapGetters, mapMutations} from 'vuex'
+  import NotesForm from './notes_form'
 
   export default {
     props: ['facility', 'note', 'from'],
-    components: {NotesForm},
+    components: {
+      NotesForm
+    },
     data() {
       return {
         show: true,

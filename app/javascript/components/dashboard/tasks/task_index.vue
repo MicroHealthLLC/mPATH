@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3">
+  <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-3">
         <div class="simple-select w-70 mr-1">
@@ -22,13 +22,13 @@
           </multiselect>
         </div>
         <div class="simple-select w-50">
-            <multiselect
-          v-model="viewList"
-          :options="listOptions"
-          :searchable="false"
-          :close-on-select="false"
-          :show-labels="false"
-          placeholder="Filter by Task Status"
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Task Status"
           >
            <template slot="singleLabel">
               <div class="d-flex">
@@ -54,10 +54,10 @@
           </label>
         </div>
       </div>
-       <button v-if="_isallowed('write')" class="new-tasks-btn btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
+       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
-          @click="download"
+          @click.prevent="download"
           id="printBtn"
           class="btn btn-sm btn-outline-dark mr-1 exportBtn">
           Export to PDF
@@ -66,11 +66,11 @@
           disabled
           id="printBtn"
           class="btn btn-sm btn-outline-dark">
-         Export to Excel
+          Export to Excel
         </button>
-          <label class="form-check-label ml-2 mt-1 text-primary" id="total">
-            <h5>Total: {{filteredTasks.length}}</h5>
-          </label>
+        <label class="form-check-label ml-2 mt-1 text-primary" id="total" data-cy="task_total">
+          <h5>Total: {{filteredTasks.length}}</h5>
+        </label>
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
@@ -82,13 +82,14 @@
           :task="task"
           :from-view="from"
           @edit-task="editTask"
-          @toggle-watched="toggleWatched"
         >{{ task.text }}</task-show>
       </div>
-      <h6 v-else class="text-danger alt-text ml-1">No tasks found..</h6>
+      <div v-else>
+        <br/>
+        <h6 class="text-danger mt-4 ml-1">No tasks found..</h6>
+      </div>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-
     <table style="display:none"
       class="table table-sm table-bordered"
       ref="table" id="taskList1"
@@ -126,23 +127,21 @@
           <td v-else>No Updates</td>
         </tr>
       </tbody>
-      <!-- <tfoot>
-       <tr><td> Task List </td></tr>
-      </tfoot> -->
     </table>
   </div>
-
 </template>
 
 <script>
-  import TaskShow from "./task_show"
   import {mapGetters, mapMutations} from "vuex"
-  import  {jsPDF} from "jspdf";
-  import 'jspdf-autotable';
+  import {jsPDF} from "jspdf"
+  import 'jspdf-autotable'
+  import TaskShow from "./task_show"
 
   export default {
     name: 'TasksIndex',
-    components: {TaskShow},
+    components: {
+      TaskShow
+    },
     props: ['facility', 'from'],
     data() {
       return {
@@ -171,9 +170,6 @@
       },
       editTask(task) {
         this.$emit('show-hide', task)
-      },
-      toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
       },
       download() {
         const doc = new jsPDF("l")
@@ -289,9 +285,5 @@
   }
   tfoot {
     text-align: right !important;
-  }
-  .alt-text {
-    position: relative;
-    margin-top: 80px !important;
   }
 </style>

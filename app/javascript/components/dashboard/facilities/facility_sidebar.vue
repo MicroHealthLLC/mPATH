@@ -1,9 +1,10 @@
 <template>
-  <div id="facility_sidebar">
+  <div id="facility_sidebar" data-cy="facility_list">
     <h4 class="mt-4 text-info text-center" v-if="title">{{title}}</h4>
-      <div class="my-4 ml-2">
+    <div class="my-4 ml-2">
+      <div v-if="contentLoaded">
         <div v-for="group in filteredFacilityGroups" class="my-3">
-          <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
+          <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}" data-cy="facility_groups">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>
@@ -15,22 +16,34 @@
           <div v-show="expanded.id == group.id" class="ml-2">
             <div v-for="item in facilityGroupFacilities(group)">
               <div class="d-flex align-items-center expandable" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
-              <h6 class="facility-header">{{item.facility.facilityName}}</h6>
+              <h6 class="facility-header" data-cy="facilities">{{item.facility.facilityName}}</h6>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <div v-else>
+        <loader type="code"></loader>
+        <loader type="code"></loader>
+        <loader type="code"></loader>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
+  import Loader from './../../shared/loader'
+
   export default {
     name: 'FacilitySidebar',
+    components: {
+      Loader
+    },
     props: ['title', 'currentFacilityGroup', 'expanded', 'currentFacility'],
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'filteredFacilityGroups',
         'facilityGroupFacilities'
       ]),
@@ -63,8 +76,6 @@
           background-color: rgba(211, 211, 211, 10%);
         }
       }
-    }
-    .expandable {
       &.active,
       &:hover {
         h5, h6 {

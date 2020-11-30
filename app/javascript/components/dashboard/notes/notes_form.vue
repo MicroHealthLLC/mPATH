@@ -5,12 +5,14 @@
           :disabled="!readyToSave || loading"
           class="btn btn-success sticky-btn btn-sm"
           @click.prevent.stop="saveNote"
+          data-cy="note_save_btn"
           >
           Save
         </button>
         <button
           class="btn btn-sm btn-warning sticky-btn ml-2"
           @click.prevent="cancelNoteSave"
+          data-cy="note_close_btn"
           >
           Cancel
         </button>
@@ -18,6 +20,7 @@
           v-if="_isallowed('delete')"
           @click.prevent="deleteNote"
           class="btn btn-sm btn-danger sticky-btn ml-auto"
+          data-cy="note_delete_btn"
           >
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
@@ -25,11 +28,9 @@
       </div>
 
    <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
-      <!-- <center>{{titleText}}</center> -->
       <div class="form-group">
-        <!-- <label class="badge badge-secondary">Note</label> -->
        <label class="font-sm"><h5>Note</h5></label>
-        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..."></textarea>
+        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..." data-cy="note_details"></textarea>
       </div>
       <div class="input-group mb-2">
         <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
@@ -68,12 +69,14 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
-  import AttachmentInput from './../../shared/attachment_input'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
+  import AttachmentInput from './../../shared/attachment_input'
 
   export default {
     props: ['facility', 'note', 'title', 'from'],
-    components: {AttachmentInput},
+    components: {
+      AttachmentInput
+    },
     data() {
       return {
         DV_note: this.INITIAL_NOTE_STATE(),

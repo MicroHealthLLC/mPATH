@@ -1,9 +1,9 @@
 <template>
   <div class="m-3">
-    <div class="text-info font-weight-bold">Project Type: {{currentProject.projectType}}</div>
+    <div class="text-info font-weight-bold">Project Type: <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
     <div class="text-center">
-      <h2>{{C_facilityCount}} Facilities</h2>
+      <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
       <p class="mt-2 d-flex align-items-center">
         <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
           <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
@@ -23,7 +23,7 @@
     <hr>
     <div class="my-1">
       <h5 class="text-center">Facility Project Status</h5>
-      <div v-if="C_facilityCount > 0">
+      <div v-if="contentLoaded && C_facilityCount > 0">
         <div v-for="status in facilitiesByProjectStatus">
           <div class="row">
             <div class="col-md-9">
@@ -39,97 +39,110 @@
           </div>
         </div>
       </div>
-    </div>
-    <hr>
-    <div class="my-1">
-      <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
-      <div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Complete</span>
-            <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
-            </span>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Overdue</span>
-            <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
-            </span>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Task Categories</div>
-      <div v-for="task in currentTaskTypes">
-        <div class="row" v-if="task._display">
-          <div class="col-md-9">
-            <span> {{task.name}}</span>
-            <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
-              <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-            </span>
-          </div>
-        </div>
+      <div v-if="!contentLoaded" class="my-4">
+        <loader type="code"></loader>
       </div>
     </div>
     <hr>
     <div class="my-1">
-      <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
-      <div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Complete</span>
-            <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
+      <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
+      <div v-if="contentLoaded">
+        <div>
+          <div class="row">
+            <div class="col-md-9">
+              <span>Complete</span>
+              <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
+              </span>
+            </div>
           </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
-            </span>
+          <div class="row">
+            <div class="col-md-9">
+              <span>Overdue</span>
+              <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
+              </span>
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-9">
-            <span>Overdue</span>
-            <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
-            </span>
+        <br>
+        <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Task Categories</div>
+        <div v-for="task in currentTaskTypes">
+          <div class="row" v-if="task._display">
+            <div class="col-md-9">
+              <span> {{task.name}}</span>
+              <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
+                <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-      <br>
-      <div v-if="filteredIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
-      <div v-for="issue in currentIssueTypes">
-        <div class="row" v-if="issue._display">
-          <div class="col-md-9">
-            <span> {{issue.name}}</span>
-            <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-          </div>
-          <div class="col-md-3 d-flex align-items-center">
-            <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-              <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-            </span>
-          </div>
-        </div>
+      <div v-else class="my-4">
+        <loader type="code"></loader>
       </div>
     </div>
     <hr>
-    <div v-if="from !== 'manager_view'">
+    <div class="my-1">
+      <h5 class="text-center"><span v-if="contentLoaded">{{filteredIssues.length}}</span> Issues</h5>
+      <div v-if="contentLoaded">
+        <div>
+          <div class="row">
+            <div class="col-md-9">
+              <span>Complete</span>
+              <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-9">
+              <span>Overdue</span>
+              <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
+              </span>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div v-if="filteredIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
+        <div v-for="issue in currentIssueTypes">
+          <div class="row" v-if="issue._display">
+            <div class="col-md-9">
+              <span> {{issue.name}}</span>
+              <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="my-4">
+        <loader type="code"></loader>
+      </div>
+    </div>
+    <div class="mb-3" v-if="from !== 'manager_view'">
+      <hr>
       <h5 class="text-center">Facility Groups</h5>
-      <div class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
+      <div v-if="contentLoaded" class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
         <div class="col-md-9 font-md">
           <span class="badge badge-pill" :class="{'badge-success':
             facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
@@ -144,17 +157,26 @@
           </span>
         </div>
       </div>
+      <div v-else class="my-4">
+        <loader type="code"></loader>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Loader from './../../shared/loader'
 import {mapGetters} from 'vuex'
+
 export default {
   name: 'FacilityRollup',
   props: ['from', 'facilityGroup'],
+  components: {
+    Loader
+  },
   computed: {
     ...mapGetters([
+      'contentLoaded',
       'facilities',
       'currentProject',
       'filteredFacilityGroups',

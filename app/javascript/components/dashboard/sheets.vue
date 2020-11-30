@@ -68,11 +68,11 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
+  import {SweetModal} from 'sweet-modal-vue'
   import FacilitySheets from './facilities/facility_sheets'
   import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
-  import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: "ProjectSheets",
@@ -205,7 +205,7 @@
       position: relative;
       border-radius: 4px;
       z-index: 1;
-    }    
+    }
     h6.fac-manager-sidebar {
       padding: 0 8px;
     }

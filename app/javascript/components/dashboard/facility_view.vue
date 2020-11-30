@@ -107,10 +107,6 @@
         return !_.isEmpty(this.currentFacilityGroup)
       }
     },
-    mounted() {
-      // make the first facility_group expanded
-      if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
-    },
     methods: {
       ...mapMutations([
         'updateTasksHash',
@@ -208,7 +204,7 @@
     }
     .center-section {
       position: absolute;
-      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
       border: 1px solid #383838;
       border-radius: 4px;
       padding: 10px;

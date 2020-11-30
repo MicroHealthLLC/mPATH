@@ -1,12 +1,12 @@
 <template>
   <div id="tasks-index" class="my-4">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2">        
+      <div class="d-flex align-item-center justify-content-between mb-2">
         <div class="simple-select mr-1 d-flex" style="width:38%">
         <i class="fas fa-filter filter mr-1"></i>
           <multiselect
             v-model="C_taskTypeFilter"
-            track-by="name"            
+            track-by="name"
             label="name"
             placeholder="Filter by Task Category"
             :options="taskTypes"
@@ -20,30 +20,30 @@
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>          
-        </div> 
+          </multiselect>
+        </div>
         <div class="simple-select d-flex" style="width:35%">
         <multiselect
-        v-model="viewList"
-        :options="listOptions" 
-        :searchable="false"   
-        :close-on-select="false"
-        :show-labels="false"         
-        placeholder="Filter by Task Status"     
-        >
-           <template slot="singleLabel">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
-              </div>
-            </template>
+          v-model="viewList"
+          :options="listOptions"
+          :searchable="false"
+          :close-on-select="false"
+          :show-labels="false"
+          placeholder="Filter by Task Status"
+          >
+          <template slot="singleLabel">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{viewList}}</span>
+            </div>
+          </template>
         </multiselect>
+        </div>
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
           <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery">
         </div>  
-        </div>   
           <div class="form-check-inline mr-0" style="width:26%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
@@ -52,57 +52,56 @@
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
-          </label>         
-        </div>     
+          </label>
+        </div>
       </div>
-        <button v-if="_isallowed('write')"
-          class="new-tasks-btn addBtns btn mr-3 btn-sm btn-primary"
-          @click.prevent="addNewTask">
-          <i class="fas fa-plus-circle"></i>
-          Add Task
-        </button>
-    
-      <div v-if="filteredTasks.length > 0">      
+      <button v-if="_isallowed('write')"
+        class="new-tasks-btn addBtns btn mr-3 btn-sm btn-primary"
+        @click.prevent="addNewTask">
+        <i class="fas fa-plus-circle mr-2"></i>
+        Add Task
+      </button>
+      <div v-if="filteredTasks.length > 0">
         <button
           @click="download"
           id="printBtn"
-          class="btn btn-sm btn-outline-dark exportBtn">       
-         Export to PDF
+          class="btn btn-sm btn-outline-dark exportBtn">
+          Export to PDF
         </button>
         <button
           disabled
           id="printBtn"
-          class="btn btn-sm btn-outline-dark">           
+          class="btn btn-sm btn-outline-dark">
           Export to Excel
-        </button>       
+        </button>
         <label class="form-check-label text-primary floatRight">
-            <h5 id="total">Total: {{filteredTasks.length}}</h5>
+          <h5 id="total">Total: {{filteredTasks.length}}</h5>
         </label>
-      
+
         <div style="margin-bottom:100px">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
-               <colgroup>
-                <col class="twenty" />
-                <col class="ten" />              
-                <col class="eight" />
-                <col class="eight" />
-                <col class="ten" />
-                <col class="eight" />
-                <col class="eight" />
-                <col class="eight" />
-                <col class="twenty" />         
-              </colgroup>
-              <tr style="background-color:#ededed">
-                <th>Task</th>
-                <th>Task Category</th>
-                <th>Start Date</th>
-                <th>Due Date</th>
-                <th>Assigned Users</th>
-                <th>Progress</th>
-                <th>Overdue</th>
-                <th>On Watch</th>
-                <th>Last Update</th>
-              </tr>          
+            <colgroup>
+              <col class="twenty" />
+              <col class="ten" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="ten" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="twenty" />
+            </colgroup>
+            <tr style="background-color:#ededed">
+              <th>Task</th>
+              <th>Task Category</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Assigned Users</th>
+              <th>Progress</th>
+              <th>Overdue</th>
+              <th>On Watch</th>
+              <th>Last Update</th>
+            </tr>
           </table>
           <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list pl-0" :per="15">
             <task-sheets
@@ -110,7 +109,7 @@
               class="taskHover"
               href="#"
               :class="{'b_border': !!filteredTasks[i+1]}"
-              :key="task.id"            
+              :key="task.id"
               :task="task"
               :from-view="from"
               @edit-task="editTask"
@@ -158,35 +157,35 @@
           <td v-if="(task.watched) == true"><h5>X</h5></td>
           <td v-else></td>
           <td v-if="(task.notes.length) > 0">
-             By: {{ task.notes[0].user.fullName}} on 
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}} 
+             By: {{ task.notes[0].user.fullName}} on
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
       </tbody>
     </table>
-     
+
   </div>
 </template>
 
 <script>
-  import TaskSheets from "./task_sheets"
   import {mapGetters, mapMutations} from "vuex"
-  import VuePaginate from 'vue-paginate'
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import moment from 'moment'  
-  
+  import moment from 'moment'
+  import TaskSheets from "./task_sheets"
   Vue.prototype.moment = moment
-  Vue.use(VuePaginate)
+
   export default {
     name: 'TasksSheetsIndex',
-    components: {TaskSheets},
+    components: {
+      TaskSheets
+    },
     props: ['facility', 'from'],
     data() {
-      return {           
+      return {
         viewList:'active',
-        listOptions: ['active','all', 'completed'],        
+        listOptions: ['active','all', 'completed'],
         paginate: ['filteredTasks'],
         tasks: Object,
         now: new Date().toISOString(),
@@ -199,7 +198,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),    
+      ]),
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -225,6 +224,7 @@
         'taskTypeFilter',
         'myActionsFilter',
         'onWatchFilter',
+        'taskUserFilter',
         'taskTypes',
         'viewPermit'
       ]),
@@ -232,13 +232,15 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredTasks() {
-        var typeIds = _.map(this.C_taskTypeFilter, 'id')
+        let typeIds = _.map(this.C_taskTypeFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
-        var tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
-          var valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (this.C_myTasks) {
-            var userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            valid  = valid && userIds.includes(this.$currentUser.id)
+
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
+          let valid = Boolean(task && task.hasOwnProperty('progress'))
+          if (this.C_myTasks || this.taskUserFilter) {
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
           }
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
@@ -294,9 +296,9 @@
 </script>
 
 <style lang="scss">
-  #tasks-index {    
+  #tasks-index {
     background-color: #ffffff;
-    z-index: 100;    
+    z-index: 100;
     height: 500px
   }
   .new-tasks-btn {
@@ -304,18 +306,18 @@
     width: 100px;
   }
   .addBtns {
-    position: absolute;  
+    position: absolute;
   }
   .alt-text {
-    position: relative; 
-    margin-top: 50px;  
-    margin-left: 2px; 
+    position: relative;
+    margin-top: 50px;
+    margin-left: 2px;
   }
   #printBtn {
-    font-size: .80rem;   
+    font-size: .80rem;
   }
   #printBtn, .addBtns, .paginate-links.filteredTasks {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .exportBtn {
     margin-left: 130px;
@@ -327,7 +329,7 @@
   .filter {
     color: #ced4da !important;
     border: solid #ced4da .8px !important;
-    padding: 4px;   
+    padding: 4px;
     font-size: 2rem;
     border-radius: 4px;
     padding: 4px;
@@ -342,28 +344,28 @@
     width: 100%;
     position: relative;
     margin-bottom: 0 !important;
-  } 
+  }
   .stickyTableHeader {
     position: sticky;
     position: -webkit-sticky;
-    justify-content: center;    
+    justify-content: center;
     z-index: 10;
     left: 15;
     top: 0;
     width: 100%;
-  }  
+  }
   .eight {
-    width: 8%; 
+    width: 8%;
   }
   .ten {
-    width: 10%; 
+    width: 10%;
   }
   .twenty {
-    width: 20%; 
+    width: 20%;
   }
   .floatRight {
-    text-align: right;  
-    right: 0px; 
+    text-align: right;
+    right: 0px;
   }
   .pagination {
     margin-bottom: 50px !important;
@@ -374,8 +376,8 @@
     a {
       width: 30px;
       height: 36px;
-      margin-right: 1px;    
-      background-color: white;      
+      margin-right: 1px;
+      background-color: white;
       color: #383838;
       padding: 10px 24px;
       padding-bottom: 10px !important;

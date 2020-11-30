@@ -1,5 +1,5 @@
 <template>
-  <div id="notes-index">
+  <div id="notes-index" data-cy="note_list">
     <div v-if="_isallowed('write') && newNote" class="mb-3">
       <notes-form
         title="Add Note"
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="col-3 px-0" v-if="_isallowed('write')">
-          <button @click.prevent="addNewNote" class="btn btn-sm btn-primary ml-2"><i class="fas fa-plus-circle mr-2"></i>Add Note</button>
+          <button @click.prevent="addNewNote" class="btn btn-sm btn-primary ml-2" data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>Add Note</button>
         </div>
       </div>
       <div class="form-check-inline justify-content-end w-100 mb-2 font-sm">
@@ -27,7 +27,7 @@
           <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
         </label>
         <label class="form-check-label ml-2 text-primary">
-          <h5 class="mb-0 mr-2">Total: {{filteredNotes.length}}</h5>
+          <h5 class="mb-0 mr-2" data-cy="note_total">Total: {{filteredNotes.length}}</h5>
         </label>
       </div>
       <div v-if="_isallowed('read')">
@@ -54,7 +54,10 @@
 
   export default {
     name: 'NotesIndex',
-    components: {NotesForm, NotesShow},
+    components: {
+      NotesForm,
+      NotesShow
+    },
     props: ['facility', 'from'],
     data() {
       return {

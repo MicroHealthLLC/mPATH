@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_145647) do
+ActiveRecord::Schema.define(version: 2020_11_30_074254) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_145647) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "percentage", default: 0
   end
 
   create_table "issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -159,6 +160,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_145647) do
     t.boolean "watched", default: false
     t.datetime "watched_at"
     t.bigint "issue_stage_id"
+    t.integer "kanban_order", default: 0
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -197,6 +199,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_145647) do
     t.string "members", default: "R"
     t.string "facility_manager_view", default: "R"
     t.string "sheets_view", default: "R"
+    t.string "kanban_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -292,6 +295,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_145647) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "percentage", default: 0
   end
 
   create_table "task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -323,6 +327,7 @@ ActiveRecord::Schema.define(version: 2020_11_16_145647) do
     t.boolean "watched", default: false
     t.datetime "watched_at"
     t.bigint "task_stage_id"
+    t.integer "kanban_order", default: 0
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"

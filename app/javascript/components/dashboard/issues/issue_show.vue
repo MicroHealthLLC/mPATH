@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="C_editForManager" class="float-right blur_show">
-    <div class="text-primary align-items-center mb-3">
+      <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
@@ -120,13 +120,17 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
+  import {SweetModal} from 'sweet-modal-vue'
   import IssueForm from "./issue_form"
   import TaskForm from "./../tasks/task_form"
-  import {SweetModal} from 'sweet-modal-vue'
 
   export default {
     name: 'IssueShow',
-    components: {IssueForm, SweetModal, TaskForm},
+    components: {
+      IssueForm,
+      TaskForm,
+      SweetModal,
+    },
     props: {
       fromView: {
         type: String,
