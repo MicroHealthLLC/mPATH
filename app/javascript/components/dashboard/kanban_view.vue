@@ -17,6 +17,14 @@
             <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarTasksQuery">
+                  </div>
+                </div>
+                <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -73,6 +81,14 @@
               </div>
 
               <div v-if="currentTab === 'issues'">
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarIssuesQuery">
+                  </div>
+                </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
@@ -171,6 +187,7 @@
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
               @on-add-new="handleAddNew"
+              @on-search-change="handleSearchQueryChange"
             ></kanban>
           </div>
           <div v-else class="center-section text-center">
@@ -253,7 +270,13 @@
         listOptions: ['active','all', 'completed'],
         currentFacility: {},
         currentFacilityGroup: {},
-        expandFilter: false
+        expandFilter: false,
+        searchTasksQuery: '',
+        searchIssuesQuery: '',
+        searchStageId: null,
+        sidebarTasksQuery: '',
+        sidebarIssuesQuery: ''
+
       }
     },
     mounted() {
@@ -309,6 +332,17 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.onCloseForm()
       },
+      handleSearchQueryChange(searchElement){
+        this.searchStageId = $(searchElement).attr("data-stage-id")
+        
+        if($(searchElement).attr("data-kanban-type") == "issues"){
+          this.searchIssuesQuery = $(searchElement).val()
+        }
+        if($(searchElement).attr("data-kanban-type") == "tasks"){
+          this.searchTasksQuery = $(searchElement).val()
+        }
+        
+      }
     },
     computed: {
       ...mapGetters([
@@ -332,6 +366,9 @@
       filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
+        const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
+
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -344,6 +381,9 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
+          if (search_query) valid = valid && search_query.test(task.text)
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
+
           switch (this.viewList) {
             case "active": {
               valid = valid && task.progress < 100
@@ -390,7 +430,11 @@
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
+        const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
+
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
+
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
@@ -401,7 +445,15 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+          if(this.searchStageId && this.searchStageId == issue.issueStageId){
+            if (search_query) valid = valid && search_query.test(issue.title)
+
+          }else if(stageIds.length > 0  && stageIds.includes(issue.issueStageId)){
+            valid = valid
+          }
+          
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(issue.title)
+            
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
             case "active": {
@@ -459,6 +511,7 @@
       },
       filterIssueStages() {
         let stageIds = _.map(this.issueStageFilter, 'id')
+
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
       C_kanban() {

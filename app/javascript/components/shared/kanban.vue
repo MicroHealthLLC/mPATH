@@ -1,5 +1,6 @@
 <template>
   <div id="kanban">
+    
     <div class="overflow-x-auto">
       <div class="d-flex" v-if="!loading">
         <div
@@ -18,6 +19,12 @@
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
             </div>
+            <!-- <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+              </div>
+              <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
+            </div> -->
           </div>
           <draggable :move="handleMove" @change="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
             <div
@@ -91,6 +98,9 @@ export default {
     },
     handleAddNew(stage) {
       this.$emit('on-add-new', stage)
+    },
+    handleSearchQueryChange(event){
+      this.$emit('on-search-change', event.target)
     }
   },
   computed: {
