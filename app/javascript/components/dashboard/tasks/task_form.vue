@@ -7,7 +7,7 @@
       :class="{'_disabled': loading}"
       accept-charset="UTF-8"
       >
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2">
+       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -29,7 +29,7 @@
           Close
         </button>
         <button
-          v-if="_isallowed('delete')"
+          v-if="_isallowed('delete') && DV_task.id"
           @click.prevent="deleteTask"
           class="btn btn-sm btn-danger sticky-btn ml-auto"
           >

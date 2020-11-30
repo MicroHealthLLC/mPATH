@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_26_075449) do
+ActiveRecord::Schema.define(version: 2020_11_30_074254) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -160,6 +160,7 @@ ActiveRecord::Schema.define(version: 2020_11_26_075449) do
     t.boolean "watched", default: false
     t.datetime "watched_at"
     t.bigint "issue_stage_id"
+    t.integer "kanban_order", default: 0
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -326,6 +327,7 @@ ActiveRecord::Schema.define(version: 2020_11_26_075449) do
     t.boolean "watched", default: false
     t.datetime "watched_at"
     t.bigint "task_stage_id"
+    t.integer "kanban_order", default: 0
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"

@@ -29,6 +29,9 @@ class Task < ApplicationRecord
   before_save :check_watched, if: :watched_changed?
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   after_save :handle_related_tasks_issues
+  before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
+  before_update :handle_kanban_order_changes
+  after_destroy :update_siblings_kanban_order
 
   def to_json
     attach_files = []
@@ -103,6 +106,10 @@ class Task < ApplicationRecord
     super
   end
 
+  def update_siblings_kanban_order
+    siblings.where("kanban_order > ?", kanban_order).update_all("kanban_order = kanban_order - 1")
+  end
+
   def handle_related_tasks_issues
     sub_tasks.each{|t| t.sub_tasks << self unless t.sub_tasks.include? self}
     sub_issues.each{|i| i.sub_tasks << self unless i.sub_tasks.include? self}
@@ -115,5 +122,27 @@ class Task < ApplicationRecord
       self.progress = task_stage.percentage
       self.auto_calculate = false
     end
+  end
+
+  def handle_kanban_order_changes
+    if task_stage_id_changed?
+      siblings.where("kanban_order >= ?", kanban_order).update_all("kanban_order = kanban_order + 1")
+      was_siblings.where("kanban_order > ?", kanban_order_was).update_all("kanban_order = kanban_order - 1")
+    elsif kanban_order_changed?
+      siblings.where("kanban_order >= ? AND kanban_order < ?", kanban_order, kanban_order_was).update_all("kanban_order = kanban_order + 1") if kanban_order < kanban_order_was
+      siblings.where("kanban_order > ? AND kanban_order <= ?", kanban_order_was, kanban_order).update_all("kanban_order = kanban_order - 1") if kanban_order > kanban_order_was
+    end
+  end
+
+  def siblings
+    facility_project.tasks.where("id != ? AND task_stage_id = ?", id, task_stage_id)
+  end
+
+  def was_siblings
+    facility_project.tasks.where("id != ? AND task_stage_id = ?", id, task_stage_id_was)
+  end
+
+  def init_kanban_order
+    self.kanban_order = facility_project.tasks.where(task_stage_id: task_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.task_stage_id.present?
   end
 end

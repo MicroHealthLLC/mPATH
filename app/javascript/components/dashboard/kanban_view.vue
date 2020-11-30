@@ -186,6 +186,7 @@
       ref="newFormModal"
       :hide-close-button="true"
       :blocking="true"
+      v-if="viewPermit(currentTab, 'write')"
       >
       <div v-if="currentFacility && ('id' in currentFacility) && fixedStageId" class="w-100">
         <task-form
@@ -290,6 +291,7 @@
         this.currentFacility = {}
       },
       handleAddNew(stage) {
+        if (!this.viewPermit(this.currentTab, 'write')) return
         this.fixedStageId = stage.id
         this.$refs.newFormModal && this.$refs.newFormModal.open()
       },
@@ -330,7 +332,7 @@
       filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
-        return _.filter(this.currentFacility.tasks, (task) => {
+        return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
@@ -356,7 +358,7 @@
             }
           }
           return valid
-        })
+        }), 'kanbanOrder', 'asc')
       },
       C_myTasks: {
         get() {
@@ -388,7 +390,7 @@
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
-        return _.filter(this.currentFacility.issues, (issue) => {
+        return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
@@ -414,8 +416,8 @@
               break
             }
           }
-          return valid;
-        })
+          return valid
+        }), 'kanbanOrder', 'asc')
       },
       C_issueTypeFilter: {
         get() {

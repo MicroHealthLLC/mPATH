@@ -781,6 +781,23 @@ export default new Vuex.Store({
           })
       })
     },
+
+    // update_from_kanban_view
+    updateKanbanTaskIssues({commit, dispatch}, {task, type}) {
+      return new Promise(async (resolve, reject) => {
+        let data = type === 'tasks' ? {task: task} : {issue: task}
+        http.put(`/projects/${task.projectId}/facilities/${task.facilityId}/${type}/${task.id}.json`, data)
+          .then(async (res) => {
+            await dispatch('fetchFacility', {projectId: task.projectId, facilityId: task.facilityId})
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
+
     taskDeleted({commit}, task) {
       return new Promise((resolve, reject) => {
         http
