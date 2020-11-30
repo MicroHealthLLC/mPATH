@@ -4,7 +4,7 @@
     <div class="my-4 ml-2">
       <div v-if="contentLoaded">
         <div v-for="group in filteredFacilityGroups" class="my-3">
-          <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}">
+          <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}" data-cy="facility_groups">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
             </span>

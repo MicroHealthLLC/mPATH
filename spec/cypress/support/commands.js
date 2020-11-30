@@ -17,13 +17,14 @@ Cypress.Commands.add("logout", () => {
 // Open first Project
 Cypress.Commands.add("openProject", () => {
   cy.get('[data-cy=project_list_items]').first().click()
-  cy.wait(500)
+  cy.wait(1000)
   cy.get('[data-cy=facility_list]').contains('Facility Manager')
 })
 
 // Open first Facility of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
+  cy.get('[data-cy=facility_groups]').first().click()
   cy.get('[data-cy=facilities]').first().click()
   cy.wait(50)
   cy.contains('Facility Summary')
