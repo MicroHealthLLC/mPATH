@@ -1,7 +1,7 @@
 <template>
   <div id="customtabs" class="d-flex align-items-center" :class="{'tab-shadow': !badgeMargin}">
     <div v-for="tab in tabs" :key="tab.key">
-      <div class="badge" :class="{active: currentTab == tab.key, disabled: tab.disabled}" @click.prevent="changeTab(tab)" :style="badgeStyle">
+      <div class="badge" :class="{active: currentTab == tab.key, disabled: tab.disabled}" @click.prevent="changeTab(tab)" :style="badgeStyle" data-cy="facility_tabs">
         <div>{{tab.label}}</div>
       </div>
     </div>

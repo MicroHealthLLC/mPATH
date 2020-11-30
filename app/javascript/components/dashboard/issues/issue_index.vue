@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4 issues-index">
+  <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_list">
     <div v-if="newIssue && from != 'manager_view'">
       <issue-form
         :facility="facility"
@@ -82,7 +82,7 @@
         </div>
       </div>
       <div class="mt-3">
-        <button v-if="_isallowed('write')" class="position-absolute shadow-sm btn btn-sm btn-primary" @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2"></i>Add Issue</button>
+        <button v-if="_isallowed('write')" class="position-absolute shadow-sm btn btn-sm btn-primary" @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>Add Issue</button>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <button
@@ -97,7 +97,7 @@
               class="btn btn-sm btn-outline-dark ml-2">
               Export to Excel
             </button>
-            <label class="form-check-label mr-2 text-primary total">
+            <label class="form-check-label mr-2 text-primary total" data-cy="issue_total">
               <h5>Total: {{filteredIssues.length}}</h5>
             </label>
             <hr/>

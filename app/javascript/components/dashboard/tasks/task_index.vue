@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3">
+  <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-3">
         <div class="simple-select w-70 mr-1">
@@ -48,7 +48,7 @@
           </label>
         </div>
       </div>
-       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2"></i>Add Task</button>
+       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>Add Task</button>
       <div v-if="filteredTasks.length > 0">
         <button
           @click.prevent="download"
@@ -62,7 +62,7 @@
           class="btn btn-sm btn-outline-dark">
           Export to Excel
         </button>
-        <label class="form-check-label ml-2 mt-1 text-primary" id="total">
+        <label class="form-check-label ml-2 mt-1 text-primary" id="total" data-cy="task_total">
           <h5>Total: {{filteredTasks.length}}</h5>
         </label>
         <hr/>
