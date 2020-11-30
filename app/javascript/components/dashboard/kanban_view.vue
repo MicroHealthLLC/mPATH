@@ -18,6 +18,14 @@
             <div v-if="expandFilter" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarTasksQuery">
+                  </div>
+                </div>
+                <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -74,6 +82,14 @@
               </div>
 
               <div v-if="currentTab === 'issues'">
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarIssuesQuery">
+                  </div>
+                </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
                     <multiselect
@@ -250,7 +266,10 @@
         expandFilter: false,
         searchTasksQuery: '',
         searchIssuesQuery: '',
-        searchStageId: null
+        searchStageId: null,
+        sidebarTasksQuery: '',
+        sidebarIssuesQuery: ''
+
       }
     },
     mounted() {
@@ -339,6 +358,7 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
 
         return _.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -353,6 +373,7 @@
             valid  = valid && task.watched
           }
           if (search_query) valid = valid && search_query.test(task.text)
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
 
           switch (this.viewList) {
             case "active": {
@@ -401,6 +422,8 @@
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
+
         return _.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -419,6 +442,8 @@
             valid = valid
           }
           
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(issue.title)
+            
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
             case "active": {
