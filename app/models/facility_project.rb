@@ -32,6 +32,6 @@ class FacilityProject < ApplicationRecord
   end
 
   def progress
-    self.tasks.map(&:progress).sum / self.tasks.count rescue 0
+    self.tasks.map(&:progress).sum / self.tasks.size rescue 0
   end
 end
