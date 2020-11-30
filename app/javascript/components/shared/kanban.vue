@@ -13,7 +13,7 @@
                 <span>{{column.title}}</span>
               </div>
             </div>
-            <div class="col-2 px-0">
+            <div class="col-2 px-0" v-if="viewPermit(kanbanType, 'write')">
               <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
@@ -23,7 +23,7 @@
             <div
               :is="cardShow"
               v-for="task in column.tasks"
-              :key="task.id"
+              :key="`${task.id}_${column.stage.id}`"
               :task="task"
               :issue="task"
               fromView="kanban_view"
@@ -38,7 +38,7 @@
 
 <script>
 import Draggable from "vuedraggable"
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import TaskShow from './../dashboard/tasks/task_show'
 import IssueShow from './../dashboard/issues/issue_show'
 
@@ -59,13 +59,12 @@ export default {
     };
   },
   mounted() {
-    this.setupColumns(this.cards)
+    this.setupColumns(Object.assign([], this.cards))
     this.loading = false
   },
   methods: {
     ...mapActions([
-      'updateWatchedTasks',
-      'updateWatchedIssues'
+      'updateKanbanTaskIssues'
     ]),
     setupColumns(cards) {
       this.stageId = this.kanbanType === 'issues' ? 'issueStageId' : 'taskStageId'
@@ -82,11 +81,12 @@ export default {
       return true
     },
     handleChange(item) {
-      if (!('added' in item)) return;
-      let task = item.added.element
-      task[this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
-      if (this.kanbanType === 'tasks') this.updateWatchedTasks(task)
-      else if (this.kanbanType === 'issues') this.updateWatchedIssues(task)
+      let type = 'added' in item ? 'added' : 'moved' in item ? 'moved' : null
+      if (!type) return
+      let task = Object.assign({}, item[type].element)
+      if (type === 'added') task[this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
+      task.kanbanOrder = item[type].newIndex
+      this.updateKanbanTaskIssues({task, type: this.kanbanType})
       this.movingSlot = ''
     },
     handleAddNew(stage) {
@@ -94,6 +94,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'viewPermit'
+    ]),
     cardShow() {
       return this.kanbanType == 'tasks' ? 'TaskShow' : 'IssueShow'
     }
@@ -102,7 +105,7 @@ export default {
     cards: {
       handler(value) {
         this.columns = []
-        this.setupColumns(value)
+        this.setupColumns(Object.assign([], value))
       }, deep: true
     }
   }

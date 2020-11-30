@@ -49,6 +49,7 @@ class TasksController < AuthenticatedController
       :progress,
       :auto_calculate,
       :watched,
+      :kanban_order,
       task_files: [],
       user_ids: [],
       sub_task_ids: [],
