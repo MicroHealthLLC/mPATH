@@ -35,8 +35,9 @@ class Task < ApplicationRecord
 
   def to_json
     attach_files = []
-    if self.task_files.attached?
-      attach_files = self.task_files.map do |file|
+    tf = self.task_files
+    if tf.attached?
+      attach_files = tf.map do |file|
         {
           id: file.id,
           name: file.blob.filename,
@@ -44,22 +45,26 @@ class Task < ApplicationRecord
         }
       end
     end
+    fp = self.facility_project
+    users = self.users
+    sub_tasks = self.sub_tasks
+    sub_issues = self.sub_issues
 
     self.as_json.merge(
       attach_files: attach_files,
-      task_type: self.task_type.try(:name),
-      task_stage: self.task_stage.try(:name),
-      user_ids: self.users.pluck(:id),
-      users: self.users.map(&:full_name),
-      checklists: self.checklists.as_json,
-      notes: self.notes.as_json,
-      facility_id: self.facility_project.try(:facility_id),
-      facility_name: self.facility_project.try(:facility).facility_name,
-      project_id: self.facility_project.try(:project_id),
-      sub_tasks: self.sub_tasks.as_json(only: [:text, :id]),
-      sub_issues: self.sub_issues.as_json(only: [:title, :id]),
-      sub_task_ids: self.sub_task_ids,
-      sub_issue_ids: self.sub_issue_ids
+      task_type: task_type.try(:name),
+      task_stage: task_stage.try(:name),
+      user_ids: users.map(&:id).compact.uniq,
+      users: users.map(&:full_name),
+      checklists: checklists.as_json,
+      notes: notes.as_json,
+      facility_id: fp.try(:facility_id),
+      facility_name: fp.try(:facility).facility_name,
+      project_id: fp.try(:project_id),
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id)
     ).as_json
   end
 

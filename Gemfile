@@ -55,6 +55,10 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'cypress-on-rails', '~> 1.0'
   gem 'letter_opener'
+  gem 'bullet', '6.1.0'
+  gem 'pry', '~> 0.13.1'
+  gem 'pry-rails'
+  gem 'pry-byebug'
 end
 
 group :development do

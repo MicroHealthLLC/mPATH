@@ -24,14 +24,15 @@ class FacilityProject < ApplicationRecord
   end
 
   def status_name
-    self.status.try(:name)
+    status.try(:name)
   end
 
   def color
-    self.status.try(:color) || '#ff0000'
+    status.try(:color) || '#ff0000'
   end
 
   def progress
-    self.tasks.map(&:progress).sum / self.tasks.size rescue 0
+    t = self.tasks
+    t.map(&:progress).sum / t.size rescue 0
   end
 end

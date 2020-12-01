@@ -8475,6 +8475,13 @@ vue-slider-component@^3.0.31:
     core-js "^3.6.5"
     vue-property-decorator "^8.0.0"
 
+vue-sorted-table@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vue-sorted-table/-/vue-sorted-table-1.2.0.tgz#55546de0afb3e9b809e34f67d232e90d28399146"
+  integrity sha512-pW9WeE35I8BrZHqAYts3tvB1zTckSIWijEJgzSaDbkupPpr4ZeU++H8kU/50nXf5aZCqVQa2FKnZ3Z4636+RLg==
+  dependencies:
+    vue "^2.6.8"
+
 vue-spinner@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/vue-spinner/-/vue-spinner-1.0.4.tgz#0e794d9d93acb23b5b6564042157a531e7ce413b"
@@ -8546,7 +8553,7 @@ vue@2.3.3:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.3.3.tgz#d1eaa8fde5240735a4563e74f2c7fead9cbb064c"
   integrity sha1-0eqo/eUkBzWkVj508sf+rZy7Bkw=
 
-vue@^2.2.6, vue@^2.5.13, vue@^2.5.17, vue@^2.5.21, vue@^2.5.22, vue@^2.6.10, vue@^2.6.11:
+vue@^2.2.6, vue@^2.5.13, vue@^2.5.17, vue@^2.5.21, vue@^2.5.22, vue@^2.6.10, vue@^2.6.11, vue@^2.6.8:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
@@ -8562,6 +8569,11 @@ vuejs-datepicker@^1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/vuejs-datepicker/-/vuejs-datepicker-1.6.2.tgz#83c1e8fd4108e7f1d01c061a7e344918f25e47ae"
   integrity sha512-PkC4vxzFBo7i6FSCUAJfnaWOx6VkKbOqxijSGHHlWxh8FIUKEZVtFychkonVWtK3iwWfhmYtqHcwsmgxefLpLQ==
+
+vuejs-paginate@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vuejs-paginate/-/vuejs-paginate-2.1.0.tgz#93e1ad1539b713a688c7a2d3080bda60fcc6c77d"
+  integrity sha512-gnwyXlmCiDOu9MLWxN5UJ4PGijKGNOMpHG8ujsrynCzTJljn/rp7Jq0WiDGDAMi5/u0AHuYIHhced+tUW4jblA==
 
 vuex-persistedstate@^3.0.1:
   version "3.1.0"
