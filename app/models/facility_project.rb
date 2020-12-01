@@ -13,9 +13,9 @@ class FacilityProject < ApplicationRecord
     json = super(options)
     return json.merge(
       facility: self.facility.as_json,
-      tasks: self.tasks.map(&:to_json),
-      issues: self.issues.map(&:to_json),
-      notes: self.notes.map(&:to_json),
+      tasks: tasks.map(&:to_json),
+      issues: issues.map(&:to_json),
+      notes: notes.map(&:to_json),
       project_status: status_name,
       color: color,
       progress: progress
@@ -32,7 +32,7 @@ class FacilityProject < ApplicationRecord
   end
 
   def progress
-    t = self.tasks
+    t = tasks
     t.map(&:progress).sum / t.size rescue 0
   end
 end
