@@ -14,7 +14,7 @@
           @click.prevent="cancelNoteSave"
           data-cy="note_close_btn"
           >
-          Cancel
+          Close
         </button>
         <button
           v-if="_isallowed('delete')"

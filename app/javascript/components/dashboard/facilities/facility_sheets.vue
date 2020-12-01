@@ -301,7 +301,7 @@
         if (e.target) e.target.blur()
         if (!this._isallowed('write') || !this.DV_updated) return
         this.DV_updated = false
-        var data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
+        let data = {facility: {statusId: this.DV_facility.statusId, dueDate: this.DV_facility.dueDate}}
         http
           .put(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`, data)
           .then((res) => {
@@ -331,16 +331,55 @@
         'currentProject',
         'taskTypeFilter',
         'issueTypeFilter',
+        'myActionsFilter',
+        'onWatchFilter',
+        'taskStageFilter',
+        'issueSeverityFilter',
+        'issueStageFilter',
         'statuses'
       ]),
+      C_myTasks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('tasks')
+        }
+      },
+      C_myIssues: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('issues')
+        }
+      },
+      C_onWatchTasks: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('tasks')
+        }
+      },
+      C_onWatchIssues: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('issues')
+        }
+      },
       filteredTasks() {
-        var ids = this.taskTypeFilter && this.taskTypeFilter.length ? _.map(this.taskTypeFilter, 'id') : []
-        return _.filter(this.DV_facility.tasks, t => ids.length ? ids.includes(t.taskTypeId) : true)
+        let typeIds = _.map(this.taskTypeFilter, 'id')
+        let stageIds = _.map(this.taskStageFilter, 'id')
+        return _.filter(this.DV_facility.tasks, (task) => {
+          let valid = true
+          if (this.C_myTasks || this.taskUserFilter) {
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+          }
+          if (this.C_onWatchTasks) {
+            valid  = valid && task.watched
+          }
+          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          return valid
+        })
       },
       taskStats() {
-        var tasks = new Array
-        var group = _.groupBy(this.filteredTasks, 'taskType')
-        for (var type in group) {
+        let tasks = new Array
+        let group = _.groupBy(this.filteredTasks, 'taskType')
+        for (let type in group) {
           tasks.push({
             name: type,
             count: group[type].length,
@@ -350,10 +389,10 @@
         return tasks
       },
       taskVariation() {
-        var completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
-        var completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-        var overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
+        let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
+        let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
+        let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
           completed: {count: completed.length, percentage: completed_percent},
@@ -361,13 +400,29 @@
         }
       },
       filteredIssues() {
-        var ids = this.issueTypeFilter && this.issueTypeFilter.length ? _.map(this.issueTypeFilter, 'id') : []
-        return _.filter(this.DV_facility.issues, t => ids.length ? ids.includes(t.issueTypeId) : true)
+        let typeIds = _.map(this.issueTypeFilter, 'id')
+        let severityIds = _.map(this.issueSeverityFilter, 'id')
+        let stageIds = _.map(this.issueStageFilter, 'id')
+        return _.filter(this.facility.issues, ((issue) => {
+          let valid = true
+          if (this.C_myIssues || this.issueUserFilter) {
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+          }
+          if (this.C_onWatchIssues) {
+            valid  = valid && issue.watched
+          }
+          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+          return valid
+        }))
       },
       issueStats() {
-        var issues = new Array
-        var group = _.groupBy(this.filteredIssues, 'issueType')
-        for (var type in group) {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'issueType')
+        for (let type in group) {
           issues.push({
             name: type,
             count: group[type].length,
@@ -377,10 +432,10 @@
         return issues
       },
       issueVariation() {
-        var completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
-        var completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-        var overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
-        var overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
+        let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
+        let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
+        let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
           completed: {count: completed.length, percentage: completed_percent},

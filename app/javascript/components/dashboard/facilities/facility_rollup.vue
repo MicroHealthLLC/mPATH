@@ -185,6 +185,8 @@ export default {
       'filteredFacilities',
       'facilityGroupFacilities',
       'taskTypeFilter',
+      'taskStageFilter',
+      'issueStageFilter',
       'issueTypeFilter',
       'issueSeverityFilter',
       'taskUserFilter',
@@ -224,6 +226,7 @@ export default {
     },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, 'id')
+      let stageIds = _.map(this.taskStageFilter, 'id')
       let tasks = this.facilityGroup ? _.flatten(_.map(this.facilityGroupFacilities(this.facilityGroup), 'tasks')) : this.filteredAllTasks
       return _.filter(tasks, (task) => {
         let valid = true
@@ -235,12 +238,14 @@ export default {
         if (this.C_onWatchTasks) {
           valid  = valid && task.watched
         }
+        if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
         if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
         return valid
       })
     },
     filteredIssues() {
       let typeIds = _.map(this.issueTypeFilter, 'id')
+      let stageIds = _.map(this.issueStageFilter, 'id')
       let severityIds = _.map(this.issueSeverityFilter, 'id')
       let issues = this.facilityGroup ? _.flatten(_.map(this.facilityGroupFacilities(this.facilityGroup), 'issues')) : this.filteredAllIssues
       return _.filter(issues, (issue) => {
@@ -255,6 +260,7 @@ export default {
         }
         if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
         if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+        if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
         return valid
       })
     },

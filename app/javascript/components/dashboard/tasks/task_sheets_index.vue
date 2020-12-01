@@ -38,13 +38,10 @@
           </template>
         </multiselect>
         </div>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-          </div>
+        <div class="input-group w-25 mx-2">
           <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery">
-        </div>  
-          <div class="form-check-inline mr-0" style="width:26%">
+        </div>
+        <div class="form-check-inline mr-0" style="width:26%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
@@ -74,10 +71,9 @@
           class="btn btn-sm btn-outline-dark">
           Export to Excel
         </button>
-        <label class="form-check-label text-primary floatRight">
-          <h5 id="total">Total: {{filteredTasks.length}}</h5>
+        <label class="form-check-label text-primary float-right mr-2">
+          <h5>Total: {{filteredTasks.length}}</h5>
         </label>
-
         <div style="margin-bottom:100px">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
@@ -222,6 +218,7 @@
     computed: {
       ...mapGetters([
         'taskTypeFilter',
+        'taskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',
@@ -233,6 +230,7 @@
       },
       filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
@@ -246,6 +244,7 @@
             valid  = valid && task.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {
