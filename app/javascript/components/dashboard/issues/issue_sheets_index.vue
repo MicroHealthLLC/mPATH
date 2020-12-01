@@ -68,15 +68,10 @@
             </template>
           </multiselect>
         </div>
-          <div class="mt-3">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-              </div>
-              <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
-            </div>
-          </div>
-        <div class="form-check-inline mr-3">
+        <div class="input-group w-25 mr-2">
+          <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
+        </div>
+        <div class="form-check-inline">
           <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-2"></i>My Issue
@@ -108,8 +103,8 @@
               class="btn btn-sm btn-outline-dark">
               Export to Excel
             </button>
-            <label class="form-check-label text-primary floatRight">
-              <h5 id="total">Total: {{filteredIssues.length}}</h5>
+            <label class="form-check-label text-primary float-right mr-2">
+              <h5>Total: {{filteredIssues.length}}</h5>
             </label>
             <div style="margin-bottom:50px">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
@@ -254,7 +249,7 @@
         this.$emit('refresh-facility')
       },
       issueUpdated(issue, refresh=true) {
-        var index = this.facility.issues.findIndex((t) => t.id == issue.id)
+        let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
         if (refresh) {
           this.newIssue = false
@@ -297,6 +292,7 @@
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
+        'issueStageFilter',
         'issueUserFilter',
         'myActionsFilter',
         'managerView',
@@ -307,13 +303,14 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       filteredIssues() {
-        var typeIds = _.map(this.C_issueTypeFilter, 'id')
-        var severityIds = _.map(this.C_issueSeverityFilter, 'id')
+        let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let severityIds = _.map(this.C_issueSeverityFilter, 'id')
+        let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
-        var issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
+        let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
-            var userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
@@ -322,6 +319,7 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           if (search_query) valid = valid && search_query.test(issue.title)
           switch (this.viewList) {
             case "active": {
@@ -476,5 +474,4 @@
       margin-bottom: 20px !important;
     }
   }
-
 </style>

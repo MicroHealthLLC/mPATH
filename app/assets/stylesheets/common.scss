@@ -468,3 +468,6 @@ body /deep/ .mx-input.disabled {
     cursor: no-drop;
   }
 }
+.enum-select /deep/ .multiselect {
+  width: 140px;
+}

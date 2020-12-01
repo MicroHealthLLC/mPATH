@@ -17,10 +17,7 @@
             <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                    </div>
+                  <div class="input-group mb-2">
                     <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarTasksQuery">
                   </div>
                 </div>
@@ -82,10 +79,7 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                    </div>
+                  <div class="input-group mb-2">
                     <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarIssuesQuery">
                   </div>
                 </div>
@@ -334,14 +328,14 @@
       },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
-        
+
         if($(searchElement).attr("data-kanban-type") == "issues"){
           this.searchIssuesQuery = $(searchElement).val()
         }
         if($(searchElement).attr("data-kanban-type") == "tasks"){
           this.searchTasksQuery = $(searchElement).val()
         }
-        
+
       }
     },
     computed: {
@@ -445,15 +439,12 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if(this.searchStageId && this.searchStageId == issue.issueStageId){
+          if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)
-
-          }else if(stageIds.length > 0  && stageIds.includes(issue.issueStageId)){
-            valid = valid
+          } else if(stageIds.length > 0) {
+            valid = valid && stageIds.includes(issue.issueStageId)
           }
-          
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(issue.title)
-            
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           switch (this.viewList) {
             case "active": {
@@ -511,7 +502,6 @@
       },
       filterIssueStages() {
         let stageIds = _.map(this.issueStageFilter, 'id')
-
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
       C_kanban() {

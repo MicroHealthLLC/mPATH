@@ -32,7 +32,7 @@
               </template>
             </multiselect>
           </div>
-          <div class="simple-select w-100 mr-2">
+          <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -54,7 +54,7 @@
         </div>
       </div>
       <div class="mr-2 mt-1 d-flex font-sm w-100">
-        <div class="simple-select w-50">
+        <div class="simple-select enum-select">
           <multiselect
             v-model="viewList"
             :options="listOptions"
@@ -70,7 +70,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="form-check-inline w-50 ml-1">
+        <div class="form-check-inline ml-1">
           <label class="form-check-label ml-3">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issue
@@ -80,13 +80,8 @@
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
         </div>
-        <div class="mt-3">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-            </div>
-            <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
-          </div>
+        <div class="input-group w-50">
+          <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
         </div>
       </div>
       <div class="mt-3">
@@ -267,6 +262,7 @@
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
+        'issueStageFilter',
         'viewPermit'
       ]),
       _isallowed() {
@@ -275,6 +271,7 @@
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
+        let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -288,6 +285,7 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           if (search_query) valid = valid && search_query.test(issue.title)
 
           switch (this.viewList) {

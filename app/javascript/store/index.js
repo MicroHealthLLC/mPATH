@@ -478,10 +478,12 @@ export default new Vuex.Store({
               )
 
               let ranges = getters.taskProgressFilter ? _.map(getters.taskProgressFilter, 'value').map(r => r.split("-").map(Number)) : false
+              let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
 
               // for tasks under task_types
               let task_count = 1
               for (let task of tasks) {
+                if (stages.length > 0 && !stages.includes(task.taskStageId)) continue
                 if (_.map(getters.myActionsFilter, 'value').includes('tasks')) {
                   let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
                   if (!userIds.includes(Vue.prototype.$currentUser.id)) continue
@@ -558,11 +560,26 @@ export default new Vuex.Store({
     },
     filteredAllTasks: (state, getters) => {
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
-      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => ids.length ? ids.includes(t.taskTypeId) : true)
+      let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
+        let valid = true
+        if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
+        if (stages.length > 0) valid = valid && stages.includes(t.taskStageId)
+        return valid
+      })
+
     },
     filteredAllIssues: (state, getters) => {
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
-      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => ids.length ? ids.includes(t.issueTypeId) : true)
+      let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
+      let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
+        let valid = true
+        if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
+        if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
+        if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
+        return valid
+      })
     },
     on_watched: (state, getters) => {
       let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
