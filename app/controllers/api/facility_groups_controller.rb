@@ -14,7 +14,8 @@ class Api::FacilityGroupsController < AuthenticatedController
     }
 
     if params[:project_id].present?
-      collection = FacilityGroup.includes(include_hash).joins(:facility_projects).where("facility_projects.project_id = ?", params[:project_id]).distinct
+      facility_ids = FacilityProject.where(project_id: params[:project_id]).map(&:facility_id).compact.uniq
+      collection = FacilityGroup.includes(include_hash).where(facility_id: facility_ids)
     else
       collection = FacilityGroup.includes(include_hash).all
     end
