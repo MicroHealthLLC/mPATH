@@ -21,6 +21,7 @@ import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
+import SortedTablePlugin    from "vue-sorted-table"
 import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 
@@ -41,6 +42,10 @@ Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
 Vue.config.productionTip = false
 Vue.use(VeeValidate)
+Vue.use(SortedTablePlugin, {
+  ascIcon: '<i class="material-icons">arrow_drop_up</i>',
+  descIcon: '<i class="material-icons">arrow_drop_down</i>'
+});
 
 
 Vue.use(VueGoogleMaps, {
