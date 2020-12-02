@@ -76,3 +76,6 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+#Activerecord-Import is a library for bulk inserting data using ActiveRecord.
+gem 'activerecord-import', '1.0.7'
