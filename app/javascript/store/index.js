@@ -800,13 +800,14 @@ export default new Vuex.Store({
     },
 
     // update_from_kanban_view
-    updateKanbanTaskIssues({commit, dispatch}, {task, type}) {
-      return new Promise(async (resolve, reject) => {
-        let data = type === 'tasks' ? {task: task} : {issue: task}
-        http.put(`/projects/${task.projectId}/facilities/${task.facilityId}/${type}/${task.id}.json`, data)
-          .then(async (res) => {
-            await dispatch('fetchFacility', {projectId: task.projectId, facilityId: task.facilityId})
-            resolve()
+    updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
+      return new Promise((resolve, reject) => {
+        http.post(`/projects/${projectId}/facilities/${facilityId}/${type}/batch_update.json`, data)
+          .then((res) => {
+            let facility = Object.assign({}, {...res.data, ...res.data.facility})
+            let index = getters.facilities.findIndex(f => f.id == facility.id)
+            if (index > -1) commit('updateFacilities', {index, facility})
+            return resolve(facility)
           })
           .catch((err) => {
             console.error(err)

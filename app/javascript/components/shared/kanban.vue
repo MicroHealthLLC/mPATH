@@ -1,6 +1,6 @@
 <template>
   <div id="kanban">
-    
+
     <div class="overflow-x-auto">
       <div class="d-flex" v-if="!loading">
         <div
@@ -26,7 +26,7 @@
               <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
             </div> -->
           </div>
-          <draggable :move="handleMove" @change="handleChange" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
+          <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
             <div
               :is="cardShow"
               v-for="task in column.tasks"
@@ -87,14 +87,21 @@ export default {
       this.movingSlot = item.relatedContext.component.$vnode.key
       return true
     },
-    handleChange(item) {
-      let type = 'added' in item ? 'added' : 'moved' in item ? 'moved' : null
-      if (!type) return
-      let task = Object.assign({}, item[type].element)
-      if (type === 'added') task[this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
-      task.kanbanOrder = item[type].newIndex
-      this.updateKanbanTaskIssues({task, type: this.kanbanType})
-      this.movingSlot = ''
+    handleChange(item, tasks) {
+      if (tasks.length > 0) {
+        let projectId = tasks[0].projectId
+        let facilityId = tasks[0].facilityId
+        let data = {[this.kanbanType]: {}}
+        for (let task of tasks) {
+          data[this.kanbanType][task.id] = {}
+          data[this.kanbanType][task.id].kanbanOrder = tasks.indexOf(task)
+          if ('added' in item) {
+            data[this.kanbanType][task.id][this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
+          }
+        }
+        this.updateKanbanTaskIssues({projectId, facilityId, data, type: this.kanbanType})
+        this.movingSlot = ''
+      }
     },
     handleAddNew(stage) {
       this.$emit('on-add-new', stage)
