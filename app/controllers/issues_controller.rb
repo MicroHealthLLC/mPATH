@@ -28,6 +28,11 @@ class IssuesController < AuthenticatedController
     render json: {}, status: 500
   end
 
+  def batch_update
+    Issue.update(params[:issues].keys, params[:issues].values)
+    render json: @facility_project.as_json
+  end
+
   private
   def set_resources
     @project = current_user.projects.active.find_by(id: params[:project_id])

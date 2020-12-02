@@ -342,6 +342,8 @@
         'issueTypeFilter',
         'issueSeverityFilter',
         'taskUserFilter',
+        'taskStageFilter',
+        'issueStageFilter',
         'issueUserFilter',
         'statuses',
         'myActionsFilter',
@@ -369,6 +371,7 @@
       },
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')
+        let stageIds = _.map(this.taskStageFilter, 'id')
         return _.filter(this.DV_facility.tasks, (task) => {
           let valid = true
           if (this.C_myTasks || this.taskUserFilter) {
@@ -379,6 +382,7 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
+          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           return valid
         })
@@ -409,6 +413,7 @@
       filteredIssues() {
         let typeIds = _.map(this.issueTypeFilter, 'id')
         let severityIds = _.map(this.issueSeverityFilter, 'id')
+        let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.facility.issues, ((issue) => {
           let valid = true
           if (this.C_myIssues || this.issueUserFilter) {
@@ -421,6 +426,7 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           return valid
         }))
       },
