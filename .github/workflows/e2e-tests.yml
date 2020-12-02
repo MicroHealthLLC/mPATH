@@ -1,0 +1,65 @@
+name: e2e-tests
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        image: mysql:8.0
+        ports:
+          - 3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6.6' # Specify your version
+
+      - name: Start rails server and run e2e test
+        env:
+          RAILS_ENV: test
+          MGIS_DATABASE_USERNAME: root
+          MGIS_DATABASE_PASSWORD: root
+          MGIS_DATABASE_HOST: 127.0.0.1
+          CYPRESS_RECORD_KEY: e63a7946-58c1-48bf-9a6b-c0c832a5g137
+
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          sudo service mysql start
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          yarn add cypress
+          bundle exec rails db:setup
+          bundle exec rails server -p 5017 &
+          sleep 5 &&
+          curl http://localhost:5017 -I
+
+          yarn cypress run --project ./spec
+
+      # https://github.com/cypress-io/github-action
+      # - name: Cypress run
+      #   env:
+      #     RAILS_ENV: test
+      #     MGIS_DATABASE_USERNAME: root
+      #     MGIS_DATABASE_HOST: 127.0.0.1
+      #     MGIS_DATABASE_PASSWORD: root
+      #     SECRET_KEY_BASE: 3a23dbd2ea318f52602c420794d939adc1ce57a95749cae98539725a9770106257c22bd06f4c57df3a25f0e19867c6d0d0978e49e2225e6ea6a1a0438b0cbae8
+          # ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          # CYPRESS_RECORD_KEY: e63a7946-58c1-48bf-9a6b-c0c832a5g137
+        # uses: cypress-io/github-action@v2
+        # run: |
+        #   yarn add cypress
+        #   yarn cypress run --project ./spec
+        # with:
+          # path: ./spec
+          # record: true
+          # parallel: true
+          # start: yarn cypress run
+          # working-directory: spec
+          # wait-on: http://localhost:5017
+          # config: baseUrl=https://localhost:5017

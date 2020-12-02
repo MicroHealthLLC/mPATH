@@ -17,8 +17,10 @@ Cypress.Commands.add("logout", () => {
 // Open first Project
 Cypress.Commands.add("openProject", () => {
   cy.get('[data-cy=project_list_items]').first().click()
-  cy.wait(1000)
-  cy.get('[data-cy=facility_list]').contains('Facility Manager')
+  cy.get('#facility_view').within(() => {
+    cy.wait(10000)
+    cy.get('[data-cy=facility_list]').contains('Facility Manager')
+  })
 })
 
 // Open first Facility of a project
