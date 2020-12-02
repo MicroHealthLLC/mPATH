@@ -18,7 +18,15 @@
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="input-group mb-2">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarTasksQuery">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                     </div>
+                    <input type="search"
+                      class="form-control form-control-sm" 
+                      placeholder="Search Tasks" 
+                      aria-label="Search" 
+                      aria-describedby="search-addon" 
+                      v-model="sidebarTasksQuery">
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -79,9 +87,17 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="input-group mb-2">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="sidebarIssuesQuery">
-                  </div>
+                   <div class="input-group mb-2">
+                     <div class="input-group-prepend">
+                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                     </div>
+                    <input type="search" 
+                      class="form-control form-control-sm" 
+                      placeholder="Search Issues" 
+                      aria-label="Search" 
+                      aria-describedby="search-addon" 
+                      v-model="sidebarIssuesQuery">
+                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
@@ -230,7 +246,6 @@
   import FacilitySidebar from './facilities/facility_sidebar'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
-
   export default {
     name: 'KanbanView',
     components: {
@@ -270,7 +285,6 @@
         searchStageId: null,
         sidebarTasksQuery: '',
         sidebarIssuesQuery: ''
-
       }
     },
     mounted() {
@@ -360,7 +374,6 @@
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
-
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -375,7 +388,6 @@
           }
           if (search_query) valid = valid && search_query.test(task.text)
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
-
           switch (this.viewList) {
             case "active": {
               valid = valid && task.progress < 100
@@ -424,9 +436,7 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
-
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
-
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
@@ -575,6 +585,12 @@
     max-width: 200px;
     min-width: 200px;
   }
+  input[type=search] { 
+    color: #383838;  
+    text-align: left;
+    cursor: pointer;
+    display: block;                
+   }
   .expandBtn {
     position: absolute;
     top: 50px;
