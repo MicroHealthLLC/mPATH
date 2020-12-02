@@ -9,27 +9,34 @@
       ></notes-form>
     </div>
     <div v-else>
-      <div class="mb-4 row" :class="{'align-items-center justify-content-between': _isallowed('write')}">
+      <div class="mb-3 row" :class="{'align-items-center justify-content-between': _isallowed('write')}">
         <div class="col">
           <div class="input-group" :class="{'search-tab': _isallowed('write')}">
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="text" class="form-control form-control-sm" placeholder="Search notes.." aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
+            <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
           </div>
         </div>
-        <div class="col-3 px-0" v-if="_isallowed('write')">
-          <button @click.prevent="addNewNote" class="btn btn-sm btn-primary ml-2" data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>Add Note</button>
-        </div>
+        
       </div>
-      <div class="form-check-inline justify-content-end w-100 mb-2 font-sm">
+      <div class="form-check-inline w-100 mb-2 font-sm">
+        <div class="col-3 px-0 float-left" v-if="_isallowed('write')">
+          <button @click.prevent="addNewNote" 
+          class="btn btn-sm btn-primary addNote" 
+          data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>
+          Add Note</button>
+        </div>
+        <div class="fR ml-auto">
         <label class="form-check-label mr-3">
           <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
         </label>
-        <label class="form-check-label ml-2 text-primary">
-          <h5 class="mb-0 mr-2" data-cy="note_total">Total: {{filteredNotes.length}}</h5>
-        </label>
+        <!-- <label class="form-check-label ml-2 text-primary">
+          <h5 class="mb-0 mr-2" data-cy="note_total">Total Notes: {{filteredNotes.length}}</h5>
+        </label> -->
+        </div>
       </div>
+      <hr/>
       <div v-if="_isallowed('read')">
         <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
           <notes-show
@@ -134,4 +141,17 @@
   #notes-index {
     height: 500px;
   }
+  input[type=search] { 
+    color: #383838;  
+    text-align: left;
+    cursor: pointer;
+    display: block;                
+  }
+  .fR{
+    right:0px;
+    float:right;
+  }
+  // .addNote {
+  //   marging-right:6rem;
+  // }
 </style>

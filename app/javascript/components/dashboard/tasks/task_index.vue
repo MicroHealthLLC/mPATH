@@ -1,8 +1,19 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="simple-select w-70 mr-1">
+          <div class="input-group w-100">
+             <div class="input-group-prepend">
+             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="search" 
+            class="form-control form-control-sm" 
+            placeholder="Search tasks.." 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="tasksQuery">
+          </div>
+      <div class="d-flex align-item-center justify-content-between my-2">        
+        <div class="simple-select w-100 mr-1">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -21,9 +32,10 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select enum-select">
+        <div class="simple-select w-100 enum-select">
           <multiselect
             v-model="viewList"
+            style="width:235px"
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -38,36 +50,33 @@
           </multiselect>
         </div>
       </div>
-      <div class="mb-3 d-flex font-sm">
-        <div class="form-check-inline mx-0 w-100">
-          <div class="input-group w-50 mr-2">
-            <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery">
-          </div>
-          <label class="form-check-label">
+      <div class="mb-3 d-flex font-sm">          
+         <button v-if="_isallowed('write')" 
+          class="btn btn-sm btn-primary mr-2"
+          @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
+          Add Task
+          </button>
+          <button
+          @click.prevent="download"     
+          class="btn btn-sm btn-dark mr-1">
+          Export to PDF
+          </button>
+          <!-- <button
+            disabled 
+            class="btn btn-sm btn-outline-dark">
+            Export to Excel
+          </button>  -->
+          <div class="myTasks">             
+          <label class="form-check-label ml-4 mr-3">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div>
+          </label> 
+          </div>    
       </div>
-       <button v-if="_isallowed('write')" class="position-absolute btn btn-sm btn-primary" @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>Add Task</button>
-      <div v-if="filteredTasks.length > 0">
-        <button
-          @click.prevent="download"
-          id="printBtn"
-          class="btn btn-sm btn-outline-dark mr-1 exportBtn">
-          Export to PDF
-        </button>
-        <button
-          disabled
-          id="printBtn"
-          class="btn btn-sm btn-outline-dark">
-          Export to Excel
-        </button>
-        <label class="form-check-label ml-2 mt-1 text-primary" id="total" data-cy="task_total">
-          <h5>Total: {{filteredTasks.length}}</h5>
-        </label>
+      
+      <div v-if="filteredTasks.length > 0">        
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
@@ -261,13 +270,8 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn {
-    width: 100px;
-    position: absolute;
+  .new-tasks-btn { 
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  .exportBtn {
-    margin-left: 135px;
   }
   #total {
     float: right;
@@ -285,4 +289,14 @@
   tfoot {
     text-align: right !important;
   }
+  input[type=search] { 
+    color: #383838;  
+    text-align: left;
+    cursor: pointer;
+    display: block;                
+ }
+ .myTasks {
+   margin-left:65px;
+   margin-top: 5px;
+ }
 </style>
