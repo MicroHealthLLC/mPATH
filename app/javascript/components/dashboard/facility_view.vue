@@ -98,6 +98,7 @@
     computed: {
       ...mapGetters([
         'filteredFacilityGroups',
+        'facilityGroupFacilities',
         'managerView'
       ]),
       C_showFacilityTab() {
@@ -169,6 +170,22 @@
             this.currentFacilityGroup = {}
             this.currentFacility = {}
             this.expanded.id = ''
+          } else {
+            let group = value.find(f => f.id === this.currentFacilityGroup.id)
+            if (group) {
+              this.currentFacilityGroup = group
+              let facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == this.currentFacility.id)
+              if (facility) {
+                this.currentFacility = facility
+              } else {
+                this.currentFacility = {}
+              }
+            }
+            else {
+              this.currentFacilityGroup = {}
+              this.currentFacility = {}
+              this.expanded.id = ''
+            }
           }
         }, deep: true
       }

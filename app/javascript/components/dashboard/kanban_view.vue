@@ -328,14 +328,12 @@
       },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
-
-        if($(searchElement).attr("data-kanban-type") == "issues"){
+        if ($(searchElement).attr("data-kanban-type") == "issues") {
           this.searchIssuesQuery = $(searchElement).val()
         }
-        if($(searchElement).attr("data-kanban-type") == "tasks"){
+        if ($(searchElement).attr("data-kanban-type") == "tasks") {
           this.searchTasksQuery = $(searchElement).val()
         }
-
       }
     },
     computed: {
@@ -519,16 +517,32 @@
             this.currentFacility = {}
             this.expanded.id = ''
           } else {
-            this.currentFacilityGroup = value.find(f => f.id === this.currentFacilityGroup.id)
-            this.currentFacility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == this.currentFacility.id)
+            let group = value.find(f => f.id === this.currentFacilityGroup.id)
+            if (group) {
+              this.currentFacilityGroup = group
+              let facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == this.currentFacility.id)
+              if (facility) {
+                this.currentFacility = facility
+              } else {
+                this.currentFacility = {}
+              }
+            }
+            else {
+              this.currentFacilityGroup = {}
+              this.currentFacility = {}
+              this.expanded.id = ''
+            }
           }
         }, deep: true
       },
       currentFacilityGroup: {
         handler(value) {
           if (!('id' in value)) this.expandFilter = false
-        }
-      }, deep: true
+        }, deep: true
+      },
+      "expanded.id"(value) {
+        if (!value) this.expandFilter = false
+      }
     }
   }
 </script>

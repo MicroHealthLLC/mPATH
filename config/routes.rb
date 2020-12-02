@@ -34,9 +34,13 @@ Rails.application.routes.draw do
     get :facility_manager, on: :member
     get :kanban, on: :member
     resources :facilities do
-      resources :issues
+      resources :issues do
+        post :batch_update, on: :collection
+      end
       resources :notes, module: :facilities
-      resources :tasks
+      resources :tasks do
+        post :batch_update, on: :collection
+      end
     end
   end
   resources :facilities, only: [] do
