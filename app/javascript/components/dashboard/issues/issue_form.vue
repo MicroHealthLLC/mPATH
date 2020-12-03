@@ -46,10 +46,15 @@
         v-if="showErrors"
         class="text-danger mb-3"
         >
-        Please fill the required feilds before submitting
+        Please fill the required fields before submitting
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Issue Name:</h5></label>
+         <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+                <span v-show="DV_issue.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
+                <span v-show="!DV_issue.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
+               <span><i class="fas fa-eye mr-1"></i></span><small style="vertical-align:text-top">On Watch</small>
+            </span>
         <input
           name="title"
           v-validate="'required'"
@@ -398,7 +403,8 @@
       ]),
        ...mapActions([
         'issueDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedIssues'
       ]),
       INITIAL_ISSUE_STATE() {
         return {
@@ -461,6 +467,14 @@
         else if (file.name) {
           this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
         }
+      },
+       toggleWatched() {
+        if (this.DV_issue.watched) {
+          let confirm = window.confirm(`Are you sure, you want to remove this issue from on-watch?`)
+          if (!confirm) {return}
+        }
+        this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
+        this.updateWatchedIssues(this.DV_issue)
       },
       cancelIssueSave() {
         this.$emit('on-close-form')
