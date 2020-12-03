@@ -7,7 +7,9 @@ class IssuesController < AuthenticatedController
   end
 
   def create
-    @issue = @facility_project.issues.create(issue_params)
+    # @issue = @facility_project.issues.create(issue_params)
+    @issue = Issue.new.create_or_update_issue(params, current_user)
+
     render json: {issue: @issue.to_json}
   end
 

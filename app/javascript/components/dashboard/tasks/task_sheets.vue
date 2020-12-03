@@ -3,14 +3,14 @@
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped">
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask">
-        <td class="twenty">{{task.text}}</td>
+        <td class="sixteen">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
         <td class="eight">{{formatDate(task.dueDate)}}</td>
         <td class="ten">{{task.users.join(', ')}}</td>
-        <td class="eight">{{task.progress + "%"}}</td>
-        <td class="eight" v-if="(task.dueDate) <= now"><h5>x</h5></td>
-        <td class="eight" v-else></td>
+        <td class="ten">{{task.progress + "%"}}</td>
+        <td class="ten" v-if="(task.dueDate) <= now"><h5>x</h5></td>
+        <td class="ten" v-else></td>
         <td class="eight" v-if="(task.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="twenty" v-if="(task.notes.length) > 0">
@@ -215,6 +215,9 @@
   }
   .ten {
     width: 10%;
+  }
+  .sixteen {
+    width: 16%;
   }
   .twenty {
     width: 20%;

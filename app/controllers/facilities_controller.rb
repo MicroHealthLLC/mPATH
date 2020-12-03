@@ -1,9 +1,16 @@
 class FacilitiesController < AuthenticatedController
   before_action :set_project
-  before_action :set_facility, only: [:show, :update, :destroy]
+  before_action :set_facility, only: [:show, :update]
 
   def index
-    render json: {facilities: @project.facility_projects.order(created_at: :desc).as_json, project: @project}
+    include_hash = {
+      facility: [:facility_group],
+      tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
+      issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
+      notes: [{note_files_attachments: :blob}, :user]
+    }
+    facility_projects = @project.facility_projects.includes(include_hash,:status ).order(created_at: :desc).as_json
+    render json: {facilities: facility_projects, project: @project}
   end
 
   def create
@@ -21,6 +28,8 @@ class FacilitiesController < AuthenticatedController
   end
 
   def destroy
+    @facility_project = @project.facility_projects.includes(include_hash,:status).find_by(facility_id: params[:id])
+    @facility = @facility_project.facility
     @facility.destroy!
     render json: {}, status: 200
   rescue
@@ -29,8 +38,14 @@ class FacilitiesController < AuthenticatedController
 
   private
   def set_facility
-    @facility_project = @project.facility_projects.find_by(facility_id: params[:id])
-    @facility = @facility_project.facility
+    include_hash = {
+      facility: [:facility_group],
+      tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
+      issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
+      notes: [{note_files_attachments: :blob}, :user]
+    }
+    @facility_project = @project.facility_projects.includes(include_hash,:status).find_by(facility_id: params[:id])
+    # @facility = @facility_project.facility
   end
 
   def set_project

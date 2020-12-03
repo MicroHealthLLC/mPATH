@@ -50,7 +50,7 @@
           </multiselect>
         </div>
       </div>
-      <div class="mb-3 d-flex font-sm">          
+      <div class="mb-3 mr-2 font-sm">          
          <button v-if="_isallowed('write')" 
           class="btn btn-sm btn-primary mr-2"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
@@ -59,6 +59,7 @@
           <button
           @click.prevent="download"     
           class="btn btn-sm btn-dark mr-1">
+          <font-awesome-icon icon="file-pdf" />
           Export to PDF
           </button>
           <!-- <button
@@ -66,7 +67,7 @@
             class="btn btn-sm btn-outline-dark">
             Export to Excel
           </button>  -->
-          <div class="myTasks">             
+          <div class="form-check-inline font-sm myTasks mt-1 mr-0">             
           <label class="form-check-label ml-4 mr-3">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
@@ -84,7 +85,6 @@
           href="#"
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
-          :load="log(task)"
           :task="task"
           :from-view="from"
           @edit-task="editTask"
@@ -142,6 +142,9 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   import TaskShow from "./task_show"
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
+  library.add(faFilePdf)
 
   export default {
     name: 'TasksIndex',
@@ -163,10 +166,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),
-      log(task) {
-        console.log(task)
-      },
+      ]),  
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -296,7 +296,7 @@
     display: block;                
  }
  .myTasks {
-   margin-left:65px;
+   float: right !important;
    margin-top: 5px;
  }
 </style>

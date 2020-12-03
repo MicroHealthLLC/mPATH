@@ -5,19 +5,20 @@
       <button
         @click.prevent="download"
         id="printBtn"
-        class="btn btn-sm btn-outline-dark mb-3">
-        <font-awesome-icon icon="file-download" class="mr-2" />
+        class="btn btn-sm btn-dark mb-3">
+        <font-awesome-icon icon="file-pdf" class="mr-2" />
         Export to PDF
       </button>
       <div class="float-right">
-        <h5 class="pb-0 team-total m-0 text-primary d-inline-block">
+        <button class="btn btn-md btn-info mb-3 team-total">
         Team Total: {{teamMembers.length}}
-        </h5>
+        </button>
       </div>
       <div>
         <table ref="table" id="teamMembersList" class="table-bordered">
           <thead>
             <tr class="teamHead">
+              <th class="sort-th col-1" @click="sort('id')">#<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('firstName')">First Name<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('lastName')">Last Name<i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('title')">Position<i class="fas fa-sort scroll ml-2"></i></th>
@@ -28,6 +29,7 @@
           </thead>
           <tbody>
             <tr v-for="value in sortedTeamMembers" :key="value.id" class="teamTable">
+              <td id="col-1-row">{{ value.id }}</td>
               <td>{{ value.firstName }}</td>
               <td>{{ value.lastName }}</td>
               <td>{{ value.title }}</td>
@@ -52,16 +54,15 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   import {library} from '@fortawesome/fontawesome-svg-core'
-  import {faFileDownload} from '@fortawesome/free-solid-svg-icons'
-  library.add(faFileDownload)
-
+  import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
+  library.add(faFilePdf)
   export default {
     name: "TeamMembersView",
     data() {
       return {
-        pageSize: 10,
+        pageSize: 25,
         currentPage: 1,
-        currentSort: 'lastName',
+        currentSort: 'id',
         currentSortDir: 'asc',
       }
     },
@@ -115,6 +116,12 @@
     table-layout: fixed;
     width: 100%;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .col-1 {
+    width: 6%
+  }
+  #col-1-row {
+    text-align: center;
   }
   thead {
     background-color: #ededed;
@@ -177,5 +184,8 @@
   .page-btns.active  {
     background-color: rgba(211, 211, 211, 10%);
     border: none !important;
+  }
+  .team-total {
+    cursor: default;
   }
 </style>

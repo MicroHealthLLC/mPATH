@@ -91,6 +91,7 @@
          <button
            @click.prevent="download"      
            class="btn btn-sm btn-dark">
+           <font-awesome-icon icon="file-pdf" />
            Export to PDF
          </button>
        <div class="form-check-inline font-sm myIssues mt-1 mr-0">
@@ -181,6 +182,9 @@
   import {mapGetters, mapMutations} from 'vuex'
   import IssueForm from './issue_form'
   import IssueShow from './issue_show'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
+  library.add(faFilePdf)
 
   export default {
     name: 'IssueIndex',
@@ -372,6 +376,7 @@
     display: block;                
   }
   .myIssues {
-    margin-left:60px;
+    float:right;
+    margin-top: 5px;
   }
 </style>

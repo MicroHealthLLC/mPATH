@@ -9,9 +9,10 @@ class FacilityGroup < SortableRecord
 
   def as_json(options=nil)
     json = super(options)
+    fp = self.facility_projects
     json.merge(
-      facilities: self.facility_projects.as_json,
-      project_ids: self.facility_projects.pluck(:project_id).uniq
+      facilities: fp.as_json,
+      project_ids: fp.pluck(:project_id).uniq
     ).as_json
   end
 

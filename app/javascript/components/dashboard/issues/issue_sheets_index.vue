@@ -100,6 +100,7 @@
          @click.prevent="download"
          id="printBtn"
          class="btn btn-sm btn-dark exportBtn">
+         <font-awesome-icon icon="file-pdf" />
          Export to PDF
         </button>            
        <label class="form-check-label text-primary float-right mr-2">
@@ -110,28 +111,28 @@
             <div style="margin-bottom:50px">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
                 <colgroup>
-                  <col class="seventeen" />
+                  <col class="oneFive" />
                   <col class="ten" />
                   <col class="nine" />
                   <col class="eight" />
                   <col class="eight" />
                   <col class="ten" />
-                  <col class="eight" />
-                  <col class="seven" />
-                  <col class="six" />
-                  <col class="seventeen" />
+                  <col class="nine" />
+                  <col class="nine" />
+                  <col class="nine" />
+                  <col class="oneFive" />
                 </colgroup>
-                <tr style="background-color:#ededed; font-size:.90rem">
+                <tr style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
                   <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('dueDate')">Due Date<i class="fas fa-sort scroll" ></i></th>
+                  <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
                   <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-                  <th>Overdue</th>
-                  <th>Onwatch</th>
-                  <th>Last Update</th>               
+                  <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('watched')">Onwatch<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>               
                 </tr>
               </table>            
                 <issue-sheets
@@ -209,7 +210,11 @@
   import {mapGetters, mapMutations} from 'vuex'
   import IssueForm from './issue_form'
   import IssueSheets from './issue_sheets'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   import moment from 'moment'
+
+  library.add(faFilePdf)
   Vue.prototype.moment = moment
 
   export default {
@@ -228,9 +233,9 @@
         currentIssue: null,
         now: new Date().toISOString(),        
         issuesQuery: '',
-        pageSize:5,
+        pageSize:15,
         currentPage:1,
-        currentSort:'text',
+        currentSort:'title',
         currentSortDir:'asc',
 
       }
@@ -415,15 +420,6 @@
     width: 100% ;
     margin-bottom: 0 !important;
   }
-  .five {
-    width: 5%;
-  }
-  .six {
-    width: 6%;
-  }
-  .seven {
-    width: 7%;
-  }
   .eight {
     width: 8%;
   }
@@ -433,8 +429,8 @@
   .ten {
     width: 10%;
   }
-  .seventeen {
-    width: 17%;
+  .oneFive {
+    width: 15%;
   }
   th {
     font-size: .70rem !important;

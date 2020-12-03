@@ -9,6 +9,7 @@ class SortableRecord < ApplicationRecord
   end
 
   def self.order_humanize
-    self.sort_order?.humanize.downcase if self.sort_order?
+    so = self.sort_order?
+    so.humanize.downcase if so
   end
 end
