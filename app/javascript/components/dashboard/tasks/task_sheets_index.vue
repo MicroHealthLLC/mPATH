@@ -2,8 +2,19 @@
   <div id="tasks-index" class="my-4">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="simple-select mr-1 d-flex" style="width:38%">
-        <i class="fas fa-filter filter mr-1"></i>
+        <div class="input-group w-90 task-search-bar">
+             <div class="input-group-prepend">
+             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="search" 
+            class="form-control form-control-sm" 
+            placeholder="Search Tasks" 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="tasksQuery">
+          </div>
+        <div class="simple-select mx-1 d-flex" style="width:35%">
+       
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -22,7 +33,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select d-flex" style="width:35%">
+        <div class="simple-select d-flex" style="width:30%">
         <multiselect
           v-model="viewList"
           :options="listOptions"
@@ -38,10 +49,8 @@
           </template>
         </multiselect>
         </div>
-        <div class="input-group w-25 mx-2">
-          <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery">
-        </div>
-        <div class="form-check-inline mr-0" style="width:26%">
+       
+        <div class="form-check-inline mr-4 font-sm" style="width:26%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
@@ -53,27 +62,21 @@
         </div>
       </div>
       <button v-if="_isallowed('write')"
-        class="new-tasks-btn addBtns btn mr-3 btn-sm btn-primary"
+        class="new-tasks-btn addBtns btn mr-2 btn-sm btn-primary"
         @click.prevent="addNewTask">
         <i class="fas fa-plus-circle mr-2"></i>
         Add Task
       </button>
-      <div v-if="filteredTasks.length > 0">
-        <button
-          @click="download"
-          id="printBtn"
-          class="btn btn-sm btn-outline-dark exportBtn">
-          Export to PDF
-        </button>
-        <button
-          disabled
-          id="printBtn"
-          class="btn btn-sm btn-outline-dark">
-          Export to Excel
-        </button>
+       <button
+        @click="download"
+        id="printBtn"
+        class="btn btn-sm btn-dark exportBtn">
+        Export to PDF
+      </button>
         <label class="form-check-label text-primary float-right mr-2">
           <h5>Total: {{filteredTasks.length}}</h5>
         </label>
+      <div v-if="filteredTasks.length > 0">          
         <div style="margin-bottom:100px">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
@@ -87,21 +90,20 @@
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
-            <tr style="background-color:#ededed">
-              <th>Task</th>
-              <th>Task Category</th>
-              <th>Start Date</th>
-              <th>Due Date</th>
-              <th>Assigned Users</th>
-              <th>Progress</th>
+            <tr style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll ml-2"></i></th>
+              <th class="sort-th" @click="sort('dueDate')">Due Date<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
+              <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
               <th>Overdue</th>
               <th>On Watch</th>
               <th>Last Update</th>
             </tr>
-          </table>
-          <paginate name="filteredTasks" :list="filteredTasks" class="paginate-list pl-0" :per="15">
-            <task-sheets
-              v-for="(task, i) in paginated('filteredTasks')"
+          </table>        
+             <task-sheets
+              v-for="(task, i) in sortedTasks"
               class="taskHover"
               href="#"
               :class="{'b_border': !!filteredTasks[i+1]}"
@@ -111,15 +113,17 @@
               @edit-task="editTask"
               @toggle-watched="toggleWatched"
             />
-          </paginate>
-          <div class="floatRight pagination mr-3 my-3">
-            <paginate-links for="filteredTasks" :show-step-links="true" :limit="4"></paginate-links>
-          </div>
+          <div class="float-right mb-4">
+          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>         
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
+           </div>
         </div>
       </div>
       <h6 v-else class="text-danger alt-text">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+      <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"
@@ -181,12 +185,15 @@
     data() {
       return {
         viewList:'active',
-        listOptions: ['active','all', 'completed'],
-        paginate: ['filteredTasks'],
+        listOptions: ['active','all', 'completed'],     
         tasks: Object,
         now: new Date().toISOString(),
-        tasksQuery: ''
-      }
+        tasksQuery: '',
+        pageSize:5,
+        currentPage:1,
+        currentSort:'text',
+        currentSortDir:'asc',
+     }
     },
     methods: {
       ...mapMutations([
@@ -195,6 +202,20 @@
         'setOnWatchFilter',
         'setTaskForManager'
       ]),
+      sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextPage:function() {
+        if((this.currentPage*this.pageSize) < this.filteredTasks.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+
+      },
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -263,7 +284,7 @@
           return valid
         }), ['dueDate'])
         return tasks
-      },
+      },     
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -289,9 +310,23 @@
           if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
         }
+      }, 
+      sortedTasks:function() {
+          return this.filteredTasks.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+          let start = (this.currentPage-1)*this.pageSize;
+          let end = this.currentPage*this.pageSize;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
+       }
       }
     }
-  }
 </script>
 
 <style lang="scss">
@@ -300,26 +335,62 @@
     z-index: 100;
     height: 500px
   }
+  .scroll {
+    cursor:pointer !important; 
+    top: 5px;
+    right: 5px;
+    position:absolute;
+    font-size: .95rem;
+    color: #383838 !important;
+    padding-left:4px !important
+  }
+  .task-search-bar {
+    height: 31px;
+    width: 310px;
+    border-radius: 5px;
+  }
+  .sort-th {
+    position:relative;   
+  }
+  input[type=search] { 
+    color: #383838;  
+    text-align: left;
+    cursor: pointer;
+    display: block;                
+ }
   .new-tasks-btn {
     height: max-content;
     width: 100px;
   }
-  .addBtns {
-    position: absolute;
+   .page-btns {
+    width: 20px;
+    line-height: 1 !important;
+    border: none !important;
+    height: 25px;
+    margin-right: 1px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    color: #383838;
+    cursor: pointer;
+ }
+  .page-btns:hover {
+    background-color: #ededed;
   }
+  #page-count {
+    width: auto !important;
+    cursor: default;
+  }
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ }
   .alt-text {
     position: relative;
     margin-top: 50px;
     margin-left: 2px;
   }
-  #printBtn {
-    font-size: .80rem;
-  }
-  #printBtn, .addBtns, .paginate-links.filteredTasks {
+  #printBtn, .addBtns {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  .exportBtn {
-    margin-left: 130px;
   }
   #total {
     margin-right: 18px;
@@ -368,42 +439,5 @@
   }
   .pagination {
     margin-bottom: 50px !important;
-  }
-  .paginate-links.filteredTasks {
-    list-style: none !important;
-    user-select: none;
-    a {
-      width: 30px;
-      height: 36px;
-      margin-right: 1px;
-      background-color: white;
-      color: #383838;
-      padding: 10px 24px;
-      padding-bottom: 10px !important;
-      cursor: pointer;
-    }
-    a:hover {
-      background-color: #ededed
-    }
-    li.active a {
-      font-weight: bold;
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    a.active  {
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    li.next:before {
-      content: ' | ';
-      margin-right: 13px;
-      color: #ddd;
-    }
-    li.disabled a {
-      color: #ccc;
-      cursor: no-drop;
-    }
-    li {
-      display: inline !important;
-      margin-bottom: 20px !important;
-    }
   }
 </style>
