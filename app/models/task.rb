@@ -66,6 +66,8 @@ class Task < ApplicationRecord
     ).as_json
   end
 
+  # This method is currently just creating Task and not updating it
+  # In future we will use this method in background process
   def create_or_update_task(params, user)
 
     task_params = params.require(:task).permit(
@@ -111,10 +113,9 @@ class Task < ApplicationRecord
 
     task.attributes = t_params
     task.facility_project_id = facility_project.id
-    task.save
 
     task.transaction do 
-    
+      task.save
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|

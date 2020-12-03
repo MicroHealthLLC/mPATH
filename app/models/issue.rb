@@ -79,6 +79,108 @@ class Issue < ApplicationRecord
     end.as_json
   end
 
+  # This method is currently just creating Issue and not updating it
+  # In future we will use this method in background process
+  def create_or_update_issue(params, user)
+
+    issue_params = params.require(:issue).permit(
+      :title,
+      :description,
+      :issue_type_id,
+      :issue_stage_id,
+      :issue_severity_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :watched,
+      :kanban_order,
+      issue_files: [],
+      user_ids: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+       ]
+    )
+
+    project = user.projects.active.find_by(id: params[:project_id])
+    facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+    issue = self
+    i_params = issue_params.dup
+    user_ids = i_params.delete(:user_ids)
+    sub_task_ids = i_params.delete(:sub_task_ids)
+    sub_issue_ids = i_params.delete(:sub_issue_ids)
+    checklists_attributes = i_params.delete(:checklists_attributes)
+    notes_attributes = i_params.delete(:notes_attributes)
+
+    issue.attributes = i_params
+    issue.facility_project_id = facility_project.id
+
+    issue.transaction do 
+      
+      issue.save
+
+      if user_ids && user_ids.present?
+        issue_users_obj = []
+        user_ids.each do |uid|
+          next if !uid.present?
+          issue_users_obj << IssueUser.new(issue_id: issue.id, user_id: uid)
+        end     
+        IssueUser.import(issue_users_obj) if issue_users_obj.any?
+      end
+
+      if sub_task_ids && sub_task_ids.any?
+        related_task_objs = []
+        sub_task_ids.each do |sid|
+          related_task_objs << RelatedTask.new(relatable_id: issue.id, relatable_type: issue.class.name, task_id: sid)
+        end
+        RelatedTask.import(related_task_objs) if related_task_objs.any?
+      end
+
+      if sub_issue_ids && sub_issue_ids.any?
+        related_issue_objs = []
+        sub_issue_ids.each do |sid|
+          related_issue_objs << RelatedIssue.new(relatable_id: issue.id, relatable_type: issue.class.name, issue_id: sid)
+        end
+        RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+      end
+
+      if checklists_attributes.present?
+        checklist_objs = []
+        checklists_attributes.each do |key, value|
+          value.delete("_destroy")
+          checklist_objs << Checklist.new(value.merge({listable_id: issue.id, listable_type: issue.class.name}) )
+        end
+        Checklist.import(checklist_objs) if checklist_objs.any?
+      end
+
+      if notes_attributes.present?
+        notes_objs = []
+        notes_attributes.each do |key, value|
+          value.delete("_destroy")
+          notes_objs << Note.new(value.merge({noteable_id: issue.id, noteable_type: issue.class.name}) )
+        end
+        Note.import(notes_objs) if notes_objs.any?
+      end
+
+    end
+
+    issue
+  end
+
+
   def manipulate_files(params)
     return unless params[:issue][:issue_files].present?
     file_blobs = JSON.parse(params[:issue][:issue_files])
