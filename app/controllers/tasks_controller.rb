@@ -7,7 +7,8 @@ class TasksController < AuthenticatedController
   end
 
   def create
-    @task = @facility_project.tasks.create(task_params)
+
+    @task = Task.new.create_or_update_task(params, current_user) #@facility_project.tasks.create(t_params)
     render json: {task: @task.to_json}
   end
 

@@ -7,8 +7,10 @@ class Note < ApplicationRecord
 
   def to_json
     attach_files = []
-    if self.note_files.attached?
-      attach_files = self.note_files.map do |file|
+    n_files = self.note_files
+
+    if n_files.attached?
+      attach_files = n_files.map do |file|
         {
           id: file.id,
           name: file.blob.filename,

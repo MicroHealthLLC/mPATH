@@ -7,7 +7,8 @@ class TaskType < SortableRecord
   validates_uniqueness_of :name, case_sensitive: false
 
   def progress
-    self.facility_projects.map(&:progress).sum / self.facility_projects.count rescue 0
+  	fp = self.facility_projects
+    fp.map(&:progress).sum / fp.size rescue 0
   end
 
 end

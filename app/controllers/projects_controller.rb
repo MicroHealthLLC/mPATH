@@ -3,7 +3,7 @@ class ProjectsController < AuthenticatedController
 
   def index
     respond_to do |format|
-      format.json {render json: {projects: current_user.projects.active.order(created_at: :desc).as_json}, status: 200}
+      format.json {render json: {projects: current_user.projects.includes(:project_type).active.order(created_at: :desc).as_json}, status: 200}
       format.html {}
     end
   end
