@@ -24,7 +24,11 @@ import GanttElasticHeader   from 'gantt-elastic-header'
 import SortedTablePlugin    from "vue-sorted-table"
 import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
+import { library }          from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
+ 
 
+ 
 Vue.use(vco)
 Vue.mixin(utils)
 Vue.use(VTooltip)
@@ -33,6 +37,7 @@ Vue.use(VueTelInput)
 Vue.use(VuePaginate)
 Vue.component('loader', FadeLoader)
 Vue.component('gantt-elastic', GanttElastic)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('gantt-elastic-header', GanttElasticHeader)
 Vue.component('vue-slide-bar', VueSlideBar)
 Vue.component('date-picker', DatePicker)
