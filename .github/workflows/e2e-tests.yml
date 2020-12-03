@@ -26,7 +26,7 @@ jobs:
           MGIS_DATABASE_USERNAME: root
           MGIS_DATABASE_PASSWORD: root
           MGIS_DATABASE_HOST: 127.0.0.1
-          CYPRESS_RECORD_KEY: e63a7946-58c1-48bf-9a6b-c0c832a5g137
+          CYPRESS_RECORD_KEY: 948b6361-589e-4521-8248-ee4b9655595b
 
         run: |
           sudo apt-get -yqq install libpq-dev
@@ -34,12 +34,11 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3
           yarn add cypress
-          bundle exec rails db:setup
-          bundle exec rails server -p 5017 &
-          sleep 5 &&
-          curl http://localhost:5017 -I
-
-          yarn cypress run --project ./spec
+          bundle exec rails db:create
+          bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rails assets:precompile RAILS_ENV=test
+          bundle exec rails server -e test -p 5017 -d
+          yarn cypress run --record --parallel --project ./spec
 
       # https://github.com/cypress-io/github-action
       # - name: Cypress run

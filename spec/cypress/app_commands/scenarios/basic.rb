@@ -229,7 +229,7 @@ Task.find_or_create_by(
 )
 
 Issue.find_or_create_by(
-  title: 'Test Issue',
+  title: 'Test Issue 4',
   description: 'Test issue description',
   start_date: Date.today + 2.days,
   due_date: Date.today + 7.days,
