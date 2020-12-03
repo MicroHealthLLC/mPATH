@@ -1,218 +1,181 @@
 <template>
   <div id="members">
-    <div class="container mt-4">
+    <div class="container mt-4"> 
       <h3 class="mt-3 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
       <button
         @click.prevent="download"
         id="printBtn"
-        class="btn btn-sm btn-outline-dark mb-3"
-      >Export to PDF</button>
-      <button
-        @click.prevent="tableToExcel('table', 'Team Members')"
-        class="btn btn-sm btn-outline-dark ml-1 mb-3"
-        disabled
-        id="printBtn" 
-      >Export to Excel</button>   
+        class="btn btn-sm btn-dark mb-3">
+      <font-awesome-icon icon="file-download" />
+      Export to PDF</button>     
       <div>
       <h5 class="pb-0 team-total m-0 text-primary" style="display:inline-block;float:right">
-        Team Total: {{ items.length }}
+        Team Total: {{ teamMembers.length }}
       </h5>
       </div>
-
       <div>         
-        <sorted-table :values="values" ref="table" id="teamMembersList">
+        <table ref="table" id="teamMembersList" class="table-bordered">
          <thead>
-          <tr class="tableHead"> 
-            <!-- <th scope="col" style="text-align: left; width: 4rem;">
-            <sort-link name="id">#</sort-link>
-            </th>                   -->
-            <th scope="col" class="pl-3" style="text-align: left; width: 10rem;">
-            <sort-link name="firstName">First Name</sort-link>
-            </th>
-             <th scope="col" style="text-align: left; width: 10rem;">
-            <sort-link name="lastName">Last Name</sort-link>
-            </th>
-            <th scope="col" style="text-align: left; width: 8rem;">
-            <sort-link name="title">Position</sort-link>
-            </th>
-            <th scope="col" style="text-align: left; width: 11rem;">
-            <sort-link name="organization">Organization</sort-link>
-            </th>
-            <th scope="col" style="text-align: left; width: 15rem;">
-            <sort-link name="email">Email</sort-link>
-            </th>
-             <th scope="col" style="text-align: left; width: 10rem;">
-            <sort-link name="phoneNumber">Phone Number</sort-link>
-            </th>
+          <tr class="teamHead">         
+           <th class="sort-th" @click="sort('firstName')">First Name<i class="fas fa-sort scroll"></i></th>
+           <th class="sort-th" @click="sort('lastName')">Last Name<i class="fas fa-sort scroll"></i> </th>
+           <th class="sort-th" @click="sort('title')">Position<i class="fas fa-sort scroll ml-2"></i></th>
+           <th class="sort-th" @click="sort('organization')">Organization<i class="fas fa-sort scroll"></i></th>
+           <th class="sort-th" @click="sort('email')">Email<i class="fas fa-sort scroll" ></i></th>
+           <th class="sort-th" @click="sort('phoneNumber')">Phone Number<i class="fas fa-sort scroll"></i></th>                 
           </tr>
-          </thead>
-          <template #body="sort">
+        </thead>        
           <tbody>            
-          <tr v-for="value in sort.values" :key="value.id" class="teamTable"   :load="log(value)"> 
-            <!-- <td>{{ value.id }}</td>           -->
-            <td class="pl-3" >{{ value.firstName }}</td>
+          <tr v-for="value in sortedTeamMembers" :key="value.id" class="teamTable">         
+            <td>{{ value.firstName }}</td>
             <td>{{ value.lastName }}</td>
             <td>{{ value.title }}</td>
             <td>{{ value.organization }}</td>
             <td><a :href="`mailto:${value.email}`">{{ value.email }}</a></td>
             <td><a :href="`tel:${value.phoneNumber}`">{{ value.phoneNumber }}</a></td>
           </tr>
-          </tbody>
-          </template>
-        </sorted-table> 
-        <paginated
-        class="team-pagination"
-        :page-count="getPageCount"
-        :page-range="3"
-        :margin-pages="2"
-        :click-handler="clickCallback"
-        :prev-text="'＜'"
-        :next-text="'＞'"
-        :container-class="'pagination'"
-        :page-class="'page-item'">
-       </paginated>       
+          </tbody> 
+        </table> 
+        <div class="float-right mt-1 mb-4">
+          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.teamMembers.length / pageSize) }} </button>         
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>               
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
   import {mapGetters, mapActions} from 'vuex'
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import VuejsPaginate from 'vuejs-paginate'
-  Vue.component('paginated', VuejsPaginate)
-
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFileDownload } from '@fortawesome/free-solid-svg-icons'
+  library.add(faFileDownload)
 
   export default {
-    name: "TeamMembersView",
-     components: {
-     VuejsPaginate
-    },
+    name: "TeamMembersView",    
     data() {
       return {  
-        parPage: 8,
-        currentPage: 1,     
-        uri :'data:application/vnd.ms-excel;base64,',
-        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-        base64: (s) => window.btoa(unescape(encodeURIComponent(s))),
-        format: (s, c) => s.replace(/{(\w+)}/g, function(m, p) { return c[p]; })
+        pageSize:10,
+        currentPage:1,
+        currentSort:'lastName',
+        currentSortDir:'asc',       
       }
     },
-    methods: {
-      //download() method for PDF
-      //tableToExcel() method for excel
-      clickCallback: function (pageNum) {
-        this.currentPage = Number(pageNum);
-       },
-       log(value) {
-       console.log(value)
-       },
+    methods: {    
+      sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextPage:function() {
+        if((this.currentPage*this.pageSize) < this.teamMembers.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+      },
+      //download() method for PDF export
       download() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
         doc.autoTable({ html: '#teamMembersList' })
         doc.save("Team_Members_list.pdf")
-      },
-      tableToExcel(table, name) {
-        if (!table.nodeType) table = this.$refs.table
-        let ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
-        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      },
-     onChangePage(values) {
-            // update page of items
-            this.values = values;
-        }
+      },     
     },
     computed: {
       ...mapGetters([
         'projectUsers'
       ]),
-      items() {
+      teamMembers() {
         return this.projectUsers
       },
-      values: function() {
-        let current = this.currentPage * this.parPage;
-        let start = current - this.parPage;
-        return this.items.slice(start, current);
-      },
-      getPageCount: function() {
-        return Math.ceil(this.items.length / this.parPage);  
-      }
-    },
+      sortedTeamMembers: function() {
+        return this.teamMembers.sort((a,b) => {
+        let modifier = 1;
+        if(this.currentSortDir === 'desc') modifier = -1;
+        if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+        if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+        return 0;
+        }).filter((row, index) => {
+        let start = (this.currentPage-1)*this.pageSize;
+        let end = this.currentPage*this.pageSize;
+        if(index >= start && index < end) return true;
+        return this.end
+        });
+       },
+    }
   }
 </script>
 
 <style scoped lang="scss">
  table {
-    table-layout: fixed ;   
-    margin-bottom: .5rem !important;   
+    table-layout: fixed;   
+    width:100%; 
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
   }
   thead {
     background-color: #ededed;
+    
+  }
+  .sort-th {
+    font-size: 1rem !important; 
+    text-align: center; 
+  }
+  .teamHead {
+    height: 40px;
   }
   td {
-    overflow-wrap: break-word;
-   
+    overflow-wrap: break-word;  
+    padding: 5px !important;    
+  }
+ .scroll {
+    cursor:pointer !important; 
+    top: 12px;
+    right: 5px;
+    position:absolute;
+    font-size: 1rem;
+    color: #383838 !important;
+    padding-left:4px !important
+  }
+  /deep/.sort-th {
+    position:relative;
+    padding: 3px; 
   }
   .teamTable:hover {
    cursor: default;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
-
   a:visited, a:active, a:hover {
     text-decoration-line: none !important;    
   }
   th > a {
     color: #383838 !important;
   }
-  /deep/.team-pagination {
-    margin-top: 8px;
-    list-style: none !important;
-    user-select: none;
-    float:right;
-
-    a:visited, a:active, a:hover {
-      text-decoration-line: none !important;    
-    }
-    li { 
-      display: inline !important;
-      margin-bottom: 20px !important;     
-     }
-    a {
-      width: 30px;
-      height: 36px;
-      margin-right: 1px;
-      background-color: white;
-      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-      color: #383838;
-      padding: 10px 24px;
-      padding-bottom: 10px !important;
-      cursor: pointer;
-    }
-    a:hover {
-      background-color: #ededed
-    }
-    li.active a {
-      font-weight: bold;
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    a.active  {
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    li.next:before {
-      content: ' | ';
-      margin-right: 13px;
-      color: #ddd;
-    }
-    li.disabled a {
-      color: #ccc;
-      cursor: no-drop;
-    }
+  .page-btns {
+    width: 20px;
+    line-height: 1 !important;
+    border: none !important;
+    height: 25px;
+    margin-right: 1px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    color: #383838;
+    cursor: pointer;
+ }
+  .page-btns:hover {
+    background-color: #ededed;
   }
-  
-  
+  #page-count {
+    width: auto !important;
+    cursor: default;
+  }
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ } 
 </style>
