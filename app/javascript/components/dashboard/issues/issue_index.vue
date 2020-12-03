@@ -11,9 +11,19 @@
       />
     </div>
     <div v-else>
-      <div class="d-flex align-item-center justify-content-between">
-        <div class="d-flex w-100">
-          <div class="simple-select w-100 mr-2">
+       <div class="input-group w-100">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+          </div>
+          <input type="search" 
+              class="form-control form-control-sm" 
+              placeholder="Search Issues" 
+              aria-label="Search" 
+              aria-describedby="search-addon" 
+              v-model="issuesQuery">
+          </div>
+         <div class="d-flex align-item-center justify-content-between mt-2">          
+          <div class="simple-select w-100 mr-1">
             <multiselect
               v-model="C_issueTypeFilter"
               track-by="name"
@@ -32,7 +42,7 @@
               </template>
             </multiselect>
           </div>
-          <div class="simple-select w-100">
+              <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -50,13 +60,14 @@
                 </div>
               </template>
             </multiselect>
+        
           </div>
-        </div>
       </div>
-      <div class="mr-2 mt-1 d-flex font-sm w-100">
-        <div class="simple-select enum-select">
+      <div class="mt-1 d-flex font-sm">
+        <div class="simple-select mr-4 enum-select">
           <multiselect
             v-model="viewList"
+            style="width:232px"
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -69,9 +80,21 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="form-check-inline ml-1">
-          <label class="form-check-label ml-3">
+        </div>       
+      </div>
+      <div class="mt-3">
+        <button v-if="_isallowed('write')" 
+           class="shadow-sm btn btn-sm btn-primary" 
+           @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
+          Add Issue
+          </button>
+         <button
+           @click.prevent="download"      
+           class="btn btn-sm btn-dark">
+           Export to PDF
+         </button>
+       <div class="form-check-inline font-sm myIssues mt-1 mr-0">
+          <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issue
           </label>
@@ -80,29 +103,14 @@
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
         </div>
-        <div class="input-group w-50">
-          <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
-        </div>
-      </div>
-      <div class="mt-3">
-        <button v-if="_isallowed('write')" class="position-absolute shadow-sm btn btn-sm btn-primary" @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>Add Issue</button>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">
-            <button
-              @click.prevent="download"
-              id="printBtn"
-              class="btn btn-sm btn-outline-dark exportBtn">
-              Export to PDF
-            </button>
-            <button
+          <div v-if="filteredIssues.length > 0">          
+            <!-- <button
               disabled
               id="printBtn"
               class="btn btn-sm btn-outline-dark ml-2">
               Export to Excel
-            </button>
-            <label class="form-check-label mr-2 text-primary total" data-cy="issue_total">
-              <h5>Total: {{filteredIssues.length}}</h5>
-            </label>
+            </button> -->           
             <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
@@ -348,20 +356,22 @@
   .issues-index {
     height: 465px;
   }
-  .exportBtn {
-    margin-left: 140px;
-  }
   #issueHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
-  .total {
-    float: right;
-    text-align: right;
-  }
  .alt-text {
     position: relative;
     padding-top: 80px !important;
+  }
+  input[type=search] { 
+    color: #383838;  
+    text-align: left;
+    cursor: pointer;
+    display: block;                
+  }
+  .myIssues {
+    margin-left:60px;
   }
 </style>

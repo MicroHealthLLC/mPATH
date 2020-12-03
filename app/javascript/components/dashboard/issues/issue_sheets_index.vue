@@ -10,10 +10,20 @@
         class="issue-form-modal"
       />
     </div>
-    <div v-else>
+    <div v-else>      
       <div class="d-flex align-item-center justify-content-between">
-        <div class="simple-select mr-1 d-flex" style="width:30%">
-          <i class="fas fa-filter filter mr-2"></i>
+        <div class="input-group mb-2 mr-1 task-search-bar">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+          </div>
+          <input type="search" 
+            class="form-control form-control-sm" 
+            placeholder="Search Issues" 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="issuesQuery">
+        </div>
+        <div class="simple-select mr-1 d-flex" style="width:20%">        
           <multiselect
             v-model="C_issueTypeFilter"
             track-by="name"
@@ -33,7 +43,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1" style="width:28%">
+        <div class="simple-select mr-1" style="width:20%">
           <multiselect
             v-model="C_issueSeverityFilter"
             track-by="name"
@@ -52,7 +62,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1 d-flex" style="width:20%">
+        <div class="simple-select mr-1 d-flex" style="width:17%">
           <multiselect
             v-model="viewList"
             :options="listOptions"
@@ -67,45 +77,36 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="input-group w-25 mr-2">
-          <input type="text" class="form-control form-control-sm" placeholder="Search issues.." aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery">
-        </div>
-        <div class="form-check-inline">
-          <label class="form-check-label mr-2">
+        </div>        
+        <div class="form-check-inline font-sm">
+          <label class="form-check-label mr-1">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-2"></i>My Issue
+            <i class="fas fa-user mr-1"></i>My Issue
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-            <i class="fas fa-eye mr-2"></i>On Watch
+            <i class="fas fa-eye mr-1"></i>On Watch
           </label>
         </div>
       </div>
       <div class="mt-2">
         <button v-if="_isallowed('write')"
-          class="new-issue-btn btn btn-sm btn-primary addBtns"
+          class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
           @click.prevent="reportNew">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
+        <button
+         @click.prevent="download"
+         id="printBtn"
+         class="btn btn-sm btn-dark exportBtn">
+         Export to PDF
+        </button>            
+       <label class="form-check-label text-primary float-right mr-2">
+        <h5>Total: {{filteredIssues.length}}</h5>
+       </label>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">
-            <button
-              @click.prevent="download"
-              id="printBtn"
-              class="btn btn-sm btn-outline-dark exportBtn">
-              Export to PDF
-            </button>
-            <button
-              disabled
-              id="printBtn"
-              class="btn btn-sm btn-outline-dark">
-              Export to Excel
-            </button>
-            <label class="form-check-label text-primary float-right mr-2">
-              <h5>Total: {{filteredIssues.length}}</h5>
-            </label>
+          <div v-if="filteredIssues.length > 0">      
             <div style="margin-bottom:50px">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
                 <colgroup>
@@ -121,21 +122,20 @@
                   <col class="seventeen" />
                 </colgroup>
                 <tr style="background-color:#ededed; font-size:.90rem">
-                  <th>Issue</th>
-                  <th>Issue Type</th>
-                  <th>Issue Severity</th>
-                  <th>Start Date</th>
-                  <th>Due Date</th>
-                  <th>Assigned Users</th>
-                  <th>Progress</th>
+                  <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
+                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
+                  <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('dueDate')">Due Date<i class="fas fa-sort scroll" ></i></th>
+                  <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
                   <th>Overdue</th>
-                  <th>On Watch</th>
-                  <th>Last Update</th>
+                  <th>Onwatch</th>
+                  <th>Last Update</th>               
                 </tr>
-              </table>
-              <paginate name="filteredIssues" :list="filteredIssues" class="paginate-list pl-0" :per="15">
+              </table>            
                 <issue-sheets
-                  v-for="(issue, i) in paginated('filteredIssues')"
+                  v-for="(issue, i) in sortedIssues"
                   id="issueHover"
                   :class="{'b_border': !!filteredIssues[i+1]}"
                   :key="issue.id"
@@ -144,10 +144,11 @@
                   @issue-edited="issueEdited"
                   @toggle-watch-issue="toggleWatched"
                 />
-              </paginate>
-              <div class="floatRight my-3 mr-3">
-                <paginate-links for="filteredIssues" :show-step-links="true" :limit="4"></paginate-links>
-              </div>
+              <div class="float-right mb-4">
+                <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
+                  <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / pageSize) }}  </button> 
+                <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
+              </div>             
             </div>
           </div>
           <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText">No issues found..</h6>
@@ -225,9 +226,12 @@
         newIssue: false,
         viewList: 'active',
         currentIssue: null,
-        now: new Date().toISOString(),
-        paginate: ['filteredIssues'],
-        issuesQuery: ''
+        now: new Date().toISOString(),        
+        issuesQuery: '',
+        pageSize:5,
+        currentPage:1,
+        currentSort:'text',
+        currentSortDir:'asc',
 
       }
     },
@@ -243,6 +247,20 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
+      sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextPage:function() {
+        if((this.currentPage*this.pageSize) < this.filteredIssues.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+
+      },
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
         this.newIssue = false
@@ -275,7 +293,7 @@
       issueEdited(issue) {
         this.currentIssue = issue
         this.newIssue = true
-      },
+      }, 
       reportNew() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
@@ -284,7 +302,7 @@
           this.newIssue = true
         }
       }
-    },
+   },
     computed: {
       ...mapGetters([
         'currentProject',
@@ -338,7 +356,7 @@
         })), ['dueDate'])
 
         return issues
-      },
+      }, 
       C_issueTypeFilter: {
         get() {
           return this.issueTypeFilter
@@ -372,7 +390,21 @@
           if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Issues", value: "issues"}])
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
         }
-      }
+      },
+      sortedIssues:function() {
+          return this.filteredIssues.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+          let start = (this.currentPage-1)*this.pageSize;
+          let end = this.currentPage*this.pageSize;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
+      },
     }
   }
 </script>
@@ -435,43 +467,28 @@
   .multiselect__tags {
     min-height: 25px !important;
   }
-  .paginate-links.filteredIssues {
-    list-style: none !important;
-    user-select: none;
-    a {
-      width: 30px;
-      height: 36px;
-      margin-right: 1px;
-      background-color: white;
-      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-      color: #383838;
-      padding: 10px 24px;
-      padding-bottom: 10px !important;
-      cursor: pointer;
-    }
-    a:hover {
-      background-color: #ededed;
-    }
-    li.active a {
-      font-weight: bold;
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    a.active  {
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    li.next:before {
-      content: ' | ';
-      margin-right: 13px;
-      color: #ddd;
-    }
-    li.disabled a {
-      color: #ccc;
-      cursor: no-drop;
-    }
-    li {
-      display: inline !important;
-      float: left;
-      margin-bottom: 20px !important;
-    }
+    .page-btns {
+    width: 30px;
+    border: none !important;
+    height: 36px;
+    margin-right: 1px;
+    background-color: white;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    color: #383838;
+    padding: 10px 24px;
+    padding-bottom: 10px !important;
+    cursor: pointer;
+ }
+  .page-btns:hover {
+    background-color: #ededed
+  }  
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ }
+   #page-count {
+    width: auto !important;
+    cursor: default;
   }
+
 </style>
