@@ -33,7 +33,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select d-flex" style="width:30%">
+        <div class="simple-select d-flex mr-2" style="width:30%">
         <multiselect
           v-model="viewList"
           :options="listOptions"
@@ -50,7 +50,7 @@
         </multiselect>
         </div>
        
-        <div class="form-check-inline mr-4 font-sm" style="width:26%">
+        <div class="form-check-inline font-sm mr-0" style="width:20%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
@@ -71,6 +71,7 @@
         @click="download"
         id="printBtn"
         class="btn btn-sm btn-dark exportBtn">
+        <font-awesome-icon icon="file-pdf" />
         Export to PDF
       </button>
         <label class="form-check-label text-primary float-right mr-2">
@@ -80,13 +81,13 @@
         <div style="margin-bottom:100px">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
-              <col class="twenty" />
+              <col class="sixteen" />
               <col class="ten" />
               <col class="eight" />
               <col class="eight" />
               <col class="ten" />
-              <col class="eight" />
-              <col class="eight" />
+              <col class="ten" />
+              <col class="ten" />
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
@@ -94,12 +95,12 @@
               <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll ml-2"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Due Date<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
               <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-              <th>Overdue</th>
-              <th>On Watch</th>
-              <th>Last Update</th>
+              <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
             </tr>
           </table>        
              <task-sheets
@@ -174,6 +175,9 @@
   import 'jspdf-autotable'
   import moment from 'moment'
   import TaskSheets from "./task_sheets"
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
+  library.add(faFilePdf)
   Vue.prototype.moment = moment
 
   export default {
@@ -189,7 +193,7 @@
         tasks: Object,
         now: new Date().toISOString(),
         tasksQuery: '',
-        pageSize:5,
+        pageSize:15,
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
@@ -214,7 +218,6 @@
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
-
       },
       addNewTask() {
         if (this.from == "manager_view") {
@@ -337,10 +340,10 @@
   }
   .scroll {
     cursor:pointer !important; 
-    top: 5px;
-    right: 5px;
+    top: 35%;
+    right: 5px;  
     position:absolute;
-    font-size: .95rem;
+    font-size: 1.1rem;
     color: #383838 !important;
     padding-left:4px !important
   }
@@ -350,7 +353,10 @@
     border-radius: 5px;
   }
   .sort-th {
-    position:relative;   
+    font-size: .80rem !important; 
+    text-align: center;
+    position: relative;
+    vertical-align: middle !important;   
   }
   input[type=search] { 
     color: #383838;  
@@ -429,6 +435,9 @@
   }
   .ten {
     width: 10%;
+  }
+  .sixteen {
+    width: 16%;
   }
   .twenty {
     width: 20%;

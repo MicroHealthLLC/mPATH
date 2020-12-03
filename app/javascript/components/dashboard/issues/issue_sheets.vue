@@ -2,22 +2,22 @@
   <div>
     <table class="table table-sm table-bordered table-striped">
       <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
-        <td class="seventeen">{{issue.title}}</td>
+        <td class="oneFive">{{issue.title}}</td>
         <td class="ten">{{issue.issueType}}</td>
         <td class="nine">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
         <td class="eight">{{formatDate(issue.dueDate)}}</td>
         <td class="ten">{{issue.users.join(', ')}}</td>
-        <td class="eight">{{issue.progress + "%"}}</td>
-        <td class="seven" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
-        <td class="seven" v-else></td>
-        <td class="six" v-if="(issue.watched) == true"><h5>x</h5></td>
-        <td class="six" v-else></td>
-        <td class="seventeen" v-if="(issue.notes.length) > 0">
+        <td class="nine">{{issue.progress + "%"}}</td>
+        <td class="nine" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
+        <td class="nine" v-else></td>
+        <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
+        <td class="nine" v-else></td>
+        <td class="oneFive" v-if="(issue.notes.length) > 0">
           By: {{ issue.notes[0].user.fullName}} on
           {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
         </td>
-        <td class="seventeen" v-else>No Updates</td>
+        <td class="oneFive" v-else>No Updates</td>
       </tr>
     </table>
 
@@ -197,16 +197,7 @@
     table-layout: fixed;
     width: 100%;
     margin-bottom: 0 !important;
-  }
-  .five {
-    width: 5%;
-  }
-  .six {
-    width: 6%;
-  }
-  .seven {
-    width: 7%;
-  }
+  }  
   .eight {
     width: 8%;
   }
@@ -216,8 +207,8 @@
   .ten {
     width: 10%;
   }
-  .seventeen {
-    width: 17%;
+  .oneFive {
+    width: 15%;
   }
   .t_actions {
     display: flex;
