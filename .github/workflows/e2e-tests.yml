@@ -39,26 +39,3 @@ jobs:
           bundle exec rails assets:precompile RAILS_ENV=test
           bundle exec rails server -e test -p 5017 -d
           yarn cypress run --record --parallel --project ./spec
-
-      # https://github.com/cypress-io/github-action
-      # - name: Cypress run
-      #   env:
-      #     RAILS_ENV: test
-      #     MGIS_DATABASE_USERNAME: root
-      #     MGIS_DATABASE_HOST: 127.0.0.1
-      #     MGIS_DATABASE_PASSWORD: root
-      #     SECRET_KEY_BASE: 3a23dbd2ea318f52602c420794d939adc1ce57a95749cae98539725a9770106257c22bd06f4c57df3a25f0e19867c6d0d0978e49e2225e6ea6a1a0438b0cbae8
-          # ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-          # CYPRESS_RECORD_KEY: e63a7946-58c1-48bf-9a6b-c0c832a5g137
-        # uses: cypress-io/github-action@v2
-        # run: |
-        #   yarn add cypress
-        #   yarn cypress run --project ./spec
-        # with:
-          # path: ./spec
-          # record: true
-          # parallel: true
-          # start: yarn cypress run
-          # working-directory: spec
-          # wait-on: http://localhost:5017
-          # config: baseUrl=https://localhost:5017
