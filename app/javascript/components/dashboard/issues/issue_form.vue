@@ -103,6 +103,32 @@
         </div>
       </div>
       <div class="simple-select form-group mx-4">
+        <label class="font-sm">Task Category:</label>
+        <multiselect
+          v-model="selectedIssueType"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Task category"
+          :options="issueTypes"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          :class="{'error': errors.has('Task Category')}"
+          data-cy="issue_type"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Issue Type')" class="text-danger" data-cy="issue_type_error">
+          {{errors.first('Issue Type')}}
+        </div>
+      </div>
+      <div class="simple-select form-group mx-4">
         <label class="font-sm">Issue Severity:</label>
         <multiselect
           v-model="selectedIssueSeverity"
