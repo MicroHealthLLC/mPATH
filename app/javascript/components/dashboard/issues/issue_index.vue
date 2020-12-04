@@ -42,7 +42,26 @@
               </template>
             </multiselect>
           </div>
-              <div class="simple-select w-100">
+          <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_taskTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Task Category"
+              :options="taskTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+          <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
               track-by="name"
@@ -60,7 +79,6 @@
                 </div>
               </template>
             </multiselect>
-        
           </div>
       </div>
       <div class="mt-1 d-flex font-sm">
@@ -210,6 +228,7 @@
     methods: {
       ...mapMutations([
         'setIssueTypeFilter',
+        'setTaskTypeFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
         'updateFacilityHash',
@@ -267,8 +286,10 @@
       ...mapGetters([
         'currentProject',
         'issueTypes',
+        'taskTypes',
         'issueSeverities',
         'issueTypeFilter',
+        'taskTypeFilter',
         'issueSeverityFilter',
         'issueUserFilter',
         'myActionsFilter',
@@ -282,6 +303,7 @@
       },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
@@ -296,6 +318,7 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
           if (search_query) valid = valid && search_query.test(issue.title)
@@ -324,6 +347,14 @@
         },
         set(value) {
           this.setIssueTypeFilter(value)
+        }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
         }
       },
       C_issueSeverityFilter: {
