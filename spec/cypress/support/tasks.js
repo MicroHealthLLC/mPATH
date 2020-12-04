@@ -24,4 +24,5 @@ Cypress.Commands.add("createNewTask", () => {
   cy.get('[data-cy=task_user]').click().type('{enter}')
   cy.get('[data-cy=task_save_btn]').should('not.be.disabled')
   cy.get('[data-cy=task_save_btn]').click()
+  cy.get('[data-cy=task_list]').contains('New test task', {timeout: 60000}).should('be.visible')
 })

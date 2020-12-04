@@ -50,6 +50,11 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Task Name:</h5></label>
+            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+              <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
+              <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
+              <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
+            </span>
         <input
           name="Name"
           v-validate="'required'"
@@ -60,7 +65,7 @@
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
           data-cy="task_name"
-        />
+        />          
         <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
@@ -373,7 +378,8 @@
       ]),
       ...mapActions([
         'taskDeleted',
-        'taskUpdated'
+        'taskUpdated',
+        'updateWatchedTasks'
       ]),
       INITIAL_TASK_STATE() {
         return {
@@ -433,6 +439,14 @@
         else if (file.name) {
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
         }
+      },
+       toggleWatched() {
+        if (this.DV_task.watched) {
+          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+          if (!confirm) {return}
+        }
+          this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
+          this.updateWatchedTasks(this.DV_task)
       },
       cancelSave() {
         this.$emit('on-close-form')
