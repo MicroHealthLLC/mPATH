@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="issues">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
