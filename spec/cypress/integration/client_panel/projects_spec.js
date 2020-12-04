@@ -11,15 +11,17 @@ describe('Projects List', function() {
 
   it('Open a particular project', function() {
     cy.openProject()
-    cy.contains('Facility Project Status')
+    cy.contains('4 Facilities').should('be.visible')
+    cy.contains('Project Type: Test Project Type').should('be.visible')
+    cy.contains('Facility Project Status').should('be.visible')
     cy.logout()
   })
 
   it('Open a facility of a project', function() {
     cy.openFacility()
-    cy.contains('Facility Group:')
-    cy.contains('Project Completion Date:')
-    cy.contains('Project Status:')
+    cy.contains('Facility Group:').should('be.visible')
+    cy.contains('Project Completion Date:').should('be.visible')
+    cy.contains('Project Status:').should('be.visible')
     cy.logout()
   })
 })
