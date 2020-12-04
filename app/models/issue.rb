@@ -5,6 +5,7 @@ class Issue < ApplicationRecord
   belongs_to :facility_project
   belongs_to :issue_type
   belongs_to :issue_stage, optional: true
+  belongs_to :task_type, optional: true
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users
@@ -89,6 +90,7 @@ class Issue < ApplicationRecord
       :issue_type_id,
       :issue_stage_id,
       :issue_severity_id,
+      :task_type_id,
       :progress,
       :start_date,
       :due_date,
