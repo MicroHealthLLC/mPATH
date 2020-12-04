@@ -7,21 +7,21 @@ describe('Tasks Page', function() {
   })
 
   it('Open Task list page of a Facility', function() {
-    cy.contains('My Tasks')
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    cy.get('[data-cy=task_list]').contains('My Task').should('be.visible')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 
   it('Open new Task form', function() {
     cy.get('[data-cy=new_task]').click()
-    cy.contains('Task Name:')
+    cy.contains('Task Name:').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.logout()
   })
 
   it('Close Task form', function() {
     cy.get('[data-cy=new_task]').click()
-    cy.contains('Task Name:')
+    cy.contains('Task Name:').should('be.visible')
     cy.get('[data-cy=task_close_btn]').click()
     cy.contains('Task Name:').should('not.exist')
     cy.logout()
@@ -35,7 +35,7 @@ describe('Tasks Page', function() {
   // })
 
   it('Delete the task form facility', function() {
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_delete_btn]').click()
     cy.contains('No tasks found..').should('be.visible')
@@ -46,8 +46,8 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_name]').clear().type('Updated new test task').should('have.value', 'Updated new test task')
     cy.get('[data-cy=task_save_btn]').click()
-    cy.get('[data-cy=task_list]').contains('Updated new test task')
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    cy.get('[data-cy=task_list]').contains('Updated new test task').should('be.visible')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -57,7 +57,7 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_name_error]').contains('The Name field is required.')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -66,7 +66,7 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_type]').click().type('{enter}')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -81,7 +81,7 @@ describe('Tasks Page', function() {
     })
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -93,7 +93,7 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
-    cy.get('[data-cy=task_total]').contains('Total: 1')
+    // cy.get('[data-cy=task_total]').contains('Total: 1')
     cy.logout()
   })
 })
