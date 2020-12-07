@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :loading="true">
      <div class="container mt-2">          
           <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
           <button
@@ -43,19 +43,22 @@
           label-for="perPageSelect"
           class="mb-0"
         >
-          <b-form-select
-            v-model="perPage"
-            id="perPageSelect"
-            size="sm"
-            :options="pageOptions"
-          ></b-form-select>
+        <b-form-select
+          v-model="perPage"
+          id="perPageSelect"
+          size="sm"
+          :current-page="currentPage"
+          :options="pageOptions"
+        ></b-form-select>
         </b-form-group>
       </b-col> 
         </b-col>
         </b-row>        
         <!-- <paginate ref="paginator" name="items" :list="items" :per="perPage" class="paginate-list" :key="items ? items.length : 1"> -->
-        <b-table sticky-header hover 
+        <b-table sticky-header striped hover                  
           class="btable"   
+          ref="table" 
+          id="teamMembersList" 
           show-empty   
           sort-icon-left    
           :items="items"
@@ -71,22 +74,19 @@
           @filtered="onFiltered"
           responsive="md"   
         >              
-        </b-table>  
-                 
+        </b-table>                  
           <div>
           <small>Sorting By: <b>{{ sortBy }}</b> | Sort Direction:
           <b>{{ sortDesc ? 'Descending' : 'Ascending' }}</b></small>
            <b-pagination
-          v-model="currentPage"
+          v-model="currentPage"         
           :total-rows="totalRows"
-          :per-page="perPage"         
+          :per-page="perPage"           
           align="fill"
           size="sm"
           class="my-0 float-right"         
         ></b-pagination>
-        </div>     
-    
-        
+        </div>        
    </div>
   </div>
 </template>
@@ -103,6 +103,7 @@ library.add(faFilePdf)
     data() {
       return {
         sortBy: 'id',
+        componentKey: 0,      
         sortDesc: false,
         sortDirection: 'asc',
         pageOptions: [5, 15, 25, 50,  { value: 100, text: "+100" }],
@@ -122,9 +123,12 @@ library.add(faFilePdf)
         ], 
       }
     }, 
-     mounted() {    
+    beforeMount() {
+       this.totalRows = this.items.length 
+    },
+    mounted() {    
       this.totalRows = this.items.length
-    },  
+    }, 
     computed: {
       ...mapGetters([
         'projectUsers'
@@ -146,13 +150,19 @@ library.add(faFilePdf)
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      },      
-    }
+      },   
+       download() {
+        const doc = new jsPDF("l")
+        const html = this.$refs.table.innerHTML
+        doc.autoTable({ html: '#teamMembersList' })
+        doc.save("Team_Members_list.pdf")   
+      },
+  
+     }
   }
 </script>
 <style scoped lang="scss">
  /deep/.btable {
-    table-layout: fixed;
     padding-top: 0px;
     margin-top:0;
     width: 100%;
@@ -160,6 +170,9 @@ library.add(faFilePdf)
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
     overflow-y:auto !important;
   } 
+  /deep/th.table-b-table-default[aria-colindex="1"] {
+    width:4% !important;
+  }
   /deep/thead {
     background-color:#ededed !important;
     height: 60px !important;
