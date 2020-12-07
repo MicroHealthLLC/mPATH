@@ -1,5 +1,5 @@
 <template>
-  <div :loading="true">
+  <div id="members" data-cy="members_view">
      <div class="container mt-2">          
           <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
           <button
@@ -8,8 +8,7 @@
             class="btn btn-sm btn-dark mb-1">
             <font-awesome-icon icon="file-pdf" class="mr-2" />
             Export to PDF
-          </button>  
-           
+          </button>            
           <b-row class="search-row pt-2 pb-0 pl-3">  
           <b-col sm="6" md="4" lg="4" class="my-1 pl-0">           
             <b-input-group size="sm" style="height:38px">
@@ -27,7 +26,7 @@
           </b-col>
 
         <b-col class="my-1 pl-3 float-right justify-content-end">           
-        <div class="float-right">
+        <div class="float-right" data-cy="team_total">
             <button class="btn btn-md btn-info mb-3 team-total">
             Team Total: {{items.length}}
             </button>
@@ -54,9 +53,10 @@
       </b-col> 
         </b-col>
         </b-row>        
-        <!-- <paginate ref="paginator" name="items" :list="items" :per="perPage" class="paginate-list" :key="items ? items.length : 1"> -->
+        
         <b-table sticky-header striped hover                  
-          class="btable"   
+          class="btable"
+          data-cy="team_members_list"
           ref="table" 
           id="teamMembersList" 
           show-empty   
@@ -156,9 +156,8 @@ library.add(faFilePdf)
         const html = this.$refs.table.innerHTML
         doc.autoTable({ html: '#teamMembersList' })
         doc.save("Team_Members_list.pdf")   
-      },
-  
-     }
+      },  
+    }
   }
 </script>
 <style scoped lang="scss">

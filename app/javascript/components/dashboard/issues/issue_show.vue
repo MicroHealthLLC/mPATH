@@ -11,7 +11,7 @@
           <div class="col-md-9">
             <div>
               <div class="mb-1 d-flex font-sm">
-               <h6> {{issue.title}}</h6>            
+               <h6> {{issue.title}}</h6>
               </div>
 
               <div class="row mb-1 d-flex" v-if="fromView == 'watch_view'">
@@ -48,15 +48,15 @@
             </div>
           </div>
           <div class="col-md-3 mt-2">
-            <div class="t_actions my-3 float-left"> 
-             <span v-if="(issue.watched) == true">
-             <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md"></i></span>         
-            </span>         
+            <div class="t_actions my-3 float-left">
+              <span v-if="(issue.watched) == true">
+                <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
+              </span>
             </div>
-             <div class="t_actions my-3 float-right"> 
+             <div class="t_actions my-3 float-right">
               <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
             </div>
-           
+
               <div class="font-sm col mt-3 p-0">
                 <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%</div>
