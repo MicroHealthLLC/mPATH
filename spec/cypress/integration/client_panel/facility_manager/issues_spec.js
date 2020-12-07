@@ -35,7 +35,7 @@ describe('Issue List', function() {
   //   cy.logout()
   // })
 
-  it('Delete the Issue form facility', function() {
+  it('Delete the Issue from facility manager', function() {
     // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.get('[data-cy=issues]').first().click()
     cy.get('[data-cy=issue_delete_btn]').click()

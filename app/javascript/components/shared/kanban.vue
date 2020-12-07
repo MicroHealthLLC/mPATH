@@ -1,5 +1,5 @@
 <template>
-  <div id="kanban">
+  <div id="kanban" data-cy="kanban">
 
     <div class="overflow-x-auto">
       <div class="d-flex" v-if="!loading">
@@ -8,13 +8,13 @@
           :key="column.title"
           class="rounded-lg kan-col p-3 column-width mx-3"
           >
-          <div class="row mb-4">
+          <div class="row mb-4" data-cy="kanban_col_title">
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
               </div>
             </div>
-            <div class="col-2 px-0" v-if="viewPermit(kanbanType, 'write')">
+            <div class="col-2 px-0" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
               <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
@@ -26,7 +26,7 @@
               <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
             </div> -->
           </div>
-          <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable">
+          <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable">
             <div
               :is="cardShow"
               v-for="task in column.tasks"

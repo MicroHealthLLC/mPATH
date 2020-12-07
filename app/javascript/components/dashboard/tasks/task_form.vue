@@ -50,7 +50,7 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Task Name:</h5></label>
-            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
               <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
@@ -65,7 +65,7 @@
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
           data-cy="task_name"
-        />          
+        />
         <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
