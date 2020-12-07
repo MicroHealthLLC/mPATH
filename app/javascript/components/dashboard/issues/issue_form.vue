@@ -108,6 +108,31 @@
         </div>
       </div>
       <div class="simple-select form-group mx-4">
+        <label class="font-sm">Task Category:</label>
+        <multiselect
+          v-model="selectedTaskType"
+          track-by="id"
+          label="name"
+          placeholder="Task category"
+          :options="taskTypes"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          :class="{'error': errors.has('Task Category')}"
+          data-cy="task_type"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Task Type')" class="text-danger" data-cy="task_type_error">
+          {{errors.first('Task Type')}}
+        </div>
+      </div>
+      <div class="simple-select form-group mx-4">
         <label class="font-sm">Issue Severity:</label>
         <multiselect
           v-model="selectedIssueSeverity"
@@ -378,6 +403,7 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedIssueType: null,
+        selectedTaskType: null,
         selectedIssueSeverity: null,
         selectedIssueStage: null,
         issueUsers: [],
@@ -412,6 +438,7 @@
           startDate: '',
           dueDate: '',
           issueTypeId: '',
+          taskTypeId: '',
           progress: 0,
           issueSeverityId: '',
           issueStageId: '',
@@ -431,6 +458,7 @@
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
+        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_issue.taskTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
         this.selectedIssueStage = this.issueStages.find(t => t.id === this.DV_issue.issueStageId)
         if (issue.attachFiles) this.addFile(issue.attachFiles)
@@ -493,12 +521,14 @@
           formData.append('issue[due_date]', this.DV_issue.dueDate)
           formData.append('issue[start_date]', this.DV_issue.startDate)
           formData.append('issue[issue_type_id]', this.DV_issue.issueTypeId)
+          formData.append('issue[task_type_id]', this.DV_issue.taskTypeId)
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
           formData.append('issue[issue_stage_id]', this.DV_issue.issueStageId)
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
           formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
           formData.append('issue[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
+
 
           if (this.DV_issue.userIds.length) {
             for (let u_id of this.DV_issue.userIds) {
@@ -647,6 +677,7 @@
         'activeProjectUsers',
         'myActionsFilter',
         'issueTypes',
+        'taskTypes',
         'issueStages',
         'issueSeverities',
         'currentTasks',
@@ -726,6 +757,11 @@
       selectedIssueType: {
         handler: function(value) {
           this.DV_issue.issueTypeId = value ? value.id : null
+        }, deep: true
+      },
+      selectedTaskType: {
+        handler: function(value) {
+          this.DV_issue.taskTypeId = value ? value.id : null
         }, deep: true
       },
       selectedIssueSeverity: {
