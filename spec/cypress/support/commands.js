@@ -24,7 +24,7 @@ Cypress.Commands.add("openProject", () => {
   })
 })
 
-// Open first Facility of a project
+// Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
   cy.get('[data-cy=facility_groups]').first().click()
@@ -36,4 +36,12 @@ Cypress.Commands.add("openFacility", () => {
 Cypress.Commands.add("openTeam", () => {
   cy.openProject()
   cy.get('[data-cy=team_tab]').contains('Team').should('be.visible').click()
+})
+
+// Open Kanban of a project
+Cypress.Commands.add("openKanban", () => {
+  cy.openProject()
+  cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
+  cy.get('[data-cy=facility_groups]').first().click()
+  cy.get('[data-cy=facilities]').first().click()
 })

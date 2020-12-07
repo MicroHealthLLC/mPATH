@@ -13,5 +13,6 @@ describe('Teams List', function() {
       cy.contains('admin@test.com').should('be.visible')
       cy.contains('client@test.com').should('be.visible')
     })
+    cy.logout()
   })
 })

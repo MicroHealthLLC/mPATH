@@ -26,3 +26,12 @@ Cypress.Commands.add("createNewTask", () => {
   cy.get('[data-cy=task_save_btn]').click()
   cy.get('[data-cy=task_list]').contains('New test task', {timeout: 60000}).should('be.visible')
 })
+
+// Open Kanban Tasks
+
+Cypress.Commands.add("openKanbanTask", () => {
+  cy.openKanban()
+  cy.get('[data-cy=facility_tabs]').within(() => {
+    cy.contains('Kanban Tasks').should('be.visible').click()
+  })
+})

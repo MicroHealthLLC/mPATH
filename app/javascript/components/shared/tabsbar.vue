@@ -1,22 +1,22 @@
 <template>
   <div id="tabbar">
     <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
-      <div class="badge" :class="{'active': isFacilityManagerView}">Facility Manager</div>
+      <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Facility Manager</div>
     </router-link>
     <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
-      <div class="badge" :class="{'active': isSheetsView}">Sheets</div>
+      <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Sheets</div>
     </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
-      <div class="badge" :class="{'active': isMapView}">Map</div>
+      <div class="badge" :class="{'active': isMapView}" data-cy="map_tab">Map</div>
     </router-link>
     <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
-      <div class="badge" :class="{'active': isGanttView}">Gantt</div>
+      <div class="badge" :class="{'active': isGanttView}" data-cy="gantt_tab">Gantt</div>
     </router-link>
     <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
-      <div class="badge" :class="{'active': isWatchView}">On Watch</div>
+      <div class="badge" :class="{'active': isWatchView}" data-cy="on_watch_tab">On Watch</div>
     </router-link>
     <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
-      <div class="badge" :class="{'active': isKanbanView}">Kanban</div>
+      <div class="badge" :class="{'active': isKanbanView}" data-cy="kanban_tab">Kanban</div>
     </router-link>
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
