@@ -50,7 +50,7 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Issue Name:</h5></label>
-         <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+         <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="issue_on_watch">
                 <span v-show="DV_issue.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
                <span><i class="fas fa-eye mr-1"></i></span><small style="vertical-align:text-top">On Watch</small>
@@ -111,7 +111,6 @@
         <label class="font-sm">Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
-          v-validate="'required'"
           track-by="id"
           label="name"
           placeholder="Task category"
