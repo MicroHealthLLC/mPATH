@@ -111,7 +111,6 @@
         <label class="font-sm">Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
-          v-validate="'required'"
           track-by="id"
           label="name"
           placeholder="Task category"
