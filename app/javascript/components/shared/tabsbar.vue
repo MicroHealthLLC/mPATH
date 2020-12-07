@@ -21,7 +21,7 @@
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
-      <div class="badge" :class="{'active': isMembersView}">Team</div>
+      <div class="badge" :class="{'active': isMembersView}" data-cy="team_tab">Team</div>
     </router-link>
   </div>
 </template>

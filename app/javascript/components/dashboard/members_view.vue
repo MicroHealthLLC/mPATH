@@ -1,5 +1,5 @@
 <template>
-  <div id="members">
+  <div id="members" data-cy="members_view">
     <div class="container mt-4">
       <h3 class="mt-3 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
       <button
@@ -9,13 +9,13 @@
         <font-awesome-icon icon="file-pdf" class="mr-2" />
         Export to PDF
       </button>
-      <div class="float-right">
+      <div class="float-right" data-cy="team_total">
         <button class="btn btn-md btn-info mb-3 team-total">
         Team Total: {{teamMembers.length}}
         </button>
       </div>
       <div>
-        <table ref="table" id="teamMembersList" class="table-bordered">
+        <table ref="table" id="teamMembersList" class="table-bordered" data-cy="team_members_list">
           <thead>
             <tr class="teamHead">
               <th class="sort-th col-1" @click="sort('id')">#<i class="fas fa-sort scroll"></i></th>

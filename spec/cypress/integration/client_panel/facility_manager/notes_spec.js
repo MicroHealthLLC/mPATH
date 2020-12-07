@@ -8,7 +8,6 @@ describe('Notes Page', function() {
 
   it('Open Notes list page of a Facility', function() {
     cy.get('[data-cy=note_list]').contains('My Note').should('be.visible')
-    // cy.get('[data-cy=note_total]').contains('Total: 0')
     cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
     cy.logout()
   })
@@ -21,28 +20,23 @@ describe('Notes Page', function() {
 
   it('Create new note in a Facility', function() {
     cy.createNewNote()
-    // cy.get('[data-cy=note_total]').contains('Total: 1')
     cy.get('[data-cy=note_list]').contains('New test note').should('be.visible')
     cy.logout()
   })
 
   it('Delete the note, after open the note from the form delete button', function() {
     cy.createNewNote()
-    // cy.get('[data-cy=note_total]').contains('Total: 1')
     cy.get('[data-cy=note_list]').contains('New test note').should('be.visible')
     cy.get('[data-cy=note_edit_icon]').click()
     cy.get('[data-cy=note_delete_btn]').click()
     cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
-    // cy.get('[data-cy=note_total]').contains('Total: 0')
     cy.logout()
   })
 
   it('Delete the note, without open it using delete icon', function() {
     cy.createNewNote()
-    // cy.get('[data-cy=note_total]').contains('Total: 1')
     cy.get('[data-cy=note_list]').contains('New test note').should('be.visible')
     cy.get('[data-cy=note_delete_icon]').click()
-    // cy.get('[data-cy=note_total]').contains('Total: 0')
     cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
     cy.logout()
   })
@@ -54,7 +48,6 @@ describe('Notes Page', function() {
     cy.get('[data-cy=note_details]').clear().type('Updated new test note').should('have.value', 'Updated new test note')
     cy.get('[data-cy=note_save_btn]').click()
     cy.get('[data-cy=note_list]').contains('Updated new test note').should('be.visible')
-    // cy.get('[data-cy=note_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -65,7 +58,6 @@ describe('Notes Page', function() {
     cy.get('[data-cy=note_details]').clear()
     cy.get('[data-cy=note_save_btn]').should('be.disabled')
     cy.get('[data-cy=note_close_btn]').click()
-    // cy.get('[data-cy=note_total]').contains('Total: 1')
     cy.logout()
   })
 })

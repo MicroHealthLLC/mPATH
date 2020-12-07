@@ -31,3 +31,9 @@ Cypress.Commands.add("openFacility", () => {
   cy.get('[data-cy=facilities]').first().click()
   cy.contains('Facility Summary')
 })
+
+// Open Teams of a project
+Cypress.Commands.add("openTeam", () => {
+  cy.openProject()
+  cy.get('[data-cy=team_tab]').contains('Team').should('be.visible').click()
+})
