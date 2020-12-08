@@ -132,7 +132,8 @@ Task.find_or_create_by(
   progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
-  facility_project_id: facility_project_2.id
+  facility_project_id: facility_project_2.id,
+  watched: true
 )
 
 Issue.find_or_create_by(
@@ -143,7 +144,8 @@ Issue.find_or_create_by(
   issue_type_id: issue_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
-  facility_project_id: facility_project_2.id
+  facility_project_id: facility_project_2.id,
+  watched: true
 )
 
 facility_group_2 = FacilityGroup.find_or_create_by(

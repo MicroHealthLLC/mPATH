@@ -22,27 +22,45 @@ describe('Kanban Tasks View', function() {
     cy.logout()
   })
 
-  it('Delete the task from kanban', function() {
+  it('Update on watch state of a task', function() {
     cy.get('[data-cy=kanban_draggable]').within(() => {
+      cy.get('[data-cy=tasks]').first().within(() => {
+        cy.get('[data-cy=on_watch_icon]').should('be.visible')
+      })
       cy.get('[data-cy=tasks]').first().click()
     })
-    cy.get('[data-cy=task_delete_btn]').click({force: true})
-    cy.get('[data-cy=kanban_draggable]').within(() => {
-      cy.get('[data-cy=tasks]').should('not.exist')
-    })
-    cy.logout()
-  })
-
-  it('Update task from kanban', function() {
-    cy.get('[data-cy=kanban_draggable]').within(() => {
-      cy.get('[data-cy=tasks]').first().click()
-    })
-    cy.get('[data-cy=task_name]').clear({force: true}).type('Updated new test task').should('have.value', 'Updated new test task')
+    cy.get('[data-cy=task_on_watch]').click({force: true})
     cy.get('[data-cy=task_save_btn]').click({force: true})
     cy.get('[data-cy=kanban_draggable]').within(() => {
-      cy.get('[data-cy=tasks]').first().contains('Updated new test task').should('be.visible')
+      cy.get('[data-cy=tasks]').first().within(() => {
+        cy.get('[data-cy=on_watch_icon]').should('not.exist')
+      })
     })
     cy.logout()
   })
 
+  describe('Kanban Tasks Actions', function() {
+    beforeEach(() => {
+      cy.get('[data-cy=kanban_draggable]').within(() => {
+        cy.get('[data-cy=tasks]').first().click()
+      })
+    })
+
+    it('Delete the task from kanban', function() {
+      cy.get('[data-cy=task_delete_btn]').click({force: true})
+      cy.get('[data-cy=kanban_draggable]').within(() => {
+        cy.get('[data-cy=tasks]').should('not.exist')
+      })
+      cy.logout()
+    })
+
+    it('Update task from kanban', function() {
+      cy.get('[data-cy=task_name]').clear({force: true}).type('Updated new test task').should('have.value', 'Updated new test task')
+      cy.get('[data-cy=task_save_btn]').click({force: true})
+      cy.get('[data-cy=kanban_draggable]').within(() => {
+        cy.get('[data-cy=tasks]').first().contains('Updated new test task').should('be.visible')
+      })
+      cy.logout()
+    })
+  })
 })
