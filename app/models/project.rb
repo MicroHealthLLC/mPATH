@@ -39,7 +39,7 @@ class Project < SortableRecord
 
   def as_complete_json
     json = as_json.merge(
-      users: users.as_json(only: [:id, :full_name]),
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email ]),
       facilities: facility_projects.includes(include_fp_hash, :status).as_json,
       facility_groups: facility_groups.includes(include_fg_hash).uniq.as_json,
       statuses: statuses.as_json,
