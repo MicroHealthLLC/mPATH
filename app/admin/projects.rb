@@ -9,6 +9,11 @@ ActiveAdmin.register Project do
       :project_type_id,
       :status,
       user_ids: [],
+      facility_ids: [],
+      status_ids: [],
+      task_type_ids: [],
+      issue_type_ids: [],
+      issue_severity_ids: [],
       comments_attributes: [
         :id,
         :namespace,
@@ -63,7 +68,42 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
-          f.input :users, label: 'Project Users', as: :select, collection: User.client.map{|u| [u.email, u.id]}, multiple: true
+          div id: 'project-user-select2' do
+            input :user_alt, label: 'Users', as: :select, collection: User.client.where.not(id: f.object.user_ids).map{|u| [u.email, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :users, label: 'Users in Project', as: :select, collection: f.object.users.client.map{|u| [u.email, u.id]}, multiple: true
+          end
+          div id: 'project-facility-select2' do
+            input :facility_alt, label: 'Facilities', as: :select, collection: Facility.where.not(id: f.object.facility_ids).map{|u| [u.facility_name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :facilities, label: 'Facilities in Project', as: :select, collection: f.object.facilities.map{|u| [u.facility_name, u.id]}, multiple: true
+          end
+          div id: 'project-status-select2' do
+            input :status_alt, label: 'Statuses', as: :select, collection: Status.where.not(id: f.object.status_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :statuses, label: 'Statuses in Project', as: :select, collection: f.object.statuses.map{|u| [u.name, u.id]}, multiple: true
+          end
+          div id: 'project-task_type-select2' do
+            input :task_type_alt, label: 'Milestones', as: :select, collection: TaskType.where.not(id: f.object.task_type_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :task_types, label: 'Milestones in Project', as: :select, collection: f.object.task_types.map{|u| [u.name, u.id]}, multiple: true
+          end
+          div id: 'project-issue_type-select2' do
+            input :issue_type_alt, label: 'Issue Types', as: :select, collection: IssueType.where.not(id: f.object.issue_type_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :issue_types, label: 'Issue Types in Project', as: :select, collection: f.object.issue_types.map{|u| [u.name, u.id]}, multiple: true
+          end
+          div id: 'project-issue_severity-select2' do
+            input :issue_severity_alt, label: 'Issue Severities', as: :select, collection: IssueSeverity.where.not(id: f.object.issue_severity_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: f.object.issue_severities.map{|u| [u.name, u.id]}, multiple: true
+          end
         end
       end
 
@@ -129,6 +169,7 @@ ActiveAdmin.register Project do
 
     def update(options={}, &block)
       normalize_comment_params
+      resource.delete_nested_facilities(params[:project][:facility_ids]) if params[:project][:facility_ids].present?
       super do |success, failure|
         block.call(success, failure) if block
         failure.html {render :edit}

@@ -13,6 +13,15 @@ class Project < SortableRecord
 
   belongs_to :project_type
 
+  has_many :project_statuses
+  has_many :statuses, through: :project_statuses
+  has_many :project_task_types
+  has_many :task_types, through: :project_task_types
+  has_many :project_issue_types
+  has_many :issue_types, through: :project_issue_types
+  has_many :project_issue_severities
+  has_many :issue_severities, through: :project_issue_severities
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
@@ -35,6 +44,18 @@ class Project < SortableRecord
   def progress
     self.tasks.map(&:progress).sum / self.tasks.count rescue 0
   end
+
+  def delete_nested_facilities ids
+    ids = ids.reject(&:blank?)
+    facility_projects.where.not(facility_id: ids).destroy_all
+  end
+
+  attr_accessor :user_alt
+  attr_accessor :facility_alt
+  attr_accessor :status_alt
+  attr_accessor :task_type_alt
+  attr_accessor :issue_type_alt
+  attr_accessor :issue_severity_alt
 
   private
     def set_uuid

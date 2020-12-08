@@ -28,7 +28,10 @@ body {
     width: calc(80% - 20px);
   }
   select[multiple=multiple] {
-    height: 150px;
+    height: 180px;
+    option {
+      padding: 3px 10px 2px;
+    }
   }
   input[type=checkbox] {
     margin-right: 1em;
@@ -43,16 +46,13 @@ body {
   input[type=range] {
     width: 20%;
   }
-
   #main_content_wrapper .index_content {
     max-width: 75vw;
     overflow: auto;
   }
-
   .index_as_table {
     overflow-x: auto;
   }
-
   form.filter_form .filter_form_field.select_and_search {
     select {
       width: 40%;
@@ -61,7 +61,6 @@ body {
       width: 50%;
     }
   }
-
   ul.header-item li:nth-last-child(1),
   ul.header-item li:nth-last-child(2) {
     /*float: right !important;*/
@@ -75,9 +74,6 @@ body {
     margin-top: 10px;
     margin-bottom: 20px;
     max-width: 70%;
-  }
-  .comments {
-
   }
   .has_many_container.comments {
     fieldset.has_many_fields {
@@ -605,5 +601,59 @@ body {
   }
   .vue-phone-number-input {
     width: calc(80% - 22px) !important;
+  }
+
+  #project-facility-select2,
+  #project-status-select2,
+  #project-task_type-select2,
+  #project-issue_type-select2,
+  #project-issue_severity-select2,
+  #project-user-select2 {
+    display: flex;
+    align-items: flex-end;
+    li {
+      width: 100%;
+      display: block;
+      padding: 20px;
+      label {
+        display: block;
+      }
+      select {
+        width: 90%;
+      }
+    }
+    .arrow-left,
+    .arrow-right {
+      position: relative;
+      height: 0px; width: 0px;
+      border: 12px solid;
+      border-color:
+        darkcyan
+        darkcyan
+        transparent
+        transparent;
+    }
+    .arrow-right {
+      transform: rotate(45deg);
+      left: -2%;
+      bottom: 100px;
+    }
+    .arrow-left {
+      transform: rotate(225deg);
+      left: -4%;
+      bottom: 65px;
+    }
+    .arrow-left:before,
+    .arrow-right:before {
+      content: '';
+      position: absolute;
+      top: 0px; right: 0px;
+      display: block;
+      height: 12px; width: 16px;
+      background-color: darkcyan;
+      transform:
+        rotate(-45deg)
+        translate(2px, 1px);
+    }
   }
 }
