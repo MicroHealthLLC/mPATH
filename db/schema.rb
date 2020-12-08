@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_30_074254) do
+ActiveRecord::Schema.define(version: 2020_12_04_151828) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 2020_11_30_074254) do
     t.datetime "watched_at"
     t.bigint "issue_stage_id"
     t.integer "kanban_order", default: 0
+    t.integer "task_type_id"
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -201,6 +202,42 @@ ActiveRecord::Schema.define(version: 2020_11_30_074254) do
     t.string "sheets_view", default: "R"
     t.string "kanban_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
+  end
+
+  create_table "project_issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "issue_severity_id"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_severity_id"], name: "index_project_issue_severities_on_issue_severity_id"
+    t.index ["project_id"], name: "index_project_issue_severities_on_project_id"
+  end
+
+  create_table "project_issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "issue_type_id"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issue_type_id"], name: "index_project_issue_types_on_issue_type_id"
+    t.index ["project_id"], name: "index_project_issue_types_on_project_id"
+  end
+
+  create_table "project_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "status_id"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_statuses_on_project_id"
+    t.index ["status_id"], name: "index_project_statuses_on_status_id"
+  end
+
+  create_table "project_task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "task_type_id"
+    t.bigint "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_project_task_types_on_project_id"
+    t.index ["task_type_id"], name: "index_project_task_types_on_task_type_id"
   end
 
   create_table "project_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -381,6 +418,14 @@ ActiveRecord::Schema.define(version: 2020_11_30_074254) do
   add_foreign_key "issues", "issue_stages"
   add_foreign_key "issues", "issue_types"
   add_foreign_key "privileges", "users"
+  add_foreign_key "project_issue_severities", "issue_severities"
+  add_foreign_key "project_issue_severities", "projects"
+  add_foreign_key "project_issue_types", "issue_types"
+  add_foreign_key "project_issue_types", "projects"
+  add_foreign_key "project_statuses", "projects"
+  add_foreign_key "project_statuses", "statuses"
+  add_foreign_key "project_task_types", "projects"
+  add_foreign_key "project_task_types", "task_types"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
   add_foreign_key "projects", "project_types"

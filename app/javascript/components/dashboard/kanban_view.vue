@@ -17,16 +17,16 @@
             <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                     </div>
-                    <input type="search"
-                      class="form-control form-control-sm" 
-                      placeholder="Search Tasks" 
-                      aria-label="Search" 
-                      aria-describedby="search-addon" 
-                      v-model="sidebarTasksQuery">
+                  <div class="form-group has-search mb-2 w-100">
+                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                    <input
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Search Tasks"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
+                      v-model="sidebarTasksQuery"
+                    />
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -87,17 +87,16 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                   <div class="input-group mb-2">
-                     <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                     </div>
-                    <input type="search" 
-                      class="form-control form-control-sm" 
-                      placeholder="Search Issues" 
-                      aria-label="Search" 
-                      aria-describedby="search-addon" 
+                  <div class="form-group has-search mb-2 w-100">
+                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                    <input
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Search Issues"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
                       v-model="sidebarIssuesQuery">
-                   </div>
+                  </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
@@ -585,12 +584,12 @@
     max-width: 200px;
     min-width: 200px;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
-   }
+    display: block;
+  }
   .expandBtn {
     position: absolute;
     top: 50px;
