@@ -1,19 +1,18 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-      <div class="input-group w-100">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-        </div>
-        <input type="search"
-          class="form-control form-control-sm"
-          placeholder="Search tasks.."
-          aria-label="Search"
-          aria-describedby="search-addon"
-          v-model="tasksQuery"
-        />
-      </div>
-      <div class="d-flex align-item-center justify-content-between my-2">
+          <div class="input-group w-100">
+             <div class="input-group-prepend">
+             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="search" 
+            class="form-control form-control-sm" 
+            placeholder="Search tasks.." 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="tasksQuery">
+          </div>
+      <div class="d-flex align-item-center justify-content-between my-2 100">        
         <div class="simple-select w-100 mr-1">
           <multiselect
             v-model="C_taskTypeFilter"
@@ -35,8 +34,8 @@
         </div>
         <div class="simple-select w-100 enum-select">
           <multiselect
-            v-model="viewList"
-            style="width:235px"
+            v-model="viewList" 
+            style="width:100%"          
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -51,35 +50,34 @@
           </multiselect>
         </div>
       </div>
-      <div class="mb-3 mr-2 font-sm">
-        <button v-if="_isallowed('write')"
-          class="btn btn-sm btn-primary mr-1"
-          @click.prevent="addNewTask">
-          <i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
+      <div class="mb-3 mr-2 font-sm">          
+         <button v-if="_isallowed('write')" 
+          class="btn btn-sm btn-primary mr-2"
+          @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
-        </button>
-        <button
-          @click.prevent="download"
-          class="btn btn-sm btn-dark">
-          <font-awesome-icon icon="file-pdf" class="mr-2" />
+          </button>
+          <button
+          @click.prevent="download"     
+          class="btn btn-sm btn-dark mr-1">
+          <font-awesome-icon icon="file-pdf" />
           Export to PDF
-        </button>
+          </button>
           <!-- <button
-            disabled
+            disabled 
             class="btn btn-sm btn-outline-dark">
             Export to Excel
           </button>  -->
-        <div class="font-sm my-2 mr-0 float-right">
+          <div class="form-check-inline font-sm myTasks mt-1 mr-0">             
           <label class="form-check-label ml-4 mr-3">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div>
+          </label> 
+          </div>    
       </div>
-
-      <div v-if="filteredTasks.length > 0">
+      
+      <div v-if="filteredTasks.length > 0">        
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
@@ -168,7 +166,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),
+      ]),  
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -272,7 +270,7 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn {
+  .new-tasks-btn { 
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {
@@ -291,10 +289,14 @@
   tfoot {
     text-align: right !important;
   }
-  input[type=search] {
-    color: #383838;
+  input[type=search] { 
+    color: #383838;  
     text-align: left;
     cursor: pointer;
-    display: block;
+    display: block;                
+ }
+ .myTasks {
+   float: right !important;
+   margin-top: 5px;
  }
 </style>

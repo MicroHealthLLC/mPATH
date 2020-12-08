@@ -11,63 +11,84 @@
       />
     </div>
     <div v-else>
-      <div class="input-group w-100">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-        </div>
-        <input type="search"
-          class="form-control form-control-sm"
-          placeholder="Search Issues"
-          aria-label="Search"
-          aria-describedby="search-addon"
-          v-model="issuesQuery"
-        />
+       <div class="input-group w-100">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+          </div>
+          <input type="search" 
+              class="form-control form-control-sm" 
+              placeholder="Search Issues" 
+              aria-label="Search" 
+              aria-describedby="search-addon" 
+              v-model="issuesQuery">
       </div>
-      <div class="d-flex align-item-center justify-content-between mt-2">
-        <div class="simple-select w-100 mr-1">
-          <multiselect
-            v-model="C_issueTypeFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Issue Type"
-            :options="issueTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select w-100">
-          <multiselect
-            v-model="C_issueSeverityFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Issue Severity"
-            :options="issueSeverities"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
+
+
+         <div class="d-flex align-item-center justify-content-between mt-2 100">          
+          <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_issueTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Issue Type"
+              :options="issueTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>         
+          <div class="simple-select w-100">
+            <multiselect
+              v-model="C_issueSeverityFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Issue Severity"
+              :options="issueSeverities"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
       </div>
-      <div class="mt-1 d-flex font-sm">
-        <div class="simple-select mr-4 enum-select">
+
+      <div class="mt-1 d-flex font-sm w-100">
+         <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_taskTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Task Category"
+              :options="taskTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        <div class="simple-select enum-select w-100">
           <multiselect
             v-model="viewList"
-            style="width:232px"
+            style="width:100%"
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -80,39 +101,38 @@
               </div>
             </template>
           </multiselect>
-        </div>
+        </div>       
       </div>
       <div class="mt-3">
-        <button v-if="_isallowed('write')"
-          class="shadow-sm btn btn-sm btn-primary mr-1"
-          @click.prevent="addNewIssue">
-          <i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
+        <button v-if="_isallowed('write')" 
+           class="shadow-sm btn btn-sm btn-primary" 
+           @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
-        </button>
-        <button
-          @click.prevent="download"
-          class="btn btn-sm btn-dark">
-          <font-awesome-icon icon="file-pdf" class="mr-2" />
-          Export to PDF
-        </button>
-        <div class="font-sm my-2 mr-0 float-right">
-          <label class="form-check-label ml-4 mr-3">
+          </button>
+         <button
+           @click.prevent="download"      
+           class="btn btn-sm btn-dark">
+           <font-awesome-icon icon="file-pdf" />
+           Export to PDF
+         </button>
+       <div class="form-check-inline font-sm myIssues mt-1 mr-0">
+          <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issue
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
         </div>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">
+          <div v-if="filteredIssues.length > 0">          
             <!-- <button
               disabled
               id="printBtn"
               class="btn btn-sm btn-outline-dark ml-2">
               Export to Excel
-            </button> -->
+            </button> -->           
             <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
@@ -383,10 +403,14 @@
     position: relative;
     padding-top: 80px !important;
   }
-  input[type=search] {
-    color: #383838;
+  input[type=search] { 
+    color: #383838;  
     text-align: left;
     cursor: pointer;
-    display: block;
+    display: block;                
+  }
+  .myIssues {
+    float:right;
+    margin-top: 5px;
   }
 </style>
