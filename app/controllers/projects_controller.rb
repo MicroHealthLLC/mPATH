@@ -12,7 +12,7 @@ class ProjectsController < AuthenticatedController
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
-        format.json {render json: {project: @project, users: @project.users}, status: 200}
+        format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end
     else

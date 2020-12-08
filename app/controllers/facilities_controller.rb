@@ -3,13 +3,7 @@ class FacilitiesController < AuthenticatedController
   before_action :set_facility, only: [:show, :update]
 
   def index
-    include_hash = {
-      facility: [:facility_group],
-      tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
-      issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
-      notes: [{note_files_attachments: :blob}, :user]
-    }
-    facility_projects = @project.facility_projects.includes(include_hash,:status ).order(created_at: :desc).as_json
+    facility_projects = @project.facility_projects.includes(include_hash, :status).order(created_at: :desc).as_json
     render json: {facilities: facility_projects, project: @project}
   end
 
@@ -28,8 +22,7 @@ class FacilitiesController < AuthenticatedController
   end
 
   def destroy
-    @facility_project = @project.facility_projects.includes(include_hash,:status).find_by(facility_id: params[:id])
-    @facility = @facility_project.facility
+    @facility = @project.facilities.find_by(id: params[:id])
     @facility.destroy!
     render json: {}, status: 200
   rescue
@@ -38,14 +31,7 @@ class FacilitiesController < AuthenticatedController
 
   private
   def set_facility
-    include_hash = {
-      facility: [:facility_group],
-      tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
-      issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
-      notes: [{note_files_attachments: :blob}, :user]
-    }
-    @facility_project = @project.facility_projects.includes(include_hash,:status).find_by(facility_id: params[:id])
-    # @facility = @facility_project.facility
+    @facility_project = @project.facility_projects.includes(include_hash, :status).find_by(facility_id: params[:id])
   end
 
   def set_project
@@ -70,5 +56,14 @@ class FacilitiesController < AuthenticatedController
       :status_id,
       :due_date
     )
+  end
+
+  def include_hash
+    {
+      facility: [:facility_group],
+      tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
+      issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
+      notes: [{note_files_attachments: :blob}, :user]
+    }
   end
 end

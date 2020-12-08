@@ -45,7 +45,7 @@ class Issue < ApplicationRecord
         }
       end
     end
-    
+
     fp = self.facility_project
     users = self.users
     sub_tasks = self.sub_tasks
@@ -57,7 +57,7 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       user_ids: users.map(&:id).compact.uniq,
-      users: users.map(&:full_name),
+      users: users.as_json(only: [:id, :full_name]),
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),
@@ -130,8 +130,8 @@ class Issue < ApplicationRecord
     issue.attributes = i_params
     issue.facility_project_id = facility_project.id
 
-    issue.transaction do 
-      
+    issue.transaction do
+
       issue.save
 
       if user_ids && user_ids.present?
@@ -139,7 +139,7 @@ class Issue < ApplicationRecord
         user_ids.each do |uid|
           next if !uid.present?
           issue_users_obj << IssueUser.new(issue_id: issue.id, user_id: uid)
-        end     
+        end
         IssueUser.import(issue_users_obj) if issue_users_obj.any?
       end
 

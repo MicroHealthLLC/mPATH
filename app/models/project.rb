@@ -37,6 +37,21 @@ class Project < SortableRecord
     ).as_json
   end
 
+  def as_complete_json
+    json = as_json.merge(
+      users: users.as_json(only: [:id, :full_name]),
+      facilities: facility_projects.includes(include_fp_hash, :status).as_json,
+      facility_groups: facility_groups.includes(include_fg_hash).as_json,
+      statuses: statuses.as_json,
+      task_types: task_types.as_json,
+      issue_types: issue_types.as_json,
+      issue_severities: issue_severities.as_json,
+      task_stages: TaskStage.all.as_json,
+      issue_stages: IssueStage.all.as_json
+    )
+    json
+  end
+
   def reject_comment(comment)
     comment['body'].blank?
   end
@@ -64,5 +79,27 @@ class Project < SortableRecord
 
     def grant_access_to_admins
       self.users << User.superadmin.where.not(id: self.users.ids)
+    end
+
+    def include_fp_hash
+      {
+        facility: [:facility_group],
+        tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
+        issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
+        notes: [{note_files_attachments: :blob}, :user]
+      }
+    end
+
+    def include_fg_hash
+      {
+        facility_projects: [:facility, {
+          tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]
+          }, {
+          issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]
+          }, {
+            notes: [{note_files_attachments: :blob}, :user]
+          }
+        ]
+      }
     end
 end
