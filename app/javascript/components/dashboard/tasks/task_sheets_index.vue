@@ -48,14 +48,13 @@
             </div>
           </template>
         </multiselect>
-        </div>
-       
-        <div class="form-check-inline font-sm mr-0" style="width:20%">
+        </div>       
+        <div class="form-check-inline font-sm mr-0 justify-content-end" style="width:20%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
