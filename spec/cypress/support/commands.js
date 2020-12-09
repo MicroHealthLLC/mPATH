@@ -26,24 +26,39 @@ Cypress.Commands.add("openProject", () => {
   })
 })
 
+Cypress.Commands.add("facilityUnderGroup", () => {
+  cy.get('[data-cy=facility_groups]').first().click()
+  cy.get('[data-cy=facilities]').first().click()
+})
+
 // Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
-  cy.get('[data-cy=facility_groups]').first().click()
-  cy.get('[data-cy=facilities]').first().click()
+  cy.facilityUnderGroup()
   cy.contains('Facility Summary')
 })
 
-// Open Teams of a project
+// Open Teams page of a project
 Cypress.Commands.add("openTeam", () => {
   cy.openProject()
   cy.get('[data-cy=team_tab]').contains('Team').should('be.visible').click()
 })
 
-// Open Kanban of a project
+// Open Kanban view of a project
 Cypress.Commands.add("openKanban", () => {
   cy.openProject()
   cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
-  cy.get('[data-cy=facility_groups]').first().click()
-  cy.get('[data-cy=facilities]').first().click()
+  cy.facilityUnderGroup()
+})
+
+// Open Sheet view of a project
+Cypress.Commands.add("openSheet", () => {
+  cy.openProject()
+  cy.get('[data-cy=sheets_tab]').contains('Sheets').should('be.visible').click()
+})
+
+// Open sheet of a facility
+Cypress.Commands.add("openFacilitySheet", () => {
+  cy.openSheet()
+  cy.facilityUnderGroup()
 })
