@@ -27,3 +27,11 @@ Cypress.Commands.add("createNewIssue", () => {
   cy.get('[data-cy=issue_save_btn]').click()
   cy.get('[data-cy=task_list]').contains('New test issue', {timeout: 60000}).should('be.visible')
 })
+
+// Open Kanban Isuues
+Cypress.Commands.add("openKanbanIssue", () => {
+  cy.openKanban()
+  cy.get('[data-cy=facility_tabs]').within(() => {
+    cy.contains('Kanban Issues').should('be.visible').click()
+  })
+})

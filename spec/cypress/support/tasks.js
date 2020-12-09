@@ -28,7 +28,6 @@ Cypress.Commands.add("createNewTask", () => {
 })
 
 // Open Kanban Tasks
-
 Cypress.Commands.add("openKanbanTask", () => {
   cy.openKanban()
   cy.get('[data-cy=facility_tabs]').within(() => {

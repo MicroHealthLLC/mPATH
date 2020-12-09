@@ -7,6 +7,7 @@
           v-for="column in columns"
           :key="column.title"
           class="rounded-lg kan-col p-3 column-width mx-3"
+          data-cy="kanban_col"
           >
           <div class="row mb-4" data-cy="kanban_col_title">
             <div class="col">
