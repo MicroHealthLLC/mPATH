@@ -48,8 +48,6 @@ describe('Kanban Tasks View', function() {
   })
 
   it('Drag a task from first stage and drop it to next stage', function() {
-    const dataTransfer = new DataTransfer
-
     cy.get('[data-cy=kanban_col]').first().within(() => {
       cy.get('[data-cy=tasks]').first().as('origin')
     })
@@ -62,6 +60,10 @@ describe('Kanban Tasks View', function() {
 
     cy.get('[data-cy=kanban_col]').first().within(() => {
       cy.get('[data-cy=tasks]').should('not.exist')
+    })
+
+    cy.get('[data-cy=kanban_col]').last().within(() => {
+      cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     })
   })
 

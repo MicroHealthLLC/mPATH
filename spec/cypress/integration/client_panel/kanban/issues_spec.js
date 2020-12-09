@@ -43,6 +43,26 @@ describe('Kanban Issues View', function() {
     cy.logout()
   })
 
+  it('Drag an issue from first stage and drop it to next stage', function() {
+    cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=issues]').first().as('origin')
+    })
+
+    cy.get('[data-cy=kanban_col]').last().within(() => {
+      cy.get('[data-cy=issues]').as('destination')
+    })
+
+    cy.get('@origin').drag('@destination')
+
+    cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=issues]').should('not.exist')
+    })
+
+    cy.get('[data-cy=kanban_col]').last().within(() => {
+      cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
+    })
+  })
+
   describe('Kanban Issues Actions', function() {
     beforeEach(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
