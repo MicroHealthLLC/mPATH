@@ -7,7 +7,8 @@
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
         <td class="eight">{{formatDate(task.dueDate)}}</td>
-        <td class="ten">{{task.users.join(', ')}}</td>
+        <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+        <td class="ten" v-else></td>
         <td class="ten">{{task.progress + "%"}}</td>
         <td class="ten" v-if="(task.dueDate) <= now"><h5>x</h5></td>
         <td class="ten" v-else></td>
