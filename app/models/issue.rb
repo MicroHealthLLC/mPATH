@@ -57,7 +57,7 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       user_ids: users.map(&:id).compact.uniq,
-      users: users.as_json(only: [:id, :full_name]),
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),

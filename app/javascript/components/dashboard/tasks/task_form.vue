@@ -202,6 +202,7 @@
           <i class="fas fa-plus-circle"></i>
         </span>
         <div v-if="filteredChecks.length > 0">
+        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
           <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -231,6 +232,7 @@
               <i class="fas fa-times"></i>
             </span>
           </div>
+        </draggable>       
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
       </div>
@@ -337,6 +339,7 @@
 
 <script>
   import axios from 'axios'
+  import Draggable from "vuedraggable"
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
@@ -345,7 +348,7 @@
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
-      AttachmentInput
+      AttachmentInput, Draggable
     },
     data() {
       return {
@@ -359,7 +362,8 @@
         relatedTasks: [],
         _ismounted: false,
         showErrors: false,
-        loading: true
+        loading: true,
+        movingSlot: ''
       }
     },
     mounted() {
@@ -399,6 +403,18 @@
           notes: []
         }
       },
+      handleMove(item) {
+        this.movingSlot = item.relatedContext.component.$vnode.key
+        return true
+      },
+      handleEnd(e, checklists){
+        var cc = this.DV_task.checklists
+        var count = 0
+        for(var checklist of cc){
+          checklist.position = count
+          count++
+        }
+      },        
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
@@ -579,7 +595,7 @@
 
         let i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
-      },
+      },   
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
