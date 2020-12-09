@@ -35,6 +35,8 @@ describe('Tasks Page', function() {
   it('Delete the task from facility manager', function() {
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_delete_btn]').click()
+    cy.get('[data-cy=tasks]').first().click()
+    cy.get('[data-cy=task_delete_btn]').click()
     cy.contains('No tasks found..').should('be.visible')
     cy.logout()
   })

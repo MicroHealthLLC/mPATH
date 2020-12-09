@@ -15,7 +15,9 @@ describe('Kanban Issues View', function() {
 
   it('Open and close Kanban Issue new form', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+      cy.get('[data-cy=kanban_col]').first().within(() => {
+        cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+      })
     })
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
@@ -23,11 +25,13 @@ describe('Kanban Issues View', function() {
   })
 
   it('Update on watch state of a issue', function() {
-    cy.get('[data-cy=kanban_draggable]').within(() => {
-      cy.get('[data-cy=issues]').first().within(() => {
-        cy.get('[data-cy=on_watch_icon]').should('be.visible')
+    cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_draggable]').within(() => {
+        cy.get('[data-cy=issues]').first().within(() => {
+          cy.get('[data-cy=on_watch_icon]').should('be.visible')
+        })
+        cy.get('[data-cy=issues]').first().click()
       })
-      cy.get('[data-cy=issues]').first().click()
     })
     cy.get('[data-cy=issue_on_watch]').click({force: true})
     cy.get('[data-cy=issue_save_btn]').click({force: true})
@@ -48,8 +52,10 @@ describe('Kanban Issues View', function() {
 
     it('Delete the issue from kanban', function() {
       cy.get('[data-cy=issue_delete_btn]').click({force: true})
-      cy.get('[data-cy=kanban_draggable]').within(() => {
-        cy.get('[data-cy=issues]').should('not.exist')
+      cy.get('[data-cy=kanban_col]').first().within(() => {
+        cy.get('[data-cy=kanban_draggable]').within(() => {
+          cy.get('[data-cy=issues]').should('not.exist')
+        })
       })
       cy.logout()
     })

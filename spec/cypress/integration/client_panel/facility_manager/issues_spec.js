@@ -39,6 +39,8 @@ describe('Issue List', function() {
     // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.get('[data-cy=issues]').first().click()
     cy.get('[data-cy=issue_delete_btn]').click()
+    cy.get('[data-cy=issues]').first().click()
+    cy.get('[data-cy=issue_delete_btn]').click()
     cy.contains('No issues found..').should('be.visible')
     cy.logout()
   })

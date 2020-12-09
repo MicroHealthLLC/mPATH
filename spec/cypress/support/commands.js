@@ -1,3 +1,5 @@
+import '@4tw/cypress-drag-drop'
+
 // Login command
 Cypress.Commands.add("login", (email, password) => {
   cy.visit('/')
