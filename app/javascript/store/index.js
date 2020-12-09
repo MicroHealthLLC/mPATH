@@ -39,6 +39,7 @@ export default new Vuex.Store({
     facilityNameFilter: null,
     facilityProgressFilter: null,
     facilityDueDateFilter: null,
+    noteDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
     taskStageFilter: null,
@@ -155,6 +156,7 @@ export default new Vuex.Store({
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
+    setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
@@ -210,6 +212,7 @@ export default new Vuex.Store({
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
+    noteDateFilter: state => state.noteDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
@@ -232,6 +235,18 @@ export default new Vuex.Store({
             case "dueDate": {
               let range = moment.range(f[k][0], f[k][1])
               valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
+              break
+            }
+            case "noteDate": {
+              var range = moment.range(f[k][0], f[k][1])
+              var _notes = _.flatten(_.map(facility.tasks, 'notes') ).concat(_.flatten(_.map(facility.issues, 'notes') ))
+              var is_valid = false
+              for(var n of _notes){
+                is_valid = range.contains(new Date(n.createdAt))
+                if(is_valid) break
+              }
+
+              valid = valid && is_valid
               break
             }
             case "progress": {
@@ -802,6 +817,7 @@ export default new Vuex.Store({
         'facilityNameFilter',
         'facilityProgressFilter',
         'facilityDueDateFilter',
+        'noteDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',

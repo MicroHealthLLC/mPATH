@@ -206,6 +206,9 @@
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'IssueIndex',
@@ -287,6 +290,7 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
         'currentProject',
         'issueTypes',
         'taskTypes',
@@ -310,6 +314,7 @@
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -324,6 +329,18 @@
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+
+          if(noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            var is_valid = issue.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(issue.title)
 
           switch (this.viewList) {
