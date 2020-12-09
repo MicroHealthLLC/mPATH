@@ -22,7 +22,6 @@ import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
-import SortedTablePlugin    from "vue-sorted-table"
 import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
