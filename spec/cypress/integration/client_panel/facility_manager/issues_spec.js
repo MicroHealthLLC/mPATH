@@ -27,9 +27,7 @@ describe('Issue List', function() {
   })
 
   // it('Create new Issue in a Facility', function() {
-  //   cy.get('[data-cy=issue_total]').contains('Total: 1')
   //   cy.createNewIssue()
-  //   cy.get('[data-cy=issue_total]').contains('Total: 2')
   //   cy.get('[data-cy=issue_list]').contains('New test issue')
   //   cy.logout()
   // })
