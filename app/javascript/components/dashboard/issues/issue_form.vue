@@ -220,7 +220,7 @@
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="issueUsers"
-          :load="log(issueUsers)"
+          :load="log(issueUsers.length)"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
@@ -456,8 +456,8 @@
           notes: []
         }
       }, 
-      log(user) {
-        console.log(user)
+      log(i) {
+        console.log(i)
       },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
