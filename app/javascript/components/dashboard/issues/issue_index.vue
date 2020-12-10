@@ -138,8 +138,7 @@
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
-              :key="issue.id"
-              :load="log(issue)"
+              :key="issue.id"             
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
@@ -265,9 +264,6 @@
             this.$emit('refresh-facility')
           })
           .catch((err) => console.log(err))
-      },
-      log(issues) {
-        console.log(issues)
       },
       download() {
         const doc = new jsPDF("l")
