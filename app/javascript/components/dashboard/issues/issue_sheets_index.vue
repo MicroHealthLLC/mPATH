@@ -206,7 +206,8 @@
             <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
-            <td>{{issue.users.join(', ')}}</td>
+            <td class="ten" v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+            <td class="ten" v-else></td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
             <td v-else></td>
@@ -233,10 +234,7 @@
   import IssueSheets from './issue_sheets'
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
-  // import moment from 'moment'
-
   library.add(faFilePdf)
-  // Vue.prototype.moment = moment
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)

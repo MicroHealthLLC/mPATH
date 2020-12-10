@@ -220,11 +220,11 @@
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="issueUsers"
-          :load="log(issueUsers)"
+          :load="log(issueUsers.length)"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"         
+          :options="projectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -268,7 +268,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="activeProjectUsers"
+                  :options="projectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -457,8 +457,8 @@
           notes: []
         }
       }, 
-      log(user) {
-        console.log(user)
+      log(i) {
+        console.log(i)
       },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
@@ -474,7 +474,7 @@
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
@@ -694,7 +694,7 @@
     computed: {
       ...mapGetters([
         'currentProject',
-        'activeProjectUsers',
+        'projectUsers',
         'myActionsFilter',
         'issueTypes',
         'taskTypes',

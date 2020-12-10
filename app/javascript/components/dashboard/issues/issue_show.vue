@@ -5,7 +5,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-1" @click.prevent="editIssue">
+    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-1 py-1" @click.prevent="editIssue">
       <div v-if="show">
         <div class="row">
           <div class="col-md-9">

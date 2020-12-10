@@ -168,7 +168,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"
+          :options="projectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -214,7 +214,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="activeProjectUsers"
+                  :options="projectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -423,7 +423,7 @@
       },
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
@@ -636,6 +636,7 @@
         'taskTypes',
         'taskStages',
         'activeProjectUsers',
+        'projectUsers',
         'myActionsFilter',
         'currentTasks',
         'currentIssues',
