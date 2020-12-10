@@ -105,13 +105,13 @@
       </div>
       <div class="mt-3">
         <button v-if="_isallowed('write')" 
-           class="shadow-sm btn btn-sm btn-primary" 
+           class="btn btn-sm btn-primary addIssueBtn" 
            @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
           </button>
          <button
            @click.prevent="download"      
-           class="btn btn-sm btn-dark">
+           class="btn btn-sm btn-dark export2pdf">
            <font-awesome-icon icon="file-pdf" />
            Export to PDF
          </button>
@@ -425,5 +425,11 @@
   .myIssues {
     float:right;
     margin-top: 5px;
+  }
+  .addIssueBtn, .export2pdf, #issueHover {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  #issueHover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
   }
 </style>
