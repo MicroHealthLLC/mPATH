@@ -54,6 +54,10 @@ new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage')
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
 
+project_task_type = ProjectTaskType.create(project_id: project.id, task_type_id: task_type.id)
+project_issue_severities = ProjectIssueSeverity.create(project_id: project.id, issue_severity_id: issue_severity.id)
+project_issue_type = ProjectIssueType.create(project_id: project.id, issue_type_id: issue_type.id)
+
 facility_group_1 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 1',
   code: 'TFG1',
@@ -110,6 +114,7 @@ Issue.find_or_create_by(
   start_date: Date.today,
   due_date: Date.today + 5.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
@@ -122,6 +127,7 @@ Issue.find_or_create_by(
   start_date: Date.today,
   due_date: Date.today + 5.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
@@ -180,6 +186,7 @@ Issue.find_or_create_by(
   start_date: Date.today + 1.day,
   due_date: Date.today + 6.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_2.id,
@@ -192,6 +199,7 @@ Issue.find_or_create_by(
   start_date: Date.today + 1.day,
   due_date: Date.today + 6.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_2.id,
@@ -242,6 +250,7 @@ Issue.find_or_create_by(
   start_date: Date.today - 1.day,
   due_date: Date.today + 4.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_3.id,
@@ -286,6 +295,7 @@ Issue.find_or_create_by(
   start_date: Date.today + 2.days,
   due_date: Date.today + 7.days,
   issue_type_id: issue_type.id,
+  task_type_id: task_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_4.id
