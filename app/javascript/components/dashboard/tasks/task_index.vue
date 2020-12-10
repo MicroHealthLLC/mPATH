@@ -52,13 +52,13 @@
       </div>
       <div class="mb-3 mr-2 font-sm">          
          <button v-if="_isallowed('write')" 
-          class="btn btn-sm btn-primary mr-2"
+          class="btn btn-sm btn-primary mr-2 addTaskBtn"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
           </button>
           <button
           @click.prevent="download"     
-          class="btn btn-sm btn-dark mr-1">
+          class="btn btn-sm btn-dark mr-1 export2pdf">
           <font-awesome-icon icon="file-pdf" />
           Export to PDF
           </button>
@@ -81,14 +81,13 @@
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"
-          href="#"
+          id="taskHover"        
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :task="task"
           :from-view="from"
           @edit-task="editTask"
-        >{{ task.text }}</task-show>
+        ></task-show>
       </div>
       <div v-else>
         <br/>
@@ -312,8 +311,14 @@
     cursor: pointer;
     display: block;                
  }
+ .addTaskBtn, .export2pdf {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
  .myTasks {
    float: right !important;
    margin-top: 5px;
  }
+  #taskHover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
+  }
 </style>
