@@ -145,6 +145,9 @@
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TasksIndex',
@@ -188,6 +191,7 @@
     computed: {
       ...mapGetters([
         'taskTypeFilter',
+        'noteDateFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',
@@ -202,6 +206,7 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -214,6 +219,18 @@
           }
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {

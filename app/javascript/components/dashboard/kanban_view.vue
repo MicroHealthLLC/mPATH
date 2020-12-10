@@ -245,6 +245,10 @@
   import FacilitySidebar from './facilities/facility_sidebar'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
+
   export default {
     name: 'KanbanView',
     components: {
@@ -351,6 +355,7 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
         'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
@@ -373,6 +378,7 @@
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -385,6 +391,18 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
           switch (this.viewList) {
@@ -435,6 +453,7 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -446,6 +465,18 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            var is_valid = issue.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)
           } else if(stageIds.length > 0) {
