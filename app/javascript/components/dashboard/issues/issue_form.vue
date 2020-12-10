@@ -391,6 +391,7 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
+  import Draggable from "vuedraggable"
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
 
@@ -398,7 +399,7 @@
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
     components: {
-      AttachmentInput
+      AttachmentInput, Draggable
     },
     data() {
       return {
