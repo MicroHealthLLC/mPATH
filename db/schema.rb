@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2020_12_04_151828) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.integer "position", default: 0
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
