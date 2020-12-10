@@ -234,10 +234,7 @@
   import IssueSheets from './issue_sheets'
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
-  // import moment from 'moment'
-
   library.add(faFilePdf)
-  // Vue.prototype.moment = moment
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
