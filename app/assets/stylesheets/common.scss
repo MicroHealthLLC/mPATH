@@ -471,3 +471,15 @@ body /deep/ .mx-input.disabled {
 .enum-select /deep/ .multiselect {
   width: 140px;
 }
+.has-search .form-control {
+  padding-left: 2em;
+}
+.has-search .form-control-feedback {
+  position: absolute;
+  z-index: 9999;
+  display: block;
+  text-align: center;
+  pointer-events: none;
+  color: #ccc;
+  margin: 0.6em;
+}

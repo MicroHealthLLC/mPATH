@@ -55,7 +55,7 @@
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
@@ -153,7 +153,8 @@
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
-          <td>{{task.users.join(', ')}}</td>
+          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td class="ten" v-else></td>
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
@@ -175,12 +176,16 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import moment from 'moment'
+  // import moment from 'moment'
   import TaskSheets from "./task_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
-  Vue.prototype.moment = moment
+  // Vue.prototype.moment = moment
+  
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TasksSheetsIndex',
@@ -243,6 +248,7 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
         'taskTypeFilter',
         'taskStageFilter',
         'myActionsFilter',
@@ -258,7 +264,7 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
-
+        let noteDates = this.noteDateFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -271,6 +277,18 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {

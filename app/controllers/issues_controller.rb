@@ -7,9 +7,7 @@ class IssuesController < AuthenticatedController
   end
 
   def create
-    # @issue = @facility_project.issues.create(issue_params)
     @issue = Issue.new.create_or_update_issue(params, current_user)
-
     render json: {issue: @issue.to_json}
   end
 
@@ -67,14 +65,15 @@ class IssuesController < AuthenticatedController
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :position
       ],
       notes_attributes: [
         :id,
         :_destroy,
         :user_id,
         :body
-       ]
+      ]
     )
   end
 

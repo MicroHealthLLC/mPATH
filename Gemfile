@@ -68,6 +68,9 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring'
   # gem 'spring-watcher-listen', '~> 2.0.0'
+
+  # To give memory back to operating system
+  gem 'malloc_trim'
 end
 
 group :production do
@@ -79,3 +82,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 #Activerecord-Import is a library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import', '1.0.7'
+
+
+gem 'omniauth-rails_csrf_protection', '~> 0.1'

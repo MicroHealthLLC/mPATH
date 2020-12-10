@@ -21,8 +21,10 @@
               aria-label="Search" 
               aria-describedby="search-addon" 
               v-model="issuesQuery">
-          </div>
-         <div class="d-flex align-item-center justify-content-between mt-2">          
+      </div>
+
+
+         <div class="d-flex align-item-center justify-content-between mt-2 100">          
           <div class="simple-select w-100 mr-1">
             <multiselect
               v-model="C_issueTypeFilter"
@@ -41,26 +43,7 @@
                 </div>
               </template>
             </multiselect>
-          </div>
-          <div class="simple-select w-100 mr-1">
-            <multiselect
-              v-model="C_taskTypeFilter"
-              track-by="name"
-              label="name"
-              placeholder="Filter by Task Category"
-              :options="taskTypes"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-          </div>
+          </div>         
           <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
@@ -81,11 +64,31 @@
             </multiselect>
           </div>
       </div>
-      <div class="mt-1 d-flex font-sm">
-        <div class="simple-select mr-4 enum-select">
+
+      <div class="mt-1 d-flex font-sm w-100">
+         <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_taskTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Task Category"
+              :options="taskTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        <div class="simple-select enum-select w-100">
           <multiselect
             v-model="viewList"
-            style="width:232px"
+            style="width:100%"
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -102,13 +105,13 @@
       </div>
       <div class="mt-3">
         <button v-if="_isallowed('write')" 
-           class="shadow-sm btn btn-sm btn-primary" 
+           class="btn btn-sm btn-primary addIssueBtn" 
            @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
           </button>
          <button
            @click.prevent="download"      
-           class="btn btn-sm btn-dark">
+           class="btn btn-sm btn-dark export2pdf">
            <font-awesome-icon icon="file-pdf" />
            Export to PDF
          </button>
@@ -135,8 +138,7 @@
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
-              :key="issue.id"
-              :load="log(issue)"
+              :key="issue.id"             
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
@@ -203,6 +205,9 @@
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'IssueIndex',
@@ -260,9 +265,6 @@
           })
           .catch((err) => console.log(err))
       },
-      log(issues) {
-        console.log(issues)
-      },
       download() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -284,6 +286,7 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
         'currentProject',
         'issueTypes',
         'taskTypes',
@@ -307,6 +310,7 @@
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -321,6 +325,18 @@
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var range = moment.range(noteDates[0], noteDates[1])
+            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            var is_valid = issue.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              is_valid = range.contains(new Date(createdAt))
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(issue.title)
 
           switch (this.viewList) {
@@ -393,6 +409,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
@@ -409,5 +426,11 @@
   .myIssues {
     float:right;
     margin-top: 5px;
+  }
+  .addIssueBtn, .export2pdf, #issueHover {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  #issueHover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
   }
 </style>

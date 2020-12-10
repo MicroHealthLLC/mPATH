@@ -18,22 +18,21 @@
             <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
           </div>
         </div>
-        
       </div>
       <div class="form-check-inline w-100 mb-2 font-sm">
         <div class="col-3 px-0 float-left" v-if="_isallowed('write')">
-          <button @click.prevent="addNewNote" 
-          class="btn btn-sm btn-primary addNote" 
+          <button @click.prevent="addNewNote"
+          class="btn btn-sm btn-primary addNote"
           data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>
           Add Note</button>
         </div>
-        <div class="fR ml-auto">
-        <label class="form-check-label mr-3">
-          <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
-        </label>
-        <!-- <label class="form-check-label ml-2 text-primary">
-          <h5 class="mb-0 mr-2" data-cy="note_total">Total Notes: {{filteredNotes.length}}</h5>
-        </label> -->
+        <div class="float-right ml-auto">
+          <label class="form-check-label mr-3">
+            <input type="checkbox" class="form-check-input" v-model="C_myNotes"> <i class="fas fa-user mr-1"></i>My Notes
+          </label>
+          <!-- <label class="form-check-label ml-2 text-primary">
+            <h5 class="mb-0 mr-2" data-cy="note_total">Total Notes: {{filteredNotes.length}}</h5>
+          </label> -->
         </div>
       </div>
       <hr/>
@@ -91,7 +90,7 @@
         this.DV_facility.notes.unshift(note)
       },
       noteUpdated(note) {
-        var index = this.DV_facility.notes.findIndex(n => n.id == note.id)
+        let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
         if (index > -1) Vue.set(this.DV_facility.notes, index, note)
       },
       noteDeleted(note) {
@@ -141,17 +140,10 @@
   #notes-index {
     height: 500px;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
   }
-  .fR{
-    right:0px;
-    float:right;
-  }
-  // .addNote {
-  //   marging-right:6rem;
-  // }
 </style>

@@ -39,6 +39,7 @@ export default new Vuex.Store({
     facilityNameFilter: null,
     facilityProgressFilter: null,
     facilityDueDateFilter: null,
+    noteDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
     taskStageFilter: null,
@@ -155,6 +156,7 @@ export default new Vuex.Store({
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
+    setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
@@ -210,6 +212,7 @@ export default new Vuex.Store({
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
+    noteDateFilter: state => state.noteDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
@@ -232,6 +235,18 @@ export default new Vuex.Store({
             case "dueDate": {
               let range = moment.range(f[k][0], f[k][1])
               valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
+              break
+            }
+            case "noteDate": {
+              var range = moment.range(f[k][0], f[k][1])
+              var _notes = _.flatten(_.map(facility.tasks, 'notes') ).concat(_.flatten(_.map(facility.issues, 'notes') ))
+              var is_valid = false
+              for(var n of _notes){
+                is_valid = range.contains(new Date(n.createdAt))
+                if(is_valid) break
+              }
+
+              valid = valid && is_valid
               break
             }
             case "progress": {
@@ -616,8 +631,20 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.get(`/projects/${id}.json`)
           .then((res) => {
+            let facilities = []
+            for (let facility of res.data.project.facilities) {
+              facilities.push({...facility, ...facility.facility})
+            }
+            commit('setFacilities', facilities)
             commit('setCurrentProject', res.data.project)
-            commit('setProjectUsers', res.data.users)
+            commit('setFacilityGroups', res.data.project.facilityGroups)
+            commit('setProjectUsers', res.data.project.users)
+            commit('setStatuses', res.data.project.statuses)
+            commit('setTaskTypes', res.data.project.taskTypes)
+            commit('setTaskStages', res.data.project.taskStages)
+            commit('setIssueStages', res.data.project.issueStages)
+            commit('setIssueTypes', res.data.project.issueTypes)
+            commit('setIssueSeverities', res.data.project.issueSeverities)
             resolve()
           })
           .catch((err) => {
@@ -669,96 +696,11 @@ export default new Vuex.Store({
           })
       })
     },
-    fetchStatuses({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/statuses.json')
-          .then((res) => {
-            commit('setStatuses', res.data.statuses)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchTaskTypes({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/task_types.json')
-          .then((res) => {
-            commit('setTaskTypes', res.data.taskTypes)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchTaskStages({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/task_stages.json')
-          .then((res) => {
-            commit('setTaskStages', res.data.taskStages)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueStages({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_stages.json')
-          .then((res) => {
-            commit('setIssueStages', res.data.issueStages)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueTypes({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_types.json')
-          .then((res) => {
-            commit('setIssueTypes', res.data.issueTypes)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueSeverities({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_severities.json')
-          .then((res) => {
-            commit('setIssueSeverities', res.data.issueSeverities)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
+
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
       await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
-      await dispatch('fetchFacilities', id)
-      await dispatch('fetchFacilityGroups', id)
-      await dispatch('fetchStatuses')
-      await dispatch('fetchTaskTypes')
-      await dispatch('fetchTaskStages')
-      await dispatch('fetchIssueStages')
-      await dispatch('fetchIssueTypes')
-      await dispatch('fetchIssueSeverities')
-      await commit('setContentLoaded', true)
+      commit('setContentLoaded', true)
       if (cb) return cb()
     },
 
@@ -875,6 +817,7 @@ export default new Vuex.Store({
         'facilityNameFilter',
         'facilityProgressFilter',
         'facilityDueDateFilter',
+        'noteDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',
