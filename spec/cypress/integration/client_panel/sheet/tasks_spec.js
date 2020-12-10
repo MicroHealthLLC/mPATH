@@ -31,4 +31,24 @@ describe('Sheets Tasks View', function() {
     cy.get('[data-cy=task_close_btn]').should('be.visible').click({force: true})
     cy.logout()
   })
+
+  it('Delete task from sheet task table', function() {
+    cy.get('[data-cy=tasks_table]').within(() => {
+      cy.get('tr').its('length').should('be.eq', 3)
+      cy.get('tr').eq(1).should('be.visible').click({force: true})
+    })
+
+    cy.get('[data-cy=task_delete_btn]').should('be.visible').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=tasks_table]').within(() => {
+      cy.get('tr').its('length').should('be.eq', 2)
+      cy.get('tr').eq(1).should('be.visible').click({force: true})
+    })
+
+    cy.get('[data-cy=task_delete_btn]').should('be.visible').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=tasks_table]').should('not.exist')
+    cy.get('[data-cy=no_task_found]').contains('No tasks found..')
+    cy.logout()
+  })
 })

@@ -123,7 +123,7 @@
            </div>
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
