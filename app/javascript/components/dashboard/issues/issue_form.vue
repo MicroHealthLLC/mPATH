@@ -219,8 +219,7 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"
-          :load="log(issueUsers.length)"
+          v-model="issueUsers"   
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
@@ -457,9 +456,6 @@
           notes: []
         }
       }, 
-      log(i) {
-        console.log(i)
-      },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
