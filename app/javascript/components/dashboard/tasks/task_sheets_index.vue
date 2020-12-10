@@ -1,20 +1,20 @@
 <template>
-  <div id="tasks-index" class="my-4">
+  <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">
         <div class="input-group w-90 task-search-bar">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="search" 
-            class="form-control form-control-sm" 
-            placeholder="Search Tasks" 
-            aria-label="Search" 
-            aria-describedby="search-addon" 
+            <input type="search"
+            class="form-control form-control-sm"
+            placeholder="Search Tasks"
+            aria-label="Search"
+            aria-describedby="search-addon"
             v-model="tasksQuery">
           </div>
         <div class="simple-select mx-1 d-flex" style="width:35%">
-       
+
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -49,7 +49,7 @@
           </template>
         </multiselect>
         </div>
-       
+
         <div class="form-check-inline font-sm mr-0" style="width:20%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
@@ -63,22 +63,24 @@
       </div>
       <button v-if="_isallowed('write')"
         class="new-tasks-btn addBtns btn mr-2 btn-sm btn-primary"
-        @click.prevent="addNewTask">
+        @click.prevent="addNewTask"
+        data-cy="add_task"
+      >
         <i class="fas fa-plus-circle mr-2"></i>
         Add Task
       </button>
-       <button
+      <button
         @click="download"
         id="printBtn"
         class="btn btn-sm btn-dark exportBtn">
         <font-awesome-icon icon="file-pdf" />
         Export to PDF
       </button>
-        <label class="form-check-label text-primary float-right mr-2">
-          <h5>Total: {{filteredTasks.length}}</h5>
-        </label>
-      <div v-if="filteredTasks.length > 0">          
-        <div style="margin-bottom:100px">
+      <label class="form-check-label text-primary float-right mr-2" data-cy="task_total">
+        <h5>Total: {{filteredTasks.length}}</h5>
+      </label>
+      <div v-if="filteredTasks.length > 0">
+        <div style="margin-bottom:100px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="sixteen" />
@@ -102,7 +104,7 @@
               <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
             </tr>
-          </table>        
+          </table>
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
@@ -115,9 +117,9 @@
               @toggle-watched="toggleWatched"
             />
           <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>         
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
+          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
       </div>
@@ -189,7 +191,7 @@
     data() {
       return {
         viewList:'active',
-        listOptions: ['active','all', 'completed'],     
+        listOptions: ['active','all', 'completed'],
         tasks: Object,
         now: new Date().toISOString(),
         tasksQuery: '',
@@ -287,7 +289,7 @@
           return valid
         }), ['dueDate'])
         return tasks
-      },     
+      },
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -313,7 +315,7 @@
           if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
         }
-      }, 
+      },
       sortedTasks:function() {
           return this.filteredTasks.sort((a,b) => {
           let modifier = 1;
@@ -339,9 +341,9 @@
     height: 500px
   }
   .scroll {
-    cursor:pointer !important; 
+    cursor:pointer !important;
     top: 35%;
-    right: 5px;  
+    right: 5px;
     position:absolute;
     font-size: 1.1rem;
     color: #383838 !important;
@@ -353,16 +355,16 @@
     border-radius: 5px;
   }
   .sort-th {
-    font-size: .80rem !important; 
+    font-size: .80rem !important;
     text-align: center;
     position: relative;
-    vertical-align: middle !important;   
+    vertical-align: middle !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
  }
   .new-tasks-btn {
     height: max-content;

@@ -114,14 +114,14 @@ class Task < ApplicationRecord
     task.attributes = t_params
     task.facility_project_id = facility_project.id
 
-    task.transaction do 
+    task.transaction do
       task.save
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|
           next if !uid.present?
           task_users_obj << TaskUser.new(task_id: task.id, user_id: uid)
-        end     
+        end
         TaskUser.import(task_users_obj) if task_users_obj.any?
       end
 

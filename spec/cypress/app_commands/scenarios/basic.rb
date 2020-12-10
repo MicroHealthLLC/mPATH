@@ -80,7 +80,7 @@ facility_project_1 = FacilityProject.find_or_create_by(
   due_date: Date.today + 10.days
 )
 
-Task.find_or_create_by(
+test_task_1 = Task.find_or_create_by(
   text: 'Test Task 1',
   description: 'Test task 1 description',
   start_date: Date.today,
@@ -92,7 +92,10 @@ Task.find_or_create_by(
   watched: true
 )
 
-Task.find_or_create_by(
+TaskUser.find_or_create_by(task_id: test_task_1.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: test_task_1.id, user_id: client.id)
+
+new_task_1 = Task.find_or_create_by(
   text: 'New Task 1',
   description: 'New task 1 description',
   start_date: Date.today,
@@ -104,7 +107,9 @@ Task.find_or_create_by(
   watched: true
 )
 
-Issue.find_or_create_by(
+TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: admin.id)
+
+test_issue_1 = Issue.find_or_create_by(
   title: 'Test Issue 1',
   description: 'Test issue 1 description',
   start_date: Date.today,
@@ -116,7 +121,9 @@ Issue.find_or_create_by(
   watched: true
 )
 
-Issue.find_or_create_by(
+IssueUser.find_or_create_by(issue_id: test_issue_1.id, user_id: admin.id)
+
+new_issue_1 = Issue.find_or_create_by(
   title: 'New Issue 1',
   description: 'New issue 1 description',
   start_date: Date.today,
@@ -128,6 +135,7 @@ Issue.find_or_create_by(
   watched: true
 )
 
+IssueUser.find_or_create_by(issue_id: new_issue_1.id, user_id: client.id)
 
 facility_2 = Facility.find_or_create_by(
   facility_name: 'Test Facility 2',
@@ -150,7 +158,7 @@ facility_project_2 = FacilityProject.find_or_create_by(
   due_date: Date.today + 10.days
 )
 
-Task.find_or_create_by(
+test_task_2 = Task.find_or_create_by(
   text: 'Test Task 2',
   description: 'Test task 2 description',
   start_date: Date.today + 1.day,
@@ -162,7 +170,10 @@ Task.find_or_create_by(
   watched: true
 )
 
-Task.find_or_create_by(
+TaskUser.find_or_create_by(task_id: test_task_2.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: test_task_2.id, user_id: client.id)
+
+new_task_2 = Task.find_or_create_by(
   text: 'New Task 2',
   description: 'New task 2 description',
   start_date: Date.today + 1.day,
@@ -174,7 +185,9 @@ Task.find_or_create_by(
   watched: true
 )
 
-Issue.find_or_create_by(
+TaskUser.find_or_create_by(task_id: new_task_2.id, user_id: admin.id)
+
+test_issue_2 = Issue.find_or_create_by(
   title: 'Test Issue 2',
   description: 'Test issue 2 description',
   start_date: Date.today + 1.day,
@@ -186,7 +199,9 @@ Issue.find_or_create_by(
   watched: true
 )
 
-Issue.find_or_create_by(
+IssueUser.find_or_create_by(issue_id: test_issue_2.id, user_id: admin.id)
+
+new_issue_2 = Issue.find_or_create_by(
   title: 'New Issue 2',
   description: 'New issue 2 description',
   start_date: Date.today + 1.day,
@@ -197,6 +212,8 @@ Issue.find_or_create_by(
   facility_project_id: facility_project_2.id,
   watched: true
 )
+
+IssueUser.find_or_create_by(issue_id: new_issue_2.id, user_id: client.id)
 
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
