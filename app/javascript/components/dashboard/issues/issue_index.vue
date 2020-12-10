@@ -326,7 +326,7 @@
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
 
-          if(noteDates[0] && noteDates[1]){
+          if(noteDates && noteDates[0] && noteDates[1]){
             var range = moment.range(noteDates[0], noteDates[1])
             var _notesCreatedAt = _.map(issue.notes, 'createdAt')
             var is_valid = issue.notes.length > 0

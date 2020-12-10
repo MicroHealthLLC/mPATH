@@ -274,7 +274,7 @@
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
 
-          if(noteDates[0] && noteDates[1]){
+          if(noteDates && noteDates[0] && noteDates[1]){
             var range = moment.range(noteDates[0], noteDates[1])
             var _notesCreatedAt = _.map(task.notes, 'createdAt')
             var is_valid = task.notes.length > 0

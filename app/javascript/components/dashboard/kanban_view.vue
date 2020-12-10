@@ -392,7 +392,7 @@
             valid  = valid && task.watched
           }
 
-          if(noteDates[0] && noteDates[1]){
+          if(noteDates && noteDates[0] && noteDates[1]){
             var range = moment.range(noteDates[0], noteDates[1])
             var _notesCreatedAt = _.map(task.notes, 'createdAt')
             var is_valid = task.notes.length > 0
@@ -466,7 +466,7 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
 
-          if(noteDates[0] && noteDates[1]){
+          if(noteDates && noteDates[0] && noteDates[1]){
             var range = moment.range(noteDates[0], noteDates[1])
             var _notesCreatedAt = _.map(issue.notes, 'createdAt')
             var is_valid = issue.notes.length > 0
