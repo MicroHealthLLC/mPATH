@@ -65,7 +65,8 @@ class IssuesController < AuthenticatedController
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :position
       ],
       notes_attributes: [
         :id,

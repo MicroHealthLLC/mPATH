@@ -138,6 +138,17 @@
           </multiselect>
         </div>
 
+        <div class="notedate-range my-3 mx-1">
+          <v2-date-picker
+            v-model="C_noteDateFilter"
+            class="datepicker"
+            placeholder="Note Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
+            range
+          />
+        </div>
+
         <div class="progress_ranges my-3 mx-1">
           <label class="mb-0">Task % Progress Range</label>
           <div class="form-row">
@@ -362,6 +373,7 @@
         'facilityNameFilter',
         'facilityProgressFilter',
         'facilityDueDateFilter',
+        'noteDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueProgressFilter',
@@ -434,6 +446,15 @@
         },
         set(value) {
           this.setFacilityDueDateFilter(value)
+        }
+      },
+      C_noteDateFilter: {
+        get() {
+          if (!this.noteDateFilter) return this.noteDateFilter
+          return this.noteDateFilter.map(d => d ? new Date(d) : d)
+        },
+        set(value) {
+          this.setNoteDateFilter(value)
         }
       },
       C_issueTypeFilter: {
@@ -539,6 +560,7 @@
         'setFacilityNameFilter',
         'setFacilityProgressFilter',
         'setFacilityDueDateFilter',
+        'setNoteDateFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setIssueProgressFilter',
@@ -581,6 +603,7 @@
         this.setFacilityGroupFilter(null)
         this.setFacilityProgressFilter(null)
         this.setFacilityDueDateFilter([null])
+        this.setNoteDateFilter([null])
         this.setFacilityNameFilter(null)
         this.setIssueTypeFilter(null)
         this.setIssueSeverityFilter(null)
@@ -688,6 +711,9 @@
     watch: {
       facilityDueDateFilter(value) {
         this.updateMapFilters({key: 'dueDate', filter: value, same: true})
+      },
+      noteDateFilter(value){
+        this.updateMapFilters({key: 'noteDate', filter: value, same: true})
       },
       facilityGroupFilter(value) {
         this.updateMapFilters({key: 'facilityGroupIds', filter: value})
@@ -886,6 +912,29 @@
       }
     }
   }
+
+  .notedate-range /deep/ .mx-datepicker-range {
+    width: 280px;
+    .mx-input {
+      display: inline-block;
+      box-sizing: border-box;
+      box-shadow: none;
+      width: 100%;
+      height: 40px;
+      padding: 6px 30px;
+      padding-left: 8px;
+      line-height: 1.4;
+      background-color: #fff;
+      border-radius: 4px;
+      min-height: 40px;
+      border: 1px solid #e8e8e8;
+      font-size: 14px;
+      &::placeholder {
+        color: #adadad;
+      }
+    }
+  }
+
   .datepicker,
   .milestones {
     width: 100% !important;
