@@ -48,7 +48,9 @@ active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage')
+new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage')
 issue_stage = IssueStage.find_or_create_by(name: 'Test Issue Stage')
+new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage')
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
 
@@ -90,6 +92,18 @@ Task.find_or_create_by(
   watched: true
 )
 
+Task.find_or_create_by(
+  text: 'New Task 1',
+  description: 'New task 1 description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  progress: 0,
+  task_type_id: task_type.id,
+  task_stage_id: new_task_stage.id,
+  facility_project_id: facility_project_1.id,
+  watched: true
+)
+
 Issue.find_or_create_by(
   title: 'Test Issue 1',
   description: 'Test issue 1 description',
@@ -97,6 +111,18 @@ Issue.find_or_create_by(
   due_date: Date.today + 5.days,
   issue_type_id: issue_type.id,
   issue_stage_id: issue_stage.id,
+  issue_severity_id: issue_severity.id,
+  facility_project_id: facility_project_1.id,
+  watched: true
+)
+
+Issue.find_or_create_by(
+  title: 'New Issue 1',
+  description: 'New issue 1 description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  issue_type_id: issue_type.id,
+  issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
   watched: true
@@ -132,7 +158,20 @@ Task.find_or_create_by(
   progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
-  facility_project_id: facility_project_2.id
+  facility_project_id: facility_project_2.id,
+  watched: true
+)
+
+Task.find_or_create_by(
+  text: 'New Task 2',
+  description: 'New task 2 description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  progress: 0,
+  task_type_id: task_type.id,
+  task_stage_id: new_task_stage.id,
+  facility_project_id: facility_project_2.id,
+  watched: true
 )
 
 Issue.find_or_create_by(
@@ -143,7 +182,20 @@ Issue.find_or_create_by(
   issue_type_id: issue_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
-  facility_project_id: facility_project_2.id
+  facility_project_id: facility_project_2.id,
+  watched: true
+)
+
+Issue.find_or_create_by(
+  title: 'New Issue 2',
+  description: 'New issue 2 description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  issue_type_id: issue_type.id,
+  issue_stage_id: new_issue_stage.id,
+  issue_severity_id: issue_severity.id,
+  facility_project_id: facility_project_2.id,
+  watched: true
 )
 
 facility_group_2 = FacilityGroup.find_or_create_by(

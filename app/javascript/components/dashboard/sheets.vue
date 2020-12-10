@@ -1,5 +1,5 @@
 <template>
-  <div id="sheets_view">
+  <div id="sheets_view" data-cy="sheets_view">
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
         <facility-sidebar

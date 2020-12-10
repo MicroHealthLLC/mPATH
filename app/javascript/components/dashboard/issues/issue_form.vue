@@ -220,10 +220,11 @@
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="issueUsers"
+          :load="log(issueUsers)"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"
+          :options="activeProjectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -238,7 +239,7 @@
             </div>
           </template>
         </multiselect>
-      </div>
+      </div>  
       <div class="form-group mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
@@ -451,6 +452,9 @@
           checklists: [],
           notes: []
         }
+      }, 
+      log(user) {
+        console.log(user)
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}

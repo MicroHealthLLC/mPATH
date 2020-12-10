@@ -1,5 +1,5 @@
 <template>
-  <div id="facility-sheets">
+  <div id="facility-sheets" data-cy="facility_sheets">
     <div v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
