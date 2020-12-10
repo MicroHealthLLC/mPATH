@@ -66,7 +66,7 @@
                 </span>
               </p>
               <hr>
-              <div class="my-1">
+              <div class="my-1" data-cy="facility_tasks">
                 <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
                 <div>
                   <div class="row">
@@ -93,7 +93,7 @@
                   </div>
                 </div>
               </div>
-              <div v-if="taskStats.length > 0">
+              <div v-if="taskStats.length > 0" data-cy="task_categories">
                 <div class="text-info font-weight-bold text-center">Task Categories</div>
                 <p>
                   <div class="row my-2" v-for="task in taskStats">
@@ -110,7 +110,7 @@
                 </p>
               </div>
               <hr>
-              <div class="my-1">
+              <div class="my-1" data-cy="facility_issues">
                 <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
                 <div>
                   <div class="row">
@@ -137,7 +137,7 @@
                   </div>
                 </div>
               </div>
-              <div v-if="issueStats.length > 0">
+              <div v-if="issueStats.length > 0" data-cy="issue_types">
                 <div class="text-info font-weight-bold text-center">Issue Types</div>
                 <p>
                   <div class="row my-2" v-for="issue in issueStats">
