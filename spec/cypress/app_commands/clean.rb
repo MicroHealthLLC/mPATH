@@ -15,6 +15,7 @@ else
   ProjectIssueSeverity.destroy_all
   ProjectIssueType.destroy_all
   ProjectUser.destroy_all
+  ProjectStatus.destroy_all
   Project.destroy_all if defined?(Project)
   ProjectType.destroy_all
 
