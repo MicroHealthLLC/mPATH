@@ -180,7 +180,8 @@
           <td>{{issue.issueSeverity}}</td>
           <td>{{formatDate(issue.startDate)}}</td>
           <td>{{formatDate(issue.dueDate)}}</td>
-          <td>{{issue.users.join(', ')}}</td>
+          <td v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td v-else></td>
           <td>{{issue.progress + "%"}}</td>
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>

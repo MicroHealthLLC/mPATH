@@ -219,8 +219,7 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"
-          :load="log(issueUsers.length)"
+          v-model="issueUsers"   
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
@@ -256,7 +255,7 @@
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
-       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card">
+       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
           <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -457,9 +456,6 @@
           notes: []
         }
       }, 
-      log(i) {
-        console.log(i)
-      },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -849,6 +845,9 @@
   ul {
     list-style-type: none;
     padding: 0;
+  }
+  .drag {
+    cursor: all-scroll;
   }
  .formTitle {
     padding-top: 25px;
