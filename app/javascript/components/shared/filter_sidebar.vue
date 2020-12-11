@@ -142,7 +142,7 @@
           <v2-date-picker
             v-model="C_noteDateFilter"
             class="datepicker"
-            placeholder="Note Date Range"
+            placeholder="Updates Date Range"
             @open="datePicker=true"
             @close="datePicker=false"
             range
