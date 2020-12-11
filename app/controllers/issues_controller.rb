@@ -55,6 +55,7 @@ class IssuesController < AuthenticatedController
       :due_date,
       :auto_calculate,
       :watched,
+      :task_type_id,
       :kanban_order,
       issue_files: [],
       user_ids: [],
