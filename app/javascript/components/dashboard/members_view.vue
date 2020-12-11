@@ -1,186 +1,176 @@
 <template>
   <div id="members" data-cy="members_view">
-     <div class="container mt-2">          
-          <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
+     <div class="container mt-2"> 
+        <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
+        <div class="row mt-2 mb-1">
+          <div class="col float-left">
           <button
             @click.prevent="download"
             id="printBtn"
             class="btn btn-sm btn-dark mb-1">
             <font-awesome-icon icon="file-pdf" class="mr-2" />
             Export to PDF
-          </button>            
-          <b-row class="search-row pt-2 pb-0 pl-3">  
-          <b-col sm="6" md="4" lg="4" class="my-1 pl-0">           
-            <b-input-group size="sm" style="height:38px">
-               <div class="input-group-prepend">
+          </button>      
+          </div>    
+       
+        </div>  
+           <div class="mb-0 p-b-0">
+            <el-row>
+             <el-col :span="9">
+             <div class="input-group w-100 task-search-bar">
+                <div class="input-group-prepend">
                 <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-               </div>
-              <b-form-input
-                v-model="filter"
-                style="height:38px"
-                type="search"
-                id="filterInput"
-                placeholder="Search Team Members"
-              ></b-form-input>                  
-            </b-input-group>    
-          </b-col>
-
-        <b-col class="my-1 pl-3 float-right justify-content-end">           
-        <div class="float-right" data-cy="team_total">
-            <button class="btn btn-md btn-info mb-3 team-total">
-            Team Total: {{items.length}}
-            </button>
-          </div>  
-          <b-col sm="5" md="6" lg="6" class="my-1">
-        <b-form-group
-          label="Team Members per page"
-          label-cols-sm="6"
-          label-cols-md="6"
-          label-cols-lg="6"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="perPageSelect"
-          class="mb-0"
-        >
-        <b-form-select
-          v-model="perPage"
-          id="perPageSelect"
-          size="sm"
-          :current-page="currentPage"
-          :options="pageOptions"
-        ></b-form-select>
-        </b-form-group>
-      </b-col> 
-        </b-col>
-        </b-row>        
-        
-        <b-table sticky-header striped hover                  
-          class="btable"
-          data-cy="team_members_list"
+                </div>
+               <input type="search"
+                class="form-control form-control-sm"
+                placeholder="Search All"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                v-model="filters[0].value" >
+            </div>          
+            </el-col>
+              <div class="total" data-cy="team_total">
+              <button class="btn btn-sm btn-info mb-3 team-total">
+                Team Total: {{tableData.length}}
+                </button>
+              </div>   
+            </el-row>
+           </div>      
+        <data-tables 
+          :data="tableData"  
           ref="table" 
-          id="teamMembersList" 
-          show-empty   
-          sort-icon-left    
-          :items="items"
-          :fields="fields"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :current-page="currentPage"
-          :per-page="perPage"
-          sort-icon-right
-          :filter="filter"
-          :filter-included-fields="filterOn"         
-          :sort-direction="sortDirection"
-          @filtered="onFiltered"
-          responsive="md"   
-        >              
-        </b-table>                  
-          <div>
-          <small>Sorting By: <b>{{ sortBy }}</b> | Sort Direction:
-          <b>{{ sortDesc ? 'Descending' : 'Ascending' }}</b></small>
-           <b-pagination
-          v-model="currentPage"         
-          :total-rows="totalRows"
-          :per-page="perPage"           
-          align="fill"
-          size="sm"
-          class="my-0 float-right"         
-        ></b-pagination>
-        </div>        
-   </div>
+          class="teamMembersList"
+          data-cy="team_members_list"          
+          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }" 
+          layout="table, pagination" 
+          :table-props="tableProps"     
+          :filters="filters">
+        <el-table-column 
+          v-for="title in titles"                 
+          :prop="title.prop" 
+          :label="title.label" 
+          :key="title.label" 
+          sortable="custom">
+        </el-table-column>      
+      </data-tables>  
+     </div>
   </div>
+  
 </template>
 
 <script>
-import {mapGetters, mapActions} from 'vuex'
-import {jsPDF} from "jspdf"
-import 'jspdf-autotable'
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
+import {mapGetters, mapActions} from 'vuex'
+import VueDataTables from 'vue-data-tables'
+import {jsPDF} from "jspdf"
+import 'jspdf-autotable'
+Vue.use(VueDataTables)
 library.add(faFilePdf)
+ELEMENT.locale(ELEMENT.lang.en)
+
   export default {
     name: "TeamMembersView",
-    data() {
-      return {
-        sortBy: 'id',
-        componentKey: 0,      
-        sortDesc: false,
-        sortDirection: 'asc',
-        pageOptions: [5, 15, 25, 50,  { value: 100, text: "+100" }],
+     data() {
+      return {        
+        search: '',
+        total: 0,     
         totalRows: 1,        
-        currentPage: 1,
-        filter: null,
-        filterOn: [],
-        perPage: 15,
-        fields: [
-          { key: 'id', label:"#", sortable: true, class: 'text-left' },
-          { key: 'firstName', sortable: true, class: 'text-left' },
-          { key: 'lastName', sortable: true, class: 'text-left' },
-          { key: 'title', sortable: true, label: 'Position', class: 'text-left' },
-          { key: 'organization', sortable: true,class: 'text-left' },
-          { key: 'email', sortable: true, class: 'text-left' },
-          { key: 'phoneNumber', sortable: true, class: 'text-left' }
-        ], 
+        tableProps: {
+          stripe: true,
+        defaultSort: {
+          prop: 'id',
+          order: 'ascending'
+        },
+          prop: 'organization',
+          isSortable: false
+       },
+        filters: [
+        {
+          prop: ['id', 'firstName', 'lastName', 'title', 'organization', 'email', 'phoneNumber'],
+          value: ''
+        }
+        ],
+        layout: 'table, pagination',
+        titles: [{
+          prop: "id",
+          label: "#"
+          }, {
+          prop: "firstName",
+          label: "First Name"
+          }, {
+          prop: "lastName",
+          label: "Last Name"
+          }, {
+          prop: "title",
+          label: "Position"
+          }, {
+          prop: "organization",
+          label: "Organization", 
+          sortable: false
+          }, {
+          prop: "email",
+          label: "Email"
+          }, {
+          prop: "phoneNumber",
+          label: "Phone Number"
+        }]
       }
-    }, 
-    beforeMount() {
-       this.totalRows = this.items.length 
     },
-    mounted() {    
-      this.totalRows = this.items.length
-    }, 
-    computed: {
+     computed: {
       ...mapGetters([
         'projectUsers'
       ]),
-      items() {
+      tableData() {
         return this.projectUsers
       },
-       sortOptions() {
-        // Create an options list from our fields
-        return this.fields
-          .filter(f => f.sortable)
-          .map(f => {
-            return { text: f.label, value: f.key }
-          })
-      }
-    },  
-     methods: {
-        onFiltered(filteredItems) {
-        // Trigger pagination to update the number of buttons/pages due to filtering
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
-      },   
-       download() {
+    }, 
+     methods: {    
+      download() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
-        doc.autoTable({ html: '#teamMembersList' })
-        doc.save("Team_Members_list.pdf")   
-      },  
-    }
-  }
+        doc.autoTable({ html: '.el-table .el-table__body-wrapper .el-table__body' })
+        doc.save("Team_Members_list.pdf")
+      }
+    },
+}
 </script>
 <style scoped lang="scss">
- /deep/.btable {
+  /deep/.el-table {
     padding-top: 0px;
-    margin-top:0;
+    margin-top:-1.5rem;
     width: 100%;
-    // min-height: 450px !important;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-    overflow-y:auto !important;
-  } 
-  /deep/th.table-b-table-default[aria-colindex="1"] {
-    width:4% !important;
+    margin-bottom: 6px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
   }
-  /deep/thead {
-    background-color:#ededed !important;
-    height: 60px !important;
+  /deep/.has-gutter {
+    background-color: #ededed;
   }
-  /deep/td {
-    overflow-wrap: break-word !important;
-    padding: 5px !important;
-  }
+  /deep/.el-pagination, .total {
+    text-align: end;
+    margin-bottom:2rem;
+  }  
   .team-total {
-    cursor: default;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
   }
+  input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+ }
+  // /deep/th.table-b-table-default[aria-colindex="1"] {
+  //   width:4% !important;
+  // }
+  // /deep/thead {
+  //   background-color:#ededed !important;
+  //   height: 60px !important;
+  // }
+  // /deep/td {
+  //   overflow-wrap: break-word !important;
+  //   padding: 5px !important;
+  // }
+  // .team-total {
+  //   cursor: default;
+  // }
 </style>
