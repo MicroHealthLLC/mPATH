@@ -1,6 +1,11 @@
 desc "Populating database"
 task :populate_database => :environment do
 
+  if !Rails.env.development?
+    puts "This command is for Development environment."
+    Kernel.exit(0)
+  end
+  
   print "Do you want to remove data from database? y/n :"
   
   remove_data = STDIN.gets.chomp
