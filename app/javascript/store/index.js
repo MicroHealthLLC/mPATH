@@ -238,11 +238,13 @@ export default new Vuex.Store({
               break
             }
             case "noteDate": {
-              var range = moment.range(f[k][0], f[k][1])
+              var startDate = moment(f[k][0], "YYYY-MM-DD")
+              var endDate = moment(f[k][1], "YYYY-MM-DD")
               var _notes = _.flatten(_.map(facility.tasks, 'notes') ).concat(_.flatten(_.map(facility.issues, 'notes') ))
               var is_valid = false
               for(var n of _notes){
-                is_valid = range.contains(new Date(n.createdAt))
+                var nDate = moment(n.createdAt, "YYYY-MM-DD")
+                is_valid = nDate.isBetween(startDate, endDate, 'days', true)
                 if(is_valid) break
               }
 
