@@ -159,18 +159,5 @@ ELEMENT.locale(ELEMENT.lang.en)
     cursor: pointer;
     display: block;
  }
-  // /deep/th.table-b-table-default[aria-colindex="1"] {
-  //   width:4% !important;
-  // }
-  // /deep/thead {
-  //   background-color:#ededed !important;
-  //   height: 60px !important;
-  // }
-  // /deep/td {
-  //   overflow-wrap: break-word !important;
-  //   padding: 5px !important;
-  // }
-  // .team-total {
-  //   cursor: default;
-  // }
+
 </style>
