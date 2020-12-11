@@ -105,13 +105,13 @@
       </div>
       <div class="mt-3">
         <button v-if="_isallowed('write')" 
-           class="shadow-sm btn btn-sm btn-primary" 
+           class="btn btn-sm btn-primary addIssueBtn" 
            @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
           </button>
          <button
            @click.prevent="download"      
-           class="btn btn-sm btn-dark">
+           class="btn btn-sm btn-dark export2pdf">
            <font-awesome-icon icon="file-pdf" />
            Export to PDF
          </button>
@@ -180,7 +180,8 @@
           <td>{{issue.issueSeverity}}</td>
           <td>{{formatDate(issue.startDate)}}</td>
           <td>{{formatDate(issue.dueDate)}}</td>
-          <td>{{issue.users.join(', ')}}</td>
+          <td v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td v-else></td>
           <td>{{issue.progress + "%"}}</td>
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>
@@ -409,6 +410,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
@@ -425,5 +427,11 @@
   .myIssues {
     float:right;
     margin-top: 5px;
+  }
+  .addIssueBtn, .export2pdf, #issueHover {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  #issueHover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
   }
 </style>

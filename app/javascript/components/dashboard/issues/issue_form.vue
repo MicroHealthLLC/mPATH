@@ -219,12 +219,11 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"
-          :load="log(issueUsers)"
+          v-model="issueUsers"   
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"         
+          :options="projectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -256,7 +255,7 @@
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
-       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card">
+       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
           <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -268,7 +267,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="activeProjectUsers"
+                  :options="projectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -391,6 +390,7 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
+  import Draggable from "vuedraggable"
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
 
@@ -398,7 +398,7 @@
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
     components: {
-      AttachmentInput
+      AttachmentInput, Draggable
     },
     data() {
       return {
@@ -456,9 +456,6 @@
           notes: []
         }
       }, 
-      log(user) {
-        console.log(user)
-      },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -473,7 +470,7 @@
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
@@ -693,7 +690,7 @@
     computed: {
       ...mapGetters([
         'currentProject',
-        'activeProjectUsers',
+        'projectUsers',
         'myActionsFilter',
         'issueTypes',
         'taskTypes',
@@ -848,6 +845,9 @@
   ul {
     list-style-type: none;
     padding: 0;
+  }
+  .drag {
+    cursor: all-scroll;
   }
  .formTitle {
     padding-top: 25px;
