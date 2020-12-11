@@ -46,6 +46,9 @@ task :populate_database => :environment do
   print "\nHow many facilities do you want to create in each facility group? "
   facility_number = STDIN.gets.chomp.to_i
 
+  print "\nHow many facilities do you want to create in each project? "
+  facility_project_number = STDIN.gets.chomp.to_i
+
   print "\nHow many projects do you want to create in each project type? "
   project_number = STDIN.gets.chomp.to_i
 
@@ -112,7 +115,9 @@ task :populate_database => :environment do
 
 
   puts "***** Generating Facility *****"
-  FacilityGroup.all.each do |fg|
+  facility_groups = FacilityGroup.last(facility_groups.size)
+  all_facilities = []
+  facility_groups.each do |fg|
     facilities = []
     facility_count = Facility.count + 1
 
@@ -121,7 +126,7 @@ task :populate_database => :environment do
       facility_count = facility_count + 1
     end
     Facility.import(facilities)
-
+    all_facilities = all_facilities + facilities
   end
   
   puts "***** Generating Task Stage *****"
@@ -144,15 +149,17 @@ task :populate_database => :environment do
 
   puts "***** Generating Issue Severity *****"
   issue_severity_count = IssueSeverity.count + 1
-  is = []
+  issue_severities = []
   10.times do |i|
-    is << IssueSeverity.new(name: "Issue Severity #{issue_severity_count}")
+    issue_severities << IssueSeverity.new(name: "Issue Severity #{issue_severity_count}")
     issue_severity_count = issue_severity_count + 1
   end
-  IssueSeverity.import(is)
+  IssueSeverity.import(issue_severities)
 
   puts "***** Generating Projects *****"
-  ProjectType.all.each do |pt|
+  all_projects = []
+  project_types = ProjectType.last(project_types.size)
+  project_types.each do |pt|
     project_count = Project.count + 1
     projects = []
 
@@ -166,29 +173,36 @@ task :populate_database => :environment do
       project_count = project_count + i
     end
     Project.import(projects)
+    all_projects = all_projects + projects
   end
   
 
   puts "***** Generating Project Users *****"
   project_users = []
-  Project.all.each do |p|
+  projects = Project.last(all_projects.size)
+  projects.each do |p|
     project_users << ProjectUser.new(project_id: p.id, user_id: user.id)
   end
   ProjectUser.import(project_users)
 
   puts "***** Generating Facility Projects *****"
-  facilities = Facility.all
-  projects = Project.all
+  facilities = Facility.last(all_facilities.size)
+  projects = Project.last(all_projects.size)
   fps = []
-  facilities.each do |f|
-    fps << FacilityProject.new(facility_id: f.id, project_id: projects.sample.id)
+  projects.each do |f|
+    fp = []
+    facility_project_number.times do |i|
+      fp << FacilityProject.new(facility_id: f.id, project_id: projects.sample.id)
+    end
+    FacilityProject.import(fps)
+    fps = fps + fp
   end
-  FacilityProject.import(fps)
+  
 
   puts "***** Generating Tasks *****"
-  task_types = TaskType.all
-  facility_projects = FacilityProject.all
-  task_stages = TaskStage.all
+  task_types = TaskType.last(task_types.size) #TaskType.all
+  facility_projects = FacilityProject.last(fps.size) #FacilityProject.all
+  task_stages = TaskStage.last(task_stages.size) #TaskStage.all
 
   facility_projects.each do |fp|
     task_count = Task.count
@@ -208,10 +222,10 @@ task :populate_database => :environment do
 
 
   puts "***** Generating Issues *****"
-  issue_types = IssueType.all
-  facility_projects = FacilityProject.all
-  issue_stages = IssueStage.all
-  isssue_severities = IssueSeverity.all
+  issue_types = IssueType.last(issue_types.size) #IssueType.all
+  facility_projects = FacilityProject.last(fps.size) #FacilityProject.all
+  issue_stages = IssueStage.last(issue_stages.size) #IssueStage.all
+  issue_severities = IssueSeverity.last(issue_severities.size) #IssueSeverity.all
 
   facility_projects.each do |fp|
     issue_count = Issue.count
@@ -220,7 +234,7 @@ task :populate_database => :environment do
     issue_number.times do |i|
       issues << Issue.new({
         title: "Issue #{issue_count}", description: "issue description #{issue_count}", 
-        issue_type_id: issue_types.sample.id, issue_severity_id: isssue_severities.sample.id, 
+        issue_type_id: issue_types.sample.id, issue_severity_id: issue_severities.sample.id, 
         facility_project_id: fp.id, start_date: Date.today, due_date: Date.today, 
         progress: i, auto_calculate: true, issue_stage_id: issue_stages.sample.id 
       })
@@ -229,5 +243,21 @@ task :populate_database => :environment do
     end
     Issue.import(issues)
   end
+
+  puts "***** Assigning issue types and issue severies to project *****"
+  projects = Project.includes(issues: [:issue_type, :issue_severity], tasks: [:task_type]).all
+  projects.each do |project|
+    issues = project.issues
+    issue_types = issues.map(&:issue_type)
+    project.issue_types = issue_types
+
+    issue_severities = issues.map(&:issue_severity)
+    project.issue_severities = issue_severities
+
+    tasks= project.tasks
+    task_types = tasks.map(&:task_type)
+    project.task_types = task_types
+  end
+
 
 end
