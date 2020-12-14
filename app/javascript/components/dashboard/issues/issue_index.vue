@@ -288,7 +288,7 @@
     computed: {
       ...mapGetters([
         'noteDateFilter',
-        'issueDueDateFilter',
+        'taskIssueDueDateFilter',
         'currentProject',
         'issueTypes',
         'taskTypes',
@@ -313,7 +313,7 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
-        let issueDueDates = this.issueDueDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -343,9 +343,9 @@
             valid = is_valid
           }
 
-          if(issueDueDates && issueDueDates[0] && issueDueDates[1]){
-            var startDate = moment(issueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(issueDueDates[1], "YYYY-MM-DD")
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
             
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")

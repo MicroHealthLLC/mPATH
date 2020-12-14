@@ -356,8 +356,7 @@
     computed: {
       ...mapGetters([
         'noteDateFilter',
-        'taskDueDateFilter',
-        'issueDueDateFilter',
+        'taskIssueDueDateFilter',
         'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
@@ -381,7 +380,7 @@
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
-        let taskDueDates = this.taskDueDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -409,9 +408,9 @@
             valid = is_valid
           }
 
-          if(taskDueDates && taskDueDates[0] && taskDueDates[1]){
-            var startDate = moment(taskDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskDueDates[1], "YYYY-MM-DD")
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
             
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
@@ -470,7 +469,7 @@
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
-        let issueDueDates = this.taskDueDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -496,10 +495,10 @@
             }            
             valid = is_valid
           }
-
-          if(issueDueDates && issueDueDates[0] && issueDueDates[1]){
-            var startDate = moment(issueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(issueDueDates[1], "YYYY-MM-DD")
+          
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
             
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
