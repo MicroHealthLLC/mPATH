@@ -149,6 +149,17 @@
           />
         </div>
 
+        <div class="taskduedate-range my-3 mx-1">
+          <v2-date-picker
+            v-model="C_taskDueDateFilter"
+            class="datepicker"
+            placeholder="Task Due Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
+            range
+          />
+        </div>
+
         <div class="progress_ranges my-3 mx-1">
           <label class="mb-0">Task % Progress Range</label>
           <div class="form-row">
@@ -374,6 +385,7 @@
         'facilityProgressFilter',
         'facilityDueDateFilter',
         'noteDateFilter',
+        'taskDueDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueProgressFilter',
@@ -455,6 +467,15 @@
         },
         set(value) {
           this.setNoteDateFilter(value)
+        }
+      },
+      C_taskDueDateFilter: {
+        get() {
+          if (!this.taskDueDateFilter) return this.taskDueDateFilter
+          return this.taskDueDateFilter.map(d => d ? new Date(d) : d)
+        },
+        set(value) {
+          this.setTaskDueDateFilter(value)
         }
       },
       C_issueTypeFilter: {
@@ -561,6 +582,7 @@
         'setFacilityProgressFilter',
         'setFacilityDueDateFilter',
         'setNoteDateFilter',
+        'setTaskDueDateFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setIssueProgressFilter',
@@ -604,6 +626,7 @@
         this.setFacilityProgressFilter(null)
         this.setFacilityDueDateFilter([null])
         this.setNoteDateFilter([null])
+        this.setTaskDueDateFilter([null])
         this.setFacilityNameFilter(null)
         this.setIssueTypeFilter(null)
         this.setIssueSeverityFilter(null)
@@ -714,6 +737,9 @@
       },
       noteDateFilter(value){
         this.updateMapFilters({key: 'noteDate', filter: value, same: true})
+      },
+      taskDueDateFilter(value){
+        this.updateMapFilters({key: 'taskDueDate', filter: value, same: true})
       },
       facilityGroupFilter(value) {
         this.updateMapFilters({key: 'facilityGroupIds', filter: value})

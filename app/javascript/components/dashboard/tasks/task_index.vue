@@ -207,6 +207,8 @@
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
+        let taskDueDates = this.taskDueDateFilter
+        
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -230,6 +232,16 @@
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }            
+            valid = is_valid
+          }
+
+          if(taskDueDates && taskDueDates[0] && taskDueDates[1]){
+            var startDate = moment(taskDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
           }
 

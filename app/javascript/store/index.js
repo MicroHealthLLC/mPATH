@@ -40,6 +40,7 @@ export default new Vuex.Store({
     facilityProgressFilter: null,
     facilityDueDateFilter: null,
     noteDateFilter: null,
+    taskDueDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
     taskStageFilter: null,
@@ -157,6 +158,7 @@ export default new Vuex.Store({
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
+    setTaskDueDateFilter: (state, filter) => state.taskDueDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
@@ -213,6 +215,7 @@ export default new Vuex.Store({
     facilityProgressFilter: state => state.facilityProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
     noteDateFilter: state => state.noteDateFilter,
+    taskDueDateFilter: state => state.taskDueDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
@@ -250,6 +253,27 @@ export default new Vuex.Store({
 
               valid = valid && is_valid
               break
+            }
+            case "taskDueDate": {
+              var startDate = moment(f[k][0], "YYYY-MM-DD")
+              var endDate = moment(f[k][1], "YYYY-MM-DD")
+              var _dueDates = _.flatten(_.map(facility.tasks, 'dueDate') ).concat(_.flatten(_.map(facility.issues, 'dueDate') ))
+              var is_valid = false
+
+              if(_dueDates.length < 1){
+                valid = valid && is_valid
+                break
+
+              }else{
+                for(var dueDate of _dueDates){
+                  var nDate = moment(dueDate, "YYYY-MM-DD")
+                  is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+                  if(is_valid) break
+                }
+                valid = valid && is_valid
+                break
+              }
+
             }
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
