@@ -189,12 +189,12 @@ task :populate_database => :environment do
   facilities = Facility.last(all_facilities.size)
   projects = Project.last(all_projects.size)
   fps = []
-  projects.each do |f|
+  projects.each do |project|
     fp = []
     facility_project_number.times do |i|
-      fp << FacilityProject.new(facility_id: f.id, project_id: projects.sample.id)
+      fp << FacilityProject.new(facility_id: facilities.sample.id, project_id: project.id)
     end
-    FacilityProject.import(fps)
+    FacilityProject.import(fp)
     fps = fps + fp
   end
   
@@ -259,5 +259,15 @@ task :populate_database => :environment do
     project.task_types = task_types
   end
 
+
+  puts "***** Database populated *****"
+  classes = [
+    User, Organization, Status, TaskType, IssueSeverity, TaskStage, IssueStage, 
+    IssueType, ProjectType, Project, Issue, Task, FacilityProject, Facility, FacilityGroup
+  ]
+
+  classes.each do |c|
+    puts "* #{c} : #{c.count}"
+  end
 
 end
