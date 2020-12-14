@@ -192,6 +192,7 @@
       ...mapGetters([
         'taskTypeFilter',
         'noteDateFilter',
+        'taskIssueDueDateFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',
@@ -207,6 +208,8 @@
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -230,6 +233,16 @@
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
           }
 

@@ -356,6 +356,7 @@
     computed: {
       ...mapGetters([
         'noteDateFilter',
+        'taskIssueDueDateFilter',
         'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
@@ -379,6 +380,8 @@
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -402,6 +405,16 @@
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
           }
 
@@ -456,6 +469,8 @@
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -478,6 +493,16 @@
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }            
+            valid = is_valid
+          }
+          
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
           }
 
