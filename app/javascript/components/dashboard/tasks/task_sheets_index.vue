@@ -249,6 +249,7 @@
     computed: {
       ...mapGetters([
         'noteDateFilter',
+        'taskDueDateFilter',
         'taskTypeFilter',
         'taskStageFilter',
         'myActionsFilter',

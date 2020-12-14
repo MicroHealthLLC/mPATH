@@ -160,6 +160,17 @@
           />
         </div>
 
+        <div class="issueduedate-range my-3 mx-1">
+          <v2-date-picker
+            v-model="C_issueDueDateFilter"
+            class="datepicker"
+            placeholder="Issue Due Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
+            range
+          />
+        </div>
+
         <div class="progress_ranges my-3 mx-1">
           <label class="mb-0">Task % Progress Range</label>
           <div class="form-row">
@@ -386,6 +397,7 @@
         'facilityDueDateFilter',
         'noteDateFilter',
         'taskDueDateFilter',
+        'issueDueDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueProgressFilter',
@@ -476,6 +488,15 @@
         },
         set(value) {
           this.setTaskDueDateFilter(value)
+        }
+      },
+      C_issueDueDateFilter: {
+        get() {
+          if (!this.issueDueDateFilter) return this.issueDueDateFilter
+          return this.issueDueDateFilter.map(d => d ? new Date(d) : d)
+        },
+        set(value) {
+          this.setIssueDueDateFilter(value)
         }
       },
       C_issueTypeFilter: {
@@ -583,6 +604,7 @@
         'setFacilityDueDateFilter',
         'setNoteDateFilter',
         'setTaskDueDateFilter',
+        'setIssueDueDateFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setIssueProgressFilter',
@@ -627,6 +649,7 @@
         this.setFacilityDueDateFilter([null])
         this.setNoteDateFilter([null])
         this.setTaskDueDateFilter([null])
+        this.setIssueDueDateFilter([null])
         this.setFacilityNameFilter(null)
         this.setIssueTypeFilter(null)
         this.setIssueSeverityFilter(null)
@@ -740,6 +763,9 @@
       },
       taskDueDateFilter(value){
         this.updateMapFilters({key: 'taskDueDate', filter: value, same: true})
+      },
+      issueDueDateFilter(value){
+        this.updateMapFilters({key: 'issueDueDate', filter: value, same: true})
       },
       facilityGroupFilter(value) {
         this.updateMapFilters({key: 'facilityGroupIds', filter: value})
@@ -940,6 +966,50 @@
   }
 
   .notedate-range /deep/ .mx-datepicker-range {
+    width: 280px;
+    .mx-input {
+      display: inline-block;
+      box-sizing: border-box;
+      box-shadow: none;
+      width: 100%;
+      height: 40px;
+      padding: 6px 30px;
+      padding-left: 8px;
+      line-height: 1.4;
+      background-color: #fff;
+      border-radius: 4px;
+      min-height: 40px;
+      border: 1px solid #e8e8e8;
+      font-size: 14px;
+      &::placeholder {
+        color: #adadad;
+      }
+    }
+  }
+
+  .taskduedate-range /deep/ .mx-datepicker-range {
+    width: 280px;
+    .mx-input {
+      display: inline-block;
+      box-sizing: border-box;
+      box-shadow: none;
+      width: 100%;
+      height: 40px;
+      padding: 6px 30px;
+      padding-left: 8px;
+      line-height: 1.4;
+      background-color: #fff;
+      border-radius: 4px;
+      min-height: 40px;
+      border: 1px solid #e8e8e8;
+      font-size: 14px;
+      &::placeholder {
+        color: #adadad;
+      }
+    }
+  }
+
+  .issueduedate-range /deep/ .mx-datepicker-range {
     width: 280px;
     .mx-input {
       display: inline-block;

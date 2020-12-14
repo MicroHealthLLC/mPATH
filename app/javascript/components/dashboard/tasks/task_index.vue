@@ -192,6 +192,7 @@
       ...mapGetters([
         'taskTypeFilter',
         'noteDateFilter',
+        'taskDueDateFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',
