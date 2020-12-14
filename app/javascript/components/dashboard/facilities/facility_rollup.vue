@@ -10,14 +10,14 @@
         </span>
       </p>
       <div v-if="C_facilityCount > 0" class="d-flex justify-content-around">
-        <div>
+        <!-- <div>
           <span> active</span>
           <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
         </div>
         <div>
           <span> inactive</span>
           <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
-        </div>
+         </div>-->
       </div>
     </div>
     <hr>
