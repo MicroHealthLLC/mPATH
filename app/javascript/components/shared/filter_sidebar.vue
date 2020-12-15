@@ -95,6 +95,32 @@
           </div>
         </div>
 
+
+        <div class="d-flex my-3 mx-1">
+          <div class="taskissueoverdue-select d-flex">
+            <multiselect
+              v-model="C_taskIssueOverdueFilter"
+              track-by="name"
+              label="name"
+              class="ml-2"
+              placeholder="Task and Issue Overdue"
+              :options="C_taskIssueOverdueOptions"
+              :searchable="false"
+              :multiple="false"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+
+        </div>
+
+
         <div class="progress_ranges my-3 mx-1">
           <label class="mb-0">Facility % Progress Range</label>
           <div class="form-row">
@@ -394,6 +420,8 @@
         'currentProject',
         'activeProjectUsers',
         'statuses',
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'activeFacilityGroups',
         'taskTypes',
         'issueTypes',
@@ -419,12 +447,23 @@
         let id = Number(this.$route.params.projectId)
         return this.activeFacilityGroups(id)
       },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
       C_projectStatusFilter: {
         get() {
           return this.projectStatusFilter
         },
         set(value) {
           this.setProjectStatusFilter(value)
+        }
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter([value])
         }
       },
       C_taskTypeFilter: {
@@ -575,6 +614,7 @@
     methods: {
       ...mapMutations([
         'updateMapFilters',
+        'setTaskIssueOverdueFilter',
         'setProjectStatusFilter',
         'setTaskTypeFilter',
         'setFacilityGroupFilter',
@@ -621,6 +661,7 @@
       },
       onClearFilter() {
         this.setProjectStatusFilter(null)
+        this.setTaskIssueOverdueFilter(null)
         this.setTaskTypeFilter(null)
         this.setFacilityGroupFilter(null)
         this.setFacilityProgressFilter(null)
@@ -740,6 +781,9 @@
       },
       taskIssueDueDateFilter(value){
         this.updateMapFilters({key: 'taskIssueDueDate', filter: value, same: true})
+      },
+      taskIssueOverdueFilter(value){
+        this.updateMapFilters({key: 'taskIssueOverdue', filter: value})
       },
       facilityGroupFilter(value) {
         this.updateMapFilters({key: 'facilityGroupIds', filter: value})
@@ -904,6 +948,32 @@
       content: unset;
     }
   }
+
+  .taskissueoverdue-select  /deep/ .multiselect {
+    font-size: 14px;
+    width: 280px;
+    .multiselect__tags {
+      min-height: 20px;
+    }
+    .multiselect__placeholder {
+      margin-bottom: 2px;
+      padding-top: 2px;
+    }
+    .select__tag-name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: fit-content;
+    }
+    .multiselect__option {
+      white-space: normal;
+    }
+    .multiselect__option--selected:after {
+      content: unset;
+    }
+  }
+
+
   a.disabled {
     pointer-events: none;
     cursor: default;

@@ -50,6 +50,7 @@ class Task < ApplicationRecord
 
     self.as_json.merge(
       attach_files: attach_files,
+      is_overdue: progress < 100 && (due_date < Date.today),
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: users.map(&:id).compact.uniq,
