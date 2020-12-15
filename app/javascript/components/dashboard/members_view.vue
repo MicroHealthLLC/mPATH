@@ -1,6 +1,6 @@
 <template>
   <div id="members" data-cy="members_view">
-     <div class="container mt-2"> 
+     <div class="container mt-2">
         <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
         <div class="row mt-2 mb-1">
           <div class="col float-left">
@@ -10,10 +10,10 @@
             class="btn btn-sm btn-dark mb-1">
             <font-awesome-icon icon="file-pdf" class="mr-2" />
             Export to PDF
-          </button>      
-          </div>    
-       
-        </div>  
+          </button>
+          </div>
+
+        </div>
            <div class="mb-0 p-b-0">
             <el-row>
              <el-col :span="9">
@@ -26,37 +26,38 @@
                 placeholder="Search All"
                 aria-label="Search"
                 aria-describedby="search-addon"
-                v-model="filters[0].value" >
-            </div>          
+                v-model="filters[0].value"
+                data-cy="search_team_member">
+            </div>
             </el-col>
               <div class="total" data-cy="team_total">
               <button class="btn btn-sm btn-info mb-3 team-total">
                 Team Total: {{tableData.length}}
                 </button>
-              </div>   
+              </div>
             </el-row>
-           </div>      
-        <data-tables 
-          :data="tableData"  
-          ref="table" 
+           </div>
+        <data-tables
+          :data="tableData"
+          ref="table"
           id="teamMemberTableId"
           class="teamMembersList"
-          data-cy="team_members_list"          
-          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }" 
-          layout="table, pagination" 
-          :table-props="tableProps"     
+          data-cy="team_members_list"
+          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }"
+          layout="table, pagination"
+          :table-props="tableProps"
           :filters="filters">
-        <el-table-column 
-          v-for="title in titles"                 
-          :prop="title.prop" 
-          :label="title.label" 
-          :key="title.label" 
+        <el-table-column
+          v-for="title in titles"
+          :prop="title.prop"
+          :label="title.label"
+          :key="title.label"
           sortable="custom">
-        </el-table-column>      
-      </data-tables>  
+        </el-table-column>
+      </data-tables>
      </div>
   </div>
-  
+
 </template>
 
 <script>
@@ -73,10 +74,10 @@ ELEMENT.locale(ELEMENT.lang.en)
   export default {
     name: "TeamMembersView",
      data() {
-      return {        
+      return {
         search: '',
-        total: 0,     
-        totalRows: 1,        
+        total: 0,
+        totalRows: 1,
         tableProps: {
           stripe: true,
         defaultSort: {
@@ -107,7 +108,7 @@ ELEMENT.locale(ELEMENT.lang.en)
           label: "Position"
           }, {
           prop: "organization",
-          label: "Organization", 
+          label: "Organization",
           sortable: false
           }, {
           prop: "email",
@@ -125,8 +126,8 @@ ELEMENT.locale(ELEMENT.lang.en)
       tableData() {
         return this.projectUsers
       },
-    }, 
-     methods: {    
+    },
+     methods: {
       download() {
         const doc = new jsPDF("l")
 
@@ -136,7 +137,7 @@ ELEMENT.locale(ELEMENT.lang.en)
         var tr = $("<tr>")
         for(var h of headers){
           tr.append($("<th>",{text: h}))
-        } 
+        }
         thead.append(tr)
         $(".el-table__body").append(thead)
         doc.autoTable({html: '.el-table .el-table__body-wrapper .el-table__body' })
@@ -152,7 +153,7 @@ ELEMENT.locale(ELEMENT.lang.en)
     margin-top:-1.5rem;
     width: 100%;
     margin-bottom: 6px;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   /deep/.has-gutter {
     background-color: #ededed;
@@ -160,9 +161,9 @@ ELEMENT.locale(ELEMENT.lang.en)
   /deep/.el-pagination, .total {
     text-align: end;
     margin-bottom:2rem;
-  }  
+  }
   .team-total {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   input[type=search] {
     color: #383838;

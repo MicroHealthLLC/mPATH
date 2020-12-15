@@ -26,6 +26,7 @@
                       aria-label="Search"
                       aria-describedby="search-addon"
                       v-model="sidebarTasksQuery"
+                      data-cy="search_tasks"
                     />
                   </div>
                 </div>
@@ -59,6 +60,7 @@
                       :close-on-select="false"
                       :show-labels="false"
                       placeholder="Filter by Task Status"
+                      data-cy="task_status_list"
                       >
                       <template slot="singleLabel">
                         <div class="d-flex">
@@ -77,7 +79,7 @@
                       <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"><span><i class="fas fa-eye mr-1"></i></span>On Watch
                     </label>
                   </div>
-                  <div class="form-check my-4 pl-0">
+                  <div class="form-check my-4 pl-0" data-cy="search_task_total">
                     <label class="form-check-label text-primary">
                      <h5> Total: {{filteredTasks.length}}</h5>
                     </label>
@@ -95,7 +97,8 @@
                       placeholder="Search Issues"
                       aria-label="Search"
                       aria-describedby="search-addon"
-                      v-model="sidebarIssuesQuery">
+                      v-model="sidebarIssuesQuery"
+                      data-cy="search_issues">
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -125,6 +128,7 @@
                       :close-on-select="false"
                       :show-labels="false"
                       placeholder="Filter by Issue Status"
+                      data-cy="issue_status_list"
                       >
                       <template slot="singleLabel">
                         <div class="d-flex">
@@ -150,7 +154,7 @@
                         </div>
                       </template>
                     </multiselect>
-                    
+
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -170,8 +174,7 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 mb-3 font-sm">              
-
+                <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
@@ -182,7 +185,7 @@
                       <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues"><span><i class="fas fa-eye mr-1"></i></span>On Watch
                     </label>
                   </div>
-                  <div class="form-check my-4 pl-0">
+                  <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>
                     </label>
@@ -196,7 +199,7 @@
 
       <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
         <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">
-          <span class="clickable" @click.prevent="expandFilter=!expandFilter">
+          <span class="clickable" @click.prevent="expandFilter=!expandFilter" data-cy="kanban_search">
             <span v-show="!expandFilter" class="expandBtn">
               <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </span>
@@ -411,7 +414,7 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
-          
+
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -421,17 +424,17 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 
@@ -511,17 +514,17 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
-          
+
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 

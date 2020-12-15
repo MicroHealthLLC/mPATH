@@ -11,7 +11,8 @@
             placeholder="Search Tasks"
             aria-label="Search"
             aria-describedby="search-addon"
-            v-model="tasksQuery">
+            v-model="tasksQuery"
+            data-cy="search_tasks">
           </div>
         <div class="simple-select mx-1 d-flex" style="width:35%">
 
@@ -41,6 +42,7 @@
           :close-on-select="false"
           :show-labels="false"
           placeholder="Filter by Task Status"
+          data-cy="task_status_list"
           >
           <template slot="singleLabel">
             <div class="d-flex">
@@ -182,7 +184,7 @@
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
   // Vue.prototype.moment = moment
-  
+
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -290,17 +292,17 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 

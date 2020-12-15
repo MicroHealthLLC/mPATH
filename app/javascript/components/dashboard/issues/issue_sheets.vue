@@ -1,7 +1,7 @@
 <template>
   <div>
     <table class="table table-sm table-bordered table-striped">
-      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue">
+      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue" data-cy="issue_row">
         <td class="oneFive">{{issue.title}}</td>
         <td class="ten">{{issue.issueType}}</td>
         <td class="nine">{{issue.issueSeverity}}</td>
@@ -198,7 +198,7 @@
     table-layout: fixed;
     width: 100%;
     margin-bottom: 0 !important;
-  }  
+  }
   .eight {
     width: 8%;
   }

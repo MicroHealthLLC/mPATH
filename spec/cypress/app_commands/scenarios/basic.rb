@@ -32,6 +32,18 @@ client.assign_attributes(
   role: "superadmin",
   last_name: 'Client'
 )
+client.privilege = Privilege.new(
+  overview: "R",
+  tasks: "R",
+  notes: "R",
+  issues: "R",
+  admin: "R",
+  map_view: "R",
+  gantt_view: "R",
+  watch_view: "R",
+  documents: "R",
+  members: "R"
+)
 client.save(validate: false)
 
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
@@ -46,6 +58,8 @@ project = Project.find_or_create_by(
 
 active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
+ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
+ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage')
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage')

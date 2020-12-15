@@ -15,7 +15,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
+            <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery" data-cy="search_notes">
           </div>
         </div>
       </div>
