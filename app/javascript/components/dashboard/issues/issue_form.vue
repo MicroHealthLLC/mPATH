@@ -223,7 +223,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="projectUsers"         
+          :options="activeProjectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -267,7 +267,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="projectUsers"
+                  :options="activeProjectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -470,7 +470,7 @@
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
@@ -691,6 +691,7 @@
       ...mapGetters([
         'currentProject',
         'projectUsers',
+        'activeProjectUsers',
         'myActionsFilter',
         'issueTypes',
         'taskTypes',
