@@ -556,7 +556,7 @@ export default new Vuex.Store({
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    _users: task.users,
+                    _users: task.users.map(_u => _u.fullName).join(","), 
                     type: 'task',
                     collapsed: true
                   }
