@@ -206,8 +206,7 @@
                 id: 6,
                 width: 100,
                 label: "Assigned To",
-                value: "_users",
-                value: task => task._users ? task._users.join(', ') : '',
+                value: "_users",               
                 style: {
                   'task-list-item-column': {
                     // height: '200px'
