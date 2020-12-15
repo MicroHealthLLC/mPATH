@@ -602,10 +602,23 @@ export default new Vuex.Store({
     filteredAllTasks: (state, getters) => {
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+        
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.taskStageId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          valid = is_valid
+        }
+
         return valid
       })
 
@@ -614,11 +627,24 @@ export default new Vuex.Store({
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          valid = is_valid
+        }
+
         return valid
       })
     },

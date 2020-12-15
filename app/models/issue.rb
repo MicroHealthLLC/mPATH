@@ -52,6 +52,7 @@ class Issue < ApplicationRecord
     sub_issues = self.sub_issues
 
     self.as_json.merge(
+      class_name: self.class.name,
       attach_files: attach_files,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
