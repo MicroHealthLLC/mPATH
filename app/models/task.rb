@@ -49,6 +49,7 @@ class Task < ApplicationRecord
     sub_issues = self.sub_issues
 
     self.as_json.merge(
+      class_name: self.class.name,
       attach_files: attach_files,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),

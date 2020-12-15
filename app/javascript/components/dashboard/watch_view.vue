@@ -437,7 +437,7 @@
         let data = []
         for (let task of [...this.on_watched.issues, ...this.on_watched.tasks]) {
           let _hash = {item: {...task}}
-          let is_task = task.hasOwnProperty('taskTypeId')
+          let is_task = task.className == 'Task' //task.hasOwnProperty('taskTypeId')          
           _hash.id = is_task ? 'task_'+task.id : 'issue_'+task.id
           _hash.taskType = is_task ? task.taskType : task.issueType
           _hash.content = is_task ? task.text : task.title
@@ -447,6 +447,7 @@
             _hash.className = 'vis-overdue-' + (is_task ? 'task' : 'issue')
             _hash.overdue = true
           }
+
           data.push(_hash)
         }
         return data
@@ -477,7 +478,8 @@
     watch: {
       on_watched: {
         handler(value) {
-          this.timeline.destroy()
+          if(this.timeline)
+            this.timeline.destroy()
           this.createTimeline()
         }, deep: true
       }
