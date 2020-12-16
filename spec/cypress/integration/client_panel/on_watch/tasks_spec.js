@@ -29,4 +29,21 @@ describe('On watch task details', function() {
     })
     cy.logout()
   })
+
+  it('When task remove from on watch it must not appear in page', function() {
+    cy.get('[data-cy=watch_view]').within(() => {
+      cy.get('[data-cy=watched_task_status]').scrollIntoView()
+      cy.get('[data-cy=watched_task_list]').within(() => {
+        cy.get('h5').contains('Watched Tasks').should('be.visible')
+        cy.get('[data-cy=tasks]').its('length').should('be.eq', 5)
+        cy.get('[data-cy=tasks]').first().click()
+      })
+      cy.get('[data-cy=task_on_watch]').click({force: true})
+      cy.get('[data-cy=task_save_btn]').click({force: true})
+      cy.wait(1000)
+      cy.get('[data-cy=watched_task_list]').within(() => {
+        cy.get('[data-cy=tasks]').its('length').should('be.eq', 4)
+      })
+    })
+  })
 })

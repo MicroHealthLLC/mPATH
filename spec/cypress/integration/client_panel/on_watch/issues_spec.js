@@ -29,4 +29,21 @@ describe('On watch issue details', function() {
     })
     cy.logout()
   })
+
+  it('When issue remove from on watch it must not appear in page', function() {
+    cy.get('[data-cy=watch_view]').within(() => {
+      cy.get('[data-cy=watched_issue_status]').scrollIntoView()
+      cy.get('[data-cy=watched_issue_list]').within(() => {
+        cy.get('h5').contains('Watched Issues').should('be.visible')
+        cy.get('[data-cy=issues]').its('length').should('be.eq', 5)
+        cy.get('[data-cy=issues]').first().click()
+      })
+      cy.get('[data-cy=issue_on_watch]').click({force: true})
+      cy.get('[data-cy=issue_save_btn]').click({force: true})
+      cy.wait(1000)
+      cy.get('[data-cy=watched_issue_list]').within(() => {
+        cy.get('[data-cy=issues]').its('length').should('be.eq', 4)
+      })
+    })
+  })
 })
