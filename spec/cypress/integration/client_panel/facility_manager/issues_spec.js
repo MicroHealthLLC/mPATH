@@ -8,7 +8,6 @@ describe('Issue List', function() {
 
   it('Open Issue list page of a Facility', function() {
     cy.get('[data-cy=issue_list]').contains('My Issue').should('be.visible')
-    // cy.get('[data-cy=issue_list]').contains('Total: 1')
     cy.logout()
   })
 
@@ -28,15 +27,18 @@ describe('Issue List', function() {
   })
 
   // it('Create new Issue in a Facility', function() {
-  //   cy.get('[data-cy=issue_total]').contains('Total: 1')
   //   cy.createNewIssue()
-  //   cy.get('[data-cy=issue_total]').contains('Total: 2')
   //   cy.get('[data-cy=issue_list]').contains('New test issue')
   //   cy.logout()
   // })
 
-  it('Delete the Issue form facility', function() {
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
+  it('Delete the Issue from facility manager', function() {
+    cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
+    cy.get('[data-cy=issues]').first().click()
+    cy.get('[data-cy=issue_delete_btn]').click()
+    cy.contains('No issues found..').should('not.exist')
+    cy.wait(1000)
+    cy.get('[data-cy=issues]').its('length').should('be.eq', 1)
     cy.get('[data-cy=issues]').first().click()
     cy.get('[data-cy=issue_delete_btn]').click()
     cy.contains('No issues found..').should('be.visible')
@@ -48,7 +50,6 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_title]').clear().type('Updated new test issue').should('have.value', 'Updated new test issue')
     cy.get('[data-cy=issue_save_btn]').click()
     cy.get('[data-cy=issue_list]').contains('Updated new test issue').should('be.visible')
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -58,7 +59,6 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_title_error]').contains('The title field is required.')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -67,7 +67,6 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_type]').click().type('{enter}')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -76,7 +75,6 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_severity]').click().type('{enter}')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -91,7 +89,6 @@ describe('Issue List', function() {
     })
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 
@@ -103,7 +100,6 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_due_date_error]').contains('The Estimated Completion Date field is required.')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
-    // cy.get('[data-cy=issue_total]').contains('Total: 1')
     cy.logout()
   })
 })

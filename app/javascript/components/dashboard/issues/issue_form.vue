@@ -50,7 +50,7 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Issue Name:</h5></label>
-         <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+         <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="issue_on_watch">
                 <span v-show="DV_issue.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
                <span><i class="fas fa-eye mr-1"></i></span><small style="vertical-align:text-top">On Watch</small>
@@ -105,6 +105,31 @@
         </multiselect>
         <div v-show="errors.has('Issue Type')" class="text-danger" data-cy="issue_type_error">
           {{errors.first('Issue Type')}}
+        </div>
+      </div>
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">Task Category:</label>
+        <multiselect
+          v-model="selectedTaskType"
+          track-by="id"
+          label="name"
+          placeholder="Task category"
+          :options="taskTypes"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          :class="{'error': errors.has('Task Category')}"
+          data-cy="task_type"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+        <div v-show="errors.has('Task Type')" class="text-danger" data-cy="task_type_error">
+          {{errors.first('Task Type')}}
         </div>
       </div>
       <div class="simple-select form-group mx-4">
@@ -194,11 +219,11 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"
+          v-model="issueUsers"   
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"
+          :options="projectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -213,7 +238,7 @@
             </div>
           </template>
         </multiselect>
-      </div>
+      </div>  
       <div class="form-group mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
@@ -230,6 +255,7 @@
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
+       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
           <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -241,7 +267,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="activeProjectUsers"
+                  :options="projectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -257,6 +283,7 @@
             </div>
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
           </div>
+       </draggable>
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
       </div>
@@ -363,6 +390,7 @@
 <script>
   import axios from 'axios'
   import humps from 'humps'
+  import Draggable from "vuedraggable"
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
 
@@ -370,7 +398,7 @@
     name: 'IssueForm',
     props: ['facility', 'issue', 'task', 'fixedStage'],
     components: {
-      AttachmentInput
+      AttachmentInput, Draggable
     },
     data() {
       return {
@@ -378,13 +406,15 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         selectedIssueType: null,
+        selectedTaskType: null,
         selectedIssueSeverity: null,
         selectedIssueStage: null,
         issueUsers: [],
         relatedIssues: [],
         relatedTasks: [],
         showErrors: false,
-        loading: true
+        loading: true,
+        movingSlot: ''
       }
     },
     mounted() {
@@ -412,6 +442,7 @@
           startDate: '',
           dueDate: '',
           issueTypeId: '',
+          taskTypeId: '',
           progress: 0,
           issueSeverityId: '',
           issueStageId: '',
@@ -424,13 +455,26 @@
           checklists: [],
           notes: []
         }
+      }, 
+      handleMove(item) {
+        this.movingSlot = item.relatedContext.component.$vnode.key
+        return true
+      },
+      handleEnd(e, checklists){
+        var cc = this.DV_issue.checklists
+        var count = 0
+        for(var checklist of cc){
+          checklist.position = count
+          count++
+        }
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
+        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_issue.taskTypeId)
         this.selectedIssueSeverity = this.issueSeverities.find(t => t.id === this.DV_issue.issueSeverityId)
         this.selectedIssueStage = this.issueStages.find(t => t.id === this.DV_issue.issueStageId)
         if (issue.attachFiles) this.addFile(issue.attachFiles)
@@ -493,12 +537,14 @@
           formData.append('issue[due_date]', this.DV_issue.dueDate)
           formData.append('issue[start_date]', this.DV_issue.startDate)
           formData.append('issue[issue_type_id]', this.DV_issue.issueTypeId)
+          formData.append('issue[task_type_id]', this.DV_issue.taskTypeId)
           formData.append('issue[issue_severity_id]', this.DV_issue.issueSeverityId)
           formData.append('issue[issue_stage_id]', this.DV_issue.issueStageId)
           formData.append('issue[progress]', this.DV_issue.progress)
           formData.append('issue[description]', this.DV_issue.description)
           formData.append('issue[auto_calculate]', this.DV_issue.autoCalculate)
           formData.append('issue[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
+
 
           if (this.DV_issue.userIds.length) {
             for (let u_id of this.DV_issue.userIds) {
@@ -644,9 +690,10 @@
     computed: {
       ...mapGetters([
         'currentProject',
-        'activeProjectUsers',
+        'projectUsers',
         'myActionsFilter',
         'issueTypes',
+        'taskTypes',
         'issueStages',
         'issueSeverities',
         'currentTasks',
@@ -728,6 +775,11 @@
           this.DV_issue.issueTypeId = value ? value.id : null
         }, deep: true
       },
+      selectedTaskType: {
+        handler: function(value) {
+          this.DV_issue.taskTypeId = value ? value.id : null
+        }, deep: true
+      },
       selectedIssueSeverity: {
         handler: function(value) {
           this.DV_issue.issueSeverityId = value ? value.id : null
@@ -793,6 +845,9 @@
   ul {
     list-style-type: none;
     padding: 0;
+  }
+  .drag {
+    cursor: all-scroll;
   }
  .formTitle {
     padding-top: 25px;

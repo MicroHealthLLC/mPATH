@@ -5,7 +5,8 @@
     br
     ul.list-group
       -if @active_projects.size > 0
-        -@active_projects.each do |project|
+        - @active_projects.each do |project|
+          - facility_projects = @facility_projects_hash[project.id] || []
           li.list-group-item
             .row
               .col-12
@@ -15,7 +16,7 @@
                       span
                         ="#{project.name} "
                       span.font-weight-bold
-                        ="(#{project.facilities.size} Facilities)"
+                        ="(#{facility_projects.map(&:facility_id).compact.uniq.size} Facilities)"
                 .mt-2.d-flex.align-items-center
                   - fp = project.facility_projects
                   -progs = fp.map(&:progress)

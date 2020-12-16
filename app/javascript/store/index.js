@@ -39,6 +39,8 @@ export default new Vuex.Store({
     facilityNameFilter: null,
     facilityProgressFilter: null,
     facilityDueDateFilter: null,
+    noteDateFilter: null,
+    taskIssueDueDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
     taskStageFilter: null,
@@ -155,6 +157,8 @@ export default new Vuex.Store({
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
+    setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
+    setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
@@ -210,6 +214,8 @@ export default new Vuex.Store({
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
+    noteDateFilter: state => state.noteDateFilter,
+    taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
@@ -233,6 +239,41 @@ export default new Vuex.Store({
               let range = moment.range(f[k][0], f[k][1])
               valid = valid && facility[k] && range.contains(new Date(facility[k].replace(/-/g, '/')))
               break
+            }
+            case "noteDate": {
+              var startDate = moment(f[k][0], "YYYY-MM-DD")
+              var endDate = moment(f[k][1], "YYYY-MM-DD")
+              var _notes = _.flatten(_.map(facility.tasks, 'notes') ).concat(_.flatten(_.map(facility.issues, 'notes') ))
+              var is_valid = false
+              for(var n of _notes){
+                var nDate = moment(n.createdAt, "YYYY-MM-DD")
+                is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+                if(is_valid) break
+              }
+
+              valid = valid && is_valid
+              break
+            }
+            case "taskIssueDueDate": {
+              var startDate = moment(f[k][0], "YYYY-MM-DD")
+              var endDate = moment(f[k][1], "YYYY-MM-DD")
+              var _dueDates = _.flatten(_.map(facility.tasks, 'dueDate') ).concat(_.flatten(_.map(facility.issues, 'dueDate') ))
+              var is_valid = false
+
+              if(_dueDates.length < 1){
+                valid = valid && is_valid
+                break
+
+              }else{
+                for(var dueDate of _dueDates){
+                  var nDate = moment(dueDate, "YYYY-MM-DD")
+                  is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+                  if(is_valid) break
+                }
+                valid = valid && is_valid
+                break
+              }
+
             }
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
@@ -515,7 +556,7 @@ export default new Vuex.Store({
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    _users: task.users,
+                    _users: task.users.map(_u => _u.fullName).join(","), 
                     type: 'task',
                     collapsed: true
                   }
@@ -561,10 +602,23 @@ export default new Vuex.Store({
     filteredAllTasks: (state, getters) => {
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+        
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.taskStageId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          valid = is_valid
+        }
+
         return valid
       })
 
@@ -573,11 +627,24 @@ export default new Vuex.Store({
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+          
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          valid = is_valid
+        }
+
         return valid
       })
     },
@@ -616,8 +683,20 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         http.get(`/projects/${id}.json`)
           .then((res) => {
+            let facilities = []
+            for (let facility of res.data.project.facilities) {
+              facilities.push({...facility, ...facility.facility})
+            }
+            commit('setFacilities', facilities)
             commit('setCurrentProject', res.data.project)
-            commit('setProjectUsers', res.data.users)
+            commit('setFacilityGroups', res.data.project.facilityGroups)
+            commit('setProjectUsers', res.data.project.users)
+            commit('setStatuses', res.data.project.statuses)
+            commit('setTaskTypes', res.data.project.taskTypes)
+            commit('setTaskStages', res.data.project.taskStages)
+            commit('setIssueStages', res.data.project.issueStages)
+            commit('setIssueTypes', res.data.project.issueTypes)
+            commit('setIssueSeverities', res.data.project.issueSeverities)
             resolve()
           })
           .catch((err) => {
@@ -669,96 +748,11 @@ export default new Vuex.Store({
           })
       })
     },
-    fetchStatuses({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/statuses.json')
-          .then((res) => {
-            commit('setStatuses', res.data.statuses)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchTaskTypes({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/task_types.json')
-          .then((res) => {
-            commit('setTaskTypes', res.data.taskTypes)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchTaskStages({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/task_stages.json')
-          .then((res) => {
-            commit('setTaskStages', res.data.taskStages)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueStages({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_stages.json')
-          .then((res) => {
-            commit('setIssueStages', res.data.issueStages)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueTypes({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_types.json')
-          .then((res) => {
-            commit('setIssueTypes', res.data.issueTypes)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
-    fetchIssueSeverities({commit}) {
-      return new Promise((resolve, reject) => {
-        http.get('/api/issue_severities.json')
-          .then((res) => {
-            commit('setIssueSeverities', res.data.issueSeverities)
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
+
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
       await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
-      await dispatch('fetchFacilities', id)
-      await dispatch('fetchFacilityGroups', id)
-      await dispatch('fetchStatuses')
-      await dispatch('fetchTaskTypes')
-      await dispatch('fetchTaskStages')
-      await dispatch('fetchIssueStages')
-      await dispatch('fetchIssueTypes')
-      await dispatch('fetchIssueSeverities')
-      await commit('setContentLoaded', true)
+      commit('setContentLoaded', true)
       if (cb) return cb()
     },
 
@@ -875,6 +869,8 @@ export default new Vuex.Store({
         'facilityNameFilter',
         'facilityProgressFilter',
         'facilityDueDateFilter',
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',

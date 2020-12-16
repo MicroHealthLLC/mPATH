@@ -10,9 +10,9 @@
         class="issue-form-modal"
       />
     </div>
-    <div v-else>      
+     <div v-else>      
       <div class="d-flex align-item-center justify-content-between">
-        <div class="input-group mb-2 mr-1 task-search-bar">
+        <div class="input-group mb-2 mr-1 task-search-bar w-90">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
@@ -23,7 +23,54 @@
             aria-describedby="search-addon" 
             v-model="issuesQuery">
         </div>
-        <div class="simple-select mr-1 d-flex" style="width:20%">        
+        <div class="simple-select mr-1" style="width:35%">
+            <multiselect
+              v-model="C_taskTypeFilter"            
+              track-by="name"
+              label="name"
+              placeholder="Filter by Task Category"
+              :options="taskTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>
+        <div class="simple-select" style="width:30%">
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"           
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Issue Status"
+          >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>  
+        <div class="form-check-inline font-sm justify-content-end mr-0" style="width:20%">
+          <label class="form-check-label mx-2">
+            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
+            <i class="fas fa-user mr-1"></i>My Issue
+          </label>
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
+            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
+            <i class="fas fa-eye mr-1"></i>On Watch
+          </label>
+         </div> 
+       </div>
+      <div class="d-flex align-item-center justify-content-between w-70">          
+       <div class="simple-select mr-1 d-flex w-100">        
           <multiselect
             v-model="C_issueTypeFilter"
             track-by="name"
@@ -43,7 +90,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1" style="width:20%">
+        <div class="simple-select mr-1 w-100">
           <multiselect
             v-model="C_issueSeverityFilter"
             track-by="name"
@@ -61,34 +108,8 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="simple-select mr-1 d-flex" style="width:17%">
-          <multiselect
-            v-model="viewList"
-            :options="listOptions"
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Issue Status"
-          >
-            <template slot="singleLabel">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>        
-        <div class="form-check-inline font-sm">
-          <label class="form-check-label mr-1">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issue
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div>
-      </div>
+        </div>   
+    </div>
       <div class="mt-2">
         <button v-if="_isallowed('write')"
           class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
@@ -185,7 +206,8 @@
             <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
-            <td>{{issue.users.join(', ')}}</td>
+            <td class="ten" v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+            <td class="ten" v-else></td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
             <td v-else></td>
@@ -212,10 +234,10 @@
   import IssueSheets from './issue_sheets'
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
-  import moment from 'moment'
-
   library.add(faFilePdf)
-  Vue.prototype.moment = moment
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'IssueSheetsIndex',
@@ -247,6 +269,7 @@
       ...mapMutations([
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
+        'setTaskTypeFilter',
         'setMyActionsFilter',
         'updateFacilityHash',
         'setTaskForManager',
@@ -310,12 +333,16 @@
    },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'currentProject',
         'issueTypes',
+        'taskTypes',
         'issueSeverities',
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',
+        'taskTypeFilter',
         'issueUserFilter',
         'myActionsFilter',
         'managerView',
@@ -327,9 +354,13 @@
       },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -343,6 +374,30 @@
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            var is_valid = issue.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(issue.title)
           switch (this.viewList) {
             case "active": {
@@ -368,6 +423,14 @@
         },
         set(value) {
           this.setIssueTypeFilter(value)
+        }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
         }
       },
       C_issueSeverityFilter: {

@@ -3,7 +3,7 @@ class ProjectsController < AuthenticatedController
 
   def index
     respond_to do |format|
-      format.json {render json: {projects: current_user.projects.includes(:project_type).active.order(created_at: :desc).as_json}, status: 200}
+      format.json {render json: {projects: current_user.projects.includes(:project_type).active.as_json}}
       format.html {}
     end
   end
@@ -12,7 +12,7 @@ class ProjectsController < AuthenticatedController
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
-        format.json {render json: {project: @project, users: @project.users}, status: 200}
+        format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end
     else
@@ -73,7 +73,32 @@ class ProjectsController < AuthenticatedController
 
   private
   def set_project
-    @project = current_user.projects.active.find_by(id: params[:id])
+      fg_hash = {
+        facility_projects: [:facility, {
+          tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]
+          }, {
+          issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]
+          }, {
+            notes: [{note_files_attachments: :blob}, :user]
+          }
+        ]
+      }
+      fp_hash = {
+        facility: [:facility_group],
+        tasks: [{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ],
+        issues: [{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ],
+        notes: [{note_files_attachments: :blob}, :user]
+      }
+      projects_include_hash = {
+        users: [],
+        facility_projects: fp_hash,
+        facility_groups: fg_hash,
+        statuses: [],
+        task_types: [],
+        issue_types: [],
+        issue_severities: []
+      }
+    @project = current_user.projects.includes(projects_include_hash).active.find_by(id: params[:id])
   end
 
   def check_permit(view)

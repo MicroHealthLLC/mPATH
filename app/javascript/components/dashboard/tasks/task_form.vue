@@ -50,7 +50,7 @@
       </div>
       <div class="form-group mx-4">
         <label class="font-sm"><h5>Task Name:</h5></label>
-            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched">
+            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
               <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
@@ -65,7 +65,7 @@
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
           data-cy="task_name"
-        />          
+        />
         <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
@@ -168,7 +168,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"
+          :options="projectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -202,7 +202,8 @@
           <i class="fas fa-plus-circle"></i>
         </span>
         <div v-if="filteredChecks.length > 0">
-          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
+        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
+          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
               <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
               <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
@@ -213,7 +214,7 @@
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="activeProjectUsers"
+                  :options="projectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -231,6 +232,7 @@
               <i class="fas fa-times"></i>
             </span>
           </div>
+        </draggable>       
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
       </div>
@@ -337,6 +339,7 @@
 
 <script>
   import axios from 'axios'
+  import Draggable from "vuedraggable"
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
@@ -345,7 +348,7 @@
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
-      AttachmentInput
+      AttachmentInput, Draggable
     },
     data() {
       return {
@@ -359,7 +362,8 @@
         relatedTasks: [],
         _ismounted: false,
         showErrors: false,
-        loading: true
+        loading: true,
+        movingSlot: ''
       }
     },
     mounted() {
@@ -399,6 +403,18 @@
           notes: []
         }
       },
+      handleMove(item) {
+        this.movingSlot = item.relatedContext.component.$vnode.key
+        return true
+      },
+      handleEnd(e, checklists){
+        var cc = this.DV_task.checklists
+        var count = 0
+        for(var checklist of cc){
+          checklist.position = count
+          count++
+        }
+      },        
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
@@ -407,7 +423,7 @@
       },
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.taskUsers = _.filter(this.projectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
@@ -579,7 +595,7 @@
 
         let i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
-      },
+      },   
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
@@ -620,6 +636,7 @@
         'taskTypes',
         'taskStages',
         'activeProjectUsers',
+        'projectUsers',
         'myActionsFilter',
         'currentTasks',
         'currentIssues',
@@ -749,6 +766,9 @@
     border: 0;
     width: 92%;
     outline: none;
+  }
+  .drag {
+    cursor: all-scroll;
   }
   .del-check {
     position: relative;

@@ -2038,6 +2038,19 @@ jQuery(function($) {
       return $("label[for='issue_stage_percentage']").text(issue_stage_percentage + " (" + (parseFloat(this.value).toFixed(1)) + ")");
     });
 
+    // on_change multiselect enums in project_form
+    $('body').on('click', '#project_user_alt > option, #project_user_ids > option, #project_facility_alt > option, #project_facility_ids > option, #project_status_alt > option, #project_status_ids > option, #project_task_type_ids > option, #project_task_type_alt > option, #project_issue_type_ids > option, #project_issue_type_alt > option, #project_issue_severity_ids > option, #project_issue_severity_alt > option', function () {
+      let this_id = $(this).parent().prop('id');
+      let alt_replace = this_id.includes('ids') ? 'alt' : 'ids';
+      let alt_with = this_id.includes('ids') ? 'ids' : 'alt';
+      let alt_id = this_id.replaceAll(alt_with, alt_replace);
+      let without_id = this_id.slice(0, -4);
+
+      $(this).remove().appendTo(`#${alt_id}`);
+      $(`#${without_id}_ids option`).prop('selected', true);
+      $(`#${without_id}_alt option`).prop('selected', false);
+    });
+
   }());
 
   // password generator tab

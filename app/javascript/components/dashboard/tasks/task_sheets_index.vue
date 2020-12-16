@@ -1,20 +1,20 @@
 <template>
-  <div id="tasks-index" class="my-4">
+  <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">
         <div class="input-group w-90 task-search-bar">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="search" 
-            class="form-control form-control-sm" 
-            placeholder="Search Tasks" 
-            aria-label="Search" 
-            aria-describedby="search-addon" 
+            <input type="search"
+            class="form-control form-control-sm"
+            placeholder="Search Tasks"
+            aria-label="Search"
+            aria-describedby="search-addon"
             v-model="tasksQuery">
           </div>
         <div class="simple-select mx-1 d-flex" style="width:35%">
-       
+
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -49,13 +49,13 @@
           </template>
         </multiselect>
         </div>
-       
+
         <div class="form-check-inline font-sm mr-0" style="width:20%">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
@@ -63,22 +63,24 @@
       </div>
       <button v-if="_isallowed('write')"
         class="new-tasks-btn addBtns btn mr-2 btn-sm btn-primary"
-        @click.prevent="addNewTask">
+        @click.prevent="addNewTask"
+        data-cy="add_task"
+      >
         <i class="fas fa-plus-circle mr-2"></i>
         Add Task
       </button>
-       <button
+      <button
         @click="download"
         id="printBtn"
         class="btn btn-sm btn-dark exportBtn">
         <font-awesome-icon icon="file-pdf" />
         Export to PDF
       </button>
-        <label class="form-check-label text-primary float-right mr-2">
-          <h5>Total: {{filteredTasks.length}}</h5>
-        </label>
-      <div v-if="filteredTasks.length > 0">          
-        <div style="margin-bottom:100px">
+      <label class="form-check-label text-primary float-right mr-2" data-cy="task_total">
+        <h5>Total: {{filteredTasks.length}}</h5>
+      </label>
+      <div v-if="filteredTasks.length > 0">
+        <div style="margin-bottom:100px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="sixteen" />
@@ -102,7 +104,7 @@
               <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
             </tr>
-          </table>        
+          </table>
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
@@ -115,13 +117,13 @@
               @toggle-watched="toggleWatched"
             />
           <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>         
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
+          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
@@ -151,7 +153,8 @@
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
-          <td>{{task.users.join(', ')}}</td>
+          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td class="ten" v-else></td>
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
@@ -173,12 +176,16 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  import moment from 'moment'
+  // import moment from 'moment'
   import TaskSheets from "./task_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
-  Vue.prototype.moment = moment
+  // Vue.prototype.moment = moment
+  
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TasksSheetsIndex',
@@ -189,7 +196,7 @@
     data() {
       return {
         viewList:'active',
-        listOptions: ['active','all', 'completed'],     
+        listOptions: ['active','all', 'completed'],
         tasks: Object,
         now: new Date().toISOString(),
         tasksQuery: '',
@@ -241,6 +248,8 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'taskTypeFilter',
         'taskStageFilter',
         'myActionsFilter',
@@ -256,6 +265,8 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -269,6 +280,30 @@
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {
@@ -287,7 +322,7 @@
           return valid
         }), ['dueDate'])
         return tasks
-      },     
+      },
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -313,7 +348,7 @@
           if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
         }
-      }, 
+      },
       sortedTasks:function() {
           return this.filteredTasks.sort((a,b) => {
           let modifier = 1;
@@ -339,9 +374,9 @@
     height: 500px
   }
   .scroll {
-    cursor:pointer !important; 
+    cursor:pointer !important;
     top: 35%;
-    right: 5px;  
+    right: 5px;
     position:absolute;
     font-size: 1.1rem;
     color: #383838 !important;
@@ -353,16 +388,16 @@
     border-radius: 5px;
   }
   .sort-th {
-    font-size: .80rem !important; 
+    font-size: .80rem !important;
     text-align: center;
     position: relative;
-    vertical-align: middle !important;   
+    vertical-align: middle !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
  }
   .new-tasks-btn {
     height: max-content;

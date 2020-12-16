@@ -12,7 +12,7 @@
             aria-describedby="search-addon" 
             v-model="tasksQuery">
           </div>
-      <div class="d-flex align-item-center justify-content-between my-2">        
+      <div class="d-flex align-item-center justify-content-between my-2 100">        
         <div class="simple-select w-100 mr-1">
           <multiselect
             v-model="C_taskTypeFilter"
@@ -34,8 +34,8 @@
         </div>
         <div class="simple-select w-100 enum-select">
           <multiselect
-            v-model="viewList"
-            style="width:235px"
+            v-model="viewList" 
+            style="width:100%"          
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -52,13 +52,13 @@
       </div>
       <div class="mb-3 mr-2 font-sm">          
          <button v-if="_isallowed('write')" 
-          class="btn btn-sm btn-primary mr-2"
+          class="btn btn-sm btn-primary mr-2 addTaskBtn"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
           </button>
           <button
           @click.prevent="download"     
-          class="btn btn-sm btn-dark mr-1">
+          class="btn btn-sm btn-dark mr-1 export2pdf">
           <font-awesome-icon icon="file-pdf" />
           Export to PDF
           </button>
@@ -81,14 +81,13 @@
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"
-          href="#"
+          id="taskHover"        
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :task="task"
           :from-view="from"
           @edit-task="editTask"
-        >{{ task.text }}</task-show>
+        ></task-show>
       </div>
       <div v-else>
         <br/>
@@ -122,7 +121,8 @@
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
-          <td>{{task.users.join(', ')}}</td>
+          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td class="ten" v-else></td>
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
@@ -145,6 +145,9 @@
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TasksIndex',
@@ -188,6 +191,8 @@
     computed: {
       ...mapGetters([
         'taskTypeFilter',
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',
@@ -202,6 +207,9 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -214,6 +222,30 @@
           }
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {
@@ -295,8 +327,14 @@
     cursor: pointer;
     display: block;                
  }
+ .addTaskBtn, .export2pdf {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
  .myTasks {
    float: right !important;
    margin-top: 5px;
  }
+  #taskHover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
+  }
 </style>

@@ -49,11 +49,12 @@ class Task < ApplicationRecord
     sub_issues = self.sub_issues
 
     self.as_json.merge(
+      class_name: self.class.name,
       attach_files: attach_files,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: users.map(&:id).compact.uniq,
-      users: users.map(&:full_name),
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),
@@ -114,14 +115,14 @@ class Task < ApplicationRecord
     task.attributes = t_params
     task.facility_project_id = facility_project.id
 
-    task.transaction do 
+    task.transaction do
       task.save
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|
           next if !uid.present?
           task_users_obj << TaskUser.new(task_id: task.id, user_id: uid)
-        end     
+        end
         TaskUser.import(task_users_obj) if task_users_obj.any?
       end
 

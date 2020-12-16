@@ -2,6 +2,7 @@ import                           'core-js/stable'
 import                           'regenerator-runtime/runtime'
 import                           'vue-multiselect/dist/vue-multiselect.min.css'
 import                           'vue2-datepicker/index.css'
+import                           'bootstrap-vue/dist/bootstrap-vue.css'
 import _                    from 'lodash'
 import Multiselect          from 'vue-multiselect'
 import VModal               from 'vue-js-modal'
@@ -21,14 +22,10 @@ import VTooltip             from 'v-tooltip'
 import V2DatePicker         from 'vue2-datepicker'
 import GanttElastic         from 'gantt-elastic'
 import GanttElasticHeader   from 'gantt-elastic-header'
-import SortedTablePlugin    from "vue-sorted-table"
 import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
-import { library }          from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
- 
 
- 
 Vue.use(vco)
 Vue.mixin(utils)
 Vue.use(VTooltip)
@@ -46,12 +43,7 @@ Vue.component('GmapCluster', GmapCluster)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
 Vue.config.productionTip = false
-Vue.use(VeeValidate)
-Vue.use(SortedTablePlugin, {
-  ascIcon: '<i class="material-icons">arrow_drop_up</i>',
-  descIcon: '<i class="material-icons">arrow_drop_down</i>'
-});
-
+Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
 Vue.use(VueGoogleMaps, {
   load: {

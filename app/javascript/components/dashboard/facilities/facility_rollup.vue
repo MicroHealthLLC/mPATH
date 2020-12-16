@@ -1,5 +1,5 @@
 <template>
-  <div class="m-3">
+  <div class="m-3" data-cy="sheet_facility">
     <div class="text-info font-weight-bold">Project Type: <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
     <div class="text-center">
@@ -10,14 +10,14 @@
         </span>
       </p>
       <div v-if="C_facilityCount > 0" class="d-flex justify-content-around">
-        <div>
+        <!-- <div>
           <span> active</span>
           <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
         </div>
         <div>
           <span> inactive</span>
           <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
-        </div>
+         </div>-->
       </div>
     </div>
     <hr>
@@ -44,7 +44,7 @@
       </div>
     </div>
     <hr>
-    <div class="my-1">
+    <div class="my-1" data-cy="tasks_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
       <div v-if="contentLoaded">
         <div>
@@ -92,7 +92,7 @@
       </div>
     </div>
     <hr>
-    <div class="my-1">
+    <div class="my-1" data-cy="issues_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredIssues.length}}</span> Issues</h5>
       <div v-if="contentLoaded">
         <div>
@@ -139,7 +139,7 @@
         <loader type="code"></loader>
       </div>
     </div>
-    <div class="mb-3" v-if="from !== 'manager_view'">
+    <div class="mb-3" v-if="from !== 'manager_view'" data-cy="facility_group_summary">
       <hr>
       <h5 class="text-center">Facility Groups</h5>
       <div v-if="contentLoaded" class="row my-2" v-for="facilityGroup in filteredFacilityGroups">

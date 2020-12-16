@@ -17,16 +17,16 @@
             <div v-if="expandFilter && contentLoaded" class="mt-4">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                     </div>
-                    <input type="search"
-                      class="form-control form-control-sm" 
-                      placeholder="Search Tasks" 
-                      aria-label="Search" 
-                      aria-describedby="search-addon" 
-                      v-model="sidebarTasksQuery">
+                  <div class="form-group has-search mb-2 w-100">
+                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                    <input
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Search Tasks"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
+                      v-model="sidebarTasksQuery"
+                    />
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -87,17 +87,16 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                   <div class="input-group mb-2">
-                     <div class="input-group-prepend">
-                      <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                     </div>
-                    <input type="search" 
-                      class="form-control form-control-sm" 
-                      placeholder="Search Issues" 
-                      aria-label="Search" 
-                      aria-describedby="search-addon" 
+                  <div class="form-group has-search mb-2 w-100">
+                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                    <input
+                      type="search"
+                      class="form-control form-control-sm"
+                      placeholder="Search Issues"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
                       v-model="sidebarIssuesQuery">
-                   </div>
+                  </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
@@ -246,6 +245,10 @@
   import FacilitySidebar from './facilities/facility_sidebar'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+  const moment = extendMoment(Moment)
+
   export default {
     name: 'KanbanView',
     components: {
@@ -352,6 +355,8 @@
     },
     computed: {
       ...mapGetters([
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'contentLoaded',
         'filteredFacilityGroups',
         'taskStages',
@@ -374,6 +379,9 @@
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.searchTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchTasksQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -386,6 +394,30 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
+          
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(task.notes, 'createdAt')
+            var is_valid = task.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            valid = is_valid
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
           switch (this.viewList) {
@@ -436,6 +468,9 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -447,6 +482,30 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+
+          if(noteDates && noteDates[0] && noteDates[1]){
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            var is_valid = issue.notes.length > 0
+            for(var createdAt of _notesCreatedAt){
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }            
+            valid = is_valid
+          }
+          
+          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            
+            var is_valid = true
+            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            valid = is_valid
+          }
+
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)
           } else if(stageIds.length > 0) {
@@ -585,12 +644,12 @@
     max-width: 200px;
     min-width: 200px;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
-   }
+    display: block;
+  }
   .expandBtn {
     position: absolute;
     top: 50px;

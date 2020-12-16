@@ -1,191 +1,174 @@
 <template>
-  <div id="members">
-    <div class="container mt-4">
-      <h3 class="mt-3 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
-      <button
-        @click.prevent="download"
-        id="printBtn"
-        class="btn btn-sm btn-dark mb-3">
-        <font-awesome-icon icon="file-pdf" class="mr-2" />
-        Export to PDF
-      </button>
-      <div class="float-right">
-        <button class="btn btn-md btn-info mb-3 team-total">
-        Team Total: {{teamMembers.length}}
-        </button>
-      </div>
-      <div>
-        <table ref="table" id="teamMembersList" class="table-bordered">
-          <thead>
-            <tr class="teamHead">
-              <th class="sort-th col-1" @click="sort('id')">#<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('firstName')">First Name<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('lastName')">Last Name<i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('title')">Position<i class="fas fa-sort scroll ml-2"></i></th>
-              <th class="sort-th" @click="sort('organization')">Organization<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('email')">Email<i class="fas fa-sort scroll" ></i></th>
-              <th class="sort-th" @click="sort('phoneNumber')">Phone Number<i class="fas fa-sort scroll"></i></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="value in sortedTeamMembers" :key="value.id" class="teamTable">
-              <td id="col-1-row">{{ value.id }}</td>
-              <td>{{ value.firstName }}</td>
-              <td>{{ value.lastName }}</td>
-              <td>{{ value.title }}</td>
-              <td>{{ value.organization }}</td>
-              <td><a :href="`mailto:${value.email}`">{{ value.email }}</a></td>
-              <td><a :href="`tel:${value.phoneNumber}`">{{ value.phoneNumber }}</a></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="float-right my-3">
-          <button class="btn btn-sm page-btns h-auto" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns h-auto disabled" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.teamMembers.length / pageSize) }} </button>
-          <button class="btn btn-sm page-btns h-auto" @click="nextPage"><i class="fas fa-angle-right"></i></button>
-        </div>
-      </div>
-    </div>
+  <div id="members" data-cy="members_view">
+     <div class="container mt-2"> 
+        <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
+        <div class="row mt-2 mb-1">
+          <div class="col float-left">
+          <button
+            @click.prevent="download"
+            id="printBtn"
+            class="btn btn-sm btn-dark mb-1">
+            <font-awesome-icon icon="file-pdf" class="mr-2" />
+            Export to PDF
+          </button>      
+          </div>    
+       
+        </div>  
+           <div class="mb-0 p-b-0">
+            <el-row>
+             <el-col :span="9">
+             <div class="input-group w-100 task-search-bar">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+                </div>
+               <input type="search"
+                class="form-control form-control-sm"
+                placeholder="Search All"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                v-model="filters[0].value" >
+            </div>          
+            </el-col>
+              <div class="total" data-cy="team_total">
+              <button class="btn btn-sm btn-info mb-3 team-total">
+                Team Total: {{tableData.length}}
+                </button>
+              </div>   
+            </el-row>
+           </div>      
+        <data-tables 
+          :data="tableData"  
+          ref="table" 
+          id="teamMemberTableId"
+          class="teamMembersList"
+          data-cy="team_members_list"          
+          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }" 
+          layout="table, pagination" 
+          :table-props="tableProps"     
+          :filters="filters">
+        <el-table-column 
+          v-for="title in titles"                 
+          :prop="title.prop" 
+          :label="title.label" 
+          :key="title.label" 
+          sortable="custom">
+        </el-table-column>      
+      </data-tables>  
+     </div>
   </div>
+  
 </template>
 
 <script>
-  import {mapGetters, mapActions} from 'vuex'
-  import {jsPDF} from "jspdf"
-  import 'jspdf-autotable'
-  import {library} from '@fortawesome/fontawesome-svg-core'
-  import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
-  library.add(faFilePdf)
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
+import {mapGetters, mapActions} from 'vuex'
+import VueDataTables from 'vue-data-tables'
+import {jsPDF} from "jspdf"
+import 'jspdf-autotable'
+Vue.use(VueDataTables)
+library.add(faFilePdf)
+ELEMENT.locale(ELEMENT.lang.en)
+
   export default {
     name: "TeamMembersView",
-    data() {
-      return {
-        pageSize: 25,
-        currentPage: 1,
-        currentSort: 'id',
-        currentSortDir: 'asc',
-      }
-    },
-    methods: {
-      sort(s) {
-        if (s === this.currentSort) {
-          this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+     data() {
+      return {        
+        search: '',
+        total: 0,     
+        totalRows: 1,        
+        tableProps: {
+          stripe: true,
+        defaultSort: {
+          prop: 'id',
+          order: 'ascending'
+        },
+          prop: 'organization',
+          isSortable: false
+       },
+        filters: [
+        {
+          prop: ['id', 'firstName', 'lastName', 'title', 'organization', 'email', 'phoneNumber'],
+          value: ''
         }
-        this.currentSort = s;
-      },
-      nextPage() {
-        if ((this.currentPage*this.pageSize) < this.teamMembers.length) this.currentPage++;
-      },
-      prevPage() {
-        if(this.currentPage > 1) this.currentPage--;
-      },
-      download() {
-        const doc = new jsPDF("l")
-        const html = this.$refs.table.innerHTML
-        doc.autoTable({ html: '#teamMembersList' })
-        doc.save("Team_Members_list.pdf")
+        ],
+        layout: 'table, pagination',
+        titles: [{
+          prop: "id",
+          label: "#"
+          }, {
+          prop: "firstName",
+          label: "First Name"
+          }, {
+          prop: "lastName",
+          label: "Last Name"
+          }, {
+          prop: "title",
+          label: "Position"
+          }, {
+          prop: "organization",
+          label: "Organization", 
+          sortable: false
+          }, {
+          prop: "email",
+          label: "Email"
+          }, {
+          prop: "phoneNumber",
+          label: "Phone Number"
+        }]
       }
     },
-    computed: {
+     computed: {
       ...mapGetters([
         'projectUsers'
       ]),
-      teamMembers() {
+      tableData() {
         return this.projectUsers
       },
-      sortedTeamMembers() {
-        return this.teamMembers.sort((a,b) => {
-          let modifier = 1;
-          if (this.currentSortDir === 'desc') modifier = -1;
-          if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-          if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-          return 0;
-        }).filter((row, index) => {
-          let start = (this.currentPage-1) * this.pageSize;
-          let end = this.currentPage * this.pageSize;
-          if (index >= start && index < end) return true;
-          return end
-        });
-      }
-    }
-  }
-</script>
+    }, 
+     methods: {    
+      download() {
+        const doc = new jsPDF("l")
 
+        const html = this.$refs.table.innerHTML
+        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
+        var thead = $("<thead>")
+        var tr = $("<tr>")
+        for(var h of headers){
+          tr.append($("<th>",{text: h}))
+        } 
+        thead.append(tr)
+        $(".el-table__body").append(thead)
+        doc.autoTable({html: '.el-table .el-table__body-wrapper .el-table__body' })
+        doc.save("Team_Members_list.pdf")
+        thead.remove()
+      }
+    },
+}
+</script>
 <style scoped lang="scss">
- table {
-    table-layout: fixed;
+  /deep/.el-table {
+    padding-top: 0px;
+    margin-top:-1.5rem;
     width: 100%;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    margin-bottom: 6px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
   }
-  .col-1 {
-    width: 6%
-  }
-  #col-1-row {
-    text-align: center;
-  }
-  thead {
+  /deep/.has-gutter {
     background-color: #ededed;
   }
-  .sort-th {
-    font-size: 1rem !important;
-    text-align: center;
-  }
-  .teamHead {
-    height: 40px;
-  }
-  td {
-    overflow-wrap: break-word;
-    padding: 5px !important;
-  }
- .scroll {
-    cursor:pointer !important;
-    top: 12px;
-    right: 5px;
-    position:absolute;
-    font-size: 1rem;
-    color: #383838 !important;
-    padding-left:4px !important
-  }
-  /deep/.sort-th {
-    position:relative;
-    padding: 3px;
-    cursor: pointer;
-    letter-spacing: 2px;
-  }
-  .teamTable:hover {
-    cursor: default;
-    background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
-  }
-  a:visited, a:active, a:hover {
-    text-decoration-line: none !important;
-  }
-  th > a {
-    color: #383838 !important;
-  }
-  .page-btns {
-    width: 20px;
-    line-height: 1 !important;
-    border: none !important;
-    height: 25px;
-    margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    color: #383838;
-    cursor: pointer;
-  }
-  .page-btns:hover {
-    background-color: #ededed;
-  }
-  #page-count {
-    width: auto !important;
-    cursor: default;
-  }
-  .page-btns.active  {
-    background-color: rgba(211, 211, 211, 10%);
-    border: none !important;
-  }
+  /deep/.el-pagination, .total {
+    text-align: end;
+    margin-bottom:2rem;
+  }  
   .team-total {
-    cursor: default;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);  
   }
+  input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+ }
+
 </style>

@@ -15,7 +15,7 @@ user.save(validate: false)
 
 puts "superuser created with email: #{user.email}"
 
-FacilityGroup.find_or_create_by(name: 'Sample Region', code: 'SAMP', status: 'active')
+FacilityGroup.find_or_create_by(name: 'Sample Group', code: 'SAMP', status: 'active')
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 
 puts "Seeds completed.."

@@ -7,8 +7,7 @@ class TasksController < AuthenticatedController
   end
 
   def create
-
-    @task = Task.new.create_or_update_task(params, current_user) #@facility_project.tasks.create(t_params)
+    @task = Task.new.create_or_update_task(params, current_user)
     render json: {task: @task.to_json}
   end
 
@@ -54,7 +53,7 @@ class TasksController < AuthenticatedController
       :description,
       :progress,
       :auto_calculate,
-      :watched,
+      :watched,    
       :kanban_order,
       task_files: [],
       user_ids: [],
@@ -65,7 +64,8 @@ class TasksController < AuthenticatedController
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :position
       ],
       notes_attributes: [
         :id,

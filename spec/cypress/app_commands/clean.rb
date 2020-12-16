@@ -9,15 +9,22 @@ else
   FacilityProject.destroy_all if defined?(FacilityProject)
   Facility.destroy_all if defined?(Facility)
   FacilityGroup.destroy_all if defined?(FacilityGroup)
-  IssueSeverity.destroy_all if defined?(IssueSeverity)
+
+  # sequence is required because of foreign key constrain
+  ProjectTaskType.destroy_all
+  ProjectIssueSeverity.destroy_all
+  ProjectIssueType.destroy_all
+  ProjectUser.destroy_all
+  ProjectStatus.destroy_all
+  Project.destroy_all if defined?(Project)
+  ProjectType.destroy_all
+
   IssueType.destroy_all if defined?(IssueType)
   IssueStage.destroy_all if defined?(IssueStage)
   TaskStage.destroy_all if defined?(TaskStage)
+  IssueSeverity.destroy_all
   TaskType.destroy_all if defined?(TaskType)
   Status.destroy_all if defined?(Status)
-  ProjectUser.destroy_all if defined?(ProjectUser)
-  Project.destroy_all if defined?(Project)
-  ProjectType.destroy_all if defined?(ProjectType)
   Organization.destroy_all if defined?(Organization)
   Setting.destroy_all if defined?(Setting)
   Privilege.destroy_all if defined?(Privilege)

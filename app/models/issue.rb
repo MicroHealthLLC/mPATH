@@ -5,6 +5,7 @@ class Issue < ApplicationRecord
   belongs_to :facility_project
   belongs_to :issue_type
   belongs_to :issue_stage, optional: true
+  belongs_to :task_type, optional: true
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users
@@ -44,19 +45,20 @@ class Issue < ApplicationRecord
         }
       end
     end
-    
+
     fp = self.facility_project
     users = self.users
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
 
     self.as_json.merge(
+      class_name: self.class.name,
       attach_files: attach_files,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       user_ids: users.map(&:id).compact.uniq,
-      users: users.map(&:full_name),
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),
@@ -89,6 +91,7 @@ class Issue < ApplicationRecord
       :issue_type_id,
       :issue_stage_id,
       :issue_severity_id,
+      :task_type_id,
       :progress,
       :start_date,
       :due_date,
@@ -128,8 +131,8 @@ class Issue < ApplicationRecord
     issue.attributes = i_params
     issue.facility_project_id = facility_project.id
 
-    issue.transaction do 
-      
+    issue.transaction do
+
       issue.save
 
       if user_ids && user_ids.present?
@@ -137,7 +140,7 @@ class Issue < ApplicationRecord
         user_ids.each do |uid|
           next if !uid.present?
           issue_users_obj << IssueUser.new(issue_id: issue.id, user_id: uid)
-        end     
+        end
         IssueUser.import(issue_users_obj) if issue_users_obj.any?
       end
 
