@@ -45,5 +45,23 @@ describe('On watch issue details', function() {
         cy.get('[data-cy=issues]').its('length').should('be.eq', 4)
       })
     })
+    cy.logout()
+  })
+})
+
+describe('On watch Page issues', function() {
+  beforeEach(() => {
+    cy.app('clean')
+    cy.appScenario('basic')
+    cy.appScenario('remove_on_watch')
+    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.openOnWatch()
+  })
+
+  it('When no issue is on watch', function() {
+    cy.get('[data-cy=watched_issue_status]').scrollIntoView()
+    cy.get('[data-cy=no_issue_category_found]').contains('No Data Found..').should('be.visible')
+    cy.get('[data-cy=watched_issue_list]').contains('No Data Found..').should('be.visible')
+    cy.logout()
   })
 })
