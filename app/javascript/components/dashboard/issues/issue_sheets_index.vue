@@ -109,7 +109,31 @@
             </template>
           </multiselect>
         </div>   
-    </div>
+      </div>
+
+      <div class="d-flex align-item-center justify-content-between w-70">          
+       <div class="simple-select mr-1 d-flex w-100">        
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"
+            class="ml-2"
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>  
+      </div>
+
       <div class="mt-2">
         <button v-if="_isallowed('write')"
           class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
@@ -267,6 +291,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
         'setTaskTypeFilter',
@@ -333,6 +358,8 @@
    },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'currentProject',
@@ -360,6 +387,7 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -372,6 +400,7 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
 
@@ -397,7 +426,13 @@
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
           }
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (issue.isOverdue == true)
+          }
 
+          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
+            valid = (issue.isOverdue == false)
+          }
           if (search_query) valid = valid && search_query.test(issue.title)
           switch (this.viewList) {
             case "active": {
@@ -417,6 +452,26 @@
 
         return issues
       }, 
+
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_issueTypeFilter: {
         get() {
           return this.issueTypeFilter
