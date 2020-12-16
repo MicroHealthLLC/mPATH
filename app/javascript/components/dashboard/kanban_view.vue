@@ -100,6 +100,39 @@
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
+                     <multiselect
+                      v-model="C_taskTypeFilter"
+                      track-by="name"
+                      label="name"
+                      placeholder="Filter by Task Category"
+                      :options="taskTypes"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                      <div class="simple-select w-50">
+                    <multiselect
+                      v-model="viewList"
+                      :options="listOptions"
+                      :searchable="false"
+                      :close-on-select="false"
+                      :show-labels="false"
+                      placeholder="Filter by Issue Status"
+                      >
+                      <template slot="singleLabel">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{viewList}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
                     <multiselect
                       v-model="C_issueTypeFilter"
                       track-by="name"
@@ -117,7 +150,7 @@
                         </div>
                       </template>
                     </multiselect>
-
+                    
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -137,23 +170,7 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 mb-3 font-sm">
-                  <div class="simple-select w-50">
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"
-                      placeholder="Filter by Issue Status"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
+                <div class="mx-2 mb-3 font-sm">              
 
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
@@ -464,6 +481,7 @@
       },
       filteredIssues() {
         let typeIds = _.map(this.C_issueTypeFilter, 'id')
+        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
         let severityIds = _.map(this.C_issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
         const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()), 'i') : null
@@ -482,6 +500,7 @@
             valid  = valid && issue.watched
           }
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
 
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
@@ -535,6 +554,14 @@
         },
         set(value) {
           this.setIssueTypeFilter(value)
+        }
+      },
+       C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
         }
       },
       C_issueSeverityFilter: {
