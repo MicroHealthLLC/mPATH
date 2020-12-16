@@ -87,10 +87,10 @@ ActiveAdmin.register Project do
             input :statuses, label: 'Statuses in Project', as: :select, collection: f.object.statuses.map{|u| [u.name, u.id]}, multiple: true
           end
           div id: 'project-task_type-select2' do
-            input :task_type_alt, label: 'Milestones', as: :select, collection: TaskType.where.not(id: f.object.task_type_ids).map{|u| [u.name, u.id]}, multiple: true
+            input :task_type_alt, label: 'Task Categories', as: :select, collection: TaskType.where.not(id: f.object.task_type_ids).map{|u| [u.name, u.id]}, multiple: true
             div class: 'arrow-right'
             div class: 'arrow-left'
-            input :task_types, label: 'Milestones in Project', as: :select, collection: f.object.task_types.map{|u| [u.name, u.id]}, multiple: true
+            input :task_types, label: 'Task Categories in Project', as: :select, collection: f.object.task_types.map{|u| [u.name, u.id]}, multiple: true
           end
           div id: 'project-issue_type-select2' do
             input :issue_type_alt, label: 'Issue Types', as: :select, collection: IssueType.where.not(id: f.object.issue_type_ids).map{|u| [u.name, u.id]}, multiple: true
