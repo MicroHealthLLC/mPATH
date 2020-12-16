@@ -1,21 +1,9 @@
 <template>
   <div id="members" data-cy="members_view">
      <div class="container mt-2"> 
-        <h3 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
-        <div class="row mt-2 mb-1">
-          <div class="col float-left">
-          <button
-            @click.prevent="download"
-            id="printBtn"
-            class="btn btn-sm btn-dark mb-1">
-            <font-awesome-icon icon="file-pdf" class="mr-2" />
-            Export to PDF
-          </button>      
-          </div>    
-       
-        </div>  
+        <h3 class="mt-4 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>  
            <div class="mb-0 p-b-0">
-            <el-row>
+            <el-row class="mb-2">
              <el-col :span="9">
              <div class="input-group w-100 task-search-bar">
                 <div class="input-group-prepend">
@@ -28,14 +16,21 @@
                 aria-describedby="search-addon"
                 v-model="filters[0].value" >
             </div>          
-            </el-col>
-              <div class="total" data-cy="team_total">
-              <button class="btn btn-sm btn-info mb-3 team-total">
+            </el-col>        
+            <div class="total" data-cy="team_total">                 
+              <button
+                @click.prevent="download"
+                id="printBtn"
+                class="btn btn-sm btn-dark">
+                <font-awesome-icon icon="file-pdf" class="mr-2" />
+                Export to PDF
+              </button>      
+              <button class="btn btn-sm btn-info team-total">
                 Team Total: {{tableData.length}}
                 </button>
               </div>   
             </el-row>
-           </div>      
+           </div>              
         <data-tables 
           :data="tableData"  
           ref="table" 
@@ -82,9 +77,7 @@ ELEMENT.locale(ELEMENT.lang.en)
         defaultSort: {
           prop: 'id',
           order: 'ascending'
-        },
-          prop: 'organization',
-          isSortable: false
+        },          
        },
         filters: [
         {
@@ -107,8 +100,7 @@ ELEMENT.locale(ELEMENT.lang.en)
           label: "Position"
           }, {
           prop: "organization",
-          label: "Organization", 
-          sortable: false
+          label: "Organization",        
           }, {
           prop: "email",
           label: "Email"
@@ -120,16 +112,15 @@ ELEMENT.locale(ELEMENT.lang.en)
     },
      computed: {
       ...mapGetters([
-        'projectUsers'
+        'activeProjectUsers'
       ]),
       tableData() {
-        return this.projectUsers
-      },
-    }, 
-     methods: {    
+        return this.activeProjectUsers
+      }
+    },  
+     methods: {  
       download() {
         const doc = new jsPDF("l")
-
         const html = this.$refs.table.innerHTML
         var headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
         var thead = $("<thead>")
