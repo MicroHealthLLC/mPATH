@@ -14,6 +14,7 @@
     props: ["tabs", "currentTab", "badgeMargin"],
     methods: {
       changeTab(tab) {
+        if (tab.disabled) return;
         this.$emit('on-change-tab', tab)
       }
     },
@@ -31,7 +32,7 @@
       cursor: pointer;
       padding: 7px 10px;
       letter-spacing: 0.12em;
-      margin: 4px 10px;
+      margin: 4px 7px;
       transition: auto;
       &.active {
         color: #fff;
