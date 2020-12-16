@@ -39,6 +39,7 @@
         <data-tables 
           :data="tableData"  
           ref="table" 
+          id="teamMemberTableId"
           class="teamMembersList"
           data-cy="team_members_list"          
           :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }" 
@@ -128,9 +129,19 @@ ELEMENT.locale(ELEMENT.lang.en)
      methods: {    
       download() {
         const doc = new jsPDF("l")
+
         const html = this.$refs.table.innerHTML
-        doc.autoTable({ html: '.el-table .el-table__body-wrapper .el-table__body' })
+        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
+        var thead = $("<thead>")
+        var tr = $("<tr>")
+        for(var h of headers){
+          tr.append($("<th>",{text: h}))
+        } 
+        thead.append(tr)
+        $(".el-table__body").append(thead)
+        doc.autoTable({html: '.el-table .el-table__body-wrapper .el-table__body' })
         doc.save("Team_Members_list.pdf")
+        thead.remove()
       }
     },
 }

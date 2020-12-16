@@ -52,6 +52,7 @@ class Issue < ApplicationRecord
     sub_issues = self.sub_issues
 
     self.as_json.merge(
+      class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
       issue_type: issue_type.try(:name),
