@@ -96,28 +96,30 @@
         </div>
 
 
-        <div class="d-flex my-3 mx-1">
-          <div class="taskissueoverdue-select d-flex">
-            <multiselect
-              v-model="C_taskIssueOverdueFilter"
-              track-by="name"
-              label="name"
-              class="ml-2"
-              placeholder="Task and Issue Overdue"
-              :options="C_taskIssueOverdueOptions"
-              :searchable="false"
-              :multiple="false"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
+        <div class="progress_ranges my-3 mx-1">
+          <label class="mb-0">Task and Issue Overdue</label>
+          <div class="form-row">
+            <div class="form-group col mb-0">
+              <multiselect
+                v-model="C_taskIssueOverdueFilter"
+                track-by="name"
+                label="name"
+                class="ml-2"
+                placeholder="Task and Issue Overdue"
+                :options="C_taskIssueOverdueOptions"
+                :searchable="false"
+                :multiple="false"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+            </div>
           </div>
-
         </div>
 
 
@@ -460,10 +462,17 @@
       },
       C_taskIssueOverdueFilter: {
         get() {
-          return this.taskIssueOverdueFilter
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
         },
         set(value) {
-          this.setTaskIssueOverdueFilter([value])
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
         }
       },
       C_taskTypeFilter: {
@@ -783,7 +792,7 @@
         this.updateMapFilters({key: 'taskIssueDueDate', filter: value, same: true})
       },
       taskIssueOverdueFilter(value){
-        this.updateMapFilters({key: 'taskIssueOverdue', filter: value})
+        this.updateMapFilters({key: 'taskIssueOverdue', filter: value, same: true})
       },
       facilityGroupFilter(value) {
         this.updateMapFilters({key: 'facilityGroupIds', filter: value})

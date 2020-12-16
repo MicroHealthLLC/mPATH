@@ -287,6 +287,7 @@
     },
     computed: {
       ...mapGetters([
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'currentProject',
@@ -314,6 +315,7 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -351,6 +353,14 @@
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
             valid = is_valid
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (issue.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+            valid = (issue.isOverdue == false)
           }
 
           if (search_query) valid = valid && search_query.test(issue.title)

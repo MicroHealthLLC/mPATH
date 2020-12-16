@@ -23,7 +23,7 @@ export default new Vuex.Store({
     facilities: new Array,
     facilityGroups: new Array,
     statuses: new Array,
-    taskIssueOverdueOptions: [{name: "overdue"}, {name: "not overdue"}],
+    taskIssueOverdueOptions: [{id: "all",name: "all"},{id: "overdue",name: "overdue"}, {id: "not overdue",name: "not overdue"}],
     taskIssueOverdueFilter: null,
     taskTypes: new Array,
     taskStages: new Array,
@@ -101,8 +101,6 @@ export default new Vuex.Store({
       if (index > -1) Vue.set(state.facilities, index, facility)
     },
     updateMapFilters: (state, {key, filter, same, _k}) => {
-      console.log("updateMapFilters")
-      console.log(filter)
       if (filter && !filter.includes(null) && Array.isArray(filter) && filter.length > 0) {
         let i = state.mapFilters.findIndex(f => f.hasOwnProperty(key))
         if (i < 0) i = state.mapFilters.length
@@ -156,7 +154,9 @@ export default new Vuex.Store({
       }
     },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
-    setTaskIssueOverdueFilter: (state, filter) => { state.taskIssueOverdueFilter = filter},
+    setTaskIssueOverdueFilter: (state, filter) => { 
+      state.taskIssueOverdueFilter = filter
+    },
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
@@ -284,11 +284,14 @@ export default new Vuex.Store({
             case "taskIssueOverdue": {
               var _isOverdues = _.flatten(_.map(facility.tasks, 'isOverdue') ).concat(_.flatten(_.map(facility.issues, 'isOverdue') ))
               var is_valid = false
-              valid = valid && _isOverdues.includes(true)
-              console.log("filteredFacilities taskIssueOverdue")
-              console.log(f)
-              console.log(k)
 
+              if(f[k][0] && f[k][0].name == "overdue"){
+                valid = valid && _isOverdues.includes(true)
+              }
+              if(f[k][0] && f[k][0].name == "not overdue"){
+                valid = valid && _isOverdues.includes(false)
+              }
+              
               break
             }
             
