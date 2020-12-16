@@ -59,6 +59,7 @@ describe('On watch timeline Page', function() {
         cy.contains('Test Task 3').click()
       })
       // remove issue from on watch
+      cy.wait(1000)
       cy.get('[data-cy=task_on_watch]').click({force: true})
       cy.get('[data-cy=task_save_btn]').click({force: true})
 
@@ -66,6 +67,7 @@ describe('On watch timeline Page', function() {
       cy.get('[data-cy=watched_issue_list]').within(() => {
         cy.contains('Test Issue 3').click()
       })
+      cy.wait(1000)
       cy.get('[data-cy=issue_on_watch]').click({force: true})
       cy.get('[data-cy=issue_save_btn]').click({force: true})
 
