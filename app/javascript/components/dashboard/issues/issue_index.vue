@@ -103,6 +103,30 @@
           </multiselect>
         </div>       
       </div>
+
+      <div class="mt-1 d-flex font-sm w-100">
+         <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_taskIssueOverdueFilter"
+              track-by="name"
+              label="name"
+              class="ml-2"
+              placeholder="Task and Issue Overdue"
+              :options="C_taskIssueOverdueOptions"
+              :searchable="false"
+              :multiple="false"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>      
+      </div>
+
       <div class="mt-3">
         <button v-if="_isallowed('write')" 
            class="btn btn-sm btn-primary addIssueBtn" 
@@ -233,6 +257,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setTaskTypeFilter',
         'setIssueSeverityFilter',
@@ -287,6 +312,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
@@ -382,6 +408,24 @@
         })), ['dueDate'])
 
         return issues
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
       },
       C_issueTypeFilter: {
         get() {

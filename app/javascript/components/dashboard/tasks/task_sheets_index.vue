@@ -34,20 +34,41 @@
           </multiselect>
         </div>
         <div class="simple-select d-flex mr-2" style="width:30%">
-        <multiselect
-          v-model="viewList"
-          :options="listOptions"
-          :searchable="false"
-          :close-on-select="false"
-          :show-labels="false"
-          placeholder="Filter by Task Status"
-          >
-          <template slot="singleLabel">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{viewList}}</span>
-            </div>
-          </template>
-        </multiselect>
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Task Status"
+            >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
+        <div class="simple-select mx-1 d-flex" style="width:35%">
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"
+            class="ml-2"
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
 
         <div class="form-check-inline font-sm mr-0" style="width:20%">
@@ -208,6 +229,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -248,6 +270,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
@@ -333,6 +356,26 @@
         }), ['dueDate'])
         return tasks
       },
+
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter

@@ -627,7 +627,8 @@ export default new Vuex.Store({
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
-        
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
+
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
@@ -642,7 +643,13 @@ export default new Vuex.Store({
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
         }
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
 
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
+        }
         return valid
       })
 
@@ -652,6 +659,7 @@ export default new Vuex.Store({
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
 
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
@@ -667,6 +675,14 @@ export default new Vuex.Store({
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
         }
 
         return valid

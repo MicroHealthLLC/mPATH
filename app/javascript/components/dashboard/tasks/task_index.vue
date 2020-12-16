@@ -50,6 +50,34 @@
           </multiselect>
         </div>
       </div>
+
+      <div class="d-flex align-item-center justify-content-between my-2 100">        
+        <div class="simple-select w-100 mr-1">
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"
+            class="ml-2"
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="simple-select w-100 enum-select">
+        </div>
+      </div>
+
+
+
       <div class="mb-3 mr-2 font-sm">          
          <button v-if="_isallowed('write')" 
           class="btn btn-sm btn-primary mr-2 addTaskBtn"
@@ -165,6 +193,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -190,6 +219,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'taskTypeFilter',
         'noteDateFilter',
@@ -276,6 +306,25 @@
 
         return tasks
       },
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
