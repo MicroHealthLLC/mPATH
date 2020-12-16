@@ -286,7 +286,7 @@ export default new Vuex.Store({
               break
             }
             case "taskTypeIds": {
-              let ids = _.map(facility.tasks, 'taskTypeId')
+              let ids = _.map(facility.tasks, 'taskTypeId').concat(_.flatten(_.map(facility.issues, 'taskTypeId') ))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -624,6 +624,7 @@ export default new Vuex.Store({
 
     },
     filteredAllIssues: (state, getters) => {
+      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
@@ -632,6 +633,7 @@ export default new Vuex.Store({
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
+        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
 
