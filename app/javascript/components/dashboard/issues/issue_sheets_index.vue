@@ -149,7 +149,7 @@
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
                   <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
-                  <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned Users<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('watched')">Onwatch<i class="fas fa-sort scroll"></i></th>
@@ -157,7 +157,7 @@
                 </tr>
               </table>            
                 <issue-sheets
-                  v-for="(issue, i) in sortedIssues"
+                  v-for="(issue, i) in sortedIssues"      
                   id="issueHover"
                   :class="{'b_border': !!filteredIssues[i+1]}"
                   :key="issue.id"
@@ -206,8 +206,8 @@
             <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
-            <td class="ten" v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
-            <td class="ten" v-else></td>
+            <td v-if="(issue.responsibleUserNames.length) > 0">{{ issue.responsibleUserNames }}</td>
+            <td v-else></td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
             <td v-else></td>

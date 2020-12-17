@@ -98,7 +98,7 @@
               <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('users')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
+              <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
               <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
@@ -153,8 +153,8 @@
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
-          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
-          <td class="ten" v-else></td>
+          <td v-if="(task.userNames.length) > 0">{{ task.userNames }}</td>
+          <td v-else></td>
           <td>{{task.progress + "%"}}</td>
           <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
