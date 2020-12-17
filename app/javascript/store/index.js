@@ -23,6 +23,8 @@ export default new Vuex.Store({
     facilities: new Array,
     facilityGroups: new Array,
     statuses: new Array,
+    taskIssueOverdueOptions: [{id: "all",name: "all"},{id: "overdue",name: "overdue"}, {id: "not overdue",name: "not overdue"}],
+    taskIssueOverdueFilter: null,
     taskTypes: new Array,
     taskStages: new Array,
     issueStages: new Array,
@@ -152,6 +154,9 @@ export default new Vuex.Store({
       }
     },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
+    setTaskIssueOverdueFilter: (state, filter) => { 
+      state.taskIssueOverdueFilter = filter
+    },
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
@@ -207,6 +212,7 @@ export default new Vuex.Store({
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
+    taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
     taskTypeFilter: state => state.taskTypeFilter,
     taskStageFilter: state => state.taskStageFilter,
     issueStageFilter: state => state.issueStageFilter,
@@ -275,6 +281,20 @@ export default new Vuex.Store({
               }
 
             }
+            case "taskIssueOverdue": {
+              var _isOverdues = _.flatten(_.map(facility.tasks, 'isOverdue') ).concat(_.flatten(_.map(facility.issues, 'isOverdue') ))
+              var is_valid = false
+
+              if(f[k][0] && f[k][0].name == "overdue"){
+                valid = valid && _isOverdues.includes(true)
+              }
+              if(f[k][0] && f[k][0].name == "not overdue"){
+                valid = valid && _isOverdues.includes(false)
+              }
+              
+              break
+            }
+            
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -286,7 +306,7 @@ export default new Vuex.Store({
               break
             }
             case "taskTypeIds": {
-              let ids = _.map(facility.tasks, 'taskTypeId')
+              let ids = _.map(facility.tasks, 'taskTypeId').concat(_.flatten(_.map(facility.issues, 'taskTypeId') ))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -394,6 +414,10 @@ export default new Vuex.Store({
     activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
       return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
     },
+    getTaskIssueOverdueOptions: (state, getters) => () => {
+      return state.taskIssueOverdueOptions
+    },
+
     currentTasks: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'tasks'))
     },
@@ -603,7 +627,8 @@ export default new Vuex.Store({
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
-        
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
+
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
@@ -618,20 +643,29 @@ export default new Vuex.Store({
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
         }
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
 
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
+        }
         return valid
       })
 
     },
     filteredAllIssues: (state, getters) => {
+      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
 
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
+        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
 
@@ -643,6 +677,14 @@ export default new Vuex.Store({
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
         }
 
         return valid

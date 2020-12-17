@@ -35,21 +35,43 @@
           </multiselect>
         </div>
         <div class="simple-select d-flex mr-2" style="width:30%">
-        <multiselect
-          v-model="viewList"
-          :options="listOptions"
-          :searchable="false"
-          :close-on-select="false"
-          :show-labels="false"
-          placeholder="Filter by Task Status"
-          data-cy="task_status_list"
-          >
-          <template slot="singleLabel">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{viewList}}</span>
-            </div>
-          </template>
-        </multiselect>
+
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Task Status"
+            data-cy="task_status_list"
+            >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
+        <div class="simple-select mx-1 d-flex" style="width:35%">
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"
+            class="ml-2"
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
 
         <div class="form-check-inline font-sm mr-0" style="width:20%">
@@ -210,6 +232,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -250,6 +273,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
@@ -269,6 +294,7 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -306,6 +332,14 @@
             valid = is_valid
           }
 
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (task.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
+            valid = (task.isOverdue == false)
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {
@@ -325,6 +359,26 @@
         }), ['dueDate'])
         return tasks
       },
+
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter

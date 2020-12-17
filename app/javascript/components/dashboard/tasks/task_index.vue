@@ -52,8 +52,32 @@
           </multiselect>
         </div>
       </div>
-      <div class="mb-3 mr-2 font-sm">
-         <button v-if="_isallowed('write')"
+      <div class="d-flex align-item-center justify-content-between my-2 100">        
+        <div class="simple-select w-100 mr-1">
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"
+            class="ml-2"
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="simple-select w-100 enum-select">
+        </div>
+      </div>
+      <div class="mb-3 mr-2 font-sm">          
+         <button v-if="_isallowed('write')" 
           class="btn btn-sm btn-primary mr-2 addTaskBtn"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
@@ -167,6 +191,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -192,6 +217,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'taskTypeFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
@@ -211,6 +238,7 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -248,6 +276,14 @@
             valid = is_valid
           }
 
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (task.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+            valid = (task.isOverdue == false)
+          }
+
           if (search_query) valid = valid && search_query.test(task.text)
 
           switch (this.viewList) {
@@ -268,6 +304,25 @@
 
         return tasks
       },
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
