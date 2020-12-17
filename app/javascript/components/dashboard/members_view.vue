@@ -1,7 +1,7 @@
 <template>
   <div id="members" data-cy="members_view">
-     <div class="container mt-2"> 
-        <h3 class="mt-4 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>  
+    <div class="container mt-2">
+        <h3 class="mt-4 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h3>
            <div class="mb-0 p-b-0">
             <el-row class="mb-2">
              <el-col :span="9">
@@ -17,25 +17,25 @@
                 v-model="filters[0].value"
                 data-cy="search_team_member">
             </div>
-            </el-col>            
-            <div class="total" data-cy="team_total">                 
+            </el-col>
+            <div class="total" data-cy="team_total">
               <button
                 @click.prevent="download"
                 id="printBtn"
                 class="btn btn-sm btn-dark">
                 <font-awesome-icon icon="file-pdf" class="mr-2" />
                 Export to PDF
-              </button>      
+              </button>
               <button class="btn btn-sm btn-info team-total">
                 Team Total: {{tableData.length}}
                 </button>
               </div>
             </el-row>
 
-           </div>              
-        <data-tables 
-          :data="tableData"  
-          ref="table" 
+           </div>
+        <data-tables
+          :data="tableData"
+          ref="table"
           id="teamMemberTableId"
           class="teamMembersList"
           data-cy="team_members_list"
@@ -53,7 +53,6 @@
       </data-tables>
      </div>
   </div>
-
 </template>
 
 <script>
@@ -76,16 +75,24 @@ ELEMENT.locale(ELEMENT.lang.en)
         totalRows: 1,
         tableProps: {
           stripe: true,
-        defaultSort: {
-          prop: 'id',
-          order: 'ascending'
-        },          
-       },
+          defaultSort: {
+            prop: 'id',
+            order: 'ascending'
+          },
+        },
         filters: [
-        {
-          prop: ['id', 'firstName', 'lastName', 'title', 'organization', 'email', 'phoneNumber'],
-          value: ''
-        }
+          {
+            prop: [
+              'id',
+              'firstName',
+              'lastName',
+              'title',
+              'organization',
+              'email',
+              'phoneNumber'
+            ],
+            value: ''
+          }
         ],
         layout: 'table, pagination',
         titles: [{
@@ -102,7 +109,7 @@ ELEMENT.locale(ELEMENT.lang.en)
           label: "Position"
           }, {
           prop: "organization",
-          label: "Organization"       
+          label: "Organization"
           }, {
           prop: "email",
           label: "Email"
@@ -119,15 +126,15 @@ ELEMENT.locale(ELEMENT.lang.en)
       tableData() {
         return this.activeProjectUsers
       }
-    },  
-     methods: { 
+    },
+     methods: {
       download() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
-        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
-        var thead = $("<thead>")
-        var tr = $("<tr>")
-        for(var h of headers){
+        let headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
+        let thead = $("<thead>")
+        let tr = $("<tr>")
+        for (let h of headers){
           tr.append($("<th>",{text: h}))
         }
         thead.append(tr)
@@ -136,9 +143,10 @@ ELEMENT.locale(ELEMENT.lang.en)
         doc.save("Team_Members_list.pdf")
         thead.remove()
       }
-    },
-}
+    }
+  }
 </script>
+
 <style scoped lang="scss">
   /deep/.el-table {
     padding-top: 0px;
@@ -162,6 +170,5 @@ ELEMENT.locale(ELEMENT.lang.en)
     text-align: left;
     cursor: pointer;
     display: block;
- }
-
+  }
 </style>

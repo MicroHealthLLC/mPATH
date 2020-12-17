@@ -1,18 +1,19 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-          <div class="input-group w-100">
-             <div class="input-group-prepend">
-             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-            </div>
-            <input type="search"
-            class="form-control form-control-sm"
-            placeholder="Search tasks.."
-            aria-label="Search"
-            aria-describedby="search-addon"
-            v-model="tasksQuery"
-            data-cy="search_tasks">
-          </div>
+      <div class="input-group w-100">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+        </div>
+        <input type="search"
+          class="form-control form-control-sm"
+          placeholder="Search tasks.."
+          aria-label="Search"
+          aria-describedby="search-addon"
+          v-model="tasksQuery"
+          data-cy="search_tasks"
+        />
+      </div>
       <div class="d-flex align-item-center justify-content-between my-2 100">
         <div class="simple-select w-100 mr-1">
           <multiselect
@@ -52,57 +53,27 @@
           </multiselect>
         </div>
       </div>
-      <div class="d-flex align-item-center justify-content-between my-2 100">        
-        <div class="simple-select w-100 mr-1">
-          <multiselect
-            v-model="C_taskIssueOverdueFilter"
-            track-by="name"
-            label="name"
-            class="ml-2"
-            placeholder="Task and Issue Overdue"
-            :options="C_taskIssueOverdueOptions"
-            :searchable="false"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select w-100 enum-select">
-        </div>
-      </div>
-      <div class="mb-3 mr-2 font-sm">          
-         <button v-if="_isallowed('write')" 
+      <div class="mb-3 d-flex font-sm">
+        <button v-if="_isallowed('write')"
           class="btn btn-sm btn-primary mr-2 addTaskBtn"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
-          </button>
-          <button
+        </button>
+        <button
           @click.prevent="download"
           class="btn btn-sm btn-dark mr-1 export2pdf">
-          <font-awesome-icon icon="file-pdf" />
+          <font-awesome-icon icon="file-pdf" class="mr-2" />
           Export to PDF
-          </button>
-          <!-- <button
-            disabled
-            class="btn btn-sm btn-outline-dark">
-            Export to Excel
-          </button>  -->
-          <div class="form-check-inline font-sm myTasks mt-1 mr-0">
-          <label class="form-check-label ml-4 mr-3">
+        </button>
+        <div class="form-check-inline font-sm ml-auto mr-0">
+          <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
           </label>
-          </div>
+        </div>
       </div>
-
       <div v-if="filteredTasks.length > 0">
         <hr/>
         <task-show
@@ -239,7 +210,6 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
-
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -309,7 +279,7 @@
           if(!this.taskIssueOverdueFilter){
             this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
           }
-          return this.taskIssueOverdueFilter       
+          return this.taskIssueOverdueFilter
         },
         set(value) {
           if(!value){
