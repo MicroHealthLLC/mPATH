@@ -15,16 +15,17 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="search" 
-              class="form-control form-control-sm" 
-              placeholder="Search Issues" 
-              aria-label="Search" 
-              aria-describedby="search-addon" 
-              v-model="issuesQuery">
+          <input type="search"
+              class="form-control form-control-sm"
+              placeholder="Search Issues"
+              aria-label="Search"
+              aria-describedby="search-addon"
+              v-model="issuesQuery"
+              data-cy="search_issues">
       </div>
 
 
-         <div class="d-flex align-item-center justify-content-between mt-2 100">          
+         <div class="d-flex align-item-center justify-content-between mt-2 100">
           <div class="simple-select w-100 mr-1">
             <multiselect
               v-model="C_issueTypeFilter"
@@ -43,7 +44,7 @@
                 </div>
               </template>
             </multiselect>
-          </div>         
+          </div>
           <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
@@ -94,6 +95,7 @@
             :close-on-select="false"
             :show-labels="false"
             placeholder="Filter by Issue Status"
+            data-cy="issue_status_list"
           >
             <template slot="singleLabel">
               <div class="d-flex">
@@ -101,16 +103,40 @@
               </div>
             </template>
           </multiselect>
-        </div>       
+        </div>
       </div>
+
+      <div class="mt-1 d-flex font-sm w-100">
+         <div class="simple-select w-100 mr-1">
+            <multiselect
+              v-model="C_taskIssueOverdueFilter"
+              track-by="name"
+              label="name"
+              class="ml-2"
+              placeholder="Task and Issue Overdue"
+              :options="C_taskIssueOverdueOptions"
+              :searchable="false"
+              :multiple="false"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>      
+      </div>
+
       <div class="mt-3">
-        <button v-if="_isallowed('write')" 
-           class="btn btn-sm btn-primary addIssueBtn" 
+        <button v-if="_isallowed('write')"
+           class="btn btn-sm btn-primary addIssueBtn"
            @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
           </button>
          <button
-           @click.prevent="download"      
+           @click.prevent="download"
            class="btn btn-sm btn-dark export2pdf">
            <font-awesome-icon icon="file-pdf" />
            Export to PDF
@@ -126,19 +152,19 @@
           </label>
         </div>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">          
+          <div v-if="filteredIssues.length > 0">
             <!-- <button
               disabled
               id="printBtn"
               class="btn btn-sm btn-outline-dark ml-2">
               Export to Excel
-            </button> -->           
+            </button> -->
             <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
-              :key="issue.id"             
+              :key="issue.id"
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
@@ -233,6 +259,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setTaskTypeFilter',
         'setIssueSeverityFilter',
@@ -287,6 +314,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'currentProject',
@@ -314,6 +343,7 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -339,18 +369,26 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (issue.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+            valid = (issue.isOverdue == false)
           }
 
           if (search_query) valid = valid && search_query.test(issue.title)
@@ -372,6 +410,24 @@
         })), ['dueDate'])
 
         return issues
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
       },
       C_issueTypeFilter: {
         get() {
@@ -433,11 +489,11 @@
     position: relative;
     padding-top: 80px !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
   }
   .myIssues {
     float:right;

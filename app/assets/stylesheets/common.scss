@@ -476,7 +476,7 @@ body /deep/ .mx-input.disabled {
 }
 .has-search .form-control-feedback {
   position: absolute;
-  z-index: 9999;
+  z-index: 99;
   display: block;
   text-align: center;
   pointer-events: none;

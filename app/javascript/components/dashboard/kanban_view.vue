@@ -26,6 +26,7 @@
                       aria-label="Search"
                       aria-describedby="search-addon"
                       v-model="sidebarTasksQuery"
+                      data-cy="search_tasks"
                     />
                   </div>
                 </div>
@@ -50,6 +51,28 @@
                     </multiselect>
                   </div>
                 </div>
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="simple-select w-100">
+                    <multiselect
+                      v-model="C_taskIssueOverdueFilter"
+                      track-by="name"
+                      label="name"
+                      class="ml-2"
+                      placeholder="Task and Issue Overdue"
+                      :options="C_taskIssueOverdueOptions"
+                      :searchable="false"
+                      :multiple="false"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                </div>
                 <div class="mx-2 mb-3 font-sm">
                   <div class="simple-select w-50">
                     <multiselect
@@ -59,6 +82,7 @@
                       :close-on-select="false"
                       :show-labels="false"
                       placeholder="Filter by Task Status"
+                      data-cy="task_status_list"
                       >
                       <template slot="singleLabel">
                         <div class="d-flex">
@@ -77,7 +101,7 @@
                       <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"><span><i class="fas fa-eye mr-1"></i></span>On Watch
                     </label>
                   </div>
-                  <div class="form-check my-4 pl-0">
+                  <div class="form-check my-4 pl-0" data-cy="search_task_total">
                     <label class="form-check-label text-primary">
                      <h5> Total: {{filteredTasks.length}}</h5>
                     </label>
@@ -95,7 +119,8 @@
                       placeholder="Search Issues"
                       aria-label="Search"
                       aria-describedby="search-addon"
-                      v-model="sidebarIssuesQuery">
+                      v-model="sidebarIssuesQuery"
+                      data-cy="search_issues">
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -117,7 +142,8 @@
                         </div>
                       </template>
                     </multiselect>
-                      <div class="simple-select w-50">
+
+                  <div class="simple-select w-50">
                     <multiselect
                       v-model="viewList"
                       :options="listOptions"
@@ -125,6 +151,7 @@
                       :close-on-select="false"
                       :show-labels="false"
                       placeholder="Filter by Issue Status"
+                      data-cy="issue_status_list"
                       >
                       <template slot="singleLabel">
                         <div class="d-flex">
@@ -133,6 +160,7 @@
                       </template>
                     </multiselect>
                   </div>
+
                     <multiselect
                       v-model="C_issueTypeFilter"
                       track-by="name"
@@ -150,7 +178,7 @@
                         </div>
                       </template>
                     </multiselect>
-                    
+
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -170,9 +198,30 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 mb-3 font-sm">              
-
-                  <div class="form-check my-1 mt-3">
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="simple-select w-100">
+                    <multiselect
+                      v-model="C_taskIssueOverdueFilter"
+                      track-by="name"
+                      label="name"
+                      class="ml-2"
+                      placeholder="Task and Issue Overdue"
+                      :options="C_taskIssueOverdueOptions"
+                      :searchable="false"
+                      :multiple="false"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                </div>
+                <div class="mx-2 mb-3 font-sm">   
+                 <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
                     </label>
@@ -182,7 +231,7 @@
                       <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues"><span><i class="fas fa-eye mr-1"></i></span>On Watch
                     </label>
                   </div>
-                  <div class="form-check my-4 pl-0">
+                  <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>
                     </label>
@@ -196,7 +245,7 @@
 
       <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
         <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">
-          <span class="clickable" @click.prevent="expandFilter=!expandFilter">
+          <span class="clickable" @click.prevent="expandFilter=!expandFilter" data-cy="kanban_search">
             <span v-show="!expandFilter" class="expandBtn">
               <i class="fa fa-chevron-right" aria-hidden="true"></i>
             </span>
@@ -313,6 +362,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setIssueSeverityFilter',
@@ -372,6 +422,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'contentLoaded',
@@ -398,6 +450,7 @@
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -411,7 +464,7 @@
           if (this.C_onWatchTasks) {
             valid  = valid && task.watched
           }
-          
+
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -421,18 +474,26 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (task.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
+            valid = (task.isOverdue == false)
           }
 
           if (search_query) valid = valid && search_query.test(task.text)
@@ -453,6 +514,26 @@
           return valid
         }), 'kanbanOrder', 'asc')
       },
+
+      C_taskIssueOverdueFilter: {
+        get() {
+          if(!this.taskIssueOverdueFilter){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }
+          return this.taskIssueOverdueFilter       
+        },
+        set(value) {
+          if(!value){
+            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
+          }else{
+            this.setTaskIssueOverdueFilter([value])
+          }
+        }
+      },
+      C_taskIssueOverdueOptions() {
+        return this.getTaskIssueOverdueOptions()
+      },
+
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -488,6 +569,7 @@
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -511,18 +593,26 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
-          
+
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+            valid = (issue.isOverdue == true)
+          }
+
+          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+            valid = (issue.isOverdue == false)
           }
 
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
