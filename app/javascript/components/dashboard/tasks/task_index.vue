@@ -5,14 +5,15 @@
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="search" 
-            class="form-control form-control-sm" 
-            placeholder="Search tasks.." 
-            aria-label="Search" 
-            aria-describedby="search-addon" 
-            v-model="tasksQuery">
+            <input type="search"
+            class="form-control form-control-sm"
+            placeholder="Search tasks.."
+            aria-label="Search"
+            aria-describedby="search-addon"
+            v-model="tasksQuery"
+            data-cy="search_tasks">
           </div>
-      <div class="d-flex align-item-center justify-content-between my-2 100">        
+      <div class="d-flex align-item-center justify-content-between my-2 100">
         <div class="simple-select w-100 mr-1">
           <multiselect
             v-model="C_taskTypeFilter"
@@ -34,13 +35,14 @@
         </div>
         <div class="simple-select w-100 enum-select">
           <multiselect
-            v-model="viewList" 
-            style="width:100%"          
+            v-model="viewList"
+            style="width:100%"
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
             :show-labels="false"
             placeholder="Filter by Task Status"
+            data-cy="task_status_list"
           >
            <template slot="singleLabel">
               <div class="d-flex">
@@ -50,7 +52,6 @@
           </multiselect>
         </div>
       </div>
-
       <div class="d-flex align-item-center justify-content-between my-2 100">        
         <div class="simple-select w-100 mr-1">
           <multiselect
@@ -75,9 +76,6 @@
         <div class="simple-select w-100 enum-select">
         </div>
       </div>
-
-
-
       <div class="mb-3 mr-2 font-sm">          
          <button v-if="_isallowed('write')" 
           class="btn btn-sm btn-primary mr-2 addTaskBtn"
@@ -85,31 +83,31 @@
           Add Task
           </button>
           <button
-          @click.prevent="download"     
+          @click.prevent="download"
           class="btn btn-sm btn-dark mr-1 export2pdf">
           <font-awesome-icon icon="file-pdf" />
           Export to PDF
           </button>
           <!-- <button
-            disabled 
+            disabled
             class="btn btn-sm btn-outline-dark">
             Export to Excel
           </button>  -->
-          <div class="form-check-inline font-sm myTasks mt-1 mr-0">             
+          <div class="form-check-inline font-sm myTasks mt-1 mr-0">
           <label class="form-check-label ml-4 mr-3">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label> 
-          </div>    
+          </label>
+          </div>
       </div>
-      
-      <div v-if="filteredTasks.length > 0">        
+
+      <div v-if="filteredTasks.length > 0">
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"        
+          id="taskHover"
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :task="task"
@@ -198,7 +196,7 @@
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),  
+      ]),
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -254,7 +252,7 @@
           }
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
-          
+
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -264,17 +262,17 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 
@@ -361,7 +359,7 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn { 
+  .new-tasks-btn {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {
@@ -380,11 +378,11 @@
   tfoot {
     text-align: right !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
  }
  .addTaskBtn, .export2pdf {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);

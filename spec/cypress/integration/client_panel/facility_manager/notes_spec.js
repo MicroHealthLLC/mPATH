@@ -60,4 +60,14 @@ describe('Notes Page', function() {
     cy.get('[data-cy=note_close_btn]').click()
     cy.logout()
   })
+
+  it('Search the note by typing title', function() {
+    cy.createNewNote()
+    cy.get('[data-cy=note_list]').contains('New test note').should('be.visible')
+    cy.get('[data-cy=search_notes]').clear().type('Note is not in the list').should('have.value', 'Note is not in the list')
+    cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
+    cy.get('[data-cy=search_notes]').clear()
+    cy.get('[data-cy=note_list]').contains('New test note').should('be.visible')
+    cy.logout()
+  })
 })

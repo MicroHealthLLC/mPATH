@@ -62,7 +62,7 @@ describe('Tasks Page', function() {
     cy.logout()
   })
 
-  it("In Task form if task category not selected, save button must be disabled", function() {
+  it('In Task form if task category not selected, save button must be disabled', function() {
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_type]').click().type('{enter}')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
@@ -92,6 +92,34 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
+    cy.logout()
+  })
+
+  it('Search task by typing title', function() {
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+    cy.get('[data-cy=search_tasks]').clear().type('task is not in the list').should('have.value', 'task is not in the list')
+    cy.contains('No tasks found..').should('be.visible')
+
+    cy.get('[data-cy=search_tasks]').clear().type('Test task').should('have.value', 'Test task')
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 1)
+
+    cy.get('[data-cy=search_tasks]').clear()
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+    cy.logout()
+  })
+
+  it('Select task status from list to display related tasks', function() {
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+    cy.get('[data-cy=task_status_list]').as('list')
+    cy.get('@list').click()
+    cy.get('@list').within(() => {
+      cy.contains('complete').click()
+    })
+    cy.contains('No tasks found..').should('be.visible')
+    cy.get('@list').within(() => {
+      cy.contains('all').click()
+    })
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     cy.logout()
   })
 })
