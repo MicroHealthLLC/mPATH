@@ -70,6 +70,18 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
+          div id: 'project-task_stage-select2' do
+            input :task_stage_alt, label: 'Task Stages', as: :select, collection: TaskStage.where.not(id: f.object.task_stage_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :task_stages, label: 'Task Stages in Project', as: :select, collection: f.object.task_stages.map{|u| [u.name, u.id]}, multiple: true
+          end
+          div id: 'project-issue_stage-select2' do
+            input :issue_stage_alt, label: 'Issue Stages', as: :select, collection: IssueStage.where.not(id: f.object.issue_stage_ids).map{|u| [u.name, u.id]}, multiple: true
+            div class: 'arrow-right'
+            div class: 'arrow-left'
+            input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: f.object.issue_stages.map{|u| [u.name, u.id]}, multiple: true
+          end
           div id: 'project-user-select2' do
             input :user_alt, label: 'Users', as: :select, collection: User.client.where.not(id: f.object.user_ids).map{|u| [u.email, u.id]}, multiple: true
             div class: 'arrow-right'
@@ -106,18 +118,7 @@ ActiveAdmin.register Project do
             div class: 'arrow-left'
             input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: f.object.issue_severities.map{|u| [u.name, u.id]}, multiple: true
           end
-          div id: 'project-issue_severity-select2' do
-            input :task_stage_alt, label: 'Task Stage', as: :select, collection: TaskStage.where.not(id: f.object.task_stage_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :task_stages, label: 'Task Stages in Project', as: :select, collection: f.object.task_stages.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-issue_severity-select2' do
-            input :issue_stage_alt, label: 'Issue Stage', as: :select, collection: IssueStage.where.not(id: f.object.issue_stage_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: f.object.issue_stages.map{|u| [u.name, u.id]}, multiple: true
-          end
+
         end
       end
 

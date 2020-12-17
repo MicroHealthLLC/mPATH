@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_15_142105) do
+ActiveRecord::Schema.define(version: 2020_12_17_182144) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -215,6 +215,13 @@ ActiveRecord::Schema.define(version: 2020_12_15_142105) do
     t.index ["project_id"], name: "index_project_issue_severities_on_project_id"
   end
 
+  create_table "project_issue_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "project_id"
+    t.integer "issue_stage_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "project_issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "issue_type_id"
     t.bigint "project_id"
@@ -231,6 +238,13 @@ ActiveRecord::Schema.define(version: 2020_12_15_142105) do
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_project_statuses_on_project_id"
     t.index ["status_id"], name: "index_project_statuses_on_status_id"
+  end
+
+  create_table "project_task_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "project_id"
+    t.integer "task_stage_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "project_task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

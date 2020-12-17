@@ -55,7 +55,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # Do not dump schema after migrations.
-  config.active_record.dump_schema_after_migration = false
+  # config.active_record.dump_schema_after_migration = false
   if File.exist?("#{Rails.root}/config/emails.yml")
     emails = YAML::load(File.open("#{Rails.root}/config/emails.yml"))
     if emails['email_delivery']
