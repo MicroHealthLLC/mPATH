@@ -34,4 +34,5 @@ Cypress.Commands.add("openKanbanIssue", () => {
   cy.get('[data-cy=facility_tabs]').within(() => {
     cy.contains('Kanban Issues').should('be.visible').click()
   })
+  cy.facilityUnderGroup()
 })
