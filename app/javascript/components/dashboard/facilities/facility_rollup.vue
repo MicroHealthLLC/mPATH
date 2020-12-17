@@ -1,5 +1,5 @@
 <template>
-  <div class="m-3" data-cy="sheet_facility">
+  <div class="m-3" data-cy="facility_rollup">
     <div class="text-info font-weight-bold">Project Type: <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
     <div class="text-center">
