@@ -41,7 +41,8 @@ ActiveAdmin.register User do
         :documents,
         :facility_manager_view,
         :sheets_view,
-        :members
+        :members,
+        :risks
       ]
     ]
   end
@@ -79,6 +80,7 @@ ActiveAdmin.register User do
             p.input :overview
             p.input :tasks
             p.input :issues
+            p.input :risks
             p.input :notes
             p.input :documents
             p.input :members

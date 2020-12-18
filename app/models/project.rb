@@ -13,14 +13,19 @@ class Project < SortableRecord
 
   belongs_to :project_type
 
-  has_many :project_statuses
+  has_many :project_statuses, dependent: :destroy
   has_many :statuses, through: :project_statuses
-  has_many :project_task_types
+  has_many :project_task_types, dependent: :destroy
   has_many :task_types, through: :project_task_types
-  has_many :project_issue_types
+  has_many :project_issue_types, dependent: :destroy
   has_many :issue_types, through: :project_issue_types
-  has_many :project_issue_severities
+  has_many :project_issue_severities, dependent: :destroy
   has_many :issue_severities, through: :project_issue_severities
+  has_many :project_task_stages, dependent: :destroy
+  has_many :task_stages, through: :project_task_stages
+  has_many :project_issue_stages, dependent: :destroy
+  has_many :issue_stages, through: :project_issue_stages
+
 
   enum status: [:inactive, :active].freeze
 
@@ -71,6 +76,8 @@ class Project < SortableRecord
   attr_accessor :task_type_alt
   attr_accessor :issue_type_alt
   attr_accessor :issue_severity_alt
+  attr_accessor :task_stage_alt
+  attr_accessor :issue_stage_alt
 
   private
     def set_uuid

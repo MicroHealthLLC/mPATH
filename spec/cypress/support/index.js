@@ -19,6 +19,7 @@ import './on-rails'
 import './tasks'
 import './issues'
 import './notes'
+import './facility'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

@@ -30,6 +30,15 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   after_save :handle_related_tasks_issues
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
+  after_save :remove_on_watch
+
+
+  def remove_on_watch
+    if self.progress == 100 && self.watched == true
+      self.update(watched: false)
+    end
+  end
+
 
   def to_json
     attach_files = []
@@ -93,7 +102,8 @@ class Task < ApplicationRecord
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :due_date
       ],
       notes_attributes: [
         :id,

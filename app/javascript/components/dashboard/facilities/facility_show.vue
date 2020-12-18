@@ -267,11 +267,17 @@
             key: 'issues',
             closable: false
           },
-           {
+          {
             label: 'Notes',
             key: 'notes',
             closable: false
           },
+          {
+            label: 'Risks (Coming soon)',
+            key: 'risks',
+            closable: false,
+            disabled: true
+          }
         ]
       }
     },
