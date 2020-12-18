@@ -61,7 +61,7 @@
           type="text"
           class="form-control form-control-sm"
           v-model="DV_issue.title"
-          placeholder="Title"
+          placeholder="*Issue Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('title') }"
           data-cy="issue_title"
@@ -74,7 +74,7 @@
         <label class="font-sm">Description:</label>
         <textarea
           class="form-control"
-          placeholder="issue brief description"
+          placeholder="Issue brief description"
           v-model="DV_issue.description"
           rows="4"
           :readonly="!_isallowed('write')"
@@ -88,7 +88,7 @@
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Issue Type"
+          placeholder="*Issue Type"
           :options="issueTypes"
           :searchable="false"
           select-label="Select"
@@ -139,7 +139,7 @@
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Issue Severity"
+          placeholder="*Issue Severity"
           :options="issueSeverities"
           :searchable="false"
           select-label="Select"
@@ -187,7 +187,7 @@
             v-model="DV_issue.startDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
+            placeholder="*DD MM YYYY"
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
@@ -203,7 +203,7 @@
             v-validate="'required'"
             v-model="DV_issue.dueDate"
             value-type="YYYY-MM-DD"
-            format="DD MMM YYYY"
+            format="*DD MMM YYYY"
             placeholder="DD MM YYYY"
             name="Estimated Completion Date"
             class="w-100 vue2-datepicker"
@@ -403,6 +403,7 @@
         </paginate>
       </div>
       </div>
+       <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
