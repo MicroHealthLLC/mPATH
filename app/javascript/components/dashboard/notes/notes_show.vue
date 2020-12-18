@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="notes">
     <div v-if="C_editForManager" class="blur_show float-right">
       <div class="text-danger d-flex align-items-center">
         <p class="mr-2 mb-0">Details</p>
