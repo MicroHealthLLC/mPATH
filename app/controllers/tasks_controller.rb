@@ -65,7 +65,8 @@ class TasksController < AuthenticatedController
         :text,
         :user_id,
         :checked,
-        :position
+        :position,
+        :due_date
       ],
       notes_attributes: [
         :id,

@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 2020_12_15_142105) do
     t.integer "listable_id"
     t.boolean "checked"
     t.string "text"
+    t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
