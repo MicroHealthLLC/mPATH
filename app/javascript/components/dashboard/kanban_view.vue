@@ -255,7 +255,13 @@
           </span>
         </div>
 
-        <div class="mt-4">
+        <div>
+         <div class="my-3 ml-3 text-center facName" v-if="currentFacility">
+           <h5 class="mb-0 py-1"> 
+          <i class="fas fa-building"></i>
+           {{ currentFacility.facilityName }}
+           </h5>
+         </div>
           <div v-if="currentFacility && ('id' in currentFacility)">
             <kanban
               :stages="C_kanban.stages"
@@ -766,6 +772,12 @@
     text-align: left;
     cursor: pointer;
     display: block;
+  }
+  .facName {
+    background-color: #fafafa;
+    padding:2px;
+    border-radius: 2px;  
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .expandBtn {
     position: absolute;
