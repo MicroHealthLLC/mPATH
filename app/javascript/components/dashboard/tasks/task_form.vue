@@ -61,7 +61,7 @@
           type="text"
           class="form-control form-control-sm"
           v-model="DV_task.text"
-          placeholder="Task Name"
+          placeholder="*Task Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
           data-cy="task_name"
@@ -74,7 +74,7 @@
         <label class="font-sm">Description:</label>
         <textarea
           class="form-control"
-          placeholder="task brief description"
+          placeholder="Task brief description"
           v-model="DV_task.description"
           rows="4"
           :readonly="!_isallowed('write')"
@@ -88,7 +88,7 @@
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Select task category"
+          placeholder="*Select Task Category"
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
@@ -132,7 +132,7 @@
             v-model="DV_task.startDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
+            placeholder="*DD MM YYYY"
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
@@ -149,7 +149,7 @@
             v-model="DV_task.dueDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
+            placeholder="*DD MM YYYY"
             name="Due Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
@@ -191,7 +191,7 @@
         </span>
         <vue-slide-bar
           v-model="DV_task.progress"
-          :line-height="8"
+          :line-height="8"      
           :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
           :draggable="_isallowed('write') && !DV_task.autoCalculate"
         ></vue-slide-bar>
@@ -353,8 +353,9 @@
         </paginate>
       </div>
      </div>
+     <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
     </form>
-    <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
+    <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
   </div>
 </template>
 
