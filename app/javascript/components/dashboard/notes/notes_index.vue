@@ -36,14 +36,15 @@
         </div>
       </div>
       <hr/>
-      <div v-if="_isallowed('read')">
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
+      <div v-if="_isallowed('read')" >
+        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" class="mb-2">
           <notes-show
             :facility="DV_facility"
             :note="note"
             :from="from"
             @note-updated="noteUpdated"
             @note-deleted="noteDeleted"
+            class="notes"
           ></notes-show>
         </div>
         <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
@@ -145,5 +146,12 @@
     text-align: left;
     cursor: pointer;
     display: block;
+  }
+  .addNote{
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .notes{
+    padding:8px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
 </style>

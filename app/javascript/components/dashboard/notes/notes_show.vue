@@ -143,13 +143,12 @@
     border-radius: 5px;
     padding: 15px;
   }
-  .note_body {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+  .note_body {  
+    padding-top: 10px;
     word-break: break-word;
-    max-height: 200px;
+    min-height: 80px;
     overflow-y: auto;
+    font-size: 1.06rem;
   }
   .file-icon {
     cursor: pointer;
