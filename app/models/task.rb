@@ -55,6 +55,7 @@ class Task < ApplicationRecord
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: users.map(&:id).compact.uniq,
+      user_names: users.map(&:full_name).compact.join(", "),
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,

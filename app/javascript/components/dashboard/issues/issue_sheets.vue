@@ -7,7 +7,7 @@
         <td class="nine">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
         <td class="eight">{{formatDate(issue.dueDate)}}</td>
-        <td class="ten" v-if="(issue.users.length) > 0">{{JSON.stringify(issue.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+        <td class="ten" v-if="(issue.responsibleUserNames.length) > 0">{{ issue.responsibleUserNames }}</td>
         <td class="ten" v-else></td>
         <td class="nine">{{issue.progress + "%"}}</td>
         <td class="nine" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
