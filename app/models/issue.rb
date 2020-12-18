@@ -117,7 +117,8 @@ class Issue < ApplicationRecord
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :due_date
       ],
       notes_attributes: [
         :id,

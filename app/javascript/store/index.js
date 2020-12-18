@@ -598,6 +598,7 @@ export default new Vuex.Store({
                       _id: _c_id,
                       parentId: t_id,
                       name: checklist.text,
+                      dueDate: checklist.dueDate,
                       duration: t_duration,
                       durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
                       percent: checklist.checked ? 100 : 0,

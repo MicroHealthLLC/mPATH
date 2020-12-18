@@ -203,10 +203,31 @@
         </span>
         <div v-if="filteredChecks.length > 0">
         <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+          <div v-for="(check, index) in DV_task.checklists" :load="log(check)" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
-              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
+              <div class="row">
+                <div class="col justify-content-start">
+                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text" maxlength="50" :readonly="!_isallowed('write')">
+                </div>
+                <div class="col justify-content-end">
+                  <div class="float-right check-due-date">
+                   <label class="font-sm">Due Date:</label>
+                    <v2-date-picker                    
+                      v-model="check.dueDate"
+                      :value="check.dueDate" 
+                      @selected="updateCheckItem($event, 'dueDate', index)"
+                      :key="`dueDate_${index}`"
+                      value-type="YYYY-MM-DD"
+                      format="DD MMM YYYY"
+                      placeholder="DD MM YYYY"
+                      name="dueDate"
+                      class="w-50 vue2-datepicker"                    
+                    />
+                </div>
+                </div>
+              </div>
+             
               <div class="simple-select form-group m-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
@@ -390,6 +411,7 @@
           text: '',
           startDate: '',
           dueDate: '',
+          checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',
           userIds: [],
@@ -402,6 +424,9 @@
           checklists: [],
           notes: []
         }
+      },
+      log(t) {
+        console.log(t)
       },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
@@ -519,12 +544,15 @@
           for (let i in this.DV_task.checklists) {
             let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (let key in check) {
-              if (key === 'user') key = 'user_id'
+            for (let key in check) {         
+              if (key === 'user') key = 'user_id'            
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+              if (key === "dueDate"){
+                key = "due_date"
+              }
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-            }
-          }
+            }              
+          }          
 
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
@@ -618,6 +646,8 @@
           if (!event.target.value) this.DV_task.checklists[index].checked = false
         } else if (name === 'check' && this.DV_task.checklists[index].text) {
           this.DV_task.checklists[index].checked = event.target.checked
+        } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
+          this.DV_task.checklists[index].dueDate = event.target.value
         }
       },
       isMyCheck(check) {
@@ -766,6 +796,8 @@
     border: 0;
     width: 92%;
     outline: none;
+    border: solid #ededed 1px;
+    border-radius: 4px;  
   }
   .drag {
     cursor: all-scroll;
@@ -852,5 +884,8 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .check-due-date {
+    text-align: end;
   }
 </style>
