@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-cy="gantt_view">
     <div class="gantt_board">
       <div v-if="!loading">
         <gantt-elastic
@@ -15,7 +15,7 @@
           <p class="__loading">Updating..</p>
         </div>
       </div>
-      <div v-else class="d-flex justify-content-center align-items-center h-75 mt-5">
+      <div v-else class="d-flex justify-content-center align-items-center h-75 mt-5" data-cy="gantt_loading">
         <loader :loading="true" color="black"></loader>
         <p class="__loading">Loading</p>
       </div>
@@ -206,7 +206,7 @@
                 id: 6,
                 width: 100,
                 label: "Assigned To",
-                value: "_users",               
+                value: "_users",
                 style: {
                   'task-list-item-column': {
                     // height: '200px'
