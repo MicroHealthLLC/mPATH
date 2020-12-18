@@ -67,3 +67,9 @@ Cypress.Commands.add("openOnWatch", () => {
   cy.openProject()
   cy.get('[data-cy=on_watch_tab]').contains('On Watch').should('be.visible').click()
 })
+
+// Open map view of a project
+Cypress.Commands.add("openMap", () => {
+  cy.openProject()
+  cy.get('[data-cy=map_tab]').contains('Map').should('be.visible').click()
+})

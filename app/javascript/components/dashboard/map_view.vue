@@ -1,5 +1,5 @@
 <template>
-  <div id="_wrapper">
+  <div id="_wrapper" data-cy="map_view">
     <div class="col p-0">
       <div class="row m-0 mw-100">
         <div id="map-wrap" class="col-8 p-0">
