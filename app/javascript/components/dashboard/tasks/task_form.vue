@@ -248,8 +248,6 @@
                   </template>
                 </multiselect>
               </div>
-
-
             </div>
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
               <i class="fas fa-times"></i>
