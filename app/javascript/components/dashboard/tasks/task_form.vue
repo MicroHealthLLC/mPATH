@@ -207,8 +207,8 @@
             <div class="form-control h-100" :key="index">
               <div class="row">
                 <div class="col justify-content-start">
-              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
+                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text" maxlength="50" :readonly="!_isallowed('write')">
                 </div>
                 <div class="col justify-content-end">
                   <div class="float-right check-due-date">
@@ -546,12 +546,15 @@
           for (let i in this.DV_task.checklists) {
             let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (let key in check) {
-              if (key === 'user') key = 'user_id'
+            for (let key in check) {         
+              if (key === 'user') key = 'user_id'            
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+              if (key === "dueDate"){
+                key = "due_date"
+              }
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-            }
-          }
+            }              
+          }          
 
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
@@ -795,6 +798,8 @@
     border: 0;
     width: 92%;
     outline: none;
+    border: solid #ededed 1px;
+    border-radius: 4px;  
   }
   .drag {
     cursor: all-scroll;
