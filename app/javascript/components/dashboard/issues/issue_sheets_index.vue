@@ -154,7 +154,7 @@
        </label>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">      
-            <div style="margin-bottom:50px" data-cy="issues_table">>
+            <div style="margin-bottom:50px" data-cy="issues_table">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
                 <colgroup>
                   <col class="oneFive" />

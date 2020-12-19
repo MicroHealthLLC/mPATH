@@ -797,12 +797,12 @@
   .simple-select /deep/ .multiselect {
     width: 230px;
   }
-  .new_form_modal.sweet-modal-overlay {
+  .new_form_modal.sweet-modal-overlay {    
     z-index: 10000001;
   }
   .new_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-    min-width: 40vw;
-    max-height: 80vh;
+      min-width: 80vw;
+      max-height: 80vh;
     .sweet-content {
       padding-top: 30px;
       text-align: unset;
