@@ -49,7 +49,7 @@
         Please fill the required fields before submitting
       </div>
       <div class="form-group mx-4">
-        <label class="font-sm"><h5>Issue Name:</h5></label>
+        <label class="font-sm"><h5>*Issue Name:</h5></label>
          <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="issue_on_watch">
                 <span v-show="DV_issue.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
@@ -61,7 +61,7 @@
           type="text"
           class="form-control form-control-sm"
           v-model="DV_issue.title"
-          placeholder="*Issue Name"
+          placeholder="Issue Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('title') }"
           data-cy="issue_title"
@@ -82,13 +82,13 @@
         />
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Issue Type:</label>
+        <label class="font-sm">*Issue Type:</label>
         <multiselect
           v-model="selectedIssueType"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="*Issue Type"
+          placeholder="Issue Type"
           :options="issueTypes"
           :searchable="false"
           select-label="Select"
@@ -133,13 +133,13 @@
         </div>
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Issue Severity:</label>
+        <label class="font-sm">*Issue Severity:</label>
         <multiselect
           v-model="selectedIssueSeverity"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="*Issue Severity"
+          placeholder="Issue Severity"
           :options="issueSeverities"
           :searchable="false"
           select-label="Select"
@@ -181,13 +181,13 @@
       </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
-          <label class="font-sm">Start Date:</label>
+          <label class="font-sm">*Start Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_issue.startDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="*DD MM YYYY"
+            placeholder="DD MM YYYY"
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
@@ -198,12 +198,12 @@
           </div>
         </div>
         <div class="form-group col-md-6 pr-0">
-          <label class="font-sm">Estimated Completion Date:</label>
+          <label class="font-sm">*Estimated Completion Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_issue.dueDate"
             value-type="YYYY-MM-DD"
-            format="*DD MMM YYYY"
+            format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             name="Estimated Completion Date"
             class="w-100 vue2-datepicker"

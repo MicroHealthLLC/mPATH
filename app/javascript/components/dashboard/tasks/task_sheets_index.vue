@@ -2,7 +2,7 @@
   <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="input-group w-90 task-search-bar">
+        <div class="input-group task-search-bar" style="width:280px">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
@@ -14,7 +14,7 @@
             v-model="tasksQuery"
             data-cy="search_tasks">
           </div>
-        <div class="simple-select mx-1 d-flex" style="width:35%">
+        <div class="simple-select mx-1 d-flex" style="width:20%">
 
           <multiselect
             v-model="C_taskTypeFilter"
@@ -34,7 +34,7 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select d-flex mr-2" style="width:30%">
+        <div class="simple-select d-flex mr-1" style="width:18%">
 
           <multiselect
             v-model="viewList"
@@ -53,12 +53,11 @@
           </multiselect>
         </div>
 
-        <div class="simple-select mx-1 d-flex" style="width:35%">
+        <div class="simple-select d-flex" style="width:18%">
           <multiselect
             v-model="C_taskIssueOverdueFilter"
             track-by="name"
-            label="name"
-            class="ml-2"
+            label="name"           
             placeholder="Task and Issue Overdue"
             :options="C_taskIssueOverdueOptions"
             :searchable="false"
@@ -74,7 +73,7 @@
           </multiselect>
         </div>
 
-        <div class="form-check-inline font-sm mr-0" style="width:20%">
+        <div class="form-check-inline font-sm ml-auto">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
@@ -359,7 +358,6 @@
         }), ['dueDate'])
         return tasks
       },
-
       C_taskIssueOverdueFilter: {
         get() {
           if(!this.taskIssueOverdueFilter){
@@ -378,7 +376,6 @@
       C_taskIssueOverdueOptions() {
         return this.getTaskIssueOverdueOptions()
       },
-
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -444,10 +441,15 @@
     border-radius: 5px;
   }
   .sort-th {
-    font-size: .80rem !important;
+    font-size: .70rem !important;
+    cursor: pointer;
+    font-family: 'FuturaPTBook';
     text-align: center;
     position: relative;
     vertical-align: middle !important;
+  }
+   .sort-th > #text { 
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
   }
   input[type=search] {
     color: #383838;
