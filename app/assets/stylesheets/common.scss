@@ -9,7 +9,11 @@ body {
   font-weight: 300;
   overflow-x: hidden;
   letter-spacing: .035em;
-  /*overflow-y: hidden;*/
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 p {
   word-break: break-word;

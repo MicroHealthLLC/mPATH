@@ -186,7 +186,7 @@ export default new Vuex.Store({
       }
     },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
-    setTaskIssueOverdueFilter: (state, filter) => { 
+    setTaskIssueOverdueFilter: (state, filter) => {
       state.taskIssueOverdueFilter = filter
     },
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
@@ -521,10 +521,10 @@ export default new Vuex.Store({
               if(f[k][0] && f[k][0].name == "not overdue"){
                 valid = valid && _isOverdues.includes(false)
               }
-              
+
               break
             }
-            
+
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -810,7 +810,7 @@ export default new Vuex.Store({
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    _users: task.users.map(_u => _u.fullName).join(","), 
+                    _users: task.users.map(_u => _u.fullName).join(","),
                     type: 'task',
                     collapsed: true
                   }
@@ -868,10 +868,10 @@ export default new Vuex.Store({
         if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
           var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
           var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-          
+
           var is_valid = true
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
           valid = is_valid
         }
         if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
@@ -903,10 +903,10 @@ export default new Vuex.Store({
         if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
           var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
           var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-          
+
           var is_valid = true
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
           valid = is_valid
         }
 
