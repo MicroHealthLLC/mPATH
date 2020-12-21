@@ -52,7 +52,7 @@ describe('Kanban Issues View', function() {
       cy.get('[data-cy=issues]').as('destination')
     })
 
-    cy.get('@origin').drag('@destination')
+    cy.get('@origin').drag('@destination', {force: true})
 
     cy.get('[data-cy=kanban_col]').first().within(() => {
       cy.get('[data-cy=issues]').should('not.exist')
