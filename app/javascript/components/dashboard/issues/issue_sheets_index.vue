@@ -11,8 +11,8 @@
       />
     </div>
      <div v-else>      
-      <div class="d-flex align-item-center justify-content-between">
-        <div class="input-group mb-2 mr-1 task-search-bar w-90">
+      <div class="d-flex align-item-center">
+        <div class="input-group mb-2 mr-1 task-search-bar" style="width:280px">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
@@ -25,9 +25,10 @@
             data-cy="search_issues"
             >
         </div>
-        <div class="simple-select mr-1" style="width:35%">
+        <div class="simple-select mr-1 justify-content-start">
             <multiselect
-              v-model="C_taskTypeFilter"            
+              v-model="C_taskTypeFilter"    
+              style="width:325px"        
               track-by="name"
               label="name"
               placeholder="Filter by Task Category"
@@ -44,9 +45,10 @@
               </template>
             </multiselect>
           </div>
-        <div class="simple-select" style="width:30%">
+        <div class="simple-select justify-content-start">
           <multiselect
             v-model="viewList"
+            style="width:325px"
             :options="listOptions"           
             :searchable="false"
             :close-on-select="false"
@@ -61,10 +63,10 @@
             </template>
           </multiselect>
         </div>  
-        <div class="form-check-inline font-sm justify-content-end mr-0" style="width:20%">
+        <div class="form-check-inline font-sm ml-auto">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issue
+            <i class="fas fa-user mr-1"></i>My Issues
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
@@ -72,11 +74,12 @@
           </label>
          </div> 
        </div>
-      <div class="d-flex align-item-center justify-content-between w-70">          
-       <div class="simple-select mr-1 d-flex w-100">        
+      <div class="d-flex align-item-center justify-content-start w-100">          
+       <div class="simple-select mr-1 d-inline">        
           <multiselect
             v-model="C_issueTypeFilter"
             track-by="name"
+            style="width:280px"
             label="name"
             class="issueTypeMs"
             placeholder="Filter by Issue Type"
@@ -93,10 +96,11 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1 w-100">
+        <div class="simple-select mr-1 d-flex">
           <multiselect
             v-model="C_issueSeverityFilter"
             track-by="name"
+            style="width:325px"
             label="name"
             placeholder="Filter by Issue Severity"
             :options="issueSeverities"
@@ -111,15 +115,13 @@
               </div>
             </template>
           </multiselect>
-        </div>   
-    </div>
-     <div class="d-flex align-item-center justify-content-between w-70">          
-       <div class="simple-select mr-1 d-flex w-100">        
+        </div>  
+         <div class="simple-select mr-1 d-flex">        
           <multiselect
             v-model="C_taskIssueOverdueFilter"
             track-by="name"
-            label="name"
-            class="ml-2"
+             style="width:325px"
+            label="name"           
             placeholder="Task and Issue Overdue"
             :options="C_taskIssueOverdueOptions"
             :searchable="false"
@@ -133,8 +135,9 @@
               </div>
             </template>
           </multiselect>
-        </div>  
-      </div>
+        </div>   
+    </div>
+  
       <div class="mt-2">
         <button v-if="_isallowed('write')"
           class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
@@ -593,5 +596,9 @@
    #page-count {
     width: auto !important;
     cursor: default;
+  }
+  .my-issues {
+    float: right !important;
+    right: 0;
   }
 </style>
