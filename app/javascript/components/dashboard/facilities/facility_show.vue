@@ -10,7 +10,7 @@
       </div>
       <div>
         <div v-if="currentTab == 'overview'">
-          <div v-if="_isallowed('read')">
+          <div v-if="_isallowed('read')" class="fac-sum p-3">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div v-if="contentLoaded" class="f-body mt-3 p-2">
               <p class="mt-2">
@@ -66,7 +66,7 @@
                 </span>
               </p>
               <hr>
-              <div class="my-1">
+              <div class="my-1 tasks">
                 <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
                 <div>
                   <div class="row">
@@ -110,7 +110,7 @@
                 </p>
               </div>
               <hr>
-              <div class="my-1">
+              <div class="my-1 issues">
                 <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
                 <div>
                   <div class="row">
@@ -558,5 +558,11 @@
       color: #dc3545;
       text-overflow: ellipsis;
     }
+  }
+  .fac-sum {  
+   border-radius: 2px;
+   margin-bottom: 8px;
+   background-color: #ededed;
+   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
 </style>
