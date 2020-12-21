@@ -2,7 +2,7 @@ describe('Sheets Issues View', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('[data-cy=facility_tabs]').contains('Issues').should('be.visible').click()
   })
@@ -15,52 +15,11 @@ describe('Sheets Issues View', function() {
     cy.logout()
   })
 
-  it('Open and Close Issue form sheet view', function() {
-    cy.get('[data-cy=issue_sheet_index]').within(() => {
-      cy.get('[data-cy=add_issue]').should('be.exist').click({force: true})
-    })
-    cy.get('[data-cy=issue_save_btn]').should('be.disabled')
-    cy.get('[data-cy=issue_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
-  })
-
   it('Open issue from sheet issue table', function() {
     cy.get('[data-cy=issues_table]').within(() => {
       cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
     })
     cy.get('[data-cy=issue_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
-  })
-
-  it('Update issue from sheet issue table', function() {
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
-    })
-    cy.get('[data-cy=issue_title]').clear({force: true}).type('Updated new test issue', {force: true}).should('have.value', 'Updated new test issue')
-    cy.get('[data-cy=issue_save_btn]').click({force: true})
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').contains('Updated new test issue').should('be.exist')
-    })
-    cy.logout()
-  })
-
-  it('Delete issue from sheet issue table', function() {
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-      cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=issue_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 1)
-      cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=issue_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=issues_table]').should('not.exist')
-    cy.get('[data-cy=no_issue_found]').contains('No issues found..')
     cy.logout()
   })
 

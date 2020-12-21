@@ -19,7 +19,7 @@ describe('Notes Page', function() {
 
   it('Create new note in a Facility', function() {
     cy.createNewNote()
-    cy.get('[data-cy=notes]').last().contains('New test note').should('be.visible')
+    cy.get('[data-cy=notes]').contains('New test note').should('be.visible')
     cy.logout()
   })
 

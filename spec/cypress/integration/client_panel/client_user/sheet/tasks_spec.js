@@ -2,7 +2,7 @@ describe('Sheets Tasks View', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
-    cy.login('admin@test.com', 'T3$tAdmin')
+    cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
     cy.get('[data-cy=facility_tabs]').contains('Tasks').should('be.visible').click()
   })
@@ -15,51 +15,11 @@ describe('Sheets Tasks View', function() {
     cy.logout()
   })
 
-  it('Open and Close task form sheet view', function() {
-    cy.get('[data-cy=task_sheet_index]').within(() => {
-      cy.get('[data-cy=add_task]').should('be.exist').click({force: true})
-    })
-    cy.get('[data-cy=task_save_btn]').should('be.disabled')
-    cy.get('[data-cy=task_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
-  })
-
   it('Open task from sheet task table', function() {
     cy.get('[data-cy=tasks_table]').within(() => {
       cy.get('[data-cy=task_row]').first().should('be.exist').click({force: true})
     })
     cy.get('[data-cy=task_close_btn]').should('be.exist').click({force: true})
-    cy.logout()
-  })
-
-  it('Update task from sheet task table', function() {
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').first().should('be.exist').click({force: true})
-    })
-    cy.get('[data-cy=task_name]').clear({force: true}).type('Updated new test task', {force: true}).should('have.value', 'Updated new test task')
-    cy.get('[data-cy=task_save_btn]').click({force: true})
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').contains('Updated new test task').should('be.exist')
-    })
-  })
-
-  it('Delete task from sheet task table', function() {
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
-      cy.get('[data-cy=task_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=task_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').its('length').should('be.eq', 1)
-      cy.get('[data-cy=task_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=task_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=tasks_table]').should('not.exist')
-    cy.get('[data-cy=no_task_found]').contains('No tasks found..')
     cy.logout()
   })
 
