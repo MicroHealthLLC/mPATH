@@ -49,7 +49,7 @@
         Please fill the required fields before submitting
       </div>
       <div class="form-group mx-4">
-        <label class="font-sm"><h5>Task Name:</h5></label>
+        <label class="font-sm"><h5>*Task Name:</h5></label>
             <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
@@ -61,7 +61,7 @@
           type="text"
           class="form-control form-control-sm"
           v-model="DV_task.text"
-          placeholder="*Task Name"
+          placeholder="Task Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('Name') }"
           data-cy="task_name"
@@ -82,13 +82,13 @@
         />
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Task Category:</label>
+        <label class="font-sm">*Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="*Select Task Category"
+          placeholder="Select Task Category"
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
@@ -126,13 +126,13 @@
       </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
-          <label class="font-sm">Start Date:</label>
+          <label class="font-sm">*Start Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_task.startDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="*DD MM YYYY"
+            placeholder="DD MM YYYY"
             name="Start Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write')"
@@ -143,13 +143,13 @@
           </div>
         </div>
         <div class="form-group col-md-6 pr-0">
-          <label class="font-sm">Due Date:</label>
+          <label class="font-sm">*Due Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_task.dueDate"
             value-type="YYYY-MM-DD"
             format="DD MMM YYYY"
-            placeholder="*DD MM YYYY"
+            placeholder="DD MM YYYY"
             name="Due Date"
             class="w-100 vue2-datepicker"
             :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
@@ -208,27 +208,11 @@
               <div class="row">
                 <div class="col justify-content-start">
                   <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text" maxlength="50" :readonly="!_isallowed('write')">
-                </div>
-                <div class="col justify-content-end">
-                  <div class="float-right check-due-date">
-                   <label class="font-sm">Due Date:</label>
-                    <v2-date-picker                    
-                      v-model="check.dueDate"
-                      :value="check.dueDate" 
-                      @selected="updateCheckItem($event, 'dueDate', index)"
-                      :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
-                      placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-50 vue2-datepicker"                    
-                    />
-                </div>
+                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="50" :readonly="!_isallowed('write')">
                 </div>
               </div>
-             
-              <div class="simple-select form-group m-0">
+              <div class="row justify-content-end">             
+               <div class="simple-select form-group col">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
                   v-model="check.user"
@@ -246,9 +230,27 @@
                       <span class='select__tag-name'>{{option.fullName}}</span>
                     </div>
                   </template>
-                </multiselect>
-              </div>
-            </div>
+              </multiselect>
+             </div>
+               <div class="simple-select form-group col">
+                 <div class="float-right">
+                   <label class="font-sm dueDate">Due Date:</label>  
+                   <br/>                    
+                    <v2-date-picker                    
+                      v-model="check.dueDate"
+                      :value="check.dueDate" 
+                      @selected="updateCheckItem($event, 'dueDate', index)"
+                      :key="`dueDate_${index}`"
+                      value-type="YYYY-MM-DD"
+                      format="DD MMM YYYY"
+                      placeholder="DD MM YYYY"
+                      name="dueDate"
+                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                    />
+                 </div>
+                </div>       
+               </div>
+            </div>             
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
               <i class="fas fa-times"></i>
             </span>
@@ -795,7 +797,7 @@
   .checklist-text {
     margin-left: 5px;
     border: 0;
-    width: 92%;
+    width: 95%;
     outline: none;
     border: solid #ededed 1px;
     border-radius: 4px;  

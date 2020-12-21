@@ -1,8 +1,8 @@
 <template>
   <div class="m-3" data-cy="facility_rollup">
-    <div class="text-info font-weight-bold">Project Type: <span v-if="currentProject">{{currentProject.projectType}}</span></div>
+    <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
-    <div class="text-center">
+    <div class="text-center mt-1">
       <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
       <p class="mt-2 d-flex align-items-center">
         <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
@@ -20,9 +20,10 @@
          </div>-->
       </div>
     </div>
-    <hr>
-    <div class="my-1">
+
+    <div class="my-3 p-3 fac-proj-status">
       <h5 class="text-center">Facility Project Status</h5>
+      <hr>
       <div v-if="contentLoaded && C_facilityCount > 0">
         <div v-for="status in facilitiesByProjectStatus">
           <div class="row">
@@ -43,9 +44,10 @@
         <loader type="code"></loader>
       </div>
     </div>
-    <hr>
-    <div class="my-1" data-cy="tasks_summary">
+  
+    <div class="my-3 tasks p-3" data-cy="tasks_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
+     <hr>
       <div v-if="contentLoaded">
         <div>
           <div class="row">
@@ -91,9 +93,10 @@
         <loader type="code"></loader>
       </div>
     </div>
-    <hr>
-    <div class="my-1" data-cy="issues_summary">
+  
+    <div class="my-3 issues p-3" data-cy="issues_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredIssues.length}}</span> Issues</h5>
+     <hr>
       <div v-if="contentLoaded">
         <div>
           <div class="row">
@@ -139,9 +142,9 @@
         <loader type="code"></loader>
       </div>
     </div>
-    <div class="mb-3" v-if="from !== 'manager_view'" data-cy="facility_group_summary">
-      <hr>
-      <h5 class="text-center">Facility Groups</h5>
+    <div class="mb-3 p-3 fac-groups" v-if="from !== 'manager_view'" data-cy="facility_group_summary">
+    <h5 class="text-center">Facility Groups</h5>
+    <hr>
       <div v-if="contentLoaded" class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
         <div class="col-md-9 font-md">
           <span class="badge badge-pill" :class="{'badge-success':
@@ -355,4 +358,20 @@ export default {
     height: 12px;
     padding-top: 2px;
   }
+  .proj-type {
+    display: inline;
+    border-radius: 2px;
+    padding: 4px;
+    color: #fff;
+    font-size: small;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .fac-proj-status, .tasks, .issues, .fac-groups {  
+   border-radius: 2px;
+   background-color: #ededed;
+   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+  }
+  // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {    
+  //  background-color: #fff;
+  // }
 </style>

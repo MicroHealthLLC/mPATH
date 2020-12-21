@@ -1,23 +1,25 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
+  <div class="d-flex align-item-center justify-content-between w-100">
       <div class="input-group w-100">
-        <div class="input-group-prepend">
+        <div class="input-group-prepend d-inline">
           <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
         </div>
         <input type="search"
+          style="height:30px"
           class="form-control form-control-sm"
-          placeholder="Search tasks.."
+          placeholder="Search Tasks.."
           aria-label="Search"
           aria-describedby="search-addon"
           v-model="tasksQuery"
           data-cy="search_tasks"
-        />
+        />        
       </div>
-      <div class="d-flex align-item-center justify-content-between my-2 100">
-        <div class="simple-select w-100 mr-1">
+     <div class="d-flex simple-select w-100 font-sm ml-1">
           <multiselect
             v-model="C_taskTypeFilter"
+            style="min-height:30px"
             track-by="name"
             label="name"
             placeholder="Filter by Task Category"
@@ -33,11 +35,12 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="simple-select w-100 enum-select">
-          <multiselect
-            v-model="viewList"
-            style="width:100%"
+   </div>
+  </div>
+      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
+        <div class="simple-select w-100 mr-1">  
+           <multiselect
+            v-model="viewList"            
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
@@ -50,7 +53,27 @@
                 <span class='select__tag-name'>{{viewList}}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect>         
+        </div>
+        <div class="simple-select w-100 enum-select">         
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            style="width:100%"   
+            track-by="name"
+            label="name"          
+            placeholder="Task and Issue Overdue"
+            :options="C_taskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>  
         </div>
       </div>
       <div class="mb-3 d-flex font-sm">
@@ -292,7 +315,6 @@
       C_taskIssueOverdueOptions() {
         return this.getTaskIssueOverdueOptions()
       },
-
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter

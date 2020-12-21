@@ -1,20 +1,19 @@
 <template>
   <div data-cy="notes">
-    <div v-if="C_editForManager" class="blur_show float-right">
-      <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Details</p>
+    <div v-if="C_editForManager" class="float-right blur_show">
+      <div class="text-primary align-items-center mb-3">     
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="notes_show mb-5 mx-2" :class="{'hide-to-edit': C_editForManager}">
-      <div v-if="show">
-        <div class="crud-actions mx-3 float-right">
-          <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
+    <div v-if="!loading" class="notes_show mb-5 mx-2" @click.stop="editNoteMode">
+      <div v-if="show" >
+        <div v-if="permitted('write')" class="mr-2 font-sm edit-action">
+          <!-- <span data-cy="note_edit_icon">
             <i class="fas fa-edit"></i>
-          </span>
-          <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
+          </span> -->
+          <!-- <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
             <i class="fas fa-trash-alt"></i>
-          </span>
+          </span> -->
         </div>
         <div class="note_by my-2">
           <span class="badge badge-secondary">Note by</span>
@@ -143,13 +142,12 @@
     border-radius: 5px;
     padding: 15px;
   }
-  .note_body {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+  .note_body {  
+    padding-top: 10px;
     word-break: break-word;
-    max-height: 200px;
+    min-height: 80px;
     overflow-y: auto;
+    font-size: 1.06rem;
   }
   .file-icon {
     cursor: pointer;
