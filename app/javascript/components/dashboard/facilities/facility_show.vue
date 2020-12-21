@@ -59,12 +59,25 @@
                 </p>
               </div>
               <p class="mt-2 d-flex align-items-center">
-                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
                 <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
+              <hr>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
+                <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
+
+                <p>
+                  <div class="row my-2" v-for="filter in getAllFilterNames">
+                    <div class="col-md-9 font-md">
+                      <span>{{filter}}: {{getFilterValue(filter)}}</span>
+                    </div>
+                  </div>
+                </p>
+              </p>
+
               <hr>
               <div class="my-1 tasks">
                 <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
@@ -342,6 +355,8 @@
     },
     computed: {
       ...mapGetters([
+        'getAllFilterNames',
+        'getFilterValue',
         'contentLoaded',
         'currentProject',
         'taskTypeFilter',

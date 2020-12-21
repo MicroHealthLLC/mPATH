@@ -194,6 +194,39 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getAllFilterNames: (state, getters) => {
+      console.log('getAllFilterNames')
+      return [
+      'projectStatusFilter', 'taskIssueOverdueFilter', 'taskTypeFilter', 'facilityGroupFilter',
+      'facilityNameFilter', 'facilityNameFilter', 'facilityProgressFilter', 'facilityDueDateFilter',
+      'noteDateFilter', 'taskIssueDueDateFilter'
+      ]
+    },
+    getFilterValue: (state, getter)=>(_filterValue) =>{
+
+      if(_filterValue == 'projectStatusFilter')
+        return getter.projectStatusFilter
+      else if(_filterValue == 'taskIssueOverdueFilter')
+        return getter.taskIssueOverdueFilter
+      else if(_filterValue == 'taskTypeFilter')
+        return getter.taskTypeFilter
+      else if(_filterValue == 'facilityGroupFilter')
+        return getter.facilityGroupFilter
+      else if(_filterValue == 'facilityNameFilter')
+        return getter.facilityNameFilter
+      else if(_filterValue == 'facilityNameFilter')
+        return getter.facilityNameFilter
+      else if(_filterValue == 'facilityProgressFilter')
+        return getter.facilityProgressFilter
+      else if(_filterValue == 'facilityDueDateFilter')
+        return getter.facilityDueDateFilter
+      else if(_filterValue == 'noteDateFilter')
+        return getter.noteDateFilter
+      else if(_filterValue == 'taskIssueDueDateFilter')
+        return getter.taskIssueDueDateFilter
+
+      
+    },
     contentLoaded: state => state.contentLoaded,
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,
