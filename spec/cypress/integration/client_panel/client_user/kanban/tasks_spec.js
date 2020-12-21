@@ -47,6 +47,7 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=kanban_col]').last().within(() => {
       cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     })
+    cy.logout()
   })
 
   it('Search task by typing title', function() {

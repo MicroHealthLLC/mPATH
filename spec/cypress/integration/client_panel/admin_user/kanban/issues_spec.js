@@ -61,6 +61,7 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=kanban_col]').last().within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
     })
+    cy.logout()
   })
 
   it('Search issue by typing title', function() {

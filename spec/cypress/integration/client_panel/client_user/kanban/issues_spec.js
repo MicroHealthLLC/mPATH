@@ -17,13 +17,13 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')
       cy.get('[data-cy=kanban_col]').first().within(() => {
-        cy.get('[data-cy=issues]').first().click
+        cy.get('[data-cy=issues]').first().click()
       })
     })
     cy.get('[data-cy=issue_read_only_btn]').should('be.disabled')
     cy.get('[data-cy=issue_save_btn]').should('not.exist')
     cy.get('[data-cy=issue_delete_btn]').should('not.exist')
-    cy.get('[data-cy=issue_close_btn]').click()
+    cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.logout()
   })
 
@@ -45,6 +45,7 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=kanban_col]').last().within(() => {
       cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
     })
+    cy.logout()
   })
 
   it('Search issue by typing title', function() {
