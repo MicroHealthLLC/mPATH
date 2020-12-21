@@ -70,54 +70,69 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
-          div id: 'project-task_stage-select2' do
-            input :task_stage_alt, label: 'Task Stages', as: :select, collection: TaskStage.where.not(id: f.object.task_stage_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :task_stages, label: 'Task Stages in Project', as: :select, collection: f.object.task_stages.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-issue_stage-select2' do
-            input :issue_stage_alt, label: 'Issue Stages', as: :select, collection: IssueStage.where.not(id: f.object.issue_stage_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: f.object.issue_stages.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-user-select2' do
-            input :user_alt, label: 'Users', as: :select, collection: User.client.where.not(id: f.object.user_ids).map{|u| [u.email, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :users, label: 'Users in Project', as: :select, collection: f.object.users.client.map{|u| [u.email, u.id]}, multiple: true
-          end
-          div id: 'project-facility-select2' do
-            input :facility_alt, label: 'Facilities', as: :select, collection: Facility.where.not(id: f.object.facility_ids).map{|u| [u.facility_name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :facilities, label: 'Facilities in Project', as: :select, collection: f.object.facilities.map{|u| [u.facility_name, u.id]}, multiple: true
-          end
-          div id: 'project-status-select2' do
-            input :status_alt, label: 'Statuses', as: :select, collection: Status.where.not(id: f.object.status_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :statuses, label: 'Statuses in Project', as: :select, collection: f.object.statuses.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-task_type-select2' do
-            input :task_type_alt, label: 'Task Categories', as: :select, collection: TaskType.where.not(id: f.object.task_type_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :task_types, label: 'Task Categories in Project', as: :select, collection: f.object.task_types.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-issue_type-select2' do
-            input :issue_type_alt, label: 'Issue Types', as: :select, collection: IssueType.where.not(id: f.object.issue_type_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :issue_types, label: 'Issue Types in Project', as: :select, collection: f.object.issue_types.map{|u| [u.name, u.id]}, multiple: true
-          end
-          div id: 'project-issue_severity-select2' do
-            input :issue_severity_alt, label: 'Issue Severities', as: :select, collection: IssueSeverity.where.not(id: f.object.issue_severity_ids).map{|u| [u.name, u.id]}, multiple: true
-            div class: 'arrow-right'
-            div class: 'arrow-left'
-            input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: f.object.issue_severities.map{|u| [u.name, u.id]}, multiple: true
-          end
+          input :task_stages, label: 'Task Stages', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-task_stage-select2' do
+          #   input :task_stage_alt, label: 'Task Stages', as: :select, collection: TaskStage.where.not(id: f.object.task_stage_ids).map{|u| [u.name, u.id]}, multiple: true, input_html: { class: "select2" }
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :task_stages, label: 'Task Stages in Project', as: :select, collection: f.object.task_stages.map{|u| [u.name, u.id]}, multiple: true
+          # end
+
+          input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: options_for_select( IssueStage.all.map{|u| [u.name, u.id]}, f.object.issue_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-issue_stage-select2' do
+          #   input :issue_stage_alt, label: 'Issue Stages', as: :select, collection: IssueStage.where.not(id: f.object.issue_stage_ids).map{|u| [u.name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: f.object.issue_stages.map{|u| [u.name, u.id]}, multiple: true
+          # end
+
+          input :users, label: 'Users in Project', as: :select, collection: options_for_select(  User.client.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-user-select2' do
+          #   input :user_alt, label: 'Users', as: :select, collection: User.client.where.not(id: f.object.user_ids).map{|u| [u.email, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :users, label: 'Users in Project', as: :select, collection: f.object.users.client.map{|u| [u.email, u.id]}, multiple: true
+          # end
+
+          input :facilities, label: 'Facilities in Project', as: :select, collection: options_for_select(Facility.all.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-facility-select2' do
+          #   input :facility_alt, label: 'Facilities', as: :select, collection: Facility.where.not(id: f.object.facility_ids).map{|u| [u.facility_name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :facilities, label: 'Facilities in Project', as: :select, collection: f.object.facilities.map{|u| [u.facility_name, u.id]}, multiple: true
+          # end
+
+          input :statuses, label: 'Statuses in Project', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-status-select2' do
+          #   input :status_alt, label: 'Statuses', as: :select, collection: Status.where.not(id: f.object.status_ids).map{|u| [u.name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :statuses, label: 'Statuses in Project', as: :select, collection: f.object.statuses.map{|u| [u.name, u.id]}, multiple: true
+          # end
+
+          input :task_types, label: 'Task Categories in Project', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-task_type-select2' do
+          #   input :task_type_alt, label: 'Task Categories', as: :select, collection: TaskType.where.not(id: f.object.task_type_ids).map{|u| [u.name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :task_types, label: 'Task Categories in Project', as: :select, collection: f.object.task_types.map{|u| [u.name, u.id]}, multiple: true
+          # end
+
+          input :issue_types, label: 'Issue Types in Project', as: :select, collection: options_for_select( IssueType.all.map{|u| [u.name, u.id]}, f.object.issue_type_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-issue_type-select2' do
+          #   input :issue_type_alt, label: 'Issue Types', as: :select, collection: IssueType.where.not(id: f.object.issue_type_ids).map{|u| [u.name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :issue_types, label: 'Issue Types in Project', as: :select, collection: f.object.issue_types.map{|u| [u.name, u.id]}, multiple: true
+          # end
+
+          input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: options_for_select( IssueSeverity.all.map{|u| [u.name, u.id]}, f.object.issue_severity_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          # div id: 'project-issue_severity-select2' do
+          #   input :issue_severity_alt, label: 'Issue Severities', as: :select, collection: IssueSeverity.where.not(id: f.object.issue_severity_ids).map{|u| [u.name, u.id]}, multiple: true
+          #   div class: 'arrow-right'
+          #   div class: 'arrow-left'
+          #   input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: f.object.issue_severities.map{|u| [u.name, u.id]}, multiple: true
+          # end
 
         end
       end
@@ -179,7 +194,17 @@ ActiveAdmin.register Project do
 
     def create
       normalize_comment_params
-      super
+      # super
+      p_params = permitted_params[:project]
+      user_ids = p_params.delete("user_ids")
+      project = Project.new(p_params)
+      if project.save
+        project.user_ids = project.user_ids + user_ids if user_ids.present?
+        redirect_to admin_projects_path , notice: "Project created Successfully"
+      else
+        render :new
+      end
+
     end
 
     def update(options={}, &block)
