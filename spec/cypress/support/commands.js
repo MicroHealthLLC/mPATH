@@ -73,3 +73,9 @@ Cypress.Commands.add("openMap", () => {
   cy.openProject()
   cy.get('[data-cy=map_tab]').contains('Map').should('be.visible').click()
 })
+
+// Open gantt view of a project
+Cypress.Commands.add("openGantt", () => {
+  cy.openProject()
+  cy.get('[data-cy=gantt_tab]').contains('Gantt').should('be.visible').click()
+})
