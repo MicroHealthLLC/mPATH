@@ -70,9 +70,9 @@
                 <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
 
                 <p>
-                  <div class="row my-2" v-for="filter in getAllFilterNames">
-                    <div class="col-md-9 font-md">
-                      <span>{{filter}}: {{getFilterValue(filter)}}</span>
+                  <div v-for="filterArray in getAllFilterNames">
+                    <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
+                      <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
                     </div>
                   </div>
                 </p>
