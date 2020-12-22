@@ -1,3 +1,4 @@
+<!--  NOTE: This File is used in Map view right side bard -->
 <template>
   <div class="m-3" data-cy="facility_rollup">
     <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div>
@@ -44,7 +45,25 @@
         <loader type="code"></loader>
       </div>
     </div>
-  
+    <hr>
+
+    <div class="my-3 tasks p-3" data-cy="tasks_summary">
+      <h5 class="text-center">Data Set Filters</h5>
+      <hr>
+      <div>
+        <div v-for="filterArray in getAllFilterNames">
+          <div class="row">
+            <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
+              <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
     <div class="my-3 tasks p-3" data-cy="tasks_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
      <hr>
@@ -179,6 +198,8 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'getAllFilterNames',
+      'getFilterValue',
       'contentLoaded',
       'facilities',
       'currentProject',

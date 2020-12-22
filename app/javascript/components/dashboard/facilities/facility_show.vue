@@ -1,3 +1,5 @@
+<!--  NOTE: This file is used in Facility Manager view as overview tab -->
+
 <template>
   <div id="facility-show">
     <div class="position-sticky" v-if="!loading">
@@ -66,7 +68,7 @@
               </p>
               <hr>
               <p class="mt-2 d-flex align-items-center">
-                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
+                <span class="fbody-icon"><i class="fas fa-filter"></i></span>
                 <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
 
                 <p>

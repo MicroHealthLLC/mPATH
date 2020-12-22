@@ -194,6 +194,7 @@ export default new Vuex.Store({
   },
 
   getters: {
+    // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
       return [
 
@@ -219,6 +220,7 @@ export default new Vuex.Store({
 
       ]
     },
+    // This method is used to show filters applied in overview tabs
     getFilterValue: (state, getter)=>(_filterValue) =>{
       
       if(_filterValue == 'facilityGroupFilter'){
