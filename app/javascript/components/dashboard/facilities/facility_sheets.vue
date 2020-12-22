@@ -22,6 +22,29 @@
               <div>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    class="ml-2 milestones"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </p>
+
+                <p class="mt-2 d-flex align-items-center">
+                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                   <span style="font-weight:700; margin-right: 4px">Project Completion Date: </span>
                   <v2-date-picker
                     v-model="DV_facility.dueDate"
@@ -33,6 +56,7 @@
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
+
                 <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
@@ -110,7 +134,7 @@
               <div v-if="taskStats.length > 0" data-cy="task_categories">
                 <div class="text-info font-weight-bold text-center">Task Categories</div>
                 <p>
-                  <div class="row my-2" v-for="task in taskStats">
+                  <div class="row my-2"  v-for="task in taskStats">
                     <div class="col-md-9 font-md">
                       <span>{{task.name}}</span>
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
@@ -291,6 +315,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskTypeFilter',
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
@@ -342,6 +367,7 @@
     },
     computed: {
       ...mapGetters([
+        'taskTypes',
         'getAllFilterNames',
         'getFilterValue',
         'currentProject',
@@ -354,6 +380,14 @@
         'issueStageFilter',
         'statuses'
       ]),
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')

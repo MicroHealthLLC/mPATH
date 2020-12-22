@@ -34,6 +34,28 @@
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
+                <p class="mt-2 d-flex align-items-center">
+                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    class="ml-2 milestones"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </p>
+
                 <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
@@ -305,6 +327,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskTypeFilter',
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
@@ -357,6 +380,7 @@
     },
     computed: {
       ...mapGetters([
+        'taskTypes',
         'getAllFilterNames',
         'getFilterValue',
         'contentLoaded',
@@ -372,6 +396,14 @@
         'myActionsFilter',
         'onWatchFilter'
       ]),
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
