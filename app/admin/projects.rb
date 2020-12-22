@@ -70,7 +70,7 @@ ActiveAdmin.register Project do
 
       tab 'Advanced' do
         f.inputs 'Project Details' do
-          input :task_stages, label: 'Task Stages', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :task_stages, label: 'Task Stages in Project', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           # div id: 'project-task_stage-select2' do
           #   input :task_stage_alt, label: 'Task Stages', as: :select, collection: TaskStage.where.not(id: f.object.task_stage_ids).map{|u| [u.name, u.id]}, multiple: true, input_html: { class: "select2" }
           #   div class: 'arrow-right'
@@ -86,7 +86,7 @@ ActiveAdmin.register Project do
           #   input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: f.object.issue_stages.map{|u| [u.name, u.id]}, multiple: true
           # end
 
-          input :users, label: 'Users in Project', as: :select, collection: options_for_select(  User.client.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :users, label: 'Users in Project', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           # div id: 'project-user-select2' do
           #   input :user_alt, label: 'Users', as: :select, collection: User.client.where.not(id: f.object.user_ids).map{|u| [u.email, u.id]}, multiple: true
           #   div class: 'arrow-right'
@@ -94,7 +94,7 @@ ActiveAdmin.register Project do
           #   input :users, label: 'Users in Project', as: :select, collection: f.object.users.client.map{|u| [u.email, u.id]}, multiple: true
           # end
 
-          input :facilities, label: 'Facilities in Project', as: :select, collection: options_for_select(Facility.all.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :facilities, label: 'Facilities in Project', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           # div id: 'project-facility-select2' do
           #   input :facility_alt, label: 'Facilities', as: :select, collection: Facility.where.not(id: f.object.facility_ids).map{|u| [u.facility_name, u.id]}, multiple: true
           #   div class: 'arrow-right'
