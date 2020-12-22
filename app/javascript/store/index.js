@@ -31,6 +31,7 @@ export default new Vuex.Store({
     issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
+    riskMilestones: new Array,
     currentProject: null,
     projectUsers: new Array,
     currentFacility: null,
@@ -46,6 +47,7 @@ export default new Vuex.Store({
     taskIssueDueDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
+    riskMilestoneFilter: null,
     taskStageFilter: null,
     issueStageFilter: null,
     issueProgressFilter: null,
@@ -74,7 +76,8 @@ export default new Vuex.Store({
     managerView: {
       task: null,
       issue: null,
-      note: null
+      note: null,
+      risk: null
     }
   },
 
@@ -122,6 +125,7 @@ export default new Vuex.Store({
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
+    setRiskMilestones: (state, riskMilestones) => state.riskMilestones = riskMilestones,
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
@@ -197,6 +201,7 @@ export default new Vuex.Store({
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
+    setRiskMilestoneFilter: (state, filter) => state.riskMilestoneFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
@@ -217,7 +222,7 @@ export default new Vuex.Store({
       state.progressFilter = filters
     },
     setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value,
-    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null},
+    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null, risk: null},
     setTaskForManager: (state, {key, value}) => {
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
@@ -241,7 +246,7 @@ export default new Vuex.Store({
         {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
         {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
         {id: 'myIssues', name: 'My Issues', value: 'issues'},
-        {id: 'myNotes', name: 'My Notes', value: 'notes'}        
+        {id: 'myNotes', name: 'My Notes', value: 'notes'}
       ]
     },
     // This method is used to show filters applied in overview tabs
@@ -272,15 +277,15 @@ export default new Vuex.Store({
     },
     // This method is used to show filters applied in overview tabs
     getFilterValue: (state, getter)=>(_filterValue) =>{
-      
+
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
         return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
-      
+
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
         return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
-      
+
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
         var user_names = null
@@ -292,7 +297,7 @@ export default new Vuex.Store({
       }else if(_filterValue == 'taskIssueOverdueFilter'){
         // console.log(getter.taskIssueOverdueFilter)
         return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
-      
+
       }else if(_filterValue == 'facilityProgressFilter'){
         // console.log(getter.facilityProgressFilter)
         var user_names = null
@@ -408,7 +413,7 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'taskStageFilter'){
         // console.log(getter.taskStageFilter)
-     
+
         var user_names = null
         if(getter.taskStageFilter && getter.taskStageFilter[0]){
           user_names = _.map(getter.taskStageFilter, 'name').join(", ")
@@ -436,6 +441,7 @@ export default new Vuex.Store({
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
+    riskMilestones: state => state.riskMilestones,
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
     activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
@@ -453,6 +459,7 @@ export default new Vuex.Store({
     noteDateFilter: state => state.noteDateFilter,
     taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
+    riskMilestoneFilter: state => state.riskMilestoneFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
@@ -970,6 +977,7 @@ export default new Vuex.Store({
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('setRiskMilestones', res.data.project.riskMilestones)
             resolve()
           })
           .catch((err) => {
@@ -1145,6 +1153,7 @@ export default new Vuex.Store({
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'issueTypeFilter',
+        'riskMilestoneFilter',
         'issueSeverityFilter',
         'issueStageFilter',
         'taskStageFilter',

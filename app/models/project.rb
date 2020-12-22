@@ -8,6 +8,7 @@ class Project < SortableRecord
   has_many :facility_groups, through: :facilities
   has_many :tasks, through: :facility_projects
   has_many :issues, through: :facility_projects
+  has_many :risks, through: :facility_projects
   has_many :comments, as: :resource, dependent: :destroy, class_name: 'ActiveAdmin::Comment'
   accepts_nested_attributes_for :comments, reject_if: :reject_comment, allow_destroy: true
 
@@ -51,8 +52,9 @@ class Project < SortableRecord
       task_types: task_types.as_json,
       issue_types: issue_types.as_json,
       issue_severities: issue_severities.as_json,
-      task_stages: TaskStage.all.as_json,
-      issue_stages: IssueStage.all.as_json
+      task_stages: task_stages.as_json,
+      issue_stages: issue_stages.as_json,
+      risk_milestones: RiskMilestone.all.as_json
     )
     json
   end

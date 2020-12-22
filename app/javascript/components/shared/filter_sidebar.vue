@@ -190,7 +190,7 @@
           </div>
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
-            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227             
+            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227
             <div>
               <label class="font-sm mb-0">My Actions</label>
               <multiselect v-model="C_myActionsFilter" track-by="name" label="name" :options="myActions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -200,7 +200,7 @@
                   </div>
                 </template>
               </multiselect>
-            </div> 
+            </div>
             <div v-if="viewPermit('watch_view', 'read')">
               <label class="font-sm mb-0">On Watch</label>
               <multiselect v-model="C_onWatchFilter" track-by="name" label="name" :options="onWatch" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -889,7 +889,6 @@ export default {
     content: unset;
   }
 }
-
 
 a.disabled {
   pointer-events: none;

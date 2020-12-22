@@ -239,6 +239,13 @@
             @refresh-facility="refreshFacility"
           ></issue-index>
         </div>
+        <div v-if="currentTab == 'risks'">
+          <risk-index
+            :facility="DV_facility"
+            :from="from"
+            @refresh-facility="refreshFacility"
+          ></risk-index>
+        </div>
       </div>
     </div>
   </div>
@@ -249,6 +256,7 @@
   import DetailShow from './detail_show'
   import NotesIndex from './../notes/notes_index'
   import IssueIndex from './../issues/issue_index'
+  import RiskIndex from './../risks/risk_index'
   import CustomTabs from './../../shared/custom-tabs'
   import Loader from './../../shared/loader'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
@@ -259,6 +267,7 @@
       DetailShow,
       NotesIndex,
       IssueIndex,
+      RiskIndex,
       CustomTabs,
       Loader
     },
@@ -310,10 +319,9 @@
             closable: false
           },
           {
-            label: 'Risks (Coming soon)',
+            label: 'Risks',
             key: 'risks',
-            closable: false,
-            disabled: true
+            closable: false
           }
         ]
       }
@@ -608,7 +616,7 @@
       text-overflow: ellipsis;
     }
   }
-  .fac-sum {  
+  .fac-sum {
    border-radius: 2px;
    margin-bottom: 8px;
    background-color: #fff;

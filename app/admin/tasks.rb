@@ -24,6 +24,7 @@ ActiveAdmin.register Task do
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
+      sub_risk_ids: [],
       facility_project_attributes: [
         :id,
         :project_id,
@@ -128,6 +129,7 @@ ActiveAdmin.register Task do
       f.input :task_files
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
       f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
+      f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
       div id: 'related_tasks-issues-tab'
     end
     f.actions

@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         post :batch_update, on: :collection
       end
       resources :notes, module: :facilities
+      resources :risks
       resources :tasks do
         post :batch_update, on: :collection
       end

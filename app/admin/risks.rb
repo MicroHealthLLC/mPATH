@@ -130,6 +130,7 @@ ActiveAdmin.register Risk do
       f.input :risk_files, label: 'Risk Files'
       f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
       f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
+      f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
       div id: 'related_tasks-issues-tab'
     end
     f.actions
