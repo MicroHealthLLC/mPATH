@@ -62,8 +62,6 @@
     </div>
 
 
-
-
     <div class="my-3 tasks p-3" data-cy="tasks_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
      <hr>
@@ -198,6 +196,8 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'taskTypes',
+      'getAllFilterNames',
       'getAllFilterNames',
       'getFilterValue',
       'contentLoaded',
@@ -222,6 +222,14 @@ export default {
       'myActionsFilter',
       'onWatchFilter'
     ]),
+    C_taskTypeFilter: {
+      get() {
+        return this.taskTypeFilter
+      },
+      set(value) {
+        this.setTaskTypeFilter(value)
+      }
+    },
     C_myTasks: {
       get() {
         return _.map(this.myActionsFilter, 'value').includes('tasks')

@@ -35,7 +35,6 @@
                   />
                 </p>
                 <p class="mt-2 d-flex align-items-center">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
                   <span style="font-weight:700; margin-right: 4px">Task Category: </span>
                   <multiselect
                     v-model="C_taskTypeFilter"
@@ -381,6 +380,7 @@
     },
     computed: {
       ...mapGetters([
+        'taskTypes',
         'getAllFilterNames',
         'getFilterValue',
         'contentLoaded',
