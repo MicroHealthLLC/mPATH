@@ -1,3 +1,5 @@
+<!-- NOTE: This file is used Global filter view in left side -->
+
 <template>
   <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
     <div id="filter_bar" class="container shadow-sm">

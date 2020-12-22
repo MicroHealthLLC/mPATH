@@ -1,3 +1,4 @@
+<!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
   <div id="facility-sheets" data-cy="facility_sheets">
     <div v-if="!loading">
@@ -64,6 +65,19 @@
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
+              </p>
+              <hr>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-filter"></i></span>
+                <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
+
+                <p>
+                  <div v-for="filterArray in getAllFilterNames">
+                    <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
+                      <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
+                    </div>
+                  </div>
+                </p>
               </p>
               <hr>
               <div class="my-1" data-cy="facility_tasks">
@@ -328,6 +342,8 @@
     },
     computed: {
       ...mapGetters([
+        'getAllFilterNames',
+        'getFilterValue',
         'currentProject',
         'taskTypeFilter',
         'issueTypeFilter',
