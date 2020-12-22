@@ -1,0 +1,1 @@
+ProjectUser.destroy_all
