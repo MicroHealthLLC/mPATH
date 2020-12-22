@@ -1,7 +1,6 @@
 class Risk < ApplicationRecord
   include Normalizer
   include Tasker
-  default_scope {order(due_date: :asc)}
 
   belongs_to :user
   belongs_to :risk_milestone

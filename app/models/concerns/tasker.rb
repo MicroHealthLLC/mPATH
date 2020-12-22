@@ -2,6 +2,8 @@ module Tasker
   extend ActiveSupport::Concern
 
   included do
+    default_scope {order(due_date: :asc)}
+
     scope :complete, -> {where("progress = ?", 100)}
     scope :incomplete, -> {where("progress < ?", 100)}
 
@@ -21,6 +23,7 @@ module Tasker
     validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
 
     before_save :check_watched, if: :watched_changed?
+    after_save :remove_on_watch
     after_validation :setup_facility_project
 
     def setup_facility_project
@@ -39,6 +42,12 @@ module Tasker
 
     def facility
       facility_project.try(:facility)
+    end
+
+    def remove_on_watch
+      if self.progress == 100 && self.watched == true
+        self.update_attributes(watched: false)
+      end
     end
   end
 end

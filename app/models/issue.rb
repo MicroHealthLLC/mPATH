@@ -1,46 +1,22 @@
 class Issue < ApplicationRecord
   include Normalizer
-  default_scope {order(due_date: :asc)}
+  include Tasker
 
-  belongs_to :facility_project
   belongs_to :issue_type
   belongs_to :issue_stage, optional: true
   belongs_to :task_type, optional: true
   belongs_to :issue_severity
   has_many :issue_users, dependent: :destroy
   has_many :users, through: :issue_users
-  has_many :checklists, as: :listable, dependent: :destroy
   has_many_attached :issue_files, dependent: :destroy
-
-  has_many :related_tasks, as: :relatable, dependent: :destroy
-  has_many :related_issues, as: :relatable, dependent: :destroy
-  has_many :sub_tasks, through: :related_tasks
-  has_many :sub_issues, through: :related_issues
-
   has_many :notes, as: :noteable, dependent: :destroy
 
   validates :title, :start_date, :due_date, presence: true
-  validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
-  accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :facility_project, reject_if: :all_blank
 
-  scope :complete, -> {where("progress = ?", 100)}
-  scope :incomplete, -> {where("progress < ?", 100)}
-
-  before_save :check_watched, if: :watched_changed?
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   after_save :handle_related_tasks_issues
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
-
-  after_save :remove_on_watch
-
-
-  def remove_on_watch
-    if self.progress == 100 && self.watched == true
-      self.update(watched: false)
-    end
-  end
 
   def to_json
     attach_files = []
@@ -195,7 +171,6 @@ class Issue < ApplicationRecord
     issue
   end
 
-
   def manipulate_files(params)
     return unless params[:issue][:issue_files].present?
     file_blobs = JSON.parse(params[:issue][:issue_files])
@@ -206,18 +181,6 @@ class Issue < ApplicationRecord
         issue_files.new(blob_id: file['id'])
       end
     end
-  end
-
-  def project
-    self.facility_project.try(:project)
-  end
-
-  def facility
-    self.facility_project.try(:facility)
-  end
-
-  def check_watched
-    self.watched_at = DateTime.now
   end
 
   def nuke_it!
