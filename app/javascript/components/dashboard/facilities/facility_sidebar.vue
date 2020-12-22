@@ -70,7 +70,7 @@
       }
     }
     .fac-name {
-      border: solid lightgray .5px;
+      border-bottom: solid lightgray .5px;
       border-radius: 2px;
       margin: 1px;
       cursor: pointer;
