@@ -1457,6 +1457,29 @@ jQuery(function($) {
       }
     });
 
+
+    // Add this in input element
+    //"data-task-stage-data" => TaskStage.where.not(id: f.object.task_stage_ids).map{|u| {id: u.id, text: u.name}}.to_json
+    // NOTE: Select2 is not working as expected. It is not preserving order of selected items: 
+    // https://github.com/select2/select2/issues/3106#issuecomment-333341636
+    // http://jsfiddle.net/L6163yc9/4
+
+    // task_stage_select2_data = JSON.parse( $("#project_task_stage_alt").attr("data-task-stage-data"))
+    // $("#project_task_stage_alt").select2({
+    //   data: task_stage_select2_data
+    // })
+    // $("#project_task_stage_alt").on('select2:select', function(e) {
+    //   var element = $(e.params.data.element);
+    //   debugger;
+    //   if (element.length) {
+    //     $(this).append(element);
+    //     $(this).trigger('change');
+    //   } else {
+    //     console.log('element does not exist!');
+    //   }
+    // });
+
+
     // task form slider auto calculate and slider
     $("#task_auto_calculate").change(function(e) {
       $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();

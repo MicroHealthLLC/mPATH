@@ -56,7 +56,7 @@ describe('Kanban Tasks View', function() {
       cy.get('[data-cy=tasks]').as('destination')
     })
 
-    cy.get('@origin').drag('@destination')
+    cy.get('@origin').drag('@destination', {force: true})
 
     cy.get('[data-cy=kanban_col]').first().within(() => {
       cy.get('[data-cy=tasks]').should('not.exist')
@@ -65,6 +65,7 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=kanban_col]').last().within(() => {
       cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     })
+    cy.logout()
   })
 
   it('Search task by typing title', function() {
