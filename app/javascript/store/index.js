@@ -225,11 +225,11 @@ export default new Vuex.Store({
       
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
-        return getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
+        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
       
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
-        return getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
+        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
       
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
@@ -241,7 +241,7 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'taskIssueOverdueFilter'){
         // console.log(getter.taskIssueOverdueFilter)
-        return getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+        return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
       
       }else if(_filterValue == 'facilityProgressFilter'){
         // console.log(getter.facilityProgressFilter)
