@@ -1,20 +1,29 @@
 <template>
   <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
-    <div id="filter_bar" class="shadow-sm">
-      <div class="d-flex m-3 align-items-center justify-content-between">
-        <h4 class="d-flex align-items-center">
-          <i class="fas fa-filter font-sm mr-2"></i><span>Filter View</span>
-        </h4>
-        <button class="btn btn-sm btn-link" @click.prevent="onClearFilter">clear</button>
-      </div>
-      <div class="filters_wrap">
-        <div class="d-flex my-3 mx-1">
-          <div class="project-select d-flex">
-            <multiselect
+    <div id="filter_bar" class="container shadow-sm">
+      <!-- First row: Filter View Title/Header -->
+      <div class="row pt-1">              
+          <div class="col-md-12">
+            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>FILTER VIEW</h5>
+            <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>   
+          </div>         
+      </div>      
+       <!-- Next row for Facilities label with border div -->
+     <div class="filter-border filter-sections px-3 pb-2">
+        <div class="row">       
+          <div class="col-md-12">
+            <h5 class="mb-0">Facilities</h5>
+          </div>         
+        </div>
+  <!-- Next row for two columns that will contain Facilities-related menus -->
+      <div class="row justify-content-between">     
+          <div class="col-md-6">
+            <div>
+            <label class="font-sm mb-0">Project Type</label>
+             <multiselect
               v-model="currentProject"
               track-by="name"
-              label="name"
-              placeholder="Select Project"
+              label="name"             
               :options="projects"
               :searchable="false"
               :allow-empty="false"
@@ -27,13 +36,48 @@
                 </div>
               </template>
             </multiselect>
-          </div>
-          <div class="ml-2 facilitygroup-select d-flex">
+            </div>
+
+           <div>
+            <label class="font-sm mb-0">Project Status</label>
+            <multiselect
+              v-model="C_projectStatusFilter"
+              track-by="name"
+              label="name"             
+              :options="statuses"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div> 
+           <div class="">
+            <label class="font-sm mb-0">Facility % Progress Range</label>
+              <div class="form-row">
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                </div>
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                </div>
+              </div>
+            <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+           </div>           
+         </div>
+         
+           <div class="col-md-6">
+           <div>
+              <label class="font-sm mb-0">Facility Group</label>
             <multiselect
               v-model="C_facilityGroupFilter"
               track-by="name"
-              label="name"
-              placeholder="Filter by Facility Group"
+              label="name"             
               :options="C_activeFacilityGroups"
               :multiple="true"
               select-label="Select"
@@ -47,12 +91,9 @@
               </template>
             </multiselect>
           </div>
-        </div>
-
-        <div class="d-flex my-3 mx-1">
-          <div class="facilitygroup-select d-flex">
-            <multiselect
-              placeholder="Search by Facility Name"
+          <div>
+            <label class="font-sm mb-0">Facility Name</label>
+            <multiselect             
               v-model="C_facilityNameFilter"
               label="facilityName"
               track-by="id"
@@ -73,42 +114,36 @@
               <span slot="noOptions">...</span>
             </multiselect>
           </div>
-          <div class="facilitygroup-select d-flex">
-            <multiselect
-              v-model="C_projectStatusFilter"
-              track-by="name"
-              label="name"
-              class="ml-2"
-              placeholder="Filter by Status"
-              :options="statuses"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-          </div>
-        </div>
+          <div>
+           <label class="font-sm mb-0">Project Completion Date Range</label>
+           <v2-date-picker           
+            v-model="C_facilityDueDateFilter"
+            class="datepicker"
+            placeholder="Select Date Range"
+            @open="datePicker=true"
+            @close="datePicker=false"
+            range
+          />
+          </div>         
+       </div>
+         
+       </div>
+       </div>
 
-
-        <div class="progress_ranges my-3 mx-1">
-          <label class="mb-0">Task and Issue Overdue</label>
-          <div class="form-row">
-            <div class="form-group col mb-0">
-              <multiselect
-                v-model="C_taskIssueOverdueFilter"
+      <!-- Next Set of Rows for Tasks and Issues Columns -->     
+      <div class="filter-sections filter-border mt-2 mb-1 px-3 py-2">
+        <div class="row">         
+            <div class="col-md-4" style="border-right:solid lightgray .8px">
+              <h5>Tasks</h5>
+            <div>
+                <label class="font-sm mb-0">Task Category</label>
+                <multiselect
+                v-model="C_taskTypeFilter"
                 track-by="name"
-                label="name"
-                class="ml-2"
-                placeholder="Task and Issue Overdue"
-                :options="C_taskIssueOverdueOptions"
+                label="name"                   
+                :options="taskTypes"
                 :searchable="false"
-                :multiple="false"
+                :multiple="true"
                 select-label="Select"
                 deselect-label="Remove"
                 >
@@ -118,265 +153,240 @@
                   </div>
                 </template>
               </multiselect>
-            </div>
-          </div>
-        </div>
-
-
-        <div class="progress_ranges my-3 mx-1">
-          <label class="mb-0">Facility % Progress Range</label>
-          <div class="form-row">
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
-            </div>
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
-            </div>
-          </div>
-          <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
-        </div>
-
-        <div class="duedate-range my-3 mx-1">
-          <v2-date-picker
-            v-model="C_facilityDueDateFilter"
-            class="datepicker"
-            placeholder="Project Completion Date Range"
-            @open="datePicker=true"
-            @close="datePicker=false"
-            range
-          />
-
-          <multiselect
-            v-model="C_taskTypeFilter"
-            track-by="name"
-            label="name"
-            class="ml-2 milestones"
-            placeholder="Filter by Task Category"
-            :options="taskTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+           </div>
+             <div>
+              <label class="font-sm mb-0">Task Users</label>
+               <multiselect
+                  v-model="C_taskUserFilter"
+                  track-by="id"
+                  label="fullName"                
+                  class="mr-1"
+                  :options="activeProjectUsers"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>              
+            <div v-if="viewPermit('kanban_view', 'read')">
+              <label class="font-sm mb-0">Task Stages</label>
+                 <multiselect
+                  v-model="C_taskStageFilter"
+                  track-by="name"
+                  label="name"
+                  placeholder="Filter by task stages"
+                  :options="taskStages"
+                  :searchable="false"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.name}}</span>
+                    </div>
+                  </template>
+                 </multiselect>               
               </div>
-            </template>
-          </multiselect>
-        </div>
 
-        <div class="notedate-range my-3 mx-1">
-          <v2-date-picker
-            v-model="C_noteDateFilter"
-            class="datepicker"
-            placeholder="Updates Date Range"
-            @open="datePicker=true"
-            @close="datePicker=false"
-            range
-          />
-        </div>
-
-        <div class="taskissueduedate-range my-3 mx-1">
-          <v2-date-picker
-            v-model="C_taskIssueDueDateFilter"
-            class="datepicker"
-            placeholder="Task and Issue Due Date Range"
-            @open="datePicker=true"
-            @close="datePicker=false"
-            range
-          />
-        </div>
-
-        <div class="progress_ranges my-3 mx-1">
-          <label class="mb-0">Task % Progress Range</label>
-          <div class="form-row">
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'min'})" :value="C_taskProgress.min">
-            </div>
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'max'})" :value="C_taskProgress.max">
-            </div>
-          </div>
-          <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
-        </div>
-
-        <div class="taskUser-select my-3 mx-1 d-flex">
-          <multiselect
-            v-model="C_taskUserFilter"
-            track-by="id"
-            label="fullName"
-            placeholder="Search By Task Users"
-            class="mr-1"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
+              <div>
+                <label class="font-sm mb-0">Task % Progress Range</label>
+                  <div class="form-row">
+                    <div class="form-group col mb-0">
+                      <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'min'})" :value="C_taskProgress.min">
+                    </div>
+                    <div class="form-group col mb-0">
+                      <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'max'})" :value="C_taskProgress.max">
+                    </div>
+                  </div>
+                  <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
               </div>
-            </template>
-          </multiselect>
-
-          <multiselect
-            v-model="C_issueTypeFilter"
-            track-by="name"
-            label="name"
-            class="ml-2"
-            placeholder="Filter by Issue Type"
-            :options="issueTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+            </div> 
+            <div class="col-md-4">
+              <h5>Issues</h5>
+               <div>
+                  <label class="font-sm mb-0">Issue Type</label>
+                  <multiselect
+                    v-model="C_issueTypeFilter"
+                    track-by="name"
+                    label="name"              
+                    :options="issueTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+               </div>
+             <div>
+              <label class="font-sm mb-0">Issue Users</label>
+               <multiselect
+                  v-model="C_issueUserFilter"
+                  track-by="id"
+                  label="fullName"                          
+                  :options="activeProjectUsers"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
               </div>
-            </template>
-          </multiselect>
-        </div>
-
-        <div class="progress_ranges my-3 mx-1">
-          <label class="mb-0">Issue % Progress Range</label>
-          <div class="form-row">
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'min'})" :value="C_issueProgress.min">
-            </div>
-            <div class="form-group col mb-0">
-              <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'max'})" :value="C_issueProgress.max">
-            </div>
-          </div>
-          <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>
-        </div>
-
-        <div class="issueSeverity-select my-3 mx-1 d-flex">
-          <multiselect
-            v-model="C_issueSeverityFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Issue Severity"
-            :options="issueSeverities"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+              <div>
+                <label class="font-sm mb-0">Issue Stages</label>
+                <multiselect
+                  v-model="C_issueStageFilter"
+                  track-by="name"
+                  label="name"                
+                  :options="issueStages"
+                  :searchable="false"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
               </div>
-            </template>
-          </multiselect>
-
-          <multiselect
-            v-model="C_issueUserFilter"
-            track-by="id"
-            label="fullName"
-            class="ml-2"
-            placeholder="Search By Issue Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-
-        <div class="actions-select my-3 mx-1 d-flex">
-          <multiselect
-            v-model="C_myActionsFilter"
-            track-by="name"
-            label="name"
-            placeholder="My-actions Filter"
-            :options="myActions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-
-          <div v-if="viewPermit('watch_view', 'read')" class="on-watch-select ml-2">
-            <multiselect
-              v-model="C_onWatchFilter"
-              track-by="name"
-              label="name"
-              placeholder="On-Watch Filter"
-              :options="onWatch"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
+               <div>
+                <label class="font-sm mb-0">Issue % Progress Range</label>                
+                <div class="form-row">
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'min'})" :value="C_issueProgress.min">
+                  </div>
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'max'})" :value="C_issueProgress.max">
+                  </div>
                 </div>
-              </template>
-            </multiselect>
-          </div>
-        </div>
-
-        <div v-if="viewPermit('kanban_view', 'read')" class="actions-select my-3 mx-1 d-flex">
-          <multiselect
-            v-model="C_taskStageFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by task stages"
-            :options="taskStages"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-          <div class="actions-select ml-2">
-            <multiselect
-              v-model="C_issueStageFilter"
-              track-by="name"
-              label="name"
-              placeholder="Filter by issue stages"
-              :options="issueStages"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
+                <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>                 
                 </div>
-              </template>
-            </multiselect>
+                <div>
+                  <label class="font-sm mb-0">Issue Severity</label>
+                  <multiselect
+                    v-model="C_issueSeverityFilter"
+                    track-by="name"
+                    label="name"                 
+                    :options="issueSeverities"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+            </div>
+            <div class="col-md-4" style="border-left:solid lightgray .8px">
+              <h5>Combined</h5>              
+              <div>
+                <label class="font-sm mb-0">My Actions</label>
+                  <multiselect
+                    v-model="C_myActionsFilter"
+                    track-by="name"
+                    label="name"                  
+                    :options="myActions"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+              </div>
+              <div v-if="viewPermit('watch_view', 'read')">
+                  <label class="font-sm mb-0">On Watch</label>
+                  <multiselect
+                    v-model="C_onWatchFilter"
+                    track-by="name"
+                    label="name"                  
+                    :options="onWatch"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+                 <div>
+                 <label class="font-sm mb-0">Task and Issue Overdue</label>
+                 <multiselect
+                  v-model="C_taskIssueOverdueFilter"
+                  track-by="name"
+                  label="name"              
+                  :options="C_taskIssueOverdueOptions"
+                  :searchable="false"  
+                  :allow-empty="false"         
+                  select-label="Select"
+                  deselect-label="Remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>             
+                <div>
+                  <label class="font-sm mb-0">Task and Issue Due Date Range</label>               
+                  <v2-date-picker
+                    v-model="C_taskIssueDueDateFilter"
+                    placeholder="Select Date Range"
+                    class="datepicker"               
+                    @open="datePicker=true"
+                    @close="datePicker=false"
+                    range
+                  />
+                </div>           
+                <div>
+                  <label class="font-sm mb-0">Updates Date Range</label>           
+                  <v2-date-picker
+                    v-model="C_noteDateFilter"
+                    class="datepicker"
+                    placeholder="Select Date Range"
+                    @open="datePicker=true"
+                    @close="datePicker=false"
+                    range
+                    />               
+                </div>
+            </div> 
           </div>
-        </div>
-      </div>
+       </div>
     </div>
-
     <div class="knocker" @click.prevent="toggleFilters">
-      <div class="linner"></div>
-    </div>
+      <button class="btn btn-md ml-0 knocker-btn text-light p-2"><small><span class="p-1"><i class="fas fa-sliders-h"></i></span>UNIVERSAL FILTERS</small></button>
+    </div>    
   </div>
 </template>
 
@@ -610,7 +620,7 @@
       filterBarStyle() {
         if (this.showFilters) return {}
         return {
-          transform: 'translateX(-640px)'
+          transform: 'translateX(-685px)'
         }
       },
       isMapView() {
@@ -876,17 +886,20 @@
   #filterbar {
     position: absolute;
     z-index: 1000;
-    transition: .4s ease;
+    transition: .4s ease; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.19), 0 24px 24px rgba(0,0,0,0.23);  
   }
   #filter_bar {
-    overflow-y: auto;
-    color: #383838;
-    background:white;
+    overflow-y: auto;  
+    border-radius: 4px;
+    background-color: #fafafa;
     height: calc(100vh - 94px);
     max-height: calc(100vh - 94px);
-    width: 640px;
-    border-top: solid #ededed 1.2px;
+    width: 685px;    
     box-shadow: 0 20px 40px rgba(0,0,0,0.19), 0 24px 24px rgba(0,0,0,0.23);
+  }
+  .filter-sections {
+    background-color: #fff;
   }
   .filters_wrap {
     width: 90%;
@@ -1061,8 +1074,6 @@
       }
     }
   }
-
-
   .datepicker,
   .milestones {
     width: 100% !important;
@@ -1070,22 +1081,18 @@
   .knocker {
     cursor: pointer;
     position: absolute;
-    top: 40%;
-    right: -12px;
-    width: 12px;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    height: 100px;
-    background: #ffa500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .linner {
-      width: 5px;
-      height: 60px;
-      border-left: 1px solid #fff;
-      border-right: 1px solid #fff;
-    }
+    bottom: 10%;
+    right: -145px;
+    width: 145px;     
+  }
+  .knocker-btn {
+    // Bootstrap success color rgba with transparency
+    background-color: rgba(92, 184, 92, .90);
+  }
+  .filter-border {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    border-radius: 5px;
+    padding:6px
   }
   .selected-opt {
     position: relative;
@@ -1113,5 +1120,21 @@
     ::placeholder {
       color: #adadad;
     }
+  }
+     input::-webkit-outer-spin-button,
+     input::-webkit-inner-spin-button {
+     -webkit-appearance: none;
+      margin: 0;
+  }
+    /* Firefox */
+    input[type=number] {
+    -moz-appearance: textfield;
+    height: 34px;
+  }
+  /deep/.mx-input {
+    font-size: .75rem !important;
+  }
+  .clear-btn {
+    text-decoration-line: none !important;
   }
 </style>

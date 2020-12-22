@@ -562,7 +562,7 @@
   .fac-sum {  
    border-radius: 2px;
    margin-bottom: 8px;
-   background-color: #ededed;
+   background-color: #fff;
    box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
 </style>

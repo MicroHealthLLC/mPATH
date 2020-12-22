@@ -15,7 +15,7 @@
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
             <div v-for="item in facilityGroupFacilities(group)">
-              <div class="d-flex align-items-center expandable" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
+              <div class="d-flex align-items-center expandable fac-name" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
               <h6 class="facility-header" data-cy="facilities">{{item.facility.facilityName}}</h6>
               </div>
             </div>
@@ -66,15 +66,22 @@
       cursor: pointer;
       font-weight: 400 !important;
       &:hover {
-        font-weight: 900 !important;
-        background-color: rgba(91, 192, 222, 0.3);
+        font-weight: 900 !important;        
       }
     }
-    .expandable {
-      &.active {
-        h6 {
-          background-color: rgba(211, 211, 211, 10%);
-        }
+    .fac-name {
+      border: solid lightgray .5px;
+      border-radius: 2px;
+      margin: 1px;
+      cursor: pointer;
+    }
+    .fac-name:hover {
+      background-color: rgba(91, 192, 222, 0.3);
+      cursor: pointer;
+    }
+    .fac-name {
+      &.active {        
+          background-color: rgba(211, 211, 211, 10%);        
       }
       &.active,
       &:hover {
