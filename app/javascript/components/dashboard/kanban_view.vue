@@ -14,13 +14,16 @@
               @on-expand-facility="showFacility"
             ></facility-sidebar>
 
-            <div v-if="expandFilter && contentLoaded" class="mt-4">
+            <div v-if="expandFilter && contentLoaded" class="mt-4 ml-2" style="border-left:solid 1px lightgray">
               <div v-if="currentTab === 'tasks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="form-group has-search mb-2 w-100">
-                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                 <div class="mb-2 input-group w-100">
+                    <div class="input-group-prepend d-inline">
+                     <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
                     <input
                       type="search"
+                      style="height:30px"
                       class="form-control form-control-sm"
                       placeholder="Search Tasks"
                       aria-label="Search"
@@ -32,11 +35,11 @@
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
+                     <label class="font-sm mb-0">Task Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"
-                      placeholder="Filter by Task Category"
+                      label="name"                     
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -51,14 +54,32 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="d-flex align-item-center justify-content-between mx-2">
+               
+                <div class="mx-2 mb-3 font-sm">
+                  <div class="simple-select w-50">
+                    <label class="font-sm mb-0">Task Status</label>
+                    <multiselect
+                      v-model="viewList"
+                      :options="listOptions"
+                      :searchable="false"
+                      :close-on-select="false"
+                      :show-labels="false"               
+                      data-cy="task_status_list"
+                      >
+                      <template slot="singleLabel">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{viewList}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                   <div class="d-flex align-item-center justify-content-between">
                   <div class="simple-select w-100">
+                    <label class="font-sm mb-0">Tasks and Issues Overdue</label>
                     <multiselect
                       v-model="C_taskIssueOverdueFilter"
                       track-by="name"
-                      label="name"
-                      class="ml-2"
-                      placeholder="Task and Issue Overdue"
+                      label="name"                     
                       :options="C_taskIssueOverdueOptions"
                       :searchable="false"
                       :multiple="false"
@@ -73,24 +94,6 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 mb-3 font-sm">
-                  <div class="simple-select w-50">
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"
-                      placeholder="Filter by Task Status"
-                      data-cy="task_status_list"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
                   <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
                       <input type="checkbox" class="form-check-input" v-model="C_myTasks"><span><i class="fas fa-user mr-1"></i></span>My Tasks
@@ -111,10 +114,13 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="form-group has-search mb-2 w-100">
-                    <i class="fa fa-search form-control-feedback font-sm"></i>
+                   <div class="mb-2 input-group w-100">
+                      <div class="input-group-prepend d-inline">
+                      <span class="input-group-text"><i class="fa fa-search"></i></span>
+                      </div>
                     <input
                       type="search"
+                      style="height:30px"
                       class="form-control form-control-sm"
                       placeholder="Search Issues"
                       aria-label="Search"
@@ -125,11 +131,11 @@
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
+                     <label class="font-sm mb-0">Task Category</label>
                      <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"
-                      placeholder="Filter by Task Category"
+                      label="name"                     
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -144,13 +150,13 @@
                     </multiselect>
 
                   <div class="simple-select w-50">
+                    <label class="font-sm mb-0">Issue Status</label>
                     <multiselect
                       v-model="viewList"
                       :options="listOptions"
                       :searchable="false"
                       :close-on-select="false"
-                      :show-labels="false"
-                      placeholder="Filter by Issue Status"
+                      :show-labels="false"                   
                       data-cy="issue_status_list"
                       >
                       <template slot="singleLabel">
@@ -160,8 +166,29 @@
                       </template>
                     </multiselect>
                   </div>
-
+                   <div class="d-flex align-item-center justify-content-between">
+                  <div class="simple-select w-100">
+                     <label class="font-sm mb-0">Task and Issue Overdue</label>
                     <multiselect
+                      v-model="C_taskIssueOverdueFilter"
+                      track-by="name"
+                      label="name"                     
+                      :options="C_taskIssueOverdueOptions"
+                      :searchable="false"
+                      :multiple="false"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                </div>
+                    <label class="font-sm mb-0">Issue Type</label>
+                    <multiselect                    
                       v-model="C_issueTypeFilter"
                       track-by="name"
                       label="name"
@@ -178,7 +205,7 @@
                         </div>
                       </template>
                     </multiselect>
-
+                    <label class="font-sm mb-0">Issue Severity</label>
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -197,29 +224,7 @@
                       </template>
                     </multiselect>
                   </div>
-                </div>
-                <div class="d-flex align-item-center justify-content-between mx-2">
-                  <div class="simple-select w-100">
-                    <multiselect
-                      v-model="C_taskIssueOverdueFilter"
-                      track-by="name"
-                      label="name"
-                      class="ml-2"
-                      placeholder="Task and Issue Overdue"
-                      :options="C_taskIssueOverdueOptions"
-                      :searchable="false"
-                      :multiple="false"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
-                </div>
+                </div>               
                 <div class="mx-2 mb-3 font-sm">   
                  <div class="form-check my-1 mt-3">
                     <label class="form-check-label">
