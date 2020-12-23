@@ -387,7 +387,7 @@
        </div>
     </div>
     <div class="knocker" @click.prevent="toggleFilters">
-      <button class="btn btn-md ml-0 knocker-btn text-light p-2"><small><span class="p-1"><i class="fas fa-sliders-h"></i></span>UNIVERSAL FILTERS</small></button>
+      <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>UNIVERSAL FILTERS</small></button>
     </div>    
   </div>
 </template>
@@ -1083,13 +1083,13 @@
   .knocker {
     cursor: pointer;
     position: absolute;
-    bottom: 10%;
-    right: -145px;
-    width: 145px;     
+    bottom: 4%;
+    right: -140px;
+    width: 140px;     
   }
   .knocker-btn {
-    // Bootstrap success color rgba with transparency
-    background-color: rgba(92, 184, 92, .90);
+    // Green hexcode of filter badges translated to rgba for added transparency
+    background-color: rgba(65, 184, 131, .90);
   }
   .filter-border {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);

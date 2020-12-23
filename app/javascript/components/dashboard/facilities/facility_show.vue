@@ -34,28 +34,6 @@
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
-                <p class="mt-2 d-flex align-items-center">
-                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
-                  <multiselect
-                    v-model="C_taskTypeFilter"
-                    track-by="name"
-                    label="name"
-                    class="ml-2 milestones"
-                    placeholder="Filter by Task Category"
-                    :options="taskTypes"
-                    :searchable="false"
-                    :multiple="true"
-                    select-label="Select"
-                    deselect-label="Remove"
-                    >
-                    <template slot="singleLabel" slot-scope="{option}">
-                      <div class="d-flex">
-                        <span class='select__tag-name'>{{option.name}}</span>
-                      </div>
-                    </template>
-                  </multiselect>
-                </p>
-
                 <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
@@ -83,20 +61,41 @@
                 </p>
               </div>
               <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
                 <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
-              <hr>
               <p class="mt-2 d-flex align-items-center">
-                <span class="fbody-icon"><i class="fas fa-filter"></i></span>
-                <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
-
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    class="ml-2 milestones w-50"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </p>        
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-sliders-h"></i></span>
+                <span style="font-weight:700; margin-right: 4px">Data Set Filters:</span>
                 <p>
                   <div v-for="filterArray in getAllFilterNames">
                     <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
-                      <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
+                      <span style="font-weight:700;margin-left:10px">{{filterArray[1]}}: </span><span>{{getFilterValue(filterArray[0])}}</span>
                     </div>
                   </div>
                 </p>
