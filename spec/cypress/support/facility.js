@@ -6,6 +6,7 @@ Cypress.Commands.add("facilityRollup", () => {
     cy.contains('4 Facilities').should('be.visible')
 
     // In sheet view display task summary
+    cy.get('[data-cy=tasks_summary]').scrollIntoView()
     cy.get('[data-cy=tasks_summary]').within(() => {
       cy.contains('6 Tasks').should('be.visible')
       cy.contains('Task Categories').should('be.visible')
