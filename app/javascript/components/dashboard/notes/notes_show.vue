@@ -5,16 +5,8 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="notes_show mb-5 mx-2" @click.stop="editNoteMode">
-      <div v-if="show" >
-        <div v-if="permitted('write')" class="mr-2 font-sm edit-action">
-          <!-- <span data-cy="note_edit_icon">
-            <i class="fas fa-edit"></i>
-          </span> -->
-          <!-- <span v-if="permitted('delete')" class="font-sm delete-action" @click.stop="deleteNote" data-cy="note_delete_icon">
-            <i class="fas fa-trash-alt"></i>
-          </span> -->
-        </div>
+    <div v-if="!loading" class="notes_show mb-5 mx-2">
+    <div v-if="show"  @click.stop="editNoteMode" data-cy="note_edit_icon">        
         <div class="note_by my-2">
           <span class="badge badge-secondary">Note by</span>
           <span class="text-muted font-sm">{{noteBy}}</span>
