@@ -5,7 +5,11 @@ Cypress.Commands.add("facilityRollup", () => {
     cy.contains('Facility Project Status').should('be.visible')
     cy.contains('4 Facilities').should('be.visible')
 
-    // In sheet view display task summary
+    cy.get('[data-cy=date_set_filter]').within(() => {
+      cy.contains('Data Set Filters').should('be.visible')
+    })
+
+    // Display task summary
     cy.get('[data-cy=tasks_summary]').scrollIntoView()
     cy.get('[data-cy=tasks_summary]').within(() => {
       cy.contains('6 Tasks').should('be.visible')
@@ -13,7 +17,7 @@ Cypress.Commands.add("facilityRollup", () => {
       cy.contains('Test Task Type(milestone)').should('be.visible')
     })
 
-    // In sheet view display Issues summary
+    // Display Issues summary
     cy.get('[data-cy=issues_summary]').scrollIntoView()
     cy.get('[data-cy=issues_summary]').within(() => {
       cy.contains('6 Issues').should('be.visible')
@@ -21,7 +25,7 @@ Cypress.Commands.add("facilityRollup", () => {
       cy.contains('Test Issue Type').should('be.visible')
     })
 
-    // In sheet view display Facility group summary
+    // Display Facility group summary
     cy.get('[data-cy=facility_group_summary]').scrollIntoView()
     cy.get('[data-cy=facility_group_summary]').within(() => {
       cy.contains('Facility Groups').should('be.visible')
