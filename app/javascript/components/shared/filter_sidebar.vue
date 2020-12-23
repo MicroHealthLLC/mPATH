@@ -6,7 +6,7 @@
       <!-- First row: Filter View Title/Header -->
       <div class="row pt-1">              
           <div class="col-md-12">
-            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>FILTER VIEW</h5>
+            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
             <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>   
           </div>         
       </div>      
@@ -122,8 +122,7 @@
             v-model="C_facilityDueDateFilter"
             class="datepicker"
             placeholder="Select Date Range"
-            @open="datePicker=true"
-            @close="datePicker=false"
+            @open="datePicker=true"           
             range
           />
           </div>         
@@ -366,8 +365,7 @@
                     v-model="C_taskIssueDueDateFilter"
                     placeholder="Select Date Range"
                     class="datepicker"               
-                    @open="datePicker=true"
-                    @close="datePicker=false"
+                    @open="datePicker=true"                  
                     range
                   />
                 </div>           
@@ -377,8 +375,7 @@
                     v-model="C_noteDateFilter"
                     class="datepicker"
                     placeholder="Select Date Range"
-                    @open="datePicker=true"
-                    @close="datePicker=false"
+                    @open="datePicker=true"              
                     range
                     />               
                 </div>
@@ -387,7 +384,7 @@
        </div>
     </div>
     <div class="knocker" @click.prevent="toggleFilters">
-      <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>UNIVERSAL FILTERS</small></button>
+      <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
     </div>    
   </div>
 </template>
@@ -1083,9 +1080,14 @@
   .knocker {
     cursor: pointer;
     position: absolute;
-    bottom: 4%;
-    right: -140px;
-    width: 140px;     
+    bottom: 10%;
+    right: -88px;
+    width: 140px;
+    -moz-transform:rotate(-90deg);
+    -ms-transform:rotate(-90deg);
+    -o-transform:rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+    
   }
   .knocker-btn {
     // Green hexcode of filter badges translated to rgba for added transparency

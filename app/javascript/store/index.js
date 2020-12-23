@@ -203,7 +203,7 @@ export default new Vuex.Store({
         ['projectStatusFilter', 'Project Status'],
         ['taskIssueOverdueFilter','Task and Issue Overdue'],
         ['facilityProgressFilter', 'Facility Progress'],
-        ['facilityDueDateFilter', 'Facility Due Date Range'],
+        ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
         ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
