@@ -205,7 +205,7 @@ export default new Vuex.Store({
         ['facilityProgressFilter', 'Facility Progress'],
         ['facilityDueDateFilter', 'Facility Due Date Range'],
         ['taskTypeFilter', 'Task Category'],
-        ['noteDateFilter', 'Note Date Range'],
+        ['noteDateFilter', 'Updates Date Range'],
         ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
         ['taskProgressFilter', 'Task Progress'],
         ['taskUserFilter', 'Task Users'],
