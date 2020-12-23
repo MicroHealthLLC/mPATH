@@ -1,3 +1,5 @@
+<!--  NOTE: This file is used in Facility Manager view as overview tab -->
+
 <template>
   <div id="facility-show">
     <div class="position-sticky" v-if="!loading">
@@ -32,6 +34,28 @@
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                 </p>
+                <p class="mt-2 d-flex align-items-center">
+                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    class="ml-2 milestones"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </p>
+
                 <p v-if="!DV_facility.statusId && _isallowed('write')" class="ml-4 text-danger">Status must be updated before you can enter a Due Date</p>
                 <p class="mt-2 d-flex align-items-center">
                   <span class="fbody-icon"><i class="fas fa-info-circle"></i></span>
@@ -59,12 +83,25 @@
                 </p>
               </div>
               <p class="mt-2 d-flex align-items-center">
-                <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
                 <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
+              <hr>
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-filter"></i></span>
+                <span style="font-weight:700; margin-right: 4px">Data Set Filters</span>
+
+                <p>
+                  <div v-for="filterArray in getAllFilterNames">
+                    <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
+                      <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
+                    </div>
+                  </div>
+                </p>
+              </p>
+
               <hr>
               <div class="my-1 tasks">
                 <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
@@ -290,6 +327,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskTypeFilter',
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
@@ -342,6 +380,9 @@
     },
     computed: {
       ...mapGetters([
+        'taskTypes',
+        'getAllFilterNames',
+        'getFilterValue',
         'contentLoaded',
         'currentProject',
         'taskTypeFilter',
@@ -355,6 +396,14 @@
         'myActionsFilter',
         'onWatchFilter'
       ]),
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -562,7 +611,7 @@
   .fac-sum {  
    border-radius: 2px;
    margin-bottom: 8px;
-   background-color: #ededed;
+   background-color: #fff;
    box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
 </style>

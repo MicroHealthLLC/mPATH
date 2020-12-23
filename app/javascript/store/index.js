@@ -194,6 +194,186 @@ export default new Vuex.Store({
   },
 
   getters: {
+    // This method is used to show filters applied in overview tabs
+    getAllFilterNames: (state, getters) => {
+      return [
+
+        ['facilityGroupFilter', 'Facility Group'],
+        ['facilityNameFilter', 'Facility Name'],
+        ['projectStatusFilter', 'Project Status'],
+        ['taskIssueOverdueFilter','Taks and issue Overdue'],
+        ['facilityProgressFilter', 'Facility Progress'],
+        ['facilityDueDateFilter', 'Facility Due Date Range'],
+        ['taskTypeFilter', 'Task Type'],
+        ['noteDateFilter', 'Note Date Range'],
+        ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
+        ['taskProgressFilter', 'Task Progress'],
+        ['taskUserFilter', 'Task Users'],
+        ['issueTypeFilter', 'Task Types'],
+        ['issueProgressFilter', 'Issue Progress'],
+        ['issueSeverityFilter', 'Issue Severities'],
+        ['issueUserFilter', 'Issue Users'],
+        ['myActionsFilter', 'My Actions'],
+        ['onWatchFilter', 'On Watch'],
+        ['taskStageFilter', 'Task Stages'],
+        ['issueStageFilter', 'Issue Stages']
+
+      ]
+    },
+    // This method is used to show filters applied in overview tabs
+    getFilterValue: (state, getter)=>(_filterValue) =>{
+      
+      if(_filterValue == 'facilityGroupFilter'){
+        // console.log(getter.facilityGroupFilter)
+        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
+      
+      }else if(_filterValue == 'facilityNameFilter'){
+        // console.log(getter.facilityNameFilter)
+        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
+      
+      }else if(_filterValue == 'projectStatusFilter'){
+        // console.log(getter.projectStatusFilter)
+        var user_names = null
+        if(getter.projectStatusFilter && getter.projectStatusFilter[0]){
+          user_names = _.map(getter.projectStatusFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskIssueOverdueFilter'){
+        // console.log(getter.taskIssueOverdueFilter)
+        return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+      
+      }else if(_filterValue == 'facilityProgressFilter'){
+        // console.log(getter.facilityProgressFilter)
+        var user_names = null
+        if(getter.facilityProgressFilter && getter.facilityProgressFilter[0]){
+          user_names = _.map(getter.facilityProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'facilityDueDateFilter'){
+        // console.log(getter.facilityDueDateFilter)
+        var dates = null
+        if(getter.facilityDueDateFilter && getter.facilityDueDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskTypeFilter'){
+        // console.log(getter.taskTypeFilter)
+        var user_names = null
+        if(getter.taskTypeFilter && getter.taskTypeFilter[0]){
+          user_names = _.map(getter.taskTypeFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'noteDateFilter'){
+        // console.log(getter.noteDateFilter)
+        var dates = null
+        if(getter.noteDateFilter && getter.noteDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.noteDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.noteDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskIssueDueDateFilter'){
+        // console.log(getter.taskIssueDueDateFilter)
+        var dates = null
+        if(getter.taskIssueDueDateFilter && getter.taskIssueDueDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskProgressFilter'){
+        // console.log(getter.taskProgressFilter)
+        var user_names = null
+        if(getter.taskProgressFilter && getter.taskProgressFilter[0]){
+          user_names = _.map(getter.taskProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskUserFilter'){
+        // console.log(getter.taskUserFilter)
+        var user_names = null
+        if(getter.taskUserFilter && getter.taskUserFilter[0]){
+          user_names = _.map(getter.taskUserFilter, 'fullName').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueTypeFilter'){
+        // console.log(getter.issueTypeFilter)
+        var names = null
+        if(getter.issueTypeFilter && getter.issueTypeFilter[0]){
+           names = _.map(getter.issueTypeFilter, 'name').join(", ")
+        }
+        return names
+
+      }else if(_filterValue == 'issueProgressFilter'){
+        // console.log(getter.issueProgressFilter)
+        var user_names = null
+        if(getter.issueProgressFilter && getter.issueProgressFilter[0]){
+          user_names = _.map(getter.issueProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueSeverityFilter'){
+        // console.log(getter.issueSeverityFilter)
+        var names = null
+        if(getter.issueSeverityFilter && getter.issueSeverityFilter[0]){
+           names = _.map(getter.issueSeverityFilter, 'name').join(", ")
+        }
+        return names
+
+      }else if(_filterValue == 'issueUserFilter'){
+        // console.log(getter.issueUserFilter)
+        var user_names = null
+        if(getter.issueUserFilter && getter.issueUserFilter[0]){
+          user_names = _.map(getter.issueUserFilter, 'fullName').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'myActionsFilter'){
+        // console.log(getter.myActionsFilter)
+        var user_names = null
+        if(getter.myActionsFilter && getter.myActionsFilter[0]){
+          user_names = _.map(getter.myActionsFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'onWatchFilter'){
+        // console.log(getter.onWatchFilter)
+        var user_names = null
+        if(getter.onWatchFilter && getter.onWatchFilter[0]){
+          user_names = _.map(getter.onWatchFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskStageFilter'){
+        // console.log(getter.taskStageFilter)
+     
+        var user_names = null
+        if(getter.taskStageFilter && getter.taskStageFilter[0]){
+          user_names = _.map(getter.taskStageFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueStageFilter'){
+        // console.log(getter.issueStageFilter)
+        var user_names = null
+        if(getter.issueStageFilter && getter.issueStageFilter[0]){
+          user_names = _.map(getter.issueStageFilter, 'name').join(", ")
+        }
+        return user_names
+      }
+    },
     contentLoaded: state => state.contentLoaded,
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,
