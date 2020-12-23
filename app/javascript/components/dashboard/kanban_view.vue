@@ -80,9 +80,9 @@
                       v-model="C_taskIssueOverdueFilter"
                       track-by="name"
                       label="name"                     
-                      :options="C_taskIssueOverdueOptions"
+                      :options="getTaskIssueOverdueOptions"
                       :searchable="false"
-                      :multiple="false"
+                      :multiple="true"
                       select-label="Select"
                       deselect-label="Remove"
                       >
@@ -173,9 +173,9 @@
                       v-model="C_taskIssueOverdueFilter"
                       track-by="name"
                       label="name"                     
-                      :options="C_taskIssueOverdueOptions"
+                      :options="getTaskIssueOverdueOptions"
                       :searchable="false"
-                      :multiple="false"
+                      :multiple="true"
                       select-label="Select"
                       deselect-label="Remove"
                       >
@@ -528,21 +528,11 @@
 
       C_taskIssueOverdueFilter: {
         get() {
-          if(!this.taskIssueOverdueFilter){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }
-          return this.taskIssueOverdueFilter       
+          return this.taskIssueOverdueFilter
         },
         set(value) {
-          if(!value){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }else{
-            this.setTaskIssueOverdueFilter([value])
-          }
+          this.setTaskIssueOverdueFilter(value)
         }
-      },
-      C_taskIssueOverdueOptions() {
-        return this.getTaskIssueOverdueOptions()
       },
 
       C_myTasks: {

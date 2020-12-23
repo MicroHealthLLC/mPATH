@@ -123,9 +123,9 @@
              style="width:325px"
             label="name"           
             placeholder="Task and Issue Overdue"
-            :options="C_taskIssueOverdueOptions"
+            :options="getTaskIssueOverdueOptions"
             :searchable="false"
-            :multiple="false"
+            :multiple="true"
             select-label="Select"
             deselect-label="Remove"
             >
@@ -423,11 +423,17 @@
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (issue.isOverdue == true)
-          }
-          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
-            valid = (issue.isOverdue == false)
+          if(taskIssueOverdue){
+            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+            if(overdueFilterNames.includes("overdue")){
+              valid = (issue.isOverdue == true)
+            }
+            if(overdueFilterNames.includes("not overdue")){
+              valid = (issue.isOverdue == false)
+            }
+            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+              valid = true
+            }
           }
           if (search_query) valid = valid && search_query.test(issue.title)
           switch (this.viewList) {
@@ -449,21 +455,11 @@
       },
       C_taskIssueOverdueFilter: {
         get() {
-          if(!this.taskIssueOverdueFilter){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }
-          return this.taskIssueOverdueFilter       
+          return this.taskIssueOverdueFilter
         },
         set(value) {
-          if(!value){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }else{
-            this.setTaskIssueOverdueFilter([value])
-          }
+          this.setTaskIssueOverdueFilter(value)
         }
-      },
-      C_taskIssueOverdueOptions() {
-        return this.getTaskIssueOverdueOptions()
       },
       C_issueTypeFilter: {
         get() {
