@@ -284,7 +284,8 @@ export default new Vuex.Store({
         ['myActionsFilter', 'My Actions'],
         ['onWatchFilter', 'On Watch'],
         ['taskStageFilter', 'Task Stages'],
-        ['issueStageFilter', 'Issue Stages']
+        ['issueStageFilter', 'Issue Stages'],
+        ['taskIssueProgressStatusFilter', 'Task and Issue Status']
 
       ]
     },
@@ -295,6 +296,14 @@ export default new Vuex.Store({
         // console.log(getter.facilityGroupFilter)
         return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
       
+      }else if(_filterValue == 'taskIssueProgressStatusFilter'){
+        
+        var user_names = null
+        if(getter.getTaskIssueProgressStatusFilter && getter.getTaskIssueProgressStatusFilter[0]){
+          user_names = _.map(getter.getTaskIssueProgressStatusFilter, 'name').join(", ")
+        }
+        return user_names
+
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
         return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
@@ -314,7 +323,7 @@ export default new Vuex.Store({
           user_names = _.map(getter.taskIssueOverdueFilter, 'name').join(", ")
         }
         return user_names
-        
+
         // return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
       
       }else if(_filterValue == 'facilityProgressFilter'){
