@@ -604,7 +604,7 @@ export default {
         }
       }
       hash[option.type] = (input == "" ? input : Number(input) )
-      if (hash.max == "" || hash.min == "") error = "Both fields are required."
+      if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
       this.setProgressFilters({ key: option.variable, value: hash })

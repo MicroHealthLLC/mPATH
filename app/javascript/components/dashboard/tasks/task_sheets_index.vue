@@ -35,19 +35,10 @@
           </multiselect>
         </div>
         <div class="simple-select d-flex mr-1" style="width:18%">
-
-          <multiselect
-            v-model="viewList"
-            :options="listOptions"
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Task Status"
-            data-cy="task_status_list"
-            >
-            <template slot="singleLabel">
+          <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status" data-cy="task_status_list">
+            <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
+                <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
@@ -231,6 +222,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
@@ -272,6 +264,9 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -294,6 +289,8 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -344,24 +341,32 @@
             }
           }
 
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (task.progress >= min && task.progress <= max)
+          }
+
+          if (taskIssueProgressStatus) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
+            valid = valid && taskIssueProgressStatusNames.includes(task.progressStatus)
+          }
           if (search_query) valid = valid && search_query.test(task.text)
 
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && task.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && task.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
           return valid
         }), ['dueDate'])
         return tasks
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
       },
       C_taskIssueOverdueFilter: {
         get() {
