@@ -123,6 +123,7 @@
       ...mapMutations([
         'updateTasksHash',
         'updateIssuesHash',
+        'updateRisksHash',
         'setTaskForManager'
       ]),
       ...mapActions([

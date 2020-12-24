@@ -177,6 +177,21 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility)
       }
     },
+    updateRisksHash: (state, {risk, action}) => {
+      let facility_i = state.facilities.findIndex(f => f.id == risk.facilityId)
+      if (facility_i > -1) {
+        let facility = Object.assign({}, state.facilities[facility_i])
+        let risk_i = facility.risks.findIndex((t) => t.id == risk.id)
+        if (action === 'delete') {
+          for (let t of _.flatten(_.map(state.facilities, 'risks'))) {
+            _.remove(t.subRiskIds, id => id == t.id)
+          }
+          Vue.delete(facility.risks, risk_i)
+        }
+        else if (risk_i > -1) Vue.set(facility.risks, risk_i, risk)
+        Vue.set(state.facilities, facility_i, facility)
+      }
+    },
     updateNotesHash: (state, {note, facilityId, action}) => {
       let facility_i = state.facilities.findIndex(f => f.id == facilityId)
       if (facility_i > -1) {
@@ -661,6 +676,9 @@ export default new Vuex.Store({
     currentIssues: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
     },
+    currentRisks: (state, getters) => {
+      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'risks'))
+    },
     facilityGroupFacilities: (state, getters) => (group, status='active') => {
       return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
     },
@@ -938,6 +956,9 @@ export default new Vuex.Store({
     },
     viewPermit: () => (view, req) => {
       return Vue.prototype.$permissions[view][req]
+    },
+    riskApproaches: () => {
+      return ['avoid', 'mitigate', 'transfer', 'accept']
     }
   },
 
@@ -1073,6 +1094,19 @@ export default new Vuex.Store({
           })
       })
     },
+    updateWatchedRisks({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+          .then((res) => {
+            commit('updateRisksHash', {risk: res.data.risk})
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
 
     // update_from_kanban_view
     updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
@@ -1126,6 +1160,20 @@ export default new Vuex.Store({
           .delete(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
           .then((res) => {
             commit('updateIssuesHash', {issue: issue, action: 'delete'})
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject()
+          })
+      })
+    },
+    riskDeleted({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
+          .then((res) => {
+            commit('updateRisksHash', {risk: risk, action: 'delete'})
             resolve()
           })
           .catch((err) => {

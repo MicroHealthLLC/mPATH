@@ -20,7 +20,8 @@ p {
 }
 button:focus,
 input[type=button]:focus {
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
 }
 .body-wrapper {
   border-top: 1px solid #dee2e6;

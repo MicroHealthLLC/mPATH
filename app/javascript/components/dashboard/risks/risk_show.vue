@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="issues">
+  <div data-cy="risks">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
@@ -125,6 +125,15 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></issue-form>
+
+        <risk-form
+          v-if="Object.entries(DV_edit_risk).length"
+          :facility="facility"
+          :risk="DV_edit_risk"
+          @risk-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></risk-form>
       </div>
     </sweet-modal>
   </div>

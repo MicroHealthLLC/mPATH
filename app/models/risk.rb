@@ -13,6 +13,7 @@ class Risk < ApplicationRecord
   validates_presence_of :risk_description, :start_date, :due_date
 
   before_validation :cast_constants_to_i
+  before_destroy :nuke_it!
 
   def files_as_json
     risk_files.map do |file|
@@ -47,7 +48,7 @@ class Risk < ApplicationRecord
       is_overdue: progress < 100 && (due_date < Date.today),
       checklists: checklists.as_json,
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility).facility_name,
+      facility_name: fp.try(:facility)&.facility_name,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -68,6 +69,10 @@ class Risk < ApplicationRecord
         risk_files.new(blob_id: file['id'])
       end
     end
+  end
+
+  def nuke_it!
+    RelatedRisk.where(risk_id: self.id).or(RelatedRisk.where(relatable: self)).destroy_all
   end
 
   private

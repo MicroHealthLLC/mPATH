@@ -28,6 +28,7 @@ module Tasker
     after_validation :setup_facility_project
 
     def setup_facility_project
+      return unless facility_project.present?
       if facility_project.facility_id_changed? || facility_project.project_id_changed?
         self.facility_project = FacilityProject.find_or_initialize_by(project: self.project, facility: self.facility)
       end
@@ -52,7 +53,7 @@ module Tasker
     end
 
     def handle_related_taskers
-      subclass = self.class.name.downcase.pluralize
+      subclass = "sub_#{self.class.name.downcase.pluralize}"
       sub_tasks.each{|t| t.send(subclass) << self unless t.send(subclass).include? self}
       sub_issues.each{|i| i.send(subclass) << self unless i.send(subclass).include? self}
       sub_risks.each{|r| r.send(subclass) << self unless r.send(subclass).include? self}
