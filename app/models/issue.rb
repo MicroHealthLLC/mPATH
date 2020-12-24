@@ -59,9 +59,13 @@ class Issue < ApplicationRecord
     users = self.users
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
-
+    progress_status = "active"
+    if(progress >= 100)
+      progress_status = "completed"
+    end
     self.as_json.merge(
       class_name: self.class.name,
+      progress_status: progress_status,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
       issue_type: issue_type.try(:name),

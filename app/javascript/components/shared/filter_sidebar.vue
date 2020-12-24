@@ -235,6 +235,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'getTaskIssueProgressStatusFilter',
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
       'projectStatusFilter',
@@ -280,13 +281,13 @@ export default {
     C_advancedFilter: {
       get() {
         if (this.getAdvancedFilter().length == 0) {
-          this.setAdvancedFilter([{ id: 'active', name: 'Active' }])
+          this.setAdvancedFilter([{ id: 'active', name: 'active' }])
         }
         return this.getAdvancedFilter()
       },
       set(value) {
         if (!value) {
-          this.setAdvancedFilter([{ id: 'active', name: 'Active' }])
+          this.setAdvancedFilter([{ id: 'active', name: 'active' }])
         } else {
           this.setAdvancedFilter(value)
         }
@@ -453,6 +454,7 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setTaskIssueProgressStatusFilter',
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
       'updateMapFilters',
@@ -499,6 +501,7 @@ export default {
       }
     },
     onClearFilter() {
+      this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
@@ -608,6 +611,9 @@ export default {
     }
   },
   watch: {
+    getTaskIssueProgressStatusFilter(value){
+      this.updateMapFilters({ key: 'taskIssueProgressStatus', filter: value, same: true })
+    },
     facilityDueDateFilter(value) {
       this.updateMapFilters({ key: 'dueDate', filter: value, same: true })
     },
