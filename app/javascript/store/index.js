@@ -50,6 +50,7 @@ export default new Vuex.Store({
     issueStageFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
+    taskIssueProgressFilter: null,
     progressFilter: {
       facility: {
         min: '',
@@ -65,7 +66,12 @@ export default new Vuex.Store({
         min: '',
         max: '',
         error: ''
-      }
+      },
+      taskIssue:{
+        min: '',
+        max: '',
+        error: ''
+      }     
     },
     taskUserFilter: null,
     issueUserFilter: null,
@@ -79,10 +85,9 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
-      console.log("setAdvancedFilter")
-      console.log(state.mapFilters)
       var _taskIssueOverdueFilter = []
       var _onWatchFilter = []
       var _myActionsFilter = []
@@ -108,7 +113,6 @@ export default new Vuex.Store({
       state.onWatchFilter = _onWatchFilter
       // if(_myActionsFilter.length > 0)
       state.myActionsFilter = _myActionsFilter
-
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setMapLoading: (state, loading) => state.mapLoading = loading,
@@ -456,6 +460,7 @@ export default new Vuex.Store({
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
+    taskIssueProgressFilter: state => state.taskIssueProgressFilter,
     taskUserFilter: state => state.taskUserFilter,
     issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
@@ -525,6 +530,7 @@ export default new Vuex.Store({
               break
             }
             
+            // This is for facility progress
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -545,9 +551,8 @@ export default new Vuex.Store({
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
-            case "issueProgress":
-            case "taskProgress": {
-              let progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
+            case "taskIssueProgress": {
+              let progressFor = facility.tasks.concat(facility.issues)
               let progress = _.uniq(_.map(progressFor, 'progress'))
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false

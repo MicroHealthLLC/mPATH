@@ -119,18 +119,6 @@
                 </template>
               </multiselect>
             </div>
-            <div>
-              <label class="font-sm mb-0">Task % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'min'})" :value="C_taskProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'max'})" :value="C_taskProgress.max">
-                </div>
-              </div>
-              <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
-            </div>
           </div>
           <div class="col-md-4">
             <h5>Issues</h5>
@@ -165,18 +153,6 @@
               </multiselect>
             </div>
             <div>
-              <label class="font-sm mb-0">Issue % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'min'})" :value="C_issueProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'max'})" :value="C_issueProgress.max">
-                </div>
-              </div>
-              <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>
-            </div>
-            <div>
               <label class="font-sm mb-0">Issue Severity</label>
               <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
                 <template slot="singleLabel" slot-scope="{option}">
@@ -189,37 +165,6 @@
           </div>
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
-            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227             
-            <div>
-              <label class="font-sm mb-0">My Actions</label>
-              <multiselect v-model="C_myActionsFilter" track-by="name" label="name" :options="myActions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div> 
-            <div v-if="viewPermit('watch_view', 'read')">
-              <label class="font-sm mb-0">On Watch</label>
-              <multiselect v-model="C_onWatchFilter" track-by="name" label="name" :options="onWatch" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Task and Issue Overdue</label>
-              <multiselect v-model="C_taskIssueOverdueFilter" track-by="name" label="name" :options="getTaskIssueOverdueOptions" :searchable="false" :allow-empty="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>-->
             <div>
               <label class="font-sm mb-0">Task and Issue Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
@@ -229,6 +174,19 @@
               <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
 
+            <div>
+              <label class="font-sm mb-0">Task and Issue % Progress Range</label>
+              <div class="form-row">
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
+                </div>
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
+                </div>
+              </div>
+              <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
+            </div>
+          
             <!-- First row: Filter View Title/Header -->
             <div class="row pt-1">
               <div class="col-md-12">
@@ -289,8 +247,7 @@ export default {
       'taskIssueDueDateFilter',
       'issueTypeFilter',
       'issueSeverityFilter',
-      'issueProgressFilter',
-      'taskProgressFilter',
+      'taskIssueProgressFilter',
       'projects',
       'currentProject',
       'activeProjectUsers',
@@ -315,6 +272,11 @@ export default {
       'issueStageFilter',
       'viewPermit'
     ]),
+    C_taskIssueProgress: {
+      get() {
+        return this.progressFilter.taskIssue
+      },
+    },
     C_advancedFilter: {
       get() {
         if (this.getAdvancedFilter().length == 0) {
@@ -475,16 +437,7 @@ export default {
         return this.progressFilter.facility
       }
     },
-    C_taskProgress: {
-      get() {
-        return this.progressFilter.task
-      }
-    },
-    C_issueProgress: {
-      get() {
-        return this.progressFilter.issue
-      }
-    },
+
     filterBarStyle() {
       if (this.showFilters) return {}
       return {
@@ -500,6 +453,7 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setTaskIssueProgressFilter',
       'setAdvancedFilter',
       'updateMapFilters',
       'setTaskIssueOverdueFilter',
@@ -513,8 +467,6 @@ export default {
       'setTaskIssueDueDateFilter',
       'setIssueTypeFilter',
       'setIssueSeverityFilter',
-      'setIssueProgressFilter',
-      'setTaskProgressFilter',
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
@@ -561,8 +513,7 @@ export default {
       this.setIssueSeverityFilter(null)
       this.setIssueStageFilter(null)
       this.setTaskStageFilter(null)
-      this.setIssueProgressFilter(null)
-      this.setTaskProgressFilter(null)
+      this.setTaskIssueProgressFilter(null)
       this.setMyActionsFilter([])
       this.setOnWatchFilter([])
       this.setMapFilters([])
@@ -585,9 +536,9 @@ export default {
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
             Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
             Milestones: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
-            Task % Progress Range: ${this.taskProgressFilter ?  _.map(this.taskProgressFilter, 'name').join() : 'all'}\n
+            Task % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue Type: ${this.issueTypeFilter ?  _.map(this.issueTypeFilter, 'name').join() : 'all'}\n
-            Issue % Progress Range: ${this.issueProgressFilter ?  _.map(this.issueProgressFilter, 'name').join() : 'all'}\n
+            Issue % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
         let header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
@@ -645,9 +596,11 @@ export default {
       if (this.exists(input)) {
         if (input < 0) input = 0
         if (input > 100) input = 100
-        if ((option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) error = "Min should not be greator than Max."
+        if ( (option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) {
+          error = "Min should not be greator than Max."
+        }
       }
-      hash[option.type] = input == "" ? input : Number(input)
+      hash[option.type] = (input == "" ? input : Number(input) )
       if (hash.max == "" || hash.min == "") error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
@@ -682,14 +635,11 @@ export default {
     taskTypeFilter(value) {
       this.updateMapFilters({ key: 'taskTypeIds', filter: value })
     },
-    taskProgressFilter(value) {
-      this.updateMapFilters({ key: 'taskProgress', filter: value, _k: 'value' })
+    taskIssueProgressFilter(value) {
+      this.updateMapFilters({ key: 'taskIssueProgress', filter: value, _k: 'value' })
     },
     issueTypeFilter(value) {
       this.updateMapFilters({ key: 'issueTypeIds', filter: value })
-    },
-    issueProgressFilter(value) {
-      this.updateMapFilters({ key: 'issueProgress', filter: value, _k: 'value' })
     },
     issueSeverityFilter(value) {
       this.updateMapFilters({ key: 'issueSeverityIds', filter: value })
@@ -723,24 +673,13 @@ export default {
       },
       deep: true
     },
-    "progressFilter.task": {
+    "progressFilter.taskIssue": {
       handler(value) {
         if (value.error == "" && value.min && value.max && value.min <= value.max) {
           value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
-          this.setTaskProgressFilter([value])
+          this.setTaskIssueProgressFilter([value])
         } else if (value.min == "" && value.max == "") {
-          this.setTaskProgressFilter([])
-        }
-      },
-      deep: true
-    },
-    "progressFilter.issue": {
-      handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
-          value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
-          this.setIssueProgressFilter([value])
-        } else if (value.min == "" && value.max == "") {
-          this.setIssueProgressFilter([])
+          this.setTaskIssueProgressFilter([])
         }
       },
       deep: true
