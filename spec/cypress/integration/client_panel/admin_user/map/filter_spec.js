@@ -9,7 +9,7 @@ describe('Apply filters in Map Page', function() {
   it('Open and close filters tab', function() {
     cy.toggleFilterTab()
     cy.get('[data-cy=filter_info]').within(() => {
-      cy.contains('FILTER VIEW').should('be.visible')
+      cy.contains('ADVANCED FILTERS').should('be.visible')
       cy.get('[data-cy=clear_filter]').contains('CLEAR').should('be.visible')
       cy.contains('Facilities').should('be.visible')
     })
@@ -88,7 +88,7 @@ describe('Apply filters in Map Page', function() {
     })
     cy.toggleFilterTab()
     cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Type: Test Task Type(milestone)').should('be.visible')
+      cy.contains('Task Category: Test Task Type(milestone)').should('be.visible')
     })
     cy.facilityRollup()
     cy.logout()
@@ -169,7 +169,7 @@ describe('Apply filters in Map Page', function() {
     })
     cy.toggleFilterTab()
     cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Types: Test Issue Type').should('be.visible')
+      cy.contains('Issue Type: Test Issue Type').should('be.visible')
     })
     cy.facilityRollup()
     cy.logout()
