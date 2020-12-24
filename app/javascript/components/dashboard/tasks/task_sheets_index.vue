@@ -59,9 +59,9 @@
             track-by="name"
             label="name"           
             placeholder="Task and Issue Overdue"
-            :options="C_taskIssueOverdueOptions"
+            :options="getTaskIssueOverdueOptions"
             :searchable="false"
-            :multiple="false"
+            :multiple="true"
             select-label="Select"
             deselect-label="Remove"
             >
@@ -331,12 +331,17 @@
             valid = is_valid
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (task.isOverdue == true)
-          }
-
-          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
-            valid = (task.isOverdue == false)
+          if(taskIssueOverdue){
+            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+            if(overdueFilterNames.includes("overdue")){
+              valid = (task.isOverdue == true)
+            }
+            if(overdueFilterNames.includes("not overdue")){
+              valid = (task.isOverdue == false)
+            }
+            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+              valid = true
+            }
           }
 
           if (search_query) valid = valid && search_query.test(task.text)
@@ -360,21 +365,11 @@
       },
       C_taskIssueOverdueFilter: {
         get() {
-          if(!this.taskIssueOverdueFilter){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }
-          return this.taskIssueOverdueFilter       
+          return this.taskIssueOverdueFilter
         },
         set(value) {
-          if(!value){
-            this.setTaskIssueOverdueFilter([{id: 'all', name: 'all'}])
-          }else{
-            this.setTaskIssueOverdueFilter([value])
-          }
+          this.setTaskIssueOverdueFilter(value)
         }
-      },
-      C_taskIssueOverdueOptions() {
-        return this.getTaskIssueOverdueOptions()
       },
       C_taskTypeFilter: {
         get() {

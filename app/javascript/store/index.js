@@ -16,6 +16,7 @@ const getSimpleDate = (date) => {
 
 export default new Vuex.Store({
   state: {
+    advancedFilter: new Array,
     contentLoaded: false,
     mapLoading: true,
     sideLoading: true,
@@ -23,8 +24,8 @@ export default new Vuex.Store({
     facilities: new Array,
     facilityGroups: new Array,
     statuses: new Array,
-    taskIssueOverdueOptions: [{id: "all",name: "all"},{id: "overdue",name: "overdue"}, {id: "not overdue",name: "not overdue"}],
-    taskIssueOverdueFilter: null,
+    advancedFilterOptions: new Array,
+    taskIssueOverdueFilter: new Array,
     taskTypes: new Array,
     taskStages: new Array,
     issueStages: new Array,
@@ -78,6 +79,37 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setAdvancedFilter: (state, selectedOptions) => {
+      state.advancedFilter = selectedOptions
+      console.log("setAdvancedFilter")
+      console.log(state.mapFilters)
+      var _taskIssueOverdueFilter = []
+      var _onWatchFilter = []
+      var _myActionsFilter = []
+
+      // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
+      // state.onWatchFilter = _onWatchFilter
+      // state.myActionsFilter = _myActionsFilter
+
+      for(var option of selectedOptions){
+        if(option.id == "overdue" || option.id == 'not overdue'){
+          _taskIssueOverdueFilter.push(option)
+        }else if(option.id == "onWatchTask" || option.id == 'onWatchIssue'){
+          _onWatchFilter.push(option)
+        }else if(option.id == "myTasks" || option.id == 'myIssues' || option.id == "myNotes"){
+          _myActionsFilter.push(option)
+        }else if(option.name == "active" || option.id == 'completed'){
+        }
+      }
+
+      // if(_taskIssueOverdueFilter.length > 0)
+      state.taskIssueOverdueFilter = _taskIssueOverdueFilter
+      // if(_onWatchFilter.length > 0)
+      state.onWatchFilter = _onWatchFilter
+      // if(_myActionsFilter.length > 0)
+      state.myActionsFilter = _myActionsFilter
+
+    },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setMapLoading: (state, loading) => state.mapLoading = loading,
     setSideLoading: (state, loading) => state.sideLoading = loading,
@@ -194,6 +226,24 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getAdvancedFilter: (state, getter) => () =>{
+      return state.advancedFilter
+    },
+    getAdvancedFilterOptions: (state, getters) => {
+      // return [{id: "overdue",name: "overdue", }, {id: "not overdue",name: "not overdue", }]
+
+      return [
+        {id: 'active', name: 'Active'},
+        {id: 'completed', name: 'Completed'},
+        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+        {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
+        {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
+        {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
+        {id: 'myIssues', name: 'My Issues', value: 'issues'},
+        {id: 'myNotes', name: 'My Notes', value: 'notes'}        
+      ]
+    },
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
       return [
@@ -594,8 +644,8 @@ export default new Vuex.Store({
     activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
       return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
     },
-    getTaskIssueOverdueOptions: (state, getters) => () => {
-      return state.taskIssueOverdueOptions
+    getTaskIssueOverdueOptions: (state, getters) => {
+      return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "not overdue",name: "not overdue", value: "not overdue"}]
     },
 
     currentTasks: (state, getters) => {
