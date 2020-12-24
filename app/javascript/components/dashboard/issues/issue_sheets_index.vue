@@ -140,18 +140,23 @@
   
       <div class="mt-2">
         <button v-if="_isallowed('write')"
-          class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
+          class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-        <button
-         @click.prevent="download"
-         id="printBtn"
-         class="btn btn-sm btn-dark exportBtn">
-         <font-awesome-icon icon="file-pdf" />
-         Export to PDF
-        </button>            
+          <button
+           v-tooltip="`Export to PDF`"
+           @click.prevent="exportToPdf"
+           class="btn btn-md mr-1 exportBtns text-light">
+           <font-awesome-icon icon="file-pdf" />        
+         </button>
+         <button
+          v-tooltip="`Export to Excel`"
+          @click.prevent="exportToExcel('table', 'Issue Log')"
+          class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel"/>         
+        </button>
        <label class="form-check-label text-primary float-right mr-2" data-cy="issue_total">
         <h5>Total: {{filteredIssues.length}}</h5>
        </label>
@@ -286,6 +291,10 @@
         currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
       }
     },
     mounted() {
@@ -338,11 +347,16 @@
           })
           .catch((err) => console.log(err))
       },
-      download() {
+       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#issueSheetsList1"})
         doc.save("Issue_Log.pdf")
+      },
+      exportToExcel(table, name){      
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
       issueEdited(issue) {
         this.currentIssue = issue
@@ -549,10 +563,6 @@
   .issues-index {
     height: 465px;
   }
-  .new-issue-btn {
-    height: max-content;
-    width: 100px;
-  }
   #altText {
     position: absolute;
     margin-top: 50px
@@ -597,4 +607,12 @@
     float: right !important;
     right: 0;
   }
+  .addIssueBtn, .exportBtns {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .exportBtns { 
+    transition: all .2s ease-in-out; 
+    background-color: #41b883; 
+  }
+  .exportBtns:hover { transform: scale(1.06); }
 </style>

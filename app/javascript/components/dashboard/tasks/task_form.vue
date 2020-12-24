@@ -212,7 +212,7 @@
                 </div>
               </div>
               <div class="row justify-content-end">             
-               <div class="simple-select form-group col">
+               <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
                   v-model="check.user"
@@ -232,7 +232,7 @@
                   </template>
               </multiselect>
              </div>
-               <div class="simple-select form-group col">
+               <div class="simple-select form-group col mb-0">
                  <div class="float-right">
                    <label class="font-sm dueDate">Due Date:</label>  
                    <br/>                    
