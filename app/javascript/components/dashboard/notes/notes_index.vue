@@ -156,7 +156,6 @@
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
   #notesHover:hover {
-    cursor: pointer;
     box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);

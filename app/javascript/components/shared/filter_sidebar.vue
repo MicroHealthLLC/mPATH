@@ -4,11 +4,10 @@
   <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
 
     <div id="filter_bar" class="container shadow-sm">
-
       <!-- First row: Filter View Title/Header -->
       <div class="row pt-1">
         <div class="col-md-12">
-          <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>FILTER VIEW</h5>
+           <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
           <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
@@ -80,7 +79,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Project Completion Date Range</label>
-              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" @close="datePicker=false" range />
+              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
           </div>
         </div>
@@ -223,11 +222,11 @@
             </div>-->
             <div>
               <label class="font-sm mb-0">Task and Issue Due Date Range</label>
-              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" @close="datePicker=false" range />
+              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
             <div>
               <label class="font-sm mb-0">Updates Date Range</label>
-              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" @close="datePicker=false" range />
+              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
 
             <!-- First row: Filter View Title/Header -->
@@ -249,14 +248,13 @@
       </div>
     </div>
     <div class="knocker" @click.prevent="toggleFilters">
-      <button class="btn btn-md ml-0 knocker-btn text-light p-2"><small><span class="p-1"><i class="fas fa-sliders-h"></i></span>UNIVERSAL FILTERS</small></button>
+        <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
     </div>
   </div>
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
-
 export default {
   name: 'FilterSidebar',
   data() {
@@ -593,7 +591,6 @@ export default {
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
         let header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
-
         let ex_data = []
         for (let facility of this.filterFacilitiesWithActiveFacilityGroups) {
           ex_data.push({
@@ -607,7 +604,6 @@ export default {
             "Point of Contact Email": facility.email || 'N/A'
           })
         }
-
         let wb = XLSX.utils.book_new()
         let ws = XLSX.utils.aoa_to_sheet(new Array(filters))
         XLSX.utils.sheet_add_json(ws, ex_data, { header: header, origin: "A3" })
@@ -633,7 +629,6 @@ export default {
             "Assigned To": row._users ? row._users.join(', ') : ''
           })
         }
-
         let wb = XLSX.utils.book_new()
         let ws = XLSX.utils.json_to_sheet(ex_data, { header: header })
         XLSX.utils.book_append_sheet(wb, ws, "MGIS")
@@ -656,7 +651,6 @@ export default {
       if (hash.max == "" || hash.min == "") error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
-
       this.setProgressFilters({ key: option.variable, value: hash })
     }
   },
@@ -761,7 +755,6 @@ export default {
   transition: .4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
-
 #filter_bar {
   overflow-y: auto;
   border-radius: 4px;
@@ -771,22 +764,18 @@ export default {
   width: 685px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
-
 .filter-sections {
   background-color: #fff;
 }
-
 .filters_wrap {
   width: 90%;
   margin: 0 auto;
 }
-
 .fac-group-filter {
   min-height: 48px !important;
   margin-right: 0px !important;
   width: 100%;
 }
-
 .issueUser-select /deep/ .multiselect,
 .taskUser-select /deep/ .multiselect,
 .actions-select /deep/ .multiselect,
@@ -801,115 +790,91 @@ export default {
 .status-select /deep/ .multiselect {
   font-size: 14px;
   width: 280px;
-
   .multiselect__placeholder {
     margin-bottom: 10px;
     padding-top: 3px;
   }
-
   .select__tag-name {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     width: 170px;
   }
-
   .multiselect__option {
     white-space: normal;
   }
-
   .multiselect__option--selected:after {
     content: unset;
   }
-
   .multiselect__tags {
     padding-top: 6px;
   }
 }
-
 .facilitygroup-select,
 .duedate-range {
   display: flex;
 }
-
 .project-select /deep/ .multiselect {
   font-size: 14px;
   width: 280px;
-
   .multiselect__tags {
     min-height: 20px;
   }
-
   .multiselect__placeholder {
     margin-bottom: 2px;
     padding-top: 2px;
   }
-
   .select__tag-name {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     width: fit-content;
   }
-
   .multiselect__option {
     white-space: normal;
   }
-
   .multiselect__option--selected:after {
     content: unset;
   }
 }
-
 .taskissueoverdue-select /deep/ .multiselect {
   font-size: 14px;
   width: 280px;
-
   .multiselect__tags {
     min-height: 20px;
   }
-
   .multiselect__placeholder {
     margin-bottom: 2px;
     padding-top: 2px;
   }
-
   .select__tag-name {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     width: fit-content;
   }
-
   .multiselect__option {
     white-space: normal;
   }
-
   .multiselect__option--selected:after {
     content: unset;
   }
 }
-
-
 a.disabled {
   pointer-events: none;
   cursor: default;
   opacity: 0.8;
 }
-
 .clear_btn {
   position: relative;
   top: -50px;
   left: 120px;
 }
-
 .filter-header {
   height: 30px;
 }
-
 .duedate-range /deep/ .mx-datepicker-range {
   width: 280px;
-
   .mx-input {
     display: inline-block;
     box-sizing: border-box;
@@ -924,16 +889,13 @@ a.disabled {
     min-height: 40px;
     border: 1px solid #e8e8e8;
     font-size: 14px;
-
     &::placeholder {
       color: #adadad;
     }
   }
 }
-
 .notedate-range /deep/ .mx-datepicker-range {
   width: 280px;
-
   .mx-input {
     display: inline-block;
     box-sizing: border-box;
@@ -948,16 +910,13 @@ a.disabled {
     min-height: 40px;
     border: 1px solid #e8e8e8;
     font-size: 14px;
-
     &::placeholder {
       color: #adadad;
     }
   }
 }
-
 .taskissueduedate-range /deep/ .mx-datepicker-range {
   width: 280px;
-
   .mx-input {
     display: inline-block;
     box-sizing: border-box;
@@ -972,37 +931,35 @@ a.disabled {
     min-height: 40px;
     border: 1px solid #e8e8e8;
     font-size: 14px;
-
     &::placeholder {
       color: #adadad;
     }
   }
 }
-
 .datepicker,
 .milestones {
   width: 100% !important;
 }
-
 .knocker {
   cursor: pointer;
   position: absolute;
   bottom: 10%;
-  right: -145px;
-  width: 145px;
+  right: -85px;
+  width: 140px;
+  -moz-transform:rotate(-90deg);
+  -ms-transform:rotate(-90deg);
+  -o-transform:rotate(-90deg);
+  -webkit-transform:rotate(-90deg);
 }
-
 .knocker-btn {
   // Bootstrap success color rgba with transparency
-  background-color: rgba(92, 184, 92, .90);
+   background-color: rgba(65, 184, 131, .90);
 }
-
 .filter-border {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
   border-radius: 5px;
   padding: 6px
 }
-
 .selected-opt {
   position: relative;
   display: inline-block;
@@ -1017,39 +974,32 @@ a.disabled {
   max-width: 100%;
   text-overflow: ellipsis;
 }
-
 .progress_ranges {
   label {
     margin-left: 0.5em;
     font-size: 14px;
     color: #adadad;
   }
-
   input {
     border-color: #e8e8e8;
   }
-
   ::placeholder {
     color: #adadad;
   }
 }
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
   height: 34px;
 }
-
 /deep/.mx-input {
   font-size: .75rem !important;
 }
-
 .clear-btn {
   text-decoration-line: none !important;
 }
