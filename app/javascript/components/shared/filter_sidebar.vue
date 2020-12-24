@@ -69,7 +69,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Facility Name</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility" data-cy="facility_name">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
@@ -92,7 +92,7 @@
             <h5>Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Category</label>
-              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -102,7 +102,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Task Users</label>
-              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_user">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.fullName}}</span>
@@ -112,7 +112,7 @@
             </div>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Task Stages</label>
-              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -137,7 +137,7 @@
             <h5>Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Type</label>
-              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
