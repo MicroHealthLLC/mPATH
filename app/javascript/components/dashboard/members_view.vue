@@ -136,7 +136,7 @@ ELEMENT.locale(ELEMENT.lang.en)
       download() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
-        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Email", "Phone Number"]
+        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Phone Number", "Email"]
         var thead = $("<thead>")
         var tr = $("<tr>")
         for(var h of headers){
