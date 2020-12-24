@@ -309,7 +309,13 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'taskIssueOverdueFilter'){
         // console.log(getter.taskIssueOverdueFilter)
-        return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+        var user_names = null
+        if(getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0]){
+          user_names = _.map(getter.taskIssueOverdueFilter, 'name').join(", ")
+        }
+        return user_names
+        
+        // return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
       
       }else if(_filterValue == 'facilityProgressFilter'){
         // console.log(getter.facilityProgressFilter)
