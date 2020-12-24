@@ -63,15 +63,26 @@
           </multiselect>
         </div>
       </div>
-      <div class="mt-3">
-        <button v-if="_isallowed('write')" class="btn btn-sm btn-primary addIssueBtn" @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
+
+      <div class="mt-1">
+        <button v-if="_isallowed('write')"
+           class="btn btn-md btn-primary addIssueBtn mr-3"
+           @click.prevent="addNewIssue"><font-awesome-icon icon="plus-circle" data-cy="new_issue" /> 
           Add Issue
+          </button>
+         <button
+           v-tooltip="`Export to PDF`"
+           @click.prevent="exportToPdf"
+           class="btn btn-md mr-1 exportBtns text-light">
+           <font-awesome-icon icon="file-pdf" />        
+         </button>
+         <button
+          v-tooltip="`Export to Excel`"
+          @click.prevent="exportToExcel('table', 'Issue Log')"
+          class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel"/>         
         </button>
-        <button @click.prevent="download" class="btn btn-sm btn-dark export2pdf">
-          <font-awesome-icon icon="file-pdf" />
-          Export to PDF
-        </button>
-        <div class="form-check-inline font-sm myIssues mt-1 mr-0">
+       <div class="form-check-inline font-sm myIssues mt-2 mr-0">
           <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issues
@@ -162,15 +173,19 @@ export default {
     IssueShow
   },
   data() {
-    return {
-      loading: true,
-      newIssue: false,
-      viewList: 'active',
-      listOptions: ['active', 'all', 'completed'],
-      currentIssue: null,
-      now: new Date().toISOString(),
-      issuesQuery: ''
-    }
+      return {
+        loading: true,
+        newIssue: false,
+        viewList: 'active',
+        listOptions: ['active','all', 'completed'],
+        currentIssue: null,
+        now: new Date().toISOString(),
+        issuesQuery: '',
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+      }
   },
   mounted() {
     this.loading = false
@@ -209,24 +224,33 @@ export default {
           let issues = [...this.facility.issues]
           _.remove(issues, (t) => t.id == issue.id)
           this.$emit('refresh-facility')
-        })
-        .catch((err) => console.log(err))
-    },
-    download() {
-      const doc = new jsPDF("l")
-      const html = this.$refs.table.innerHTML
-      doc.autoTable({ html: "#issueList1" })
-      doc.save("Issue_Log.pdf")
-    },
-    issueEdited(issue) {
-      this.currentIssue = issue
-      this.newIssue = true
-    },
-    addNewIssue() {
-      if (this.from == "manager_view") {
-        this.setTaskForManager({ key: 'issue', value: {} })
-      } else {
-        this.currentIssue = null
+        } else {
+          this.updateFacilityHash(this.facility)
+        }
+      },
+      issueDeleted(issue) {
+        http
+          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
+          .then((res) => {
+            let issues = [...this.facility.issues]
+            _.remove(issues, (t) => t.id == issue.id)
+            this.$emit('refresh-facility')
+          })
+          .catch((err) => console.log(err))
+      },
+      exportToPdf() {
+        const doc = new jsPDF("l")
+        const html =  this.$refs.table.innerHTML
+        doc.autoTable({html: "#issueList1"})
+        doc.save("Issue_Log.pdf")
+      },
+      exportToExcel(table, name){      
+      if (!table.nodeType) table = this.$refs.table
+      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+      },
+      issueEdited(issue) {
+        this.currentIssue = issue
         this.newIssue = true
       }
     }
@@ -404,37 +428,39 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.issues-index {
-  height: 465px;
-}
+  .issues-index {
+    height: 465px;
+  }
+  .addIssueBtn, .exportBtns {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
+  .exportBtns { 
+    transition: all .2s ease-in-out; 
+    background-color: #41b883; 
+  }
+  .exportBtns:hover { transform: scale(1.06); }
 
-#issueHover:hover {
-  cursor: pointer;
-  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
-  background-color: rgba(91, 192, 222, 0.3);
-  border-left: solid rgb(91, 192, 222);
-}
-
-.alt-text {
-  position: relative;
-  padding-top: 80px !important;
-}
-
-input[type=search] {
-  color: #383838;
-  text-align: left;
-  cursor: pointer;
-  display: block;
-}
-
-.myIssues {
-  float: right;
-  margin-top: 5px;
-}
-
-.addIssueBtn,
-.export2pdf,
-#issueHover {
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
-}
+  #issueHover:hover {
+    cursor: pointer;
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
+    background-color: rgba(91, 192, 222, 0.3);
+    border-left: solid rgb(91, 192, 222);
+  }
+ .alt-text {
+    position: relative;
+    padding-top: 80px !important;
+  }
+  input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+  }
+  .myIssues {
+    float:right;
+    margin-top: 5px;
+  }
+   #issueHover {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
 </style>
