@@ -670,7 +670,7 @@ export default {
     },
     "progressFilter.facility": {
       handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
+       if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
           value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
           this.setFacilityProgressFilter([value])
         } else if (value.min == "" && value.max == "") {
