@@ -23,7 +23,6 @@
       </div>
       <div class="d-flex font-sm w-100">
         <div class="simple-select enum-select w-100">
-
           <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Issue Status" data-cy="issue_status_list">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -31,7 +30,6 @@
               </div>
             </template>
           </multiselect>
-
         </div>
         <div class="simple-select w-100 ml-1">
           <multiselect v-model="C_taskIssueOverdueFilter" track-by="name" label="name" placeholder="Task and Issue Overdue" :options="getTaskIssueOverdueOptions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -63,26 +61,18 @@
           </multiselect>
         </div>
       </div>
-
       <div class="mt-1">
-        <button v-if="_isallowed('write')"
-           class="btn btn-md btn-primary addIssueBtn mr-3"
-           @click.prevent="addNewIssue"><font-awesome-icon icon="plus-circle" data-cy="new_issue" /> 
+        <button v-if="_isallowed('write')" class="btn btn-md btn-primary addIssueBtn mr-3" @click.prevent="addNewIssue">
+          <font-awesome-icon icon="plus-circle" data-cy="new_issue" />
           Add Issue
-          </button>
-         <button
-           v-tooltip="`Export to PDF`"
-           @click.prevent="exportToPdf"
-           class="btn btn-md mr-1 exportBtns text-light">
-           <font-awesome-icon icon="file-pdf" />        
-         </button>
-         <button
-          v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Issue Log')"
-          class="btn btn-md exportBtns text-light">
-          <font-awesome-icon icon="file-excel"/>         
         </button>
-       <div class="form-check-inline font-sm myIssues mt-2 mr-0">
+        <button v-tooltip="`Export to PDF`" @click.prevent="exportToPdf" class="btn btn-md mr-1 exportBtns text-light">
+          <font-awesome-icon icon="file-pdf" />
+        </button>
+        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Issue Log')" class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel" />
+        </button>
+        <div class="form-check-inline font-sm myIssues mt-2 mr-0">
           <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issues
@@ -173,19 +163,19 @@ export default {
     IssueShow
   },
   data() {
-      return {
-        loading: true,
-        newIssue: false,
-        viewList: 'active',
-        listOptions: ['active','all', 'completed'],
-        currentIssue: null,
-        now: new Date().toISOString(),
-        issuesQuery: '',
-        uri :'data:application/vnd.ms-excel;base64,',
-        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
-        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
-      }
+    return {
+      loading: true,
+      newIssue: false,
+      viewList: 'active',
+      listOptions: ['active', 'all', 'completed'],
+      currentIssue: null,
+      now: new Date().toISOString(),
+      issuesQuery: '',
+      uri: 'data:application/vnd.ms-excel;base64,',
+      template: '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
+      format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    }
   },
   mounted() {
     this.loading = false
@@ -221,246 +211,251 @@ export default {
       http
         .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
         .then((res) => {
-          let issues = [...this.facility.issues]
-          _.remove(issues, (t) => t.id == issue.id)
-          this.$emit('refresh-facility')
-        } else {
-          this.updateFacilityHash(this.facility)
-        }
-      },
-      issueDeleted(issue) {
-        http
-          .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`)
-          .then((res) => {
             let issues = [...this.facility.issues]
             _.remove(issues, (t) => t.id == issue.id)
             this.$emit('refresh-facility')
-          })
-          .catch((err) => console.log(err))
-      },
-      exportToPdf() {
-        const doc = new jsPDF("l")
-        const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#issueList1"})
-        doc.save("Issue_Log.pdf")
-      },
-      exportToExcel(table, name){      
+          }).catch((err) => console.log(err))
+    },
+    exportToPdf() {
+      const doc = new jsPDF("l")
+      const html = this.$refs.table.innerHTML
+      doc.autoTable({ html: "#issueList1" })
+      doc.save("Issue_Log.pdf")
+    },
+    exportToExcel(table, name) {
       if (!table.nodeType) table = this.$refs.table
-      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+      var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
       window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      },
-      issueEdited(issue) {
-        this.currentIssue = issue
+    },
+    issueEdited(issue) {
+      this.currentIssue = issue
+      this.newIssue = true
+    },
+    addNewIssue() {
+      if (this.from == "manager_view") {
+        this.setTaskForManager({key: 'issue', value: {}})
+      } else {
+        this.currentIssue = null
         this.newIssue = true
       }
     }
   },
-  computed: {
-    ...mapGetters([
-      'getTaskIssueProgressStatusOptions',
-      'getTaskIssueProgressStatusFilter',
-      'taskIssueProgressFilter',
-      'getTaskIssueOverdueOptions',
-      'taskIssueOverdueFilter',
-      'noteDateFilter',
-      'taskIssueDueDateFilter',
-      'currentProject',
-      'issueTypes',
-      'taskTypes',
-      'issueSeverities',
-      'issueTypeFilter',
-      'taskTypeFilter',
-      'issueSeverityFilter',
-      'issueUserFilter',
-      'myActionsFilter',
-      'managerView',
-      'onWatchFilter',
-      'issueStageFilter',
-      'viewPermit'
-    ]),
-    _isallowed() {
-      return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
-    },
-    filteredIssues() {
-      let typeIds = _.map(this.C_issueTypeFilter, 'id')
-      let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
-      let severityIds = _.map(this.C_issueSeverityFilter, 'id')
-      let stageIds = _.map(this.issueStageFilter, 'id')
-      const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
-      let noteDates = this.noteDateFilter
-      let taskIssueDueDates = this.taskIssueDueDateFilter
-      let taskIssueOverdue = this.taskIssueOverdueFilter
-      let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
-      let taskIssueProgress = this.taskIssueProgressFilter
+computed: {
+  ...mapGetters([
+    'getTaskIssueProgressStatusOptions',
+    'getTaskIssueProgressStatusFilter',
+    'taskIssueProgressFilter',
+    'getTaskIssueOverdueOptions',
+    'taskIssueOverdueFilter',
+    'noteDateFilter',
+    'taskIssueDueDateFilter',
+    'currentProject',
+    'issueTypes',
+    'taskTypes',
+    'issueSeverities',
+    'issueTypeFilter',
+    'taskTypeFilter',
+    'issueSeverityFilter',
+    'issueUserFilter',
+    'myActionsFilter',
+    'managerView',
+    'onWatchFilter',
+    'issueStageFilter',
+    'viewPermit'
+  ]),
+  _isallowed() {
+    return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
+  },
+  filteredIssues() {
+    let typeIds = _.map(this.C_issueTypeFilter, 'id')
+    let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
+    let severityIds = _.map(this.C_issueSeverityFilter, 'id')
+    let stageIds = _.map(this.issueStageFilter, 'id')
+    const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
+    let noteDates = this.noteDateFilter
+    let taskIssueDueDates = this.taskIssueDueDateFilter
+    let taskIssueOverdue = this.taskIssueOverdueFilter
+    let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
+    let taskIssueProgress = this.taskIssueProgressFilter
 
-      let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
-        let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-        if (this.C_myIssues || this.issueUserFilter) {
-          let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-          if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
-          if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
-        }
-        if (this.C_onWatchIssues) {
-          valid = valid && issue.watched
-        }
-        if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
-        if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-        if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+    let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
+      let valid = Boolean(issue && issue.hasOwnProperty('progress'))
+      if (this.C_myIssues || this.issueUserFilter) {
+        let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+        if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+        if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+      }
+      if (this.C_onWatchIssues) {
+        valid = valid && issue.watched
+      }
+      if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
+      if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
+      if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
+      if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
 
-        if (noteDates && noteDates[0] && noteDates[1]) {
-          var startDate = moment(noteDates[0], "YYYY-MM-DD")
-          var endDate = moment(noteDates[1], "YYYY-MM-DD")
-          var _notesCreatedAt = _.map(issue.notes, 'createdAt')
-          var is_valid = issue.notes.length > 0
-          for (var createdAt of _notesCreatedAt) {
-            var nDate = moment(createdAt, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            if (is_valid) break
-          }
-          valid = is_valid
-        }
-
-        if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
-          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-          var is_valid = true
-          var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+      if (noteDates && noteDates[0] && noteDates[1]) {
+        var startDate = moment(noteDates[0], "YYYY-MM-DD")
+        var endDate = moment(noteDates[1], "YYYY-MM-DD")
+        var _notesCreatedAt = _.map(issue.notes, 'createdAt')
+        var is_valid = issue.notes.length > 0
+        for (var createdAt of _notesCreatedAt) {
+          var nDate = moment(createdAt, "YYYY-MM-DD")
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-          valid = is_valid
+          if (is_valid) break
         }
+        valid = is_valid
+      }
 
-        if (taskIssueOverdue) {
-          var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-          if (overdueFilterNames.includes("overdue")) {
-            valid = (issue.isOverdue == true)
-          }
-          if (overdueFilterNames.includes("not overdue")) {
-            valid = (issue.isOverdue == false)
-          }
-          if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
-            valid = true
-          }
+      if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+        var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+        var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+
+        var is_valid = true
+        var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+        is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+        valid = is_valid
+      }
+
+      if (taskIssueOverdue) {
+        var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+        if (overdueFilterNames.includes("overdue")) {
+          valid = (issue.isOverdue == true)
         }
-        
-        if (taskIssueProgress && taskIssueProgress[0]) {
-          var min = taskIssueProgress[0].value.split("-")[0]
-          var max = taskIssueProgress[0].value.split("-")[1]
-          valid = valid && (issue.progress >= min && issue.progress <= max)
+        if (overdueFilterNames.includes("not overdue")) {
+          valid = (issue.isOverdue == false)
         }
-
-        if (taskIssueProgressStatus) {
-          var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
-          valid = valid && taskIssueProgressStatusNames.includes(issue.progressStatus)
+        if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+          valid = true
         }
+      }
 
-        if (search_query) valid = valid && search_query.test(issue.title)
+      if (taskIssueProgress && taskIssueProgress[0]) {
+        var min = taskIssueProgress[0].value.split("-")[0]
+        var max = taskIssueProgress[0].value.split("-")[1]
+        valid = valid && (issue.progress >= min && issue.progress <= max)
+      }
+
+      if (taskIssueProgressStatus) {
+        var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
+        valid = valid && taskIssueProgressStatusNames.includes(issue.progressStatus)
+      }
+
+      if (search_query) valid = valid && search_query.test(issue.title)
 
 
-        return valid;
-      })), ['dueDate'])
+      return valid;
+    })), ['dueDate'])
 
-      return issues
-    },
-    C_taskIssueProgressStatusFilter: {
-      get() {
-        if (this.getTaskIssueProgressStatusFilter.length < 1) {
-          this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
-        }
-        return this.getTaskIssueProgressStatusFilter
-      },
-      set(value) {
-        this.setTaskIssueProgressStatusFilter(value)
+    return issues
+  },
+  C_taskIssueProgressStatusFilter: {
+    get() {
+      if (this.getTaskIssueProgressStatusFilter.length < 1) {
+        this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
       }
+      return this.getTaskIssueProgressStatusFilter
     },
-    C_taskIssueOverdueFilter: {
-      get() {
-        return this.taskIssueOverdueFilter
-      },
-      set(value) {
-        this.setTaskIssueOverdueFilter(value)
-      }
+    set(value) {
+      this.setTaskIssueProgressStatusFilter(value)
+    }
+  },
+  C_taskIssueOverdueFilter: {
+    get() {
+      return this.taskIssueOverdueFilter
     },
-    C_issueTypeFilter: {
-      get() {
-        return this.issueTypeFilter
-      },
-      set(value) {
-        this.setIssueTypeFilter(value)
-      }
+    set(value) {
+      this.setTaskIssueOverdueFilter(value)
+    }
+  },
+  C_issueTypeFilter: {
+    get() {
+      return this.issueTypeFilter
     },
-    C_taskTypeFilter: {
-      get() {
-        return this.taskTypeFilter
-      },
-      set(value) {
-        this.setTaskTypeFilter(value)
-      }
+    set(value) {
+      this.setIssueTypeFilter(value)
+    }
+  },
+  C_taskTypeFilter: {
+    get() {
+      return this.taskTypeFilter
     },
-    C_issueSeverityFilter: {
-      get() {
-        return this.issueSeverityFilter
-      },
-      set(value) {
-        this.setIssueSeverityFilter(value)
-      }
+    set(value) {
+      this.setTaskTypeFilter(value)
+    }
+  },
+  C_issueSeverityFilter: {
+    get() {
+      return this.issueSeverityFilter
     },
-    C_myIssues: {
-      get() {
-        return _.map(this.myActionsFilter, 'value').includes('issues')
-      },
-      set(value) {
-        if (value) this.setMyActionsFilter([...this.myActionsFilter, { name: "My Issues", value: "issues" }])
-        else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
-      }
+    set(value) {
+      this.setIssueSeverityFilter(value)
+    }
+  },
+  C_myIssues: {
+    get() {
+      return _.map(this.myActionsFilter, 'value').includes('issues')
     },
-    C_onWatchIssues: {
-      get() {
-        return _.map(this.onWatchFilter, 'value').includes('issues')
-      },
-      set(value) {
-        if (value) this.setOnWatchFilter([...this.onWatchFilter, { name: "On Watch Issues", value: "issues" }])
-        else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
-      }
+    set(value) {
+      if (value) this.setMyActionsFilter([...this.myActionsFilter, { name: "My Issues", value: "issues" }])
+      else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
+    }
+  },
+  C_onWatchIssues: {
+    get() {
+      return _.map(this.onWatchFilter, 'value').includes('issues')
+    },
+    set(value) {
+      if (value) this.setOnWatchFilter([...this.onWatchFilter, { name: "On Watch Issues", value: "issues" }])
+      else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
     }
   }
 }
+}
 </script>
 <style lang="scss" scoped>
-  .issues-index {
-    height: 465px;
-  }
-  .addIssueBtn, .exportBtns {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
- }
-  .exportBtns { 
-    transition: all .2s ease-in-out; 
-    background-color: #41b883; 
-  }
-  .exportBtns:hover { transform: scale(1.06); }
+.issues-index {
+  height: 465px;
+}
 
-  #issueHover:hover {
-    cursor: pointer;
-    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
-    background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
-  }
- .alt-text {
-    position: relative;
-    padding-top: 80px !important;
-  }
-  input[type=search] {
-    color: #383838;
-    text-align: left;
-    cursor: pointer;
-    display: block;
-  }
-  .myIssues {
-    float:right;
-    margin-top: 5px;
-  }
-   #issueHover {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
+.addIssueBtn,
+.exportBtns {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+.exportBtns {
+  transition: all .2s ease-in-out;
+  background-color: #41b883;
+}
+
+.exportBtns:hover {
+  transform: scale(1.06);
+}
+
+#issueHover:hover {
+  cursor: pointer;
+  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
+  background-color: rgba(91, 192, 222, 0.3);
+  border-left: solid rgb(91, 192, 222);
+}
+
+.alt-text {
+  position: relative;
+  padding-top: 80px !important;
+}
+
+input[type=search] {
+  color: #383838;
+  text-align: left;
+  cursor: pointer;
+  display: block;
+}
+
+.myIssues {
+  float: right;
+  margin-top: 5px;
+}
+
+#issueHover {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+}
 </style>

@@ -38,24 +38,16 @@
           </multiselect>
         </div>
       </div>
-
       <div class="mb-3 d-flex">
-        <button v-if="_isallowed('write')"
-          class="btn btn-md btn-primary mr-3 addTaskBtn"
-          @click.prevent="addNewTask"><font-awesome-icon icon="plus-circle" data-cy="new_task" /> 
+        <button v-if="_isallowed('write')" class="btn btn-md btn-primary mr-3 addTaskBtn" @click.prevent="addNewTask">
+          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
           Add Task
         </button>
-        <button
-          v-tooltip="`Export to PDF`"
-          @click.prevent="exportToPdf"
-          class="btn btn-md mr-2 exportBtns text-light">
-          <font-awesome-icon icon="file-pdf"/>          
+        <button v-tooltip="`Export to PDF`" @click.prevent="exportToPdf" class="btn btn-md mr-2 exportBtns text-light">
+          <font-awesome-icon icon="file-pdf" />
         </button>
-        <button
-          v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Task List')"
-          class="btn btn-md exportBtns text-light">
-          <font-awesome-icon icon="file-excel"/>         
+        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Task List')" class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel" />
         </button>
         <div class="form-check-inline font-sm ml-auto mr-0">
           <label class="form-check-label">
@@ -117,265 +109,269 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapMutations } from "vuex"
+import { jsPDF } from "jspdf"
+import 'jspdf-autotable'
+import TaskShow from "./task_show"
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faFilePdf, faFileExcel, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+library.add(faFilePdf, faFileExcel, faPlusCircle)
+import * as Moment from 'moment'
+import { extendMoment } from 'moment-range'
+const moment = extendMoment(Moment)
 
-  import {mapGetters, mapMutations} from "vuex"
-  import {jsPDF} from "jspdf"
-  import 'jspdf-autotable'
-  import TaskShow from "./task_show"
-  import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faFilePdf, faFileExcel, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-  library.add(faFilePdf, faFileExcel, faPlusCircle)
-  import * as Moment from 'moment'
-  import {extendMoment} from 'moment-range'
-  const moment = extendMoment(Moment)
-
-  export default {
-    name: 'TasksIndex',
-    components: {
-      TaskShow
-    },
-    props: ['facility', 'from'],
-    data() {
-      return {
-        viewList: 'active',
-        listOptions: ['active','all', 'completed'],
-        now: new Date().toISOString(),
-        tasksQuery: '',
-        uri :'data:application/vnd.ms-excel;base64,',
-        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
-        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+export default {
+  name: 'TasksIndex',
+  components: {
+    TaskShow
+  },
+  props: ['facility', 'from'],
+  data() {
+    return {
+      viewList: 'active',
+      listOptions: ['active', 'all', 'completed'],
+      now: new Date().toISOString(),
+      tasksQuery: '',
+      uri: 'data:application/vnd.ms-excel;base64,',
+      template: '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+      base64: function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
+      format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'setTaskIssueProgressStatusFilter',
+      'setTaskIssueOverdueFilter',
+      'setTaskTypeFilter',
+      'setMyActionsFilter',
+      'setOnWatchFilter',
+      'setTaskForManager'
+    ]),
+    addNewTask() {
+      if (this.from == "manager_view") {
+        this.setTaskForManager({ key: 'task', value: {} })
+      } else {
+        this.$emit('show-hide')
       }
     },
-    methods: {
-      ...mapMutations([
-        'setTaskIssueProgressStatusFilter',
-        'setTaskIssueOverdueFilter',
-        'setTaskTypeFilter',
-        'setMyActionsFilter',
-        'setOnWatchFilter',
-        'setTaskForManager'
-      ]),
-      addNewTask() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'task', value: {}})
-        } else {
-          this.$emit('show-hide')
-        }
-      },
-      editTask(task) {
-        this.$emit('show-hide', task)
-      },
-      exportToPdf() {
-        const doc = new jsPDF("l")
-        const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#taskList1"})
-        doc.text(150,285, "Task List")
-        doc.save("Task_List.pdf")
-      },
-      exportToExcel(table, name){      
-      if (!table.nodeType) table = this.$refs.table
-      var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
-      window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      }
+    editTask(task) {
+      this.$emit('show-hide', task)
     },
-    download() {
+    exportToPdf() {
       const doc = new jsPDF("l")
       const html = this.$refs.table.innerHTML
       doc.autoTable({ html: "#taskList1" })
       doc.text(150, 285, "Task List")
       doc.save("Task_List.pdf")
     },
+    exportToExcel(table, name) {
+      if (!table.nodeType) table = this.$refs.table
+      var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+      window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+    }
+},
+computed: {
+  ...mapGetters([
+    'getTaskIssueProgressStatusOptions',
+    'getTaskIssueProgressStatusFilter',
+    'taskIssueProgressFilter',
+    'getTaskIssueOverdueOptions',
+    'taskIssueOverdueFilter',
+    'taskTypeFilter',
+    'noteDateFilter',
+    'taskIssueDueDateFilter',
+    'myActionsFilter',
+    'onWatchFilter',
+    'taskUserFilter',
+    'taskTypes',
+    'viewPermit',
+    'taskStageFilter'
+  ]),
+  _isallowed() {
+    return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
   },
-  computed: {
-    ...mapGetters([
-      'getTaskIssueProgressStatusOptions',
-      'getTaskIssueProgressStatusFilter',
-      'taskIssueProgressFilter',
-      'getTaskIssueOverdueOptions',
-      'taskIssueOverdueFilter',
-      'taskTypeFilter',
-      'noteDateFilter',
-      'taskIssueDueDateFilter',
-      'myActionsFilter',
-      'onWatchFilter',
-      'taskUserFilter',
-      'taskTypes',
-      'viewPermit',
-      'taskStageFilter'
-    ]),
-    _isallowed() {
-      return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-    },
-    filteredTasks() {
-      let typeIds = _.map(this.C_taskTypeFilter, 'id')
-      let stageIds = _.map(this.taskStageFilter, 'id')
-      const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
-      let noteDates = this.noteDateFilter
-      let taskIssueDueDates = this.taskIssueDueDateFilter
-      let taskIssueOverdue = this.taskIssueOverdueFilter
-      let taskIssueProgress = this.taskIssueProgressFilter
-      let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
-      
-      let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
-        let valid = Boolean(task && task.hasOwnProperty('progress'))
-        if (this.C_myTasks || this.taskUserFilter) {
-          let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-          if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
-          if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
-        }
-        if (this.C_onWatchTasks) {
-          valid = valid && task.watched
-        }
-        if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-        if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+  filteredTasks() {
+    let typeIds = _.map(this.C_taskTypeFilter, 'id')
+    let stageIds = _.map(this.taskStageFilter, 'id')
+    const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+    let noteDates = this.noteDateFilter
+    let taskIssueDueDates = this.taskIssueDueDateFilter
+    let taskIssueOverdue = this.taskIssueOverdueFilter
+    let taskIssueProgress = this.taskIssueProgressFilter
+    let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
 
-        if (noteDates && noteDates[0] && noteDates[1]) {
-          var startDate = moment(noteDates[0], "YYYY-MM-DD")
-          var endDate = moment(noteDates[1], "YYYY-MM-DD")
-          var _notesCreatedAt = _.map(task.notes, 'createdAt')
-          var is_valid = task.notes.length > 0
-          for (var createdAt of _notesCreatedAt) {
-            var nDate = moment(createdAt, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            if (is_valid) break
-          }
-          valid = is_valid
-        }
+    let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
+      let valid = Boolean(task && task.hasOwnProperty('progress'))
+      if (this.C_myTasks || this.taskUserFilter) {
+        let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+        if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+        if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+      }
+      if (this.C_onWatchTasks) {
+        valid = valid && task.watched
+      }
+      if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+      if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
 
-        if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
-          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-          var is_valid = true
-          var nDate = moment(task.dueDate, "YYYY-MM-DD")
+      if (noteDates && noteDates[0] && noteDates[1]) {
+        var startDate = moment(noteDates[0], "YYYY-MM-DD")
+        var endDate = moment(noteDates[1], "YYYY-MM-DD")
+        var _notesCreatedAt = _.map(task.notes, 'createdAt')
+        var is_valid = task.notes.length > 0
+        for (var createdAt of _notesCreatedAt) {
+          var nDate = moment(createdAt, "YYYY-MM-DD")
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-          valid = is_valid
+          if (is_valid) break
         }
+        valid = is_valid
+      }
 
-        if (taskIssueOverdue) {
-          var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-          if (overdueFilterNames.includes("overdue")) {
-            valid = (task.isOverdue == true)
-          }
-          if (overdueFilterNames.includes("not overdue")) {
-            valid = (task.isOverdue == false)
-          }
-          if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
-            valid = true
-          }
+      if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+        var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+        var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+
+        var is_valid = true
+        var nDate = moment(task.dueDate, "YYYY-MM-DD")
+        is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+        valid = is_valid
+      }
+
+      if (taskIssueOverdue) {
+        var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+        if (overdueFilterNames.includes("overdue")) {
+          valid = (task.isOverdue == true)
         }
-        if (taskIssueProgress && taskIssueProgress[0]) {
-          var min = taskIssueProgress[0].value.split("-")[0]
-          var max = taskIssueProgress[0].value.split("-")[1]
-          valid = valid && (task.progress >= min && task.progress <= max)
+        if (overdueFilterNames.includes("not overdue")) {
+          valid = (task.isOverdue == false)
         }
-
-        if (taskIssueProgressStatus) {
-          var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
-          valid = valid && taskIssueProgressStatusNames.includes(task.progressStatus)
+        if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+          valid = true
         }
+      }
+      if (taskIssueProgress && taskIssueProgress[0]) {
+        var min = taskIssueProgress[0].value.split("-")[0]
+        var max = taskIssueProgress[0].value.split("-")[1]
+        valid = valid && (task.progress >= min && task.progress <= max)
+      }
 
-        if (search_query) valid = valid && search_query.test(task.text)
+      if (taskIssueProgressStatus) {
+        var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
+        valid = valid && taskIssueProgressStatusNames.includes(task.progressStatus)
+      }
 
-        return valid
-      }), ['dueDate'])
+      if (search_query) valid = valid && search_query.test(task.text)
 
-      return tasks
-    },
-    C_taskIssueProgressStatusFilter: {
-      get() {
-        if (this.getTaskIssueProgressStatusFilter.length < 1) {
-          this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
-        }
-        return this.getTaskIssueProgressStatusFilter
-      },
-      set(value) {
-        this.setTaskIssueProgressStatusFilter(value)
+      return valid
+    }), ['dueDate'])
+
+    return tasks
+  },
+  C_taskIssueProgressStatusFilter: {
+    get() {
+      if (this.getTaskIssueProgressStatusFilter.length < 1) {
+        this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
       }
+      return this.getTaskIssueProgressStatusFilter
     },
-    C_taskIssueOverdueFilter: {
-      get() {
-        return this.taskIssueOverdueFilter
-      },
-      set(value) {
-        this.setTaskIssueOverdueFilter(value)
-      }
+    set(value) {
+      this.setTaskIssueProgressStatusFilter(value)
+    }
+  },
+  C_taskIssueOverdueFilter: {
+    get() {
+      return this.taskIssueOverdueFilter
     },
-    C_taskTypeFilter: {
-      get() {
-        return this.taskTypeFilter
-      },
-      set(value) {
-        this.setTaskTypeFilter(value)
-      }
+    set(value) {
+      this.setTaskIssueOverdueFilter(value)
+    }
+  },
+  C_taskTypeFilter: {
+    get() {
+      return this.taskTypeFilter
     },
-    C_myTasks: {
-      get() {
-        return _.map(this.myActionsFilter, 'value').includes('tasks')
-      },
-      set(value) {
-        if (value) this.setMyActionsFilter([...this.myActionsFilter, { name: "My Tasks", value: "tasks" }])
-        else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
-      }
+    set(value) {
+      this.setTaskTypeFilter(value)
+    }
+  },
+  C_myTasks: {
+    get() {
+      return _.map(this.myActionsFilter, 'value').includes('tasks')
     },
-    C_onWatchTasks: {
-      get() {
-        return _.map(this.onWatchFilter, 'value').includes('tasks')
-      },
-      set(value) {
-        if (value) this.setOnWatchFilter([...this.onWatchFilter, { name: "On Watch Tasks", value: "tasks" }])
-        else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
-      }
+    set(value) {
+      if (value) this.setMyActionsFilter([...this.myActionsFilter, { name: "My Tasks", value: "tasks" }])
+      else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
+    }
+  },
+  C_onWatchTasks: {
+    get() {
+      return _.map(this.onWatchFilter, 'value').includes('tasks')
+    },
+    set(value) {
+      if (value) this.setOnWatchFilter([...this.onWatchFilter, { name: "On Watch Tasks", value: "tasks" }])
+      else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
     }
   }
 }
+}
 </script>
 <style lang="scss" scoped>
-  #tasks-index {
-    height: 465px;
-    background-color: #ffffff;
-    z-index: 100;
-  }
-  .new-tasks-btn {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  #total {
-    float: right;
-    margin-right: 0;
-    text-align: right;
-  }
-  .multiselect {
-    border: #1d2124 !important;
-  }
-  #taskHover:hover {
-    cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
-  }
-  tfoot {
-    text-align: right !important;
-  }
-  input[type=search] {
-    color: #383838;
-    text-align: left;
-    cursor: pointer;
-    display: block;
- }
- .addTaskBtn, .exportBtns {
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
- }
- .exportBtns { 
-   transition: all .2s ease-in-out; 
-   background-color: #41b883; 
- }
- .exportBtns:hover { transform: scale(1.06); }
+#tasks-index {
+  height: 465px;
+  background-color: #ffffff;
+  z-index: 100;
+}
 
- .myTasks {
-   float: right !important;
-   margin-top: 5px;
- }
-  #taskHover {
-    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
-  }
+.new-tasks-btn {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+#total {
+  float: right;
+  margin-right: 0;
+  text-align: right;
+}
+
+.multiselect {
+  border: #1d2124 !important;
+}
+
+#taskHover:hover {
+  cursor: pointer;
+  background-color: rgba(91, 192, 222, 0.3);
+  border-left: solid rgb(91, 192, 222);
+}
+
+tfoot {
+  text-align: right !important;
+}
+
+input[type=search] {
+  color: #383838;
+  text-align: left;
+  cursor: pointer;
+  display: block;
+}
+
+.addTaskBtn,
+.exportBtns {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+}
+
+.exportBtns {
+  transition: all .2s ease-in-out;
+  background-color: #41b883;
+}
+
+.exportBtns:hover {
+  transform: scale(1.06);
+}
+
+.myTasks {
+  float: right !important;
+  margin-top: 5px;
+}
+
+#taskHover {
+  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
+}
 </style>
