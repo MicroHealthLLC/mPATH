@@ -174,4 +174,36 @@ describe('Apply filters in Map Page', function() {
     cy.facilityRollup()
     cy.logout()
   })
+
+  it('Apply filter on issue users', function() {
+    cy.toggleFilterTab()
+    cy.get('[data-cy=filter_bar]').within(() => {
+      cy.get('[data-cy=issue_user]').as('list')
+      cy.get('@list').click()
+      cy.get('@list').within(() => {
+        cy.contains('Test Admin').click()
+      })
+    })
+    cy.toggleFilterTab()
+    cy.get('[data-cy=date_set_filter]').within(() => {
+      cy.contains('Issue Users: Test Admin').should('be.visible')
+    })
+    cy.issueUserFilter()
+    cy.toggleFilterTab()
+    cy.get('[data-cy=filter_bar]').within(() => {
+      cy.get('[data-cy=clear_filter]').click()
+      cy.get('[data-cy=issue_user]').as('list')
+      cy.get('@list').click()
+      cy.get('@list').within(() => {
+        cy.contains('Test Client').click()
+      })
+    })
+    cy.toggleFilterTab()
+    cy.get('[data-cy=facility_rollup]').scrollIntoView()
+    cy.get('[data-cy=date_set_filter]').within(() => {
+      cy.contains('Issue Users: Test Client').should('be.visible')
+    })
+    cy.issueUserFilter()
+    cy.logout()
+  })
 })

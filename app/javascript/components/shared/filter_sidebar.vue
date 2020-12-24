@@ -147,7 +147,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Issue Users</label>
-              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.fullName}}</span>
