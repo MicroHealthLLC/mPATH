@@ -9,7 +9,7 @@
       <div class="row pt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
