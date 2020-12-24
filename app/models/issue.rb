@@ -33,6 +33,15 @@ class Issue < ApplicationRecord
   after_save :handle_related_tasks_issues
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
+  after_save :remove_on_watch
+
+
+  def remove_on_watch
+    if self.progress == 100 && self.watched == true
+      self.update(watched: false)
+    end
+  end
+
   def to_json
     attach_files = []
     i_files = self.issue_files
@@ -54,6 +63,7 @@ class Issue < ApplicationRecord
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
+      is_overdue: progress < 100 && (due_date < Date.today),
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
@@ -108,7 +118,8 @@ class Issue < ApplicationRecord
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :due_date
       ],
       notes_attributes: [
         :id,

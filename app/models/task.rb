@@ -30,6 +30,15 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   after_save :handle_related_tasks_issues
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
+  after_save :remove_on_watch
+
+
+  def remove_on_watch
+    if self.progress == 100 && self.watched == true
+      self.update(watched: false)
+    end
+  end
+
 
   def to_json
     attach_files = []
@@ -51,6 +60,7 @@ class Task < ApplicationRecord
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
+      is_overdue: progress < 100 && (due_date < Date.today),
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: users.map(&:id).compact.uniq,
@@ -92,7 +102,8 @@ class Task < ApplicationRecord
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :due_date
       ],
       notes_attributes: [
         :id,

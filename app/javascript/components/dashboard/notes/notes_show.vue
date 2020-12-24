@@ -1,12 +1,12 @@
+  
 <template>
   <div>
     <div v-if="C_editForManager" class="blur_show float-right">
-      <div class="text-danger d-flex align-items-center">
-        <p class="mr-2 mb-0">Details</p>
+      <div class="text-danger d-flex align-items-center">     
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="notes_show mb-5 mx-2" :class="{'hide-to-edit': C_editForManager}">
+    <div v-if="!loading" class="notes_show mb-5 mx-2">
       <div v-if="show">
         <div class="crud-actions mx-3 float-right">
           <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
@@ -46,6 +46,7 @@
 
   </div>
 </template>
+
 
 <script>
   import http from './../../../common/http'
@@ -143,13 +144,12 @@
     border-radius: 5px;
     padding: 15px;
   }
-  .note_body {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+  .note_body {  
+    padding-top: 10px;
     word-break: break-word;
-    max-height: 200px;
+    min-height: 80px;
     overflow-y: auto;
+    font-size: 1.06rem;
   }
   .file-icon {
     cursor: pointer;

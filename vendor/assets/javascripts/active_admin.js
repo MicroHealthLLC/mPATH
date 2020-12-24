@@ -313,16 +313,18 @@ jQuery(function($) {
       data() {
         return {
           progress: 0,
-          autoCalculate: false
+          autoCalculate: false,
+          tab_type: ''
         }
       },
       mounted() {
+        this.tab_type = $('form').attr('id').split('_').pop();
         this.setAutoCalculate();
-        this.progress = $("#task_progress").val() || $("#issue_progress").val() || 0;
+        this.progress = $(`#${this.tab_type}_progress`).val();
       },
       methods: {
         setAutoCalculate() {
-          this.autoCalculate = $("#task_auto_calculate").is(':checked') || $("#issue_auto_calculate").is(':checked');
+          this.autoCalculate = $(`#${this.tab_type}_auto_calculate`).is(':checked');
         },
         calculateProgress() {
           let isCheked = total = 0;
@@ -338,8 +340,7 @@ jQuery(function($) {
       },
       watch: {
         progress(value) {
-          $("#task_progress").val(value);
-          $("#issue_progress").val(value);
+          $(`#${this.tab_type}_progress`).val(value);
         },
         autoCalculate(value) {
           if (!value) return;
@@ -532,6 +533,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          risks: {
+            read: false,
+            write: false,
+            delete: false
+          },
           notes: {
             read: false,
             write: false,
@@ -555,6 +561,7 @@ jQuery(function($) {
           let overview = $("#user_privilege_attributes_overview").val() || "";
           let tasks = $("#user_privilege_attributes_tasks").val() || "";
           let issues = $("#user_privilege_attributes_issues").val() || "";
+          let risks = $("#user_privilege_attributes_risks").val() || "";
           let notes = $("#user_privilege_attributes_notes").val() || "";
           let admin = $("#user_privilege_attributes_admin").val() || "";
           let map_view = $("#user_privilege_attributes_map_view").val() || "";
@@ -579,6 +586,11 @@ jQuery(function($) {
             read: issues.includes("R"),
             write: issues.includes("W"),
             delete: issues.includes("D")
+          }
+          this.risks = {
+            read: risks.includes("R"),
+            write: risks.includes("W"),
+            delete: risks.includes("D")
           }
           this.notes = {
             read: notes.includes("R"),
@@ -707,6 +719,31 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           if (value) this.issues.read = value;
           $("#user_privilege_attributes_issues").val(v);
+        },
+        "risks.read"(value) {
+          if (this.loading) return;
+          if (!value) this.risks.read = true;
+          let v = $("#user_privilege_attributes_risks").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.risks.write = false;
+            this.risks.delete = false;
+          }
+          $("#user_privilege_attributes_risks").val(v);
+        },
+        "risks.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_risks").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.risks.read = value;
+          $("#user_privilege_attributes_risks").val(v);
+        },
+        "risks.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_risks").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.risks.read = value;
+          $("#user_privilege_attributes_risks").val(v);
         },
         "notes.read"(value) {
           if (this.loading) return;
@@ -1005,6 +1042,12 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
             </li>
             <li class="choice d-flex">
+              <label>Risks</label>
+              <label class="d-flex align-center" :readOnly="risks.read"><input type="checkbox" v-model="risks.read" :readOnly="risks.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="risks.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="risks.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
               <label>Notes</label>
               <label class="d-flex align-center" :readOnly="notes.read"><input type="checkbox" v-model="notes.read" :readOnly="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
@@ -1249,8 +1292,8 @@ jQuery(function($) {
               this.project_id = $("select[name=Project]").children("option:selected").val();
             },
             fetchProjectUsers() {
-              $.get(`/projects/${this.project_id}.json`, (data) => {
-                this.project_users = data.users.filter(u => u.status == "active");
+              $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+                this.project_users = data.filter(u => u.status == "active");
                 this.loading = false;
               });
             },
@@ -1414,6 +1457,29 @@ jQuery(function($) {
       }
     });
 
+
+    // Add this in input element
+    //"data-task-stage-data" => TaskStage.where.not(id: f.object.task_stage_ids).map{|u| {id: u.id, text: u.name}}.to_json
+    // NOTE: Select2 is not working as expected. It is not preserving order of selected items: 
+    // https://github.com/select2/select2/issues/3106#issuecomment-333341636
+    // http://jsfiddle.net/L6163yc9/4
+
+    // task_stage_select2_data = JSON.parse( $("#project_task_stage_alt").attr("data-task-stage-data"))
+    // $("#project_task_stage_alt").select2({
+    //   data: task_stage_select2_data
+    // })
+    // $("#project_task_stage_alt").on('select2:select', function(e) {
+    //   var element = $(e.params.data.element);
+    //   debugger;
+    //   if (element.length) {
+    //     $(this).append(element);
+    //     $(this).trigger('change');
+    //   } else {
+    //     console.log('element does not exist!');
+    //   }
+    // });
+
+
     // task form slider auto calculate and slider
     $("#task_auto_calculate").change(function(e) {
       $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
@@ -1499,8 +1565,8 @@ jQuery(function($) {
             this.u_id = $(`#${item.input_id}`).val();
           },
           fetchProjectUsers() {
-            $.get(`/projects/${this.project_id}.json`, (data) => {
-              this.users = data.users.filter(u => u.status == "active");
+            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+              this.users = data.filter(u => u.status == "active");
               this.loading = false;
             });
           }
@@ -1570,8 +1636,8 @@ jQuery(function($) {
             this.u_ids = $(`#${this.type}_user_ids`).val().map(Number);
           },
           fetchProjectUsers() {
-            $.get(`/projects/${this.project_id}.json`, (data) => {
-              this.project_users = data.users.filter(u => u.status == "active");
+            $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
+              this.project_users = data.filter(u => u.status == "active");
               this.task_users = this.project_users.filter(u => this.u_ids.includes(u.id));
               this.loading = false;
             });
@@ -1809,7 +1875,7 @@ jQuery(function($) {
           }
         },
         template: `<div>
-          <input ref="fileInput" id='vue_task_task_files' type='file' multiple='multiple' style="visibility: hidden" />
+          <input ref="fileInput" id='vue_task_task_files' type='file' multiple='multiple' style="visibility: hidden; position: absolute;" />
           <div class='upload_file_holder ml-20' @click.stop="uploadFile">UPLOAD FILES</div>
           <ul class='ml-20 mt-10'>
             <li v-for="(file, i) in files" :key="file.id+'_'+i" class='p-5' v-if="!file._destroy">
@@ -2039,11 +2105,15 @@ jQuery(function($) {
     });
 
     // on_change multiselect enums in project_form
-    $('body').on('click', '#project_user_alt > option, #project_user_ids > option, #project_facility_alt > option, #project_facility_ids > option, #project_status_alt > option, #project_status_ids > option, #project_task_type_ids > option, #project_task_type_alt > option, #project_issue_type_ids > option, #project_issue_type_alt > option, #project_issue_severity_ids > option, #project_issue_severity_alt > option', function () {
+    $('body').on('click', '#project_task_stage_alt > option, #project_task_stage_ids > option, #project_issue_stage_alt > option, #project_issue_stage_ids > option, #project_user_alt > option, #project_user_ids > option, #project_facility_alt > option, #project_facility_ids > option, #project_status_alt > option, #project_status_ids > option, #project_task_type_ids > option, #project_task_type_alt > option, #project_issue_type_ids > option, #project_issue_type_alt > option, #project_issue_severity_ids > option, #project_issue_severity_alt > option', function () {
       let this_id = $(this).parent().prop('id');
       let alt_replace = this_id.includes('ids') ? 'alt' : 'ids';
       let alt_with = this_id.includes('ids') ? 'ids' : 'alt';
-      let alt_id = this_id.replaceAll(alt_with, alt_replace);
+
+      // replaceAll isn't supported in all versions of browser
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll#Browser_compatibility
+      // let alt_id = this_id.replaceAll(alt_with, alt_replace);
+      let alt_id = this_id.replace(alt_with, alt_replace)
       let without_id = this_id.slice(0, -4);
 
       $(this).remove().appendTo(`#${alt_id}`);

@@ -1,21 +1,25 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-          <div class="input-group w-100">
-             <div class="input-group-prepend">
-             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-            </div>
-            <input type="search" 
-            class="form-control form-control-sm" 
-            placeholder="Search tasks.." 
-            aria-label="Search" 
-            aria-describedby="search-addon" 
-            v-model="tasksQuery">
-          </div>
-      <div class="d-flex align-item-center justify-content-between my-2 100">        
-        <div class="simple-select w-100 mr-1">
+  <div class="d-flex align-item-center justify-content-between w-100">
+      <div class="input-group w-100">
+        <div class="input-group-prepend d-inline">
+          <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+        </div>
+        <input type="search"
+          style="height:30px"
+          class="form-control form-control-sm"
+          placeholder="Search Tasks.."
+          aria-label="Search"
+          aria-describedby="search-addon"
+          v-model="tasksQuery"
+          data-cy="search_tasks"
+        />        
+      </div>
+     <div class="d-flex simple-select w-100 font-sm ml-1">
           <multiselect
             v-model="C_taskTypeFilter"
+            style="min-height:30px"
             track-by="name"
             label="name"
             placeholder="Filter by Task Category"
@@ -31,57 +35,73 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="simple-select w-100 enum-select">
-          <multiselect
-            v-model="viewList" 
-            style="width:100%"          
+   </div>
+  </div>
+      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
+        <div class="simple-select w-100 mr-1">  
+           <multiselect
+            v-model="viewList"            
             :options="listOptions"
             :searchable="false"
             :close-on-select="false"
             :show-labels="false"
             placeholder="Filter by Task Status"
+            data-cy="task_status_list"
           >
            <template slot="singleLabel">
               <div class="d-flex">
                 <span class='select__tag-name'>{{viewList}}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect>         
+        </div>
+        <div class="simple-select w-100 enum-select">         
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            style="width:100%"   
+            track-by="name"
+            label="name"          
+            placeholder="Task and Issue Overdue"
+            :options="getTaskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>  
         </div>
       </div>
-      <div class="mb-3 mr-2 font-sm">          
-         <button v-if="_isallowed('write')" 
+      <div class="mb-3 d-flex font-sm">
+        <button v-if="_isallowed('write')"
           class="btn btn-sm btn-primary mr-2 addTaskBtn"
           @click.prevent="addNewTask"><i class="fas fa-plus-circle mr-2" data-cy="new_task"></i>
           Add Task
-          </button>
-          <button
-          @click.prevent="download"     
+        </button>
+        <button
+          @click.prevent="download"
           class="btn btn-sm btn-dark mr-1 export2pdf">
-          <font-awesome-icon icon="file-pdf" />
+          <font-awesome-icon icon="file-pdf" class="mr-2" />
           Export to PDF
-          </button>
-          <!-- <button
-            disabled 
-            class="btn btn-sm btn-outline-dark">
-            Export to Excel
-          </button>  -->
-          <div class="form-check-inline font-sm myTasks mt-1 mr-0">             
-          <label class="form-check-label ml-4 mr-3">
+        </button>
+        <div class="form-check-inline font-sm ml-auto mr-0">
+          <label class="form-check-label">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">  <i class="fas fa-user mr-1"></i>My Tasks
           </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-3">
+          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label> 
-          </div>    
+          </label>
+        </div>
       </div>
-      
-      <div v-if="filteredTasks.length > 0">        
+      <div v-if="filteredTasks.length > 0">
         <hr/>
         <task-show
           v-for="(task, i) in filteredTasks"
-          id="taskHover"        
+          id="taskHover"
           :class="{'b_border': !!filteredTasks[i+1]}"
           :key="task.id"
           :task="task"
@@ -165,11 +185,12 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setTaskForManager'
-      ]),  
+      ]),
       addNewTask() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'task', value: {}})
@@ -190,6 +211,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'taskTypeFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
@@ -209,7 +232,7 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        
+        let taskIssueOverdue = this.taskIssueOverdueFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (this.C_myTasks || this.taskUserFilter) {
@@ -222,7 +245,7 @@
           }
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
-          
+
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -232,18 +255,31 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue){
+            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+            if(overdueFilterNames.includes("overdue")){
+              valid = (task.isOverdue == true)
+            }
+            if(overdueFilterNames.includes("not overdue")){
+              valid = (task.isOverdue == false)
+            }
+            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+              valid = true
+            }
           }
 
           if (search_query) valid = valid && search_query.test(task.text)
@@ -265,6 +301,14 @@
         }), ['dueDate'])
 
         return tasks
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
       },
       C_taskTypeFilter: {
         get() {
@@ -302,7 +346,7 @@
     background-color: #ffffff;
     z-index: 100;
   }
-  .new-tasks-btn { 
+  .new-tasks-btn {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {
@@ -321,11 +365,11 @@
   tfoot {
     text-align: right !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
  }
  .addTaskBtn, .export2pdf {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);

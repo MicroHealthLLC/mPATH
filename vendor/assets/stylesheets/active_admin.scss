@@ -163,6 +163,7 @@ body {
   #user_password_confirmation_input,
   #task_progress_input,
   #issue_progress_input,
+  #risk_progress_input,
   #task_users_input,
   #issue_users_input,
   #user_privilege_attributes_overview_input,
@@ -178,11 +179,15 @@ body {
   #user_privilege_attributes_documents_input,
   #user_privilege_attributes_members_input,
   #user_privilege_attributes_sheets_view_input,
+  #user_privilege_attributes_risks_input,
   #task_sub_issues_input,
   #task_sub_tasks_input,
   #issue_sub_tasks_input,
   #issue_sub_issues_input,
+  #risk_sub_tasks_input,
+  #risk_sub_issues_input,
   #task_task_files,
+  #risk_risk_files,
   #issue_issue_files {
     display: none;
     width: 0;
@@ -307,6 +312,8 @@ body {
         box-shadow: none;
       }
     }
+    #risk_facility_project_attributes_project_id_input,
+    #risk_facility_project_attributes_facility_id_input,
     #issue_facility_project_attributes_project_id_input,
     #issue_facility_project_attributes_facility_id_input,
     #task_facility_project_attributes_project_id_input,
@@ -603,6 +610,8 @@ body {
     width: calc(80% - 22px) !important;
   }
 
+  #project-task_stage-select2,
+  #project-issue_stage-select2,
   #project-facility-select2,
   #project-status-select2,
   #project-task_type-select2,

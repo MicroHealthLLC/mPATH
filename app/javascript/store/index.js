@@ -16,6 +16,7 @@ const getSimpleDate = (date) => {
 
 export default new Vuex.Store({
   state: {
+    advancedFilter: new Array,
     contentLoaded: false,
     mapLoading: true,
     sideLoading: true,
@@ -23,6 +24,8 @@ export default new Vuex.Store({
     facilities: new Array,
     facilityGroups: new Array,
     statuses: new Array,
+    advancedFilterOptions: new Array,
+    taskIssueOverdueFilter: new Array,
     taskTypes: new Array,
     taskStages: new Array,
     issueStages: new Array,
@@ -76,6 +79,37 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setAdvancedFilter: (state, selectedOptions) => {
+      state.advancedFilter = selectedOptions
+      console.log("setAdvancedFilter")
+      console.log(state.mapFilters)
+      var _taskIssueOverdueFilter = []
+      var _onWatchFilter = []
+      var _myActionsFilter = []
+
+      // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
+      // state.onWatchFilter = _onWatchFilter
+      // state.myActionsFilter = _myActionsFilter
+
+      for(var option of selectedOptions){
+        if(option.id == "overdue" || option.id == 'not overdue'){
+          _taskIssueOverdueFilter.push(option)
+        }else if(option.id == "onWatchTask" || option.id == 'onWatchIssue'){
+          _onWatchFilter.push(option)
+        }else if(option.id == "myTasks" || option.id == 'myIssues' || option.id == "myNotes"){
+          _myActionsFilter.push(option)
+        }else if(option.name == "active" || option.id == 'completed'){
+        }
+      }
+
+      // if(_taskIssueOverdueFilter.length > 0)
+      state.taskIssueOverdueFilter = _taskIssueOverdueFilter
+      // if(_onWatchFilter.length > 0)
+      state.onWatchFilter = _onWatchFilter
+      // if(_myActionsFilter.length > 0)
+      state.myActionsFilter = _myActionsFilter
+
+    },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setMapLoading: (state, loading) => state.mapLoading = loading,
     setSideLoading: (state, loading) => state.sideLoading = loading,
@@ -152,6 +186,9 @@ export default new Vuex.Store({
       }
     },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
+    setTaskIssueOverdueFilter: (state, filter) => { 
+      state.taskIssueOverdueFilter = filter
+    },
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
@@ -189,6 +226,204 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getAdvancedFilter: (state, getter) => () =>{
+      return state.advancedFilter
+    },
+    getAdvancedFilterOptions: (state, getters) => {
+      // return [{id: "overdue",name: "overdue", }, {id: "not overdue",name: "not overdue", }]
+
+      return [
+        {id: 'active', name: 'Active'},
+        {id: 'completed', name: 'Completed'},
+        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+        {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
+        {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
+        {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
+        {id: 'myIssues', name: 'My Issues', value: 'issues'},
+        {id: 'myNotes', name: 'My Notes', value: 'notes'}        
+      ]
+    },
+    // This method is used to show filters applied in overview tabs
+    getAllFilterNames: (state, getters) => {
+      return [
+
+        ['facilityGroupFilter', 'Facility Group'],
+        ['facilityNameFilter', 'Facility Name'],
+        ['projectStatusFilter', 'Project Status'],
+        ['taskIssueOverdueFilter','Task and Issue Overdue'],
+        ['facilityProgressFilter', 'Facility Progress'],
+        ['facilityDueDateFilter', 'Project Completion Date Range'],
+        ['taskTypeFilter', 'Task Category'],
+        ['noteDateFilter', 'Updates Date Range'],
+        ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
+        ['taskProgressFilter', 'Task Progress'],
+        ['taskUserFilter', 'Task Users'],
+        ['issueTypeFilter', 'Issue Type'],
+        ['issueProgressFilter', 'Issue Progress'],
+        ['issueSeverityFilter', 'Issue Severities'],
+        ['issueUserFilter', 'Issue Users'],
+        ['myActionsFilter', 'My Actions'],
+        ['onWatchFilter', 'On Watch'],
+        ['taskStageFilter', 'Task Stages'],
+        ['issueStageFilter', 'Issue Stages']
+
+      ]
+    },
+    // This method is used to show filters applied in overview tabs
+    getFilterValue: (state, getter)=>(_filterValue) =>{
+      
+      if(_filterValue == 'facilityGroupFilter'){
+        // console.log(getter.facilityGroupFilter)
+        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
+      
+      }else if(_filterValue == 'facilityNameFilter'){
+        // console.log(getter.facilityNameFilter)
+        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
+      
+      }else if(_filterValue == 'projectStatusFilter'){
+        // console.log(getter.projectStatusFilter)
+        var user_names = null
+        if(getter.projectStatusFilter && getter.projectStatusFilter[0]){
+          user_names = _.map(getter.projectStatusFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskIssueOverdueFilter'){
+        // console.log(getter.taskIssueOverdueFilter)
+        return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+      
+      }else if(_filterValue == 'facilityProgressFilter'){
+        // console.log(getter.facilityProgressFilter)
+        var user_names = null
+        if(getter.facilityProgressFilter && getter.facilityProgressFilter[0]){
+          user_names = _.map(getter.facilityProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'facilityDueDateFilter'){
+        // console.log(getter.facilityDueDateFilter)
+        var dates = null
+        if(getter.facilityDueDateFilter && getter.facilityDueDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskTypeFilter'){
+        // console.log(getter.taskTypeFilter)
+        var user_names = null
+        if(getter.taskTypeFilter && getter.taskTypeFilter[0]){
+          user_names = _.map(getter.taskTypeFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'noteDateFilter'){
+        // console.log(getter.noteDateFilter)
+        var dates = null
+        if(getter.noteDateFilter && getter.noteDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.noteDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.noteDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskIssueDueDateFilter'){
+        // console.log(getter.taskIssueDueDateFilter)
+        var dates = null
+        if(getter.taskIssueDueDateFilter && getter.taskIssueDueDateFilter[0]){
+          dates = []
+          dates.push( moment(getter.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
+          dates.push( moment(getter.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
+          dates = dates.join(" - ")
+        }
+        return dates
+
+      }else if(_filterValue == 'taskProgressFilter'){
+        // console.log(getter.taskProgressFilter)
+        var user_names = null
+        if(getter.taskProgressFilter && getter.taskProgressFilter[0]){
+          user_names = _.map(getter.taskProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskUserFilter'){
+        // console.log(getter.taskUserFilter)
+        var user_names = null
+        if(getter.taskUserFilter && getter.taskUserFilter[0]){
+          user_names = _.map(getter.taskUserFilter, 'fullName').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueTypeFilter'){
+        // console.log(getter.issueTypeFilter)
+        var names = null
+        if(getter.issueTypeFilter && getter.issueTypeFilter[0]){
+           names = _.map(getter.issueTypeFilter, 'name').join(", ")
+        }
+        return names
+
+      }else if(_filterValue == 'issueProgressFilter'){
+        // console.log(getter.issueProgressFilter)
+        var user_names = null
+        if(getter.issueProgressFilter && getter.issueProgressFilter[0]){
+          user_names = _.map(getter.issueProgressFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueSeverityFilter'){
+        // console.log(getter.issueSeverityFilter)
+        var names = null
+        if(getter.issueSeverityFilter && getter.issueSeverityFilter[0]){
+           names = _.map(getter.issueSeverityFilter, 'name').join(", ")
+        }
+        return names
+
+      }else if(_filterValue == 'issueUserFilter'){
+        // console.log(getter.issueUserFilter)
+        var user_names = null
+        if(getter.issueUserFilter && getter.issueUserFilter[0]){
+          user_names = _.map(getter.issueUserFilter, 'fullName').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'myActionsFilter'){
+        // console.log(getter.myActionsFilter)
+        var user_names = null
+        if(getter.myActionsFilter && getter.myActionsFilter[0]){
+          user_names = _.map(getter.myActionsFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'onWatchFilter'){
+        // console.log(getter.onWatchFilter)
+        var user_names = null
+        if(getter.onWatchFilter && getter.onWatchFilter[0]){
+          user_names = _.map(getter.onWatchFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'taskStageFilter'){
+        // console.log(getter.taskStageFilter)
+     
+        var user_names = null
+        if(getter.taskStageFilter && getter.taskStageFilter[0]){
+          user_names = _.map(getter.taskStageFilter, 'name').join(", ")
+        }
+        return user_names
+
+      }else if(_filterValue == 'issueStageFilter'){
+        // console.log(getter.issueStageFilter)
+        var user_names = null
+        if(getter.issueStageFilter && getter.issueStageFilter[0]){
+          user_names = _.map(getter.issueStageFilter, 'name').join(", ")
+        }
+        return user_names
+      }
+    },
     contentLoaded: state => state.contentLoaded,
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,
@@ -207,6 +442,7 @@ export default new Vuex.Store({
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
+    taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
     taskTypeFilter: state => state.taskTypeFilter,
     taskStageFilter: state => state.taskStageFilter,
     issueStageFilter: state => state.issueStageFilter,
@@ -275,6 +511,20 @@ export default new Vuex.Store({
               }
 
             }
+            case "taskIssueOverdue": {
+              var _isOverdues = _.flatten(_.map(facility.tasks, 'isOverdue') ).concat(_.flatten(_.map(facility.issues, 'isOverdue') ))
+              var is_valid = false
+
+              if(f[k][0] && f[k][0].name == "overdue"){
+                valid = valid && _isOverdues.includes(true)
+              }
+              if(f[k][0] && f[k][0].name == "not overdue"){
+                valid = valid && _isOverdues.includes(false)
+              }
+              
+              break
+            }
+            
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -286,7 +536,7 @@ export default new Vuex.Store({
               break
             }
             case "taskTypeIds": {
-              let ids = _.map(facility.tasks, 'taskTypeId')
+              let ids = _.map(facility.tasks, 'taskTypeId').concat(_.flatten(_.map(facility.issues, 'taskTypeId') ))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -394,6 +644,10 @@ export default new Vuex.Store({
     activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
       return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
     },
+    getTaskIssueOverdueOptions: (state, getters) => {
+      return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "not overdue",name: "not overdue", value: "not overdue"}]
+    },
+
     currentTasks: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'tasks'))
     },
@@ -574,6 +828,7 @@ export default new Vuex.Store({
                       _id: _c_id,
                       parentId: t_id,
                       name: checklist.text,
+                      dueDate: checklist.dueDate,
                       duration: t_duration,
                       durationInDays: `${Math.ceil(t_duration / (1000 * 3600 * 24))} days`,
                       percent: checklist.checked ? 100 : 0,
@@ -603,7 +858,8 @@ export default new Vuex.Store({
       let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let stages = getters.taskStageFilter && getters.taskStageFilter.length ? _.map(getters.taskStageFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
-        
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
+
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'tasks')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
@@ -618,20 +874,29 @@ export default new Vuex.Store({
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
         }
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
 
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
+        }
         return valid
       })
 
     },
     filteredAllIssues: (state, getters) => {
+      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let ids = getters.issueTypeFilter && getters.issueTypeFilter.length ? _.map(getters.issueTypeFilter, 'id') : []
       let stages = getters.issueStageFilter && getters.issueStageFilter.length ? _.map(getters.issueStageFilter, 'id') : []
       let severities = getters.issueSeverityFilter && getters.issueSeverityFilter.length ? _.map(getters.issueSeverityFilter, 'id') : []
       let taskIssueDueDates = getters.taskIssueDueDateFilter
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
 
       return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'issues')), t => {
         let valid = true
         if (ids.length > 0) valid = valid && ids.includes(t.issueTypeId)
+        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
 
@@ -643,6 +908,14 @@ export default new Vuex.Store({
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
           valid = is_valid
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+          valid = (t.isOverdue == false)
         }
 
         return valid

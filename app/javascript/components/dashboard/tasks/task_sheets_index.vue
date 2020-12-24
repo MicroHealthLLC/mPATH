@@ -2,7 +2,7 @@
   <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="input-group w-90 task-search-bar">
+        <div class="input-group task-search-bar" style="width:280px">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
@@ -11,9 +11,10 @@
             placeholder="Search Tasks"
             aria-label="Search"
             aria-describedby="search-addon"
-            v-model="tasksQuery">
+            v-model="tasksQuery"
+            data-cy="search_tasks">
           </div>
-        <div class="simple-select mx-1 d-flex" style="width:35%">
+        <div class="simple-select mx-1 d-flex" style="width:20%">
 
           <multiselect
             v-model="C_taskTypeFilter"
@@ -33,24 +34,46 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select d-flex mr-2" style="width:30%">
-        <multiselect
-          v-model="viewList"
-          :options="listOptions"
-          :searchable="false"
-          :close-on-select="false"
-          :show-labels="false"
-          placeholder="Filter by Task Status"
-          >
-          <template slot="singleLabel">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{viewList}}</span>
-            </div>
-          </template>
-        </multiselect>
+        <div class="simple-select d-flex mr-1" style="width:18%">
+
+          <multiselect
+            v-model="viewList"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Task Status"
+            data-cy="task_status_list"
+            >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
 
-        <div class="form-check-inline font-sm mr-0" style="width:20%">
+        <div class="simple-select d-flex" style="width:18%">
+          <multiselect
+            v-model="C_taskIssueOverdueFilter"
+            track-by="name"
+            label="name"           
+            placeholder="Task and Issue Overdue"
+            :options="getTaskIssueOverdueOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
+        <div class="form-check-inline font-sm ml-auto">
           <label class="form-check-label mx-2">
             <input type="checkbox" class="form-check-input" v-model="C_myTasks">
             <i class="fas fa-user mr-1"></i>My Tasks
@@ -182,7 +205,7 @@
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
   // Vue.prototype.moment = moment
-  
+
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -208,6 +231,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -248,6 +272,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
@@ -267,6 +293,7 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -290,18 +317,31 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(task.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue){
+            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+            if(overdueFilterNames.includes("overdue")){
+              valid = (task.isOverdue == true)
+            }
+            if(overdueFilterNames.includes("not overdue")){
+              valid = (task.isOverdue == false)
+            }
+            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+              valid = true
+            }
           }
 
           if (search_query) valid = valid && search_query.test(task.text)
@@ -322,6 +362,14 @@
           return valid
         }), ['dueDate'])
         return tasks
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
       },
       C_taskTypeFilter: {
         get() {
@@ -388,10 +436,15 @@
     border-radius: 5px;
   }
   .sort-th {
-    font-size: .80rem !important;
+    font-size: .70rem !important;
+    cursor: pointer;
+    font-family: 'FuturaPTBook';
     text-align: center;
     position: relative;
     vertical-align: middle !important;
+  }
+   .sort-th > #text { 
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
   }
   input[type=search] {
     color: #383838;

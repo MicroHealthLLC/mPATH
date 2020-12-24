@@ -49,7 +49,7 @@
         Please fill the required fields before submitting
       </div>
       <div class="form-group mx-4">
-        <label class="font-sm"><h5>Issue Name:</h5></label>
+        <label class="font-sm"><h5>*Issue Name:</h5></label>
          <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="issue_on_watch">
                 <span v-show="DV_issue.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
                 <span v-show="!DV_issue.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
@@ -61,7 +61,7 @@
           type="text"
           class="form-control form-control-sm"
           v-model="DV_issue.title"
-          placeholder="Title"
+          placeholder="Issue Name"
           :readonly="!_isallowed('write')"
           :class="{'form-control': true, 'error': errors.has('title') }"
           data-cy="issue_title"
@@ -74,7 +74,7 @@
         <label class="font-sm">Description:</label>
         <textarea
           class="form-control"
-          placeholder="issue brief description"
+          placeholder="Issue brief description"
           v-model="DV_issue.description"
           rows="4"
           :readonly="!_isallowed('write')"
@@ -82,7 +82,7 @@
         />
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Issue Type:</label>
+        <label class="font-sm">*Issue Type:</label>
         <multiselect
           v-model="selectedIssueType"
           v-validate="'required'"
@@ -133,7 +133,7 @@
         </div>
       </div>
       <div class="simple-select form-group mx-4">
-        <label class="font-sm">Issue Severity:</label>
+        <label class="font-sm">*Issue Severity:</label>
         <multiselect
           v-model="selectedIssueSeverity"
           v-validate="'required'"
@@ -181,7 +181,7 @@
       </div>
       <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
-          <label class="font-sm">Start Date:</label>
+          <label class="font-sm">*Start Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_issue.startDate"
@@ -198,7 +198,7 @@
           </div>
         </div>
         <div class="form-group col-md-6 pr-0">
-          <label class="font-sm">Estimated Completion Date:</label>
+          <label class="font-sm">*Estimated Completion Date:</label>
           <v2-date-picker
             v-validate="'required'"
             v-model="DV_issue.dueDate"
@@ -223,7 +223,7 @@
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="projectUsers"         
+          :options="activeProjectUsers"         
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -256,18 +256,23 @@
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
         <div v-if="filteredChecks.length > 0">
        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
-          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3" v-if="!check._destroy && isMyCheck(check)">
+          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
-              <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-              <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Check point" type="text" class="checklist-text" :readonly="!_isallowed('write')">
-              <div class="simple-select form-group m-0">
+            <div class="row">
+              <div class="col justify-content-start">
+                <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here"  type="text" maxlength="80" class="checklist-text pl-1" :readonly="!_isallowed('write')">
+              </div>
+            </div>
+             <div class="row justify-content-end">             
+              <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
                   label="fullName"
                   placeholder="Search and select users"
-                  :options="projectUsers"
+                  :options="activeProjectUsers"
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
@@ -280,7 +285,25 @@
                   </template>
                 </multiselect>
               </div>
-            </div>
+               <div class="simple-select form-group col mb-0">
+                 <div class="float-right">
+                   <label class="font-sm dueDate">Due Date:</label>  
+                   <br/>              
+                    <v2-date-picker                    
+                      v-model="check.dueDate"
+                      :value="check.dueDate" 
+                      @selected="updateCheckItem($event, 'dueDate', index)"
+                      :key="`dueDate_${index}`"
+                      value-type="YYYY-MM-DD"
+                      format="DD MMM YYYY"
+                      placeholder="DD MM YYYY"
+                      name="dueDate"
+                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                    />
+                  </div>
+                </div>       
+               </div>
+            </div>  
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
           </div>
        </draggable>
@@ -382,6 +405,7 @@
         </paginate>
       </div>
       </div>
+       <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -470,7 +494,7 @@
       },
       loadIssue(issue) {
         this.DV_issue = {...this.DV_issue, ..._.cloneDeep(issue)}
-        this.issueUsers = _.filter(this.projectUsers, u => this.DV_issue.userIds.includes(u.id))
+        this.issueUsers = _.filter(this.activeProjectUsers, u => this.DV_issue.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_issue.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_issue.subTaskIds.includes(u.id))
         this.selectedIssueType = this.issueTypes.find(t => t.id === this.DV_issue.issueTypeId)
@@ -579,6 +603,9 @@
             for (let key in check) {
               if (key === 'user') key = 'user_id'
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+              if (key === "dueDate"){
+                  key = "due_date"
+              }
               formData.append(`issue[checklists_attributes][${i}][${key}]`, value)
             }
           }
@@ -675,6 +702,8 @@
           if (!event.target.value) this.DV_issue.checklists[index].checked = false
         } else if (name === 'check' && this.DV_issue.checklists[index].text) {
           this.DV_issue.checklists[index].checked = event.target.checked
+        } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
+          this.DV_task.checklists[index].dueDate = event.target.value
         }
       },
       isMyCheck(check) {
@@ -691,6 +720,7 @@
       ...mapGetters([
         'currentProject',
         'projectUsers',
+        'activeProjectUsers',
         'myActionsFilter',
         'issueTypes',
         'taskTypes',
@@ -828,10 +858,12 @@
     margin-left: 65px;
   }
   .checklist-text {
-    margin-left: 5px;
+    margin-left: 5px;    
     border: 0;
-    width: 92%;
+    width: 95%;
     outline: none;
+    border: solid #ededed 1px;
+    border-radius: 4px;  
   }
   .del-check {
     position: relative;
@@ -847,7 +879,7 @@
     padding: 0;
   }
   .drag {
-    cursor: all-scroll;
+    cursor: all-scroll;    
   }
  .formTitle {
     padding-top: 25px;
@@ -875,5 +907,8 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .check-due-date {
+    text-align: end;
   }
 </style>

@@ -1,3 +1,5 @@
+<!--  NOTE: This file is used in Facility Manager view as overview tab -->
+
 <template>
   <div id="facility-show">
     <div class="position-sticky" v-if="!loading">
@@ -10,7 +12,7 @@
       </div>
       <div>
         <div v-if="currentTab == 'overview'">
-          <div v-if="_isallowed('read')">
+          <div v-if="_isallowed('read')" class="fac-sum p-3">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div v-if="contentLoaded" class="f-body mt-3 p-2">
               <p class="mt-2">
@@ -65,8 +67,42 @@
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
               </p>
+              <p class="mt-2 d-flex align-items-center">
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                  <span style="font-weight:700; margin-right: 4px">Task Category: </span>
+                  <multiselect
+                    v-model="C_taskTypeFilter"
+                    track-by="name"
+                    label="name"
+                    class="ml-2 milestones w-50"
+                    placeholder="Filter by Task Category"
+                    :options="taskTypes"
+                    :searchable="false"
+                    :multiple="true"
+                    select-label="Select"
+                    deselect-label="Remove"
+                    >
+                    <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name'>{{option.name}}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </p>        
+              <p class="mt-2 d-flex align-items-center">
+                <span class="fbody-icon"><i class="fas fa-sliders-h"></i></span>
+                <span style="font-weight:700; margin-right: 4px">Data Set Filters:</span>
+                <p>
+                  <div v-for="filterArray in getAllFilterNames">
+                    <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
+                      <span style="font-weight:700;margin-left:10px">{{filterArray[1]}}: </span><span>{{getFilterValue(filterArray[0])}}</span>
+                    </div>
+                  </div>
+                </p>
+              </p>
+
               <hr>
-              <div class="my-1">
+              <div class="my-1 tasks">
                 <h5 class="text-center">{{filteredTasks.length}} Tasks</h5>
                 <div>
                   <div class="row">
@@ -110,7 +146,7 @@
                 </p>
               </div>
               <hr>
-              <div class="my-1">
+              <div class="my-1 issues">
                 <h5 class="text-center">{{filteredIssues.length}} Issues</h5>
                 <div>
                   <div class="row">
@@ -267,11 +303,17 @@
             key: 'issues',
             closable: false
           },
-           {
+          {
             label: 'Notes',
             key: 'notes',
             closable: false
           },
+          {
+            label: 'Risks (Coming soon)',
+            key: 'risks',
+            closable: false,
+            disabled: true
+          }
         ]
       }
     },
@@ -284,6 +326,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskTypeFilter',
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
@@ -336,6 +379,9 @@
     },
     computed: {
       ...mapGetters([
+        'taskTypes',
+        'getAllFilterNames',
+        'getFilterValue',
         'contentLoaded',
         'currentProject',
         'taskTypeFilter',
@@ -349,6 +395,14 @@
         'myActionsFilter',
         'onWatchFilter'
       ]),
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -552,5 +606,11 @@
       color: #dc3545;
       text-overflow: ellipsis;
     }
+  }
+  .fac-sum {  
+   border-radius: 2px;
+   margin-bottom: 8px;
+   background-color: #fff;
+   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
 </style>

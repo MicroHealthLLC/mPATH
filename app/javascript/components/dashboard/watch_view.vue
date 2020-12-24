@@ -1,8 +1,8 @@
 <template>
-  <div id="watch_view">
+  <div id="watch_view" data-cy="watch_view">
     <div class="row">
       <div class="col">
-        <div class="watch-task-timeline p-4 mb-4">
+        <div class="watch-task-timeline p-4 mb-4" data-cy="watch_task_timeline">
           <h5 class="mb-2">On Watch Timeline</h5>
           <div id="watch_task_timeline"></div>
         </div>
@@ -12,19 +12,19 @@
       <div class="col-md-7">
         <div class="row">
           <div class="col-md-4">
-            <div class="blue-box w-100 h-100 text-center p-3">
+            <div class="blue-box w-100 h-100 text-center p-3" data-cy="total_watched_tasks">
               <h6 class="px-3">Total Number of Watched Tasks</h6>
               <h1 class="px-3">{{on_watched.tasks.length}}</h1>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="blue-box w-100 h-100 text-center p-3">
+            <div class="blue-box w-100 h-100 text-center p-3" data-cy="total_watched_issues">
               <h6 class="px-3">Total Number of Watched Issues</h6>
               <h1 class="px-3">{{on_watched.issues.length}}</h1>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="blue-box w-100 h-100 text-center p-3">
+            <div class="blue-box w-100 h-100 text-center p-3" data-cy="total_watched_facilities">
               <h6 class="px-3">Facilities on Watch</h6>
               <h1 class="px-3">{{on_watched.facilities.length}}</h1>
             </div>
@@ -32,7 +32,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-4">
-            <div class="d_chart_box text-center">
+            <div class="d_chart_box text-center" data-cy="in_progress_tasks">
               <h6 class="py-2 px-3 text-center">Watched Task Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedTasksCompletionData" :width="200" :height="100" />
@@ -41,7 +41,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="d_chart_box text-center">
+            <div class="d_chart_box text-center" data-cy="in_progress_issues">
               <h6 class="py-2 px-3 text-center">Watched Issue Progress</h6>
               <div class="d_chart">
                 <doughnut :chart-data="watchedIssuesCompletionData" :width="200" :height="100" />
@@ -50,7 +50,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="blue-box w-100 h-75 text-center p-3 pb-5">
+            <div class="blue-box w-100 h-75 text-center p-3 pb-5" data-cy="overdue_details">
               <div class="warning-icon" v-tooltip="`overdue`"><i class="fa fa-exclamation-triangle"></i></div>
               <h6 class="px-3">Overdue Tasks and Issues</h6>
               <h1 class="px-3">{{overdueTasksNIssues.length}}</h1>
@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-5" data-cy="watched_facilities">>
         <div class="border-gray h-330">
           <h5 class="mb-2">Watched Facilities, Status and % Progress</h5>
           <div v-if="contentLoaded">
@@ -80,7 +80,7 @@
                 </div>
               </div>
             </div>
-            <div v-else class="p-2 text-danger">No Data Found..</div>
+            <div v-else class="p-2 text-danger" data-cy="no_facility_found">No Data Found..</div>
           </div>
           <div v-else class="my-4">
             <loader type="code"></loader>
@@ -89,11 +89,11 @@
       </div>
     </div>
 
-    <div class="border-gray mt-3">
+    <div class="border-gray mt-3" data-cy="watched_task_status">
       <h5 class="px-3 mb-2">Watched Tasks Stats</h5>
       <div class="row">
         <div class="col-md-6">
-          <div class="border-gray h-330">
+          <div class="border-gray h-330" data-cy="watched_task_categories">
             <h5 class="mb-2">Watched Task Categories Progressions</h5>
             <div v-if="contentLoaded">
               <div v-if="displayWatchedTaskTypes">
@@ -111,7 +111,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else class="p-2 text-danger">No Data Found..</div>
+              <div v-else class="p-2 text-danger" data-cy="no_task_category_found">No Data Found..</div>
             </div>
             <div v-else class="my-4">
               <loader type="code"></loader>
@@ -119,7 +119,7 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="wacthed-task-list">
+          <div class="wacthed-task-list" data-cy="watched_task_list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Tasks</h5>
               <div v-if="contentLoaded">
@@ -137,7 +137,7 @@
                     ></task-show>
                   </div>
                 </div>
-                <div v-else class="p-2 text-danger">No Data Found..</div>
+                <div v-else class="p-2 text-danger" data-cy="no_task_found">No Data Found..</div>
               </div>
               <div v-else class="my-4">
                 <loader type="code"></loader>
@@ -147,11 +147,11 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-6" data-cy="watched_tasks_vs_total">
           <h6 class="px-3 text-center">Watched Task Categories vs Total</h6>
           <stacked :chart-data="onWatchedTaskData" :width="300" :height="100" />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" data-cy="assigned_task_users">
           <h6 class="px-3">Assigned Users</h6>
           <bar :chart-data="watchedTaskUsers" :width="300" :height="watchedTaskUsersHeight" />
           <p class="mt-2 text-center">Total Assigned Tasks and Checklist Items</p>
@@ -159,11 +159,11 @@
       </div>
     </div>
 
-    <div class="border-gray mt-4">
+    <div class="border-gray mt-4" data-cy="watched_issue_status">
       <h5 class="px-3 mb-2">Watched Issues Stats</h5>
       <div class="row">
         <div class="col-md-6">
-          <div class="border-gray h-330">
+          <div class="border-gray h-330" data-cy="watched_issue_types">
             <h5 class="mb-2">Watched Issue Types</h5>
             <div v-if="contentLoaded">
               <div v-if="displayWatchedIssueTypes">
@@ -181,7 +181,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else class="p-2 text-danger">No Data Found..</div>
+              <div v-else class="p-2 text-danger" data-cy="no_issue_category_found">No Data Found..</div>
             </div>
             <div v-else class="my-4">
               <loader type="code"></loader>
@@ -189,7 +189,7 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="watched-issue-list">
+          <div class="watched-issue-list" data-cy="watched_issue_list">
             <div class="watched-list">
               <h5 class="py-2 px-3">Watched Issues</h5>
               <div v-if="contentLoaded">
@@ -207,7 +207,7 @@
                     ></issue-show>
                   </div>
                 </div>
-                <div v-else class="p-2 text-danger">No Data Found..</div>
+                <div v-else class="p-2 text-danger" data-cy="no_issue_found">>No Data Found..</div>
               </div>
               <div v-else class="my-4">
                 <loader type="code"></loader>
@@ -218,11 +218,11 @@
       </div>
 
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-6" data-cy="watched_issues_vs_total">
           <h6 class="px-3 text-center">Watched Issues vs Total</h6>
           <stacked :chart-data="onWatchedIssueData" :width="300" :height="100" />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" data-cy="assigned_issue_users">
           <h6 class="px-3">Assigned Users</h6>
           <bar :chart-data="watchedIssueUsers" :width="300" :height="watchedIssueUsersHeight" />
           <p class="mt-2 text-center">Total Assigned Issues and Checklist Items</p>

@@ -1,12 +1,11 @@
 .body-wrapper
   .mt-4.container
-    h1
+    h1.text-center
       | Welcome to MicroHealth Geographical Information System
     br
     ul.list-group
       -if @active_projects.size > 0
         - @active_projects.each do |project|
-          - facility_projects = @facility_projects_hash[project.id] || []
           li.list-group-item
             .row
               .col-12
@@ -16,7 +15,7 @@
                       span
                         ="#{project.name} "
                       span.font-weight-bold
-                        ="(#{facility_projects.map(&:facility_id).compact.uniq.size} Facilities)"
+                        ="(#{project.facilities.size} Facilities)"
                 .mt-2.d-flex.align-items-center
                   - fp = project.facility_projects
                   -progs = fp.map(&:progress)
@@ -31,5 +30,5 @@
                       span.badge.badge-secondary.badge-pill
                         ="#{f.size}"
       -else
-        li.list-group-item.text-center
+        li.list-group-item.text-center data-cy="not_access_projects"
           | Currently you dont have permissions to access projects

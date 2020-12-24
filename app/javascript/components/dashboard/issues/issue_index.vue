@@ -11,20 +11,82 @@
       />
     </div>
     <div v-else>
-       <div class="input-group w-100">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+
+    <div class="d-flex align-item-center justify-content-between w-100">
+        <div class="input-group w-100">
+            <div class="input-group-prepend d-inline">
+              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="search"
+                style="height:30px"
+                class="form-control form-control-sm"
+                placeholder="Search Issues"
+                aria-label="Search"
+                aria-describedby="search-addon"
+                v-model="issuesQuery"
+                data-cy="search_issues">
+         </div>
+          <div class="simple-select w-100 ml-1 font-sm">
+            <multiselect
+              v-model="C_taskTypeFilter"
+              track-by="name"
+              label="name"
+              placeholder="Filter by Task Category"
+              :options="taskTypes"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
           </div>
-          <input type="search" 
-              class="form-control form-control-sm" 
-              placeholder="Search Issues" 
-              aria-label="Search" 
-              aria-describedby="search-addon" 
-              v-model="issuesQuery">
+     </div>
+      <div class="d-flex font-sm w-100">        
+        <div class="simple-select enum-select w-100">
+          <multiselect
+            v-model="viewList"
+            style="width:100%"
+            :options="listOptions"
+            :searchable="false"
+            :close-on-select="false"
+            :show-labels="false"
+            placeholder="Filter by Issue Status"
+            data-cy="issue_status_list"
+          >
+            <template slot="singleLabel">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{viewList}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+         <div class="simple-select w-100 ml-1">
+            <multiselect
+              v-model="C_taskIssueOverdueFilter"
+              track-by="name"
+              label="name"            
+              placeholder="Task and Issue Overdue"
+              :options="getTaskIssueOverdueOptions"
+              :searchable="false"
+              :multiple="true"
+              select-label="Select"
+              deselect-label="Remove"
+              >
+              <template slot="singleLabel" slot-scope="{option}">
+                <div class="d-flex">
+                  <span class='select__tag-name'>{{option.name}}</span>
+                </div>
+              </template>
+            </multiselect>
+          </div>      
       </div>
 
-
-         <div class="d-flex align-item-center justify-content-between mt-2 100">          
+         <div class="d-flex align-item-center justify-content-between w-100">
           <div class="simple-select w-100 mr-1">
             <multiselect
               v-model="C_issueTypeFilter"
@@ -43,7 +105,7 @@
                 </div>
               </template>
             </multiselect>
-          </div>         
+          </div>
           <div class="simple-select w-100">
             <multiselect
               v-model="C_issueSeverityFilter"
@@ -64,53 +126,14 @@
             </multiselect>
           </div>
       </div>
-
-      <div class="mt-1 d-flex font-sm w-100">
-         <div class="simple-select w-100 mr-1">
-            <multiselect
-              v-model="C_taskTypeFilter"
-              track-by="name"
-              label="name"
-              placeholder="Filter by Task Category"
-              :options="taskTypes"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-          </div>
-        <div class="simple-select enum-select w-100">
-          <multiselect
-            v-model="viewList"
-            style="width:100%"
-            :options="listOptions"
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Issue Status"
-          >
-            <template slot="singleLabel">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>       
-      </div>
       <div class="mt-3">
-        <button v-if="_isallowed('write')" 
-           class="btn btn-sm btn-primary addIssueBtn" 
+        <button v-if="_isallowed('write')"
+           class="btn btn-sm btn-primary addIssueBtn"
            @click.prevent="addNewIssue"><i class="fas fa-plus-circle mr-2" data-cy="new_issue"></i>
           Add Issue
           </button>
          <button
-           @click.prevent="download"      
+           @click.prevent="download"
            class="btn btn-sm btn-dark export2pdf">
            <font-awesome-icon icon="file-pdf" />
            Export to PDF
@@ -118,7 +141,7 @@
        <div class="form-check-inline font-sm myIssues mt-1 mr-0">
           <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issue
+            <i class="fas fa-user mr-1"></i>My Issues
           </label>
           <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
@@ -126,19 +149,19 @@
           </label>
         </div>
         <div v-if="_isallowed('read')">
-          <div v-if="filteredIssues.length > 0">          
+          <div v-if="filteredIssues.length > 0">
             <!-- <button
               disabled
               id="printBtn"
               class="btn btn-sm btn-outline-dark ml-2">
               Export to Excel
-            </button> -->           
+            </button> -->
             <hr/>
             <issue-show
               v-for="(issue, i) in filteredIssues"
               id="issueHover"
               :class="{'b_border': !!filteredIssues[i+1]}"
-              :key="issue.id"             
+              :key="issue.id"
               :issue="issue"
               :from-view="from"
               @issue-edited="issueEdited"
@@ -233,6 +256,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setTaskTypeFilter',
         'setIssueSeverityFilter',
@@ -287,6 +311,8 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'currentProject',
@@ -314,6 +340,7 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -339,18 +366,31 @@
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
-            }            
+            }
             valid = is_valid
           }
 
           if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            
+
             var is_valid = true
             var nDate = moment(issue.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
+          }
+
+          if(taskIssueOverdue){
+            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
+            if(overdueFilterNames.includes("overdue")){
+              valid = (issue.isOverdue == true)
+            }
+            if(overdueFilterNames.includes("not overdue")){
+              valid = (issue.isOverdue == false)
+            }
+            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+              valid = true
+            }
           }
 
           if (search_query) valid = valid && search_query.test(issue.title)
@@ -372,6 +412,14 @@
         })), ['dueDate'])
 
         return issues
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
       },
       C_issueTypeFilter: {
         get() {
@@ -425,7 +473,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
   }
@@ -433,11 +481,11 @@
     position: relative;
     padding-top: 80px !important;
   }
-  input[type=search] { 
-    color: #383838;  
+  input[type=search] {
+    color: #383838;
     text-align: left;
     cursor: pointer;
-    display: block;                
+    display: block;
   }
   .myIssues {
     float:right;
@@ -445,8 +493,5 @@
   }
   .addIssueBtn, .export2pdf, #issueHover {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  #issueHover {
-    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
   }
 </style>

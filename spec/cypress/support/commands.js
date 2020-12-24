@@ -48,7 +48,6 @@ Cypress.Commands.add("openTeam", () => {
 Cypress.Commands.add("openKanban", () => {
   cy.openProject()
   cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
-  cy.facilityUnderGroup()
 })
 
 // Open Sheet view of a project
@@ -61,4 +60,22 @@ Cypress.Commands.add("openSheet", () => {
 Cypress.Commands.add("openFacilitySheet", () => {
   cy.openSheet()
   cy.facilityUnderGroup()
+})
+
+// Open On watch view of a project
+Cypress.Commands.add("openOnWatch", () => {
+  cy.openProject()
+  cy.get('[data-cy=on_watch_tab]').contains('On Watch').should('be.visible').click()
+})
+
+// Open map view of a project
+Cypress.Commands.add("openMap", () => {
+  cy.openProject()
+  cy.get('[data-cy=map_tab]').contains('Map').should('be.visible').click()
+})
+
+// Open gantt view of a project
+Cypress.Commands.add("openGantt", () => {
+  cy.openProject()
+  cy.get('[data-cy=gantt_tab]').contains('Gantt').should('be.visible').click()
 })

@@ -19,7 +19,11 @@ admin.privilege = Privilege.new(
   gantt_view: "RWD",
   watch_view: "RWD",
   documents: "RWD",
-  members: "RWD"
+  members: "RWD",
+  facility_manager_view: "R",
+  sheets_view: "R",
+  kanban_view: "R",
+  risks: "R"
 )
 admin.save(validate: false)
 
@@ -29,8 +33,24 @@ client.assign_attributes(
   password_confirmation: 'T3$tClient',
   title: 'Mr.',
   first_name: 'Test',
-  role: "superadmin",
-  last_name: 'Client'
+  last_name: 'Client',
+  role: 'client'
+)
+client.privilege = Privilege.new(
+  overview: "R",
+  tasks: "R",
+  notes: "R",
+  issues: "R",
+  admin: "R",
+  map_view: "R",
+  gantt_view: "R",
+  watch_view: "R",
+  documents: "R",
+  members: "R",
+  facility_manager_view: "R",
+  sheets_view: "R",
+  kanban_view: "R",
+  risks: "R"
 )
 client.save(validate: false)
 
@@ -43,9 +63,11 @@ project = Project.find_or_create_by(
   description: 'Test project description',
   project_type_id: project_type.id
 )
-
+ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
 active_status = Status.find_or_create_by(name: 'Active', color: '#0b8e1a')
 inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
+ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
+ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
 task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage')
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage')
@@ -82,6 +104,13 @@ facility_project_1 = FacilityProject.find_or_create_by(
   facility_id: facility_1.id,
   status_id: active_status.id,
   due_date: Date.today + 10.days
+)
+
+Note.find_or_create_by(
+  noteable_type: 'FacilityProject',
+  noteable_id: facility_project_1.id,
+  user_id: admin.id,
+  body: 'Test Note 1'
 )
 
 test_task_1 = Task.find_or_create_by(
@@ -162,6 +191,13 @@ facility_project_2 = FacilityProject.find_or_create_by(
   facility_id: facility_2.id,
   status_id: inactive_status.id,
   due_date: Date.today + 10.days
+)
+
+Note.find_or_create_by(
+  noteable_type: 'FacilityProject',
+  noteable_id: facility_project_2.id,
+  user_id: admin.id,
+  body: 'Test Note 2'
 )
 
 test_task_2 = Task.find_or_create_by(

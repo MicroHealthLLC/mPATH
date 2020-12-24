@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :project_users, dependent: :destroy
   has_many :projects, through: :project_users
   has_many :facilities
+  has_many :risks
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
 
@@ -66,7 +67,7 @@ class User < ApplicationRecord
     json = super(options)
     json.merge(
       full_name: full_name,
-      organization: organization.try(:title)
+      organization: organization.try(:title)  || ""
     ).as_json
   end
 

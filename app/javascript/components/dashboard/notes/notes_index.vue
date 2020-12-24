@@ -15,7 +15,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
-            <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery">
+            <input type="search" class="form-control form-control-sm" placeholder="Search Notes" aria-label="Search" aria-describedby="search-addon" v-model="notesQuery" data-cy="search_notes">
           </div>
         </div>
       </div>
@@ -36,14 +36,16 @@
         </div>
       </div>
       <hr/>
-      <div v-if="_isallowed('read')">
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes">
+      <div v-if="_isallowed('read')" >
+        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" class="mb-2">
           <notes-show
             :facility="DV_facility"
             :note="note"
+            id="notesHover"
             :from="from"
             @note-updated="noteUpdated"
             @note-deleted="noteDeleted"
+            class="notes"
           ></notes-show>
         </div>
         <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
@@ -145,5 +147,17 @@
     text-align: left;
     cursor: pointer;
     display: block;
+  }
+  .addNote{
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .notes{
+    padding:8px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  #notesHover:hover {
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
+    background-color: rgba(91, 192, 222, 0.3);
+    border-left: solid rgb(91, 192, 222);
   }
 </style>
