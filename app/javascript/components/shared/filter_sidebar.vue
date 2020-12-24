@@ -597,13 +597,13 @@ export default {
       let hash = Object.assign({}, this.progressFilter[option.variable])
       let error = ""
       if (this.exists(input)) {
-        if (input < 0) input = 0
+        if (input < 0 || input === "") input = 0
         if (input > 100) input = 100
         if ( (option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) {
           error = "Min should not be greator than Max."
         }
       }
-      hash[option.type] = (input == "" ? input : Number(input) )
+      hash[option.type] = (input <= 0 ? 0 : Number(input) )
       if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
@@ -681,7 +681,7 @@ export default {
     },
     "progressFilter.taskIssue": {
       handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
+        if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
           value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
           this.setTaskIssueProgressFilter([value])
         } else if (value.min == "" && value.max == "") {
