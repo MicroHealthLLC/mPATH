@@ -25,29 +25,15 @@ describe('Notes Page', function() {
 
   it('Delete the note, after open the note from the form delete button', function() {
     cy.get('[data-cy=notes]').its('length').should('be.eq', 1)
-    cy.get('[data-cy=notes]').first().within(() => {
-      cy.get('[data-cy=note_edit_icon]').click()
-    })
+    cy.get('[data-cy=notes]').first().click()
     cy.get('[data-cy=note_delete_btn]').click()
     cy.get('[data-cy=notes]').should('not.exist')
     cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
     cy.logout()
   })
 
-  it('Delete the note, without open it using delete icon', function() {
-    cy.get('[data-cy=notes]').its('length').should('be.eq', 1)
-    cy.get('[data-cy=notes]').first().within(() => {
-      cy.get('[data-cy=note_delete_icon]').click()
-    })
-    cy.get('[data-cy=notes]').should('not.exist')
-    cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
-    cy.logout()
-  })
-
   it('Update note description', function() {
-    cy.get('[data-cy=notes]').first().within(() => {
-      cy.get('[data-cy=note_edit_icon]').click()
-    })
+    cy.get('[data-cy=notes]').first().click()
     cy.get('[data-cy=note_details]').clear().type('Updated new test note').should('have.value', 'Updated new test note')
     cy.get('[data-cy=note_save_btn]').click()
     cy.get('[data-cy=note_list]').contains('Updated new test note').should('be.visible')
@@ -55,9 +41,7 @@ describe('Notes Page', function() {
   })
 
   it("In note's form if details not given save button must be disabled", function() {
-    cy.get('[data-cy=notes]').first().within(() => {
-      cy.get('[data-cy=note_edit_icon]').click()
-    })
+    cy.get('[data-cy=notes]').first().click()
     cy.get('[data-cy=note_details]').clear()
     cy.get('[data-cy=note_save_btn]').should('be.disabled')
     cy.get('[data-cy=note_close_btn]').click()

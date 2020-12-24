@@ -47,7 +47,7 @@
     </div>
     <hr>
 
-    <div class="my-3 tasks p-3" data-cy="tasks_summary">
+    <div class="my-3 tasks p-3" data-cy="date_set_filter">
       <h5 class="text-center">Data Set Filters</h5>
       <hr>
       <div>
@@ -110,7 +110,7 @@
         <loader type="code"></loader>
       </div>
     </div>
-  
+
     <div class="my-3 issues p-3" data-cy="issues_summary">
       <h5 class="text-center"><span v-if="contentLoaded">{{filteredIssues.length}}</span> Issues</h5>
      <hr>
@@ -395,12 +395,12 @@ export default {
     font-size: small;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .fac-proj-status, .tasks, .issues, .fac-groups {  
+  .fac-proj-status, .tasks, .issues, .fac-groups {
    border-radius: 2px;
    background-color: #fff;
    box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
-  // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {    
+  // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {
   //  background-color: #fff;
   // }
 </style>

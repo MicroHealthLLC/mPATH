@@ -20,6 +20,7 @@ import './tasks'
 import './issues'
 import './notes'
 import './facility'
+import './filter'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
