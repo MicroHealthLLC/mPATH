@@ -56,15 +56,6 @@
               @note-updated="updatedFacilityNote"
             ></notes-form>
 
-            <risk-form
-              v-else-if="managerView.risk"
-              from="manager_view"
-              :facility="currentFacility"
-              :risk="managerView.risk"
-              @risk-created="updateFacilityRisk"
-              @risk-updated="updateFacilityRisk"
-            ></risk-form>
-
             <div v-else class="center-section text-center">
               <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
               <p>View, Add or Edit Tasks, Issues, and Notes here.</p>
@@ -84,7 +75,6 @@
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
-  import RiskForm from "./risks/risk_form"
 
   export default {
     name: "FacilityManagerView",
@@ -94,8 +84,7 @@
       FacilitySidebar,
       TaskForm,
       IssueForm,
-      NotesForm,
-      RiskForm
+      NotesForm
     },
     data() {
       return {
@@ -123,7 +112,6 @@
       ...mapMutations([
         'updateTasksHash',
         'updateIssuesHash',
-        'updateRisksHash',
         'setTaskForManager'
       ]),
       ...mapActions([
@@ -153,11 +141,6 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'issue', value: null})
       },
-      updateFacilityRisk(risk) {
-        let cb = () => this.updateRisksHash({risk: risk})
-        this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.setTaskForManager({key: 'risk', value: null})
-      },
       createdFacilityNote(note) {
         this.currentFacility.notes.unshift(note)
         this.setTaskForManager({key: 'note', value: null})
@@ -171,7 +154,6 @@
         this.setTaskForManager({key: 'task', value: null})
         this.setTaskForManager({key: 'issue', value: null})
         this.setTaskForManager({key: 'note', value: null})
-        this.setTaskForManager({key: 'risk', value: null})
       }
     },
     watch: {
@@ -228,9 +210,12 @@
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow-y: auto;
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
     }
+    
     .default-background {
       background-color: #ededed;
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
       height: calc(100vh - 130px);
       max-height: calc(100vh - 130px);
       position: relative;
@@ -239,7 +224,7 @@
     }
     .center-section {
       position: absolute;
-      box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+      box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
       border-radius: 2px;
       padding: 10px;
       top: 50%;
