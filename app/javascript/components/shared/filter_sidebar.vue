@@ -1,14 +1,15 @@
 <!-- NOTE: This file is used Global filter view in left side -->
 <template>
 
-  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
+  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick" data-cy="filter_bar">
 
-    <div id="filter_bar" class="container shadow-sm">
+    <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
+
       <!-- First row: Filter View Title/Header -->
       <div class="row pt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
@@ -34,7 +35,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Project Status</label>
-              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -58,7 +59,7 @@
           <div class="col-md-6">
             <div>
               <label class="font-sm mb-0">Facility Group</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true">
+              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -68,7 +69,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Facility Name</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
@@ -91,7 +92,7 @@
             <h5>Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Category</label>
-              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -101,7 +102,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Task Users</label>
-              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_user">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.fullName}}</span>
@@ -111,7 +112,7 @@
             </div>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Task Stages</label>
-              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -136,7 +137,7 @@
             <h5>Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Type</label>
-              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -146,7 +147,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Issue Users</label>
-              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.fullName}}</span>
@@ -189,7 +190,7 @@
           </div>
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
-            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227             
+            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227
             <div>
               <label class="font-sm mb-0">My Actions</label>
               <multiselect v-model="C_myActionsFilter" track-by="name" label="name" :options="myActions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -199,7 +200,7 @@
                   </div>
                 </template>
               </multiselect>
-            </div> 
+            </div>
             <div v-if="viewPermit('watch_view', 'read')">
               <label class="font-sm mb-0">On Watch</label>
               <multiselect v-model="C_onWatchFilter" track-by="name" label="name" :options="onWatch" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -242,12 +243,11 @@
                 </multiselect>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
-    <div class="knocker" @click.prevent="toggleFilters">
+    <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
         <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
     </div>
   </div>

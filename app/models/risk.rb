@@ -1,19 +1,10 @@
 class Risk < ApplicationRecord
   include Normalizer
-  default_scope {order(due_date: :asc)}
+  include Tasker
 
   belongs_to :user
-  belongs_to :facility_project
   belongs_to :risk_milestone
-  has_many :checklists, as: :listable, dependent: :destroy
   has_many_attached :risk_files, dependent: :destroy
-
-  has_many :related_tasks, as: :relatable, dependent: :destroy
-  has_many :related_issues, as: :relatable, dependent: :destroy
-  has_many :related_issues, as: :relatable, dependent: :destroy
-  has_many :sub_tasks, through: :related_tasks
-  has_many :sub_issues, through: :related_issues
-  has_many :sub_risks, through: :related_risks
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
 
@@ -21,15 +12,8 @@ class Risk < ApplicationRecord
   validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description, :start_date, :due_date
 
-  validates_numericality_of :progress, greater_than_or_equal_to: 0, less_than_or_equal_to: 100
-  accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :facility_project, reject_if: :all_blank
-
   before_validation :cast_constants_to_i
-  before_save :check_watched, if: :watched_changed?
-
-  scope :complete, -> {where("progress = ?", 100)}
-  scope :incomplete, -> {where("progress < ?", 100)}
+  before_destroy :nuke_it!
 
   def files_as_json
     risk_files.map do |file|
@@ -39,6 +23,40 @@ class Risk < ApplicationRecord
         uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
       }
     end.as_json
+  end
+
+  def to_json
+    attach_files = []
+    rf = self.risk_files
+    if rf.attached?
+      attach_files = rf.map do |file|
+        {
+          id: file.id,
+          name: file.blob.filename,
+          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
+        }
+      end
+    end
+    fp = self.facility_project
+    sub_tasks = self.sub_tasks
+    sub_issues = self.sub_issues
+    sub_risks = self.sub_risks
+
+    self.as_json.merge(
+      class_name: self.class.name,
+      attach_files: attach_files,
+      is_overdue: progress < 100 && (due_date < Date.today),
+      checklists: checklists.as_json,
+      facility_id: fp.try(:facility_id),
+      facility_name: fp.try(:facility)&.facility_name,
+      project_id: fp.try(:project_id),
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_risks: sub_risks.as_json(only: [:risk_description, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
+    ).as_json
   end
 
   def manipulate_files(params)
@@ -53,12 +71,8 @@ class Risk < ApplicationRecord
     end
   end
 
-  def project
-    facility_project.try(:project)
-  end
-
-  def facility
-    facility_project.try(:facility)
+  def nuke_it!
+    RelatedRisk.where(risk_id: self.id).or(RelatedRisk.where(relatable: self)).destroy_all
   end
 
   private
@@ -66,9 +80,5 @@ class Risk < ApplicationRecord
     self.probability = self.probability.to_i
     self.impact_level = self.impact_level.to_i
     self.priority_level = self.probability * self.impact_level
-  end
-
-  def check_watched
-    self.watched_at = DateTime.now
   end
 end

@@ -20,13 +20,19 @@
             </el-col>            
             <div class="total" data-cy="team_total">                 
               <button
-                @click.prevent="download"
+                @click.prevent="exportToPdf"
+                v-tooltip="`Export to PDF`"
                 id="printBtn"
-                class="btn btn-sm btn-dark">
-                <font-awesome-icon icon="file-pdf" class="mr-2" />
-                Export to PDF
-              </button>      
-              <button class="btn btn-sm btn-info team-total">
+                class="btn btn-md exportBtns text-light">
+                <font-awesome-icon icon="file-pdf" />              
+              </button>     
+               <button
+                v-tooltip="`Export to Excel`"
+                @click.prevent="exportToExcel('table', 'Team Members List')"
+                class="btn btn-md exportBtns text-light">
+                <font-awesome-icon icon="file-excel"/>         
+              </button> 
+              <button class="btn btn-md btn-info team-total">
                 Team Total: {{tableData.length}}
                 </button>
               </div>
@@ -66,6 +72,32 @@
         </el-table-column>
       </data-tables>
      </div>
+     <div style="display:none">
+        <table class="table table-sm table-bordered" ref="table">        
+          <thead>
+            <tr>
+              <th></th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Position</th>
+              <th>Organization</th>
+              <th>Phone Number</th>
+              <th>Email</th>                     
+            </tr>
+          </thead>
+          <tbody>          
+            <tr v-for="(user, i) in orderedUsers">        
+              <td class="text-center">{{i+1}}</td>
+              <td>{{user.firstName}}</td>
+              <td>{{user.lastName}}</td>
+              <td>{{user.title}}</td>
+              <td>{{user.organization}}</td>             
+              <td>{{user.phoneNumber}}</td>
+              <td>{{user.email}}</td>                        
+            </tr>
+          </tbody>
+        </table>
+     </div>
   </div>
 
 </template>
@@ -84,6 +116,10 @@ ELEMENT.locale(ELEMENT.lang.en)
     name: "TeamMembersView",
      data() {
       return {
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) },
         search: '',
         total: 0,
         totalRows: 1,
@@ -125,15 +161,18 @@ ELEMENT.locale(ELEMENT.lang.en)
       ]),
       tableData() {
         return this.activeProjectUsers
+      },
+      orderedUsers: function() {     
+        return _.orderBy(this.activeProjectUsers, 'lastName', 'asc')    
       }
-    },  
+     },
      methods: { 
        tableHeaderColor({ row, column, rowIndex, columnIndex }) {
         if (rowIndex === 0) {
           return 'background-color: #606266;color: #383838;'
         }
        },
-      download() {
+      exportToPdf() {
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
         var headers = ["id", "First Name", "Last Name","Position", "Organization", "Phone Number", "Email"]
@@ -147,6 +186,11 @@ ELEMENT.locale(ELEMENT.lang.en)
         doc.autoTable({html: '.el-table .el-table__body-wrapper .el-table__body' })
         doc.save("Team_Members_list.pdf")
         thead.remove()
+      }, 
+      exportToExcel(table, name){      
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       }
     },     
   }

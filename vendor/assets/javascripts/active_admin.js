@@ -1460,7 +1460,7 @@ jQuery(function($) {
 
     // Add this in input element
     //"data-task-stage-data" => TaskStage.where.not(id: f.object.task_stage_ids).map{|u| {id: u.id, text: u.name}}.to_json
-    // NOTE: Select2 is not working as expected. It is not preserving order of selected items: 
+    // NOTE: Select2 is not working as expected. It is not preserving order of selected items:
     // https://github.com/select2/select2/issues/3106#issuecomment-333341636
     // http://jsfiddle.net/L6163yc9/4
 
@@ -1470,7 +1470,6 @@ jQuery(function($) {
     // })
     // $("#project_task_stage_alt").on('select2:select', function(e) {
     //   var element = $(e.params.data.element);
-    //   debugger;
     //   if (element.length) {
     //     $(this).append(element);
     //     $(this).trigger('change');
@@ -1695,16 +1694,20 @@ jQuery(function($) {
             facility_id: '',
             sub_tasks: [],
             sub_issues: [],
+            sub_risks: [],
             sub_task_ids: [],
             sub_issue_ids: [],
+            sub_risk_ids: [],
             persist: {
               task_ids: [],
               issue_ids: [],
+              risk_ids: [],
               project_id: '',
               facility_id: ''
             },
             tasks: [],
-            issues: []
+            issues: [],
+            risks: []
           }
         },
         mounted() {
@@ -1718,9 +1721,11 @@ jQuery(function($) {
             this.facility_id = $(`#${this.type}_facility_project_attributes_facility_id`).val();
             this.sub_task_ids = $(`#${this.type}_sub_task_ids`).val().map(Number);
             this.sub_issue_ids = $(`#${this.type}_sub_issue_ids`).val().map(Number);
+            this.sub_risk_ids = $(`#${this.type}_sub_risk_ids`).val().map(Number);
             if (opt.persist) {
               this.persist.task_ids = this.sub_task_ids;
               this.persist.issue_ids = this.sub_issue_ids;
+              this.persist.risk_ids = this.sub_risk_ids;
               this.persist.project_id = this.project_id;
               this.persist.facility_id = this.facility_id;
             }
@@ -1729,6 +1734,7 @@ jQuery(function($) {
             if (this.project_id == this.persist.project_id) {
               this.sub_task_ids = this.persist.task_ids;
               this.sub_issue_ids = this.persist.issue_ids;
+              this.sub_risk_ids = this.persist.risk_ids;
             }
             this.fetchProjectTaskIssues()
           },
@@ -1736,8 +1742,10 @@ jQuery(function($) {
             $.get(`/api/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
+              this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
               this.sub_tasks = this.tasks.filter(t => t.id && this.sub_task_ids.includes(t.id));
               this.sub_issues = this.issues.filter(t => this.sub_issue_ids.includes(t.id));
+              this.sub_risks = this.risks.filter(t => this.sub_risk_ids.includes(t.id));
               this.loading = false;
             });
           }
@@ -1756,6 +1764,12 @@ jQuery(function($) {
             handler(value) {
               this.sub_issue_ids = value.map(u => u.id);
               if (value) $(`#${this.type}_sub_issue_ids`).val(this.sub_issue_ids);
+            }, deep: true
+          },
+          sub_risks: {
+            handler(value) {
+              this.sub_risk_ids = value.map(u => u.id);
+              if (value) $(`#${this.type}_sub_risk_ids`).val(this.sub_risk_ids);
             }, deep: true
           }
         },
@@ -1803,6 +1817,30 @@ jQuery(function($) {
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name'>{{option.title}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </li>
+
+            <li class='select input optional d-flex mt-10 p-0' id='sub_risk_multiple'>
+              <label for='sub_risk_multiple' class='label'>Related Risks</label>
+              <div v-if="!loading" class="user_multiselect">
+                <multiselect
+                  v-model="sub_risks"
+                  track-by="id"
+                  label="risk_description"
+                  placeholder="Search and select Related-risks"
+                  :options="risks"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  :close-on-select="false"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.risk_description}}</span>
                     </div>
                   </template>
                 </multiselect>

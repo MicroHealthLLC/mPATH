@@ -31,6 +31,7 @@ export default new Vuex.Store({
     issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
+    riskMilestones: new Array,
     currentProject: null,
     projectUsers: new Array,
     currentFacility: null,
@@ -46,6 +47,7 @@ export default new Vuex.Store({
     taskIssueDueDateFilter: null,
     issueTypeFilter: null,
     issueSeverityFilter: null,
+    riskMilestoneFilter: null,
     taskStageFilter: null,
     issueStageFilter: null,
     issueProgressFilter: null,
@@ -74,7 +76,8 @@ export default new Vuex.Store({
     managerView: {
       task: null,
       issue: null,
-      note: null
+      note: null,
+      risk: null
     }
   },
 
@@ -122,6 +125,7 @@ export default new Vuex.Store({
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
+    setRiskMilestones: (state, riskMilestones) => state.riskMilestones = riskMilestones,
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
@@ -173,6 +177,21 @@ export default new Vuex.Store({
         Vue.set(state.facilities, facility_i, facility)
       }
     },
+    updateRisksHash: (state, {risk, action}) => {
+      let facility_i = state.facilities.findIndex(f => f.id == risk.facilityId)
+      if (facility_i > -1) {
+        let facility = Object.assign({}, state.facilities[facility_i])
+        let risk_i = facility.risks.findIndex((t) => t.id == risk.id)
+        if (action === 'delete') {
+          for (let t of _.flatten(_.map(state.facilities, 'risks'))) {
+            _.remove(t.subRiskIds, id => id == t.id)
+          }
+          Vue.delete(facility.risks, risk_i)
+        }
+        else if (risk_i > -1) Vue.set(facility.risks, risk_i, risk)
+        Vue.set(state.facilities, facility_i, facility)
+      }
+    },
     updateNotesHash: (state, {note, facilityId, action}) => {
       let facility_i = state.facilities.findIndex(f => f.id == facilityId)
       if (facility_i > -1) {
@@ -186,7 +205,7 @@ export default new Vuex.Store({
       }
     },
     setProjectStatusFilter: (state, filter) => state.projectStatusFilter = filter,
-    setTaskIssueOverdueFilter: (state, filter) => { 
+    setTaskIssueOverdueFilter: (state, filter) => {
       state.taskIssueOverdueFilter = filter
     },
     setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
@@ -197,6 +216,7 @@ export default new Vuex.Store({
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
+    setRiskMilestoneFilter: (state, filter) => state.riskMilestoneFilter = filter,
     setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
@@ -217,7 +237,7 @@ export default new Vuex.Store({
       state.progressFilter = filters
     },
     setProgressFilters: (state, {key, value}) => state.progressFilter[key] = value,
-    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null},
+    nullifyTasksForManager: (state) => state.managerView = {task: null, issue: null, note: null, risk: null},
     setTaskForManager: (state, {key, value}) => {
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
@@ -241,7 +261,7 @@ export default new Vuex.Store({
         {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
         {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
         {id: 'myIssues', name: 'My Issues', value: 'issues'},
-        {id: 'myNotes', name: 'My Notes', value: 'notes'}        
+        {id: 'myNotes', name: 'My Notes', value: 'notes'}
       ]
     },
     // This method is used to show filters applied in overview tabs
@@ -272,15 +292,15 @@ export default new Vuex.Store({
     },
     // This method is used to show filters applied in overview tabs
     getFilterValue: (state, getter)=>(_filterValue) =>{
-      
+
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
         return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
-      
+
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
         return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
-      
+
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
         var user_names = null
@@ -292,7 +312,7 @@ export default new Vuex.Store({
       }else if(_filterValue == 'taskIssueOverdueFilter'){
         // console.log(getter.taskIssueOverdueFilter)
         return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
-      
+
       }else if(_filterValue == 'facilityProgressFilter'){
         // console.log(getter.facilityProgressFilter)
         var user_names = null
@@ -408,7 +428,7 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'taskStageFilter'){
         // console.log(getter.taskStageFilter)
-     
+
         var user_names = null
         if(getter.taskStageFilter && getter.taskStageFilter[0]){
           user_names = _.map(getter.taskStageFilter, 'name').join(", ")
@@ -436,6 +456,7 @@ export default new Vuex.Store({
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
+    riskMilestones: state => state.riskMilestones,
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
     activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
@@ -453,6 +474,7 @@ export default new Vuex.Store({
     noteDateFilter: state => state.noteDateFilter,
     taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
     issueTypeFilter: state => state.issueTypeFilter,
+    riskMilestoneFilter: state => state.riskMilestoneFilter,
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
@@ -521,10 +543,10 @@ export default new Vuex.Store({
               if(f[k][0] && f[k][0].name == "not overdue"){
                 valid = valid && _isOverdues.includes(false)
               }
-              
+
               break
             }
-            
+
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -653,6 +675,9 @@ export default new Vuex.Store({
     },
     currentIssues: (state, getters) => {
       return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'issues'))
+    },
+    currentRisks: (state, getters) => {
+      return _.flatten(_.map(getters.filterFacilitiesWithActiveFacilityGroups, 'risks'))
     },
     facilityGroupFacilities: (state, getters) => (group, status='active') => {
       return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
@@ -810,7 +835,7 @@ export default new Vuex.Store({
                     start: getSimpleDate(task.startDate),
                     startDate: task.startDate,
                     endDate: task.dueDate,
-                    _users: task.users.map(_u => _u.fullName).join(","), 
+                    _users: task.users.map(_u => _u.fullName).join(","),
                     type: 'task',
                     collapsed: true
                   }
@@ -868,10 +893,10 @@ export default new Vuex.Store({
         if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
           var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
           var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-          
+
           var is_valid = true
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
           valid = is_valid
         }
         if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
@@ -903,10 +928,10 @@ export default new Vuex.Store({
         if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
           var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
           var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-          
+
           var is_valid = true
           var nDate = moment(t.dueDate, "YYYY-MM-DD")
-          is_valid = nDate.isBetween(startDate, endDate, 'days', true)                        
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
           valid = is_valid
         }
 
@@ -931,6 +956,9 @@ export default new Vuex.Store({
     },
     viewPermit: () => (view, req) => {
       return Vue.prototype.$permissions[view][req]
+    },
+    riskApproaches: () => {
+      return ['avoid', 'mitigate', 'transfer', 'accept']
     }
   },
 
@@ -970,6 +998,7 @@ export default new Vuex.Store({
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('setRiskMilestones', res.data.project.riskMilestones)
             resolve()
           })
           .catch((err) => {
@@ -1065,6 +1094,19 @@ export default new Vuex.Store({
           })
       })
     },
+    updateWatchedRisks({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+          .then((res) => {
+            commit('updateRisksHash', {risk: res.data.risk})
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
 
     // update_from_kanban_view
     updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
@@ -1125,6 +1167,20 @@ export default new Vuex.Store({
             reject()
           })
       })
+    },
+    riskDeleted({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http
+          .delete(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
+          .then((res) => {
+            commit('updateRisksHash', {risk: risk, action: 'delete'})
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject()
+          })
+      })
     }
   },
 
@@ -1145,6 +1201,7 @@ export default new Vuex.Store({
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'issueTypeFilter',
+        'riskMilestoneFilter',
         'issueSeverityFilter',
         'issueStageFilter',
         'taskStageFilter',

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_17_182144) do
+ActiveRecord::Schema.define(version: 2020_12_17_202820) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -69,11 +69,11 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
     t.integer "listable_id"
     t.boolean "checked"
     t.string "text"
-    t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.integer "position", default: 0
+    t.date "due_date"
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
