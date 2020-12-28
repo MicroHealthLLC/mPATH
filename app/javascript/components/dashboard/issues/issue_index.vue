@@ -21,7 +21,7 @@
           </multiselect>
         </div>
       </div>
-      <div class="d-flex font-sm w-100">
+<!--       <div class="d-flex font-sm w-100">
         <div class="simple-select enum-select w-100">
           <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Issue Status" data-cy="issue_status_list">
             <template slot="singleLabel" slot-scope="{option}">
@@ -40,7 +40,20 @@
             </template>
           </multiselect>
         </div>
+      </div> -->
+
+      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
+        <div class="simple-select w-100 mr-1">
+          <multiselect v-model="C_facilityManagerIssueFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
       </div>
+
       <div class="d-flex align-item-center justify-content-between w-100">
         <div class="simple-select w-100 mr-1">
           <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" placeholder="Filter by Issue Type" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
@@ -72,7 +85,7 @@
         <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Issue Log')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
-        <div class="form-check-inline font-sm myIssues mt-2 mr-0">
+<!--         <div class="form-check-inline font-sm myIssues mt-2 mr-0">
           <label class="form-check-label mr-2">
             <input type="checkbox" class="form-check-input" v-model="C_myIssues">
             <i class="fas fa-user mr-1"></i>My Issues
@@ -81,7 +94,7 @@
             <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
             <i class="fas fa-eye mr-1"></i>On Watch
           </label>
-        </div>
+        </div> -->
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <!-- <button
@@ -166,8 +179,6 @@ export default {
     return {
       loading: true,
       newIssue: false,
-      viewList: 'active',
-      listOptions: ['active', 'all', 'completed'],
       currentIssue: null,
       now: new Date().toISOString(),
       issuesQuery: '',
@@ -182,6 +193,7 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setAdvancedFilter',
       'setTaskIssueProgressStatusFilter',
       'setTaskIssueOverdueFilter',
       'setIssueTypeFilter',
@@ -242,6 +254,8 @@ export default {
   },
 computed: {
   ...mapGetters([
+    'getAdvancedFilter',
+    'getTaskIssueTabFilterOptions',
     'getTaskIssueProgressStatusOptions',
     'getTaskIssueProgressStatusFilter',
     'taskIssueProgressFilter',
@@ -277,15 +291,17 @@ computed: {
     let taskIssueOverdue = this.taskIssueOverdueFilter
     let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
     let taskIssueProgress = this.taskIssueProgressFilter
+    let taskIssueOnWatch = this.onWatchFilter
+    let taskIssueMyAction = this.myActionsFilter
 
     let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
       let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-      if (this.C_myIssues || this.issueUserFilter) {
+      if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
         let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-        if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+        if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
         if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
       }
-      if (this.C_onWatchIssues) {
+      if(taskIssueOnWatch.length > 0){
         valid = valid && issue.watched
       }
       if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
@@ -348,6 +364,14 @@ computed: {
 
     return issues
   },
+  C_facilityManagerIssueFilter: {
+    get() {
+      return this.getAdvancedFilter()
+    },
+    set(value) {
+      this.setAdvancedFilter(value)
+    }
+  },
   C_taskIssueProgressStatusFilter: {
     get() {
       if (this.getTaskIssueProgressStatusFilter.length < 1) {
@@ -398,15 +422,6 @@ computed: {
     set(value) {
       if (value) this.setMyActionsFilter([...this.myActionsFilter, { name: "My Issues", value: "issues" }])
       else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
-    }
-  },
-  C_onWatchIssues: {
-    get() {
-      return _.map(this.onWatchFilter, 'value').includes('issues')
-    },
-    set(value) {
-      if (value) this.setOnWatchFilter([...this.onWatchFilter, { name: "On Watch Issues", value: "issues" }])
-      else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
     }
   }
 }

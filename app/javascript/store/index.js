@@ -106,12 +106,16 @@ export default new Vuex.Store({
       for(var option of selectedOptions){
         if(option.id == "overdue" || option.id == 'not overdue'){
           _taskIssueOverdueFilter.push(option)
-        }else if(option.id == "onWatchTask" || option.id == 'onWatchIssue'){
-          _onWatchFilter.push(option)
-        }else if(option.id == "myTasks" || option.id == 'myIssues' || option.id == "myNotes"){
-          _myActionsFilter.push(option)
         }else if(option.name == "active" || option.id == 'completed'){
           _taskIssueProgressStatusFilter.push(option)
+        }else if(option.id == "myAction"){
+          _myActionsFilter.push({id: 'myTasks', name: 'My Tasks', value: 'tasks'})
+          _myActionsFilter.push({id: 'myIssues', name: 'My Issues', value: 'issues'})
+          _myActionsFilter.push({id: 'myNotes', name: 'My Notes', value: 'notes'})
+        }else if(option.id == "onWatch"){
+          // TODO: make just one  instead of 2. for now keeping two nearly will not break other features.
+          _onWatchFilter.push({id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'})
+          _onWatchFilter.push({id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'})
         }
       }
 
@@ -256,6 +260,20 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getTaskIssueTabFilterOptions: (state, getters) =>{
+      var options = [
+        {id: 'active', name: 'active'},
+        {id: 'completed', name: 'completed'},
+        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+        {id: 'myAction', name: 'My Action', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
+      ]
+
+      return options;
+    },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
         {id: 'active', name: 'active'},
@@ -271,17 +289,29 @@ export default new Vuex.Store({
     getAdvancedFilterOptions: (state, getters) => {
       // return [{id: "overdue",name: "overdue", }, {id: "not overdue",name: "not overdue", }]
 
-      return [
+      // return [
+      //   {id: 'active', name: 'active'},
+      //   {id: 'completed', name: 'completed'},
+      //   {id: 'overdue', name: 'overdue', value: "overdue"},
+      //   {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+      //   {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
+      //   {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
+      //   {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
+      //   {id: 'myIssues', name: 'My Issues', value: 'issues'},
+      //   {id: 'myNotes', name: 'My Notes', value: 'notes'}
+      // ]
+      var options = [
         {id: 'active', name: 'active'},
         {id: 'completed', name: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'not overdue', value: "not overdue"},
-        {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
-        {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
-        {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
-        {id: 'myIssues', name: 'My Issues', value: 'issues'},
-        {id: 'myNotes', name: 'My Notes', value: 'notes'}
+        {id: 'myAction', name: 'My Action', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
+
+      return options;
     },
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
