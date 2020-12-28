@@ -5,7 +5,7 @@
     <div class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h4 class="f-head">{{DV_facility.facilityName}}</h4>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
       </div>
       <div class="facility-tab mb-4">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />
@@ -171,7 +171,7 @@
                       </span>
                     </div>
                   </div>
-                </div>
+                </div>over
               </div>
               <div v-if="issueStats.length > 0">
                 <div class="text-info font-weight-bold text-center">Issue Types</div>
@@ -548,12 +548,10 @@
 </script>
 
 <style lang="scss" scoped>
-
   .f-head {
     word-break: break-word;
     text-overflow: ellipsis;
   }
-
   .f-notes {
     border: 1px solid #ccc;
     padding: 5px 10px;
@@ -615,10 +613,12 @@
       text-overflow: ellipsis;
     }
   }
-  .fac-sum {
-   border-radius: 2px;
-   margin-bottom: 8px;
-   background-color: #fff;
-   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+   .fac-sum {
+      border-radius: 2px;
+      padding:8px;
+      margin-bottom: 8px;
+      background-color: #fff;
+      box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
+
 </style>

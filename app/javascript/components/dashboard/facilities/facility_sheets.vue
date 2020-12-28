@@ -1,17 +1,17 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
   <div id="facility-sheets" data-cy="facility_sheets">
-    <div v-if="!loading">
+    <div  class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h3 class="f-head">{{DV_facility.facilityName}}</h3>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
       </div>
       <div class="facility-tab mb-4">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab"/>
       </div>
       <div>
         <div v-if="currentTab == 'overview'">
-          <div v-if="_isallowed('read')">
+          <div v-if="_isallowed('read')" class="fac-sum p-3">
             <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
@@ -547,6 +547,7 @@
     background-color: #ededed !important;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
+
   .pg-content {
     width: 100%;
     height: 20px;
@@ -589,5 +590,12 @@
       color: #dc3545;
       text-overflow: ellipsis;
     }
+  }
+ .fac-sum {
+   border-radius: 2px;
+   padding:8px;
+   margin-bottom: 8px;
+   background-color: #fff;
+   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
 </style>
