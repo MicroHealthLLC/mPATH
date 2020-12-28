@@ -46,19 +46,10 @@
             </multiselect>
           </div>
         <div class="simple-select justify-content-start">
-          <multiselect
-            v-model="viewList"
-            style="width:325px"
-            :options="listOptions"           
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Issue Status"
-            data-cy="issue_status_list"
-          >
-            <template slot="singleLabel">
+          <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Issue Status" data-cy="issue_status_list">
+            <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
+                <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
@@ -302,6 +293,7 @@
     },
     methods: {
       ...mapMutations([
+        'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
@@ -373,6 +365,9 @@
    },
     computed: {
       ...mapGetters([
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -403,6 +398,9 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
           if (this.C_myIssues || this.issueUserFilter) {
@@ -449,23 +447,34 @@
               valid = true
             }
           }
-          if (search_query) valid = valid && search_query.test(issue.title)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && issue.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && issue.progress == 100
-              break
-            }
-            default: {
-              break
-            }
+        
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (issue.progress >= min && issue.progress <= max)
           }
+
+          if (taskIssueProgressStatus) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
+            valid = valid && taskIssueProgressStatusNames.includes(issue.progressStatus)
+          }
+
+          if (search_query) valid = valid && search_query.test(issue.title)
+
           return valid;
         })), ['dueDate'])
         return issues
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
       },
       C_taskIssueOverdueFilter: {
         get() {
