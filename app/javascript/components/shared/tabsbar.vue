@@ -12,9 +12,9 @@
     <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}" data-cy="gantt_tab">Gantt</div>
     </router-link>
-    <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
+    <!-- <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}" data-cy="on_watch_tab">On Watch</div>
-    </router-link>
+    </router-link> -->
     <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
       <div class="badge" :class="{'active': isKanbanView}" data-cy="kanban_tab">Kanban</div>
     </router-link>
@@ -39,9 +39,8 @@
       isGanttView() {
         return this.$route.name === 'ProjectGanttChart'
       },
-      isWatchView() {
-        return this.$route.name === 'ProjectWatchView'
-      },
+      // isWatchView() {
+      //   return this.$route.name === 'ProjectWatchView'
       isKanbanView() {
         return this.$route.name === 'ProjectKanbanView'
       },
@@ -60,9 +59,9 @@
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
       },
-      watchView() {
-        return `/projects/${this.$route.params.projectId}/watch_view`
-      },
+      // watchView() {
+      //   return `/projects/${this.$route.params.projectId}/watch_view`
+      // },
       kanbanView() {
         return `/projects/${this.$route.params.projectId}/kanban`
       },
