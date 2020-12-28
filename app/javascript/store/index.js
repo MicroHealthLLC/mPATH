@@ -81,6 +81,7 @@ export default new Vuex.Store({
     taskUserFilter: null,
     issueUserFilter: null,
     myActionsFilter: new Array,
+    notMyActionsFilter: new Array,
     onWatchFilter: new Array,
     notOnWatchFilter: new Array,
     managerView: {
@@ -100,6 +101,7 @@ export default new Vuex.Store({
       var _onWatchFilter = []
       var _notOnWatchFilter = []
       var _myActionsFilter = []
+      var _notMyActionsFilter = []
       var _taskIssueProgressStatusFilter = []
       // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
       // state.onWatchFilter = _onWatchFilter
@@ -121,6 +123,8 @@ export default new Vuex.Store({
         }else if(option.id == 'notOnWatch'){
           _notOnWatchFilter.push({id: 'notOnWatchTask', name: 'Not On Watch Task', value: 'tasks'})
           _notOnWatchFilter.push({id: 'notOnWatchIssue', name: 'Not On Watch Issue', value: 'issues'})
+        }else if(option.id == "notMyAction"){
+          _notMyActionsFilter.push({id: 'notMyAction', name: 'Not My Action', value: 'tasks'})
         }
       }
 
@@ -131,6 +135,7 @@ export default new Vuex.Store({
       state.notOnWatchFilter = _notOnWatchFilter
       // if(_myActionsFilter.length > 0)
       state.myActionsFilter = _myActionsFilter
+      state.notMyActionsFilter = _notMyActionsFilter
       state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,

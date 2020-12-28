@@ -294,6 +294,7 @@ computed: {
     let taskIssueOnWatch = this.onWatchFilter
     let taskIssueMyAction = this.myActionsFilter
     let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+    let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
 
     let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
       let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -308,6 +309,11 @@ computed: {
       if(taksIssueNotOnWatch == true){
        valid = valid && !task.watched 
       }
+      if(taksIssueNotMyAction == true){
+        let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+        if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+      }
+
       if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
       if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
       if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)

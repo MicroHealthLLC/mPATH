@@ -396,6 +396,8 @@
         let taskIssueOverdue = this.taskIssueOverdueFilter
         let taskIssueOnWatch = this.onWatchFilter
         let taskIssueMyAction = this.myActionsFilter
+        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -409,7 +411,14 @@
           if(taskIssueOnWatch.length > 0){
             valid = valid && task.watched
           }
+          if(taksIssueNotOnWatch == true){
+           valid = valid && !task.watched 
+          }
 
+          if(taksIssueNotMyAction == true){
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          }
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -494,6 +503,8 @@
         let taskIssueOverdue = this.taskIssueOverdueFilter
         let taskIssueOnWatch = this.onWatchFilter
         let taskIssueMyAction = this.myActionsFilter
+        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
@@ -505,6 +516,14 @@
           if(taskIssueOnWatch.length > 0){
             valid = valid && issue.watched
           }
+          if(taksIssueNotOnWatch == true){
+           valid = valid && !issue.watched 
+          }
+          if(taksIssueNotMyAction == true){
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          }
+
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
 
