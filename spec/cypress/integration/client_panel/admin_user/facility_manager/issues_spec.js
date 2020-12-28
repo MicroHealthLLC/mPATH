@@ -64,9 +64,11 @@ describe('Issue List', function() {
 
   it('In Issue form if issue type not selected, save button must be disabled', function() {
     cy.get('[data-cy=issues]').first().click()
-    cy.get('[data-cy=issue_type]').click().type('{enter}')
-    cy.get('[data-cy=issue_save_btn]').should('be.disabled')
-    cy.get('[data-cy=issue_close_btn]').click()
+    cy.get('[data-cy=issue_form]').within(() => {
+      cy.get('[data-cy=issue_type]').click().type('{enter}')
+      cy.get('[data-cy=issue_save_btn]').should('be.disabled')
+      cy.get('[data-cy=issue_close_btn]').click()
+    })
     cy.logout()
   })
 

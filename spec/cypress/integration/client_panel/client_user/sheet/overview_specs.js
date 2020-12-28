@@ -16,6 +16,7 @@ describe('Sheet Overview Page', function() {
       cy.contains('Facility Progress:').should('be.visible')
 
       // In overview display task summary
+      cy.get('[data-cy=facility_tasks]').scrollIntoView()
       cy.get('[data-cy=facility_tasks]').within(() => {
         cy.contains('2 Tasks').should('be.visible')
       })

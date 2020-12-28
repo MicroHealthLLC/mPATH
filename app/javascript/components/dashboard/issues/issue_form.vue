@@ -6,6 +6,7 @@
       :class="{'_disabled': loading}"
       class="mx-auto"
       accept-charset="UTF-8"
+      data-cy="issue_form"
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
         <button
@@ -219,11 +220,11 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"   
+          v-model="issueUsers"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"         
+          :options="activeProjectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -238,7 +239,7 @@
             </div>
           </template>
         </multiselect>
-      </div>  
+      </div>
       <div class="form-group mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
@@ -264,7 +265,7 @@
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here"  type="text" maxlength="80" class="checklist-text pl-1" :readonly="!_isallowed('write')">
               </div>
             </div>
-             <div class="row justify-content-end">             
+             <div class="row justify-content-end">
               <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
@@ -287,23 +288,23 @@
               </div>
                <div class="simple-select form-group col mb-0">
                  <div class="float-right">
-                   <label class="font-sm dueDate">Due Date:</label>  
-                   <br/>              
-                    <v2-date-picker                    
+                   <label class="font-sm dueDate">Due Date:</label>
+                   <br/>
+                    <v2-date-picker
                       v-model="check.dueDate"
-                      :value="check.dueDate" 
+                      :value="check.dueDate"
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
                       value-type="YYYY-MM-DD"
                       format="DD MMM YYYY"
                       placeholder="DD MM YYYY"
                       name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                      class="w-100 vue2-datepicker d-flex ml-auto"
                     />
                   </div>
-                </div>       
+                </div>
                </div>
-            </div>  
+            </div>
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
           </div>
        </draggable>
@@ -479,7 +480,7 @@
           checklists: [],
           notes: []
         }
-      }, 
+      },
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -858,12 +859,12 @@
     margin-left: 65px;
   }
   .checklist-text {
-    margin-left: 5px;    
+    margin-left: 5px;
     border: 0;
     width: 95%;
     outline: none;
     border: solid #ededed 1px;
-    border-radius: 4px;  
+    border-radius: 4px;
   }
   .del-check {
     position: relative;
@@ -879,7 +880,7 @@
     padding: 0;
   }
   .drag {
-    cursor: all-scroll;    
+    cursor: all-scroll;
   }
  .formTitle {
     padding-top: 25px;

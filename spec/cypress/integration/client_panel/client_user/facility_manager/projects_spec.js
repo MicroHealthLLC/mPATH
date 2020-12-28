@@ -47,7 +47,7 @@ describe('Client do not have permission of facility manager view', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
-    cy.appScenario('remove_facility_mmanager_permission')
+    cy.appScenario('remove_facility_manager_permission')
     cy.login('client@test.com', 'T3$tClient')
   })
 

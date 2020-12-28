@@ -210,9 +210,12 @@
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow-y: auto;
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
     }
+    
     .default-background {
       background-color: #ededed;
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
       height: calc(100vh - 130px);
       max-height: calc(100vh - 130px);
       position: relative;

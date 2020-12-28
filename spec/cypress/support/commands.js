@@ -28,7 +28,7 @@ Cypress.Commands.add("openProject", () => {
 
 Cypress.Commands.add("facilityUnderGroup", () => {
   cy.get('[data-cy=facility_groups]').first().click()
-  cy.get('[data-cy=facilities]').first().click()
+  cy.get('[data-cy=facilities]').first().click({force: true})
 })
 
 // Open Facility Manager of a project
