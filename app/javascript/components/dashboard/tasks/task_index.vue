@@ -218,6 +218,7 @@ computed: {
     let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
     let taskIssueOnWatch = this.onWatchFilter
     let taskIssueMyAction = this.myActionsFilter
+    let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
 
     let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
       let valid = Boolean(task && task.hasOwnProperty('progress'))
@@ -228,6 +229,10 @@ computed: {
       }
       if(taskIssueOnWatch.length > 0){
         valid = valid && task.watched
+      }
+
+      if(taksIssueNotOnWatch == true){
+       valid = valid && !task.watched 
       }
 
       if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)

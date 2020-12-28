@@ -82,6 +82,7 @@ export default new Vuex.Store({
     issueUserFilter: null,
     myActionsFilter: new Array,
     onWatchFilter: new Array,
+    notOnWatchFilter: new Array,
     managerView: {
       task: null,
       issue: null,
@@ -97,6 +98,7 @@ export default new Vuex.Store({
       state.advancedFilter = selectedOptions
       var _taskIssueOverdueFilter = []
       var _onWatchFilter = []
+      var _notOnWatchFilter = []
       var _myActionsFilter = []
       var _taskIssueProgressStatusFilter = []
       // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
@@ -116,6 +118,9 @@ export default new Vuex.Store({
           // TODO: make just one  instead of 2. for now keeping two nearly will not break other features.
           _onWatchFilter.push({id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'})
           _onWatchFilter.push({id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'})
+        }else if(option.id == 'notOnWatch'){
+          _notOnWatchFilter.push({id: 'notOnWatchTask', name: 'Not On Watch Task', value: 'tasks'})
+          _notOnWatchFilter.push({id: 'notOnWatchIssue', name: 'Not On Watch Issue', value: 'issues'})
         }
       }
 
@@ -123,6 +128,7 @@ export default new Vuex.Store({
       state.taskIssueOverdueFilter = _taskIssueOverdueFilter
       // if(_onWatchFilter.length > 0)
       state.onWatchFilter = _onWatchFilter
+      state.notOnWatchFilter = _notOnWatchFilter
       // if(_myActionsFilter.length > 0)
       state.myActionsFilter = _myActionsFilter
       state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
@@ -260,6 +266,9 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getNotOnWatchFilter: (state, getters) =>{
+      return state.notOnWatchFilter
+    },
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
         {id: 'active', name: 'active'},
