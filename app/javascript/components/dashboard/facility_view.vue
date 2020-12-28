@@ -1,6 +1,6 @@
 <template>
   <div id="facility_view">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-2 facility-groups-tab">
         <facility-sidebar
           title="Facility Manager"
@@ -11,8 +11,8 @@
           @on-expand-facility="showFacility"
         ></facility-sidebar>
       </div>
-      <div class="col-md-4 facility-show-tab bt-light">
-        <div class="mt-4">
+      <div class="col-md-4 facility-show-tab bt-light pb-2">
+        <div class="mt-2">
           <facility-show
             v-if="C_showFacilityTab"
             from="manager_view"
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="col-md-6 facility-forms-tab bt-light">
-        <div class="default-background mt-3">
+        <div class="default-background mt-2">
           <div class="bg-white">
             <task-form
               v-if="managerView.task"
@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
