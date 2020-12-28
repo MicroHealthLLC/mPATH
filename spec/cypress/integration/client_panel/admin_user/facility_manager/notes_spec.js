@@ -34,6 +34,16 @@ describe('Notes Page', function() {
     cy.logout()
   })
 
+  it('Delete the note, without open it using delete icon', function() {
+    cy.get('[data-cy=notes]').its('length').should('be.eq', 1)
+    cy.get('[data-cy=notes]').first().within(() => {
+      cy.get('[data-cy=note_delete_icon]').click()
+    })
+    cy.get('[data-cy=notes]').should('not.exist')
+    cy.get('[data-cy=note_list]').contains('No notes found..').should('be.visible')
+    cy.logout()
+  })
+
   it('Update note description', function() {
     cy.get('[data-cy=notes]').first().within(() => {
       cy.get('[data-cy=note_edit_icon]').click()
