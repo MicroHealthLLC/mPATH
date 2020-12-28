@@ -57,35 +57,8 @@
                
                 <div class="mx-2 mb-3 font-sm">
                   <div class="simple-select w-50">
-                    <label class="font-sm mb-0">Task Status</label>
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"               
-                      data-cy="task_status_list"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
-                   <div class="d-flex align-item-center justify-content-between">
-                  <div class="simple-select w-100">
-                    <label class="font-sm mb-0">Tasks and Issues Overdue</label>
-                    <multiselect
-                      v-model="C_taskIssueOverdueFilter"
-                      track-by="name"
-                      label="name"                     
-                      :options="getTaskIssueOverdueOptions"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
+                    <label class="font-sm mb-0">Flags</label>
+                    <multiselect v-model="C_kanbanTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
                       <template slot="singleLabel" slot-scope="{option}">
                         <div class="d-flex">
                           <span class='select__tag-name'>{{option.name}}</span>
@@ -93,17 +66,9 @@
                       </template>
                     </multiselect>
                   </div>
+                   <div class="d-flex align-item-center justify-content-between">
                 </div>
-                  <div class="form-check my-1 mt-3">
-                    <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myTasks"><span><i class="fas fa-user mr-1"></i></span>My Tasks
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"><span><i class="fas fa-eye mr-1"></i></span>On Watch
-                    </label>
-                  </div>
+
                   <div class="form-check my-4 pl-0" data-cy="search_task_total">
                     <label class="form-check-label text-primary">
                      <h5> Total: {{filteredTasks.length}}</h5>
@@ -150,35 +115,8 @@
                     </multiselect>
 
                   <div class="simple-select w-50">
-                    <label class="font-sm mb-0">Issue Status</label>
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"                   
-                      data-cy="issue_status_list"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
-                   <div class="d-flex align-item-center justify-content-between">
-                  <div class="simple-select w-100">
-                     <label class="font-sm mb-0">Task and Issue Overdue</label>
-                    <multiselect
-                      v-model="C_taskIssueOverdueFilter"
-                      track-by="name"
-                      label="name"                     
-                      :options="getTaskIssueOverdueOptions"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
+                    <label class="font-sm mb-0">Flags</label>
+                    <multiselect v-model="C_kanbanTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
                       <template slot="singleLabel" slot-scope="{option}">
                         <div class="d-flex">
                           <span class='select__tag-name'>{{option.name}}</span>
@@ -186,6 +124,7 @@
                       </template>
                     </multiselect>
                   </div>
+                   <div class="d-flex align-item-center justify-content-between">
                 </div>
                     <label class="font-sm mb-0">Issue Type</label>
                     <multiselect                    
@@ -226,16 +165,6 @@
                   </div>
                 </div>               
                 <div class="mx-2 mb-3 font-sm">   
-                 <div class="form-check my-1 mt-3">
-                    <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues"><span><i class="fas fa-eye mr-1"></i></span>On Watch
-                    </label>
-                  </div>
                   <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>
@@ -373,6 +302,7 @@
     },
     methods: {
       ...mapMutations([
+        'setAdvancedFilter',
         'setTaskIssueOverdueFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -433,6 +363,8 @@
     },
     computed: {
       ...mapGetters([
+        'getAdvancedFilter',
+        'getTaskIssueTabFilterOptions',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -462,20 +394,31 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueOnWatch = this.onWatchFilter
+        let taskIssueMyAction = this.myActionsFilter
+        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (this.C_myTasks || this.taskUserFilter) {
+          if (taskIssueMyAction.length > 0  || this.taskUserFilter) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
+            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
           }
-          if (this.C_onWatchTasks) {
-            valid  = valid && task.watched
+          if(taskIssueOnWatch.length > 0){
+            valid = valid && task.watched
+          }
+          if(taksIssueNotOnWatch == true){
+           valid = valid && !task.watched 
           }
 
+          if(taksIssueNotMyAction == true){
+            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          }
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -509,29 +452,16 @@
 
           if (search_query) valid = valid && search_query.test(task.text)
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && task.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && task.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
           return valid
         }), 'kanbanOrder', 'asc')
       },
 
-      C_taskIssueOverdueFilter: {
+      C_kanbanTaskFilter: {
         get() {
-          return this.taskIssueOverdueFilter
+          return this.getAdvancedFilter()
         },
         set(value) {
-          this.setTaskIssueOverdueFilter(value)
+          this.setAdvancedFilter(value)
         }
       },
 
@@ -571,17 +501,29 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueOnWatch = this.onWatchFilter
+        let taskIssueMyAction = this.myActionsFilter
+        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues || this.issueUserFilter) {
+          if (taskIssueMyAction.length > 0 || this.issueUserFilter) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
+            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
-          if (this.C_onWatchIssues) {
-            valid  = valid && issue.watched
+          if(taskIssueOnWatch.length > 0){
+            valid = valid && issue.watched
           }
+          if(taksIssueNotOnWatch == true){
+           valid = valid && !issue.watched 
+          }
+          if(taksIssueNotMyAction == true){
+            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          }
+
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
 
@@ -623,19 +565,7 @@
           }
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(issue.title)
           if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && issue.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && issue.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+
           return valid
         }), 'kanbanOrder', 'asc')
       },

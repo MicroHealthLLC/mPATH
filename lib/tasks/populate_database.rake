@@ -23,6 +23,8 @@ task :populate_database => :environment do
     ProjectTaskType.destroy_all
     ProjectIssueSeverity.destroy_all
     ProjectIssueType.destroy_all
+    ProjectTaskStage.destroy_all
+    ProjectIssueStage.destroy_all
     ProjectUser.destroy_all
     Project.destroy_all
     ProjectType.destroy_all
@@ -243,6 +245,29 @@ task :populate_database => :environment do
     end
     Issue.import(issues)
   end
+
+  puts "***** Create Project Task Stages *****"
+  projects = Project.all
+  task_stages = TaskStage.last(task_stages.size)
+  project_task_stages = []
+  projects.each do |p|
+    task_stages.each do |stage|
+      project_task_stages << ProjectTaskStage.new(project_id: p.id, task_stage_id: stage.id )
+    end
+  end
+  ProjectTaskStage.import(project_task_stages)
+
+  puts "***** Create Project Task Stages *****"
+  projects = Project.all
+  issue_stages = IssueStage.last(task_stages.size)
+  project_issue_stages = []
+  projects.each do |p|
+    issue_stages.each do |stage|
+      project_issue_stages << ProjectIssueStage.new(project_id: p.id, issue_stage_id: stage.id )
+    end
+    
+  end
+  ProjectIssueStage.import(project_issue_stages)
 
   puts "***** Assigning issue types and issue severies to project *****"
   projects = Project.includes(issues: [:issue_type, :issue_severity], tasks: [:task_type]).all
