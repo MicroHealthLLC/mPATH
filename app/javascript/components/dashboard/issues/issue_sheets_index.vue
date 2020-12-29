@@ -151,7 +151,7 @@
                   <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
-                  <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
                   <th class="sort-th" @click="sort('responsibleUserNames')">Assigned Users<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>

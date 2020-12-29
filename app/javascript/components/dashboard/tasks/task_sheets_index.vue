@@ -96,7 +96,7 @@
             <tr style="background-color:#ededed;">
               <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll ml-2"></i></th>
+              <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
               <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
@@ -542,6 +542,10 @@
   .floatRight {
     text-align: right;
     right: 0px;
+  }
+  .fa-sort {
+    font-size: 1.2rem;
+    color: gray;
   }
   .pagination {
     margin-bottom: 50px !important;
