@@ -1,6 +1,6 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="m-3" data-cy="facility_rollup">
+  <div class="m-2" data-cy="facility_rollup">
     <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
     <div class="text-center mt-1">
