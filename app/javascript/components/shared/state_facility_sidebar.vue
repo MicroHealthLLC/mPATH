@@ -1,19 +1,18 @@
 <template>
-  <div id="facility_view">
-    <!-- <div class="row">
+  <div id="facility_sidebar">
+    <div class="row">
       <div class="col-md-2 facility-groups-tab">
-        <facility-sidebar
-          title="Facility Manager"
+        <facility-sidebar     
           :current-facility-group="currentFacilityGroup"
           :expanded="expanded"
           :current-facility="currentFacility"
           @on-expand-facility-group="expandFacilityGroup"
           @on-expand-facility="showFacility"
         ></facility-sidebar>
-      </div>
-      <div class="col-md-4 facility-show-tab bt-light pb-2">
-        <div class="mt-2">
-          <facility-show
+      </div>  
+       <div class="col-md-4 facility-show-tab" v-if="isFacilityManagerView">
+        <div class="my-3">
+          <facility-show        
             v-if="C_showFacilityTab"
             from="manager_view"
             :facility="currentFacility"
@@ -26,9 +25,9 @@
           ></facility-rollup>
         </div>
       </div>
-      <div class="col-md-6 facility-forms-tab bt-light">
-        <div class="default-background mt-2">
-          <div class="bg-white">
+        <div class="col-md-6 facility-forms-tab" v-if="isFacilityManagerView">
+        <div class="default-background">
+          <div class="bg-white mt-4">
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -63,28 +62,44 @@
           </div>
         </div>
       </div>
-    </div> -->
+
+       <div class="col-md-10 facility-show-tab pr-3" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-else >
+        <div class="mt-3">
+          <facility-sheets
+            v-if="C_showFacilityTab"
+            from="manager_view"
+            :facility="currentFacility"
+            :facility-group="currentFacilityGroup"
+          ></facility-sheets>
+          <facility-rollup v-else></facility-rollup>
+        </div>
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import FacilityShow from './facilities/facility_show'
-  import FacilityRollup from './facilities/facility_rollup'
-  import FacilitySidebar from './facilities/facility_sidebar'
-  import TaskForm from "./tasks/task_form"
-  import IssueForm from "./issues/issue_form"
-  import NotesForm from "./notes/notes_form"
-
+  import {SweetModal} from 'sweet-modal-vue'
+  import FacilityShow from './../dashboard/facilities/facility_show'
+  import FacilitySheets from './../dashboard/facilities/facility_sheets'
+  import FacilityRollup from './../dashboard/facilities/facility_rollup'
+  import FacilitySidebar from './../dashboard/facilities/facility_sidebar'
+  import TaskForm from "./../dashboard/tasks/task_form"
+  import IssueForm from "./../dashboard/issues/issue_form"
+  import NotesForm from "./../dashboard/notes/notes_form"
   export default {
-    name: "FacilityManagerView",
-    components: {
-      FacilityShow,
-      FacilityRollup,
-      FacilitySidebar,
-      TaskForm,
-      IssueForm,
-      NotesForm
+    name: "StateFacilitySidebar",
+     components: {
+     FacilitySidebar,
+     FacilityRollup,
+     FacilitySheets, 
+     FacilityShow,
+     SweetModal,
+     TaskForm,
+     IssueForm,
+     NotesForm
     },
     data() {
       return {
@@ -106,7 +121,10 @@
       },
       C_showFacilityRollup() {
         return !_.isEmpty(this.currentFacilityGroup)
-      }
+      },
+      isFacilityManagerView() {
+        return this.$route.name === 'FacilityManagerView'
+      },
     },
     methods: {
       ...mapMutations([
@@ -194,12 +212,12 @@
 </script>
 
 <style lang="scss" scoped>
-  #facility_view {
+  #facility_sidebar {
     padding: 0 10px;
     .bt-light {
       border-top: solid #ededed 15px;
     }
-    .facility-groups-tab {
+   .facility-groups-tab {
       background: #ededed;
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
@@ -233,4 +251,29 @@
       transform: translate(-50%, -50%);
     }
   }
+    .form_modal.sweet-modal-overlay {
+      z-index: 10000001;
+    }
+    .form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+      min-width: 80vw;
+      max-height: 90vh;
+      background-color: #ededed;
+      .sweet-content {
+        padding-top: 30px;
+        text-align: unset;
+      }
+      .modal_close_btn {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      .form-inside-modal {
+        form {
+          position: inherit !important;
+        }
+      }
+    }
 </style>

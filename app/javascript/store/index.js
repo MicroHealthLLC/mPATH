@@ -52,6 +52,10 @@ export default new Vuex.Store({
     issueStageFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
+    // This filter is used for progress range number e.g. 1-19
+    taskIssueProgressFilter: null,
+    // This filter is used to check status e.g. active or completed
+    taskIssueProgressStatusFilter: new Array,
     progressFilter: {
       facility: {
         min: '',
@@ -67,12 +71,19 @@ export default new Vuex.Store({
         min: '',
         max: '',
         error: ''
-      }
+      },
+      taskIssue:{
+        min: '',
+        max: '',
+        error: ''
+      }     
     },
     taskUserFilter: null,
     issueUserFilter: null,
     myActionsFilter: new Array,
+    notMyActionsFilter: new Array,
     onWatchFilter: new Array,
+    notOnWatchFilter: new Array,
     managerView: {
       task: null,
       issue: null,
@@ -82,14 +93,16 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
+    setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
-      console.log("setAdvancedFilter")
-      console.log(state.mapFilters)
       var _taskIssueOverdueFilter = []
       var _onWatchFilter = []
+      var _notOnWatchFilter = []
       var _myActionsFilter = []
-
+      var _notMyActionsFilter = []
+      var _taskIssueProgressStatusFilter = []
       // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
       // state.onWatchFilter = _onWatchFilter
       // state.myActionsFilter = _myActionsFilter
@@ -97,11 +110,21 @@ export default new Vuex.Store({
       for(var option of selectedOptions){
         if(option.id == "overdue" || option.id == 'not overdue'){
           _taskIssueOverdueFilter.push(option)
-        }else if(option.id == "onWatchTask" || option.id == 'onWatchIssue'){
-          _onWatchFilter.push(option)
-        }else if(option.id == "myTasks" || option.id == 'myIssues' || option.id == "myNotes"){
-          _myActionsFilter.push(option)
         }else if(option.name == "active" || option.id == 'completed'){
+          _taskIssueProgressStatusFilter.push(option)
+        }else if(option.id == "myAction"){
+          _myActionsFilter.push({id: 'myTasks', name: 'My Tasks', value: 'tasks'})
+          _myActionsFilter.push({id: 'myIssues', name: 'My Issues', value: 'issues'})
+          _myActionsFilter.push({id: 'myNotes', name: 'My Notes', value: 'notes'})
+        }else if(option.id == "onWatch"){
+          // TODO: make just one  instead of 2. for now keeping two nearly will not break other features.
+          _onWatchFilter.push({id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'})
+          _onWatchFilter.push({id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'})
+        }else if(option.id == 'notOnWatch'){
+          _notOnWatchFilter.push({id: 'notOnWatchTask', name: 'Not On Watch Task', value: 'tasks'})
+          _notOnWatchFilter.push({id: 'notOnWatchIssue', name: 'Not On Watch Issue', value: 'issues'})
+        }else if(option.id == "notMyAction"){
+          _notMyActionsFilter.push({id: 'notMyAction', name: 'Not My Action', value: 'tasks'})
         }
       }
 
@@ -109,9 +132,11 @@ export default new Vuex.Store({
       state.taskIssueOverdueFilter = _taskIssueOverdueFilter
       // if(_onWatchFilter.length > 0)
       state.onWatchFilter = _onWatchFilter
+      state.notOnWatchFilter = _notOnWatchFilter
       // if(_myActionsFilter.length > 0)
       state.myActionsFilter = _myActionsFilter
-
+      state.notMyActionsFilter = _notMyActionsFilter
+      state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setMapLoading: (state, loading) => state.mapLoading = loading,
@@ -246,23 +271,61 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getNotOnWatchFilter: (state, getters) =>{
+      return state.notOnWatchFilter
+    },
+    getTaskIssueTabFilterOptions: (state, getters) =>{
+      var options = [
+        {id: 'active', name: 'active'},
+        {id: 'completed', name: 'completed'},
+        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+        {id: 'myAction', name: 'My Action', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
+      ]
+
+      return options;
+    },
+    getTaskIssueProgressStatusOptions: (state, getters) => {
+      return [
+        {id: 'active', name: 'active'},
+        {id: 'completed', name: 'completed'}
+      ]
+    },
+    getTaskIssueProgressStatusFilter: (state) => {
+      return state.taskIssueProgressStatusFilter      
+    },
     getAdvancedFilter: (state, getter) => () =>{
       return state.advancedFilter
     },
     getAdvancedFilterOptions: (state, getters) => {
       // return [{id: "overdue",name: "overdue", }, {id: "not overdue",name: "not overdue", }]
 
-      return [
-        {id: 'active', name: 'Active'},
-        {id: 'completed', name: 'Completed'},
+      // return [
+      //   {id: 'active', name: 'active'},
+      //   {id: 'completed', name: 'completed'},
+      //   {id: 'overdue', name: 'overdue', value: "overdue"},
+      //   {id: 'not overdue', name: 'not overdue', value: "not overdue"},
+      //   {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
+      //   {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
+      //   {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
+      //   {id: 'myIssues', name: 'My Issues', value: 'issues'},
+      //   {id: 'myNotes', name: 'My Notes', value: 'notes'}
+      // ]
+      var options = [
+        {id: 'active', name: 'active'},
+        {id: 'completed', name: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'not overdue', value: "not overdue"},
-        {id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'},
-        {id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'},
-        {id: 'myTasks', name: 'My Tasks', value: 'tasks'},
-        {id: 'myIssues', name: 'My Issues', value: 'issues'},
-        {id: 'myNotes', name: 'My Notes', value: 'notes'}
+        {id: 'myAction', name: 'My Action', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
+
+      return options;
     },
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
@@ -277,16 +340,16 @@ export default new Vuex.Store({
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
         ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
-        ['taskProgressFilter', 'Task Progress'],
+        ['taskIssueProgressFilter', 'Task and Issue Progress'],
         ['taskUserFilter', 'Task Users'],
         ['issueTypeFilter', 'Issue Type'],
-        ['issueProgressFilter', 'Issue Progress'],
         ['issueSeverityFilter', 'Issue Severities'],
         ['issueUserFilter', 'Issue Users'],
         ['myActionsFilter', 'My Actions'],
         ['onWatchFilter', 'On Watch'],
         ['taskStageFilter', 'Task Stages'],
-        ['issueStageFilter', 'Issue Stages']
+        ['issueStageFilter', 'Issue Stages'],
+        ['taskIssueProgressStatusFilter', 'Task and Issue Status']
 
       ]
     },
@@ -296,6 +359,14 @@ export default new Vuex.Store({
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
         return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
+      
+      }else if(_filterValue == 'taskIssueProgressStatusFilter'){
+        
+        var user_names = null
+        if(getter.getTaskIssueProgressStatusFilter && getter.getTaskIssueProgressStatusFilter[0]){
+          user_names = _.map(getter.getTaskIssueProgressStatusFilter, 'name').join(", ")
+        }
+        return user_names
 
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
@@ -311,8 +382,14 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'taskIssueOverdueFilter'){
         // console.log(getter.taskIssueOverdueFilter)
-        return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+        var user_names = null
+        if(getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0]){
+          user_names = _.map(getter.taskIssueOverdueFilter, 'name').join(", ")
+        }
+        return user_names
 
+        // return getter.taskIssueOverdueFilter && getter.taskIssueOverdueFilter[0] ? getter.taskIssueOverdueFilter[0].name : null
+      
       }else if(_filterValue == 'facilityProgressFilter'){
         // console.log(getter.facilityProgressFilter)
         var user_names = null
@@ -362,11 +439,11 @@ export default new Vuex.Store({
         }
         return dates
 
-      }else if(_filterValue == 'taskProgressFilter'){
+      }else if(_filterValue == 'taskIssueProgressFilter'){
         // console.log(getter.taskProgressFilter)
         var user_names = null
-        if(getter.taskProgressFilter && getter.taskProgressFilter[0]){
-          user_names = _.map(getter.taskProgressFilter, 'name').join(", ")
+        if(getter.taskIssueProgressFilter && getter.taskIssueProgressFilter[0]){
+          user_names = _.map(getter.taskIssueProgressFilter, 'name').join(", ")
         }
         return user_names
 
@@ -478,6 +555,7 @@ export default new Vuex.Store({
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     taskProgressFilter: state => state.taskProgressFilter,
+    taskIssueProgressFilter: state => state.taskIssueProgressFilter,
     taskUserFilter: state => state.taskUserFilter,
     issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
@@ -546,7 +624,7 @@ export default new Vuex.Store({
 
               break
             }
-
+            // This is for facility progress
             case "progress": {
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -567,9 +645,8 @@ export default new Vuex.Store({
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
-            case "issueProgress":
-            case "taskProgress": {
-              let progressFor = k === 'taskProgress' ? facility.tasks : facility.issues
+            case "taskIssueProgress": {
+              let progressFor = facility.tasks.concat(facility.issues)
               let progress = _.uniq(_.map(progressFor, 'progress'))
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
@@ -633,6 +710,12 @@ export default new Vuex.Store({
                 is_valid = is_valid || _.uniq(_.map(facility[act], 'watched')).includes(true)
               }
               valid = valid && is_valid
+              break
+            }
+            case 'taskIssueProgressStatus':{
+              let _progressStatuses = _.map(facility.tasks, 'progressStatus').concat(_.flatten(_.map(facility.issues, 'progressStatus') ))
+              let filterStatues = _.map(f[k], 'name')
+              valid = valid && _.intersection(filterStatues, _progressStatuses).length > 0
               break
             }
             default: {
@@ -1205,8 +1288,7 @@ export default new Vuex.Store({
         'issueSeverityFilter',
         'issueStageFilter',
         'taskStageFilter',
-        'issueProgressFilter',
-        'taskProgressFilter',
+        'taskIssueProgressFilter',
         'myActionsFilter',
         'onWatchFilter',
         'taskUserFilter',

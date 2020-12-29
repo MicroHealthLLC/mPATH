@@ -126,37 +126,37 @@ describe('Apply filters in Map Page', function() {
     cy.logout()
   })
 
-  it('Apply filter on task stages', function() {
-    cy.toggleFilterTab()
-    cy.get('[data-cy=filter_bar]').within(() => {
-      cy.get('[data-cy=task_stage]').as('list')
-      cy.get('@list').click()
-      cy.get('@list').within(() => {
-        cy.contains('Test Task Stage').click()
-      })
-    })
-    cy.toggleFilterTab()
-    cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Stages: Test Task Stage').should('be.visible')
-    })
-    cy.testTaskStageFilter()
-    cy.toggleFilterTab()
-    cy.get('[data-cy=filter_bar]').within(() => {
-      cy.get('[data-cy=clear_filter]').click()
-      cy.get('[data-cy=task_stage]').as('list')
-      cy.get('@list').click()
-      cy.get('@list').within(() => {
-        cy.contains('New Task Stage').click()
-      })
-    })
-    cy.toggleFilterTab()
-    cy.get('[data-cy=facility_rollup]').scrollIntoView()
-    cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Stages: New Task Stage').should('be.visible')
-    })
-    cy.facilityClientFilter()
-    cy.logout()
-  })
+  // it('Apply filter on task stages', function() {
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=filter_bar]').within(() => {
+  //     cy.get('[data-cy=task_stage]').as('list')
+  //     cy.get('@list').click()
+  //     cy.get('@list').within(() => {
+  //       cy.contains('Test Task Stage').click()
+  //     })
+  //   })
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=date_set_filter]').within(() => {
+  //     cy.contains('Task Stages: Test Task Stage').should('be.visible')
+  //   })
+  //   cy.testTaskStageFilter()
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=filter_bar]').within(() => {
+  //     cy.get('[data-cy=clear_filter]').click()
+  //     cy.get('[data-cy=task_stage]').as('list')
+  //     cy.get('@list').click()
+  //     cy.get('@list').within(() => {
+  //       cy.contains('New Task Stage').click()
+  //     })
+  //   })
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=facility_rollup]').scrollIntoView()
+  //   cy.get('[data-cy=date_set_filter]').within(() => {
+  //     cy.contains('Task Stages: New Task Stage').should('be.visible')
+  //   })
+  //   cy.facilityClientFilter()
+  //   cy.logout()
+  // })
 
   it('Apply filter on issue type', function() {
     cy.toggleFilterTab()

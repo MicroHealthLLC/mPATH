@@ -31,11 +31,15 @@ class Task < ApplicationRecord
     users = self.users
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
-
+    progress_status = "active"
+    if(progress >= 100)
+      progress_status = "completed"
+    end
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
+      progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: users.map(&:id).compact.uniq,
