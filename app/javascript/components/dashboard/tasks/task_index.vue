@@ -267,16 +267,18 @@ computed: {
       }
 
       if (taskIssueOverdue) {
-        var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-        if (overdueFilterNames.includes("overdue")) {
-          valid = (task.isOverdue == true)
-        }
-        if (overdueFilterNames.includes("not overdue")) {
-          valid = (task.isOverdue == false)
-        }
+        var overdueFilterNames = _.map(taskIssueOverdue, 'id')
         if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
           valid = true
+        }else{
+          if (overdueFilterNames.includes("overdue")) {
+            valid = (task.isOverdue == true)
+          }
+          if (overdueFilterNames.includes("not overdue")) {
+            valid = (task.isOverdue == false)
+          }
         }
+
       }
       if (taskIssueProgress && taskIssueProgress[0]) {
         var min = taskIssueProgress[0].value.split("-")[0]
