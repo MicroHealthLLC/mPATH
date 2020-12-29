@@ -8,5 +8,6 @@ describe('Admin Panel Dashboard', function() {
   it('Click on Admin Panel redirect to admin dashboard', function() {
     cy.get('[data-cy=admin_panel]').click()
     cy.contains('Dashboard')
+    cy.get('#logout').click()
   })
 })
