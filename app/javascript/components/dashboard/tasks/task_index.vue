@@ -1,14 +1,27 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between w-100">
-        <div class="input-group w-100">
+
+       <div class="d-flex align-item-center justify-content-between w-100 mb-1">        
+        <div class="input-group w-100">        
           <div class="input-group-prepend d-inline">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search Tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery" data-cy="search_tasks" />
+          <input 
+            type="search"
+            style="height:30px"
+            class="form-control form-control-sm" 
+            placeholder="Search Tasks.." 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="tasksQuery" 
+            data-cy="search_tasks" />
         </div>
-        <div class="d-flex simple-select w-100 font-sm ml-1">
+       </div>
+
+
+        <div class="w-100 font-sm d-flex my-2">
+          <div class="simple-select w-50 font-sm mr-1">            
           <multiselect v-model="C_taskTypeFilter" style="min-height:30px" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -16,21 +29,19 @@
               </div>
             </template>
           </multiselect>
-        </div>
-      </div>
+          </div>
 
-      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_facilityManagerTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+            <div class="simple-select w-50 font-sm" v-tooltip="`Flags`">          
+            <multiselect v-model="C_facilityManagerTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
-            </template>
-          </multiselect>
+             </template>
+             </multiselect>
+            </div>
         </div>
       </div>
-
 
       <div class="mb-3 d-flex">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary mr-3 addTaskBtn" @click.prevent="addNewTask">
@@ -348,6 +359,18 @@ computed: {
 
 tfoot {
   text-align: right !important;
+}
+
+.flags {
+  // background-color: #dc3545;
+  // color:white;  
+  background-color: lightgray;
+  color: black; 
+  margin-left:86%;
+  padding: 1px 2px;
+  font-size: .65rem;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;  
 }
 
 input[type=search] {

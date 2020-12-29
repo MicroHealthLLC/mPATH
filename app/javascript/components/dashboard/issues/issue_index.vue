@@ -4,14 +4,17 @@
       <issue-form :facility="facility" :issue="currentIssue" @on-close-form="newIssue=false" @issue-created="issueCreated" @issue-updated="issueUpdated" class="issue-form-modal" />
     </div>
     <div v-else>
-      <div class="d-flex align-item-center justify-content-between w-100">
+      <div class="d-flex align-item-center justify-content-between w-100 mb-2">
         <div class="input-group w-100">
           <div class="input-group-prepend d-inline">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
           <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search Issues" aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery" data-cy="search_issues">
-        </div>
-        <div class="simple-select w-100 ml-1 font-sm">
+        </div>        
+      </div>
+
+      <div class="d-flex align-item-center font-sm justify-content-between mt-2 w-100">
+       <div class="simple-select w-50 mr-1 font-sm">
           <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -20,11 +23,9 @@
             </template>
           </multiselect>
         </div>
-      </div>
-
-      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_facilityManagerIssueFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+       
+        <div class="simple-select w-50">
+          <multiselect v-model="C_facilityManagerIssueFilter" v-tooltip="`Flags`" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>

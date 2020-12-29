@@ -7,7 +7,8 @@ describe('Tasks Page', function() {
   })
 
   it('Open Task list page of a Facility', function() {
-    cy.get('[data-cy=task_list]').contains('My Task').should('be.visible')
+    cy.get('[data-cy=task_list]').should('be.visible')
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     cy.logout()
   })
 
@@ -34,18 +35,18 @@ describe('Tasks Page', function() {
     cy.logout()
   })
 
-  it('Select task status from list to display related tasks', function() {
-    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
-    cy.get('[data-cy=task_status_list]').as('list')
-    cy.get('@list').click()
-    cy.get('@list').within(() => {
-      cy.contains('complete').click()
-    })
-    cy.contains('No tasks found..').should('be.visible')
-    cy.get('@list').within(() => {
-      cy.contains('all').click()
-    })
-    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
-    cy.logout()
-  })
+  // it('Select task status from list to display related tasks', function() {
+  //   cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+  //   cy.get('[data-cy=task_status_list]').as('list')
+  //   cy.get('@list').click()
+  //   cy.get('@list').within(() => {
+  //     cy.contains('complete').click()
+  //   })
+  //   cy.contains('No tasks found..').should('be.visible')
+  //   cy.get('@list').within(() => {
+  //     cy.contains('all').click()
+  //   })
+  //   cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+  //   cy.logout()
+  // })
 })

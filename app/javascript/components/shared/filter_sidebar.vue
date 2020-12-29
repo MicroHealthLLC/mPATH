@@ -6,7 +6,7 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row pt-1">
+      <div class="row mt-3">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
           <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
@@ -86,7 +86,7 @@
         </div>
       </div>
       <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border mt-2 mb-1 px-3 py-2">
+      <div class="filter-sections filter-border mt-3 mb-1 px-3 py-2">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5>Tasks</h5>
@@ -185,7 +185,7 @@
             <!-- First row: Filter View Title/Header -->
             <div class="row pt-1">
               <div class="col-md-12">
-                <label class="font-sm mb-0">Advanced filter</label>
+                <label class="font-sm mb-0">Flags</label>
                 <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -884,7 +884,7 @@ a.disabled {
 }
 .knocker-btn {
   // Bootstrap success color rgba with transparency
-   background-color: rgba(65, 184, 131, .90);
+   background-color: rgba(65, 184, 131, .85);
 }
 .filter-border {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);

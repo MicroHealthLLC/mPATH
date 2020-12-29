@@ -11,8 +11,8 @@
       />
     </div>
      <div v-else>      
-      <div class="d-flex align-item-center">
-        <div class="input-group mb-2 mr-1 task-search-bar" style="width:280px">
+      <div class="d-flex align-item-center w-100">
+        <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
@@ -25,10 +25,9 @@
             data-cy="search_issues"
             >
         </div>
-        <div class="simple-select mr-1 justify-content-start">
+        <div class="simple-select mr-1 w-100 justify-content-start">
             <multiselect
-              v-model="C_taskTypeFilter"    
-              style="width:325px"        
+              v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
               placeholder="Filter by Task Category"
@@ -45,7 +44,7 @@
               </template>
             </multiselect>
           </div>
-        <div class="simple-select mr-1 justify-content-start">
+        <div class="simple-select mr-1 w-100" v-tooltip="`Flags`">
           <multiselect v-model="C_sheetsIssueFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -55,12 +54,11 @@
           </multiselect>
         </div>  
        </div>
-      <div class="d-flex align-item-center justify-content-start w-100">          
-       <div class="simple-select mr-1 d-inline">        
+      <div class="d-flex align-item-center justify-content-start filter-second-row">          
+       <div class="simple-select mr-1 d-inline w-100">        
           <multiselect
             v-model="C_issueTypeFilter"
-            track-by="name"
-            style="width:280px"
+            track-by="name"        
             label="name"
             class="issueTypeMs"
             placeholder="Filter by Issue Type"
@@ -77,11 +75,10 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1 d-flex">
+        <div class="simple-select mr-1 d-flex w-100">
           <multiselect
             v-model="C_issueSeverityFilter"
-            track-by="name"
-            style="width:325px"
+            track-by="name"          
             label="name"
             placeholder="Filter by Issue Severity"
             :options="issueSeverities"
@@ -118,7 +115,7 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-       <label class="form-check-label text-primary float-right mr-2" data-cy="issue_total">
+       <label class="form-check-label text-primary float-right mr-2 total-label" data-cy="issue_total">
         <h5>Total: {{filteredIssues.length}}</h5>
        </label>
         <div v-if="_isallowed('read')">
@@ -612,6 +609,9 @@
   .exportBtns { 
     transition: all .2s ease-in-out; 
     background-color: #41b883; 
+  }
+  .filter-second-row {
+    width: 66.8%;
   }
   .exportBtns:hover { transform: scale(1.06); }
 </style>
