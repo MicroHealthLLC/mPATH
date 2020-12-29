@@ -624,6 +624,7 @@ export default {
       }
     },
     onChangeProgress(event, option) {
+      let user_input = event.target.value
       let input = event.target.value
       let hash = Object.assign({}, this.progressFilter[option.variable])
       let error = ""
@@ -638,6 +639,9 @@ export default {
       if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
+      if((input === 0 || input === "" ) && user_input === "" && option.type == 'min') hash.min = ""
+      if((input === 0 || input === "" ) && option.type == 'max') hash.max = ""
+        
       this.setProgressFilters({ key: option.variable, value: hash })
     }
   },
