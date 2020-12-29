@@ -33,19 +33,10 @@
 
       <div class="d-flex font-sm w-100 mt-2">
         <div class="simple-select enum-select w-100">
-          <multiselect
-            v-model="viewList"
-            style="width:100%"
-            :options="listOptions"
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Risk Status"
-            data-cy="risks_status_list"
-          >
-            <template slot="singleLabel">
+          <multiselect v-model="C_facilityManagerRiskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+            <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
+                <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
@@ -86,16 +77,6 @@
           <font-awesome-icon icon="file-pdf" class="mr-2" />
            Export to PDF
         </button> -->
-        <div class="form-check-inline font-sm float-right mt-1 mr-0">
-          <label class="form-check-label mr-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myRisks">
-            <i class="fas fa-user mr-1"></i>My Risks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchRisks">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div>
         <div v-if="_isallowed('read')">
           <div v-if="filteredRisks.length > 0">
             <hr/>
@@ -145,8 +126,6 @@
       return {
         loading: true,
         newRisk: false,
-        viewList: 'active',
-        listOptions: ['active','all', 'completed'],
         currentRisk: null,
         now: new Date().toISOString(),
         risksQuery: ''
@@ -157,6 +136,8 @@
     },
     methods: {
       ...mapMutations([
+        'setAdvancedFilter',
+        'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setRiskMilestoneFilter',
         'setTaskTypeFilter',
@@ -202,6 +183,16 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
+        'getAdvancedFilter',
+        'getTaskIssueTabFilterOptions',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
         'riskMilestones',
         'currentProject',
         'riskMilestoneFilter',
@@ -214,18 +205,41 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
       },
       filteredRisks() {
+
         let milestoneIds = _.map(this.C_riskMilestoneFilter, 'id')
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueOnWatch = this.onWatchFilter
+        let taskIssueMyAction = this.myActionsFilter
+        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         let risks = _.sortBy(_.filter(this.facility.risks, ((risk) => {
           let valid = Boolean(risk && risk.hasOwnProperty('progress'))
-          if (this.C_myRisks) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
-            if (this.C_myRisks) valid = valid && userIds.includes(this.$currentUser.id)
+            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
-          if (this.C_onWatchRisks) {
-            valid  = valid && risk.watched
+          if(taskIssueOnWatch.length > 0){
+            valid = valid && risk.watched
           }
+          if(taksIssueNotOnWatch == true){
+           valid = valid && !risk.watched 
+          }
+
+          if(taksIssueNotMyAction == true){
+            let userIds = [..._.map(risk.checklists, 'userId'), ...risk.userIds]
+            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          }
+
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
 
           if (search_query) valid = valid && search_query.test(risk.riskDescription)
@@ -247,6 +261,33 @@
         })), ['dueDate'])
 
         return risks
+      },
+      C_facilityManagerRiskFilter: {
+        get() {
+          return this.getAdvancedFilter()
+        },
+        set(value) {
+          this.setAdvancedFilter(value)
+        }
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
       },
       C_riskMilestoneFilter: {
         get() {

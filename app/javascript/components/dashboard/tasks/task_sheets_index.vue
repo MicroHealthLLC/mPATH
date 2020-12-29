@@ -45,16 +45,6 @@
           </multiselect>
         </div>
 
-<!--         <div class="form-check-inline font-sm ml-auto">
-          <label class="form-check-label mx-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks">
-            <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div> -->
       </div>
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addTaskBtn"
@@ -258,6 +248,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
@@ -291,13 +282,15 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && task.watched
