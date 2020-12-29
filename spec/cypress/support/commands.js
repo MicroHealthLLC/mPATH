@@ -79,3 +79,59 @@ Cypress.Commands.add("openGantt", () => {
   cy.openProject()
   cy.get('[data-cy=gantt_tab]').contains('Gantt').should('be.visible').click()
 })
+
+// Open organization in admin panel
+Cypress.Commands.add("openOrganization", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#organizations').contains('Organizations').click({force: true})
+  })
+})
+
+// Open project from admin panel
+Cypress.Commands.add("openProjectAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#projects').contains('Projects').click()
+  })
+})
+
+// Open facility from Admin panel
+Cypress.Commands.add("openFacilityAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#facilities').contains('Facilities').click()
+  })
+})
+
+// Open Issue from Admin panel
+Cypress.Commands.add("openIssueAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#issues').contains('Issues').click()
+  })
+})
+
+// Open Task from Admin panel
+Cypress.Commands.add("openTaskAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#tasks').contains('Tasks').click()
+  })
+})
+
+// Open Risk from Admin panel
+Cypress.Commands.add("openRiskAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#risks').contains('Risks').click()
+  })
+})
+
+// Open User from Admin panel
+Cypress.Commands.add("openUserAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#users').contains('Users').click()
+  })
+})
