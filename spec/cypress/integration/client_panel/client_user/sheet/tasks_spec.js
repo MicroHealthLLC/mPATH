@@ -41,22 +41,22 @@ describe('Sheets Tasks View', function() {
     cy.logout()
   })
 
-  it('Select task status from list to display related tasks', function() {
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
-    })
-    cy.get('[data-cy=task_status_list]').as('list')
-    cy.get('@list').click()
-    cy.get('@list').within(() => {
-      cy.contains('complete').click()
-    })
-    cy.contains('No tasks found..').should('be.visible')
-    cy.get('@list').within(() => {
-      cy.contains('all').click()
-    })
-    cy.get('[data-cy=tasks_table]').within(() => {
-      cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
-    })
-    cy.logout()
-  })
+  // it('Select task status from list to display related tasks', function() {
+  //   cy.get('[data-cy=tasks_table]').within(() => {
+  //     cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.get('[data-cy=task_status_list]').as('list')
+  //   cy.get('@list').click()
+  //   cy.get('@list').within(() => {
+  //     cy.contains('complete').click()
+  //   })
+  //   cy.contains('No tasks found..').should('be.visible')
+  //   cy.get('@list').within(() => {
+  //     cy.contains('all').click()
+  //   })
+  //   cy.get('[data-cy=tasks_table]').within(() => {
+  //     cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.logout()
+  // })
 })

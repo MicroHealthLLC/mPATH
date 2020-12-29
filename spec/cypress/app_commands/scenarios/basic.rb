@@ -76,6 +76,11 @@ new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage')
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
 
+ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: task_stage.id)
+ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: new_task_stage.id)
+ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: issue_stage.id)
+ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: new_issue_stage.id)
+
 project_task_type = ProjectTaskType.create(project_id: project.id, task_type_id: task_type.id)
 project_issue_severities = ProjectIssueSeverity.create(project_id: project.id, issue_severity_id: issue_severity.id)
 project_issue_type = ProjectIssueType.create(project_id: project.id, issue_type_id: issue_type.id)
