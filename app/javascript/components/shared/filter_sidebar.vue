@@ -222,7 +222,7 @@
             <!-- First row: Filter View Title/Header -->
             <div class="row pt-1">
               <div class="col-md-12">
-                <label class="font-sm mb-0">Advanced filter</label>
+                <label class="font-sm mb-0">Flags</label>
                 <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
