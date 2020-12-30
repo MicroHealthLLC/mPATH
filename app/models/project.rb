@@ -24,6 +24,10 @@ class Project < SortableRecord
   has_many :issue_severities, through: :project_issue_severities
   has_many :project_task_stages, dependent: :destroy
   has_many :task_stages, through: :project_task_stages
+  
+  has_many :project_risk_stages, dependent: :destroy
+  has_many :risk_stages, through: :project_risk_stages
+
   has_many :project_issue_stages, dependent: :destroy
   has_many :issue_stages, through: :project_issue_stages
 

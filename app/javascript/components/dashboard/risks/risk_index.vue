@@ -102,35 +102,28 @@
         <tr>
           <th></th>
           <th>Risk Name</th>
+          <th>Task Category</th>
           <th>Start Date</th>         
           <th>Due Date</th>
           <th>Priority Level</th>
           <th>Risk Approach</th>
-       
+          <th>Last Update</th>       
         </tr>
       </thead>
       <tbody>
         <tr v-for="(risk, i) in filteredRisks">
           <td class="text-center">{{i+1}}</td>
           <td>{{risk.text}}</td>
+          <td>{{risk.taskType}}</td>
           <td>{{risk.startDate}}</td>
           <td>{{risk.dueDate}}</td>
           <td>{{risk.priorityLevel}}</td>
           <td>{{risk.riskApproach}}</td>
-          <!-- <td>{{formatDate(risk.startDate)}}</td>
-          <td>{{formatDate(risk.dueDate)}}</td>
-          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
-          <td class="ten" v-else></td>
-          <td>{{task.progress + "%"}}</td>
-          <td v-if="(task.dueDate) <= now">
-            <h5>X</h5>
+           <td v-if="(risk.notes.length) > 0">
+            By: {{ risk.notes[0].user.fullName}} on
+            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
-          <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
-            By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
-          </td>
-          <td v-else>No Updates</td> -->
+          <td v-else>No Updates</td>       
         </tr>
       </tbody>
     </table>

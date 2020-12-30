@@ -312,16 +312,16 @@
             key: 'issues',
             closable: false
           },
+           {
+            label: 'Risks',
+            key: 'risks',
+            closable: false
+          },
           {
             label: 'Notes',
             key: 'notes',
             closable: false
-          },
-          {
-            label: 'Risks',
-            key: 'risks',
-            closable: false
-          }
+          },         
         ]
       }
     },

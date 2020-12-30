@@ -61,14 +61,14 @@
             v-validate="'required'"
             class="form-control"       
             v-model="DV_risk.text"
-            rows="4"
+            rows="1"
             :readonly="!_isallowed('write')"
             data-cy="risk_name"
-            name="risk_name"
-            :class="{'form-control': true, 'error': errors.has('risk_name') }"
+            name="Risk Name"
+            :class="{'form-control': true, 'error': errors.has('Risk Name') }"
           />
-          <div v-show="errors.has('risk_name')" class="text-danger" data-cy="risk_name_error">
-            {{errors.first('risk_name')}}
+          <div v-show="errors.has('Risk Name')" class="text-danger" data-cy="risk_name_error">
+            {{errors.first('Risk Name')}}
           </div>             
         </div>
 
@@ -145,6 +145,29 @@
             </div>
           </div>
         </div>
+              <!-- <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Assign Risk Owner(s):</label>
+        <multiselect
+          v-model="riskOwners"
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="activeProjectUsers"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          data-cy="issue_user"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div> -->
 
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Task Category:</label>
@@ -445,6 +468,25 @@
             </template>
           </multiselect>
         </div>
+          <div class="form-group mx-4 paginated-updates">
+        <hr class="my-4"/>
+        <label class="font-sm mb-2">Updates:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
+          <div v-for="note in paginated('filteredNotes')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
+              <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
+          </div>
+        </paginate>
+      </div>
+        
 
       </div>
       <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
@@ -473,7 +515,9 @@
         DV_risk: this.INITIAL_RISK_STATE(),
         probabilities: [1,2,3,4,5],
         impactLevels: [1,2,3,4,5],
+        paginate: ['filteredNotes'],
         destroyedFiles: [],
+        riskOwners: [],
         selectedTaskType: null,
         relatedIssues: [],
         relatedTasks: [],
@@ -517,7 +561,8 @@
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
-          checklists: []
+          checklists: [], 
+          notes: []
         }
       },
       handleMove(item) {
@@ -534,6 +579,7 @@
       },
       loadRisk(risk) {
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
+        // this.riskOwners = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -646,6 +692,16 @@
             }
           }
 
+           for (let i in this.DV_risk.notes) {
+            let note = this.DV_risk.notes[i]
+            if (!note.body && !note._destroy) continue
+            for (let key in note) {
+              let value = key == 'user_id' ? note.user_id ? note.user_id : this.$currentUser.id : note[key]
+              formData.append(`risk[notes_attributes][${i}][${key}]`, value)
+            }
+          }
+
+
           for (let file of this.DV_risk.riskFiles) {
             if (!file.id) {
               formData.append('risk[risk_files][]', file)
@@ -691,8 +747,20 @@
         startDate.setHours(0,0,0,0)
         return date < startDate
       },
+      destroyNote(note) {
+        let confirm = window.confirm(`Are you sure you want to delete this update note?`)
+        if (!confirm) return;
+        let i = note.id ? this.DV_risk.notes.findIndex(n => n.id === note.id) : this.DV_risk.notes.findIndex(n => n.guid === note.guid)
+        Vue.set(this.DV_risk.notes, i, {...note, _destroy: true})
+      },
       addChecks() {
         this.DV_risk.checklists.push({text: '', checked: false})
+      },
+      noteBy(note) {
+        return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
+      },
+      addNote() {
+        this.DV_risk.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
@@ -723,6 +791,12 @@
       },
       isMyCheck(check) {
         return this.C_myRisks && check.id ? (check.user && check.user.id == this.$currentUser.id) : true
+      },
+      allowDeleteNote(note) {
+        return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
+      },
+      allowEditNote(note) {
+        return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       }
     },
     computed: {
@@ -773,6 +847,9 @@
       },
       filteredRisks() {
         return _.filter(this.currentRisks, t => t.id !== this.DV_risk.id)
+      },
+      filteredNotes() {
+        return _.orderBy(_.filter(this.DV_risk.notes, n => !n._destroy), 'createdAt', 'desc')
       },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
@@ -835,6 +912,18 @@
           let ids = _.map(value, 'id')
           this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
         }, deep: true
+      },
+       riskOwners: {
+        handler: function(value) {
+          if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      "filteredNotes.length"(value, previous) {
+        this.$nextTick(() => {
+          if (this.$refs.paginator && (value === 1 || previous === 0)) {
+            this.$refs.paginator.goToPage(1)
+          }
+      })
       }
     }
   }
@@ -907,5 +996,48 @@
   }
   .check-due-date {
     text-align: end;
+  }
+  .paginate-links.filteredNotes {
+    list-style: none !important;
+    user-select: none;
+    text-decoration-line: none !important;
+    margin-bottom: 18px;
+    a {
+      width: 20px;
+      height: 25px;
+      margin-right: 0;
+      border-radius: 2px;
+      background-color: white;
+      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+      color: #383838;
+      padding: 5px 12px;
+      cursor: pointer;
+      text-decoration-line: none !important;
+    }
+    a:hover {
+      background-color: #ededed;
+    }
+    li.active a {
+      font-weight: bold;
+      color: #383838;
+      background-color: rgba(211, 211, 211, 10%);
+    }
+    a.active  {
+      background-color: rgba(211, 211, 211, 10%);
+    }
+    li.next:before {
+      content: ' | ';
+      margin-right: 13px;
+      color: #ddd;
+    }
+    li.disabled a {
+      color: #ccc;
+      cursor: no-drop;
+    }
+    li {
+      display: inline !important;
+      margin: 1px;
+      color: #383838 !important;
+    }
   }
 </style>
