@@ -532,7 +532,7 @@ export default new Vuex.Store({
         }
         return user_names
       }else if(_filterValue == 'taskIssueUserFilter'){
-        console.log(getter.getTaskIssueUserFilter)
+        // console.log(getter.getTaskIssueUserFilter)
         var user_names = null
         if(getter.getTaskIssueUserFilter && getter.getTaskIssueUserFilter[0]){
           user_names = _.map(getter.getTaskIssueUserFilter, 'fullName').join(", ")
