@@ -53,16 +53,6 @@
             </template>
           </multiselect>
         </div>  
-<!--         <div class="form-check-inline font-sm ml-auto">
-          <label class="form-check-label mx-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issues
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-         </div>  -->
        </div>
       <div class="d-flex align-item-center justify-content-start filter-second-row">          
        <div class="simple-select mr-1 d-inline w-100">        
@@ -343,6 +333,7 @@
    },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
@@ -384,13 +375,16 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || this.issueUserFilter) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && issue.watched
@@ -429,17 +423,19 @@
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
-          if(taskIssueOverdue){
-            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-            if(overdueFilterNames.includes("overdue")){
-              valid = (issue.isOverdue == true)
-            }
-            if(overdueFilterNames.includes("not overdue")){
-              valid = (issue.isOverdue == false)
-            }
-            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
               valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (issue.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (issue.isOverdue == false)
+              }
             }
+
           }
         
           if (taskIssueProgress && taskIssueProgress[0]) {

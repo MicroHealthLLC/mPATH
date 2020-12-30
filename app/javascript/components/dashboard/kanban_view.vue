@@ -190,14 +190,12 @@
         </div>
 
         <div>
-         <div class="my-3 ml-3 text-center facName" v-if="currentFacility">
-           <h5 class="mb-0 py-1"> 
-          <i class="fas fa-building"></i>
-           {{ currentFacility.facilityName }}
-           </h5>
+         <div class="mt-2 ml-3"  v-if="currentFacility">
+           <h4 class="mb-0 pt-1"> {{ currentFacility.facilityName }}</h4>
          </div>
           <div v-if="currentFacility && ('id' in currentFacility)">
             <kanban
+              class="mb-0"
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
@@ -363,6 +361,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueOverdueOptions',
@@ -398,15 +397,18 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (taskIssueMyAction.length > 0  || this.taskUserFilter) {
+          if (taskIssueMyAction.length > 0  || taskIssueUsers.length > 0) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
             if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && task.watched
@@ -442,6 +444,20 @@
             valid = is_valid
           }
 
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (task.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (task.isOverdue == false)
+              }
+            }
+          }
+          
           if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
             valid = (task.isOverdue == true)
           }
@@ -505,13 +521,16 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || this.issueUserFilter) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && issue.watched
@@ -550,12 +569,19 @@
             valid = is_valid
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (issue.isOverdue == true)
-          }
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (issue.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (issue.isOverdue == false)
+              }
+            }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
-            valid = (issue.isOverdue == false)
           }
 
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
@@ -684,6 +710,9 @@
       margin: 10rem auto;
     }
   }
+  .light {
+    font-weight: 300 !important;
+  }
   .row [class*='col-'] {
     transition: .2s ease-in-out;
   }
@@ -697,12 +726,9 @@
     text-align: left;
     cursor: pointer;
     display: block;
-  }
-  .facName {
-    background-color: #fafafa;
-    padding:2px;
-    border-radius: 2px;  
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }  
+  .kanban-tab {
+    margin-bottom: 20px !important;
   }
   .expandBtn {
     position: absolute;

@@ -27,8 +27,8 @@
 
               <div class="row mb-1 d-flex">
                 <div class="font-sm col">
-                  <span class="mr-1">Milestone:</span>
-                  {{DV_risk.riskMilestone}}
+                  <span class="mr-1">Task Category:</span>
+                  {{DV_risk.taskType}}
                 </div>
                 <div class="font-sm col">
                   <span class="mr-1">Approach:</span>
