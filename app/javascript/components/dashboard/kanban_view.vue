@@ -190,12 +190,11 @@
         </div>
 
         <div>
-         <div class="mt-2 ml-3"  v-if="currentFacility">
-           <h4 class="mb-0 pt-1"> {{ currentFacility.facilityName }}</h4>
+         <div class="mt-0 ml-3" style="position:absolute"  v-if="currentFacility">
+           <h5 class="mb-0 pb-1"> {{ currentFacility.facilityName }}</h5>
          </div>
           <div v-if="currentFacility && ('id' in currentFacility)">
-            <kanban
-              class="mb-0"
+            <kanban             
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
