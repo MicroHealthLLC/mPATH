@@ -442,6 +442,20 @@
             valid = is_valid
           }
 
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (task.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (task.isOverdue == false)
+              }
+            }
+          }
+          
           if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
             valid = (task.isOverdue == true)
           }
@@ -550,12 +564,19 @@
             valid = is_valid
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (issue.isOverdue == true)
-          }
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (issue.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (issue.isOverdue == false)
+              }
+            }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
-            valid = (issue.isOverdue == false)
           }
 
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {

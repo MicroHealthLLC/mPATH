@@ -432,17 +432,19 @@
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
-          if(taskIssueOverdue){
-            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-            if(overdueFilterNames.includes("overdue")){
-              valid = (issue.isOverdue == true)
-            }
-            if(overdueFilterNames.includes("not overdue")){
-              valid = (issue.isOverdue == false)
-            }
-            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
+          if (taskIssueOverdue) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
               valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (issue.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (issue.isOverdue == false)
+              }
             }
+
           }
         
           if (taskIssueProgress && taskIssueProgress[0]) {
