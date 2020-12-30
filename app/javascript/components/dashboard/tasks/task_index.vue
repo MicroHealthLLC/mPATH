@@ -40,8 +40,7 @@
              </template>
              </multiselect>
             </div>
-        </div>
-      </div>
+        </div>   
 
       <div class="mb-3 d-flex">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary mr-3 addTaskBtn" @click.prevent="addNewTask">
@@ -400,6 +399,6 @@ input[type=search] {
 }
 
 #taskHover {
-  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
+ box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
 }
 </style>

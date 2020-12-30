@@ -44,7 +44,6 @@
           </multiselect>
         </div>
     </div>
-</div>
 
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addTaskBtn"
@@ -117,6 +116,7 @@
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
+    
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"

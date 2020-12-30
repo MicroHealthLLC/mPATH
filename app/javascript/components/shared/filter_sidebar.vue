@@ -86,7 +86,7 @@
         </div>
       </div>
       <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border mt-3 mb-1 px-3 py-2">
+      <div class="filter-sections filter-border mt-2 mb-1 px-3 py-2">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5>Tasks</h5>
@@ -147,8 +147,8 @@
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
             <!-- Task and Issue Users Filter -->
-            <div class="row pt-1">
-              <div class="col-md-12">
+          
+              <div>
                 <label class="font-sm mb-0">Task and Issue Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
@@ -157,9 +157,18 @@
                     </div>
                   </template>
                 </multiselect>
+              </div>            
+            
+              <div>
+                <label class="font-sm mb-0">Flags</label>
+                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
               </div>
-            </div>
-
             <div>
               <label class="font-sm mb-0">Task and Issue Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
@@ -183,18 +192,7 @@
             </div>
           
             <!-- First row: Filter View Title/Header -->
-            <div class="row pt-1">
-              <div class="col-md-12">
-                <label class="font-sm mb-0">Flags</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                    </div>
-                  </template>
-                </multiselect>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>

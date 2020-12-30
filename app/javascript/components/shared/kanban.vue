@@ -6,7 +6,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col p-3 my-2 column-width mx-3"
+          class="rounded-lg kan-col my-2 p-3 column-width mx-3"
           data-cy="kanban_col"
           >
           <div class="row mb-3 kan-header" data-cy="kanban_col_title">
@@ -135,8 +135,8 @@ export default {
 <style scoped lang="scss">
   .task-card {
     border-radius: 3px;
-    cursor: move;
-    margin-right:18px;
+    cursor: move;    
+    margin-right: 18px;
     background: #fff;
     border: none !important;
     border-top: solid 8px #ffa500 !important;
@@ -161,7 +161,7 @@ export default {
   .overflow-x-auto {
     overflow-x: auto;
     margin-right: -10px;
-    overflow-y: hidden;
+    overflow-y: hidden !important;
   }
   .kan-col {
     background-color: #ededed;
