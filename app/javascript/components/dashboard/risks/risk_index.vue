@@ -66,22 +66,23 @@
 
       <div class="mt-3">
         <button v-if="_isallowed('write')"
-          class="btn btn-sm btn-primary addRiskBtn"
+          class="btn btn-md btn-primary addRiskBtn mr-3"
           @click.prevent="addNewRisk">
-          <i class="fas fa-plus-circle mr-2" data-cy="new_risk"></i>
+         <font-awesome-icon icon="plus-circle" data-cy="new_risk" />
           Add Risk
         </button>
-        <!-- <button
-          @click.prevent="download"
-          class="btn btn-sm btn-dark export2pdf">
-          <font-awesome-icon icon="file-pdf" class="mr-2" />
-           Export to PDF
-        </button> -->
+         <button v-tooltip="`Export to PDF`" @click.prevent="exportToPdf" class="btn btn-md mr-1 exportBtns text-light">
+          <font-awesome-icon icon="file-pdf" />
+        </button>
+        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Risks Log')" class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel" />
+        </button>
         <div v-if="_isallowed('read')">
           <div v-if="filteredRisks.length > 0">
             <hr/>
             <risk-show
               v-for="(risk, i) in filteredRisks"
+              :load="log(risk)"
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -96,6 +97,43 @@
           </div>
         </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+         <table style="display:none" class="table table-sm table-bordered" ref="table" id="riskList1">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Risk Name</th>
+          <th>Start Date</th>         
+          <th>Due Date</th>
+          <th>Priority Level</th>
+          <th>Risk Approach</th>
+       
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(risk, i) in filteredRisks">
+          <td class="text-center">{{i+1}}</td>
+          <td>{{risk.text}}</td>
+          <td>{{risk.startDate}}</td>
+          <td>{{risk.dueDate}}</td>
+          <td>{{risk.priorityLevel}}</td>
+          <td>{{risk.riskApproach}}</td>
+          <!-- <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td class="ten" v-if="(task.users.length) > 0">{{JSON.stringify(task.users.map(users => (users.fullName))).replace(/]|[['"]/g, '')}}</td>
+          <td class="ten" v-else></td>
+          <td>{{task.progress + "%"}}</td>
+          <td v-if="(task.dueDate) <= now">
+            <h5>X</h5>
+          </td>
+          <td v-else></td>
+          <td v-if="(task.notes.length) > 0">
+            By: {{ task.notes[0].user.fullName}} on
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+          </td>
+          <td v-else>No Updates</td> -->
+        </tr>
+      </tbody>
+    </table>
       </div>
     </div>
   </div>
@@ -128,7 +166,11 @@
         newRisk: false,
         currentRisk: null,
         now: new Date().toISOString(),
-        risksQuery: ''
+        risksQuery: '',
+        uri: 'data:application/vnd.ms-excel;base64,',
+        template: '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s) { return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
       }
     },
     mounted() {
@@ -146,6 +188,9 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
+      log(r) {
+        console.log(r)
+      },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)
         this.newRisk = false
@@ -161,11 +206,17 @@
           this.updateFacilityHash(this.facility)
         }
       },
-      download() {
+      exportToPdf() {
         const doc = new jsPDF("l")
-        const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#riskTableList"})
-        doc.save("Risk_Log.pdf")
+        const html = this.$refs.table.innerHTML
+        doc.autoTable({ html: "#riskList1" })
+        doc.text(150, 285, "Risks List")
+        doc.save("Risks_List.pdf")
+      },
+     exportToExcel(table, name) {
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
       riskEdited(risk) {
         this.currentRisk = risk
@@ -241,7 +292,7 @@
 
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
 
-          if (search_query) valid = valid && search_query.test(risk.riskDescription)
+          if (search_query) valid = valid && search_query.test(risk.riskName)
 
           switch (this.viewList) {
             case "active": {
@@ -332,6 +383,14 @@
     position: relative;
     padding-top: 80px !important;
   }
+  .exportBtns {
+    transition: all .2s ease-in-out;
+    background-color: #41b883;
+  }
+
+  .exportBtns:hover {
+    transform: scale(1.06);
+  }
   input[type=search] {
     color: #383838;
     text-align: left;
@@ -340,6 +399,7 @@
   }
   .addRiskBtn,
   .export2pdf,
+  .exportBtns,
   .riskHover {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
