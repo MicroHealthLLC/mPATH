@@ -11,7 +11,10 @@
           <div class="col-md-9">
             <div>
               <div class="mb-1 d-flex font-sm">
-               <h6> {{DV_risk.riskDescription}}</h6>
+               <h6> {{DV_risk.text}}</h6>
+              </div>
+              <div class="mb-1 d-flex font-sm">
+               {{DV_risk.riskDescription}}
               </div>
 
               <div class="row mb-1 d-flex" v-if="fromView == 'watch_view'">

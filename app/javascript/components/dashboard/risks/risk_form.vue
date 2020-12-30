@@ -56,7 +56,24 @@
             <small style="vertical-align:text-top">On Watch</small>
           </span>
 
-          <label class="font-sm"><h5>*Risk Description:</h5></label>
+          <label class="font-sm"><h5>*Risk Name:</h5></label>
+          <textarea
+            v-validate="'required'"
+            class="form-control"       
+            v-model="DV_risk.text"
+            rows="4"
+            :readonly="!_isallowed('write')"
+            data-cy="risk_name"
+            name="risk_name"
+            :class="{'form-control': true, 'error': errors.has('risk_name') }"
+          />
+          <div v-show="errors.has('risk_name')" class="text-danger" data-cy="risk_name_error">
+            {{errors.first('risk_name')}}
+          </div>             
+        </div>
+
+    <div class="form-group mx-4">
+        <label class="font-sm">*Risk Description:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
@@ -71,7 +88,7 @@
           <div v-show="errors.has('risk_description')" class="text-danger" data-cy="risk_description_error">
             {{errors.first('risk_description')}}
           </div>
-        </div>
+     </div>
 
         <div class="form-group mx-4">
           <label class="font-sm">*Impact Description:</label>
@@ -411,7 +428,7 @@
           <multiselect
             v-model="relatedRisks"
             track-by="id"
-            label="riskDescription"
+            label="text"
             placeholder="Search and select Related-risks"
             :options="filteredRisks"
             :searchable="true"
@@ -423,7 +440,7 @@
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option.riskDescription}}</span>
+                <span class='select__tag-name'>{{option.text}}</span>
               </div>
             </template>
           </multiselect>
@@ -484,6 +501,7 @@
       ]),
       INITIAL_RISK_STATE() {
         return {
+          text: '',
           riskDescription: '',
           impactDescription: '',
           probability: 1,
@@ -576,6 +594,7 @@
 
           this.loading = true
           let formData = new FormData()
+          formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
           formData.append('risk[probability]', this.DV_risk.probability)
@@ -722,6 +741,7 @@
       readyToSave() {
         return (
           this.DV_risk &&
+          this.exists(this.DV_risk.text) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
           this.exists(this.DV_risk.probability) &&
