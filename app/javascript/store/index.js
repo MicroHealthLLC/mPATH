@@ -275,8 +275,8 @@ export default new Vuex.Store({
         {id: 'completed', name: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Action', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'myAction', name: 'My Assignments', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
@@ -314,8 +314,8 @@ export default new Vuex.Store({
         {id: 'completed', name: 'completed', value: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Actions', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Actions', value: 'not my action'},
+        {id: 'myAction', name: 'My Assignments', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
@@ -340,13 +340,13 @@ export default new Vuex.Store({
         ['issueTypeFilter', 'Issue Type'],
         ['issueSeverityFilter', 'Issue Severities'],
         ['issueUserFilter', 'Issue Users'],
-        ['myActionsFilter', 'My Actions'],
+        ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueProgressStatusFilter', 'Action Status'],
         ['notOnWatchFilter', 'Not On Watch'],
-        ['notMyActionsFilter', 'Not My Action'],
+        ['notMyActionsFilter', 'Not My Assignments'],
         ['taskIssueUserFilter', 'Action Users']
 
       ]
