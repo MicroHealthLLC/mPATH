@@ -135,8 +135,7 @@ export default {
 <style scoped lang="scss">
   .task-card {
     border-radius: 3px;
-    cursor: move;    
-    margin-right: 18px;
+    cursor: move;
     background: #fff;
     border: none !important;
     border-top: solid 8px #ffa500 !important;
@@ -152,7 +151,6 @@ export default {
     height: 76vh;
     overflow-y: hidden;
   }
-
   .ghost-card {
     opacity: 0.5;
     background: #F7FAFC;
@@ -166,15 +164,13 @@ export default {
   .kan-col {
     background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    position: relative;  
+    position: relative;
     overflow: hidden;
     padding-bottom: 5px;
   }
-
   .kan-body {
-    position: absolute;
     max-height: 73vh;
-    overflow-y: scroll !important; 
+    overflow-y: scroll !important;
   }
   .badge {
     display: flex;
