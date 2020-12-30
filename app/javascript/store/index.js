@@ -346,7 +346,8 @@ export default new Vuex.Store({
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueProgressStatusFilter', 'Action Item Status'],
         ['notOnWatchFilter', 'Not On Watch'],
-        ['notMyActionsFilter', 'Not My Action']
+        ['notMyActionsFilter', 'Not My Action'],
+        ['taskIssueUserFilter', 'Action Item Users']
 
       ]
     },
@@ -528,6 +529,13 @@ export default new Vuex.Store({
         var user_names = null
         if(getter.notMyActionsFilter && getter.notMyActionsFilter[0]){
           user_names = _.map(getter.notMyActionsFilter, 'name').join(", ")
+        }
+        return user_names
+      }else if(_filterValue == 'taskIssueUserFilter'){
+        console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.getTaskIssueUserFilter && getter.getTaskIssueUserFilter[0]){
+          user_names = _.map(getter.getTaskIssueUserFilter, 'fullName').join(", ")
         }
         return user_names
       }
