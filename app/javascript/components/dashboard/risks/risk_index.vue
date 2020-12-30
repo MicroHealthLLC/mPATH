@@ -220,23 +220,35 @@
 
         let risks = _.sortBy(_.filter(this.facility.risks, ((risk) => {
           let valid = Boolean(risk && risk.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+          let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && risk.watched
-          }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !risk.watched
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
 
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(risk.checklists, 'userId'), ...risk.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && risk.watched
+            }
+
+            if(taksIssueNotOnWatch == true){
+              valid = valid && !risk.watched 
+            }
           }
 
           if (taskIssueOverdue && taskIssueOverdue.length > 0) {
@@ -251,7 +263,6 @@
                 valid = (risk.isOverdue == false)
               }
             }
-
           }
 
           if (taskIssueProgress && taskIssueProgress[0]) {

@@ -271,22 +271,35 @@ computed: {
 
     let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
       let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-      if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-        let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-        if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+      let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+
+      if (taskIssueUsers.length > 0) {  
         if(taskIssueUsers.length > 0){
           valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
         }
       }
-      if(taskIssueOnWatch.length > 0){
-        valid = valid && issue.watched
+
+      if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+        valid = true
+      }else{
+        if (taskIssueMyAction.length > 0) {  
+          valid = valid && userIds.includes(this.$currentUser.id)
+        }
+        if(taksIssueNotMyAction == true){
+          if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+        }
       }
-      if(taksIssueNotOnWatch == true){
-       valid = valid && !task.watched 
-      }
-      if(taksIssueNotMyAction == true){
-        let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-        if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+
+      if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+        valid = true
+      }else{
+        if(taskIssueOnWatch.length > 0){
+          valid = valid && issue.watched
+        }
+
+        if(taksIssueNotOnWatch == true){
+          valid = valid && !issue.watched 
+        }
       }
 
       if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
@@ -318,7 +331,7 @@ computed: {
       }
 
       if (taskIssueOverdue && taskIssueOverdue.length > 0) {
-            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+        var overdueFilterNames = _.map(taskIssueOverdue, 'id')
         if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
           valid = true
         }else{
@@ -329,7 +342,6 @@ computed: {
             valid = (issue.isOverdue == false)
           }
         }
-
       }
 
       if (taskIssueProgress && taskIssueProgress[0]) {
@@ -353,7 +365,6 @@ computed: {
       }
 
       if (search_query) valid = valid && search_query.test(issue.title)
-
 
       return valid;
     })), ['dueDate'])

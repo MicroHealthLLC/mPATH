@@ -286,22 +286,35 @@
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+          let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && task.watched
-          }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !task.watched 
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
 
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && task.watched
+            }
+
+            if(taksIssueNotOnWatch == true){
+             valid = valid && !task.watched 
+            }
           }
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
@@ -351,9 +364,18 @@
             valid = valid && (task.progress >= min && task.progress <= max)
           }
 
-          if (taskIssueProgressStatus) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
-            valid = valid && taskIssueProgressStatusNames.includes(task.progressStatus)
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (task.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (task.progressStatus == "completed")
+              }
+            }
           }
           if (search_query) valid = valid && search_query.test(task.text)
 

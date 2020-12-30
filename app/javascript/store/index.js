@@ -313,8 +313,8 @@ export default new Vuex.Store({
         {id: 'completed', name: 'completed', value: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Action', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'myAction', name: 'My Actions', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Actions', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
