@@ -2,14 +2,14 @@
   <div id="kanban" data-cy="kanban">
 
     <div class="overflow-x-auto">
-      <div class="d-flex" v-if="!loading">
+      <div class="d-flex py-2" v-if="!loading">
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col p-3 column-width mx-3"
+          class="rounded-lg kan-col p-3 my-2 column-width mx-3"
           data-cy="kanban_col"
           >
-          <div class="row mb-4" data-cy="kanban_col_title">
+          <div class="row mb-3 kan-header" data-cy="kanban_col_title">
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
@@ -27,6 +27,7 @@
               <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
             </div> -->
           </div>
+          <div class="kan-body">
           <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable">
             <div
               :is="cardShow"
@@ -35,9 +36,10 @@
               :task="task"
               :issue="task"
               fromView="kanban_view"
-              class="mt-3 task-card"
+              class="mt-2 task-card"
             ></div>
           </draggable>
+          </div>
         </div>
       </div>
     </div>
@@ -134,6 +136,7 @@ export default {
   .task-card {
     border-radius: 3px;
     cursor: move;
+    margin-right:18px;
     background: #fff;
     border: none !important;
     border-top: solid 8px #ffa500 !important;
@@ -144,12 +147,12 @@ export default {
     min-height: calc(100vh - 230px);
   }
   .column-width {
-    min-width: 20rem;
-    width: 20rem;
-    max-height: calc(100vh - 130px);
-    height: calc(100vh - 130px);
-    overflow-y: auto;
+    min-width: 18rem;
+    width: 18rem;
+    height: 76vh;
+    overflow-y: hidden;
   }
+
   .ghost-card {
     opacity: 0.5;
     background: #F7FAFC;
@@ -157,10 +160,21 @@ export default {
   }
   .overflow-x-auto {
     overflow-x: auto;
+    margin-right: -10px;
+    overflow-y: hidden;
   }
   .kan-col {
-    background-color: #fafafa;
+    background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    position: relative;  
+    overflow: hidden;
+    padding-bottom: 5px;
+  }
+
+  .kan-body {
+    position: absolute;
+    max-height: 73vh;
+    overflow-y: scroll !important; 
   }
   .badge {
     display: flex;
