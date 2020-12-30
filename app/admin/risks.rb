@@ -18,7 +18,7 @@ ActiveAdmin.register Risk do
       :impact_level,
       :risk_approach,
       :risk_approach_description,
-      :risk_milestone_id,
+      :task_type_id,
       :progress,
       :start_date,
       :due_date,
@@ -55,11 +55,11 @@ ActiveAdmin.register Risk do
     tag_column :priority_level
     tag_column :risk_approach
     column :risk_approach_description, sortable: false
-    column "Risk Milestone", :risk_milestone, nil, sortable: 'risk_milestones.name' do |risk|
+    column "Task Category", :task_type, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
-        link_to "#{risk.risk_milestone.name}", "#{edit_admin_risk_milestone_path(risk.risk_milestone)}" if risk.risk_milestone.present?
+        link_to "#{risk.task_type.name}", "#{edit_admin_task_type_path(risk.task_type)}" if risk.task_type.present?
       else
-        "<span>#{risk.risk_milestone&.name}</span>".html_safe
+        "<span>#{risk.task_type&.name}</span>".html_safe
       end
     end
     column "Files" do |risk|
@@ -113,7 +113,7 @@ ActiveAdmin.register Risk do
       end
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
-      f.input :risk_milestone, label: 'Risk Milestone', include_blank: false, include_hidden: false
+      f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false
       f.input :probability, include_blank: false, include_hidden: false
       f.input :impact_level, include_blank: false, include_hidden: false
       f.input :risk_approach, include_blank: false, include_hidden: false
@@ -174,7 +174,7 @@ ActiveAdmin.register Risk do
     end
 
     def scoped_collection
-      super.includes(:risk_milestone, facility_project: [:project, :facility])
+      super.includes(:task_type, facility_project: [:project, :facility])
     end
   end
 
@@ -184,7 +184,7 @@ ActiveAdmin.register Risk do
   filter :impact_level
   filter :risk_approach, as: :select, collection: Risk.risk_approaches
   filter :risk_approach_description
-  filter :risk_milestone
+  filter :task_type
   filter :start_date
   filter :due_date
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'

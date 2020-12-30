@@ -3,7 +3,7 @@ class Risk < ApplicationRecord
   include Tasker
 
   belongs_to :user
-  belongs_to :risk_milestone, optional: true
+  belongs_to :task_type, optional: true
   has_many_attached :risk_files, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]

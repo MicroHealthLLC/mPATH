@@ -53,8 +53,7 @@ class Project < SortableRecord
       issue_types: issue_types.as_json,
       issue_severities: issue_severities.as_json,
       task_stages: task_stages.as_json,
-      issue_stages: issue_stages.as_json,
-      risk_milestones: RiskMilestone.all.as_json
+      issue_stages: issue_stages.as_json
     )
     json
   end

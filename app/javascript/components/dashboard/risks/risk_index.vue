@@ -45,11 +45,11 @@
       <div class="d-flex align-item-center justify-content-between w-100">
         <div class="simple-select w-100">
           <multiselect
-            v-model="C_riskMilestoneFilter"
+            v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
             placeholder="Filter by Risk Milestone"
-            :options="riskMilestones"
+            :options="taskTypes"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -139,7 +139,6 @@
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
-        'setRiskMilestoneFilter',
         'setTaskTypeFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
@@ -193,9 +192,9 @@
         'taskIssueOverdueFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
-        'riskMilestones',
+        'taskTypes',
         'currentProject',
-        'riskMilestoneFilter',
+        'taskTypeFilter',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -206,7 +205,7 @@
       },
       filteredRisks() {
 
-        let milestoneIds = _.map(this.C_riskMilestoneFilter, 'id')
+        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
@@ -232,7 +231,7 @@
             valid = valid && risk.watched
           }
           if(taksIssueNotOnWatch == true){
-           valid = valid && !risk.watched 
+           valid = valid && !risk.watched
           }
 
           if(taksIssueNotMyAction == true){
@@ -289,12 +288,12 @@
           this.setTaskIssueOverdueFilter(value)
         }
       },
-      C_riskMilestoneFilter: {
+      C_taskTypeFilter: {
         get() {
-          return this.riskMilestoneFilter
+          return this.taskTypeFilter
         },
         set(value) {
-          this.setRiskMilestoneFilter(value)
+          this.setTaskTypeFilter(value)
         }
       },
       C_myRisks: {

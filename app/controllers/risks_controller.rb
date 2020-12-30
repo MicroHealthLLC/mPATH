@@ -51,7 +51,7 @@ class RisksController < AuthenticatedController
       :impact_level,
       :risk_approach,
       :risk_approach_description,
-      :risk_milestone_id,
+      :task_type_id,
       :progress,
       :start_date,
       :due_date,

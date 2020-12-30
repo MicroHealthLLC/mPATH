@@ -130,19 +130,19 @@
         </div>
 
         <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Risk Milestone:</label>
+          <label class="font-sm">*Task Category:</label>
           <multiselect
-            v-model="selectedRiskMilestone"
+            v-model="selectedTaskType"
             v-validate="'required'"
             track-by="id"
             label="name"
-            placeholder="Risk Milestone"
-            :options="riskMilestones"
+            placeholder="Task Category"
+            :options="taskTypes"
             :searchable="false"
             select-label="Select"
             deselect-label="Enter to remove"
             :disabled="!_isallowed('write')"
-            :class="{'error': errors.has('Risk Milestone')}"
+            :class="{'error': errors.has('Task Category')}"
             data-cy="risk_milestone"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -151,8 +151,8 @@
               </div>
             </template>
           </multiselect>
-          <div v-show="errors.has('Risk Milestone')" class="text-danger" data-cy="risk_milestone_error">
-            {{errors.first('Risk Milestone')}}
+          <div v-show="errors.has('Task Category')" class="text-danger" data-cy="risk_milestone_error">
+            {{errors.first('Task Category')}}
           </div>
         </div>
 
@@ -457,7 +457,7 @@
         probabilities: [1,2,3,4,5],
         impactLevels: [1,2,3,4,5],
         destroyedFiles: [],
-        selectedRiskMilestone: null,
+        selectedTaskType: null,
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
@@ -490,7 +490,7 @@
           impactLevel: 1,
           riskApproach: 'avoid',
           riskApproachDescription: '',
-          riskMilestoneId: '',
+          taskTypeId: '',
           progress: 0,
           startDate: '',
           dueDate: '',
@@ -519,7 +519,7 @@
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
-        this.selectedRiskMilestone = this.riskMilestones.find(t => t.id === this.DV_risk.riskMilestoneId)
+        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_risk.taskTypeId)
         if (risk.attachFiles) this.addFile(risk.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -582,7 +582,7 @@
           formData.append('risk[impact_level]', this.DV_risk.impactLevel)
           formData.append('risk[risk_approach]', this.DV_risk.riskApproach)
           formData.append('risk[risk_approach_description]', this.DV_risk.riskApproachDescription)
-          formData.append('risk[risk_milestone_id]', this.DV_risk.riskMilestoneId)
+          formData.append('risk[task_type_id]', this.DV_risk.taskTypeId)
           formData.append('risk[progress]', this.DV_risk.progress)
           formData.append('risk[start_date]', this.DV_risk.startDate)
           formData.append('risk[due_date]', this.DV_risk.dueDate)
@@ -712,7 +712,7 @@
         'projectUsers',
         'activeProjectUsers',
         'myActionsFilter',
-        'riskMilestones',
+        'taskTypes',
         'riskApproaches',
         'currentTasks',
         'currentIssues',
@@ -728,7 +728,7 @@
           this.exists(this.DV_risk.impactLevel) &&
           this.exists(this.DV_risk.riskApproach) &&
           this.exists(this.DV_risk.riskApproachDescription) &&
-          this.exists(this.DV_risk.riskMilestoneId) &&
+          this.exists(this.DV_risk.taskTypeId) &&
           this.exists(this.DV_risk.startDate) &&
           this.exists(this.DV_risk.dueDate)
         )
@@ -793,9 +793,9 @@
           if (value) this.DV_risk.subRiskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
-      selectedRiskMilestone: {
+      selectedTaskType: {
         handler: function(value) {
-          this.DV_risk.riskMilestoneId = value ? value.id : null
+          this.DV_risk.taskTypeId = value ? value.id : null
         }, deep: true
       },
       filteredTasks: {

@@ -2,17 +2,17 @@
   <div id="facility_sidebar">
     <div class="row">
       <div class="col-md-2 facility-groups-tab">
-        <facility-sidebar     
+        <facility-sidebar
           :current-facility-group="currentFacilityGroup"
           :expanded="expanded"
           :current-facility="currentFacility"
           @on-expand-facility-group="expandFacilityGroup"
           @on-expand-facility="showFacility"
         ></facility-sidebar>
-      </div>  
+      </div>
        <div class="col-md-4 facility-show-tab" v-if="isFacilityManagerView">
         <div class="my-3">
-          <facility-show        
+          <facility-show
             v-if="C_showFacilityTab"
             from="manager_view"
             :facility="currentFacility"
@@ -55,6 +55,15 @@
               @note-updated="updatedFacilityNote"
             ></notes-form>
 
+            <risk-form
+              v-else-if="managerView.risk"
+              from="manager_view"
+              :facility="currentFacility"
+              :risk="managerView.risk"
+              @risk-created="updateFacilityRisk"
+              @risk-updated="updateFacilityRisk"
+            ></risk-form>
+
             <div v-else class="center-section text-center">
               <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
               <p>View, Add or Edit Tasks, Issues, and Notes here.</p>
@@ -89,17 +98,20 @@
   import TaskForm from "./../dashboard/tasks/task_form"
   import IssueForm from "./../dashboard/issues/issue_form"
   import NotesForm from "./../dashboard/notes/notes_form"
+  import RiskForm from "./../dashboard/risks/risk_form"
+
   export default {
     name: "StateFacilitySidebar",
      components: {
      FacilitySidebar,
      FacilityRollup,
-     FacilitySheets, 
+     FacilitySheets,
      FacilityShow,
      SweetModal,
      TaskForm,
      IssueForm,
-     NotesForm
+     NotesForm,
+     RiskForm
     },
     data() {
       return {
@@ -130,6 +142,7 @@
       ...mapMutations([
         'updateTasksHash',
         'updateIssuesHash',
+        'updateRisksHash',
         'setTaskForManager'
       ]),
       ...mapActions([
@@ -167,6 +180,11 @@
         let index = this.currentFacility.notes.findIndex(n => n.id == note.id)
         if (index > -1) Vue.set(this.currentFacility.notes, index, note)
         this.setTaskForManager({key: 'note', value: null})
+      },
+      updateFacilityRisk(risk) {
+        let cb = () => this.updateRisksHash({risk: risk})
+        this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.setTaskForManager({key: 'risk', value: null})
       },
       goBackFromEdits() {
         this.setTaskForManager({key: 'task', value: null})
@@ -228,12 +246,12 @@
       max-height: calc(100vh - 94px);
       height: calc(100vh - 94px);
       overflow-y: auto;
-      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
     }
-    
+
     .default-background {
       background-color: #ededed;
-      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
+      box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
       height: calc(100vh - 130px);
       max-height: calc(100vh - 130px);
       position: relative;
@@ -242,7 +260,7 @@
     }
     .center-section {
       position: absolute;
-      box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23); 
+      box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
       border-radius: 2px;
       padding: 10px;
       top: 50%;
@@ -251,29 +269,29 @@
       transform: translate(-50%, -50%);
     }
   }
-    .form_modal.sweet-modal-overlay {
-      z-index: 10000001;
+  .form_modal.sweet-modal-overlay {
+    z-index: 10000001;
+  }
+  .form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+    min-width: 80vw;
+    max-height: 90vh;
+    background-color: #ededed;
+    .sweet-content {
+      padding-top: 30px;
+      text-align: unset;
     }
-    .form_modal.sweet-modal-overlay /deep/ .sweet-modal {
-      min-width: 80vw;
-      max-height: 90vh;
-      background-color: #ededed;
-      .sweet-content {
-        padding-top: 30px;
-        text-align: unset;
-      }
-      .modal_close_btn {
-        display: flex;
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        font-size: 20px;
-        cursor: pointer;
-      }
-      .form-inside-modal {
-        form {
-          position: inherit !important;
-        }
+    .modal_close_btn {
+      display: flex;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
       }
     }
+  }
 </style>
