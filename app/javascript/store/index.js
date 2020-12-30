@@ -78,8 +78,7 @@ export default new Vuex.Store({
         error: ''
       }     
     },
-    taskUserFilter: null,
-    issueUserFilter: null,
+    taskIssueUserFilter: new Array,
     myActionsFilter: new Array,
     notMyActionsFilter: new Array,
     onWatchFilter: new Array,
@@ -93,6 +92,7 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
@@ -103,9 +103,6 @@ export default new Vuex.Store({
       var _myActionsFilter = []
       var _notMyActionsFilter = []
       var _taskIssueProgressStatusFilter = []
-      // state.taskIssueOverdueFilter = _taskIssueOverdueFilter
-      // state.onWatchFilter = _onWatchFilter
-      // state.myActionsFilter = _myActionsFilter
 
       for(var option of selectedOptions){
         if(option.id == "overdue" || option.id == 'not overdue'){
@@ -247,8 +244,6 @@ export default new Vuex.Store({
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
     setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
     setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
-    setTaskUserFilter: (state, filter) => state.taskUserFilter = filter,
-    setIssueUserFilter: (state, filter) => state.issueUserFilter = filter,
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
     setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
     clearProgressFilters: (state) => {
@@ -271,6 +266,9 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getTaskIssueUserFilter:(state, getters) =>{
+      return state.taskIssueUserFilter
+    },
     getNotOnWatchFilter: (state, getters) =>{
       return state.notOnWatchFilter
     },
@@ -680,6 +678,12 @@ export default new Vuex.Store({
             }
             case "taskUserIds": {
               let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
+              valid = valid && _.intersection(f[k], ids).length > 0
+              break
+            }
+            case "taskIssueUsers": {
+              var taskIssues = facility.tasks.concat(facility.issues)
+              let ids = _.uniq(_.compact(_.flatten(_.map(taskIssues, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
@@ -1275,6 +1279,7 @@ export default new Vuex.Store({
         removeItem: key => Cookies.remove(key),
       },
       paths: [
+        'taskIssueUserFilter',
         'projectStatusFilter',
         'taskTypeFilter',
         'facilityGroupFilter',
@@ -1291,8 +1296,6 @@ export default new Vuex.Store({
         'taskIssueProgressFilter',
         'myActionsFilter',
         'onWatchFilter',
-        'taskUserFilter',
-        'issueUserFilter',
         'progressFilter',
         'mapFilters'
       ]

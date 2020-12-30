@@ -1,14 +1,27 @@
 <template>
   <div id="tasks-index" class="mt-3" data-cy="task_list">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between w-100">
-        <div class="input-group w-100">
+
+       <div class="d-flex align-item-center justify-content-between w-100 mb-1">        
+        <div class="input-group w-100">        
           <div class="input-group-prepend d-inline">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search Tasks.." aria-label="Search" aria-describedby="search-addon" v-model="tasksQuery" data-cy="search_tasks" />
+          <input 
+            type="search"
+            style="height:30px"
+            class="form-control form-control-sm" 
+            placeholder="Search Tasks.." 
+            aria-label="Search" 
+            aria-describedby="search-addon" 
+            v-model="tasksQuery" 
+            data-cy="search_tasks" />
         </div>
-        <div class="d-flex simple-select w-100 font-sm ml-1">
+       </div>
+
+
+        <div class="w-100 font-sm d-flex my-2">
+          <div class="simple-select w-50 font-sm mr-1">            
           <multiselect v-model="C_taskTypeFilter" style="min-height:30px" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -16,41 +29,18 @@
               </div>
             </template>
           </multiselect>
-        </div>
-      </div>
-<!--       <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status" data-cy="task_status_list">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select w-100 enum-select">
-          <multiselect v-model="C_taskIssueOverdueFilter" style="width:100%" track-by="name" label="name" placeholder="Task and Issue Overdue" :options="getTaskIssueOverdueOptions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-      </div> -->
+          </div>
 
-      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_facilityManagerTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+            <div class="simple-select w-50 font-sm" v-tooltip="`Flags`">          
+            <multiselect v-model="C_facilityManagerTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
-            </template>
-          </multiselect>
-        </div>
-      </div>
-
+             </template>
+             </multiselect>
+            </div>
+        </div>   
 
       <div class="mb-3 d-flex">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary mr-3 addTaskBtn" @click.prevent="addNewTask">
@@ -63,14 +53,6 @@
         <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Task List')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
-<!--         <div class="form-check-inline font-sm ml-auto mr-0">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks"> <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div> -->
       </div>
       <div v-if="filteredTasks.length > 0">
         <hr />
@@ -187,6 +169,7 @@ export default {
 },
 computed: {
   ...mapGetters([
+    'getTaskIssueUserFilter',
     'getAdvancedFilter',
     'getTaskIssueTabFilterOptions',
     'getTaskIssueProgressStatusOptions',
@@ -220,13 +203,16 @@ computed: {
     let taskIssueMyAction = this.myActionsFilter
     let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
     let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+    let taskIssueUsers = this.getTaskIssueUserFilter
 
     let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
       let valid = Boolean(task && task.hasOwnProperty('progress'))
-      if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
+      if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
         let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
         if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-        if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+        if(taskIssueUsers.length > 0){
+          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+        }
       }
       if(taskIssueOnWatch.length > 0){
         valid = valid && task.watched
@@ -376,6 +362,18 @@ tfoot {
   text-align: right !important;
 }
 
+.flags {
+  // background-color: #dc3545;
+  // color:white;  
+  background-color: lightgray;
+  color: black; 
+  margin-left:86%;
+  padding: 1px 2px;
+  font-size: .65rem;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;  
+}
+
 input[type=search] {
   color: #383838;
   text-align: left;
@@ -403,6 +401,6 @@ input[type=search] {
 }
 
 #taskHover {
-  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
+ box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
 }
 </style>

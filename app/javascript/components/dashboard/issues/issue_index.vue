@@ -4,14 +4,17 @@
       <issue-form :facility="facility" :issue="currentIssue" @on-close-form="newIssue=false" @issue-created="issueCreated" @issue-updated="issueUpdated" class="issue-form-modal" />
     </div>
     <div v-else>
-      <div class="d-flex align-item-center justify-content-between w-100">
+      <div class="d-flex align-item-center justify-content-between w-100 mb-2">
         <div class="input-group w-100">
           <div class="input-group-prepend d-inline">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
           <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search Issues" aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery" data-cy="search_issues">
-        </div>
-        <div class="simple-select w-100 ml-1 font-sm">
+        </div>        
+      </div>
+
+      <div class="d-flex align-item-center font-sm justify-content-between mt-2 w-100">
+       <div class="simple-select w-50 mr-1 font-sm">
           <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -20,31 +23,9 @@
             </template>
           </multiselect>
         </div>
-      </div>
-<!--       <div class="d-flex font-sm w-100">
-        <div class="simple-select enum-select w-100">
-          <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Issue Status" data-cy="issue_status_list">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select w-100 ml-1">
-          <multiselect v-model="C_taskIssueOverdueFilter" track-by="name" label="name" placeholder="Task and Issue Overdue" :options="getTaskIssueOverdueOptions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-      </div> -->
-
-      <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_facilityManagerIssueFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+       
+        <div class="simple-select w-50">
+          <multiselect v-model="C_facilityManagerIssueFilter" v-tooltip="`Flags`" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -85,16 +66,6 @@
         <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Issue Log')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
-<!--         <div class="form-check-inline font-sm myIssues mt-2 mr-0">
-          <label class="form-check-label mr-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issues
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div> -->
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">
             <!-- <button
@@ -254,6 +225,7 @@ export default {
   },
 computed: {
   ...mapGetters([
+    'getTaskIssueUserFilter',
     'getAdvancedFilter',
     'getTaskIssueTabFilterOptions',
     'getTaskIssueProgressStatusOptions',
@@ -295,13 +267,16 @@ computed: {
     let taskIssueMyAction = this.myActionsFilter
     let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
     let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+    let taskIssueUsers = this.getTaskIssueUserFilter
 
     let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
       let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-      if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
+      if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
         let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
         if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-        if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+        if(taskIssueUsers.length > 0){
+          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+        }
       }
       if(taskIssueOnWatch.length > 0){
         valid = valid && issue.watched
@@ -460,7 +435,6 @@ computed: {
 
 #issueHover:hover {
   cursor: pointer;
-  box-shadow: 0.5px 0.5px 1px 1px rgba(56, 56, 56, 0.29), 0 2px 2px rgba(56, 56, 56, 0.23);
   background-color: rgba(91, 192, 222, 0.3);
   border-left: solid rgb(91, 192, 222);
 }

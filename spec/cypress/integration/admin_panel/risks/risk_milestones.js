@@ -12,6 +12,7 @@ describe('Admin Panel Risk Milestones', function() {
     })
     cy.get('#page_title').contains('Risk Milestones').should('be.visible')
     // cy.get('#index_table_risk_milestones').should('be.visible')
+    cy.get('#index_table_risk_milestones').should('not.exist')
     cy.get('#logout').click()
   })
 })

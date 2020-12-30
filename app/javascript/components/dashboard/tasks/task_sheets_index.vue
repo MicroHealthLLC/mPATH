@@ -1,8 +1,8 @@
 <template>
   <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="input-group task-search-bar" style="width:280px">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+        <div class="input-group task-search-bar w-100">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
@@ -14,8 +14,7 @@
             v-model="tasksQuery"
             data-cy="search_tasks">
           </div>
-        <div class="simple-select mx-1 d-flex" style="width:20%">
-
+        <div class="simple-select w-100 mx-1 d-flex">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -35,7 +34,7 @@
           </multiselect>
         </div>
 
-        <div class="simple-select d-flex" style="width:18%">
+        <div class="simple-select d-flex w-100" v-tooltip="`Flags`">
           <multiselect v-model="C_sheetsTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -44,18 +43,8 @@
             </template>
           </multiselect>
         </div>
+    </div>
 
-<!--         <div class="form-check-inline font-sm ml-auto">
-          <label class="form-check-label mx-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks">
-            <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div> -->
-      </div>
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addTaskBtn"
         @click.prevent="addNewTask"
@@ -76,7 +65,7 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-      <label class="form-check-label text-primary float-right mr-2" data-cy="task_total">
+      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
         <h5>Total: {{filteredTasks.length}}</h5>
       </label>
       <div v-if="filteredTasks.length > 0">
@@ -127,6 +116,7 @@
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
+    
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"
@@ -258,6 +248,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueProgressStatusOptions',
@@ -291,13 +282,15 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && task.watched
@@ -558,6 +551,9 @@
  .exportBtns { 
     transition: all .2s ease-in-out; 
     background-color: #41b883; 
+ }
+ .total-label {
+   margin-top: 20px;
  }
  .exportBtns:hover { transform: scale(1.06); }
 </style>

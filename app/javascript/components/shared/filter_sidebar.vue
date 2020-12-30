@@ -6,7 +6,7 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row pt-1">
+      <div class="row mt-3">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
           <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
@@ -100,16 +100,6 @@
                 </template>
               </multiselect>
             </div>
-            <div>
-              <label class="font-sm mb-0">Task Users</label>
-              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_user">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Task Stages</label>
               <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
@@ -129,16 +119,6 @@
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Issue Users</label>
-              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
                   </div>
                 </template>
               </multiselect>
@@ -166,37 +146,29 @@
           </div>
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
-            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227
-            <div>
-              <label class="font-sm mb-0">My Actions</label>
-              <multiselect v-model="C_myActionsFilter" track-by="name" label="name" :options="myActions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div v-if="viewPermit('watch_view', 'read')">
-              <label class="font-sm mb-0">On Watch</label>
-              <multiselect v-model="C_onWatchFilter" track-by="name" label="name" :options="onWatch" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Task and Issue Overdue</label>
-              <multiselect v-model="C_taskIssueOverdueFilter" track-by="name" label="name" :options="getTaskIssueOverdueOptions" :searchable="false" :allow-empty="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>-->
+            <!-- Task and Issue Users Filter -->
+          
+              <div>
+                <label class="font-sm mb-0">Task and Issue Users</label>
+                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>            
+            
+              <div>
+                <label class="font-sm mb-0">Flags</label>
+                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
             <div>
               <label class="font-sm mb-0">Task and Issue Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
@@ -220,18 +192,7 @@
             </div>
           
             <!-- First row: Filter View Title/Header -->
-            <div class="row pt-1">
-              <div class="col-md-12">
-                <label class="font-sm mb-0">Advanced filter</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                    </div>
-                  </template>
-                </multiselect>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>
@@ -266,6 +227,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'getTaskIssueUserFilter',
       'getTaskIssueProgressStatusFilter',
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
@@ -430,22 +392,15 @@ export default {
         this.setIssueStageFilter(value)
       }
     },
-    C_taskUserFilter: {
+    C_taskIssueUserFilter: {
       get() {
-        return this.taskUserFilter
+        return this.getTaskIssueUserFilter
       },
       set(value) {
-        this.setTaskUserFilter(value)
+        this.setTaskIssueUserFilter(value)
       }
     },
-    C_issueUserFilter: {
-      get() {
-        return this.issueUserFilter
-      },
-      set(value) {
-        this.setIssueUserFilter(value)
-      }
-    },
+
     C_myActionsFilter: {
       get() {
         return this.myActionsFilter
@@ -485,6 +440,7 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setTaskIssueUserFilter',
       'setTaskIssueProgressStatusFilter',
       'setTaskIssueProgressFilter',
       'setAdvancedFilter',
@@ -691,11 +647,8 @@ export default {
     taskStageFilter(value) {
       this.updateMapFilters({ key: 'taskStageIds', filter: value })
     },
-    issueUserFilter(value) {
-      this.updateMapFilters({ key: 'issueUserIds', filter: value })
-    },
-    taskUserFilter(value) {
-      this.updateMapFilters({ key: 'taskUserIds', filter: value })
+    getTaskIssueUserFilter(value) {
+      this.updateMapFilters({ key: 'taskIssueUsers', filter: value })
     },
     myActionsFilter(value) {
       this.updateMapFilters({ key: 'myActions', filter: value, _k: 'value' })
@@ -933,7 +886,7 @@ a.disabled {
 }
 .knocker-btn {
   // Bootstrap success color rgba with transparency
-   background-color: rgba(65, 184, 131, .90);
+   background-color: rgba(65, 184, 131, .85);
 }
 .filter-border {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
