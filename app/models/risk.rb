@@ -41,11 +41,15 @@ class Risk < ApplicationRecord
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     sub_risks = self.sub_risks
-
+    progress_status = "active"
+    if(progress >= 100)
+      progress_status = "completed"
+    end
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
+      progress_status: progress_status,
       checklists: checklists.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,

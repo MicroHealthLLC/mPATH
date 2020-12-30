@@ -239,23 +239,45 @@
             if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
           }
 
+          if (taskIssueOverdue && taskIssueOverdue.length > 0) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (risk.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (risk.isOverdue == false)
+              }
+            }
+
+          }
+
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (risk.progress >= min && risk.progress <= max)
+          }
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (risk.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (risk.progressStatus == "completed")
+              }
+            }
+          }
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
 
           if (search_query) valid = valid && search_query.test(risk.riskDescription)
 
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && risk.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && risk.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+
           return valid;
         })), ['dueDate'])
 

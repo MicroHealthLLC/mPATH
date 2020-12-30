@@ -252,7 +252,7 @@ computed: {
         valid = is_valid
       }
 
-      if (taskIssueOverdue) {
+      if (taskIssueOverdue && taskIssueOverdue.length > 0) {
         var overdueFilterNames = _.map(taskIssueOverdue, 'id')
         if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
           valid = true
@@ -272,9 +272,18 @@ computed: {
         valid = valid && (task.progress >= min && task.progress <= max)
       }
 
-      if (taskIssueProgressStatus) {
-        var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
-        valid = valid && taskIssueProgressStatusNames.includes(task.progressStatus)
+      if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+        var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+        if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+          valid = true
+        }else{
+          if (taskIssueProgressStatusNames.includes("active")) {
+            valid = (task.progressStatus == "active")
+          }
+          if (taskIssueProgressStatusNames.includes("completed")) {
+            valid = (task.progressStatus == "completed")
+          }
+        }
       }
 
       if (search_query) valid = valid && search_query.test(task.text)

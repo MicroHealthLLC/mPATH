@@ -309,8 +309,8 @@ export default new Vuex.Store({
       //   {id: 'myNotes', name: 'My Notes', value: 'notes'}
       // ]
       var options = [
-        {id: 'active', name: 'active'},
-        {id: 'completed', name: 'completed'},
+        {id: 'active', name: 'active', value: 'active'},
+        {id: 'completed', name: 'completed', value: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
         {id: 'myAction', name: 'My Action', value: 'my action'},
@@ -328,13 +328,13 @@ export default new Vuex.Store({
         ['facilityGroupFilter', 'Facility Group'],
         ['facilityNameFilter', 'Facility Name'],
         ['projectStatusFilter', 'Project Status'],
-        ['taskIssueOverdueFilter','Task and Issue Overdue'],
+        ['taskIssueOverdueFilter','Action Item Overdue'],
         ['facilityProgressFilter', 'Facility Progress'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
-        ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
-        ['taskIssueProgressFilter', 'Task and Issue Progress'],
+        ['taskIssueDueDateFilter', 'Action Item Due Date Range'],
+        ['taskIssueProgressFilter', 'Action Item Progress'],
         ['taskUserFilter', 'Task Users'],
         ['issueTypeFilter', 'Issue Type'],
         ['issueSeverityFilter', 'Issue Severities'],
@@ -343,7 +343,7 @@ export default new Vuex.Store({
         ['onWatchFilter', 'On Watch'],
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
-        ['taskIssueProgressStatusFilter', 'Task and Issue Status']
+        ['taskIssueProgressStatusFilter', 'Action Item Status']
 
       ]
     },
