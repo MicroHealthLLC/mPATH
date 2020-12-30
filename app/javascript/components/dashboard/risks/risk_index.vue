@@ -48,7 +48,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Milestone"
+            placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
