@@ -116,8 +116,9 @@ export default new Vuex.Store({
           _onWatchFilter.push({id: 'onWatchTask', name: 'On Watch Task', value: 'tasks'})
           _onWatchFilter.push({id: 'onWatchIssue', name: 'On Watch Issue', value: 'issues'})
         }else if(option.id == 'notOnWatch'){
-          _notOnWatchFilter.push({id: 'notOnWatchTask', name: 'Not On Watch Task', value: 'tasks'})
-          _notOnWatchFilter.push({id: 'notOnWatchIssue', name: 'Not On Watch Issue', value: 'issues'})
+          // _notOnWatchFilter.push({id: 'notOnWatchTask', name: 'Not On Watch Task', value: 'tasks'})
+          // _notOnWatchFilter.push({id: 'notOnWatchIssue', name: 'Not On Watch Issue', value: 'issues'})
+          _notOnWatchFilter.push({id: 'notOnWatch', name: 'Not On Watch', value: 'tasks'})
         }else if(option.id == "notMyAction"){
           _notMyActionsFilter.push({id: 'notMyAction', name: 'Not My Action', value: 'tasks'})
         }
@@ -274,8 +275,8 @@ export default new Vuex.Store({
         {id: 'completed', name: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Action', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'myAction', name: 'My Assignments', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
@@ -309,12 +310,12 @@ export default new Vuex.Store({
       //   {id: 'myNotes', name: 'My Notes', value: 'notes'}
       // ]
       var options = [
-        {id: 'active', name: 'active'},
-        {id: 'completed', name: 'completed'},
+        {id: 'active', name: 'active', value: 'active'},
+        {id: 'completed', name: 'completed', value: 'completed'},
         {id: 'overdue', name: 'overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Action', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Action', value: 'not my action'},
+        {id: 'myAction', name: 'My Assignments', value: 'my action'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
       ]
@@ -328,22 +329,25 @@ export default new Vuex.Store({
         ['facilityGroupFilter', 'Facility Group'],
         ['facilityNameFilter', 'Facility Name'],
         ['projectStatusFilter', 'Project Status'],
-        ['taskIssueOverdueFilter','Task and Issue Overdue'],
+        ['taskIssueOverdueFilter','Action Overdue'],
         ['facilityProgressFilter', 'Facility Progress'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
-        ['taskIssueDueDateFilter', 'Task and Issue Due Date Range'],
-        ['taskIssueProgressFilter', 'Task and Issue Progress'],
+        ['taskIssueDueDateFilter', 'Action Due Date Range'],
+        ['taskIssueProgressFilter', 'Action Progress'],
         ['taskUserFilter', 'Task Users'],
         ['issueTypeFilter', 'Issue Type'],
         ['issueSeverityFilter', 'Issue Severities'],
         ['issueUserFilter', 'Issue Users'],
-        ['myActionsFilter', 'My Actions'],
+        ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
-        ['taskIssueProgressStatusFilter', 'Task and Issue Status']
+        ['taskIssueProgressStatusFilter', 'Action Status'],
+        ['notOnWatchFilter', 'Not On Watch'],
+        ['notMyActionsFilter', 'Not My Assignments'],
+        ['taskIssueUserFilter', 'Action Users']
 
       ]
     },
@@ -513,6 +517,27 @@ export default new Vuex.Store({
           user_names = _.map(getter.issueStageFilter, 'name').join(", ")
         }
         return user_names
+      }else if(_filterValue == 'notOnWatchFilter'){
+        // console.log(getter.notOnWatchFilter)
+        var user_names = null
+        if(getter.notOnWatchFilter && getter.notOnWatchFilter[0]){
+          user_names = _.map(getter.notOnWatchFilter, 'name').join(", ")
+        }
+        return user_names
+      }else if(_filterValue == 'notMyActionsFilter'){
+        // console.log(getter.notMyActionsFilter)
+        var user_names = null
+        if(getter.notMyActionsFilter && getter.notMyActionsFilter[0]){
+          user_names = _.map(getter.notMyActionsFilter, 'name').join(", ")
+        }
+        return user_names
+      }else if(_filterValue == 'taskIssueUserFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.getTaskIssueUserFilter && getter.getTaskIssueUserFilter[0]){
+          user_names = _.map(getter.getTaskIssueUserFilter, 'fullName').join(", ")
+        }
+        return user_names
       }
     },
     contentLoaded: state => state.contentLoaded,
@@ -537,6 +562,8 @@ export default new Vuex.Store({
     taskTypeFilter: state => state.taskTypeFilter,
     taskStageFilter: state => state.taskStageFilter,
     issueStageFilter: state => state.issueStageFilter,
+    notOnWatchFilter: state => state.notOnWatchFilter,
+    notMyActionsFilter: state => state.notMyActionsFilter,
     facilityGroupFilter: state => state.facilityGroupFilter,
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,

@@ -28,7 +28,7 @@ class Task < ApplicationRecord
       end
     end
     fp = self.facility_project
-    users = self.users
+    users = self.users.active
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"

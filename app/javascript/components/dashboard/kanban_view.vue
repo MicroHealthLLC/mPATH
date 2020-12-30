@@ -360,8 +360,11 @@
     },
     computed: {
       ...mapGetters([
+        'taskIssueProgressFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
@@ -392,6 +395,8 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
         let taskIssueOnWatch = this.onWatchFilter
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
@@ -402,24 +407,51 @@
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (taskIssueMyAction.length > 0  || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (task.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (task.progressStatus == "completed")
+              }
+            }
+          }
+
+          let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && task.watched
-          }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !task.watched 
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
 
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && task.watched
+            }
+
+            if(taksIssueNotOnWatch == true){
+             valid = valid && !task.watched 
+            }
           }
+
           if(noteDates && noteDates[0] && noteDates[1]){
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
@@ -456,13 +488,11 @@
               }
             }
           }
-          
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (task.isOverdue == true)
-          }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
-            valid = (task.isOverdue == false)
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (task.progress >= min && task.progress <= max)
           }
 
           if (search_query) valid = valid && search_query.test(task.text)
@@ -516,6 +546,8 @@
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueOnWatch = this.onWatchFilter
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
@@ -524,22 +556,50 @@
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (issue.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (issue.progressStatus == "completed")
+              }
+            }
+          }
+
+          let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && issue.watched
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !issue.watched 
-          }
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && issue.watched
+            }
+
+            if(taksIssueNotOnWatch == true){
+              valid = valid && !issue.watched 
+            }
           }
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
@@ -582,6 +642,12 @@
             }
 
           }
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (issue.progress >= min && issue.progress <= max)
+          }
+
 
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)

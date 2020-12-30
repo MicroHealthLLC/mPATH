@@ -379,25 +379,51 @@
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (issue.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (issue.progressStatus == "completed")
+              }
+            }
+          }
+
+          let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && issue.watched
-          }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !task.watched 
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
 
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
-          }
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && issue.watched
+            }
 
+            if(taksIssueNotOnWatch == true){
+              valid = valid && !issue.watched 
+            }
+          }
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
@@ -442,11 +468,6 @@
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (issue.progress >= min && issue.progress <= max)
-          }
-
-          if (taskIssueProgressStatus) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'name')
-            valid = valid && taskIssueProgressStatusNames.includes(issue.progressStatus)
           }
 
           if (search_query) valid = valid && search_query.test(issue.title)

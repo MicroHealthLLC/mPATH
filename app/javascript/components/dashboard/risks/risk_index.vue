@@ -271,42 +271,78 @@
 
         let risks = _.sortBy(_.filter(this.facility.risks, ((risk) => {
           let valid = Boolean(risk && risk.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
-            let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
-            if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (risk.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (risk.progressStatus == "completed")
+              }
+            }
+          }
+          
+          let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
+
+          if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          if(taskIssueOnWatch.length > 0){
-            valid = valid && risk.watched
-          }
-          if(taksIssueNotOnWatch == true){
-           valid = valid && !risk.watched
+
+          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction.length > 0) {  
+              valid = valid && userIds.includes(this.$currentUser.id)
+            }
+            if(taksIssueNotMyAction == true){
+              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+            }
           }
 
-          if(taksIssueNotMyAction == true){
-            let userIds = [..._.map(risk.checklists, 'userId'), ...risk.userIds]
-            if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
+          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+            valid = true
+          }else{
+            if(taskIssueOnWatch.length > 0){
+              valid = valid && risk.watched
+            }
+
+            if(taksIssueNotOnWatch == true){
+              valid = valid && !risk.watched 
+            }
           }
+
+          if (taskIssueOverdue && taskIssueOverdue.length > 0) {
+            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
+              valid = true
+            }else{
+              if (overdueFilterNames.includes("overdue")) {
+                valid = (risk.isOverdue == true)
+              }
+              if (overdueFilterNames.includes("not overdue")) {
+                valid = (risk.isOverdue == false)
+              }
+            }
+          }
+
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (risk.progress >= min && risk.progress <= max)
+          }
+
 
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
 
           if (search_query) valid = valid && search_query.test(risk.riskName)
 
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && risk.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && risk.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+
           return valid;
         })), ['dueDate'])
 
