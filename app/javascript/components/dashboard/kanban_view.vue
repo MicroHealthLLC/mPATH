@@ -363,6 +363,7 @@
     },
     computed: {
       ...mapGetters([
+        'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
         'getTaskIssueOverdueOptions',
@@ -398,15 +399,18 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (taskIssueMyAction.length > 0  || this.taskUserFilter) {
+          if (taskIssueMyAction.length > 0  || taskIssueUsers.length > 0) {
             let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
             if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && task.watched
@@ -505,13 +509,16 @@
         let taskIssueMyAction = this.myActionsFilter
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (taskIssueMyAction.length > 0 || this.issueUserFilter) {
+          if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
             let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
             if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           if(taskIssueOnWatch.length > 0){
             valid = valid && issue.watched

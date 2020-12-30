@@ -41,30 +41,7 @@
              </multiselect>
             </div>
         </div>
-   
-<!--       <div class="d-flex align-item-center font-sm justify-content-between my-1 w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_taskIssueProgressStatusFilter" :options="getTaskIssueProgressStatusOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status" data-cy="task_status_list">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select w-100 enum-select">
-          <multiselect v-model="C_taskIssueOverdueFilter" style="width:100%" track-by="name" label="name" placeholder="Task and Issue Overdue" :options="getTaskIssueOverdueOptions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-      </div> -->
-
-     
-
+      </div>
 
       <div class="mb-3 d-flex">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary mr-3 addTaskBtn" @click.prevent="addNewTask">
@@ -77,14 +54,6 @@
         <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Task List')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
-<!--         <div class="form-check-inline font-sm ml-auto mr-0">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks"> <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label ml-2">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"> <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div> -->
       </div>
       <div v-if="filteredTasks.length > 0">
         <hr />
@@ -201,6 +170,7 @@ export default {
 },
 computed: {
   ...mapGetters([
+    'getTaskIssueUserFilter',
     'getAdvancedFilter',
     'getTaskIssueTabFilterOptions',
     'getTaskIssueProgressStatusOptions',
@@ -234,13 +204,16 @@ computed: {
     let taskIssueMyAction = this.myActionsFilter
     let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
     let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+    let taskIssueUsers = this.getTaskIssueUserFilter
 
     let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
       let valid = Boolean(task && task.hasOwnProperty('progress'))
-      if (taskIssueMyAction.length > 0 || this.taskUserFilter) {
+      if (taskIssueMyAction.length > 0 || taskIssueUsers.length > 0) {
         let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
         if (taskIssueMyAction.length > 0) valid = valid && userIds.includes(this.$currentUser.id)
-        if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
+        if(taskIssueUsers.length > 0){
+          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+        }
       }
       if(taskIssueOnWatch.length > 0){
         valid = valid && task.watched
