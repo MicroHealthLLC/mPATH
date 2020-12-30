@@ -149,7 +149,7 @@
             <!-- Task and Issue Users Filter -->
           
               <div>
-                <label class="font-sm mb-0">Action Item Users</label>
+                <label class="font-sm mb-0">Action Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -170,7 +170,7 @@
                 </multiselect>
               </div>
             <div>
-              <label class="font-sm mb-0">Action Item Due Date Range</label>
+              <label class="font-sm mb-0">Action Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
             <div>
@@ -179,7 +179,7 @@
             </div>
 
             <div>
-              <label class="font-sm mb-0">Action Item % Progress Range</label>
+              <label class="font-sm mb-0">Action % Progress Range</label>
               <div class="form-row">
                 <div class="form-group col mb-0">
                   <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">

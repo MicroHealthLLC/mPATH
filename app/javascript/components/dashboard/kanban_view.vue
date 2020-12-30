@@ -361,6 +361,7 @@
     },
     computed: {
       ...mapGetters([
+        'taskIssueProgressFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueProgressStatusOptions',
@@ -570,7 +571,7 @@
               }
             }
           }
-          
+
           let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
 
           if (taskIssueUsers.length > 0) {  
