@@ -3,10 +3,13 @@ class Risk < ApplicationRecord
   include Tasker
 
   belongs_to :user
+  # has_many :users, through: :risk_users
   belongs_to :task_type, optional: true
   has_many_attached :risk_files, dependent: :destroy
+  has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
+  accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   validates_inclusion_of :probability, in: 1..5
   validates_inclusion_of :impact_level, in: 1..5
@@ -48,8 +51,11 @@ class Risk < ApplicationRecord
       is_overdue: progress < 100 && (due_date < Date.today),
       checklists: checklists.as_json,
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility)&.facility_name,
+      facility_name: fp.try(:facility)&.facility_name, 
+      # risk_owner: users.map(&:full_name).compact.join(", "),
+      notes: notes.as_json,
       project_id: fp.try(:project_id),
+      task_type: task_type.try(:name),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_risks: sub_risks.as_json(only: [:risk_description, :id]),

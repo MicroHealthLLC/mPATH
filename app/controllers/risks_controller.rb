@@ -70,6 +70,12 @@ class RisksController < AuthenticatedController
         :checked,
         :position,
         :due_date
+      ], 
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
       ]
     )
   end
