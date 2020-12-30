@@ -407,6 +407,20 @@
           let valid = Boolean(task && task.hasOwnProperty('progress'))
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (task.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (task.progressStatus == "completed")
+              }
+            }
+          }
+
           let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
 
           if (taskIssueUsers.length > 0) {  
@@ -481,20 +495,6 @@
             valid = valid && (task.progress >= min && task.progress <= max)
           }
 
-          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
-            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
-              valid = true
-            }else{
-              if (taskIssueProgressStatusNames.includes("active")) {
-                valid = (task.progressStatus == "active")
-              }
-              if (taskIssueProgressStatusNames.includes("completed")) {
-                valid = (task.progressStatus == "completed")
-              }
-            }
-          }
-
           if (search_query) valid = valid && search_query.test(task.text)
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
           return valid
@@ -556,6 +556,21 @@
 
         return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (issue.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (issue.progressStatus == "completed")
+              }
+            }
+          }
+          
           let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
 
           if (taskIssueUsers.length > 0) {  
@@ -633,19 +648,7 @@
             valid = valid && (issue.progress >= min && issue.progress <= max)
           }
 
-          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
-            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
-              valid = true
-            }else{
-              if (taskIssueProgressStatusNames.includes("active")) {
-                valid = (issue.progressStatus == "active")
-              }
-              if (taskIssueProgressStatusNames.includes("completed")) {
-                valid = (issue.progressStatus == "completed")
-              }
-            }
-          }
+
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)
           } else if(stageIds.length > 0) {

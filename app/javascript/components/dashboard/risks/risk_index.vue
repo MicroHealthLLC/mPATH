@@ -220,6 +220,21 @@
 
         let risks = _.sortBy(_.filter(this.facility.risks, ((risk) => {
           let valid = Boolean(risk && risk.hasOwnProperty('progress'))
+
+          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
+            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
+              valid = true
+            }else{
+              if (taskIssueProgressStatusNames.includes("active")) {
+                valid = (risk.progressStatus == "active")
+              }
+              if (taskIssueProgressStatusNames.includes("completed")) {
+                valid = (risk.progressStatus == "completed")
+              }
+            }
+          }
+          
           let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
 
           if (taskIssueUsers.length > 0) {  
@@ -271,19 +286,7 @@
             valid = valid && (risk.progress >= min && risk.progress <= max)
           }
 
-          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
-            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
-              valid = true
-            }else{
-              if (taskIssueProgressStatusNames.includes("active")) {
-                valid = (risk.progressStatus == "active")
-              }
-              if (taskIssueProgressStatusNames.includes("completed")) {
-                valid = (risk.progressStatus == "completed")
-              }
-            }
-          }
+
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
 
           if (search_query) valid = valid && search_query.test(risk.riskDescription)

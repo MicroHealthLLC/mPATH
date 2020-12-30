@@ -281,6 +281,7 @@ export default {
       set(value) {
         if (!value) {
           this.setAdvancedFilter([{ id: 'active', name: 'active' }])
+          // this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
         }
