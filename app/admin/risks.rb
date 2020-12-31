@@ -117,8 +117,8 @@ ActiveAdmin.register Risk do
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false
-      f.input :probability, include_blank: false, include_hidden: false
-      f.input :impact_level, include_blank: false, include_hidden: false
+      f.input :probability, include_blank: false, include_hidden: false, min: 0, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }
+      f.input :impact_level, include_blank: false, include_hidden: false, min: 0, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }
       f.input :risk_approach, include_blank: false, include_hidden: false
       f.input :risk_approach_description, label: 'Risk Approach Description', input_html: { rows: 8 }
       f.input :progress
