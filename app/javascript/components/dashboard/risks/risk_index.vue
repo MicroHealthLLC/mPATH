@@ -81,8 +81,7 @@
           <div v-if="filteredRisks.length > 0">
             <hr/>
             <risk-show
-              v-for="(risk, i) in filteredRisks"
-              :load="log(risk)"
+              v-for="(risk, i) in filteredRisks"           
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -105,6 +104,7 @@
           <th>Task Category</th>
           <th>Start Date</th>         
           <th>Due Date</th>
+          <th>Risk Owner(s)</th>
           <th>Priority Level</th>
           <th>Risk Approach</th>
           <th>Last Update</th>       
@@ -117,6 +117,7 @@
           <td>{{risk.taskType}}</td>
           <td>{{risk.startDate}}</td>
           <td>{{risk.dueDate}}</td>
+          <td>{{risk.riskOwners}}</td>
           <td>{{risk.priorityLevel}}</td>
           <td>{{risk.riskApproach}}</td>
            <td v-if="(risk.notes.length) > 0">
@@ -181,9 +182,9 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-      log(r) {
-        console.log(r)
-      },
+      // log(r) {
+      //   console.log(r)
+      // },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)
         this.newRisk = false
@@ -237,6 +238,7 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypes',
+        'riskUserFilter',
         'currentProject',
         'taskTypeFilter',
         'myActionsFilter',
