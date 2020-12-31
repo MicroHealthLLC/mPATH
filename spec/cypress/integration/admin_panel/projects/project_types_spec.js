@@ -19,4 +19,13 @@ describe('Admin Panel Project Types', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new project Type', function() {
+    cy.get('.action_item > a').contains('New Project Type').click()
+    cy.get('#page_title').contains('New Project Type').should('be.visible')
+    cy.get('#project_type_name').type('New Test Project Type')
+    cy.get('#project_type_submit_action').contains('Create Project type').click()
+    cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

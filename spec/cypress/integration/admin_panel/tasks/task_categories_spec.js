@@ -19,4 +19,13 @@ describe('Admin Panel Task Categories', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new Task Category', function() {
+    cy.get('.action_item > a').contains('New Task Category').click()
+    cy.get('#page_title').contains('New Task Category').should('be.visible')
+    cy.get('#task_type_name').type('New Test Task Type')
+    cy.get('#task_type_submit_action').contains('Create Task Category').click()
+    cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

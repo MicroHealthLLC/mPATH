@@ -19,4 +19,13 @@ describe('Admin Panel Issue Severities', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new Issue Severity', function() {
+    cy.get('.action_item > a').contains('New Issue Severity').click()
+    cy.get('#page_title').contains('New Issue Severity').should('be.visible')
+    cy.get('#issue_severity_name').type('New Test Issue Severity')
+    cy.get('#issue_severity_submit_action').contains('Create Issue severity').click()
+    cy.get('#index_table_issue_severities > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

@@ -19,4 +19,13 @@ describe('Admin Panel Issue Types', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new Issue Type', function() {
+    cy.get('.action_item > a').contains('New Issue Type').click()
+    cy.get('#page_title').contains('New Issue Type').should('be.visible')
+    cy.get('#issue_type_name').type('New Test Issue Type')
+    cy.get('#issue_type_submit_action').contains('Create Issue type').click()
+    cy.get('#index_table_issue_types > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })
