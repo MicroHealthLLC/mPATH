@@ -58,6 +58,7 @@ class RisksController < AuthenticatedController
       :due_date,
       :auto_calculate,
       :text,
+      :watched,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],
