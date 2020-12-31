@@ -145,10 +145,11 @@
             </div>
           </div>
         </div>
-              <!-- <div class="form-group user-select mx-4">
+      <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Risk Owner(s):</label>
         <multiselect
-          v-model="riskOwners"
+          v-model="riskUsers"
+          :load="log(riskUsers)"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
@@ -159,7 +160,7 @@
           deselect-label="Enter to remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
-          data-cy="issue_user"
+          data-cy="risk_owner"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -167,7 +168,7 @@
             </div>
           </template>
         </multiselect>
-      </div> -->
+      </div>
 
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Task Category:</label>
@@ -517,7 +518,7 @@
         impactLevels: [1,2,3,4,5],
         paginate: ['filteredNotes'],
         destroyedFiles: [],
-        riskOwners: [],
+        riskUsers: [],
         selectedTaskType: null,
         relatedIssues: [],
         relatedTasks: [],
@@ -557,6 +558,7 @@
           startDate: '',
           dueDate: '',
           autoCalculate: true,
+          userIds: [],
           riskFiles: [],
           subTaskIds: [],
           subIssueIds: [],
@@ -569,6 +571,9 @@
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
       },
+      log(r) {
+        console.log(r)
+      },
       handleEnd(e, checklists) {
         let cc = this.DV_risk.checklists
         let count = 0
@@ -579,7 +584,7 @@
       },
       loadRisk(risk) {
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
-        // this.riskOwners = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
+        this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -653,6 +658,15 @@
           formData.append('risk[due_date]', this.DV_risk.dueDate)
           formData.append('risk[auto_calculate]', this.DV_risk.autoCalculate)
           formData.append('risk[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
+
+         if (this.DV_risk.userIds.length) {
+            for (let u_id of this.DV_risk.userIds) {
+              formData.append('risk[user_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('risk[user_ids][]', [])
+          }
 
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
@@ -875,6 +889,11 @@
       "DV_risk.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
+      riskUsers: {
+        handler: function(value) {
+          if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
       relatedIssues: {
         handler: function(value) {
           if (value) this.DV_risk.subIssueIds = _.uniq(_.map(value, 'id'))
@@ -911,11 +930,6 @@
         handler(value) {
           let ids = _.map(value, 'id')
           this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
-        }, deep: true
-      },
-       riskOwners: {
-        handler: function(value) {
-          if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
       "filteredNotes.length"(value, previous) {

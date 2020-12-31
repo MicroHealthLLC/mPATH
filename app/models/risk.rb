@@ -3,7 +3,8 @@ class Risk < ApplicationRecord
   include Tasker
 
   belongs_to :user
-  # has_many :users, through: :risk_users
+  has_many :risk_users, dependent: :destroy
+  has_many :users, through: :risk_users
   belongs_to :task_type, optional: true
   has_many_attached :risk_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
@@ -56,7 +57,9 @@ class Risk < ApplicationRecord
       checklists: checklists.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name, 
-      # risk_owner: users.map(&:full_name).compact.join(", "),
+      user_ids: users.map(&:id).compact.uniq,
+      risk_owners: users.map(&:full_name).compact.join(", "),
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       notes: notes.as_json,
       project_id: fp.try(:project_id),
       task_type: task_type.try(:name),

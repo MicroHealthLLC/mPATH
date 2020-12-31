@@ -25,6 +25,7 @@ ActiveAdmin.register Risk do
       :due_date,
       :auto_calculate,
       :text,
+      user_ids: [],
       risk_files: [],
       sub_task_ids: [],
       sub_issue_ids: [],
