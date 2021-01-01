@@ -28,6 +28,7 @@ export default new Vuex.Store({
     taskIssueOverdueFilter: new Array,
     taskTypes: new Array,
     taskStages: new Array,
+    riskStages: new Array,
     issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
@@ -47,6 +48,7 @@ export default new Vuex.Store({
     issueTypeFilter: null,
     issueSeverityFilter: null,
     taskStageFilter: null,
+    riskStageFilter: null,
     issueStageFilter: null,
     issueProgressFilter: null,
     taskProgressFilter: null,
@@ -143,6 +145,7 @@ export default new Vuex.Store({
     setStatuses: (state, statuses) => state.statuses = statuses,
     setTaskTypes: (state, taskTypes) => state.taskTypes = taskTypes,
     setTaskStages: (state, taskStages) => state.taskStages = taskStages,
+    setRiskStages: (state, riskStages) => state.riskStages = riskStages,
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
@@ -549,6 +552,7 @@ export default new Vuex.Store({
     statuses: state => state.statuses,
     taskTypes: state => state.taskTypes,
     taskStages: state => state.taskStages,
+    riskStages: state => state.riskStages,
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
@@ -561,6 +565,7 @@ export default new Vuex.Store({
     taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
     taskTypeFilter: state => state.taskTypeFilter,
     taskStageFilter: state => state.taskStageFilter,
+    riskStageFilter: state => state.riskStageFilter,
     issueStageFilter: state => state.issueStageFilter,
     notOnWatchFilter: state => state.notOnWatchFilter,
     notMyActionsFilter: state => state.notMyActionsFilter,
@@ -1063,6 +1068,7 @@ export default new Vuex.Store({
       return {tasks, issues, facilities}
     },
     viewPermit: () => (view, req) => {
+      if (Vue.prototype.$currentUser.role === "superadmin") return true;
       return Vue.prototype.$permissions[view][req]
     },
     riskApproaches: () => {
@@ -1103,6 +1109,7 @@ export default new Vuex.Store({
             commit('setStatuses', res.data.project.statuses)
             commit('setTaskTypes', res.data.project.taskTypes)
             commit('setTaskStages', res.data.project.taskStages)
+            commit('setRiskStages', res.data.project.riskStages)
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
@@ -1312,6 +1319,7 @@ export default new Vuex.Store({
         'issueSeverityFilter',
         'issueStageFilter',
         'taskStageFilter',
+        'riskStageFilter',
         'taskIssueProgressFilter',
         'myActionsFilter',
         'onWatchFilter',

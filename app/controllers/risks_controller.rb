@@ -52,7 +52,7 @@ class RisksController < AuthenticatedController
       :risk_approach,
       :risk_approach_description,
       :task_type_id,
-      :task_type,
+      :risk_stage_id,
       :progress,
       :start_date,
       :due_date,
@@ -62,7 +62,7 @@ class RisksController < AuthenticatedController
       risk_files: [],
       sub_task_ids: [],
       sub_issue_ids: [],
-      sub_risk_ids: [],    
+      sub_risk_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,
@@ -71,7 +71,7 @@ class RisksController < AuthenticatedController
         :checked,
         :position,
         :due_date
-      ], 
+      ],
       notes_attributes: [
         :id,
         :_destroy,

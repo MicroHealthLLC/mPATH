@@ -12,6 +12,7 @@ ActiveAdmin.register Risk do
 
   permit_params do
     permitted = [
+      :text,
       :risk_description,
       :impact_description,
       :probability,
@@ -19,12 +20,11 @@ ActiveAdmin.register Risk do
       :risk_approach,
       :risk_approach_description,
       :task_type_id,
-      :task_type,
+      :risk_stage_id,
       :progress,
       :start_date,
       :due_date,
       :auto_calculate,
-      :text,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],
@@ -48,6 +48,7 @@ ActiveAdmin.register Risk do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
+    column "Risk Name", :text, sortable: false
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
     column :start_date
@@ -63,6 +64,13 @@ ActiveAdmin.register Risk do
         link_to "#{risk.task_type.name}", "#{edit_admin_task_type_path(risk.task_type)}" if risk.task_type.present?
       else
         "<span>#{risk.task_type&.name}</span>".html_safe
+      end
+    end
+    column :risk_stage, nil, sortable: 'risk_stages.name' do |risk|
+      if current_user.admin_write?
+        link_to "#{risk.risk_stage.name}", "#{edit_admin_risk_stage_path(risk.risk_stage)}" if risk.risk_stage.present?
+      else
+        "<span>#{risk.risk_stage&.name}</span>".html_safe
       end
     end
     column "Files" do |risk|
@@ -106,6 +114,7 @@ ActiveAdmin.register Risk do
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     f.inputs 'Basic Details' do
       f.input :id, input_html: { value: f.object.id }, as: :hidden
+      f.input :text, label: 'Risk Name'
       f.input :risk_description, label: 'Risk Description', input_html: { rows: 8 }
       f.input :impact_description, label: 'Impact Description', input_html: { rows: 8 }
       div id: 'facility_projects' do
@@ -117,6 +126,7 @@ ActiveAdmin.register Risk do
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
       f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false
+      f.input :risk_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :probability, include_blank: false, include_hidden: false
       f.input :impact_level, include_blank: false, include_hidden: false
       f.input :risk_approach, include_blank: false, include_hidden: false
@@ -181,6 +191,8 @@ ActiveAdmin.register Risk do
     end
   end
 
+  filter :text, label: "Name"
+  filter :risk_stage
   filter :risk_description
   filter :impact_description
   filter :probability
