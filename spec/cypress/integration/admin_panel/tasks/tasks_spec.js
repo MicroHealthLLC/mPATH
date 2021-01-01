@@ -12,4 +12,11 @@ describe('Admin Panel Task', function() {
     cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 6)
     cy.get('#logout').click()
   })
+
+  it('Open and close new Task form', function() {
+    cy.get('.action_item > a').contains('New Task').click()
+    cy.get('#page_title').contains('New Task').should('be.visible')
+    cy.get('.cancel > a').contains('Cancel').click()
+    cy.get('#logout').click()
+  })
 })

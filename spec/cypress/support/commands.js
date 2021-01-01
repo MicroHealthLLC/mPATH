@@ -128,6 +128,14 @@ Cypress.Commands.add("openRiskAP", () => {
   })
 })
 
+// Open Risk Stages from Admin panel
+Cypress.Commands.add("openRiskStageAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#risk_stages').contains('Risk Stages').click({force: true})
+  })
+})
+
 // Open User from Admin panel
 Cypress.Commands.add("openUserAP", () => {
   cy.get('[data-cy=admin_panel]').click()
