@@ -19,4 +19,13 @@ describe('Admin Panel Risk Stages', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new Risk Stage', function() {
+    cy.get('.action_item > a').contains('New Risk Stage').click()
+    cy.get('#page_title').contains('New Risk Stage').should('be.visible')
+    cy.get('#risk_stage_name').type('New Test Risk Stage')
+    cy.get('#risk_stage_submit_action').contains('Create Risk stage').click()
+    cy.get('#index_table_risk_stages > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
 })
