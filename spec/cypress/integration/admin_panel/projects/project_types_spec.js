@@ -39,4 +39,16 @@ describe('Admin Panel Project Types', function() {
     cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
+
+  it('Delete Project Type', function() {
+    cy.get('.action_item > a').contains('New Project Type').click()
+    cy.get('#project_type_name').type('New Test Project Type')
+    cy.get('#project_type_submit_action').contains('Create Project type').click()
+    cy.get('#index_table_project_types > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Project type was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
 })

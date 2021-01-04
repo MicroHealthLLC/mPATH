@@ -39,4 +39,16 @@ describe('Admin Panel Task Categories', function() {
     cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
+
+  it('Delete Task Category', function() {
+    cy.get('.action_item > a').contains('New Task Category').click()
+    cy.get('#task_type_name').type('New Test Task Type')
+    cy.get('#task_type_submit_action').contains('Create Task Category').click()
+    cy.get('#index_table_task_types > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Task Category was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
 })

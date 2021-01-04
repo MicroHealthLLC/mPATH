@@ -39,4 +39,16 @@ describe('Admin Panel Statuses', function() {
     cy.get('#index_table_statuses > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Status', function() {
+    cy.get('.action_item > a').contains('New Status').click()
+    cy.get('#status_name').type('New Test Status')
+    cy.get('#status_submit_action').contains('Create Status').click()
+    cy.get('#index_table_statuses > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Status was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_statuses > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

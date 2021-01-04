@@ -39,4 +39,16 @@ describe('Admin Panel Task Stages', function() {
     cy.get('#index_table_task_stages > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Task Stage', function() {
+    cy.get('.action_item > a').contains('New Task Stage').click()
+    cy.get('#task_stage_name').type('New Test Task Stage')
+    cy.get('#task_stage_submit_action').contains('Create Task stage').click()
+    cy.get('#index_table_task_stages > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Task stage was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_task_stages > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

@@ -39,4 +39,16 @@ describe('Admin Panel Issue Severities', function() {
     cy.get('#index_table_issue_severities').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
+
+  it('Delete Issue Severity', function() {
+    cy.get('.action_item > a').contains('New Issue Severity').click()
+    cy.get('#issue_severity_name').type('New Test Issue Severity')
+    cy.get('#issue_severity_submit_action').contains('Create Issue severity').click()
+    cy.get('#index_table_issue_severities > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Issue severity was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_issue_severities > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
 })

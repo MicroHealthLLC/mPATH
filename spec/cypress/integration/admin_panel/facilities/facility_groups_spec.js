@@ -40,4 +40,17 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Facility Group', function() {
+    cy.get('.action_item > a').contains('New Facility Group').click()
+    cy.get('#facility_group_name').type('New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG')
+    cy.get('#facility_group_submit_action').contains('Create Facility group').click()
+    cy.get('#index_table_facility_groups > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Facility group was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

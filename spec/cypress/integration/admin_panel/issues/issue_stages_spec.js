@@ -39,4 +39,16 @@ describe('Admin Panel Issue Stages', function() {
     cy.get('#index_table_issue_stages > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Issue Stage', function() {
+    cy.get('.action_item > a').contains('New Issue Stage').click()
+    cy.get('#issue_stage_name').type('New Test Issue Stage')
+    cy.get('#issue_stage_submit_action').contains('Create Issue stage').click()
+    cy.get('#index_table_issue_stages > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Issue stage was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_issue_stages > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })
