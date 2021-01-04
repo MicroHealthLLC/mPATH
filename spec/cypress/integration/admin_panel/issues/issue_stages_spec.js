@@ -29,4 +29,14 @@ describe('Admin Panel Issue Stages', function() {
     cy.get('#index_table_issue_stages > tbody > tr').its('length').should('be.eq', 3)
     cy.get('#logout').click()
   })
+
+  it('Could not Delete Issue stage of foreign constraint', function() {
+    cy.get('#index_table_issue_stages').should('be.visible')
+    cy.get('#index_table_issue_stages > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_issue_stages > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

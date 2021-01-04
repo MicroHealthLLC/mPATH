@@ -29,4 +29,14 @@ describe('Admin Panel Organization', function() {
     cy.get('#index_table_organizations > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Organization', function() {
+    cy.get('#index_table_organizations').should('be.visible')
+    cy.get('#index_table_organizations > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Organization was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_organizations').should('not.exist')
+    cy.get('#logout').click()
+  })
 })

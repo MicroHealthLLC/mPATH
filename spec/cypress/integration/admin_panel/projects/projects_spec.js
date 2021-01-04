@@ -29,4 +29,14 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_projects > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Delete Project', function() {
+    cy.get('#index_table_projects').should('be.visible')
+    cy.get('#index_table_projects > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Project was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_projects').should('not.exist')
+    cy.get('#logout').click()
+  })
 })

@@ -30,4 +30,14 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 3)
     cy.get('#logout').click()
   })
+
+  it('Could not Delete Facility Group of foreign constraint', function() {
+    cy.get('#index_table_facility_groups').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
 })

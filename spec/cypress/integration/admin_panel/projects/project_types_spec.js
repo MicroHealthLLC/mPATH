@@ -29,4 +29,14 @@ describe('Admin Panel Project Types', function() {
     cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Could not Delete Project type of foreign constraint', function() {
+    cy.get('#index_table_project_types').should('be.visible')
+    cy.get('#index_table_project_types > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
 })

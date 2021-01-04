@@ -19,4 +19,14 @@ describe('Admin Panel Task', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Delete Task', function() {
+    cy.get('#index_table_tasks').should('be.visible')
+    cy.get('#index_table_tasks > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Task was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#logout').click()
+  })
 })
