@@ -128,10 +128,82 @@ Cypress.Commands.add("openRiskAP", () => {
   })
 })
 
+// Open Risk Stages from Admin panel
+Cypress.Commands.add("openRiskStageAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#risk_stages').contains('Risk Stages').click({force: true})
+  })
+})
+
 // Open User from Admin panel
 Cypress.Commands.add("openUserAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
     cy.get('#users').contains('Users').click()
+  })
+})
+
+// Open Project Type from Admin panel
+Cypress.Commands.add("openProjectTypeAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#project_types').contains('Project Types').click({force: true})
+  })
+})
+
+// Open Facility Group from Admin panel
+Cypress.Commands.add("openFacilityGroupAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#facility_groups').contains('Facility Groups').click({force: true})
+  })
+})
+
+// Open Status from Admin panel
+Cypress.Commands.add("openStatusAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#statuses').contains('Statuses').click({force: true})
+  })
+})
+
+// Open Issue Severities from Admin panel
+Cypress.Commands.add("openIssueSeverityAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#issue_severities').contains('Issue Severities').click({force: true})
+  })
+})
+
+// Open Issue Stage from Admin panel
+Cypress.Commands.add("openIssueStageAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#issue_stages').contains('Issue Stages').click({force: true})
+  })
+})
+
+// Open Issue Type from Admin panel
+Cypress.Commands.add("openIssueTypeAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#issue_types').contains('Issue Types').click({force: true})
+  })
+})
+
+// Open Task Category from Admin panel
+Cypress.Commands.add("openTaskCategoryAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#task_types').contains('Task Categories').click({force: true})
+  })
+})
+
+// Open Task Stage from Admin panel
+Cypress.Commands.add("openTaskStageAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#task_stages').contains('Task Stages').click({force: true})
   })
 })

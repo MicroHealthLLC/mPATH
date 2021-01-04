@@ -125,7 +125,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
-              <multiselect v-model="C_issueStageFilter" track-by="name" label="name" :options="issueStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueStageFilter" track-by="name" label="name" :options="issueStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -147,7 +147,7 @@
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
             <!-- Task and Issue Users Filter -->
-          
+
               <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
@@ -157,8 +157,8 @@
                     </div>
                   </template>
                 </multiselect>
-              </div>            
-            
+              </div>
+
               <div>
                 <label class="font-sm mb-0">Flags</label>
                 <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
@@ -190,9 +190,9 @@
               </div>
               <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
             </div>
-          
+
             <!-- First row: Filter View Title/Header -->
-           
+
           </div>
         </div>
       </div>
@@ -591,14 +591,18 @@ export default {
         if ( (option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) {
           error = "Min should not be greator than Max."
         }
+        if (( option.type == 'min' &&  hash.max == "") || ( option.type == 'max' &&  hash.min == "")) {
+          error = "Both fields are required."
+        }
       }
+      
       hash[option.type] = (input <= 0 ? 0 : Number(input) )
       if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
       if((input === 0 || input === "" ) && user_input === "" && option.type == 'min') hash.min = ""
       if((input === 0 || input === "" ) && option.type == 'max') hash.max = ""
-        
+
       this.setProgressFilters({ key: option.variable, value: hash })
     }
   },

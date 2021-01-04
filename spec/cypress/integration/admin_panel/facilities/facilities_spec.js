@@ -19,4 +19,14 @@ describe('Admin Panel Facility', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Delete Facility', function() {
+    cy.get('#index_table_facilities').should('be.visible')
+    cy.get('#index_table_facilities > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Facility was successfully destroyed.').should('be.visible')
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#logout').click()
+  })
 })
