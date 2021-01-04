@@ -591,7 +591,11 @@ export default {
         if ( (option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) {
           error = "Min should not be greator than Max."
         }
+        if (( option.type == 'min' &&  hash.max == "") || ( option.type == 'max' &&  hash.min == "")) {
+          error = "Both fields are required."
+        }
       }
+      
       hash[option.type] = (input <= 0 ? 0 : Number(input) )
       if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""

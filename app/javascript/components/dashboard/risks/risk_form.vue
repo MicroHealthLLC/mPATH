@@ -147,7 +147,7 @@
           </div>
         </div>
       <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Assign Risk Owner(s):</label>
+        <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="riskUsers"
           :load="log(riskUsers)"
