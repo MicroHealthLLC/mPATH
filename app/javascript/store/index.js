@@ -101,7 +101,7 @@ export default new Vuex.Store({
       var _taskIssueProgressStatusFilter = []
 
       for(var option of selectedOptions){
-        if(option.id == "overdue" || option.id == 'not overdue'){
+        if(option.id == "overdue" || option.id == 'notOverdue'){
           _taskIssueOverdueFilter.push(option)
         }else if(option.id == "active" || option.id == 'completed'){
           _taskIssueProgressStatusFilter.push(option)
@@ -260,9 +260,9 @@ export default new Vuex.Store({
     },
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
-        {id: 'active', name: 'active'},
-        {id: 'completed', name: 'completed'},
-        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'active', name: 'Active', value: 'active'},
+        {id: 'completed', name: 'Completed', value: 'completed'},
+        {id: 'overdue', name: 'Overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
         {id: 'myAction', name: 'My Assignments', value: 'my action'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
@@ -274,8 +274,8 @@ export default new Vuex.Store({
     },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
-        {id: 'active', name: 'active'},
-        {id: 'completed', name: 'completed'}
+        {id: 'active', name: 'Active'},
+        {id: 'completed', name: 'Completed'}
       ]
     },
     getTaskIssueProgressStatusFilter: (state) => {
@@ -761,8 +761,8 @@ export default new Vuex.Store({
               if(filterStatues.length > 1 && filterStatues.includes('active')  && filterStatues.includes('completed') && _progressStatuses.length > 0){
                 valid = true
               }else{
-                
-                valid = valid && _.intersection(filterStatues, _progressStatuses).length > 0                
+                var fs = _.map(filterStatues, 'id')
+                valid = valid && _.intersection(fs, _progressStatuses).length > 0                
               }
 
               break
@@ -1035,7 +1035,7 @@ export default new Vuex.Store({
           valid = (t.isOverdue == true)
         }
 
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
           valid = (t.isOverdue == false)
         }
         return valid
@@ -1067,11 +1067,11 @@ export default new Vuex.Store({
           valid = is_valid
         }
 
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "overdue"){
           valid = (t.isOverdue == true)
         }
 
-        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
           valid = (t.isOverdue == false)
         }
 

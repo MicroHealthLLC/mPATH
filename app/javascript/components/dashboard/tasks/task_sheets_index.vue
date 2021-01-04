@@ -275,33 +275,27 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
+        
         let taskIssueProgress = this.taskIssueProgressFilter
-        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
-        let taskIssueOnWatch = this.onWatchFilter
-        let taskIssueMyAction = this.myActionsFilter
+        
         let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
+        let taskIssueOnWatch =  _.map(this.getAdvancedFilter(), 'id').includes("onWatch")
+
+        let taskIssueMyAction = _.map(this.getAdvancedFilter(), 'id').includes("myAction")
         let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
+
+        let taskIssueOverdue = _.map(this.getAdvancedFilter(), 'id').includes("overdue")
+        let taskIssueNotOverdue = _.map(this.getAdvancedFilter(), 'id').includes("notOverdue")
+        
+        let taskIssueActiveProgressStatus = _.map(this.getAdvancedFilter(), 'id').includes("active")
+        let taskIssueCompletedProgressStatus = _.map(this.getAdvancedFilter(), 'id').includes("completed")
+
         let taskIssueUsers = this.getTaskIssueUserFilter
 
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
-          let valid = Boolean(task && task.hasOwnProperty('progress'))
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
-          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
-            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
-              valid = true
-            }else{
-              if (taskIssueProgressStatusNames.includes("active")) {
-                valid = (task.progressStatus == "active")
-              }
-              if (taskIssueProgressStatusNames.includes("completed")) {
-                valid = (task.progressStatus == "completed")
-              }
-            }
-          }
-
-          let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
           if (taskIssueUsers.length > 0) {  
             if(taskIssueUsers.length > 0){
@@ -309,10 +303,21 @@
             }
           }
 
-          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+          if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == true) {
             valid = true
           }else{
-            if (taskIssueMyAction.length > 0) {  
+            if (taskIssueActiveProgressStatus == true ) {
+              valid = (resource.progressStatus == "active")
+            }
+            if (taskIssueCompletedProgressStatus == true) {
+              valid = (resource.progressStatus == "completed")
+            }
+          }
+          
+          if(taskIssueMyAction == true && taksIssueNotMyAction == true){
+            valid = true
+          }else{
+            if (taskIssueMyAction == true) {  
               valid = valid && userIds.includes(this.$currentUser.id)
             }
             if(taksIssueNotMyAction == true){
@@ -320,66 +325,62 @@
             }
           }
 
-          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+          if(taskIssueOnWatch == true && taksIssueNotOnWatch == true){
             valid = true
           }else{
-            if(taskIssueOnWatch.length > 0){
-              valid = valid && task.watched
+            if(taskIssueOnWatch == true){
+              valid = valid && resource.watched
             }
 
             if(taksIssueNotOnWatch == true){
-             valid = valid && !task.watched 
+             valid = valid && !resource.watched 
             }
           }
 
-          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+          if (taskIssueOverdue == true && taskIssueNotOverdue == true) {
+            valid = true
+          }else{
+            if (taskIssueOverdue == true) {
+              valid = (resource.isOverdue == true)
+            }
+            if (taskIssueNotOverdue == true) {
+              valid = (resource.isOverdue == false)
+            }
+          }
 
-          if(noteDates && noteDates[0] && noteDates[1]){
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(task.notes, 'createdAt')
-            var is_valid = task.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
+            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            var is_valid = resource.notes.length > 0
+            for (var createdAt of _notesCreatedAt) {
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if(is_valid) break
+              if (is_valid) break
             }
             valid = is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
 
             var is_valid = true
-            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
-          }
-
-          if (taskIssueOverdue) {
-            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
-            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
-              valid = true
-            }else{
-              if (overdueFilterNames.includes("overdue")) {
-                valid = (task.isOverdue == true)
-              }
-              if (overdueFilterNames.includes("not overdue")) {
-                valid = (task.isOverdue == false)
-              }
-            }
-
           }
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]
-            valid = valid && (task.progress >= min && task.progress <= max)
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(task.text)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
           return valid
         }), ['dueDate'])
