@@ -39,7 +39,7 @@
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"                     
+                      label="name"
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -54,7 +54,7 @@
                     </multiselect>
                   </div>
                 </div>
-               
+
                 <div class="mx-2 mb-3 font-sm">
                   <div class="simple-select w-50">
                     <label class="font-sm mb-0">Flags</label>
@@ -79,10 +79,10 @@
 
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                   <div class="mb-2 input-group w-100">
-                      <div class="input-group-prepend d-inline">
+                  <div class="mb-2 input-group w-100">
+                    <div class="input-group-prepend d-inline">
                       <span class="input-group-text"><i class="fa fa-search"></i></span>
-                      </div>
+                    </div>
                     <input
                       type="search"
                       style="height:30px"
@@ -91,16 +91,17 @@
                       aria-label="Search"
                       aria-describedby="search-addon"
                       v-model="sidebarIssuesQuery"
-                      data-cy="search_issues">
+                      data-cy="search_issues"
+                    />
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
-                     <label class="font-sm mb-0">Task Category</label>
-                     <multiselect
+                    <label class="font-sm mb-0">Task Category</label>
+                    <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"                     
+                      label="name"
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -113,7 +114,7 @@
                         </div>
                       </template>
                     </multiselect>
-
+                  </div>
                   <div class="simple-select w-50">
                     <label class="font-sm mb-0">Flags</label>
                     <multiselect v-model="C_kanbanTaskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
@@ -124,10 +125,9 @@
                       </template>
                     </multiselect>
                   </div>
-                   <div class="d-flex align-item-center justify-content-between">
-                </div>
+                  <div class="d-flex align-item-center justify-content-between">
                     <label class="font-sm mb-0">Issue Type</label>
-                    <multiselect                    
+                    <multiselect
                       v-model="C_issueTypeFilter"
                       track-by="name"
                       label="name"
@@ -163,8 +163,8 @@
                       </template>
                     </multiselect>
                   </div>
-                </div>               
-                <div class="mx-2 mb-3 font-sm">   
+                </div>
+                <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>
@@ -172,6 +172,55 @@
                   </div>
                 </div>
               </div>
+
+              <div v-if="currentTab === 'risks'">
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="mb-2 input-group w-100">
+                    <div class="input-group-prepend d-inline">
+                      <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input
+                      type="search"
+                      style="height:30px"
+                      class="form-control form-control-sm"
+                      placeholder="Search Risks"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
+                      v-model="sidebarRisksQuery"
+                      data-cy="search_risks"
+                    />
+                  </div>
+                </div>
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="simple-select w-100">
+                    <label class="font-sm mb-0">Task Category</label>
+                    <multiselect
+                      v-model="C_taskTypeFilter"
+                      track-by="name"
+                      label="name"
+                      :options="taskTypes"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                </div>
+                <div class="mx-2 mb-3 font-sm">
+                  <div class="form-check my-4 pl-0" data-cy="search_risk_total">
+                    <label class="form-check-label text-primary">
+                      <h5>Total: {{filteredRisks.length}}</h5>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -194,7 +243,7 @@
            <h5 class="mb-0 pb-1"> {{ currentFacility.facilityName }}</h5>
          </div>
           <div v-if="currentFacility && ('id' in currentFacility)">
-            <kanban             
+            <kanban
               :stages="C_kanban.stages"
               :kanban-type="currentTab"
               :cards="C_kanban.cards"
@@ -204,7 +253,7 @@
           </div>
           <div v-else class="center-section text-center">
             <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
-            <p>View, Edit, filter Tasks/issues in kanban mode.</p>
+            <p>View, Edit, filter Tasks/Issues/Risks in kanban mode.</p>
           </div>
         </div>
       </div>
@@ -235,6 +284,15 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></issue-form>
+
+        <risk-form
+          v-if="currentTab === 'risks'"
+          :facility="currentFacility"
+          :fixed-stage="fixedStageId"
+          @issue-created="handleNewRisk"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></risk-form>
       </div>
     </sweet-modal>
   </div>
@@ -248,6 +306,7 @@
   import FacilitySidebar from './facilities/facility_sidebar'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
+  import RiskForm from "./risks/risk_form"
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -260,19 +319,25 @@
       FacilitySidebar,
       IssueForm,
       TaskForm,
+      RiskForm,
       SweetModal
     },
     data() {
       return {
         tabs: [
           {
-            label: 'Kanban Tasks',
+            label: 'Tasks',
             key: 'tasks',
             closable: false
           },
           {
-            label: 'Kanban Issues',
+            label: 'Issues',
             key: 'issues',
+            closable: false
+          },
+          {
+            label: 'Risks',
+            key: 'risks',
             closable: false
           }
         ],
@@ -288,9 +353,11 @@
         expandFilter: false,
         searchTasksQuery: '',
         searchIssuesQuery: '',
+        searchRisksQuery: '',
         searchStageId: null,
         sidebarTasksQuery: '',
-        sidebarIssuesQuery: ''
+        sidebarIssuesQuery: '',
+        sidebarRisksQuery: ''
       }
     },
     mounted() {
@@ -307,7 +374,8 @@
         'setIssueTypeFilter',
         'setTaskTypeFilter',
         'updateTasksHash',
-        'updateIssuesHash'
+        'updateIssuesHash',
+        'updateRisksHash'
       ]),
       ...mapActions([
         'taskUpdated'
@@ -348,6 +416,11 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.onCloseForm()
       },
+      handleNewRisk(risk) {
+        let cb = () => this.updateRisksHash({risk: risk})
+        this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.onCloseForm()
+      },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
         if ($(searchElement).attr("data-kanban-type") == "issues") {
@@ -374,9 +447,11 @@
         'filteredFacilityGroups',
         'taskStages',
         'issueStages',
+        'riskStages',
         'taskTypeFilter',
         'taskStageFilter',
         'issueStageFilter',
+        'riskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
         'issueTypeFilter',
@@ -408,10 +483,10 @@
           if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
           if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            let taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
             if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
               valid = true
-            }else{
+            } else {
               if (taskIssueProgressStatusNames.includes("active")) {
                 valid = (task.progressStatus == "active")
               }
@@ -423,63 +498,62 @@
 
           let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
 
-          if (taskIssueUsers.length > 0) {  
-            if(taskIssueUsers.length > 0){
+          if (taskIssueUsers.length > 0) {
+            if (taskIssueUsers.length > 0) {
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
 
-          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+          if (taskIssueMyAction.length > 0 && taksIssueNotMyAction == true) {
             valid = true
-          }else{
-            if (taskIssueMyAction.length > 0) {  
+          } else {
+            if (taskIssueMyAction.length > 0) {
               valid = valid && userIds.includes(this.$currentUser.id)
             }
-            if(taksIssueNotMyAction == true){
+            if (taksIssueNotMyAction == true) {
               if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
             }
           }
 
-          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+          if (taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true) {
             valid = true
-          }else{
-            if(taskIssueOnWatch.length > 0){
+          } else {
+            if (taskIssueOnWatch.length > 0) {
               valid = valid && task.watched
             }
 
-            if(taksIssueNotOnWatch == true){
-             valid = valid && !task.watched 
+            if (taksIssueNotOnWatch == true) {
+             valid = valid && !task.watched
             }
           }
 
-          if(noteDates && noteDates[0] && noteDates[1]){
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(task.notes, 'createdAt')
-            var is_valid = task.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
-              var nDate = moment(createdAt, "YYYY-MM-DD")
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            let startDate = moment(noteDates[0], "YYYY-MM-DD")
+            let endDate = moment(noteDates[1], "YYYY-MM-DD")
+            let _notesCreatedAt = _.map(task.notes, 'createdAt')
+            let is_valid = task.notes.length > 0
+            for(let createdAt of _notesCreatedAt){
+              let nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }
             valid = is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let is_valid = true
+            let nDate = moment(task.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 
           if (taskIssueOverdue) {
-            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            let overdueFilterNames = _.map(taskIssueOverdue, 'id')
             if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
               valid = true
-            }else{
+            } else {
               if (overdueFilterNames.includes("overdue")) {
                 valid = (task.isOverdue == true)
               }
@@ -490,8 +564,8 @@
           }
 
           if (taskIssueProgress && taskIssueProgress[0]) {
-            var min = taskIssueProgress[0].value.split("-")[0]
-            var max = taskIssueProgress[0].value.split("-")[1]
+            let min = taskIssueProgress[0].value.split("-")[0]
+            let max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (task.progress >= min && task.progress <= max)
           }
 
@@ -500,7 +574,6 @@
           return valid
         }), 'kanbanOrder', 'asc')
       },
-
       C_kanbanTaskFilter: {
         get() {
           return this.getAdvancedFilter()
@@ -509,7 +582,6 @@
           this.setAdvancedFilter(value)
         }
       },
-
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -558,10 +630,10 @@
           let valid = Boolean(issue && issue.hasOwnProperty('progress'))
 
           if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
+            let taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
             if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
               valid = true
-            }else{
+            } else {
               if (taskIssueProgressStatusNames.includes("active")) {
                 valid = (issue.progressStatus == "active")
               }
@@ -573,66 +645,64 @@
 
           let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
 
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
 
-          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
+          if (taskIssueMyAction.length > 0 && taksIssueNotMyAction == true) {
             valid = true
-          }else{
-            if (taskIssueMyAction.length > 0) {  
+          } else {
+            if (taskIssueMyAction.length > 0) {
               valid = valid && userIds.includes(this.$currentUser.id)
             }
-            if(taksIssueNotMyAction == true){
+            if (taksIssueNotMyAction == true) {
               if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
             }
           }
 
-          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
+          if (taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true) {
             valid = true
-          }else{
-            if(taskIssueOnWatch.length > 0){
+          } else {
+            if (taskIssueOnWatch.length > 0) {
               valid = valid && issue.watched
             }
-
-            if(taksIssueNotOnWatch == true){
-              valid = valid && !issue.watched 
+            if (taksIssueNotOnWatch == true) {
+              valid = valid && !issue.watched
             }
           }
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
 
-          if(noteDates && noteDates[0] && noteDates[1]){
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
-            var is_valid = issue.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
-              var nDate = moment(createdAt, "YYYY-MM-DD")
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            let startDate = moment(noteDates[0], "YYYY-MM-DD")
+            let endDate = moment(noteDates[1], "YYYY-MM-DD")
+            let _notesCreatedAt = _.map(issue.notes, 'createdAt')
+            let is_valid = issue.notes.length > 0
+            for (let createdAt of _notesCreatedAt) {
+              let nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }
             valid = is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let is_valid = true
+            let nDate = moment(issue.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 
           if (taskIssueOverdue) {
-            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
+            let overdueFilterNames = _.map(taskIssueOverdue, 'id')
             if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
               valid = true
-            }else{
+            } else {
               if (overdueFilterNames.includes("overdue")) {
                 valid = (issue.isOverdue == true)
               }
@@ -643,11 +713,10 @@
 
           }
           if (taskIssueProgress && taskIssueProgress[0]) {
-            var min = taskIssueProgress[0].value.split("-")[0]
-            var max = taskIssueProgress[0].value.split("-")[1]
+            let min = taskIssueProgress[0].value.split("-")[0]
+            let max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (issue.progress >= min && issue.progress <= max)
           }
-
 
           if (this.searchStageId && this.searchStageId == issue.issueStageId) {
             if (search_query) valid = valid && search_query.test(issue.title)
@@ -666,14 +735,6 @@
         },
         set(value) {
           this.setIssueTypeFilter(value)
-        }
-      },
-       C_taskTypeFilter: {
-        get() {
-          return this.taskTypeFilter
-        },
-        set(value) {
-          this.setTaskTypeFilter(value)
         }
       },
       C_issueSeverityFilter: {
@@ -702,6 +763,43 @@
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
         }
       },
+
+      filteredRisks() {
+        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        const search_query = this.exists(this.searchRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()), 'i') : null
+
+        return _.orderBy(_.filter(this.currentFacility.risks, (risk) => {
+          let valid = Boolean(risk && risk.hasOwnProperty('progress'))
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(risk.taskTypeId)
+          if (this.searchStageId && this.searchStageId == risk.issueStageId) {
+            if (search_query) valid = valid && search_query.test(risk.text)
+          } else if(stageIds.length > 0) {
+            valid = valid && stageIds.includes(risk.issueStageId)
+          }
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(risk.text)
+          return valid
+        }), 'kanbanOrder', 'asc')
+      },
+      C_myRisks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Risks", value: "risks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
+        }
+      },
+      C_onWatchRisks: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Risks", value: "risks"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "risks"))
+        }
+      },
       filterTaskStages() {
         let stageIds = _.map(this.taskStageFilter, 'id')
         return _.filter(this.taskStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
@@ -710,11 +808,24 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
+      filterRiskStages() {
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        return _.filter(this.riskStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
+      },
       C_kanban() {
-        return {
-          stages: this.currentTab == 'tasks' ? this.filterTaskStages : this.filterIssueStages,
-          cards: this.currentTab == 'tasks' ? this.filteredTasks : this.filteredIssues
+        let stages = [];
+        let cards = [];
+        if (this.currentTab == 'tasks') {
+          stages = this.filterTaskStages
+          cards = this.filteredTasks
+        } else if (this.currentTab == 'issues') {
+          stages = this.filterIssueStages
+          cards = this.filteredIssues
+        } else if (this.currentTab == 'risks') {
+          stages = this.filterRiskStages
+          cards = this.filteredRisks
         }
+        return { stages, cards }
       }
     },
     watch: {
@@ -724,7 +835,8 @@
             this.currentFacilityGroup = {}
             this.currentFacility = {}
             this.expanded.id = ''
-          } else {
+          }
+          else {
             let group = value.find(f => f.id === this.currentFacilityGroup.id)
             if (group) {
               this.currentFacilityGroup = group
@@ -791,7 +903,7 @@
     text-align: left;
     cursor: pointer;
     display: block;
-  }  
+  }
   .kanban-tab {
     margin-bottom: 20px !important;
   }
@@ -813,7 +925,7 @@
   .simple-select /deep/ .multiselect {
     width: 230px;
   }
-  .new_form_modal.sweet-modal-overlay {    
+  .new_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
   .new_form_modal.sweet-modal-overlay /deep/ .sweet-modal {

@@ -59,7 +59,8 @@
           <label class="font-sm"><h5>*Risk Name:</h5></label>
           <textarea
             v-validate="'required'"
-            class="form-control"       
+            class="form-control"
+            placeholder="Risk title"
             v-model="DV_risk.text"
             rows="1"
             :readonly="!_isallowed('write')"
@@ -69,11 +70,11 @@
           />
           <div v-show="errors.has('Risk Name')" class="text-danger" data-cy="risk_name_error">
             {{errors.first('Risk Name')}}
-          </div>             
+          </div>
         </div>
 
-    <div class="form-group mx-4">
-        <label class="font-sm">*Risk Description:</label>
+        <div class="form-group mx-4">
+          <label class="font-sm">*Risk Description:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
@@ -88,7 +89,7 @@
           <div v-show="errors.has('risk_description')" class="text-danger" data-cy="risk_description_error">
             {{errors.first('risk_description')}}
           </div>
-     </div>
+        </div>
 
         <div class="form-group mx-4">
           <label class="font-sm">*Impact Description:</label>
@@ -196,7 +197,27 @@
             {{errors.first('Task Category')}}
           </div>
         </div>
-
+        <div class="simple-select form-group mx-4">
+          <label class="font-sm">Stage:</label>
+          <multiselect
+            v-model="selectedRiskStage"
+            track-by="id"
+            label="name"
+            placeholder="Select Stage"
+            :options="riskStages"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write') || !!fixedStage"
+            data-cy="risk_stage"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Probablity:</label>
           <multiselect
@@ -487,7 +508,6 @@
           </div>
         </paginate>
       </div>
-        
 
       </div>
       <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
@@ -520,6 +540,7 @@
         destroyedFiles: [],
         riskUsers: [],
         selectedTaskType: null,
+        selectedRiskStage: null,
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
@@ -533,6 +554,9 @@
         this.loadRisk(this.risk)
       } else {
         this.loading = false
+      }
+      if (this.fixedStage) {
+        this.selectedRiskStage = this.riskStages.find(t => t.id === this.fixedStage)
       }
     },
     methods: {
@@ -554,6 +578,7 @@
           riskApproach: 'avoid',
           riskApproachDescription: '',
           taskTypeId: '',
+          riskStageId: '',
           progress: 0,
           startDate: '',
           dueDate: '',
@@ -563,7 +588,7 @@
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
-          checklists: [], 
+          checklists: [],
           notes: []
         }
       },
@@ -589,6 +614,7 @@
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_risk.taskTypeId)
+        this.selectedRiskStage = this.riskStages.find(t => t.id === this.DV_risk.riskStageId)
         if (risk.attachFiles) this.addFile(risk.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -653,6 +679,7 @@
           formData.append('risk[risk_approach]', this.DV_risk.riskApproach)
           formData.append('risk[risk_approach_description]', this.DV_risk.riskApproachDescription)
           formData.append('risk[task_type_id]', this.DV_risk.taskTypeId)
+          formData.append('risk[risk_stage_id]', this.DV_risk.riskStageId)
           formData.append('risk[progress]', this.DV_risk.progress)
           formData.append('risk[start_date]', this.DV_risk.startDate)
           formData.append('risk[due_date]', this.DV_risk.dueDate)
@@ -799,8 +826,8 @@
           if (!event.target.value) this.DV_risk.checklists[index].checked = false
         } else if (name === 'check' && this.DV_risk.checklists[index].text) {
           this.DV_risk.checklists[index].checked = event.target.checked
-        } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
-          this.DV_task.checklists[index].dueDate = event.target.value
+        } else if (name === 'dueDate' && this.DV_risk.checklists[index].text) {
+          this.DV_risk.checklists[index].dueDate = event.target.value
         }
       },
       isMyCheck(check) {
@@ -820,6 +847,7 @@
         'activeProjectUsers',
         'myActionsFilter',
         'taskTypes',
+        'riskStages',
         'riskApproaches',
         'currentTasks',
         'currentIssues',
@@ -912,6 +940,11 @@
       selectedTaskType: {
         handler: function(value) {
           this.DV_risk.taskTypeId = value ? value.id : null
+        }, deep: true
+      },
+      selectedRiskStage: {
+        handler: function(value) {
+          this.DV_risk.riskStageId = value ? value.id : null
         }, deep: true
       },
       filteredTasks: {

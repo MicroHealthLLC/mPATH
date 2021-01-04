@@ -1465,28 +1465,6 @@ jQuery(function($) {
       }
     });
 
-
-    // Add this in input element
-    //"data-task-stage-data" => TaskStage.where.not(id: f.object.task_stage_ids).map{|u| {id: u.id, text: u.name}}.to_json
-    // NOTE: Select2 is not working as expected. It is not preserving order of selected items:
-    // https://github.com/select2/select2/issues/3106#issuecomment-333341636
-    // http://jsfiddle.net/L6163yc9/4
-
-    // task_stage_select2_data = JSON.parse( $("#project_task_stage_alt").attr("data-task-stage-data"))
-    // $("#project_task_stage_alt").select2({
-    //   data: task_stage_select2_data
-    // })
-    // $("#project_task_stage_alt").on('select2:select', function(e) {
-    //   var element = $(e.params.data.element);
-    //   if (element.length) {
-    //     $(this).append(element);
-    //     $(this).trigger('change');
-    //   } else {
-    //     console.log('element does not exist!');
-    //   }
-    // });
-
-
     // task form slider auto calculate and slider
     $("#task_auto_calculate").change(function(e) {
       $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
@@ -2150,22 +2128,12 @@ jQuery(function($) {
       return $("label[for='issue_stage_percentage']").text(issue_stage_percentage + " (" + (parseFloat(this.value).toFixed(1)) + ")");
     });
 
-    // on_change multiselect enums in project_form
-    // $('body').on('click', '#project_task_stage_alt > option, #project_task_stage_ids > option, #project_issue_stage_alt > option, #project_issue_stage_ids > option, #project_user_alt > option, #project_user_ids > option, #project_facility_alt > option, #project_facility_ids > option, #project_status_alt > option, #project_status_ids > option, #project_task_type_ids > option, #project_task_type_alt > option, #project_issue_type_ids > option, #project_issue_type_alt > option, #project_issue_severity_ids > option, #project_issue_severity_alt > option', function () {
-    //   let this_id = $(this).parent().prop('id');
-    //   let alt_replace = this_id.includes('ids') ? 'alt' : 'ids';
-    //   let alt_with = this_id.includes('ids') ? 'ids' : 'alt';
-
-    //   // replaceAll isn't supported in all versions of browser
-    //   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll#Browser_compatibility
-    //   // let alt_id = this_id.replaceAll(alt_with, alt_replace);
-    //   let alt_id = this_id.replace(alt_with, alt_replace)
-    //   let without_id = this_id.slice(0, -4);
-
-    //   $(this).remove().appendTo(`#${alt_id}`);
-    //   $(`#${without_id}_ids option`).prop('selected', true);
-    //   $(`#${without_id}_alt option`).prop('selected', false);
-    // });
+    // on_change percent stages
+    let risk_stage_percentage = $("label[for='risk_stage_percentage']").text();
+    $("label[for='risk_stage_percentage']").text(risk_stage_percentage + " (" + (parseFloat($("#risk_stage_percentage").val()).toFixed(1)) + ")");
+    $("#risk_stage_percentage").on('input', function() {
+      return $("label[for='risk_stage_percentage']").text(risk_stage_percentage + " (" + (parseFloat(this.value).toFixed(1)) + ")");
+    });
 
   }());
 

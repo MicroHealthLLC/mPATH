@@ -24,7 +24,7 @@ class Project < SortableRecord
   has_many :issue_severities, through: :project_issue_severities
   has_many :project_task_stages, dependent: :destroy
   has_many :task_stages, through: :project_task_stages
-  
+
   has_many :project_risk_stages, dependent: :destroy
   has_many :risk_stages, through: :project_risk_stages
 
@@ -57,7 +57,8 @@ class Project < SortableRecord
       issue_types: issue_types.as_json,
       issue_severities: issue_severities.as_json,
       task_stages: task_stages.as_json,
-      issue_stages: issue_stages.as_json
+      issue_stages: issue_stages.as_json,
+      risk_stages: risk_stages.as_json
     )
     json
   end

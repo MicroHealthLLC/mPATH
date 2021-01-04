@@ -4,6 +4,7 @@ class Risk < ApplicationRecord
 
   belongs_to :user
   has_many :risk_users, dependent: :destroy
+  belongs_to :risk_stage, optional: true
   has_many :users, through: :risk_users
   belongs_to :task_type, optional: true
   has_many_attached :risk_files, dependent: :destroy
@@ -18,6 +19,8 @@ class Risk < ApplicationRecord
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
+  before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
+  before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
   def files_as_json
     risk_files.map do |file|
@@ -56,7 +59,7 @@ class Risk < ApplicationRecord
       progress_status: progress_status,
       checklists: checklists.as_json,
       facility_id: fp.try(:facility_id),
-      facility_name: fp.try(:facility)&.facility_name, 
+      facility_name: fp.try(:facility)&.facility_name,
       user_ids: users.map(&:id).compact.uniq,
       risk_owners: users.map(&:full_name).compact.join(", "),
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
@@ -85,6 +88,17 @@ class Risk < ApplicationRecord
 
   def nuke_it!
     RelatedRisk.where(risk_id: self.id).or(RelatedRisk.where(relatable: self)).destroy_all
+  end
+
+  def init_kanban_order
+    self.kanban_order = facility_project.risks.where(risk_stage_id: risk_stage_id).maximum(:kanban_order) + 1 rescue 0 if self.risk_stage_id.present?
+  end
+
+  def update_progress_on_stage_change
+    if risk_stage.present?
+      self.progress = risk_stage.percentage
+      self.auto_calculate = false
+    end
   end
 
   private

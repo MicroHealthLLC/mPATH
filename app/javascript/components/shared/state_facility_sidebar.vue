@@ -66,7 +66,7 @@
 
             <div v-else class="center-section text-center">
               <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
-              <p>View, Add or Edit Tasks, Issues, and Notes here.</p>
+              <p>View, Add or Edit Tasks, Issues, Risks and Notes here.</p>
             </div>
           </div>
         </div>

@@ -1,7 +1,5 @@
 <template>
   <div id="kanban" data-cy="kanban">
-
-
     <div class="overflow-x-auto">
       <div class="d-flex py-2" v-if="!loading">
         <div
@@ -10,9 +8,9 @@
           class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-3"
           data-cy="kanban_col"
           >
-            <div>
-    <h1 style="z-index:100">{{column.tasks.facilityName}}</h1>
-  </div>
+          <div>
+            <h1 style="z-index:100">{{column.tasks.facilityName}}</h1>
+          </div>
           <div class="row mb-3 kan-header" data-cy="kanban_col_title">
             <div class="col">
               <div class="badge">
@@ -40,6 +38,7 @@
               :key="`${task.id}_${column.stage.id}`"
               :task="task"
               :issue="task"
+              :risk="task"
               fromView="kanban_view"
               class="mr-2 mb-2 task-card"
             ></div>
@@ -56,19 +55,22 @@ import Draggable from "vuedraggable"
 import {mapActions, mapGetters} from 'vuex'
 import TaskShow from './../dashboard/tasks/task_show'
 import IssueShow from './../dashboard/issues/issue_show'
+import RiskShow from './../dashboard/risks/risk_show'
 
 export default {
   name: "Kanban",
   components: {
     TaskShow,
     IssueShow,
+    RiskShow,
     Draggable
   },
+
   props: ['stages', 'cards', 'kanbanType'],
   data() {
     return {
       loading: true,
-      stageId: this.kanbanType == 'tasks' ? 'taskStageId' : 'issueStageId',
+      stageId: _.camelCase(`${this.kanbanType}tageId`),
       columns: [],
       movingSlot: ''
     };
@@ -85,7 +87,7 @@ export default {
       console.log(t)
     },
     setupColumns(cards) {
-      this.stageId = this.kanbanType === 'issues' ? 'issueStageId' : 'taskStageId'
+      this.stageId = `${this.kanbanType.slice(0, -1)}StageId`
       for (let stage of this.stages) {
         this.columns.push({
           stage: stage,
@@ -126,7 +128,7 @@ export default {
       'viewPermit'
     ]),
     cardShow() {
-      return this.kanbanType == 'tasks' ? 'TaskShow' : 'IssueShow'
+      return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)
     }
   },
   watch: {
@@ -152,7 +154,7 @@ export default {
   }
   .kanban-draggable {
     min-height: calc(100vh - 230px);
-  } 
+  }
   .ghost-card {
     opacity: 0.5;
     background: #F7FAFC;
@@ -167,7 +169,7 @@ export default {
     background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
     position: relative;
-    overflow: hidden;   
+    overflow: hidden;
     min-width: 18rem;
     width: 18rem;
     height: 77vh;
