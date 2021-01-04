@@ -161,7 +161,7 @@
 
               <div>
                 <label class="font-sm mb-0">Flags</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
+                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="true" select-label="Select">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name selected-opt'>{{option.name}}</span>
@@ -273,15 +273,16 @@ export default {
     },
     C_advancedFilter: {
       get() {
-        if (this.getAdvancedFilter().length == 0) {
-          this.setAdvancedFilter([{ id: 'active', name: 'active' }])
-        }
+        // if (this.getAdvancedFilter().length == 0) {
+        //   this.setAdvancedFilter([{ id: 'active', name: 'active' }])
+        // }
+
         return this.getAdvancedFilter()
       },
       set(value) {
         if (!value) {
-          this.setAdvancedFilter([{ id: 'active', name: 'active' }])
-          // this.setAdvancedFilter([])
+          // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
+          this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
         }
