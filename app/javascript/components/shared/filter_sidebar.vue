@@ -273,11 +273,12 @@ export default {
     },
     C_advancedFilter: {
       get() {
-        // if (this.getAdvancedFilter().length == 0) {
-        //   this.setAdvancedFilter([{ id: 'active', name: 'active' }])
-        // }
-
-        return this.getAdvancedFilter()
+        if (this.getAdvancedFilter().length == 0) {
+          return [{ id: 'active', name: 'Active' }]
+        }else{
+          return this.getAdvancedFilter()  
+        }
+        
       },
       set(value) {
         if (!value) {
