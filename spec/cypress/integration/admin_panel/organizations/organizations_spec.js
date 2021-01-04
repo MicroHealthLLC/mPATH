@@ -24,6 +24,7 @@ describe('Admin Panel Organization', function() {
     cy.get('.action_item > a').contains('New Organization').click()
     cy.get('#organization_title').type('New Test Organization').should('have.value', 'New Test Organization')
     cy.get('#organization_submit_action > input').contains('Create Organization').click()
+    cy.get('.flashes').contains('Organization was successfully created.')
     cy.get('#index_table_organizations').should('be.visible')
     cy.get('#index_table_organizations > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()

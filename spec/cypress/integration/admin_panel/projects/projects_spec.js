@@ -25,6 +25,7 @@ describe('Admin Panel Project', function() {
     cy.get('#page_title').contains('New Project').should('be.visible')
     cy.get('#project_name').type('New Test Project')
     cy.get('#project_submit_action').contains('Create Project').click()
+    cy.get('.flashes').contains('Project created Successfully')
     cy.get('#index_table_projects > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })

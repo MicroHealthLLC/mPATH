@@ -25,6 +25,7 @@ describe('Admin Panel Task Categories', function() {
     cy.get('#page_title').contains('New Task Category').should('be.visible')
     cy.get('#task_type_name').type('New Test Task Type')
     cy.get('#task_type_submit_action').contains('Create Task Category').click()
+    cy.get('.flashes').contains('Task Category was successfully created.')
     cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })

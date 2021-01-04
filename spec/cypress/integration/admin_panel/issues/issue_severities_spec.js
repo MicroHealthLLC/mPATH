@@ -25,6 +25,7 @@ describe('Admin Panel Issue Severities', function() {
     cy.get('#page_title').contains('New Issue Severity').should('be.visible')
     cy.get('#issue_severity_name').type('New Test Issue Severity')
     cy.get('#issue_severity_submit_action').contains('Create Issue severity').click()
+    cy.get('.flashes').contains('Issue severity was successfully created.')
     cy.get('#index_table_issue_severities > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })

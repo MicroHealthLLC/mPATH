@@ -25,6 +25,7 @@ describe('Admin Panel Task Stages', function() {
     cy.get('#page_title').contains('New Task Stage').should('be.visible')
     cy.get('#task_stage_name').type('New Test Task Stage')
     cy.get('#task_stage_submit_action').contains('Create Task stage').click()
+    cy.get('.flashes').contains('Task stage was successfully created.')
     cy.get('#index_table_task_stages > tbody > tr').its('length').should('be.eq', 3)
     cy.get('#logout').click()
   })

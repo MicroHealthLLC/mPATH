@@ -25,6 +25,7 @@ describe('Admin Panel Project Types', function() {
     cy.get('#page_title').contains('New Project Type').should('be.visible')
     cy.get('#project_type_name').type('New Test Project Type')
     cy.get('#project_type_submit_action').contains('Create Project type').click()
+    cy.get('.flashes').contains('Project type was successfully created.')
     cy.get('#index_table_project_types > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })

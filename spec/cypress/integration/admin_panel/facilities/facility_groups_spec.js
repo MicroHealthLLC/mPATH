@@ -19,4 +19,15 @@ describe('Admin Panel Facility Group', function() {
     cy.get('.cancel > a').contains('Cancel').click()
     cy.get('#logout').click()
   })
+
+  it('Create new Facility Group', function() {
+    cy.get('.action_item > a').contains('New Facility Group').click()
+    cy.get('#page_title').contains('New Facility Group').should('be.visible')
+    cy.get('#facility_group_name').type('New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG')
+    cy.get('#facility_group_submit_action').contains('Create Facility group').click()
+    cy.get('.flashes').contains('Facility group was successfully created.')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#logout').click()
+  })
 })

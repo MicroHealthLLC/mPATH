@@ -25,6 +25,7 @@ describe('Admin Panel Issue Stages', function() {
     cy.get('#page_title').contains('New Issue Stage').should('be.visible')
     cy.get('#issue_stage_name').type('New Test Issue Stage')
     cy.get('#issue_stage_submit_action').contains('Create Issue stage').click()
+    cy.get('.flashes').contains('Issue stage was successfully created.')
     cy.get('#index_table_issue_stages > tbody > tr').its('length').should('be.eq', 3)
     cy.get('#logout').click()
   })
