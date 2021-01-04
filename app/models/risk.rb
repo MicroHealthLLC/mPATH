@@ -65,7 +65,6 @@ class Risk < ApplicationRecord
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       notes: notes.as_json,
       project_id: fp.try(:project_id),
-      task_type: task_type.try(:name),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_risks: sub_risks.as_json(only: [:risk_description, :id]),

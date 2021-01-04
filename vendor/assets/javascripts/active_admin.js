@@ -7,6 +7,14 @@
 //= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
+function checkRiskProbabilityImpactNumber(element){
+  if($(element).val() > 5){
+    $(element).val(5)
+  }else if($(element).val() < 0){
+    $(element).val(0)
+  }
+}
+
 jQuery(function($) {
 
   // Add placeholder to for organization select
@@ -2259,4 +2267,5 @@ jQuery(function($) {
       </div>`
     });
   }
+
 });
