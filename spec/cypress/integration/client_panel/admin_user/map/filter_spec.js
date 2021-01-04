@@ -94,69 +94,69 @@ describe('Apply filters in Map Page', function() {
     cy.logout()
   })
 
-  it('Apply filter on task users', function() {
-    cy.toggleFilterTab()
-    cy.get('[data-cy=filter_bar]').within(() => {
-      cy.get('[data-cy=task_user]').as('list')
-      cy.get('@list').click()
-      cy.get('@list').within(() => {
-        cy.contains('Test Admin').click()
-      })
-    })
-    cy.toggleFilterTab()
-    cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Users: Test Admin').should('be.visible')
-    })
-    cy.facilityGroupFilter()
-    cy.toggleFilterTab()
-    cy.get('[data-cy=filter_bar]').within(() => {
-      cy.get('[data-cy=clear_filter]').click()
-      cy.get('[data-cy=task_user]').as('list')
-      cy.get('@list').click()
-      cy.get('@list').within(() => {
-        cy.contains('Test Client').click()
-      })
-    })
-    cy.toggleFilterTab()
-    cy.get('[data-cy=facility_rollup]').scrollIntoView()
-    cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Task Users: Test Client').should('be.visible')
-    })
-    cy.facilityClientFilter()
-    cy.logout()
-  })
-
-  // it('Apply filter on task stages', function() {
+  // it('Apply filter on task users', function() {
   //   cy.toggleFilterTab()
   //   cy.get('[data-cy=filter_bar]').within(() => {
-  //     cy.get('[data-cy=task_stage]').as('list')
+  //     cy.get('[data-cy=task_user]').as('list')
   //     cy.get('@list').click()
   //     cy.get('@list').within(() => {
-  //       cy.contains('Test Task Stage').click()
+  //       cy.contains('Test Admin').click()
   //     })
   //   })
   //   cy.toggleFilterTab()
   //   cy.get('[data-cy=date_set_filter]').within(() => {
-  //     cy.contains('Task Stages: Test Task Stage').should('be.visible')
+  //     cy.contains('Task Users: Test Admin').should('be.visible')
   //   })
-  //   cy.testTaskStageFilter()
+  //   cy.facilityGroupFilter()
   //   cy.toggleFilterTab()
   //   cy.get('[data-cy=filter_bar]').within(() => {
   //     cy.get('[data-cy=clear_filter]').click()
-  //     cy.get('[data-cy=task_stage]').as('list')
+  //     cy.get('[data-cy=task_user]').as('list')
   //     cy.get('@list').click()
   //     cy.get('@list').within(() => {
-  //       cy.contains('New Task Stage').click()
+  //       cy.contains('Test Client').click()
   //     })
   //   })
   //   cy.toggleFilterTab()
   //   cy.get('[data-cy=facility_rollup]').scrollIntoView()
   //   cy.get('[data-cy=date_set_filter]').within(() => {
-  //     cy.contains('Task Stages: New Task Stage').should('be.visible')
+  //     cy.contains('Task Users: Test Client').should('be.visible')
   //   })
   //   cy.facilityClientFilter()
   //   cy.logout()
   // })
+
+  it('Apply filter on task stages', function() {
+    cy.toggleFilterTab()
+    cy.get('[data-cy=filter_bar]').within(() => {
+      cy.get('[data-cy=task_stage]').as('list')
+      cy.get('@list').click()
+      cy.get('@list').within(() => {
+        cy.contains('Test Task Stage').click()
+      })
+    })
+    cy.toggleFilterTab()
+    cy.get('[data-cy=date_set_filter]').within(() => {
+      cy.contains('Task Stages: Test Task Stage').should('be.visible')
+    })
+    cy.testTaskStageFilter()
+    cy.toggleFilterTab()
+    cy.get('[data-cy=filter_bar]').within(() => {
+      cy.get('[data-cy=clear_filter]').click()
+      cy.get('[data-cy=task_stage]').as('list')
+      cy.get('@list').click()
+      cy.get('@list').within(() => {
+        cy.contains('New Task Stage').click()
+      })
+    })
+    cy.toggleFilterTab()
+    cy.get('[data-cy=facility_rollup]').scrollIntoView()
+    cy.get('[data-cy=date_set_filter]').within(() => {
+      cy.contains('Task Stages: New Task Stage').should('be.visible')
+    })
+    cy.facilityClientFilter()
+    cy.logout()
+  })
 
   it('Apply filter on issue type', function() {
     cy.toggleFilterTab()
@@ -175,35 +175,67 @@ describe('Apply filters in Map Page', function() {
     cy.logout()
   })
 
-  it('Apply filter on issue users', function() {
+  it('Apply filter on issue stages', function() {
     cy.toggleFilterTab()
     cy.get('[data-cy=filter_bar]').within(() => {
-      cy.get('[data-cy=issue_user]').as('list')
+      cy.get('[data-cy=issue_stage]').as('list')
       cy.get('@list').click()
       cy.get('@list').within(() => {
-        cy.contains('Test Admin').click()
+        cy.contains('Test Issue Stage').click()
       })
     })
     cy.toggleFilterTab()
     cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Issue Users: Test Admin').should('be.visible')
+      cy.contains('Issue Stages: Test Issue Stage').should('be.visible')
     })
-    cy.issueUserFilter()
+    cy.testIssueStageFilter()
     cy.toggleFilterTab()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=clear_filter]').click()
-      cy.get('[data-cy=issue_user]').as('list')
+      cy.get('[data-cy=issue_stage]').as('list')
       cy.get('@list').click()
       cy.get('@list').within(() => {
-        cy.contains('Test Client').click()
+        cy.contains('New Issue Stage').click()
       })
     })
     cy.toggleFilterTab()
     cy.get('[data-cy=facility_rollup]').scrollIntoView()
     cy.get('[data-cy=date_set_filter]').within(() => {
-      cy.contains('Issue Users: Test Client').should('be.visible')
+      cy.contains('Issue Stages: New Issue Stage').should('be.visible')
     })
     cy.issueUserFilter()
     cy.logout()
   })
+
+  // it('Apply filter on issue users', function() {
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=filter_bar]').within(() => {
+  //     cy.get('[data-cy=issue_user]').as('list')
+  //     cy.get('@list').click()
+  //     cy.get('@list').within(() => {
+  //       cy.contains('Test Admin').click()
+  //     })
+  //   })
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=date_set_filter]').within(() => {
+  //     cy.contains('Issue Users: Test Admin').should('be.visible')
+  //   })
+  //   cy.issueUserFilter()
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=filter_bar]').within(() => {
+  //     cy.get('[data-cy=clear_filter]').click()
+  //     cy.get('[data-cy=issue_user]').as('list')
+  //     cy.get('@list').click()
+  //     cy.get('@list').within(() => {
+  //       cy.contains('Test Client').click()
+  //     })
+  //   })
+  //   cy.toggleFilterTab()
+  //   cy.get('[data-cy=facility_rollup]').scrollIntoView()
+  //   cy.get('[data-cy=date_set_filter]').within(() => {
+  //     cy.contains('Issue Users: Test Client').should('be.visible')
+  //   })
+  //   cy.issueUserFilter()
+  //   cy.logout()
+  // })
 })

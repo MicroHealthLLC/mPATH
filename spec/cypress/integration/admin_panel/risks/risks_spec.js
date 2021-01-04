@@ -12,4 +12,11 @@ describe('Admin Panel Risk', function() {
     cy.get('#index_table_risks').should('not.exist')
     cy.get('#logout').click()
   })
+
+  it('Open and close new Risk form', function() {
+    cy.get('.action_item > a').contains('New Risk').click()
+    cy.get('#page_title').contains('New Risk').should('be.visible')
+    cy.get('.cancel > a').contains('Cancel').click()
+    cy.get('#logout').click()
+  })
 })

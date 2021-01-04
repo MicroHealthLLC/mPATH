@@ -6,6 +6,7 @@ else
   logger.warn "add database_cleaner or update cypress/app_commands/clean.rb"
   Issue.destroy_all if defined?(Issue)
   Task.destroy_all if defined?(Task)
+  Risk.destroy_all if defined?(Risk)
   FacilityProject.destroy_all if defined?(FacilityProject)
   Facility.destroy_all if defined?(Facility)
   FacilityGroup.destroy_all if defined?(FacilityGroup)
@@ -19,6 +20,7 @@ else
   Project.destroy_all if defined?(Project)
   ProjectType.destroy_all
 
+  RiskStage.destroy_all if defined?(RiskStage)
   IssueType.destroy_all if defined?(IssueType)
   IssueStage.destroy_all if defined?(IssueStage)
   TaskStage.destroy_all if defined?(TaskStage)

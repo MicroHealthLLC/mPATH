@@ -3,15 +3,40 @@ describe('Admin Panel Issue Types', function() {
     cy.app('clean')
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
-    cy.get('[data-cy=admin_panel]').click()
+    cy.openIssueTypeAP()
   })
 
   it('Click on Issue Types on tabs open Issue Type information page', function() {
-    cy.get('#tabs').within(() => {
-      cy.get('#issue_types').contains('Issue Types').click({force: true})
-    })
     cy.get('#page_title').contains('Issue Types').should('be.visible')
     cy.get('#index_table_issue_types').should('be.visible')
+    cy.get('#index_table_issue_types > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
+
+  it('Open and close new Issue Type form', function() {
+    cy.get('.action_item > a').contains('New Issue Type').click()
+    cy.get('#page_title').contains('New Issue Type').should('be.visible')
+    cy.get('.cancel > a').contains('Cancel').click()
+    cy.get('#logout').click()
+  })
+
+  it('Create new Issue Type', function() {
+    cy.get('.action_item > a').contains('New Issue Type').click()
+    cy.get('#page_title').contains('New Issue Type').should('be.visible')
+    cy.get('#issue_type_name').type('New Test Issue Type')
+    cy.get('#issue_type_submit_action').contains('Create Issue type').click()
+    cy.get('.flashes').contains('Issue type was successfully created.')
+    cy.get('#index_table_issue_types > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
+
+  it('Could not Delete Issue type of foreign constraint', function() {
+    cy.get('#index_table_issue_types').should('be.visible')
+    cy.get('#index_table_issue_types > tbody > tr').first().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_issue_types > tbody > tr').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
 })
