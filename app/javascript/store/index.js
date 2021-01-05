@@ -263,7 +263,7 @@ export default new Vuex.Store({
         {id: 'active', name: 'Active', value: 'active'},
         {id: 'completed', name: 'Completed', value: 'completed'},
         {id: 'overdue', name: 'Overdue', value: "overdue"},
-        {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
+        {id: 'notOverdue', name: 'On Schedule', value: "not overdue"},
         {id: 'myAction', name: 'My Assignments', value: 'my action'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
@@ -291,7 +291,7 @@ export default new Vuex.Store({
         {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
-        {id: 'not overdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
@@ -573,15 +573,16 @@ export default new Vuex.Store({
 
       var userIds = []
       if(page_name == 'filteredFacilities'){
-        var actions = ['notes', 'tasks', 'issues', 'risks'] 
+        var actions = ['notes', 'tasks', 'issues', 'risks']
         for (let act of actions) {
-          userIds = act == "notes" ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
+          var u = ( act == "notes") ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
+          userIds = userIds.concat(u)
         }
       }else{
         userIds = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
       }
-
-
+      userIds = _.uniq(userIds)
+      
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
@@ -780,7 +781,7 @@ export default new Vuex.Store({
       return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
     },
     getTaskIssueOverdueOptions: (state, getters) => {
-      return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "not overdue",name: "not overdue", value: "not overdue"}]
+      return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "notOverdue",name: "not overdue", value: "not overdue"}]
     },
 
     currentTasks: (state, getters) => {
