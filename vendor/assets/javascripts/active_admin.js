@@ -1933,7 +1933,7 @@ jQuery(function($) {
       $.Vue_related_tasks_issues && $.Vue_related_tasks_issues.setProjectConsts();
     });
 
-    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin, .admin_projects.active_admin, .admin_issue_stages.active_admin, .admin_task_stages.active_admin").is(":visible"))
+    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin, .admin_projects.active_admin, .admin_issue_stages.active_admin, .admin_task_stages.active_admin, .admin_risk_stages.active_admin").is(":visible"))
     {
       $("body").on("click", ".sortable", function() {
         if ($(this.firstElementChild).is('a')) {
