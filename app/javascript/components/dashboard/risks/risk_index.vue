@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4 risks-index" data-cy="risks_list">
+  <div v-if="!loading" class="mt-4 risks-index" data-cy="risk_list">
     <div v-if="newRisk && from != 'manager_view'">
       <risk-form
         :facility="facility"
@@ -81,7 +81,7 @@
           <div v-if="filteredRisks.length > 0">
             <hr/>
             <risk-show
-              v-for="(risk, i) in filteredRisks"           
+              v-for="(risk, i) in filteredRisks"
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -102,12 +102,12 @@
           <th></th>
           <th>Risk Name</th>
           <th>Task Category</th>
-          <th>Start Date</th>         
+          <th>Start Date</th>
           <th>Due Date</th>
           <th>Risk Owner(s)</th>
           <th>Priority Level</th>
           <th>Risk Approach</th>
-          <th>Last Update</th>       
+          <th>Last Update</th>
         </tr>
       </thead>
       <tbody>
@@ -124,7 +124,7 @@
             By: {{ risk.notes[0].user.fullName}} on
             {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
-          <td v-else>No Updates</td>       
+          <td v-else>No Updates</td>
         </tr>
       </tbody>
     </table>
@@ -280,10 +280,10 @@
               }
             }
           }
-          
+
           let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
 
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
@@ -292,7 +292,7 @@
           if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
             valid = true
           }else{
-            if (taskIssueMyAction.length > 0) {  
+            if (taskIssueMyAction.length > 0) {
               valid = valid && userIds.includes(this.$currentUser.id)
             }
             if(taksIssueNotMyAction == true){
@@ -308,7 +308,7 @@
             }
 
             if(taksIssueNotOnWatch == true){
-              valid = valid && !risk.watched 
+              valid = valid && !risk.watched
             }
           }
 

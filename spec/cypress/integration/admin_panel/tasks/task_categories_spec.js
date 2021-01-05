@@ -30,12 +30,34 @@ describe('Admin Panel Task Categories', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Task Category if name is blank', function() {
+    cy.get('.action_item > a').contains('New Task Category').click()
+    cy.get('#page_title').contains('New Task Category').should('be.visible')
+    cy.get('#task_type_submit_action').contains('Create Task Category').click()
+    // cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Task Category').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Task Category of foreign constraint', function() {
     cy.get('#index_table_task_types').should('be.visible')
     cy.get('#index_table_task_types > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#logout').click()
+  })
+
+  it('Delete Task Category', function() {
+    cy.get('.action_item > a').contains('New Task Category').click()
+    cy.get('#task_type_name').type('New Test Task Type')
+    cy.get('#task_type_submit_action').contains('Create Task Category').click()
+    cy.get('#index_table_task_types > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Task Category was successfully destroyed.').should('be.visible')
     cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
