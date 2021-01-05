@@ -433,6 +433,7 @@
     },
     computed: {
       ...mapGetters([
+        'filterDataForAdvancedFilter',
         'taskIssueProgressFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',

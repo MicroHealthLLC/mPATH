@@ -333,6 +333,7 @@
    },
     computed: {
       ...mapGetters([
+        'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',

@@ -366,6 +366,7 @@
     },
     computed: {
       ...mapGetters([
+        'filterDataForAdvancedFilter',
         'taskTypes',
         'getAllFilterNames',
         'getFilterValue',
@@ -410,18 +411,18 @@
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
-        return _.filter(this.DV_facility.tasks, (task) => {
+        return _.filter(this.DV_facility.tasks, (resource) => {
           let valid = true
           if (this.C_myTasks || this.taskUserFilter) {
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
+            let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
             if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
           }
-          if (this.C_onWatchTasks) {
-            valid  = valid && task.watched
-          }
-          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = this.filterDataForAdvancedFilter([resource], 'facilityShowSheetsTasks')
+
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
           return valid
         })
       },
@@ -452,19 +453,19 @@
         let typeIds = _.map(this.issueTypeFilter, 'id')
         let severityIds = _.map(this.issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
-        return _.filter(this.facility.issues, ((issue) => {
+        return _.filter(this.facility.issues, ((resource) => {
           let valid = true
           if (this.C_myIssues || this.issueUserFilter) {
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
+            let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
             if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
             if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
           }
-          if (this.C_onWatchIssues) {
-            valid  = valid && issue.watched
-          }
-          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = this.filterDataForAdvancedFilter([resource], 'facilityShowSheetsIssues')
+
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.issueStageId)
           return valid
         }))
       },
