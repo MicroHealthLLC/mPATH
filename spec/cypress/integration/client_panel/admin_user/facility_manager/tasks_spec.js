@@ -76,6 +76,7 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_start_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
+    cy.get('[data-cy=task_start_date_error]').scrollIntoView()
     cy.get('[data-cy=task_start_date_error]').contains('The Start Date field is required.').should('be.visible')
     cy.get('[data-cy=task_due_date]').within(() => {
       cy.get('input').should('be.disabled')
@@ -90,6 +91,7 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_due_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
+    cy.get('[data-cy=task_due_date_error]').scrollIntoView()
     cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
