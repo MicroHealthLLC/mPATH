@@ -273,10 +273,10 @@ export default {
     },
     C_advancedFilter: {
       get() {
-        if (this.getAdvancedFilter().length == 0) {
+        if (this.getAdvancedFilter.length == 0) {
           return [{ id: 'active', name: 'Active' }]
         }else{
-          return this.getAdvancedFilter()  
+          return this.getAdvancedFilter
         }
         
       },
@@ -609,6 +609,9 @@ export default {
     }
   },
   watch: {
+    getAdvancedFilter(value) {
+      this.updateMapFilters({ key: 'advancedFilter', filter: value, same: true })
+    },
     getTaskIssueProgressStatusFilter(value){
       this.updateMapFilters({ key: 'taskIssueProgressStatus', filter: value, same: true })
     },

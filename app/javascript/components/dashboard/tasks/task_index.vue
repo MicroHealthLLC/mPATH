@@ -169,6 +169,8 @@ export default {
 },
 computed: {
   ...mapGetters([
+    'filterDataForAdvancedFilter',
+    'getFilteredResources',
     'getTaskIssueUserFilter',
     'getAdvancedFilter',
     'getTaskIssueTabFilterOptions',
@@ -198,18 +200,6 @@ computed: {
     let taskIssueDueDates = this.taskIssueDueDateFilter
     
     let taskIssueProgress = this.taskIssueProgressFilter
-    
-    let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
-    let taskIssueOnWatch =  _.map(this.getAdvancedFilter(), 'id').includes("onWatch")
-
-    let taskIssueMyAction = _.map(this.getAdvancedFilter(), 'id').includes("myAction")
-    let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
-
-    let taskIssueOverdue = _.map(this.getAdvancedFilter(), 'id').includes("overdue")
-    let taskIssueNotOverdue = _.map(this.getAdvancedFilter(), 'id').includes("notOverdue")
-    
-    let taskIssueActiveProgressStatus = _.map(this.getAdvancedFilter(), 'id').includes("active")
-    let taskIssueCompletedProgressStatus = _.map(this.getAdvancedFilter(), 'id').includes("completed")
 
     let taskIssueUsers = this.getTaskIssueUserFilter
 
@@ -224,50 +214,8 @@ computed: {
         }
       }
 
-      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == true) {
-        valid = true
-      }else{
-        if (taskIssueActiveProgressStatus == true ) {
-          valid = (resource.progressStatus == "active")
-        }
-        if (taskIssueCompletedProgressStatus == true) {
-          valid = (resource.progressStatus == "completed")
-        }
-      }
-      
-      if(taskIssueMyAction == true && taksIssueNotMyAction == true){
-        valid = true
-      }else{
-        if (taskIssueMyAction == true) {  
-          valid = valid && userIds.includes(this.$currentUser.id)
-        }
-        if(taksIssueNotMyAction == true){
-          if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
-        }
-      }
-
-      if(taskIssueOnWatch == true && taksIssueNotOnWatch == true){
-        valid = true
-      }else{
-        if(taskIssueOnWatch == true){
-          valid = valid && resource.watched
-        }
-
-        if(taksIssueNotOnWatch == true){
-         valid = valid && !resource.watched 
-        }
-      }
-
-      if (taskIssueOverdue == true && taskIssueNotOverdue == true) {
-        valid = true
-      }else{
-        if (taskIssueOverdue == true) {
-          valid = (resource.isOverdue == true)
-        }
-        if (taskIssueNotOverdue == true) {
-          valid = (resource.isOverdue == false)
-        }
-      }
+      //TODO: For performance, send the whole tasks array instead of one by one
+      valid = this.filterDataForAdvancedFilter([resource], 'facilityManagerTasks')
 
       if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
       if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
@@ -310,7 +258,7 @@ computed: {
   },
   C_facilityManagerTaskFilter: {
     get() {
-      return this.getAdvancedFilter()
+      return this.getAdvancedFilter
     },
     set(value) {
       this.setAdvancedFilter(value)
