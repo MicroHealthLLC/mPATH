@@ -64,7 +64,7 @@ ActiveAdmin.register RiskStage do
     end
 
     def check_order
-      order = TaskStage.sort_order?
+      order = RiskStage.sort_order?
       redirect_to admin_risk_stages_path(order: order) and return unless params[:order] == order
     end
 
@@ -79,5 +79,5 @@ ActiveAdmin.register RiskStage do
   filter :created_at
   filter :updated_at
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
-  
+
 end
