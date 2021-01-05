@@ -32,7 +32,7 @@ Cypress.Commands.add("createNewIssue", () => {
 Cypress.Commands.add("openKanbanIssue", () => {
   cy.openKanban()
   cy.get('[data-cy=facility_tabs]').within(() => {
-    cy.contains('Kanban Issues').should('be.visible').click()
+    cy.contains('Issues').should('be.visible').click()
   })
   cy.facilityUnderGroup()
 })
