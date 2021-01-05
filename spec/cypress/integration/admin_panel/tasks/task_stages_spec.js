@@ -30,6 +30,16 @@ describe('Admin Panel Task Stages', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Task stage if name is blank', function() {
+    cy.get('.action_item > a').contains('New Task Stage').click()
+    cy.get('#page_title').contains('New Task Stage').should('be.visible')
+    cy.get('#task_stage_submit_action').contains('Create Task stage').click()
+    cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Task Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Task Stage of foreign constraint', function() {
     cy.get('#index_table_task_stages').should('be.visible')
     cy.get('#index_table_task_stages > tbody > tr').first().within(() => {

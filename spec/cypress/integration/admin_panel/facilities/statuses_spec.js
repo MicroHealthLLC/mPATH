@@ -30,6 +30,16 @@ describe('Admin Panel Statuses', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Status if name is blank', function() {
+    cy.get('.action_item > a').contains('New Status').click()
+    cy.get('#page_title').contains('New Status').should('be.visible')
+    cy.get('#status_submit_action').contains('Create Status').click()
+    // cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Status').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Status of foreign constraint', function() {
     cy.get('#index_table_statuses').should('be.visible')
     cy.get('#index_table_statuses > tbody > tr').first().within(() => {

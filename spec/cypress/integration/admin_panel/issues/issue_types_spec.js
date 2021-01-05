@@ -30,6 +30,16 @@ describe('Admin Panel Issue Types', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Issue Type if name is blank', function() {
+    cy.get('.action_item > a').contains('New Issue Type').click()
+    cy.get('#page_title').contains('New Issue Type').should('be.visible')
+    cy.get('#issue_type_submit_action').contains('Create Issue type').click()
+    // cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Issue Type').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Issue type of foreign constraint', function() {
     cy.get('#index_table_issue_types').should('be.visible')
     cy.get('#index_table_issue_types > tbody > tr').first().within(() => {
