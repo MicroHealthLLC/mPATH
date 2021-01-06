@@ -213,6 +213,7 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
+      
       facilities: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -283,6 +284,7 @@ export default {
       set(value) {
         if (!value) {
           // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
+
           this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)

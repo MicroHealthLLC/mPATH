@@ -31,6 +31,14 @@
           >
           Close
         </button>
+         <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-primary ml-2 font-sm scrollToChecklist"
+         @click.prevent="scrollToChecklist"            
+          >
+          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
+          Checklist Item
+        </button>
         <button
           v-if="_isallowed('delete') && DV_risk.id"
           @click.prevent="deleteRisk"
@@ -413,6 +421,7 @@
             </div>
           </div>
         </div>
+        <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div>
 
         <div v-if="_isallowed('write')" class="form-group mx-4" >
           <label class="font-sm">Files:</label>
@@ -592,6 +601,10 @@
           notes: []
         }
       },
+      scrollToChecklist(){
+        this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+        this.DV_risk.checklists.push({text: '', checked: false})
+      }, 
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -1030,7 +1043,7 @@
   }
   .sticky {
     position: sticky;
-    position: -webkit-sticky;
+    position: -webkit-sticky; 
     justify-content: center;
     margin-bottom: -2.5rem;
     z-index: 1000;
@@ -1043,6 +1056,14 @@
   }
   .check-due-date {
     text-align: end;
+  }
+  .scrollToChecklist {
+   position: absolute;
+   top: 46%;
+   left: 50%;
+   -ms-transform: translate(-50%, -50%);
+   transform: translate(-50%, -50%);
+   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
   .paginate-links.filteredNotes {
     list-style: none !important;

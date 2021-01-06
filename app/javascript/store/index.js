@@ -297,7 +297,6 @@ export default new Vuex.Store({
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'}
       ]
-
       return options;
     },
     // This method is used to show filters applied in overview tabs
