@@ -276,13 +276,15 @@ export default {
       get() {
         if (this.getAdvancedFilter.length == 0) {
           return [{ id: 'active', name: 'Active' }]
-        } else {
+        }else{
           return this.getAdvancedFilter
-        }        
+        }
+        
       },
       set(value) {
         if (!value) {
-          // this.setAdvancedFilter([{ id: 'active', name: 'Active' }])
+          // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
+
           this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
@@ -491,6 +493,7 @@ export default {
       }
     },
     onClearFilter() {
+      this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
       this.setProjectStatusFilter(null)
@@ -511,7 +514,7 @@ export default {
       this.setOnWatchFilter([])
       this.setMapFilters([])
       this.clearProgressFilters()
-      this.setIssueUserFilter(null)
+      this.setIssueUserFilter([])
       this.setTaskUserFilter(null)
     },
     exportData() {
@@ -609,6 +612,9 @@ export default {
     }
   },
   watch: {
+    getAdvancedFilter(value) {
+      this.updateMapFilters({ key: 'advancedFilter', filter: value, same: true })
+    },
     getTaskIssueProgressStatusFilter(value){
       this.updateMapFilters({ key: 'taskIssueProgressStatus', filter: value, same: true })
     },
