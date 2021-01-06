@@ -487,7 +487,7 @@
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = this.filterDataForAdvancedFilter([resource], 'kanbanTasks')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'kanbanTasks')
 
           if (noteDates && noteDates[0] && noteDates[1]) {
             let startDate = moment(noteDates[0], "YYYY-MM-DD")
@@ -581,7 +581,7 @@
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = this.filterDataForAdvancedFilter([resource], 'kanbanIssues')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'kanbanIssues')
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)

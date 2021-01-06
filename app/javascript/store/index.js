@@ -582,7 +582,7 @@ export default new Vuex.Store({
         userIds = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
       }
       userIds = _.uniq(userIds)
-      
+
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
@@ -628,8 +628,9 @@ export default new Vuex.Store({
               allResources = allResources.concat(facility.issues)
               allResources = allResources.concat(facility.risks)
 
-              valid = getters.filterDataForAdvancedFilter(allResources, 'filteredFacilities', facility)
-
+              valid = valid && getters.filterDataForAdvancedFilter(allResources, 'filteredFacilities', facility)
+              console.log('advancedFilter')
+              console.log(valid)
               break
             }
             case "dueDate": {
@@ -638,9 +639,17 @@ export default new Vuex.Store({
               break
             }
             case "noteDate": {
+              let taksIssues = facility.tasks.concat(facility.issues)
+              let resources = []
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
+                if(v){
+                  resources.push(r)
+                }
+              }
               var startDate = moment(f[k][0], "YYYY-MM-DD")
               var endDate = moment(f[k][1], "YYYY-MM-DD")
-              var _notes = _.flatten(_.map(facility.tasks, 'notes') ).concat(_.flatten(_.map(facility.issues, 'notes') ))
+              var _notes = _.flatten(_.map(resources, 'notes') )
               var is_valid = false
               for(var n of _notes){
                 var nDate = moment(n.createdAt, "YYYY-MM-DD")
@@ -652,9 +661,19 @@ export default new Vuex.Store({
               break
             }
             case "taskIssueDueDate": {
+
+              let taksIssues = facility.tasks.concat(facility.issues)
+              let resources = []
+              for (let r of taksIssues) {
+                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
+                if(v){
+                  resources.push(r)
+                }
+              }
+
               var startDate = moment(f[k][0], "YYYY-MM-DD")
               var endDate = moment(f[k][1], "YYYY-MM-DD")
-              var _dueDates = _.flatten(_.map(facility.tasks, 'dueDate') ).concat(_.flatten(_.map(facility.issues, 'dueDate') ))
+              var _dueDates = _.flatten(_.map(resources, 'dueDate') )
               var is_valid = false
 
               if(_dueDates.length < 1){
@@ -683,19 +702,16 @@ export default new Vuex.Store({
               valid = valid && is_valid
               break
             }
-            case "taskTypeIds": {
-              let ids = _.map(facility.tasks, 'taskTypeId').concat(_.flatten(_.map(facility.issues, 'taskTypeId') ))
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
-            case "issueTypeIds": {
-              let ids = _.map(facility.issues, 'issueTypeId')
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
             case "taskIssueProgress": {
               let progressFor = facility.tasks.concat(facility.issues)
-              let progress = _.uniq(_.map(progressFor, 'progress'))
+              let resources = []
+              for (let r of progressFor) {
+                var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
+                if(v){
+                  resources.push(r)
+                }
+              }
+              let progress = _.uniq(_.map(resources, 'progress'))
               let ranges = f[k].map(r => r.split("-").map(Number))
               let is_valid = false
               for (let range of ranges) {
@@ -706,35 +722,58 @@ export default new Vuex.Store({
               valid = valid && is_valid
               break
             }
+            case "issueTypeIds": {
+              var issues = facility.issues
+              var resources = _.filter(issues, ti => _.intersection(ti.issueTypeId, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+
+              break
+            }
             case "issueSeverityIds": {
-              let ids = _.map(facility.issues, 'issueSeverityId')
-              valid = valid && _.intersection(f[k], ids).length > 0
+              var issues = facility.issues
+              var resources = _.filter(issues, ti => _.intersection(ti.issueSeverityId, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+
               break
             }
             case "issueStageIds": {
-              let ids = _.map(facility.issues, 'issueStageId')
-              valid = valid && _.intersection(f[k], ids).length > 0
+              var issues = facility.issues
+              var resources = _.filter(issues, ti => _.intersection(ti.issueStageId, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              break
+            }
+            case "taskTypeIds": {
+              var tasksIssues = facility.tasks.concat(facility.issues)
+              var resources = _.filter(tasksIssues, ti => _.intersection(ti.taskTypeId, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+
               break
             }
             case "taskStageIds": {
-              let ids = _.map(facility.tasks, 'taskStageId')
-              valid = valid && _.intersection(f[k], ids).length > 0
+              var tasks = facility.tasks
+              var resources = _.filter(tasks, ti => _.intersection(ti.taskStageId, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+
+              // valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
+            // TODO: remove if not used anywhere
             case "issueUserIds": {
               let ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
+            // TODO: remove if not used anywhere
             case "taskUserIds": {
               let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
               valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
             case "taskIssueUsers": {
-              var taskIssues = facility.tasks.concat(facility.issues)
-              let ids = _.uniq(_.compact(_.flatten(_.map(taskIssues, 'userIds'))))
-              valid = valid && _.intersection(f[k], ids).length > 0
+
+              var taskIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
+              var resources = _.filter(taskIssues, ti => _.intersection(ti.userIds, f[k]).length > 0 )
+              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
               break
             }
             case "facilityGroupIds": {

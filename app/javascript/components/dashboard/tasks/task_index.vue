@@ -208,14 +208,12 @@ computed: {
 
       let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
-      if (taskIssueUsers.length > 0) {  
-        if(taskIssueUsers.length > 0){
-          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-        }
+      if(taskIssueUsers.length > 0){
+        valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
       }
 
       //TODO: For performance, send the whole tasks array instead of one by one
-      valid = this.filterDataForAdvancedFilter([resource], 'facilityManagerTasks')
+      valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityManagerTasks')
 
       if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
       if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
@@ -230,7 +228,7 @@ computed: {
           is_valid = nDate.isBetween(startDate, endDate, 'days', true)
           if (is_valid) break
         }
-        valid = is_valid
+        valid = valid && is_valid
       }
 
       if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
@@ -240,7 +238,7 @@ computed: {
         var is_valid = true
         var nDate = moment(resource.dueDate, "YYYY-MM-DD")
         is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-        valid = is_valid
+        valid = valid && is_valid
       }
 
       if (taskIssueProgress && taskIssueProgress[0]) {

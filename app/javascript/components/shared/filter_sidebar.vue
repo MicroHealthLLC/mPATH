@@ -491,6 +491,7 @@ export default {
       }
     },
     onClearFilter() {
+      this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
       this.setProjectStatusFilter(null)
@@ -511,7 +512,7 @@ export default {
       this.setOnWatchFilter([])
       this.setMapFilters([])
       this.clearProgressFilters()
-      this.setIssueUserFilter(null)
+      this.setIssueUserFilter([])
       this.setTaskUserFilter(null)
     },
     exportData() {

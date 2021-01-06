@@ -386,7 +386,7 @@
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = this.filterDataForAdvancedFilter([resource], 'sheetsIssues')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'sheetsIssues')
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)

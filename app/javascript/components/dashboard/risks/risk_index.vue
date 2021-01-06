@@ -263,15 +263,12 @@
         let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
-          let userIds = [..._.map(resource.checklists, 'userId'), resource.userId]
-
-          if (taskIssueUsers.length > 0) {  
-            if(taskIssueUsers.length > 0){
-              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-            }
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
           }
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = this.filterDataForAdvancedFilter([resource], 'facilityManagerRisks')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityManagerRisks')
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
