@@ -308,7 +308,7 @@
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if (is_valid) break
             }
-            valid = is_valid
+            valid = valid && is_valid
           }
 
           if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
@@ -318,7 +318,7 @@
             var is_valid = true
             var nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = is_valid
+            valid = valid && is_valid
           }
 
           if (taskIssueProgress && taskIssueProgress[0]) {
