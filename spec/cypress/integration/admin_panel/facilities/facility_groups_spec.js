@@ -23,8 +23,8 @@ describe('Admin Panel Facility Group', function() {
   it('Create new Facility Group', function() {
     cy.get('.action_item > a').contains('New Facility Group').click()
     cy.get('#page_title').contains('New Facility Group').should('be.visible')
-    cy.get('#facility_group_name').type('New Test Facility Group')
-    cy.get('#facility_group_code').type('NTFG')
+    cy.get('#facility_group_name').type('New Test Facility Group').should('have.value', 'New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG').should('have.value', 'NTFG')
     cy.get('#facility_group_submit_action').contains('Create Facility group').click()
     cy.get('.flashes').contains('Facility group was successfully created.')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 3)
@@ -53,8 +53,8 @@ describe('Admin Panel Facility Group', function() {
 
   it('Delete Facility Group', function() {
     cy.get('.action_item > a').contains('New Facility Group').click()
-    cy.get('#facility_group_name').type('New Test Facility Group')
-    cy.get('#facility_group_code').type('NTFG')
+    cy.get('#facility_group_name').type('New Test Facility Group').should('have.value', 'New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG').should('have.value', 'NTFG')
     cy.get('#facility_group_submit_action').contains('Create Facility group').click()
     cy.get('#index_table_facility_groups > tbody > tr').last().within(() => {
       cy.get('.col-actions').contains('Delete').click()

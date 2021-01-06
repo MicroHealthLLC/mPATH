@@ -23,7 +23,7 @@ describe('Admin Panel Statuses', function() {
   it('Create new Status', function() {
     cy.get('.action_item > a').contains('New Status').click()
     cy.get('#page_title').contains('New Status').should('be.visible')
-    cy.get('#status_name').type('New Test Status')
+    cy.get('#status_name').type('New Test Status').should('have.value', 'New Test Status')
     cy.get('#status_submit_action').contains('Create Status').click()
     cy.get('.flashes').contains('Status was successfully created.')
     cy.get('#index_table_statuses > tbody > tr').its('length').should('be.eq', 3)
@@ -52,7 +52,7 @@ describe('Admin Panel Statuses', function() {
 
   it('Delete Status', function() {
     cy.get('.action_item > a').contains('New Status').click()
-    cy.get('#status_name').type('New Test Status')
+    cy.get('#status_name').type('New Test Status').should('have.value', 'New Test Status')
     cy.get('#status_submit_action').contains('Create Status').click()
     cy.get('#index_table_statuses > tbody > tr').last().within(() => {
       cy.get('.col-actions').contains('Delete').click()
