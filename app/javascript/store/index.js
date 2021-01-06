@@ -258,6 +258,7 @@ export default new Vuex.Store({
     getTaskIssueUserFilter:(state, getters) =>{
       return state.taskIssueUserFilter
     },
+    // TODO: remove if not used anywhere
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
         {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},

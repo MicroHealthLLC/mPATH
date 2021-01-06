@@ -285,10 +285,7 @@ export default {
         return this.getAdvancedFilter
       },
       set(value) {
-        console.log("C_advancedFilter set");
         if (!value) {
-          // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
-
           this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
