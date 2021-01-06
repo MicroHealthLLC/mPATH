@@ -638,7 +638,7 @@ export default new Vuex.Store({
               break
             }
             case "noteDate": {
-              let taksIssues = facility.tasks.concat(facility.issues)
+              let taksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
               let resources = []
               for (let r of taksIssues) {
                 var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
@@ -661,7 +661,7 @@ export default new Vuex.Store({
             }
             case "taskIssueDueDate": {
 
-              let taksIssues = facility.tasks.concat(facility.issues)
+              let taksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
               let resources = []
               for (let r of taksIssues) {
                 var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
@@ -702,7 +702,7 @@ export default new Vuex.Store({
               break
             }
             case "taskIssueProgress": {
-              let progressFor = facility.tasks.concat(facility.issues)
+              let progressFor = facility.tasks.concat(facility.issues).concat(facility.risks)
               let resources = []
               for (let r of progressFor) {
                 var v = getters.filterDataForAdvancedFilter([r], 'filteredFacilities', facility)
@@ -742,7 +742,7 @@ export default new Vuex.Store({
               break
             }
             case "taskTypeIds": {
-              var tasksIssues = facility.tasks.concat(facility.issues)
+              var tasksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
               var resources = _.filter(tasksIssues, ti => _.intersection(ti.taskTypeId, f[k]).length > 0 )
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
 

@@ -275,7 +275,9 @@ export default {
     C_advancedFilter: {
       get() {
         if (this.getAdvancedFilter.length == 0) {
-          return [{ id: 'active', name: 'Active' }]
+          // return [{ id: 'active', name: 'Active' }]
+          this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+          return this.getAdvancedFilter
         }else{
           return this.getAdvancedFilter
         }
