@@ -16,7 +16,7 @@ const getSimpleDate = (date) => {
 
 export default new Vuex.Store({
   state: {
-    advancedFilter: new Array({id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}),
+    advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
     mapLoading: true,
     sideLoading: true,
@@ -94,8 +94,6 @@ export default new Vuex.Store({
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
-      console.log('setAdvancedFilter')
-      console.log(selectedOptions)
       state.advancedFilter = selectedOptions
       // var _taskIssueOverdueFilter = []
       // var _onWatchFilter = []
