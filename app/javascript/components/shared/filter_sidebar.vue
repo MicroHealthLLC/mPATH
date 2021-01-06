@@ -274,16 +274,19 @@ export default {
     },
     C_advancedFilter: {
       get() {
-        if (this.getAdvancedFilter.length == 0) {
-          // return [{ id: 'active', name: 'Active' }]
-          this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
-          return this.getAdvancedFilter
-        }else{
-          return this.getAdvancedFilter
-        }
-        
+        console.log("C_advancedFilter get");
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        console.log(this.getAdvancedFilter)
+        return this.getAdvancedFilter
       },
       set(value) {
+        console.log("C_advancedFilter set");
         if (!value) {
           // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
 
