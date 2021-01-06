@@ -57,7 +57,7 @@ describe('Tasks Page', function() {
   it("In Task form if name's field empty, error message display and save button must be disabled", function() {
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_name]').clear()
-    cy.get('[data-cy=task_name_error]').contains('The Name field is required.')
+    cy.get('[data-cy=task_name_error]').contains('The Name field is required.').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
     cy.logout()
@@ -76,7 +76,8 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_start_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=task_start_date_error]').contains('The Start Date field is required.')
+    cy.get('[data-cy=task_start_date_error]').scrollIntoView()
+    cy.get('[data-cy=task_start_date_error]').contains('The Start Date field is required.').should('be.visible')
     cy.get('[data-cy=task_due_date]').within(() => {
       cy.get('input').should('be.disabled')
     })
@@ -90,7 +91,8 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_due_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.')
+    cy.get('[data-cy=task_due_date_error]').scrollIntoView()
+    cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
     cy.logout()

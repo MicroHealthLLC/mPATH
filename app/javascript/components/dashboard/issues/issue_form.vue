@@ -32,6 +32,14 @@
           >
           Close
         </button>
+        <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-primary ml-2 font-sm scrollToChecklist"    
+          @click.prevent="scrollToChecklist"            
+          >
+          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
+          Checklist Item
+        </button>
         <button
           v-if="_isallowed('delete') && DV_issue.id"
           @click.prevent="deleteIssue"
@@ -255,9 +263,10 @@
       <div class="form-group mx-4">
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+       
         <div v-if="filteredChecks.length > 0">
-       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
-          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)">
+       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card">
+          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
             <div class="row">
               <div class="col justify-content-start">
@@ -334,7 +343,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>   
+      <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div>
       <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
         <attachment-input
@@ -481,6 +491,10 @@
           notes: []
         }
       },
+      scrollToChecklist(){
+        this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+        this.DV_issue.checklists.push({text: '', checked: false})
+      },   
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -908,6 +922,14 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .scrollToChecklist {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
   .check-due-date {
     text-align: end;

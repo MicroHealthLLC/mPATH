@@ -31,7 +31,7 @@ Cypress.Commands.add("createNewTask", () => {
 Cypress.Commands.add("openKanbanTask", () => {
   cy.openKanban()
   cy.get('[data-cy=facility_tabs]').within(() => {
-    cy.contains('Kanban Tasks').should('be.visible').click()
+    cy.contains('Tasks').should('be.visible').click()
   })
   cy.facilityUnderGroup()
 })

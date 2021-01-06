@@ -31,12 +31,35 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Facility Group if name is blank', function() {
+    cy.get('.action_item > a').contains('New Facility Group').click()
+    cy.get('#page_title').contains('New Facility Group').should('be.visible')
+    cy.get('#facility_group_submit_action').contains('Create Facility group').click()
+    cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Facility Group').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Facility Group of foreign constraint', function() {
     cy.get('#index_table_facility_groups').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('.flashes').contains('Not able to delete this! Violates foreign key constraint.').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#logout').click()
+  })
+
+  it('Delete Facility Group', function() {
+    cy.get('.action_item > a').contains('New Facility Group').click()
+    cy.get('#facility_group_name').type('New Test Facility Group')
+    cy.get('#facility_group_code').type('NTFG')
+    cy.get('#facility_group_submit_action').contains('Create Facility group').click()
+    cy.get('#index_table_facility_groups > tbody > tr').last().within(() => {
+      cy.get('.col-actions').contains('Delete').click()
+    })
+    cy.get('.flashes').contains('Facility group was successfully destroyed.').should('be.visible')
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
