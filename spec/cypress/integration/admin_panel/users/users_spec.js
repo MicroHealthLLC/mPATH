@@ -20,17 +20,17 @@ describe('Admin Panel Users', function() {
     cy.get('#logout').click()
   })
 
-  it('Create new user', function() {
-    cy.get('.action_item > a').contains('New User').click()
-    cy.get('#page_title').contains('New User').should('be.visible')
-    cy.get('#user_first_name').type('New test').should('have.value', 'New test')
-    cy.get('#user_last_name').type('user').should('have.value', 'user')
-    cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
-    cy.get('#user_submit_action').contains('Create User').click()
-    cy.get('.flashes').contains('User was successfully created.')
-    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
-    cy.get('#logout').click()
-  })
+  // it('Create new user', function() {
+  //   cy.get('.action_item > a').contains('New User').click()
+  //   cy.get('#page_title').contains('New User').should('be.visible')
+  //   cy.get('#user_first_name').type('New test').should('have.value', 'New test')
+  //   cy.get('#user_last_name').type('user').should('have.value', 'user')
+  //   cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
+  //   cy.get('#user_submit_action').contains('Create User').click()
+  //   cy.get('.flashes').contains('User was successfully created.')
+  //   cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 3)
+  //   cy.get('#logout').click()
+  // })
 
   it('Could not create user if first name is blank', function() {
     cy.get('.action_item > a').contains('New User').click()
@@ -92,17 +92,17 @@ describe('Admin Panel Users', function() {
     cy.get('#logout').click()
   })
 
-  it('Delete User', function() {
-    cy.get('.action_item > a').contains('New User').click()
-    cy.get('#user_first_name').type('New test').should('have.value', 'New test')
-    cy.get('#user_last_name').type('user').should('have.value', 'user')
-    cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
-    cy.get('#user_submit_action').contains('Create User').click()
-    cy.get('#index_table_users > tbody > tr').first().within(() => {
-      cy.get('.col-actions').contains('Delete').click()
-    })
-    cy.get('.flashes').contains('User was successfully destroyed.').should('be.visible')
-    cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
-    cy.get('#logout').click()
-  })
+  // it('Delete User', function() {
+  //   cy.get('.action_item > a').contains('New User').click()
+  //   cy.get('#user_first_name').type('New test').should('have.value', 'New test')
+  //   cy.get('#user_last_name').type('user').should('have.value', 'user')
+  //   cy.get('#user_email').type('user@test.com').should('have.value', 'user@test.com')
+  //   cy.get('#user_submit_action').contains('Create User').click()
+  //   cy.get('#index_table_users > tbody > tr').first().within(() => {
+  //     cy.get('.col-actions').contains('Delete').click()
+  //   })
+  //   cy.get('.flashes').contains('User was successfully destroyed.').should('be.visible')
+  //   cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
+  //   cy.get('#logout').click()
+  // })
 })
