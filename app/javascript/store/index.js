@@ -313,9 +313,9 @@ export default new Vuex.Store({
       //   {id: 'myNotes', name: 'My Notes', value: 'notes'}
       // ]
       var options = [
-        {id: 'active', name: 'active', value: 'active'},
-        {id: 'completed', name: 'completed', value: 'completed'},
-        {id: 'overdue', name: 'overdue', value: "overdue"},
+        {id: 'active', name: 'Active', value: 'active'},
+        {id: 'completed', name: 'Completed', value: 'completed'},
+        {id: 'overdue', name: 'Overdue', value: "overdue"},
         {id: 'not overdue', name: 'On Schedule', value: "not overdue"},
         {id: 'myAction', name: 'My Assignments', value: 'my action'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
