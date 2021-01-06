@@ -54,7 +54,7 @@ describe('Admin Panel Risk Stages', function() {
     cy.get('.action_item > a').contains('New Risk Stage').click()
     cy.get('#risk_stage_name').type('New Test Risk Stage')
     cy.get('#risk_stage_submit_action').contains('Create Risk stage').click()
-    cy.get('#index_table_risk_stages > tbody > tr').last().within(() => {
+    cy.get('#index_table_risk_stages > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('.flashes').contains('Risk stage was successfully destroyed.').should('be.visible')
