@@ -33,7 +33,7 @@
 
       <div class="d-flex font-sm w-100 mt-2">
         <div class="simple-select w-50 mr-1">
-          <multiselect v-model="C_facilityManagerRiskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+          <multiselect v-model="C_facilityManagerRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -225,6 +225,8 @@
     },
     computed: {
       ...mapGetters([
+        'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
@@ -253,87 +255,28 @@
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
-        let taskIssueProgressStatus = this.getTaskIssueProgressStatusFilter
         let taskIssueProgress = this.taskIssueProgressFilter
-        let taskIssueOnWatch = this.onWatchFilter
-        let taskIssueMyAction = this.myActionsFilter
-        let taksIssueNotOnWatch = _.map(this.getAdvancedFilter(), 'id').includes("notOnWatch")
-        let taksIssueNotMyAction = _.map(this.getAdvancedFilter(), 'id').includes("notMyAction")
         let taskIssueUsers = this.getTaskIssueUserFilter
+        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
-        let risks = _.sortBy(_.filter(this.facility.risks, ((risk) => {
-          let valid = Boolean(risk && risk.hasOwnProperty('progress'))
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
 
-          if (taskIssueProgressStatus && taskIssueProgressStatus.length > 0) {
-            var taskIssueProgressStatusNames = _.map(taskIssueProgressStatus, 'id')
-            if (taskIssueProgressStatusNames.includes("active") && taskIssueProgressStatusNames.includes("completed")) {
-              valid = true
-            }else{
-              if (taskIssueProgressStatusNames.includes("active")) {
-                valid = (risk.progressStatus == "active")
-              }
-              if (taskIssueProgressStatusNames.includes("completed")) {
-                valid = (risk.progressStatus == "completed")
-              }
-            }
           }
-
-          let userIds = [..._.map(risk.checklists, 'userId'), risk.userId]
-
-          if (taskIssueUsers.length > 0) {
-            if(taskIssueUsers.length > 0){
-              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-            }
-          }
-
-          if(taskIssueMyAction.length > 0 && taksIssueNotMyAction == true){
-            valid = true
-          }else{
-            if (taskIssueMyAction.length > 0) {
-              valid = valid && userIds.includes(this.$currentUser.id)
-            }
-            if(taksIssueNotMyAction == true){
-              if (taksIssueNotMyAction ==  true) valid = valid && !userIds.includes(this.$currentUser.id)
-            }
-          }
-
-          if(taskIssueOnWatch.length > 0 && taksIssueNotOnWatch == true){
-            valid = true
-          }else{
-            if(taskIssueOnWatch.length > 0){
-              valid = valid && risk.watched
-            }
-
-            if(taksIssueNotOnWatch == true){
-              valid = valid && !risk.watched
-            }
-          }
-
-          if (taskIssueOverdue && taskIssueOverdue.length > 0) {
-            var overdueFilterNames = _.map(taskIssueOverdue, 'id')
-            if (overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")) {
-              valid = true
-            }else{
-              if (overdueFilterNames.includes("overdue")) {
-                valid = (risk.isOverdue == true)
-              }
-              if (overdueFilterNames.includes("not overdue")) {
-                valid = (risk.isOverdue == false)
-              }
-            }
-          }
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityManagerRisks')
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
             var max = taskIssueProgress[0].value.split("-")[1]
-            valid = valid && (risk.progress >= min && risk.progress <= max)
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
 
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(risk.riskTypeId)
-
-          if (search_query) valid = valid && search_query.test(risk.riskName)
+          if (search_query) valid = valid && search_query.test(resource.riskName)
 
 
           return valid;
@@ -343,7 +286,7 @@
       },
       C_facilityManagerRiskFilter: {
         get() {
-          return this.getAdvancedFilter()
+          return this.getAdvancedFilter
         },
         set(value) {
           this.setAdvancedFilter(value)
