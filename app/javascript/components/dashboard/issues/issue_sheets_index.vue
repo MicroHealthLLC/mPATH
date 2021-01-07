@@ -44,7 +44,7 @@
               </template>
             </multiselect>
           </div>
-        <div class="simple-select mr-1 w-100" v-tooltip="`Flags`">
+        <div class="simple-select mr-1 w-100">
           <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
