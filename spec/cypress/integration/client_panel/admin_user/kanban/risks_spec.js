@@ -68,29 +68,29 @@ describe('Kanban Risks View', function() {
     cy.logout()
   })
 
-  it('Search risk by typing title', function() {
-    cy.get('[data-cy=kanban_search]').should('be.visible').first().click({force: true})
-    cy.get('[data-cy=search_risk_total]').contains('Total: 2').should('be.visible')
+  // it('Search risk by typing title', function() {
+  //   cy.get('[data-cy=kanban_search]').should('be.visible').first().click({force: true})
+  //   cy.get('[data-cy=search_risk_total]').contains('Total: 2').should('be.visible')
 
-    cy.get('[data-cy=search_risks]').clear({force: true}).type('risk is not in the list').should('have.value', 'risk is not in the list')
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=risks]').should('not.exist')
-    })
-    cy.get('[data-cy=search_risk_total]').contains('Total: 0').should('be.visible')
+  //   cy.get('[data-cy=search_risks]').clear({force: true}).type('risk is not in the list').should('have.value', 'risk is not in the list')
+  //   cy.get('[data-cy=kanban]').within(() => {
+  //     cy.get('[data-cy=risks]').should('not.exist')
+  //   })
+  //   cy.get('[data-cy=search_risk_total]').contains('Total: 0').should('be.visible')
 
-    cy.get('[data-cy=search_risks]').clear({force: true}).type('Test risk').should('have.value', 'Test risk')
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=risks]').its('length').should('be.eq', 1)
-    })
-    cy.get('[data-cy=search_risk_total]').contains('Total: 1').should('be.visible')
+  //   cy.get('[data-cy=search_risks]').clear({force: true}).type('Test risk').should('have.value', 'Test risk')
+  //   cy.get('[data-cy=kanban]').within(() => {
+  //     cy.get('[data-cy=risks]').its('length').should('be.eq', 1)
+  //   })
+  //   cy.get('[data-cy=search_risk_total]').contains('Total: 1').should('be.visible')
 
-    cy.get('[data-cy=search_risks]').clear({force: true})
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
-    })
-    cy.get('[data-cy=search_risk_total]').contains('Total: 2').should('be.visible')
-    cy.logout()
-  })
+  //   cy.get('[data-cy=search_risks]').clear({force: true})
+  //   cy.get('[data-cy=kanban]').within(() => {
+  //     cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.get('[data-cy=search_risk_total]').contains('Total: 2').should('be.visible')
+  //   cy.logout()
+  // })
 
   describe('Kanban Risks Actions', function() {
     beforeEach(() => {
