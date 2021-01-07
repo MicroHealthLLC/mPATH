@@ -63,4 +63,28 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
+
+  it('Search facility group contains name', function() {
+    cy.get('#q_name').type('Test Facility Group 1').should('have.value', 'Test Facility Group 1')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#search_status_sidebar_section').should('be.visible')
+    cy.get('#search_status_sidebar_section > h3').contains('Search status:').should('be.visible')
+    cy.get('h4').contains('Current filters:').should('be.visible')
+    cy.get('.current_filter').contains('Name contains Test Facility Group 1').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
+  })
+
+  it('Search facility group contains code', function() {
+    cy.get('#q_code').type('TFG1').should('have.value', 'TFG1')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#search_status_sidebar_section').should('be.visible')
+    cy.get('#search_status_sidebar_section > h3').contains('Search status:').should('be.visible')
+    cy.get('h4').contains('Current filters:').should('be.visible')
+    cy.get('.current_filter').contains('Code contains TFG1').should('be.visible')
+    cy.get('#index_table_facility_groups > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
+  })
 })
