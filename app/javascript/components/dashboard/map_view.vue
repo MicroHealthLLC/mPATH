@@ -232,7 +232,7 @@ export default {
       this.$refs.facilitiesAccordion && this.$refs.facilitiesAccordion.close()
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
