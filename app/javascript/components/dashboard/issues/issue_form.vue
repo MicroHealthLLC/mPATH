@@ -35,7 +35,7 @@
         <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-primary mr-1 scrollToChecklist"    
+          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
           @click.prevent="scrollToChecklist"            
           >
           <font-awesome-icon icon="plus-circle" />
@@ -43,21 +43,13 @@
         </button>
          <button  
           v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-primary scrollToChecklist"    
+          class="btn btn-sm sticky-btn btn-light scrollToChecklist"    
           @click.prevent="scrollToUpdates"            
           >
           <font-awesome-icon icon="plus-circle" />
           Updates
         </button>
-        </div>        
-        <!-- <button  
-          v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-primary ml-2 font-sm scrollToChecklist"    
-          @click.prevent="scrollToChecklist"            
-          >
-          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
-          Checklist Item
-        </button> -->
+        </div>      
         <button
           v-if="_isallowed('delete') && DV_issue.id"
           @click.prevent="deleteIssue"
