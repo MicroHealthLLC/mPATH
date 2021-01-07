@@ -33,7 +33,7 @@
 
       <div class="d-flex font-sm w-100 mt-2">
         <div class="simple-select w-50 mr-1">
-          <multiselect v-model="C_facilityManagerRiskFilter" :options="getTaskIssueTabFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Task Status">
+          <multiselect v-model="C_facilityManagerRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -225,6 +225,7 @@
     },
     computed: {
       ...mapGetters([
+        'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',

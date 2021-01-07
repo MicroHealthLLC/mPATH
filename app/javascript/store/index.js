@@ -16,7 +16,7 @@ const getSimpleDate = (date) => {
 
 export default new Vuex.Store({
   state: {
-    advancedFilter: new Array,
+    advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
     mapLoading: true,
     sideLoading: true,
@@ -258,16 +258,17 @@ export default new Vuex.Store({
     getTaskIssueUserFilter:(state, getters) =>{
       return state.taskIssueUserFilter
     },
+    // TODO: remove if not used anywhere
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
-        {id: 'active', name: 'Active', value: 'active'},
-        {id: 'completed', name: 'Completed', value: 'completed'},
-        {id: 'overdue', name: 'Overdue', value: "overdue"},
-        {id: 'notOverdue', name: 'On Schedule', value: "not overdue"},
-        {id: 'myAction', name: 'My Assignments', value: 'my action'},
-        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action'},
-        {id: 'onWatch', name: 'On Watch', value: 'onWatch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch'}
+        {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
+        {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
+        {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'}
       ]
 
       return options;
@@ -628,8 +629,6 @@ export default new Vuex.Store({
               allResources = allResources.concat(facility.risks)
 
               valid = valid && getters.filterDataForAdvancedFilter(allResources, 'filteredFacilities', facility)
-              console.log('advancedFilter')
-              console.log(valid)
               break
             }
             case "dueDate": {
@@ -1345,7 +1344,7 @@ export default new Vuex.Store({
         removeItem: key => Cookies.remove(key),
       },
       paths: [
-        'advancedFilter',
+        // 'advancedFilter',
         'taskIssueUserFilter',
         'projectStatusFilter',
         'taskTypeFilter',

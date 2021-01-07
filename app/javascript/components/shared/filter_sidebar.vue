@@ -274,19 +274,18 @@ export default {
     },
     C_advancedFilter: {
       get() {
-        if (this.getAdvancedFilter.length == 0) {
-          // return [{ id: 'active', name: 'Active' }]
-          this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
-          return this.getAdvancedFilter
-        }else{
-          return this.getAdvancedFilter
-        }
-        
+        // Note: This code will be useful if want active as default select and never want advanced filter blank
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        return this.getAdvancedFilter
       },
       set(value) {
         if (!value) {
-          // this.setAdvancedFilter([{ id: 'active', name: 'active' }])
-
           this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
