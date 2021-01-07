@@ -23,7 +23,7 @@ describe('Admin Panel Task Categories', function() {
   it('Create new Task Category', function() {
     cy.get('.action_item > a').contains('New Task Category').click()
     cy.get('#page_title').contains('New Task Category').should('be.visible')
-    cy.get('#task_type_name').type('New Test Task Type')
+    cy.get('#task_type_name').type('New Test Task Type').should('have.value', 'New Test Task Type')
     cy.get('#task_type_submit_action').contains('Create Task Category').click()
     cy.get('.flashes').contains('Task Category was successfully created.')
     cy.get('#index_table_task_types > tbody > tr').its('length').should('be.eq', 2)
@@ -52,7 +52,7 @@ describe('Admin Panel Task Categories', function() {
 
   it('Delete Task Category', function() {
     cy.get('.action_item > a').contains('New Task Category').click()
-    cy.get('#task_type_name').type('New Test Task Type')
+    cy.get('#task_type_name').type('New Test Task Type').should('have.value', 'New Test Task Type')
     cy.get('#task_type_submit_action').contains('Create Task Category').click()
     cy.get('#index_table_task_types > tbody > tr').last().within(() => {
       cy.get('.col-actions').contains('Delete').click()

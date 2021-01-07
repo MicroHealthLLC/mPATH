@@ -76,7 +76,6 @@
                   </div>
                 </div>
               </div>
-
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="mb-2 input-group w-100">
@@ -115,6 +114,9 @@
                       </template>
                     </multiselect>
                   </div>
+                </div>
+
+                <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-50">
                     <label class="font-sm mb-0">Flags</label>
                     <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
@@ -125,7 +127,10 @@
                       </template>
                     </multiselect>
                   </div>
-                  <div class="d-flex align-item-center justify-content-between">
+                </div>
+
+                 <div class="d-flex align-item-center justify-content-between mx-2">
+                   <div class="simple-select w-50">
                     <label class="font-sm mb-0">Issue Type</label>
                     <multiselect
                       v-model="C_issueTypeFilter"
@@ -144,7 +149,12 @@
                         </div>
                       </template>
                     </multiselect>
-                    <label class="font-sm mb-0">Issue Severity</label>
+                   </div>
+                 </div>
+
+                 <div class="d-flex align-item-center justify-content-between mx-2">
+                   <div class="simple-select w-50">
+                   <label class="font-sm mb-0">Issue Severity</label>
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -164,7 +174,8 @@
                     </multiselect>
                   </div>
                 </div>
-                <div class="mx-2 mb-3 font-sm">
+
+                 <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>

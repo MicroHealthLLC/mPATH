@@ -25,7 +25,7 @@
         </div>
        
         <div class="simple-select w-50">
-          <multiselect v-model="C_facilityManagerIssueFilter" v-tooltip="`Flags`" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_facilityManagerIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>

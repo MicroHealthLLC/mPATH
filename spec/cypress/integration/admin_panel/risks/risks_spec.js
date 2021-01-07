@@ -20,6 +20,23 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
+  // it('Create new Risk', function() {
+  //   const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
+  //   const due_date = Cypress.moment().add(7, 'day').format('YYYY-MM-DD')
+  //   cy.get('.action_item > a').contains('New Risk').click()
+  //   cy.get('#page_title').contains('New Risk').should('be.visible')
+  //   cy.get('#risk_text').type('New Test Risk').should('have.value', 'New Test Risk')
+  //   cy.get('#risk_risk_description').type('Risk description').should('have.value', 'Risk description')
+  //   cy.get('#risk_impact_description').type('Risk impact description').should('have.value', 'Risk impact description')
+  //   cy.get('#risk_start_date').type(`${start_date}{enter}`)
+  //   cy.get('#risk_due_date').type(`${due_date}{enter}`)
+  //   cy.get('#risk_risk_approach_description').type('Risk approach description').should('have.value', 'Risk approach description')
+  //   cy.get('#risk_submit_action').contains('Create Risk').click()
+  //   cy.get('.flashes').contains('Risk was successfully created.')
+  //   cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
+  //   cy.get('#logout').click()
+  // })
+
   it('Delete Risk', function() {
     cy.get('#index_table_risks').should('be.visible')
     cy.get('#index_table_risks > tbody > tr').first().within(() => {

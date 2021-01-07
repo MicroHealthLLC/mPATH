@@ -22,7 +22,7 @@
       <div class="form-check-inline w-100 mb-2 font-sm">
         <div class="col-3 px-0 float-left" v-if="_isallowed('write')">
           <button @click.prevent="addNewNote"
-          class="btn btn-sm btn-primary addNote"
+          class="btn btn-md btn-primary addNote"
           data-cy="new_note"><i class="fas fa-plus-circle mr-2"></i>
           Add Note</button>
         </div>
