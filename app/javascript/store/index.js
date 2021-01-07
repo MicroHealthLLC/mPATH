@@ -557,38 +557,51 @@ export default new Vuex.Store({
         valid = valid && _isOverdues.includes(true)
       }
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
-        valid = valid && _isOverdues.includes(false)            
+        valid = valid && _isOverdues.includes(false)
       } 
 
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
 
       if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false) {
-        valid = _progressStatuses.includes('active')
+        valid = valid && _progressStatuses.includes('active')
       }
 
       if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
-        valid = _progressStatuses.includes('completed')
+        valid = valid && _progressStatuses.includes('completed')
       }
 
       var userIds = []
+      var resources2 = []
       if(page_name == 'filteredFacilities'){
-        var actions = ['notes', 'tasks', 'issues', 'risks']
-        for (let act of actions) {
-          var u = ( act == "notes") ? _.uniq(_.map(facility[act], 'userId')) : _.compact(_.uniq([..._.flatten(_.map(facility[act], 'userIds')), ..._.map(_.flatten(_.map(facility[act], 'checklists')), 'userId')]))
-          userIds = userIds.concat(u)
-        }
+
+        var u = _.uniq(_.map(facility['notes'], 'userId')) 
+        userIds = userIds.concat(u)
+        resources2 = resources2.concat(facility['tasks'])
+        resources2 = resources2.concat(facility['issues'])
+        resources2 = resources2.concat(facility['risks'])
+
       }else{
-        userIds = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
+        resources2 = resources
       }
-      userIds = _.uniq(userIds)
+
+      var uids = _.compact(_.uniq([..._.flatten(_.map(resources2, 'userIds')), ..._.map(_.flatten(_.map(resources2, 'checklists')), 'userId')]))
+      userIds = _.uniq(userIds.concat(uids))
 
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
       
       if (taskIssueMyAction == false && taksIssueNotMyAction == true) {
-        valid = valid && !userIds.includes(Vue.prototype.$currentUser.id)
+        var isValid = false
+        for(let res of resources2){
+          if( !res.userIds.includes(Vue.prototype.$currentUser.id) ){
+            isValid = true
+          }
+          if(isValid) break
+          
+        }
+        valid = valid && isValid
       }
 
       var watches = []
