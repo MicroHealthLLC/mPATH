@@ -39,4 +39,16 @@ describe('Admin Panel Project', function() {
     cy.get('#index_table_projects').should('not.exist')
     cy.get('#logout').click()
   })
+
+  it('Search Project contains name', function() {
+    cy.get('#q_name').type('Test Project').should('have.value', 'Test Project')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#search_status_sidebar_section').should('be.visible')
+    cy.get('#search_status_sidebar_section > h3').contains('Search status:').should('be.visible')
+    cy.get('h4').contains('Current filters:').should('be.visible')
+    cy.get('.current_filter').contains('Name contains Test Project').should('be.visible')
+    cy.get('#index_table_projects > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
+  })
 })
