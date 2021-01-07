@@ -79,6 +79,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on task category', function() {
     cy.toggleFilterTab()
+    cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=task_category]').as('list')
       cy.get('@list').click()
@@ -128,6 +129,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on task stages', function() {
     cy.toggleFilterTab()
+    cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=task_stage]').as('list')
       cy.get('@list').click()
@@ -154,12 +156,13 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Task Stages: New Task Stage').should('be.visible')
     })
-    cy.facilityClientFilter()
+    cy.testNewTaskStageFilter()
     cy.logout()
   })
 
   it('Apply filter on issue type', function() {
     cy.toggleFilterTab()
+    cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=issue_type]').as('list')
       cy.get('@list').click()
@@ -177,6 +180,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on issue stages', function() {
     cy.toggleFilterTab()
+    cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=issue_stage]').as('list')
       cy.get('@list').click()
@@ -203,7 +207,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Issue Stages: New Issue Stage').should('be.visible')
     })
-    cy.issueUserFilter()
+    cy.testNewIssueStageFilter()
     cy.logout()
   })
 

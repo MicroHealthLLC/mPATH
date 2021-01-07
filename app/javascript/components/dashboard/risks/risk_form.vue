@@ -31,14 +31,25 @@
           >
           Close
         </button>
+        <div class="btn-group">
+        <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
+          @click.prevent="scrollToChecklist"            
+          >
+          <font-awesome-icon icon="plus-circle" />
+          Checklists
+        </button>
          <button  
           v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-primary ml-2 font-sm scrollToChecklist"
-         @click.prevent="scrollToChecklist"            
+          class="btn btn-sm sticky-btn btn-light scrollToChecklist"    
+          @click.prevent="scrollToUpdates"            
           >
-          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
-          Checklist Item
+          <font-awesome-icon icon="plus-circle" />
+          Updates
         </button>
+        </div>      
+        
         <button
           v-if="_isallowed('delete') && DV_risk.id"
           @click.prevent="deleteRisk"
@@ -517,9 +528,9 @@
           </div>
         </paginate>
       </div>
-
-      </div>
+     </div>
       <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
+      <div ref="addUpdates" class="pt-0 mt-0"> </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
 
@@ -605,6 +616,10 @@
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         this.DV_risk.checklists.push({text: '', checked: false})
       }, 
+      scrollToUpdates(){
+        this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+        this.DV_risk.notes.unshift({body: '', user_id: '', guid: this.guid()})        
+      },   
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -1057,14 +1072,6 @@
   .check-due-date {
     text-align: end;
   }
-  .scrollToChecklist {
-   position: absolute;
-   top: 46%;
-   left: 50%;
-   -ms-transform: translate(-50%, -50%);
-   transform: translate(-50%, -50%);
-   box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
-  }
   .paginate-links.filteredNotes {
     list-style: none !important;
     user-select: none;
@@ -1107,5 +1114,15 @@
       margin: 1px;
       color: #383838 !important;
     }
+  }
+   .btn-group{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+  }
+  .scrollToChecklist {      
+      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
 </style>
