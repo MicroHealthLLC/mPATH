@@ -183,7 +183,7 @@
                   </div>
                 </div>
               </div>
-
+<!-- 
               <div v-if="currentTab === 'risks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="mb-2 input-group w-100">
@@ -230,7 +230,7 @@
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
             </div>
           </div>
@@ -346,11 +346,12 @@
             key: 'issues',
             closable: false
           },
-          {
-            label: 'Risks',
-            key: 'risks',
-            closable: false
-          }
+          // {
+          //   label: 'Risks (Coming Soon)',
+          //   key: 'risks',
+          //   disabled: true,
+          //   closable: false
+          // }
         ],
         currentTab: 'tasks',
         expanded: {

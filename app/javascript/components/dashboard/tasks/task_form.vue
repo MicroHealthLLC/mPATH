@@ -31,14 +31,24 @@
           >
           Close
         </button>
-        <button  
+        <div class="btn-group">
+           <button  
           v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-primary ml-2 font-sm scrollToChecklist"    
+          class="btn btn-sm sticky-btn btn-primary mr-1 scrollToChecklist"    
           @click.prevent="scrollToChecklist"            
           >
-          <font-awesome-icon icon="plus-circle" data-cy="new_task" />
-          Checklist Item
+          <font-awesome-icon icon="plus-circle" />
+          Checklists
         </button>
+         <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-primary scrollToChecklist"    
+          @click.prevent="scrollToUpdates"            
+          >
+          <font-awesome-icon icon="plus-circle" />
+          Updates
+        </button>
+        </div>        
         <button
           v-if="_isallowed('delete') && DV_task.id"
           @click.prevent="deleteTask"
@@ -362,9 +372,11 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
-      </div>
+      </div>         
      </div>
+    
      <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
+       <div ref="addUpdates" class="pt-0 mt-0"> </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
   </div>
@@ -442,6 +454,10 @@
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         this.DV_task.checklists.push({text: '', checked: false})
+      },   
+      scrollToUpdates(){
+        this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+        this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },   
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
@@ -900,15 +916,17 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .scrollToChecklist {
-    position: absolute;
-    top: 46%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+  .scrollToChecklist {    
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
   .check-due-date {
     text-align: end;
+  }
+  .btn-group{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
 </style>
