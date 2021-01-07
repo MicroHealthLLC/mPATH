@@ -44,7 +44,14 @@ jQuery(function($) {
     this.parentElement.classList.add(`status_${$(this).text()}`);
   });
 
-  // direct file-upload for tasks/issues
+  //risk probability level labels 
+  $('#risk_probability_text').append(
+    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');    
+
+  $('#risk_impact_text').append(
+      '<div class="risk_prob_level"><span id="riskText">Impact Levels:</span> <div class="risk_probability">1 - Negligible</div><div class="risk_probability">2 - Minor</div><div class="risk_probability">3 - Moderate</div> <div class="risk_probability">4 - Major</div><div class="risk_probability">5 - Catastrophic</div></div')
+ 
+      // direct file-upload for tasks/issues
   $.directFileUpload = (file) => {
     const url = $("#direct-upload-url").data('directUploadUrl');
     const upload = new ActiveStorage.DirectUpload(file, url);
