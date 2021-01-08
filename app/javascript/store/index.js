@@ -724,7 +724,7 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
@@ -734,7 +734,7 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
@@ -744,7 +744,7 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "taskTypeIds": {
@@ -753,7 +753,7 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
@@ -763,9 +763,7 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
-
-              // valid = valid && _.intersection(f[k], ids).length > 0
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             // // TODO: remove if not used anywhere
@@ -787,12 +785,11 @@ export default new Vuex.Store({
               if(resources.length < 1){
                 valid = false
               }
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "facilityGroupIds": {
               valid = valid && f[k].includes(facility.facilityGroupId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
-              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "ids": {
