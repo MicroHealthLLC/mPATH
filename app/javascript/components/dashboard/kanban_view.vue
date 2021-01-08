@@ -486,6 +486,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
 
         let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
         return _.orderBy(_.filter(this.currentFacility.tasks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
@@ -500,7 +501,7 @@
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && this.filterDataForAdvancedFilter([resource], 'kanbanTasks')
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'kanbanTasks')
 
           if (noteDates && noteDates[0] && noteDates[1]) {
             let startDate = moment(noteDates[0], "YYYY-MM-DD")

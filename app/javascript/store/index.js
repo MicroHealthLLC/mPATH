@@ -570,31 +570,24 @@ export default new Vuex.Store({
       if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
         valid = valid && _progressStatuses.includes('completed')
       }
+      
+      var notes = _.flatten(_.map(resources, 'notes'))
+      var userIds = _.uniq(_.map(notes, 'userId'))
 
-      var userIds = []
-      var resources2 = []
+      var uids = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
       if(page_name == 'filteredFacilities'){
-
-        var u = _.uniq(_.map(facility['notes'], 'userId')) 
+        var u = _.uniq(_.map(facility['notes'], 'userId'))
         userIds = userIds.concat(u)
-        resources2 = resources2.concat(facility['tasks'])
-        resources2 = resources2.concat(facility['issues'])
-        resources2 = resources2.concat(facility['risks'])
-
-      }else{
-        resources2 = resources
       }
-
-      var uids = _.compact(_.uniq([..._.flatten(_.map(resources2, 'userIds')), ..._.map(_.flatten(_.map(resources2, 'checklists')), 'userId')]))
       userIds = _.uniq(userIds.concat(uids))
-
+      
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
-      
+
       if (taskIssueMyAction == false && taksIssueNotMyAction == true) {
         var isValid = false
-        for(let res of resources2){
+        for(let res of resources){
           if( !res.userIds.includes(Vue.prototype.$currentUser.id) ){
             isValid = true
           }
@@ -604,26 +597,16 @@ export default new Vuex.Store({
         valid = valid && isValid
       }
 
-      var watches = []
-      if(page_name == 'filteredFacilities'){
-        var actions = ['tasks', 'issues', 'risks']
-        
-        for (let act of actions) {
-          watches = watches.concat(_.map(facility[act], 'watched'))
-        }        
-      }else{
-        watches = watches.concat(_.map(resources, 'watched'))
-      }
-
-      watches = _.uniq(watches)
+      var watches = _.uniq(_.map(resources, 'watched'))
 
       if(taskIssueOnWatch == true && taksIssueNotOnWatch == false){
         valid = valid && watches.includes(true)
       }
-
+      
       if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
         valid = valid && watches.includes(false)
       }
+
       return valid
     },
 
@@ -632,16 +615,17 @@ export default new Vuex.Store({
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
+        
+        var resources1 = []
+        resources1 = resources1.concat(facility.tasks)
+        resources1 = resources1.concat(facility.issues)
+        resources1 = resources1.concat(facility.risks)
+
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0]
           switch(k) {
             case "advancedFilter":{
-              var allResources = []
-              allResources = allResources.concat(facility.tasks)
-              allResources = allResources.concat(facility.issues)
-              allResources = allResources.concat(facility.risks)
-
-              valid = valid && getters.filterDataForAdvancedFilter(allResources, 'filteredFacilities', facility)
+               valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "dueDate": {
@@ -713,6 +697,7 @@ export default new Vuex.Store({
               valid = valid && is_valid
               break
             }
+            // TODO: Improve this function
             case "taskIssueProgress": {
               let progressFor = facility.tasks.concat(facility.issues).concat(facility.risks)
               let resources = []
@@ -735,68 +720,87 @@ export default new Vuex.Store({
             }
             case "issueTypeIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueTypeId, f[k]).length > 0 )
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueTypeId) )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
 
               break
             }
             case "issueSeverityIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueSeverityId, f[k]).length > 0 )
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueSeverityId) )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
 
               break
             }
             case "issueStageIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueStageId, f[k]).length > 0 )
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueStageId)   )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
               break
             }
             case "taskTypeIds": {
               var tasksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              var resources = _.filter(tasksIssues, ti => _.intersection(ti.taskTypeId, f[k]).length > 0 )
+              var resources = _.filter(tasksIssues, ti => f[k].includes(ti.taskTypeId) )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
 
               break
             }
             case "taskStageIds": {
               var tasks = facility.tasks
-              var resources = _.filter(tasks, ti => _.intersection(ti.taskStageId, f[k]).length > 0 )
+              var resources = _.filter(tasks, ti => f[k].includes(ti.taskStageId) )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
 
               // valid = valid && _.intersection(f[k], ids).length > 0
               break
             }
-            // TODO: remove if not used anywhere
-            case "issueUserIds": {
-              let ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
-            // TODO: remove if not used anywhere
-            case "taskUserIds": {
-              let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
-              valid = valid && _.intersection(f[k], ids).length > 0
-              break
-            }
+            // // TODO: remove if not used anywhere
+            // case "issueUserIds": {
+            //   let ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
+            //   valid = valid && _.intersection(f[k], ids).length > 0
+            //   break
+            // }
+            // // TODO: remove if not used anywhere
+            // case "taskUserIds": {
+            //   let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
+            //   valid = valid && _.intersection(f[k], ids).length > 0
+            //   break
+            // }
             case "taskIssueUsers": {
 
               var taskIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
               var resources = _.filter(taskIssues, ti => _.intersection(ti.userIds, f[k]).length > 0 )
+              if(resources.length < 1){
+                valid = false
+              }
               valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
               break
             }
             case "facilityGroupIds": {
-              valid = valid && f[k].includes(facility.facilityGroupId)
+              valid = valid && f[k].includes(facility.facilityGroupId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "ids": {
-              valid = valid && f[k].includes(facility.id)
+              valid = valid && f[k].includes(facility.id) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "statusIds": {
-              valid = valid && f[k].includes(facility.statusId)
+              valid = valid && f[k].includes(facility.statusId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             default: {

@@ -257,6 +257,8 @@
         let taskIssueDueDates = this.taskIssueDueDateFilter
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+
         let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
@@ -266,7 +268,7 @@
 
           }
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityManagerRisks')
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
