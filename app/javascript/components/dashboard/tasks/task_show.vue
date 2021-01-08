@@ -46,7 +46,7 @@
             </span>
           </div>
           <div class="t_actions my-3 float-right">
-            <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+            <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
           </div>
           <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
             <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
