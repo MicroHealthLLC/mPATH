@@ -48,13 +48,13 @@
             </div>
           </div>
           <div class="col-md-3 mt-2">
-            <div class="t_actions my-3 float-left">
+            <div class="t_actions margin-y-3 float-left">
               <span v-if="(issue.watched) == true">
                 <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
               </span>
             </div>
-             <div class="t_actions my-3 float-right">
-              <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
+             <div class="t_actions margin-y-3 float-right">
+              <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
             </div>
 
               <div class="font-sm col mt-3 p-0">
@@ -294,6 +294,9 @@
       form {
         position: inherit !important;
       }
+    }
+    .margin-y-3 {
+      margin: 1rem 0;
     }
   }
 </style>
