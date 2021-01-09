@@ -171,7 +171,7 @@
                       </span>
                     </div>
                   </div>
-                </div>over
+                </div>
               </div>
               <div v-if="issueStats.length > 0">
                 <div class="text-info font-weight-bold text-center">Issue Types</div>
