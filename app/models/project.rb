@@ -38,7 +38,7 @@ class Project < SortableRecord
   validates :name, presence: true
 
   before_create :set_uuid
-  after_save :grant_access_to_admins
+  after_save :grant_access_to_super_roles
 
   def as_json(options=nil)
     json = super(options)
@@ -90,8 +90,8 @@ class Project < SortableRecord
       self.uuid = SecureRandom.uuid
     end
 
-    def grant_access_to_admins
-      self.users << User.superadmin.where.not(id: self.users.ids)
+    def grant_access_to_super_roles
+      self.roles << Role.unscoped.system.where.not(id: self.roles.ids)
     end
 
     def include_fp_hash
