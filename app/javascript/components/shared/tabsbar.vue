@@ -1,10 +1,10 @@
 <template>
-  <div id="tabbar">
-    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
-      <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Facility Manager</div>
-    </router-link>
+  <div id="tabbar"> 
     <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
       <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Sheets</div>
+    </router-link>
+    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
+      <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Facility Manager</div>
     </router-link>
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}" data-cy="map_tab">Map</div>

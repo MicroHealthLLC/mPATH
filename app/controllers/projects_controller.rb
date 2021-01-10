@@ -10,16 +10,16 @@ class ProjectsController < AuthenticatedController
 
   def show
     check_permit("map_view")
-    unless @project.nil?
+    # unless @project.nil?
       respond_to do |format|
         format.json {render json: {project: @project.as_complete_json}, status: 200}
-        format.html {render action: :index}
-      end
-    else
-      respond_to do |format|
-        format.json {render json: {}, status: :not_found}
-        format.html {render 'layouts/_not_found', locals: {message: "Project with id #{params[:id]} doesn't exists"}}
-      end
+    #     format.html {render action: :index}
+    #   end
+    # else
+    #   respond_to do |format|
+      #   format.json {render json: {}, status: :not_found}
+      #   format.html {render 'layouts/_not_found', locals: {message: "Project with id #{params[:id]} doesn't exists"}}
+      # end
     end
   end
 
@@ -102,6 +102,6 @@ class ProjectsController < AuthenticatedController
   end
 
   def check_permit(view)
-    raise_403 and return unless current_user.allowed?(view)
+    return unless current_user.allowed?(view)
   end
 end
