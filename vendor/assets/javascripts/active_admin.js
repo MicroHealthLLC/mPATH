@@ -1012,7 +1012,7 @@ jQuery(function($) {
             </li>
             <li class="choice d-flex">
             <label>Sheets</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
             <li class="choice d-flex">
               <label>Map</label>
