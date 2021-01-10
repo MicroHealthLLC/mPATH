@@ -7,6 +7,14 @@
 //= require 'node_modules/vue-phone-number-input/dist/vue-phone-number-input.umd.js'
 //= require 'node_modules/vue-multiselect/dist/vue-multiselect.min.js'
 
+function checkRiskProbabilityImpactNumber(element){
+  if($(element).val() > 5){
+    $(element).val(5)
+  }else if($(element).val() < 0){
+    $(element).val(0)
+  }
+}
+
 jQuery(function($) {
 
   // Add placeholder to for organization select
@@ -36,7 +44,14 @@ jQuery(function($) {
     this.parentElement.classList.add(`status_${$(this).text()}`);
   });
 
-  // direct file-upload for tasks/issues
+  //risk probability level labels 
+  $('#risk_probability_text').append(
+    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');    
+
+  $('#risk_impact_text').append(
+      '<div class="risk_prob_level"><span id="riskText">Impact Levels:</span> <div class="risk_probability">1 - Negligible</div><div class="risk_probability">2 - Minor</div><div class="risk_probability">3 - Moderate</div> <div class="risk_probability">4 - Major</div><div class="risk_probability">5 - Catastrophic</div></div')
+ 
+      // direct file-upload for tasks/issues
   $.directFileUpload = (file) => {
     const url = $("#direct-upload-url").data('directUploadUrl');
     const upload = new ActiveStorage.DirectUpload(file, url);
@@ -997,7 +1012,7 @@ jQuery(function($) {
             </li>
             <li class="choice d-flex">
             <label>Sheets</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="sheets_view.read">Read</label>
+            <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
             <li class="choice d-flex">
               <label>Map</label>
@@ -1457,29 +1472,6 @@ jQuery(function($) {
       }
     });
 
-
-    // Add this in input element
-    //"data-task-stage-data" => TaskStage.where.not(id: f.object.task_stage_ids).map{|u| {id: u.id, text: u.name}}.to_json
-    // NOTE: Select2 is not working as expected. It is not preserving order of selected items: 
-    // https://github.com/select2/select2/issues/3106#issuecomment-333341636
-    // http://jsfiddle.net/L6163yc9/4
-
-    // task_stage_select2_data = JSON.parse( $("#project_task_stage_alt").attr("data-task-stage-data"))
-    // $("#project_task_stage_alt").select2({
-    //   data: task_stage_select2_data
-    // })
-    // $("#project_task_stage_alt").on('select2:select', function(e) {
-    //   var element = $(e.params.data.element);
-    //   debugger;
-    //   if (element.length) {
-    //     $(this).append(element);
-    //     $(this).trigger('change');
-    //   } else {
-    //     console.log('element does not exist!');
-    //   }
-    // });
-
-
     // task form slider auto calculate and slider
     $("#task_auto_calculate").change(function(e) {
       $.Vue_task_slider && $.Vue_task_slider.setAutoCalculate();
@@ -1695,16 +1687,20 @@ jQuery(function($) {
             facility_id: '',
             sub_tasks: [],
             sub_issues: [],
+            sub_risks: [],
             sub_task_ids: [],
             sub_issue_ids: [],
+            sub_risk_ids: [],
             persist: {
               task_ids: [],
               issue_ids: [],
+              risk_ids: [],
               project_id: '',
               facility_id: ''
             },
             tasks: [],
-            issues: []
+            issues: [],
+            risks: []
           }
         },
         mounted() {
@@ -1718,9 +1714,11 @@ jQuery(function($) {
             this.facility_id = $(`#${this.type}_facility_project_attributes_facility_id`).val();
             this.sub_task_ids = $(`#${this.type}_sub_task_ids`).val().map(Number);
             this.sub_issue_ids = $(`#${this.type}_sub_issue_ids`).val().map(Number);
+            this.sub_risk_ids = $(`#${this.type}_sub_risk_ids`).val().map(Number);
             if (opt.persist) {
               this.persist.task_ids = this.sub_task_ids;
               this.persist.issue_ids = this.sub_issue_ids;
+              this.persist.risk_ids = this.sub_risk_ids;
               this.persist.project_id = this.project_id;
               this.persist.facility_id = this.facility_id;
             }
@@ -1729,6 +1727,7 @@ jQuery(function($) {
             if (this.project_id == this.persist.project_id) {
               this.sub_task_ids = this.persist.task_ids;
               this.sub_issue_ids = this.persist.issue_ids;
+              this.sub_risk_ids = this.persist.risk_ids;
             }
             this.fetchProjectTaskIssues()
           },
@@ -1736,8 +1735,10 @@ jQuery(function($) {
             $.get(`/api/projects/${this.project_id}/task_issues.json`, (data) => {
               this.issues = data ? this.type == 'issue' ? data.issues.filter(t => t.id !== this._id) : data.issues : [];
               this.tasks = data ? this.type == 'task' ? data.tasks.filter(t => t.id !== this._id) : data.tasks : [];
+              this.risks = data ? this.type == 'risk' ? data.risks.filter(t => t.id !== this._id) : data.risks : [];
               this.sub_tasks = this.tasks.filter(t => t.id && this.sub_task_ids.includes(t.id));
               this.sub_issues = this.issues.filter(t => this.sub_issue_ids.includes(t.id));
+              this.sub_risks = this.risks.filter(t => this.sub_risk_ids.includes(t.id));
               this.loading = false;
             });
           }
@@ -1756,6 +1757,12 @@ jQuery(function($) {
             handler(value) {
               this.sub_issue_ids = value.map(u => u.id);
               if (value) $(`#${this.type}_sub_issue_ids`).val(this.sub_issue_ids);
+            }, deep: true
+          },
+          sub_risks: {
+            handler(value) {
+              this.sub_risk_ids = value.map(u => u.id);
+              if (value) $(`#${this.type}_sub_risk_ids`).val(this.sub_risk_ids);
             }, deep: true
           }
         },
@@ -1803,6 +1810,30 @@ jQuery(function($) {
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name'>{{option.title}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </li>
+
+            <li class='select input optional d-flex mt-10 p-0' id='sub_risk_multiple'>
+              <label for='sub_risk_multiple' class='label'>Related Risks</label>
+              <div v-if="!loading" class="user_multiselect">
+                <multiselect
+                  v-model="sub_risks"
+                  track-by="id"
+                  label="risk_description"
+                  placeholder="Search and select Related-risks"
+                  :options="risks"
+                  :searchable="true"
+                  :multiple="true"
+                  select-label="Select"
+                  deselect-label="Remove"
+                  :close-on-select="false"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.risk_description}}</span>
                     </div>
                   </template>
                 </multiselect>
@@ -1909,7 +1940,7 @@ jQuery(function($) {
       $.Vue_related_tasks_issues && $.Vue_related_tasks_issues.setProjectConsts();
     });
 
-    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin, .admin_projects.active_admin, .admin_issue_stages.active_admin, .admin_task_stages.active_admin").is(":visible"))
+    if ($(".admin_project_types.active_admin, .admin_facility_groups.active_admin, .admin_issue_severities.active_admin, .admin_statuses.active_admin, .admin_task_types.active_admin, .admin_issue_types.active_admin, .admin_projects.active_admin, .admin_issue_stages.active_admin, .admin_task_stages.active_admin, .admin_risk_stages.active_admin").is(":visible"))
     {
       $("body").on("click", ".sortable", function() {
         if ($(this.firstElementChild).is('a')) {
@@ -2104,21 +2135,11 @@ jQuery(function($) {
       return $("label[for='issue_stage_percentage']").text(issue_stage_percentage + " (" + (parseFloat(this.value).toFixed(1)) + ")");
     });
 
-    // on_change multiselect enums in project_form
-    $('body').on('click', '#project_task_stage_alt > option, #project_task_stage_ids > option, #project_issue_stage_alt > option, #project_issue_stage_ids > option, #project_user_alt > option, #project_user_ids > option, #project_facility_alt > option, #project_facility_ids > option, #project_status_alt > option, #project_status_ids > option, #project_task_type_ids > option, #project_task_type_alt > option, #project_issue_type_ids > option, #project_issue_type_alt > option, #project_issue_severity_ids > option, #project_issue_severity_alt > option', function () {
-      let this_id = $(this).parent().prop('id');
-      let alt_replace = this_id.includes('ids') ? 'alt' : 'ids';
-      let alt_with = this_id.includes('ids') ? 'ids' : 'alt';
-
-      // replaceAll isn't supported in all versions of browser
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll#Browser_compatibility
-      // let alt_id = this_id.replaceAll(alt_with, alt_replace);
-      let alt_id = this_id.replace(alt_with, alt_replace)
-      let without_id = this_id.slice(0, -4);
-
-      $(this).remove().appendTo(`#${alt_id}`);
-      $(`#${without_id}_ids option`).prop('selected', true);
-      $(`#${without_id}_alt option`).prop('selected', false);
+    // on_change percent stages
+    let risk_stage_percentage = $("label[for='risk_stage_percentage']").text();
+    $("label[for='risk_stage_percentage']").text(risk_stage_percentage + " (" + (parseFloat($("#risk_stage_percentage").val()).toFixed(1)) + ")");
+    $("#risk_stage_percentage").on('input', function() {
+      return $("label[for='risk_stage_percentage']").text(risk_stage_percentage + " (" + (parseFloat(this.value).toFixed(1)) + ")");
     });
 
   }());
@@ -2253,4 +2274,5 @@ jQuery(function($) {
       </div>`
     });
   }
+
 });

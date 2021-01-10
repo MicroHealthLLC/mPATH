@@ -8,15 +8,29 @@ body {
   font-style: normal;
   font-weight: 300;
   overflow-x: hidden;
-  letter-spacing: .035em;
-  /*overflow-y: hidden;*/
+  letter-spacing: .035em; 
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  ::-webkit-scrollbar {
+    background: #ededed;
+    border-radius: 4px;
+    height: 8px;
+    margin:5px !important;
+    padding:2px !important;
+    width: 8px;
+  }  
+  ::-webkit-scrollbar-thumb {
+    background: lightgray;
+    border-radius: 4px;
+  }
 }
 p {
   word-break: break-word;
 }
 button:focus,
 input[type=button]:focus {
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
 }
 .body-wrapper {
   border-top: 1px solid #dee2e6;

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_17_182144) do
+ActiveRecord::Schema.define(version: 2021_01_01_112344) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -69,11 +69,11 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
     t.integer "listable_id"
     t.boolean "checked"
     t.string "text"
-    t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.integer "position", default: 0
+    t.date "due_date"
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
@@ -232,6 +232,13 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
     t.index ["project_id"], name: "index_project_issue_types_on_project_id"
   end
 
+  create_table "project_risk_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "project_id"
+    t.integer "risk_stage_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "project_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "status_id"
     t.bigint "project_id"
@@ -320,10 +327,19 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
     t.index ["task_id"], name: "index_related_tasks_on_task_id"
   end
 
-  create_table "risk_milestones", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", null: false
+  create_table "risk_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "percentage", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "risk_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "risk_id"
+    t.string "timestamps"
+    t.index ["risk_id"], name: "index_risk_users_on_risk_id"
+    t.index ["user_id"], name: "index_risk_users_on_user_id"
   end
 
   create_table "risks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -342,11 +358,15 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
     t.datetime "watched_at"
     t.bigint "user_id"
     t.bigint "facility_project_id"
-    t.bigint "risk_milestone_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "task_type_id"
+    t.string "text"
+    t.integer "kanban_order", default: 0
+    t.bigint "risk_stage_id"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_milestone_id"], name: "index_risks_on_risk_milestone_id"
+    t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
+    t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
   end
 
@@ -490,8 +510,11 @@ ActiveRecord::Schema.define(version: 2020_12_17_182144) do
   add_foreign_key "related_issues", "issues"
   add_foreign_key "related_risks", "risks"
   add_foreign_key "related_tasks", "tasks"
+  add_foreign_key "risk_users", "risks"
+  add_foreign_key "risk_users", "users"
   add_foreign_key "risks", "facility_projects"
-  add_foreign_key "risks", "risk_milestones"
+  add_foreign_key "risks", "risk_stages"
+  add_foreign_key "risks", "task_types"
   add_foreign_key "risks", "users"
   add_foreign_key "task_users", "tasks"
   add_foreign_key "task_users", "users"

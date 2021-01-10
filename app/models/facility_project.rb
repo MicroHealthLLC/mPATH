@@ -10,12 +10,15 @@ class FacilityProject < ApplicationRecord
 
   scope :active, -> {joins(:facility).where("facilities.status = ?", 1).distinct}
 
+  validates :facility, uniqueness: {scope: :project}
+
   def as_json(options=nil)
     json = super(options)
     return json.merge(
       facility: self.facility.as_json,
       tasks: tasks.map(&:to_json),
       issues: issues.map(&:to_json),
+      risks: risks.map(&:to_json),
       notes: notes.map(&:to_json),
       project_status: status_name,
       color: color,

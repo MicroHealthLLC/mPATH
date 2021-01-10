@@ -1,28 +1,5 @@
 <template>
-  <div id="sheets_view" data-cy="sheets_view">
-    <div class="row">
-      <div class="col-md-2 facility-groups-tab">
-        <facility-sidebar
-          title="Facility Sheets"
-          class="facilitySidebar"
-          :current-facility-group="currentFacilityGroup"
-          :expanded="expanded"
-          :current-facility="currentFacility"
-          @on-expand-facility-group="expandFacilityGroup"
-          @on-expand-facility="showFacility"
-        ></facility-sidebar>
-      </div>
-      <div class="col-md-10 facility-show-tab pr-3" style="background-color: solid #ededed 15px">
-        <div class="mt-3">
-          <facility-sheets
-            v-if="C_showFacilityTab"
-            from="manager_view"
-            :facility="currentFacility"
-            :facility-group="currentFacilityGroup"
-          ></facility-sheets>
-          <facility-rollup v-else></facility-rollup>
-        </div>
-
+  <div id="sheets_view" data-cy="sheets_view">   
         <sweet-modal
           class="form_modal"
           ref="formModals"
@@ -49,8 +26,6 @@
             ></issue-form>
           </div>
         </sweet-modal>
-      </div>
-    </div>
   </div>
 </template>
 

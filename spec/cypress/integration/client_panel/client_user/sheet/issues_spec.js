@@ -41,22 +41,22 @@ describe('Sheets Issues View', function() {
     cy.logout()
   })
 
-  it('Select issue status from list to display related issues', function() {
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-    })
-    cy.get('[data-cy=issue_status_list]').as('list')
-    cy.get('@list').click()
-    cy.get('@list').within(() => {
-      cy.contains('complete').click()
-    })
-    cy.contains('No issues found..').should('be.visible')
-    cy.get('@list').within(() => {
-      cy.contains('all').click()
-    })
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-    })
-    cy.logout()
-  })
+  // it('Select issue status from list to display related issues', function() {
+  //   cy.get('[data-cy=issues_table]').within(() => {
+  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.get('[data-cy=issue_status_list]').as('list')
+  //   cy.get('@list').click()
+  //   cy.get('@list').within(() => {
+  //     cy.contains('complete').click()
+  //   })
+  //   cy.contains('No issues found..').should('be.visible')
+  //   cy.get('@list').within(() => {
+  //     cy.contains('all').click()
+  //   })
+  //   cy.get('[data-cy=issues_table]').within(() => {
+  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.logout()
+  // })
 })

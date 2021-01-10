@@ -1,21 +1,23 @@
 <template>
   <div id="kanban" data-cy="kanban">
-
     <div class="overflow-x-auto">
-      <div class="d-flex" v-if="!loading">
+      <div class="d-flex py-2" v-if="!loading">
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col p-3 column-width mx-3"
+          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-3"
           data-cy="kanban_col"
           >
-          <div class="row mb-4" data-cy="kanban_col_title">
+          <div>
+            <h1 style="z-index:100">{{column.tasks.facilityName}}</h1>
+          </div>
+          <div class="row mb-3 kan-header" data-cy="kanban_col_title">
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
               </div>
             </div>
-            <div class="col-2 px-0" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
+            <div class="col-2 px-0 mr-3" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
               <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
@@ -27,17 +29,21 @@
               <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
             </div> -->
           </div>
+          <div class="kan-body">
           <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable">
             <div
               :is="cardShow"
               v-for="task in column.tasks"
+              :load="log(task)"
               :key="`${task.id}_${column.stage.id}`"
               :task="task"
               :issue="task"
+              :risk="task"
               fromView="kanban_view"
-              class="mt-3 task-card"
+              class="mr-2 mb-2 task-card"
             ></div>
           </draggable>
+          </div>
         </div>
       </div>
     </div>
@@ -49,19 +55,22 @@ import Draggable from "vuedraggable"
 import {mapActions, mapGetters} from 'vuex'
 import TaskShow from './../dashboard/tasks/task_show'
 import IssueShow from './../dashboard/issues/issue_show'
+import RiskShow from './../dashboard/risks/risk_show'
 
 export default {
   name: "Kanban",
   components: {
     TaskShow,
     IssueShow,
+    RiskShow,
     Draggable
   },
+
   props: ['stages', 'cards', 'kanbanType'],
   data() {
     return {
       loading: true,
-      stageId: this.kanbanType == 'tasks' ? 'taskStageId' : 'issueStageId',
+      stageId: _.camelCase(`${this.kanbanType}tageId`),
       columns: [],
       movingSlot: ''
     };
@@ -74,8 +83,11 @@ export default {
     ...mapActions([
       'updateKanbanTaskIssues'
     ]),
+    log(t){
+      console.log(t)
+    },
     setupColumns(cards) {
-      this.stageId = this.kanbanType === 'issues' ? 'issueStageId' : 'taskStageId'
+      this.stageId = `${this.kanbanType.slice(0, -1)}StageId`
       for (let stage of this.stages) {
         this.columns.push({
           stage: stage,
@@ -116,7 +128,7 @@ export default {
       'viewPermit'
     ]),
     cardShow() {
-      return this.kanbanType == 'tasks' ? 'TaskShow' : 'IssueShow'
+      return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)
     }
   },
   watch: {
@@ -143,13 +155,6 @@ export default {
   .kanban-draggable {
     min-height: calc(100vh - 230px);
   }
-  .column-width {
-    min-width: 20rem;
-    width: 20rem;
-    max-height: calc(100vh - 130px);
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-  }
   .ghost-card {
     opacity: 0.5;
     background: #F7FAFC;
@@ -157,10 +162,21 @@ export default {
   }
   .overflow-x-auto {
     overflow-x: auto;
+    margin-right: -10px;
+    overflow-y: hidden !important;
   }
   .kan-col {
-    background-color: #fafafa;
+    background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    position: relative;
+    overflow: hidden;
+    min-width: 18rem;
+    width: 18rem;
+    height: 77vh;
+  }
+  .kan-body {
+    max-height: 73vh;
+    overflow-y: auto;
   }
   .badge {
     display: flex;

@@ -11,8 +11,8 @@
       />
     </div>
      <div v-else>      
-      <div class="d-flex align-item-center">
-        <div class="input-group mb-2 mr-1 task-search-bar" style="width:280px">
+      <div class="d-flex align-item-center w-100">
+        <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
@@ -25,10 +25,9 @@
             data-cy="search_issues"
             >
         </div>
-        <div class="simple-select mr-1 justify-content-start">
+        <div class="simple-select mr-1 w-100 justify-content-start">
             <multiselect
-              v-model="C_taskTypeFilter"    
-              style="width:325px"        
+              v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
               placeholder="Filter by Task Category"
@@ -45,41 +44,21 @@
               </template>
             </multiselect>
           </div>
-        <div class="simple-select justify-content-start">
-          <multiselect
-            v-model="viewList"
-            style="width:325px"
-            :options="listOptions"           
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Issue Status"
-            data-cy="issue_status_list"
-          >
-            <template slot="singleLabel">
+        <div class="simple-select mr-1 w-100">
+          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+            <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
+                <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
         </div>  
-        <div class="form-check-inline font-sm ml-auto">
-          <label class="form-check-label mx-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myIssues">
-            <i class="fas fa-user mr-1"></i>My Issues
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-         </div> 
        </div>
-      <div class="d-flex align-item-center justify-content-start w-100">          
-       <div class="simple-select mr-1 d-inline">        
+      <div class="d-flex align-item-center justify-content-start filter-second-row">          
+       <div class="simple-select mr-1 d-inline w-100">        
           <multiselect
             v-model="C_issueTypeFilter"
-            track-by="name"
-            style="width:280px"
+            track-by="name"        
             label="name"
             class="issueTypeMs"
             placeholder="Filter by Issue Type"
@@ -96,11 +75,10 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select mr-1 d-flex">
+        <div class="simple-select mr-1 d-flex w-100">
           <multiselect
             v-model="C_issueSeverityFilter"
-            track-by="name"
-            style="width:325px"
+            track-by="name"          
             label="name"
             placeholder="Filter by Issue Severity"
             :options="issueSeverities"
@@ -116,43 +94,28 @@
             </template>
           </multiselect>
         </div>  
-         <div class="simple-select mr-1 d-flex">        
-          <multiselect
-            v-model="C_taskIssueOverdueFilter"
-            track-by="name"
-             style="width:325px"
-            label="name"           
-            placeholder="Task and Issue Overdue"
-            :options="getTaskIssueOverdueOptions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>   
     </div>
   
       <div class="mt-2">
         <button v-if="_isallowed('write')"
-          class="new-issue-btn btn btn-sm mr-2 btn-primary addBtns"
+          class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-        <button
-         @click.prevent="download"
-         id="printBtn"
-         class="btn btn-sm btn-dark exportBtn">
-         <font-awesome-icon icon="file-pdf" />
-         Export to PDF
-        </button>            
-       <label class="form-check-label text-primary float-right mr-2" data-cy="issue_total">
+          <button
+           v-tooltip="`Export to PDF`"
+           @click.prevent="exportToPdf"
+           class="btn btn-md mr-1 exportBtns text-light">
+           <font-awesome-icon icon="file-pdf" />        
+         </button>
+         <button
+          v-tooltip="`Export to Excel`"
+          @click.prevent="exportToExcel('table', 'Issue Log')"
+          class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel"/>         
+        </button>
+       <label class="form-check-label text-primary float-right mr-2 total-label" data-cy="issue_total">
         <h5>Total: {{filteredIssues.length}}</h5>
        </label>
         <div v-if="_isallowed('read')">
@@ -175,7 +138,7 @@
                   <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
-                  <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll"></i></th>
+                  <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
                   <th class="sort-th" @click="sort('responsibleUserNames')">Assigned Users<i class="fas fa-sort scroll"></i></th>
                   <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
@@ -286,6 +249,10 @@
         currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
       }
     },
     mounted() {
@@ -293,6 +260,8 @@
     },
     methods: {
       ...mapMutations([
+        'setAdvancedFilter',
+        'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
@@ -338,11 +307,16 @@
           })
           .catch((err) => console.log(err))
       },
-      download() {
+       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#issueSheetsList1"})
         doc.save("Issue_Log.pdf")
+      },
+      exportToExcel(table, name){      
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
       issueEdited(issue) {
         this.currentIssue = issue
@@ -359,6 +333,14 @@
    },
     computed: {
       ...mapGetters([
+        'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter',
+        'getTaskIssueUserFilter',
+        'getAdvancedFilter',
+        'getTaskIssueTabFilterOptions',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -388,70 +370,84 @@
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
-        let issues = _.sortBy(_.filter(this.facility.issues, ((issue) => {
-          let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues || this.issueUserFilter) {
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
+        let taskIssueProgress = this.taskIssueProgressFilter
+
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+
+        let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
+
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+
+          if (taskIssueUsers.length > 0) {  
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
-          if (this.C_onWatchIssues) {
-            valid  = valid && issue.watched
-          }
-          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
-          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(issue.issueStageId)
-          if(noteDates && noteDates[0] && noteDates[1]){
+
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsIssues')
+
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.issueStageId)
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
-            var is_valid = issue.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
+            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            var is_valid = resource.notes.length > 0
+            for (var createdAt of _notesCreatedAt) {
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if(is_valid) break
+              if (is_valid) break
             }
-            valid = is_valid
+            valid = valid && is_valid
           }
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+
             var is_valid = true
-            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = is_valid
+            valid = valid && is_valid
           }
-          if(taskIssueOverdue){
-            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-            if(overdueFilterNames.includes("overdue")){
-              valid = (issue.isOverdue == true)
-            }
-            if(overdueFilterNames.includes("not overdue")){
-              valid = (issue.isOverdue == false)
-            }
-            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
-              valid = true
-            }
+
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          if (search_query) valid = valid && search_query.test(issue.title)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && issue.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && issue.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+
+          if (search_query) valid = valid && search_query.test(resource.title)
+
           return valid;
         })), ['dueDate'])
         return issues
+      },
+      C_sheetsIssueFilter: {
+        get() {
+          return this.getAdvancedFilter
+        },
+        set(value) {
+          this.setAdvancedFilter(value)
+        }
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
       },
       C_taskIssueOverdueFilter: {
         get() {
@@ -492,15 +488,6 @@
         set(value) {
           if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Issues", value: "issues"}])
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
-        }
-      },
-      C_onWatchIssues: {
-        get() {
-          return _.map(this.onWatchFilter, 'value').includes('issues')
-        },
-        set(value) {
-          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Issues", value: "issues"}])
-          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
         }
       },
       sortedIssues:function() {
@@ -549,10 +536,6 @@
   .issues-index {
     height: 465px;
   }
-  .new-issue-btn {
-    height: max-content;
-    width: 100px;
-  }
   #altText {
     position: absolute;
     margin-top: 50px
@@ -597,4 +580,15 @@
     float: right !important;
     right: 0;
   }
+  .addIssueBtn, .exportBtns {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .exportBtns { 
+    transition: all .2s ease-in-out; 
+    background-color: #41b883; 
+  }
+  .filter-second-row {
+    width: 66.8%;
+  }
+  .exportBtns:hover { transform: scale(1.06); }
 </style>

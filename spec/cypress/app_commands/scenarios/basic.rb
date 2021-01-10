@@ -73,8 +73,17 @@ task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage')
 new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage')
 issue_stage = IssueStage.find_or_create_by(name: 'Test Issue Stage')
 new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage')
+risk_stage = RiskStage.find_or_create_by(name: 'Test Risk Stage')
+new_risk_stage = RiskStage.find_or_create_by(name: 'New Risk Stage')
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
+
+ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: task_stage.id)
+ProjectTaskStage.find_or_create_by(project_id: project.id, task_stage_id: new_task_stage.id)
+ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: issue_stage.id)
+ProjectIssueStage.find_or_create_by(project_id: project.id, issue_stage_id: new_issue_stage.id)
+ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: risk_stage.id)
+ProjectRiskStage.find_or_create_by(project_id: project.id, risk_stage_id: new_risk_stage.id)
 
 project_task_type = ProjectTaskType.create(project_id: project.id, task_type_id: task_type.id)
 project_issue_severities = ProjectIssueSeverity.create(project_id: project.id, issue_severity_id: issue_severity.id)
@@ -172,6 +181,38 @@ new_issue_1 = Issue.find_or_create_by(
 
 IssueUser.find_or_create_by(issue_id: new_issue_1.id, user_id: client.id)
 
+test_risk_1 = Risk.find_or_create_by(
+  text: 'Test Risk 1',
+  risk_description: 'Test Risk 1 description',
+  impact_description: 'Test Risk 1 impact description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  risk_approach_description: 'Test Risk 1 approach description',
+  user_id: admin.id,
+  facility_project_id: facility_project_1.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true
+)
+
+RiskUser.find_or_create_by(risk_id: test_risk_1.id, user_id: admin.id)
+
+new_risk_1 = Risk.find_or_create_by(
+  text: 'New Risk 1',
+  risk_description: 'New Risk 1 description',
+  impact_description: 'New Risk 1 impact description',
+  start_date: Date.today,
+  due_date: Date.today + 5.days,
+  risk_approach_description: 'New Risk 1 approach description',
+  user_id: client.id,
+  facility_project_id: facility_project_1.id,
+  task_type_id: task_type.id,
+  risk_stage_id: new_risk_stage.id,
+  watched: true
+)
+
+RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
+
 facility_2 = Facility.find_or_create_by(
   facility_name: 'Test Facility 2',
   address: 'Abo Simbel Desert, Aswan Governorate 81514, Egypt',
@@ -259,6 +300,38 @@ new_issue_2 = Issue.find_or_create_by(
 
 IssueUser.find_or_create_by(issue_id: new_issue_2.id, user_id: client.id)
 
+test_risk_2 = Risk.find_or_create_by(
+  text: 'Test Risk 2',
+  risk_description: 'Test Risk 2 description',
+  impact_description: 'Test Risk 2 impact description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  risk_approach_description: 'Test Risk 2 approach description',
+  user_id: admin.id,
+  facility_project_id: facility_project_2.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true
+)
+
+RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
+
+new_risk_2 = Risk.find_or_create_by(
+  text: 'New Risk 2',
+  risk_description: 'New Risk 2 description',
+  impact_description: 'New Risk 2 impact description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  risk_approach_description: 'New Risk 2 approach description',
+  user_id: client.id,
+  facility_project_id: facility_project_2.id,
+  task_type_id: task_type.id,
+  risk_stage_id: new_risk_stage.id,
+  watched: true
+)
+
+RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
+
 facility_group_2 = FacilityGroup.find_or_create_by(
   name: 'Test Facility Group 2',
   code: 'TFG2',
@@ -310,6 +383,20 @@ Issue.find_or_create_by(
   watched: true
 )
 
+Risk.find_or_create_by(
+  text: 'Test Risk 3',
+  risk_description: 'Test Risk 3 description',
+  impact_description: 'Test Risk 3 impact description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  risk_approach_description: 'Test Risk 3 approach description',
+  user_id: admin.id,
+  facility_project_id: facility_project_3.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true
+)
+
 facility_4 = Facility.find_or_create_by(
   facility_name: 'Test Facility 4',
   address: 'Abo Simbel Desert, Aswan Governorate 81514, Egypt',
@@ -352,4 +439,18 @@ Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_4.id
+)
+
+Risk.find_or_create_by(
+  text: 'Test Risk 4',
+  risk_description: 'Test Risk 4 description',
+  impact_description: 'Test Risk 4 impact description',
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
+  risk_approach_description: 'Test Risk 4 approach description',
+  user_id: admin.id,
+  facility_project_id: facility_project_4.id,
+  task_type_id: task_type.id,
+  risk_stage_id: risk_stage.id,
+  watched: true
 )

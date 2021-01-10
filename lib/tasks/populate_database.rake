@@ -23,6 +23,8 @@ task :populate_database => :environment do
     ProjectTaskType.destroy_all
     ProjectIssueSeverity.destroy_all
     ProjectIssueType.destroy_all
+    ProjectTaskStage.destroy_all
+    ProjectIssueStage.destroy_all
     ProjectUser.destroy_all
     Project.destroy_all
     ProjectType.destroy_all
@@ -31,7 +33,10 @@ task :populate_database => :environment do
     IssueStage.destroy_all
     TaskStage.destroy_all
     IssueSeverity.destroy_all
+
     TaskType.destroy_all
+    Risk.destroy_all
+
     Status.destroy_all
     Organization.destroy_all
     Setting.destroy_all
@@ -58,6 +63,8 @@ task :populate_database => :environment do
   print "\nHow many issues do you want to create in each project? "
   issue_number = STDIN.gets.chomp.to_i
 
+  print "\nHow many risks do you want to create in each project? "
+  risk_number = STDIN.gets.chomp.to_i
 
   puts "***** Generating User *****"
   user_count = User.count + 1
@@ -243,6 +250,40 @@ task :populate_database => :environment do
     end
     Issue.import(issues)
   end
+
+  puts "***** Create Project Task Stages *****"
+  projects = Project.all
+  task_stages = TaskStage.last(task_stages.size)
+  project_task_stages = []
+  projects.each do |p|
+    task_stages.each do |stage|
+      project_task_stages << ProjectTaskStage.new(project_id: p.id, task_stage_id: stage.id )
+    end
+  end
+  ProjectTaskStage.import(project_task_stages)
+
+  puts "***** Create Project Task Stages *****"
+  projects = Project.all
+  issue_stages = IssueStage.last(task_stages.size)
+  project_issue_stages = []
+  projects.each do |p|
+    issue_stages.each do |stage|
+      project_issue_stages << ProjectIssueStage.new(project_id: p.id, issue_stage_id: stage.id )
+    end
+  end
+  ProjectIssueStage.import(project_issue_stages)
+
+  puts "***** Create Risks *****"
+  facility_projects = FacilityProject.all
+  risk_count = Risk.count
+  facility_project_risks = []
+  facility_projects.each do |p|
+    risk_number.times do |i|
+      facility_project_risks << Risk.new(probability: 1,impact_level: 1, start_date: DateTime.now, due_date: DateTime.now + 1.days, risk_description: "Risk #{risk_count}",facility_project_id: p.id, user_id: user.id )
+      risk_count = risk_count + 1
+    end
+  end
+  Risk.import(facility_project_risks)
 
   puts "***** Assigning issue types and issue severies to project *****"
   projects = Project.includes(issues: [:issue_type, :issue_severity], tasks: [:task_type]).all

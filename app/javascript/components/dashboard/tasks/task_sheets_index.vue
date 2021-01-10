@@ -1,8 +1,8 @@
 <template>
   <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2">
-        <div class="input-group task-search-bar" style="width:280px">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+        <div class="input-group task-search-bar w-100">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
@@ -14,8 +14,7 @@
             v-model="tasksQuery"
             data-cy="search_tasks">
           </div>
-        <div class="simple-select mx-1 d-flex" style="width:20%">
-
+        <div class="simple-select w-100 mx-1 d-flex">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -34,37 +33,9 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select d-flex mr-1" style="width:18%">
 
-          <multiselect
-            v-model="viewList"
-            :options="listOptions"
-            :searchable="false"
-            :close-on-select="false"
-            :show-labels="false"
-            placeholder="Filter by Task Status"
-            data-cy="task_status_list"
-            >
-            <template slot="singleLabel">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{viewList}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-
-        <div class="simple-select d-flex" style="width:18%">
-          <multiselect
-            v-model="C_taskIssueOverdueFilter"
-            track-by="name"
-            label="name"           
-            placeholder="Task and Issue Overdue"
-            :options="getTaskIssueOverdueOptions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
+        <div class="simple-select d-flex w-100">
+          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -72,34 +43,29 @@
             </template>
           </multiselect>
         </div>
+    </div>
 
-        <div class="form-check-inline font-sm ml-auto">
-          <label class="form-check-label mx-2">
-            <input type="checkbox" class="form-check-input" v-model="C_myTasks">
-            <i class="fas fa-user mr-1"></i>My Tasks
-          </label>
-          <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-            <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks">
-            <i class="fas fa-eye mr-1"></i>On Watch
-          </label>
-        </div>
-      </div>
       <button v-if="_isallowed('write')"
-        class="new-tasks-btn addBtns btn mr-2 btn-sm btn-primary"
+         class="btn btn-md btn-primary mr-3 addTaskBtn"
         @click.prevent="addNewTask"
         data-cy="add_task"
       >
-        <i class="fas fa-plus-circle mr-2"></i>
+        <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
-      <button
-        @click="download"
-        id="printBtn"
-        class="btn btn-sm btn-dark exportBtn">
-        <font-awesome-icon icon="file-pdf" />
-        Export to PDF
-      </button>
-      <label class="form-check-label text-primary float-right mr-2" data-cy="task_total">
+       <button
+          v-tooltip="`Export to PDF`"
+          @click.prevent="exportToPdf"
+          class="btn btn-md mr-1 exportBtns text-light">
+          <font-awesome-icon icon="file-pdf"/>          
+        </button>
+        <button
+          v-tooltip="`Export to Excel`"
+          @click.prevent="exportToExcel('table', 'Task List')"
+          class="btn btn-md exportBtns text-light">
+          <font-awesome-icon icon="file-excel"/>         
+        </button>
+      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
         <h5>Total: {{filteredTasks.length}}</h5>
       </label>
       <div v-if="filteredTasks.length > 0">
@@ -119,7 +85,7 @@
             <tr style="background-color:#ededed;">
               <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('startDate')">Start Date<i class="fas fa-sort scroll ml-2"></i></th>
+              <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
               <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
@@ -150,6 +116,7 @@
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
+    
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"
@@ -218,8 +185,6 @@
     props: ['facility', 'from'],
     data() {
       return {
-        viewList:'active',
-        listOptions: ['active','all', 'completed'],
         tasks: Object,
         now: new Date().toISOString(),
         tasksQuery: '',
@@ -227,10 +192,16 @@
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
      }
     },
     methods: {
       ...mapMutations([
+        'setAdvancedFilter',
+        'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
@@ -263,15 +234,28 @@
       toggleWatched(task) {
         this.$emit('toggle-watch-task', task)
       },
-      download() {
+      exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#taskSheetsList1"})
         doc.save("Task_List.pdf")
       },
+      exportToExcel(table, name){      
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+      }
     },
     computed: {
       ...mapGetters([
+        'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter',
+        'getTaskIssueUserFilter',
+        'getAdvancedFilter',
+        'getTaskIssueTabFilterOptions',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -293,75 +277,82 @@
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
+        
+        let taskIssueProgress = this.taskIssueProgressFilter
 
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (task) => {
-          let valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (this.C_myTasks || this.taskUserFilter) {
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
-          }
-          if (this.C_onWatchTasks) {
-            valid  = valid && task.watched
-          }
-          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
-          if(noteDates && noteDates[0] && noteDates[1]){
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+
+          if (taskIssueUsers.length > 0) {  
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
+          }
+
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
+
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
             var startDate = moment(noteDates[0], "YYYY-MM-DD")
             var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(task.notes, 'createdAt')
-            var is_valid = task.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
+            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            var is_valid = resource.notes.length > 0
+            for (var createdAt of _notesCreatedAt) {
               var nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if(is_valid) break
+              if (is_valid) break
             }
-            valid = is_valid
+            valid = valid && is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
             var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
             var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
 
             var is_valid = true
-            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = is_valid
+            valid = valid && is_valid
           }
 
-          if(taskIssueOverdue){
-            var overdueFilterNames = _.map(taskIssueOverdue, 'name')
-            if(overdueFilterNames.includes("overdue")){
-              valid = (task.isOverdue == true)
-            }
-            if(overdueFilterNames.includes("not overdue")){
-              valid = (task.isOverdue == false)
-            }
-            if(overdueFilterNames.includes("overdue") && overdueFilterNames.includes("not overdue")){
-              valid = true
-            }
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(task.text)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && task.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && task.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
           return valid
         }), ['dueDate'])
         return tasks
+      },
+      C_sheetsTaskFilter: {
+        get() {
+          return this.getAdvancedFilter
+        },
+        set(value) {
+          this.setAdvancedFilter(value)
+        }
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
       },
       C_taskIssueOverdueFilter: {
         get() {
@@ -386,15 +377,6 @@
         set(value) {
           if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
-        }
-      },
-      C_onWatchTasks: {
-        get() {
-          return _.map(this.onWatchFilter, 'value').includes('tasks')
-        },
-        set(value) {
-          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Tasks", value: "tasks"}])
-          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "tasks"))
         }
       },
       sortedTasks:function() {
@@ -452,10 +434,6 @@
     cursor: pointer;
     display: block;
  }
-  .new-tasks-btn {
-    height: max-content;
-    width: 100px;
-  }
    .page-btns {
     width: 20px;
     line-height: 1 !important;
@@ -534,7 +512,22 @@
     text-align: right;
     right: 0px;
   }
+  .fa-sort {
+    font-size: 1.2rem;
+    color: gray;
+  }
   .pagination {
     margin-bottom: 50px !important;
   }
+  .addTaskBtn, .exportBtns {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
+ .exportBtns { 
+    transition: all .2s ease-in-out; 
+    background-color: #41b883; 
+ }
+ .total-label {
+   margin-top: 20px;
+ }
+ .exportBtns:hover { transform: scale(1.06); }
 </style>

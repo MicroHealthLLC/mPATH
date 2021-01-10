@@ -1,8 +1,8 @@
-  
+
 <template>
-  <div>
+  <div data-cy="notes">
     <div v-if="C_editForManager" class="blur_show float-right">
-      <div class="text-danger d-flex align-items-center">     
+      <div class="text-danger d-flex align-items-center">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
@@ -144,7 +144,7 @@
     border-radius: 5px;
     padding: 15px;
   }
-  .note_body {  
+  .note_body {
     padding-top: 10px;
     word-break: break-word;
     min-height: 80px;

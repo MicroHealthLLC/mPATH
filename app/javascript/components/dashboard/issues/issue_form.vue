@@ -6,6 +6,7 @@
       :class="{'_disabled': loading}"
       class="mx-auto"
       accept-charset="UTF-8"
+      data-cy="issue_form"
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
         <button
@@ -30,7 +31,25 @@
           data-cy="issue_close_btn"
           >
           Close
+        </button> 
+        <div class="btn-group">
+           <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
+          @click.prevent="scrollToChecklist"            
+          >
+          <font-awesome-icon icon="plus-circle" />
+          Checklists
         </button>
+         <button  
+          v-if="_isallowed('write')"       
+          class="btn btn-sm sticky-btn btn-light scrollToChecklist"    
+          @click.prevent="scrollToUpdates"            
+          >
+          <font-awesome-icon icon="plus-circle" />
+          Updates
+        </button>
+        </div>      
         <button
           v-if="_isallowed('delete') && DV_issue.id"
           @click.prevent="deleteIssue"
@@ -219,11 +238,11 @@
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
-          v-model="issueUsers"   
+          v-model="issueUsers"
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
-          :options="activeProjectUsers"         
+          :options="activeProjectUsers"
           :searchable="true"
           :multiple="true"
           select-label="Select"
@@ -238,7 +257,7 @@
             </div>
           </template>
         </multiselect>
-      </div>  
+      </div>
       <div class="form-group mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
@@ -254,9 +273,10 @@
       <div class="form-group mx-4">
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks"><i class="fas fa-plus-circle"></i></span>
+       
         <div v-if="filteredChecks.length > 0">
-       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card" class="drag">
-          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)">
+       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_issue.checklists)" :list="DV_issue.checklists" :animation="100" ghost-class="ghost-card">
+          <div v-for="(check, index) in DV_issue.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
             <div class="form-control h-100" :key="index">
             <div class="row">
               <div class="col justify-content-start">
@@ -264,7 +284,7 @@
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here"  type="text" maxlength="80" class="checklist-text pl-1" :readonly="!_isallowed('write')">
               </div>
             </div>
-             <div class="row justify-content-end">             
+             <div class="row justify-content-end">
               <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
@@ -287,23 +307,23 @@
               </div>
                <div class="simple-select form-group col mb-0">
                  <div class="float-right">
-                   <label class="font-sm dueDate">Due Date:</label>  
-                   <br/>              
-                    <v2-date-picker                    
+                   <label class="font-sm dueDate">Due Date:</label>
+                   <br/>
+                    <v2-date-picker
                       v-model="check.dueDate"
-                      :value="check.dueDate" 
+                      :value="check.dueDate"
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
                       value-type="YYYY-MM-DD"
                       format="DD MMM YYYY"
                       placeholder="DD MM YYYY"
                       name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                      class="w-100 vue2-datepicker d-flex ml-auto"
                     />
                   </div>
-                </div>       
+                </div>
                </div>
-            </div>  
+            </div>
             <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)"><i class="fas fa-times"></i></span>
           </div>
        </draggable>
@@ -333,7 +353,8 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>   
+      <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div>
       <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
         <attachment-input
@@ -406,6 +427,7 @@
       </div>
       </div>
        <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
+        <div ref="addUpdates" class="pt-0 mt-0"> </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
   </div>
@@ -479,7 +501,15 @@
           checklists: [],
           notes: []
         }
-      }, 
+      },
+      scrollToChecklist(){
+        this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+        this.DV_issue.checklists.push({text: '', checked: false})
+      },   
+      scrollToUpdates(){
+        this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+         this.DV_issue.notes.unshift({body: '', user_id: '', guid: this.guid()})
+      },  
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -858,12 +888,12 @@
     margin-left: 65px;
   }
   .checklist-text {
-    margin-left: 5px;    
+    margin-left: 5px;
     border: 0;
     width: 95%;
     outline: none;
     border: solid #ededed 1px;
-    border-radius: 4px;  
+    border-radius: 4px;
   }
   .del-check {
     position: relative;
@@ -879,7 +909,7 @@
     padding: 0;
   }
   .drag {
-    cursor: all-scroll;    
+    cursor: all-scroll;
   }
  .formTitle {
     padding-top: 25px;
@@ -907,6 +937,16 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .scrollToChecklist {  
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .btn-group{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
   }
   .check-due-date {
     text-align: end;

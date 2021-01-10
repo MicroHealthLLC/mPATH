@@ -39,7 +39,7 @@
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"                     
+                      label="name"
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -54,38 +54,11 @@
                     </multiselect>
                   </div>
                 </div>
-               
+
                 <div class="mx-2 mb-3 font-sm">
                   <div class="simple-select w-50">
-                    <label class="font-sm mb-0">Task Status</label>
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"               
-                      data-cy="task_status_list"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div>
-                   <div class="d-flex align-item-center justify-content-between">
-                  <div class="simple-select w-100">
-                    <label class="font-sm mb-0">Tasks and Issues Overdue</label>
-                    <multiselect
-                      v-model="C_taskIssueOverdueFilter"
-                      track-by="name"
-                      label="name"                     
-                      :options="getTaskIssueOverdueOptions"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
+                    <label class="font-sm mb-0">Flags</label>
+                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
                       <template slot="singleLabel" slot-scope="{option}">
                         <div class="d-flex">
                           <span class='select__tag-name'>{{option.name}}</span>
@@ -93,17 +66,9 @@
                       </template>
                     </multiselect>
                   </div>
+                   <div class="d-flex align-item-center justify-content-between">
                 </div>
-                  <div class="form-check my-1 mt-3">
-                    <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myTasks"><span><i class="fas fa-user mr-1"></i></span>My Tasks
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchTasks"><span><i class="fas fa-eye mr-1"></i></span>On Watch
-                    </label>
-                  </div>
+
                   <div class="form-check my-4 pl-0" data-cy="search_task_total">
                     <label class="form-check-label text-primary">
                      <h5> Total: {{filteredTasks.length}}</h5>
@@ -111,13 +76,12 @@
                   </div>
                 </div>
               </div>
-
               <div v-if="currentTab === 'issues'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
-                   <div class="mb-2 input-group w-100">
-                      <div class="input-group-prepend d-inline">
+                  <div class="mb-2 input-group w-100">
+                    <div class="input-group-prepend d-inline">
                       <span class="input-group-text"><i class="fa fa-search"></i></span>
-                      </div>
+                    </div>
                     <input
                       type="search"
                       style="height:30px"
@@ -126,16 +90,17 @@
                       aria-label="Search"
                       aria-describedby="search-addon"
                       v-model="sidebarIssuesQuery"
-                      data-cy="search_issues">
+                      data-cy="search_issues"
+                    />
                   </div>
                 </div>
                 <div class="d-flex align-item-center justify-content-between mx-2">
                   <div class="simple-select w-100">
-                     <label class="font-sm mb-0">Task Category</label>
-                     <multiselect
+                    <label class="font-sm mb-0">Task Category</label>
+                    <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"                     
+                      label="name"
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -148,37 +113,13 @@
                         </div>
                       </template>
                     </multiselect>
-
-                  <div class="simple-select w-50">
-                    <label class="font-sm mb-0">Issue Status</label>
-                    <multiselect
-                      v-model="viewList"
-                      :options="listOptions"
-                      :searchable="false"
-                      :close-on-select="false"
-                      :show-labels="false"                   
-                      data-cy="issue_status_list"
-                      >
-                      <template slot="singleLabel">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{viewList}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
                   </div>
-                   <div class="d-flex align-item-center justify-content-between">
-                  <div class="simple-select w-100">
-                     <label class="font-sm mb-0">Task and Issue Overdue</label>
-                    <multiselect
-                      v-model="C_taskIssueOverdueFilter"
-                      track-by="name"
-                      label="name"                     
-                      :options="getTaskIssueOverdueOptions"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
+                </div>
+
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="simple-select w-50">
+                    <label class="font-sm mb-0">Flags</label>
+                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
                       <template slot="singleLabel" slot-scope="{option}">
                         <div class="d-flex">
                           <span class='select__tag-name'>{{option.name}}</span>
@@ -187,8 +128,11 @@
                     </multiselect>
                   </div>
                 </div>
+
+                 <div class="d-flex align-item-center justify-content-between mx-2">
+                   <div class="simple-select w-50">
                     <label class="font-sm mb-0">Issue Type</label>
-                    <multiselect                    
+                    <multiselect
                       v-model="C_issueTypeFilter"
                       track-by="name"
                       label="name"
@@ -205,7 +149,12 @@
                         </div>
                       </template>
                     </multiselect>
-                    <label class="font-sm mb-0">Issue Severity</label>
+                   </div>
+                 </div>
+
+                 <div class="d-flex align-item-center justify-content-between mx-2">
+                   <div class="simple-select w-50">
+                   <label class="font-sm mb-0">Issue Severity</label>
                     <multiselect
                       v-model="C_issueSeverityFilter"
                       track-by="name"
@@ -224,18 +173,9 @@
                       </template>
                     </multiselect>
                   </div>
-                </div>               
-                <div class="mx-2 mb-3 font-sm">   
-                 <div class="form-check my-1 mt-3">
-                    <label class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_myIssues"><span><i class="fas fa-user mr-1"></i></span>My Issues
-                    </label>
-                  </div>
-                  <div class="form-check my-1">
-                    <label v-if="viewPermit('watch_view', 'read')" class="form-check-label">
-                      <input type="checkbox" class="form-check-input" v-model="C_onWatchIssues"><span><i class="fas fa-eye mr-1"></i></span>On Watch
-                    </label>
-                  </div>
+                </div>
+
+                 <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-4 pl-0" data-cy="search_issue_total">
                     <label class="form-check-label text-primary">
                       <h5>Total: {{filteredIssues.length}}</h5>
@@ -243,6 +183,55 @@
                   </div>
                 </div>
               </div>
+<!-- 
+              <div v-if="currentTab === 'risks'">
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="mb-2 input-group w-100">
+                    <div class="input-group-prepend d-inline">
+                      <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
+                    <input
+                      type="search"
+                      style="height:30px"
+                      class="form-control form-control-sm"
+                      placeholder="Search Risks"
+                      aria-label="Search"
+                      aria-describedby="search-addon"
+                      v-model="sidebarRisksQuery"
+                      data-cy="search_risks"
+                    />
+                  </div>
+                </div>
+                <div class="d-flex align-item-center justify-content-between mx-2">
+                  <div class="simple-select w-100">
+                    <label class="font-sm mb-0">Task Category</label>
+                    <multiselect
+                      v-model="C_taskTypeFilter"
+                      track-by="name"
+                      label="name"
+                      :options="taskTypes"
+                      :searchable="false"
+                      :multiple="true"
+                      select-label="Select"
+                      deselect-label="Remove"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
+                </div>
+                <div class="mx-2 mb-3 font-sm">
+                  <div class="form-check my-4 pl-0" data-cy="search_risk_total">
+                    <label class="form-check-label text-primary">
+                      <h5>Total: {{filteredRisks.length}}</h5>
+                    </label>
+                  </div>
+                </div>
+              </div> -->
+
             </div>
           </div>
         </div>
@@ -261,11 +250,8 @@
         </div>
 
         <div>
-         <div class="my-3 ml-3 text-center facName" v-if="currentFacility">
-           <h5 class="mb-0 py-1"> 
-          <i class="fas fa-building"></i>
-           {{ currentFacility.facilityName }}
-           </h5>
+         <div class="mt-0 ml-3" style="position:absolute"  v-if="currentFacility">
+           <h5 class="mb-0 pb-1"> {{ currentFacility.facilityName }}</h5>
          </div>
           <div v-if="currentFacility && ('id' in currentFacility)">
             <kanban
@@ -278,7 +264,7 @@
           </div>
           <div v-else class="center-section text-center">
             <i class="fa fa-tasks font-lg text-center" style="font-size:1.8rem"></i>
-            <p>View, Edit, filter Tasks/issues in kanban mode.</p>
+            <p>View, Edit, filter Tasks/Issues/Risks in kanban mode.</p>
           </div>
         </div>
       </div>
@@ -309,6 +295,15 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></issue-form>
+
+        <risk-form
+          v-if="currentTab === 'risks'"
+          :facility="currentFacility"
+          :fixed-stage="fixedStageId"
+          @issue-created="handleNewRisk"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></risk-form>
       </div>
     </sweet-modal>
   </div>
@@ -322,6 +317,7 @@
   import FacilitySidebar from './facilities/facility_sidebar'
   import IssueForm from "./issues/issue_form"
   import TaskForm from "./tasks/task_form"
+  import RiskForm from "./risks/risk_form"
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -334,21 +330,28 @@
       FacilitySidebar,
       IssueForm,
       TaskForm,
+      RiskForm,
       SweetModal
     },
     data() {
       return {
         tabs: [
           {
-            label: 'Kanban Tasks',
+            label: 'Tasks',
             key: 'tasks',
             closable: false
           },
           {
-            label: 'Kanban Issues',
+            label: 'Issues',
             key: 'issues',
             closable: false
-          }
+          },
+          // {
+          //   label: 'Risks (Coming Soon)',
+          //   key: 'risks',
+          //   disabled: true,
+          //   closable: false
+          // }
         ],
         currentTab: 'tasks',
         expanded: {
@@ -362,9 +365,11 @@
         expandFilter: false,
         searchTasksQuery: '',
         searchIssuesQuery: '',
+        searchRisksQuery: '',
         searchStageId: null,
         sidebarTasksQuery: '',
-        sidebarIssuesQuery: ''
+        sidebarIssuesQuery: '',
+        sidebarRisksQuery: ''
       }
     },
     mounted() {
@@ -373,6 +378,7 @@
     },
     methods: {
       ...mapMutations([
+        'setAdvancedFilter',
         'setTaskIssueOverdueFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -380,7 +386,8 @@
         'setIssueTypeFilter',
         'setTaskTypeFilter',
         'updateTasksHash',
-        'updateIssuesHash'
+        'updateIssuesHash',
+        'updateRisksHash'
       ]),
       ...mapActions([
         'taskUpdated'
@@ -421,6 +428,11 @@
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.onCloseForm()
       },
+      handleNewRisk(risk) {
+        let cb = () => this.updateRisksHash({risk: risk})
+        this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
+        this.onCloseForm()
+      },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
         if ($(searchElement).attr("data-kanban-type") == "issues") {
@@ -433,6 +445,14 @@
     },
     computed: {
       ...mapGetters([
+        'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter',
+        'taskIssueProgressFilter',
+        'getTaskIssueUserFilter',
+        'getAdvancedFilter',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'getTaskIssueTabFilterOptions',
         'getTaskIssueOverdueOptions',
         'taskIssueOverdueFilter',
         'noteDateFilter',
@@ -441,9 +461,11 @@
         'filteredFacilityGroups',
         'taskStages',
         'issueStages',
+        'riskStages',
         'taskTypeFilter',
         'taskStageFilter',
         'issueStageFilter',
+        'riskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
         'issueTypeFilter',
@@ -461,80 +483,67 @@
         const sidebar_search_query = this.exists(this.sidebarTasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarTasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
 
-        return _.orderBy(_.filter(this.currentFacility.tasks, (task) => {
-          let valid = Boolean(task && task.hasOwnProperty('progress'))
-          if (typeIds.length > 0) valid = valid && typeIds.includes(task.taskTypeId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(task.taskStageId)
-          if (this.C_myTasks || this.taskUserFilter) {
-            let userIds = [..._.map(task.checklists, 'userId'), ...task.userIds]
-            if (this.C_myTasks) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.taskUserFilter && this.taskUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.taskUserFilter, 'id').indexOf(u) !== -1)
-          }
-          if (this.C_onWatchTasks) {
-            valid  = valid && task.watched
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+
+        return _.orderBy(_.filter(this.currentFacility.tasks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+
+          if (taskIssueUsers.length > 0) {
+            if (taskIssueUsers.length > 0) {
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
 
-          if(noteDates && noteDates[0] && noteDates[1]){
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(task.notes, 'createdAt')
-            var is_valid = task.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
-              var nDate = moment(createdAt, "YYYY-MM-DD")
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'kanbanTasks')
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            let startDate = moment(noteDates[0], "YYYY-MM-DD")
+            let endDate = moment(noteDates[1], "YYYY-MM-DD")
+            let _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            let is_valid = resource.notes.length > 0
+            for(let createdAt of _notesCreatedAt){
+              let nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }
-            valid = is_valid
+            valid = valid && is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(task.dueDate, "YYYY-MM-DD")
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let is_valid = true
+            let nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = is_valid
+            valid = valid && is_valid
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (task.isOverdue == true)
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            let min = taskIssueProgress[0].value.split("-")[0]
+            let max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] &&  taskIssueOverdue[0].name == "not overdue"){
-            valid = (task.isOverdue == false)
-          }
-
-          if (search_query) valid = valid && search_query.test(task.text)
-          if (sidebar_search_query) valid = valid && sidebar_search_query.test(task.text)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && task.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && task.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+          if (search_query) valid = valid && search_query.test(resource.text)
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.text)
           return valid
         }), 'kanbanOrder', 'asc')
       },
-
-      C_taskIssueOverdueFilter: {
+      C_kanbanTaskFilter: {
         get() {
-          return this.taskIssueOverdueFilter
+          return this.getAdvancedFilter
         },
         set(value) {
-          this.setTaskIssueOverdueFilter(value)
+          this.setAdvancedFilter(value)
         }
       },
-
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -570,72 +579,63 @@
         const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueOverdue = this.taskIssueOverdueFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
 
-        return _.orderBy(_.filter(this.currentFacility.issues, (issue) => {
-          let valid = Boolean(issue && issue.hasOwnProperty('progress'))
-          if (this.C_myIssues || this.issueUserFilter) {
-            let userIds = [..._.map(issue.checklists, 'userId'), ...issue.userIds]
-            if (this.C_myIssues) valid = valid && userIds.includes(this.$currentUser.id)
-            if (this.issueUserFilter && this.issueUserFilter.length > 0) valid = valid && userIds.some(u => _.map(this.issueUserFilter, 'id').indexOf(u) !== -1)
-          }
-          if (this.C_onWatchIssues) {
-            valid  = valid && issue.watched
-          }
-          if (typeIds.length > 0) valid = valid && typeIds.includes(issue.issueTypeId)
-          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(issue.taskTypeId)
+        let taskIssueUsers = this.getTaskIssueUserFilter
 
-          if(noteDates && noteDates[0] && noteDates[1]){
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(issue.notes, 'createdAt')
-            var is_valid = issue.notes.length > 0
-            for(var createdAt of _notesCreatedAt){
-              var nDate = moment(createdAt, "YYYY-MM-DD")
+        return _.orderBy(_.filter(this.currentFacility.issues, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+
+          if (taskIssueUsers.length > 0) {
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
+          }
+
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'kanbanIssues')
+
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            let startDate = moment(noteDates[0], "YYYY-MM-DD")
+            let endDate = moment(noteDates[1], "YYYY-MM-DD")
+            let _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            let is_valid = resource.notes.length > 0
+            for (let createdAt of _notesCreatedAt) {
+              let nDate = moment(createdAt, "YYYY-MM-DD")
               is_valid = nDate.isBetween(startDate, endDate, 'days', true)
               if(is_valid) break
             }
             valid = is_valid
           }
 
-          if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(issue.dueDate, "YYYY-MM-DD")
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let is_valid = true
+            let nDate = moment(resource.dueDate, "YYYY-MM-DD")
             is_valid = nDate.isBetween(startDate, endDate, 'days', true)
             valid = is_valid
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
-            valid = (issue.isOverdue == true)
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            let min = taskIssueProgress[0].value.split("-")[0]
+            let max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "not overdue"){
-            valid = (issue.isOverdue == false)
-          }
-
-          if (this.searchStageId && this.searchStageId == issue.issueStageId) {
-            if (search_query) valid = valid && search_query.test(issue.title)
+          if (this.searchStageId && this.searchStageId == resource.issueStageId) {
+            if (search_query) valid = valid && search_query.test(resource.title)
           } else if(stageIds.length > 0) {
-            valid = valid && stageIds.includes(issue.issueStageId)
+            valid = valid && stageIds.includes(resource.issueStageId)
           }
-          if (sidebar_search_query) valid = valid && sidebar_search_query.test(issue.title)
-          if (severityIds.length > 0) valid = valid && severityIds.includes(issue.issueSeverityId)
-          switch (this.viewList) {
-            case "active": {
-              valid = valid && issue.progress < 100
-              break
-            }
-            case "completed": {
-              valid = valid && issue.progress == 100
-              break
-            }
-            default: {
-              break
-            }
-          }
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
+          if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
+
           return valid
         }), 'kanbanOrder', 'asc')
       },
@@ -645,14 +645,6 @@
         },
         set(value) {
           this.setIssueTypeFilter(value)
-        }
-      },
-       C_taskTypeFilter: {
-        get() {
-          return this.taskTypeFilter
-        },
-        set(value) {
-          this.setTaskTypeFilter(value)
         }
       },
       C_issueSeverityFilter: {
@@ -681,6 +673,91 @@
           else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "issues"))
         }
       },
+
+      filteredRisks() {
+        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        const search_query = this.exists(this.searchRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()), 'i') : null
+        const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()), 'i') : null
+
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueUsers = this.getTaskIssueUserFilter
+
+        return _.orderBy(_.filter(this.currentFacility.risks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+
+         let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+
+          if (taskIssueUsers.length > 0) {
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
+          }
+
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'kanbanRisks')
+
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
+
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            let startDate = moment(noteDates[0], "YYYY-MM-DD")
+            let endDate = moment(noteDates[1], "YYYY-MM-DD")
+            let _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            let is_valid = resource.notes.length > 0
+            for (let createdAt of _notesCreatedAt) {
+              let nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if(is_valid) break
+            }
+            valid = is_valid
+          }
+
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            let is_valid = true
+            let nDate = moment(resource.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+            valid = is_valid
+          }
+
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            let min = taskIssueProgress[0].value.split("-")[0]
+            let max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
+          }
+
+
+          if (this.searchStageId && this.searchStageId == resource.issueStageId) {
+            if (search_query) valid = valid && search_query.test(resource.title)
+          } else if(stageIds.length > 0) {
+            valid = valid && stageIds.includes(resource.issueStageId)
+          }
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
+
+          return valid
+        }), 'kanbanOrder', 'asc')
+      },
+      C_myRisks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Risks", value: "risks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
+        }
+      },
+      C_onWatchRisks: {
+        get() {
+          return _.map(this.onWatchFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setOnWatchFilter([...this.onWatchFilter, {name: "On Watch Risks", value: "risks"}])
+          else this.setOnWatchFilter(this.onWatchFilter.filter(f => f.value !== "risks"))
+        }
+      },
       filterTaskStages() {
         let stageIds = _.map(this.taskStageFilter, 'id')
         return _.filter(this.taskStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
@@ -689,11 +766,24 @@
         let stageIds = _.map(this.issueStageFilter, 'id')
         return _.filter(this.issueStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
       },
+      filterRiskStages() {
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        return _.filter(this.riskStages, s => stageIds && stageIds.length ? stageIds.includes(s.id) : true)
+      },
       C_kanban() {
-        return {
-          stages: this.currentTab == 'tasks' ? this.filterTaskStages : this.filterIssueStages,
-          cards: this.currentTab == 'tasks' ? this.filteredTasks : this.filteredIssues
+        let stages = [];
+        let cards = [];
+        if (this.currentTab == 'tasks') {
+          stages = this.filterTaskStages
+          cards = this.filteredTasks
+        } else if (this.currentTab == 'issues') {
+          stages = this.filterIssueStages
+          cards = this.filteredIssues
+        } else if (this.currentTab == 'risks') {
+          stages = this.filterRiskStages
+          cards = this.filteredRisks
         }
+        return { stages, cards }
       }
     },
     watch: {
@@ -703,7 +793,8 @@
             this.currentFacilityGroup = {}
             this.currentFacility = {}
             this.expanded.id = ''
-          } else {
+          }
+          else {
             let group = value.find(f => f.id === this.currentFacilityGroup.id)
             if (group) {
               this.currentFacilityGroup = group
@@ -754,6 +845,9 @@
       margin: 10rem auto;
     }
   }
+  .light {
+    font-weight: 300 !important;
+  }
   .row [class*='col-'] {
     transition: .2s ease-in-out;
   }
@@ -768,11 +862,8 @@
     cursor: pointer;
     display: block;
   }
-  .facName {
-    background-color: #fafafa;
-    padding:2px;
-    border-radius: 2px;  
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  .kanban-tab {
+    margin-bottom: 20px !important;
   }
   .expandBtn {
     position: absolute;
@@ -792,7 +883,7 @@
   .simple-select /deep/ .multiselect {
     width: 230px;
   }
-  .new_form_modal.sweet-modal-overlay {    
+  .new_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
   .new_form_modal.sweet-modal-overlay /deep/ .sweet-modal {

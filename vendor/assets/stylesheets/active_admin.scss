@@ -65,6 +65,29 @@ body {
   ul.header-item li:nth-last-child(2) {
     /*float: right !important;*/
   }
+  .risk_probability {
+    background-color: #efefef;
+    background-image: linear-gradient(180deg, #efefef, #dfe1e2);
+    color: #5E6469;
+    font-weight: bold;
+    border-radius: 3px;
+    margin-right: 8px;
+    display:inline;
+    padding:4px;
+  }
+  .risk_prob_level {
+    display:inline;
+    margin-left: 20.7%;  
+    margin-bottom: 10px;
+  }
+  #riskText {
+    color:#5E6469;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  #risk_risk_approach_input, #risk_impact_level_input{
+    margin-top:25px;
+  }
   .comments.custom_made {
     label {
       width: 10%;
@@ -182,10 +205,13 @@ body {
   #user_privilege_attributes_risks_input,
   #task_sub_issues_input,
   #task_sub_tasks_input,
+  #task_sub_risks_input,
   #issue_sub_tasks_input,
   #issue_sub_issues_input,
+  #issue_sub_risks_input,
   #risk_sub_tasks_input,
   #risk_sub_issues_input,
+  #risk_sub_risks_input,
   #task_task_files,
   #risk_risk_files,
   #issue_issue_files {

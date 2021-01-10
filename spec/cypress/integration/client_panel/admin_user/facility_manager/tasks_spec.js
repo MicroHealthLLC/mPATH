@@ -7,7 +7,8 @@ describe('Tasks Page', function() {
   })
 
   it('Open Task list page of a Facility', function() {
-    cy.get('[data-cy=task_list]').contains('My Task').should('be.visible')
+    cy.get('[data-cy=task_list]').should('be.visible')
+    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
     cy.logout()
   })
 
@@ -56,7 +57,7 @@ describe('Tasks Page', function() {
   it("In Task form if name's field empty, error message display and save button must be disabled", function() {
     cy.get('[data-cy=tasks]').first().click()
     cy.get('[data-cy=task_name]').clear()
-    cy.get('[data-cy=task_name_error]').contains('The Name field is required.')
+    cy.get('[data-cy=task_name_error]').contains('The Name field is required.').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
     cy.logout()
@@ -75,7 +76,8 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_start_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=task_start_date_error]').contains('The Start Date field is required.')
+    cy.get('[data-cy=task_start_date_error]').scrollIntoView()
+    cy.get('[data-cy=task_start_date_error]').contains('The Start Date field is required.').should('be.visible')
     cy.get('[data-cy=task_due_date]').within(() => {
       cy.get('input').should('be.disabled')
     })
@@ -89,7 +91,8 @@ describe('Tasks Page', function() {
     cy.get('[data-cy=task_due_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.')
+    cy.get('[data-cy=task_due_date_error]').scrollIntoView()
+    cy.get('[data-cy=task_due_date_error]').contains('The Due Date field is required.').should('be.visible')
     cy.get('[data-cy=task_save_btn]').should('be.disabled')
     cy.get('[data-cy=task_close_btn]').click()
     cy.logout()
@@ -108,18 +111,18 @@ describe('Tasks Page', function() {
     cy.logout()
   })
 
-  it('Select task status from list to display related tasks', function() {
-    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
-    cy.get('[data-cy=task_status_list]').as('list')
-    cy.get('@list').click()
-    cy.get('@list').within(() => {
-      cy.contains('complete').click()
-    })
-    cy.contains('No tasks found..').should('be.visible')
-    cy.get('@list').within(() => {
-      cy.contains('all').click()
-    })
-    cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
-    cy.logout()
-  })
+  // it('Select task status from list to display related tasks', function() {
+  //   cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+  //   cy.get('[data-cy=task_status_list]').as('list')
+  //   cy.get('@list').click()
+  //   cy.get('@list').within(() => {
+  //     cy.contains('complete').click()
+  //   })
+  //   cy.contains('No tasks found..').should('be.visible')
+  //   cy.get('@list').within(() => {
+  //     cy.contains('all').click()
+  //   })
+  //   cy.get('[data-cy=tasks]').its('length').should('be.eq', 2)
+  //   cy.logout()
+  // })
 })

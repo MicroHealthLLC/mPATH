@@ -7,7 +7,8 @@ describe('Issue List', function() {
   })
 
   it('Open Issue list page of a Facility', function() {
-    cy.get('[data-cy=issue_list]').contains('My Issue').should('be.visible')
+    cy.get('[data-cy=issue_list]').should('be.visible')
+    cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
     cy.logout()
   })
 
@@ -56,7 +57,7 @@ describe('Issue List', function() {
   it("In Issue form if title's field empty, error message display and save button must be disabled", function() {
     cy.get('[data-cy=issues]').first().click()
     cy.get('[data-cy=issue_title]').clear()
-    cy.get('[data-cy=issue_title_error]').contains('The title field is required.')
+    cy.get('[data-cy=issue_title_error]').contains('The title field is required.').should('be.visible')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
     cy.logout()
@@ -64,9 +65,11 @@ describe('Issue List', function() {
 
   it('In Issue form if issue type not selected, save button must be disabled', function() {
     cy.get('[data-cy=issues]').first().click()
-    cy.get('[data-cy=issue_type]').click().type('{enter}')
-    cy.get('[data-cy=issue_save_btn]').should('be.disabled')
-    cy.get('[data-cy=issue_close_btn]').click()
+    cy.get('[data-cy=issue_form]').within(() => {
+      cy.get('[data-cy=issue_type]').click().type('{enter}')
+      cy.get('[data-cy=issue_save_btn]').should('be.disabled')
+      cy.get('[data-cy=issue_close_btn]').click()
+    })
     cy.logout()
   })
 
@@ -83,7 +86,8 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_start_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=issue_start_date_error]').contains('The Start Date field is required.')
+    cy.get('[data-cy=issue_start_date_error]').scrollIntoView()
+    cy.get('[data-cy=issue_start_date_error]').contains('The Start Date field is required.').should('be.visible')
     cy.get('[data-cy=issue_due_date]').within(() => {
       cy.get('input').should('be.disabled')
     })
@@ -97,7 +101,8 @@ describe('Issue List', function() {
     cy.get('[data-cy=issue_due_date]').within(() =>{
       cy.get('.mx-icon-clear').click({ force: true})
     })
-    cy.get('[data-cy=issue_due_date_error]').contains('The Estimated Completion Date field is required.')
+    cy.get('[data-cy=issue_due_date_error]').scrollIntoView()
+    cy.get('[data-cy=issue_due_date_error]').contains('The Estimated Completion Date field is required.').should('be.visible')
     cy.get('[data-cy=issue_save_btn]').should('be.disabled')
     cy.get('[data-cy=issue_close_btn]').click()
     cy.logout()
@@ -116,18 +121,18 @@ describe('Issue List', function() {
     cy.logout()
   })
 
-  it('Select issue status from list to display related issues', function() {
-    cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
-    cy.get('[data-cy=issue_status_list]').as('list')
-    cy.get('@list').click()
-    cy.get('@list').within(() => {
-      cy.contains('complete').click()
-    })
-    cy.contains('No issues found..').should('be.visible')
-    cy.get('@list').within(() => {
-      cy.contains('all').click()
-    })
-    cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
-    cy.logout()
-  })
+  // it('Select issue status from list to display related issues', function() {
+  //   cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
+  //   cy.get('[data-cy=issue_status_list]').as('list')
+  //   cy.get('@list').click()
+  //   cy.get('@list').within(() => {
+  //     cy.contains('complete').click()
+  //   })
+  //   cy.contains('No issues found..').should('be.visible')
+  //   cy.get('@list').within(() => {
+  //     cy.contains('all').click()
+  //   })
+  //   cy.get('[data-cy=issues]').its('length').should('be.eq', 2)
+  //   cy.logout()
+  // })
 })

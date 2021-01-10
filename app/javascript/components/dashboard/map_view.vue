@@ -58,14 +58,15 @@
           </GmapMap>
         </div>
         <div id="rollup-sidebar" class="col-4 p-0" :style="rollupStyle">
-          <div style="margin-left: 12px;">
+          <div style="margin-left: 20px;">
             <div>
               <facility-rollup v-show="!openSidebar"></facility-rollup>
-              <div class="knocker_side" :style="knockerStyle">
-                <div v-if="currentFacility && currentFacility.id" class="knocker" @click="toggleOpenSideBar">
-                  <div class="linner"></div>
-                </div>
-                <div id="map-sidebar" class="shadow-sm">
+
+                <div class="knocker_side" :style="knockerStyle">
+                <button v-if="currentFacility && currentFacility.id" class="knocker btn btn-sm text-light p-1" @click="toggleOpenSideBar">
+                  <small><span class="pr-1"><i class="fas fa-building"></i></span>FACILITY  SUMMARY</small>
+                </button>             
+                <div id="map-sidebar" class="shadow-sm mr-2">
                   <facility-show
                     v-if="currentFacility && currentFacility.id"
                     :facility="currentFacility"
@@ -168,7 +169,7 @@ export default {
       'facilityGroupFacilities'
     ]),
     knockerStyle() {
-      return this.openSidebar ? {} : {transform: "translateX(calc(105% - 12px))"}
+      return this.openSidebar ? {} : {transform: "translateX(calc(105% - 20px))"}
     },
     rollupStyle() {
       return this.openSidebar ? {right: '12px'} : {right: '0'}
@@ -231,7 +232,7 @@ export default {
       this.$refs.facilitiesAccordion && this.$refs.facilitiesAccordion.close()
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -249,6 +250,7 @@ export default {
   #rollup-sidebar {
     > div {
       height: calc(100vh - 94px);
+      z-index: 1000;
     }
     position: absolute;
     top: 0;
@@ -256,7 +258,7 @@ export default {
     overflow-y: auto;
   }
   #map-sidebar {
-    z-index: 800;
+    z-index: 1000;
     height: calc(100vh - 94px);
     overflow: auto;
     background: white;
@@ -268,9 +270,23 @@ export default {
     top: 0;
     transition: .3s ease;
     height: 100%;
-    z-index: 1002;
   }
-
+  .knocker {
+   cursor: pointer;
+   z-index: 1000 !important;
+    position: absolute;
+    top: 70%;  
+    left: -63.8px;
+    width: fit-content;
+    display: flex;   
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;    
+    -moz-transform:rotate(-90deg);
+    -ms-transform:rotate(-90deg);
+    -o-transform:rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+    background-color: rgba(65, 184, 131, .85);
+ }
   /* sidebar transitions */
   .slide-fade-enter-active {
     transition: all .2s ease;
@@ -311,27 +327,21 @@ export default {
       cursor: pointer;
     }
   }
-  .knocker {
-    z-index: 9999999;
-    cursor: pointer;
-    position: absolute;
-    top: 40%;
-    left: -12px;
-    width: 12px;
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-    height: 100px;
-    background: #ffa500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .linner {
-      width: 5px;
-      height: 60px;
-      border-left: 1px solid #fff;
-      border-right: 1px solid #fff;
-    }
-  }
+  // .knocker {
+  //   z-index: 9999999;
+  //   cursor: pointer;
+  //   position: absolute;
+  //   top: 40%;
+  //   left: -12px;
+  //   width: 12px;
+  //   border-top-left-radius: 12px;
+  //   border-bottom-left-radius: 12px;
+  //   height: 100px;
+  //   background: #ffa500;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;  
+  // }
   .vue-map-container /deep/ button.gm-ui-hover-effect {
     display: none;
     visibility: hidden;

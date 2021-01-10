@@ -1,14 +1,15 @@
 <!-- NOTE: This file is used Global filter view in left side -->
 <template>
 
-  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick">
+  <div id="filterbar" :style="filterBarStyle" v-click-outside="handleOutsideClick" data-cy="filter_bar">
 
-    <div id="filter_bar" class="container shadow-sm">
+    <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
+
       <!-- First row: Filter View Title/Header -->
-      <div class="row pt-1">
+      <div class="row mt-3">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
@@ -34,7 +35,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Project Status</label>
-              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -58,7 +59,7 @@
           <div class="col-md-6">
             <div>
               <label class="font-sm mb-0">Facility Group</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true">
+              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -68,7 +69,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Facility Name</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
@@ -91,90 +92,46 @@
             <h5>Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Category</label>
-              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Task Users</label>
-              <multiselect v-model="C_taskUserFilter" track-by="id" label="fullName" class="mr-1" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
                   </div>
                 </template>
               </multiselect>
             </div>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Task Stages</label>
-              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
               </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Task % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'min'})" :value="C_taskProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'task', type: 'max'})" :value="C_taskProgress.max">
-                </div>
-              </div>
-              <span class="font-sm text-danger ml-1" v-if="C_taskProgress.error">{{C_taskProgress.error}}</span>
             </div>
           </div>
           <div class="col-md-4">
             <h5>Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Type</label>
-              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Issue Users</label>
-              <multiselect v-model="C_issueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.fullName}}</span>
                   </div>
                 </template>
               </multiselect>
             </div>
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
-              <multiselect v-model="C_issueStageFilter" track-by="name" label="name" :options="issueStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+              <multiselect v-model="C_issueStageFilter" track-by="name" label="name" :options="issueStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
               </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Issue % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'min'})" :value="C_issueProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'issue', type: 'max'})" :value="C_issueProgress.max">
-                </div>
-              </div>
-              <span class="font-sm text-danger ml-1" v-if="C_issueProgress.error">{{C_issueProgress.error}}</span>
             </div>
             <div>
               <label class="font-sm mb-0">Issue Severity</label>
@@ -189,51 +146,22 @@
           </div>
           <div class="col-md-4" style="border-left:solid lightgray .8px">
             <h5>Combined</h5>
-            <!-- Commenting for issue https://github.com/MicroHealthLLC/mGis/issues/1227             
-            <div>
-              <label class="font-sm mb-0">My Actions</label>
-              <multiselect v-model="C_myActionsFilter" track-by="name" label="name" :options="myActions" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div> 
-            <div v-if="viewPermit('watch_view', 'read')">
-              <label class="font-sm mb-0">On Watch</label>
-              <multiselect v-model="C_onWatchFilter" track-by="name" label="name" :options="onWatch" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Task and Issue Overdue</label>
-              <multiselect v-model="C_taskIssueOverdueFilter" track-by="name" label="name" :options="getTaskIssueOverdueOptions" :searchable="false" :allow-empty="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>-->
-            <div>
-              <label class="font-sm mb-0">Task and Issue Due Date Range</label>
-              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
-            </div>
-            <div>
-              <label class="font-sm mb-0">Updates Date Range</label>
-              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
-            </div>
+            <!-- Task and Issue Users Filter -->
 
-            <!-- First row: Filter View Title/Header -->
-            <div class="row pt-1">
-              <div class="col-md-12">
-                <label class="font-sm mb-0">Advanced filter</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="false" select-label="Select">
+              <div>
+                <label class="font-sm mb-0">Action Users</label>
+                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+
+              <div>
+                <label class="font-sm mb-0">Flags</label>
+                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="true" select-label="Select">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name selected-opt'>{{option.name}}</span>
@@ -241,13 +169,35 @@
                   </template>
                 </multiselect>
               </div>
+            <div>
+              <label class="font-sm mb-0">Action Due Date Range</label>
+              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
+            <div>
+              <label class="font-sm mb-0">Updates Date Range</label>
+              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
+            </div>
+
+            <div>
+              <label class="font-sm mb-0">Action % Progress Range</label>
+              <div class="form-row">
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
+                </div>
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
+                </div>
+              </div>
+              <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
+            </div>
+
+            <!-- First row: Filter View Title/Header -->
 
           </div>
         </div>
       </div>
     </div>
-    <div class="knocker" @click.prevent="toggleFilters">
+    <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
         <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
     </div>
   </div>
@@ -263,6 +213,7 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
+      
       facilities: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -277,6 +228,8 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'getTaskIssueUserFilter',
+      'getTaskIssueProgressStatusFilter',
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
       'projectStatusFilter',
@@ -289,8 +242,7 @@ export default {
       'taskIssueDueDateFilter',
       'issueTypeFilter',
       'issueSeverityFilter',
-      'issueProgressFilter',
-      'taskProgressFilter',
+      'taskIssueProgressFilter',
       'projects',
       'currentProject',
       'activeProjectUsers',
@@ -315,16 +267,26 @@ export default {
       'issueStageFilter',
       'viewPermit'
     ]),
+    C_taskIssueProgress: {
+      get() {
+        return this.progressFilter.taskIssue
+      },
+    },
     C_advancedFilter: {
       get() {
-        if (this.getAdvancedFilter().length == 0) {
-          this.setAdvancedFilter([{ id: 'active', name: 'Active' }])
-        }
-        return this.getAdvancedFilter()
+        // Note: This code will be useful if want active as default select and never want advanced filter blank
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        return this.getAdvancedFilter
       },
       set(value) {
         if (!value) {
-          this.setAdvancedFilter([{ id: 'active', name: 'Active' }])
+          this.setAdvancedFilter([])
         } else {
           this.setAdvancedFilter(value)
         }
@@ -436,22 +398,15 @@ export default {
         this.setIssueStageFilter(value)
       }
     },
-    C_taskUserFilter: {
+    C_taskIssueUserFilter: {
       get() {
-        return this.taskUserFilter
+        return this.getTaskIssueUserFilter
       },
       set(value) {
-        this.setTaskUserFilter(value)
+        this.setTaskIssueUserFilter(value)
       }
     },
-    C_issueUserFilter: {
-      get() {
-        return this.issueUserFilter
-      },
-      set(value) {
-        this.setIssueUserFilter(value)
-      }
-    },
+
     C_myActionsFilter: {
       get() {
         return this.myActionsFilter
@@ -475,16 +430,7 @@ export default {
         return this.progressFilter.facility
       }
     },
-    C_taskProgress: {
-      get() {
-        return this.progressFilter.task
-      }
-    },
-    C_issueProgress: {
-      get() {
-        return this.progressFilter.issue
-      }
-    },
+
     filterBarStyle() {
       if (this.showFilters) return {}
       return {
@@ -500,6 +446,9 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setTaskIssueUserFilter',
+      'setTaskIssueProgressStatusFilter',
+      'setTaskIssueProgressFilter',
       'setAdvancedFilter',
       'updateMapFilters',
       'setTaskIssueOverdueFilter',
@@ -513,8 +462,6 @@ export default {
       'setTaskIssueDueDateFilter',
       'setIssueTypeFilter',
       'setIssueSeverityFilter',
-      'setIssueProgressFilter',
-      'setTaskProgressFilter',
       'setMyActionsFilter',
       'setOnWatchFilter',
       'setMapFilters',
@@ -547,6 +494,8 @@ export default {
       }
     },
     onClearFilter() {
+      this.setTaskIssueUserFilter([])
+      this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
@@ -561,13 +510,12 @@ export default {
       this.setIssueSeverityFilter(null)
       this.setIssueStageFilter(null)
       this.setTaskStageFilter(null)
-      this.setIssueProgressFilter(null)
-      this.setTaskProgressFilter(null)
+      this.setTaskIssueProgressFilter(null)
       this.setMyActionsFilter([])
       this.setOnWatchFilter([])
       this.setMapFilters([])
       this.clearProgressFilters()
-      this.setIssueUserFilter(null)
+      this.setIssueUserFilter([])
       this.setTaskUserFilter(null)
     },
     exportData() {
@@ -585,9 +533,9 @@ export default {
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
             Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
             Milestones: ${this.taskTypeFilter ?  _.map(this.taskTypeFilter, 'name').join() : 'all'}\n
-            Task % Progress Range: ${this.taskProgressFilter ?  _.map(this.taskProgressFilter, 'name').join() : 'all'}\n
+            Task % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue Type: ${this.issueTypeFilter ?  _.map(this.issueTypeFilter, 'name').join() : 'all'}\n
-            Issue % Progress Range: ${this.issueProgressFilter ?  _.map(this.issueProgressFilter, 'name').join() : 'all'}\n
+            Issue % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
         let header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
@@ -639,22 +587,38 @@ export default {
       }
     },
     onChangeProgress(event, option) {
+      let user_input = event.target.value
       let input = event.target.value
       let hash = Object.assign({}, this.progressFilter[option.variable])
       let error = ""
       if (this.exists(input)) {
-        if (input < 0) input = 0
+        if (input < 0 || input === "") input = 0
         if (input > 100) input = 100
-        if ((option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) error = "Min should not be greator than Max."
+        if ( (option.type == 'min' && input > hash.max) || (option.type == 'max' && input < hash.min)) {
+          error = "Min should not be greator than Max."
+        }
+        if (( option.type == 'min' &&  hash.max == "") || ( option.type == 'max' &&  hash.min == "")) {
+          error = "Both fields are required."
+        }
       }
-      hash[option.type] = input == "" ? input : Number(input)
-      if (hash.max == "" || hash.min == "") error = "Both fields are required."
+      
+      hash[option.type] = (input <= 0 ? 0 : Number(input) )
+      if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""
       hash.error = error
+      if((input === 0 || input === "" ) && user_input === "" && option.type == 'min') hash.min = ""
+      if((input === 0 || input === "" ) && option.type == 'max') hash.max = ""
+
       this.setProgressFilters({ key: option.variable, value: hash })
     }
   },
   watch: {
+    getAdvancedFilter(value) {
+      this.updateMapFilters({ key: 'advancedFilter', filter: value, same: true })
+    },
+    getTaskIssueProgressStatusFilter(value){
+      this.updateMapFilters({ key: 'taskIssueProgressStatus', filter: value, same: true })
+    },
     facilityDueDateFilter(value) {
       this.updateMapFilters({ key: 'dueDate', filter: value, same: true })
     },
@@ -682,14 +646,11 @@ export default {
     taskTypeFilter(value) {
       this.updateMapFilters({ key: 'taskTypeIds', filter: value })
     },
-    taskProgressFilter(value) {
-      this.updateMapFilters({ key: 'taskProgress', filter: value, _k: 'value' })
+    taskIssueProgressFilter(value) {
+      this.updateMapFilters({ key: 'taskIssueProgress', filter: value, _k: 'value' })
     },
     issueTypeFilter(value) {
       this.updateMapFilters({ key: 'issueTypeIds', filter: value })
-    },
-    issueProgressFilter(value) {
-      this.updateMapFilters({ key: 'issueProgress', filter: value, _k: 'value' })
     },
     issueSeverityFilter(value) {
       this.updateMapFilters({ key: 'issueSeverityIds', filter: value })
@@ -700,11 +661,8 @@ export default {
     taskStageFilter(value) {
       this.updateMapFilters({ key: 'taskStageIds', filter: value })
     },
-    issueUserFilter(value) {
-      this.updateMapFilters({ key: 'issueUserIds', filter: value })
-    },
-    taskUserFilter(value) {
-      this.updateMapFilters({ key: 'taskUserIds', filter: value })
+    getTaskIssueUserFilter(value) {
+      this.updateMapFilters({ key: 'taskIssueUsers', filter: value })
     },
     myActionsFilter(value) {
       this.updateMapFilters({ key: 'myActions', filter: value, _k: 'value' })
@@ -714,7 +672,7 @@ export default {
     },
     "progressFilter.facility": {
       handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
+       if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
           value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
           this.setFacilityProgressFilter([value])
         } else if (value.min == "" && value.max == "") {
@@ -723,24 +681,13 @@ export default {
       },
       deep: true
     },
-    "progressFilter.task": {
+    "progressFilter.taskIssue": {
       handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
+        if (value.error == "" && value.min !== "" && value.max !== ""  && value.min <= value.max) {
           value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
-          this.setTaskProgressFilter([value])
+          this.setTaskIssueProgressFilter([value])
         } else if (value.min == "" && value.max == "") {
-          this.setTaskProgressFilter([])
-        }
-      },
-      deep: true
-    },
-    "progressFilter.issue": {
-      handler(value) {
-        if (value.error == "" && value.min && value.max && value.min <= value.max) {
-          value = { name: value.min + "-" + value.max, value: value.min + "-" + value.max }
-          this.setIssueProgressFilter([value])
-        } else if (value.min == "" && value.max == "") {
-          this.setIssueProgressFilter([])
+          this.setTaskIssueProgressFilter([])
         }
       },
       deep: true
@@ -953,7 +900,7 @@ a.disabled {
 }
 .knocker-btn {
   // Bootstrap success color rgba with transparency
-   background-color: rgba(65, 184, 131, .90);
+   background-color: rgba(65, 184, 131, .85);
 }
 .filter-border {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
