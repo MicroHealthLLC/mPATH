@@ -20,6 +20,7 @@ client.assign_attributes(
   last_name: 'Client',
   role: 'client'
 )
+client.save(validate: false)
 
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 Organization.find_or_create_by(title: 'Test Organization')
@@ -31,7 +32,42 @@ project = Project.find_or_create_by(
   project_type_id: project_type.id
 )
 admin_role = Role.find_or_create_by(name: 'superadmin')
+admin_role.privilege = Privilege.new(
+  overview: "RWD",
+  tasks: "RWD",
+  notes: "RWD",
+  issues: "RWD",
+  admin: "RWD",
+  map_view: "RWD",
+  gantt_view: "RWD",
+  watch_view: "RWD",
+  documents: "RWD",
+  members: "RWD",
+  facility_manager_view: "RWD",
+  sheets_view: "RWD",
+  kanban_view: "RWD",
+  risks: "RWD"
+)
+admin_role.save(validate: false)
+
 client_role = Role.find_or_create_by(name: 'client')
+client_role.privilege = Privilege.new(
+  overview: "R",
+  tasks: "R",
+  notes: "R",
+  issues: "R",
+  admin: "R",
+  map_view: "R",
+  gantt_view: "R",
+  watch_view: "R",
+  documents: "R",
+  members: "R",
+  facility_manager_view: "R",
+  sheets_view: "R",
+  kanban_view: "R",
+  risks: "R"
+)
+client_role.save(validate: false)
 project_admin_role = ProjectRole.find_or_create_by(role_id: admin_role.id, project_id: project.id)
 project_client_role = ProjectRole.find_or_create_by(role_id: client_role.id, project_id: project.id)
 
