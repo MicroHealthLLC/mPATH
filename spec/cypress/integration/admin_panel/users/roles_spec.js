@@ -20,6 +20,16 @@ describe('Admin Panel Roles', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Role if name is blank', function() {
+    cy.get('.action_item > a').contains('New Role').click()
+    cy.get('#page_title').contains('New Role').should('be.visible')
+    cy.get('#role_submit_action').contains('Create Role').click()
+    cy.get('.errors').contains("Name can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Role').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Could not Delete Role of foreign constraint', function() {
     cy.get('#index_table_roles').should('be.visible')
     cy.get('#index_table_roles > tbody > tr').first().within(() => {
