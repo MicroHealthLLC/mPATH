@@ -71,6 +71,7 @@
       return {
         loading: true,
         newNote: false,
+        myNotesCheckbox: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility)
       }
@@ -116,11 +117,13 @@
       },
       C_myNotes: {
         get() {
-          return _.map(this.myActionsFilter, 'value').includes('notes')
+          return this.myNotesCheckbox;
+          // return _.map(this.myActionsFilter, 'value').includes('notes')
         },
         set(value) {
-          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Notes", value: "notes"}])
-          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "notes"))
+          this.myNotesCheckbox = value
+          // if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Notes", value: "notes"}])
+          // else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "notes"))
         }
       }
     },
