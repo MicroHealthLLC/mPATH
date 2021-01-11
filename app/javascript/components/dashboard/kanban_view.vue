@@ -1,18 +1,11 @@
 <template>
   <div id="kanban-view">
     <div class="row">
-      <div class="col-md-2 facility-groups-tab" :class="{'col-md-4': expandFilter, 'col-md-2': !expandFilter}">
+      <!-- <div class="col-md-2 facility-groups-tab" :class="{'col-md-4': expandFilter, 'col-md-2': !expandFilter}">
         <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="mt-4" badge-margin="4px" />
         <div class="row">
           <div class="col d-flex">
-            <facility-sidebar
-              class="facilitySidebar"
-              :current-facility-group="currentFacilityGroup"
-              :expanded="expanded"
-              :current-facility="currentFacility"
-              @on-expand-facility-group="expandFacilityGroup"
-              @on-expand-facility="showFacility"
-            ></facility-sidebar>
+      
 
             <div v-if="expandFilter && contentLoaded" class="mt-4 ml-2" style="border-left:solid 1px lightgray">
               <div v-if="currentTab === 'tasks'">
@@ -182,7 +175,7 @@
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> -->
 <!-- 
               <div v-if="currentTab === 'risks'">
                 <div class="d-flex align-item-center justify-content-between mx-2">
@@ -232,12 +225,12 @@
                 </div>
               </div> -->
 
-            </div>
+            <!-- </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
+      <!-- <div class="kanban-tab bt-light" :class="{'col-md-8': expandFilter, 'col-md-10': !expandFilter}">
         <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">
           <span class="clickable" @click.prevent="expandFilter=!expandFilter" data-cy="kanban_search">
             <span v-show="!expandFilter" class="expandBtn">
@@ -268,7 +261,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <sweet-modal
       class="new_form_modal"
@@ -306,6 +299,7 @@
         ></risk-form>
       </div>
     </sweet-modal>
+  </div>
   </div>
 </template>
 

@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-3"
+          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-2"
           data-cy="kanban_col"
           >
           <div>
@@ -162,6 +162,7 @@ export default {
   }
   .overflow-x-auto {
     overflow-x: auto;
+    margin-top: 55px;
     margin-right: -10px;
     overflow-y: hidden !important;
   }
