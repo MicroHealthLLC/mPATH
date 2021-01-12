@@ -62,4 +62,15 @@ describe('Admin Panel Organization', function() {
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
     cy.get('#logout').click()
   })
+
+  it('Delete all organizations', function() {
+    cy.get('.disabled').contains('Batch Actions').should('be.visible')
+    cy.get('#collection_selection_toggle_all').click()
+    cy.get('.dropdown_menu_button').click()
+    cy.get('.batch_action').contains('Delete Selected').click()
+    cy.get('.ui-dialog-buttonset > :nth-child(1)').contains('OK').click()
+    cy.get('.flashes').contains('Successfully deleted 1 Organizations').should('be.visible')
+    cy.get('.blank_slate').contains('There are no Organizations yet. Create one').should('be.visible')
+    cy.get('#logout').click()
+  })
 })
