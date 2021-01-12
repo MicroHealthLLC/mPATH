@@ -111,6 +111,21 @@
               </multiselect>
             </div>
           </div>
+
+          <div class="col-md-4" style="border-right:solid lightgray .8px">
+            <h5>Risks</h5>
+            <div v-if="viewPermit('kanban_view', 'read')">
+              <label class="font-sm mb-0">Risk Stages</label>
+              <multiselect v-model="C_riskStageFilter" track-by="name" label="name" placeholder="Filter by risk stages" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+            </div>
+          </div>
+
           <div class="col-md-4">
             <h5>Issues</h5>
             <div>
@@ -233,15 +248,30 @@ export default {
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
       'projectStatusFilter',
+
+      'taskTypes',
+      'taskStages',
       'taskTypeFilter',
+      'taskStageFilter',
+      'taskUserFilter',
+
+      'riskStages',
+      'riskStageFilter',
+
+      'issueSeverities',
+      'issueTypes',
+      'issueStages',
+      'issueStageFilter',
+      'issueUserFilter',
+      'issueTypeFilter',
+      'issueSeverityFilter',
+
       'facilityGroupFilter',
       'facilityNameFilter',
       'facilityProgressFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
-      'issueTypeFilter',
-      'issueSeverityFilter',
       'taskIssueProgressFilter',
       'projects',
       'currentProject',
@@ -250,21 +280,12 @@ export default {
       'getTaskIssueOverdueOptions',
       'taskIssueOverdueFilter',
       'activeFacilityGroups',
-      'taskTypes',
-      'issueTypes',
-      'issueSeverities',
-      'taskStages',
-      'issueStages',
       'unFilterFacilities',
       'filterFacilitiesWithActiveFacilityGroups',
       'ganttData',
       'myActionsFilter',
       'onWatchFilter',
-      'taskUserFilter',
-      'issueUserFilter',
       'progressFilter',
-      'taskStageFilter',
-      'issueStageFilter',
       'viewPermit'
     ]),
     C_taskIssueProgress: {
@@ -315,6 +336,16 @@ export default {
         this.setTaskIssueOverdueFilter(value)
       }
     },
+
+    C_riskStageFilter: {
+      get() {
+        return this.riskStageFilter
+      },
+      set(value) {
+        this.setRiskStageFilter(value)
+      }
+    },
+
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter
@@ -323,6 +354,15 @@ export default {
         this.setTaskTypeFilter(value)
       }
     },
+    C_taskStageFilter: {
+      get() {
+        return this.taskStageFilter
+      },
+      set(value) {
+        this.setTaskStageFilter(value)
+      }
+    },
+
     C_facilityGroupFilter: {
       get() {
         return this.facilityGroupFilter
@@ -382,14 +422,6 @@ export default {
         this.setIssueSeverityFilter(value)
       }
     },
-    C_taskStageFilter: {
-      get() {
-        return this.taskStageFilter
-      },
-      set(value) {
-        this.setTaskStageFilter(value)
-      }
-    },
     C_issueStageFilter: {
       get() {
         return this.issueStageFilter
@@ -398,6 +430,7 @@ export default {
         this.setIssueStageFilter(value)
       }
     },
+
     C_taskIssueUserFilter: {
       get() {
         return this.getTaskIssueUserFilter
@@ -470,7 +503,8 @@ export default {
       'setProgressFilters',
       'clearProgressFilters',
       'setTaskStageFilter',
-      'setIssueStageFilter'
+      'setIssueStageFilter',
+      'setRiskStageFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -510,6 +544,7 @@ export default {
       this.setIssueSeverityFilter(null)
       this.setIssueStageFilter(null)
       this.setTaskStageFilter(null)
+      this.setRiskStageFilter(null)
       this.setTaskIssueProgressFilter(null)
       this.setMyActionsFilter([])
       this.setOnWatchFilter([])
@@ -660,6 +695,9 @@ export default {
     },
     taskStageFilter(value) {
       this.updateMapFilters({ key: 'taskStageIds', filter: value })
+    },
+    riskStageFilter(value) {
+      this.updateMapFilters({ key: 'riskStageIds', filter: value })
     },
     getTaskIssueUserFilter(value) {
       this.updateMapFilters({ key: 'taskIssueUsers', filter: value })

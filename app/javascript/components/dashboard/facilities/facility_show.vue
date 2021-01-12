@@ -316,7 +316,7 @@
             label: 'Risks (Coming Soon)',
             key: 'risks',
             closable: false,
-            disabled: true
+            disabled: false
           },
           {
             label: 'Notes',
