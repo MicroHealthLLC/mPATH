@@ -35,7 +35,8 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
   cy.facilityUnderGroup()
-  cy.contains('Facility Summary')
+  cy.get('[data-cy=facility_manager_tab]').contains('Facility Manager').should('be.visible').click()
+  cy.contains('Facility Summary').should('be.visible')
 })
 
 // Open Teams page of a project
