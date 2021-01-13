@@ -213,6 +213,13 @@
           <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
         </div>
 
+        <div v-if="currentTab == 'notes'">
+          <notes-sheets-index
+            :facility="DV_facility"
+            :from="from"
+            @refresh-facility="refreshFacility"
+          ></notes-sheets-index>
+        </div>
         <div v-if="currentTab == 'tasks'">
           <div>
             <task-sheets-index
@@ -229,6 +236,7 @@
             @refresh-facility="refreshFacility"
           ></issue-sheets-index>
         </div>
+       
       </div>
     </div>
   </div>
@@ -236,21 +244,23 @@
 
 <script>
   import http from './../../../common/http'
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import DetailShow from './detail_show'
-  import NotesIndex from './../notes/notes_index'
+  import NotesSheetsIndex from './../notes/notes_sheets_index'
   import IssueSheetsIndex from './../issues/issue_sheets_index'
   import TaskSheetsIndex from './../tasks/task_sheets_index'
+  import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
 
   export default {
     name: 'FacilitySheets',
     components: {
       DetailShow,
-      NotesIndex,
+      NotesSheetsIndex,
       IssueSheetsIndex,
       TaskSheetsIndex,
-      CustomTabs
+      CustomTabs,
+      Loader
     },
     props: {
       facility: {
@@ -277,7 +287,7 @@
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
-        currentTab: 'overview',
+        currentTab: 'tasks',
         tabs: [
           {
             label: 'Overview',
@@ -296,20 +306,23 @@
           },
            {
             label: 'Risks (Coming Soon)',
-            key: 'notes',
-            closable: false,
-            disabled: true
+            key: 'risks',
+            closable: false, 
+            disabled: true          
           },
+          {
+            label: 'Notes',
+            key: 'notes',
+            closable: false
+          },         
         ]
       }
     },
     mounted() {
       if (this.from == "manager_view") {
-        this.DV_facility = Object.assign({}, this.facility)
-        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
-        this.loading = false
+        this.loadFacility(this.facility)
       } else {
-        this.fetchFacility()
+        this.getFacility()
       }
     },
     methods: {
@@ -318,22 +331,23 @@
         'updateFacilityHash',
         'nullifyTasksForManager'
       ]),
+      ...mapActions([
+        'fetchFacility'
+      ]),
       onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'overview'
+        this.currentTab = tab ? tab.key : 'tasks'
       },
-      fetchFacility(opt={}) {
-        http
-          .get(`/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`)
-          .then((res) => {
-            this.DV_facility = {...res.data.facility, ...res.data.facility.facility}
-            this.selectedStatus = this.statuses.find(s => s.id === this.DV_facility.statusId)
-            if (opt.cb) this.$emit('facility-update', this.DV_facility)
-            this.loading = false
-          })
-          .catch((err) => {
-            this.loading = false
-            console.error(err)
-          })
+      loadFacility(facility) {
+        this.DV_facility = Object.assign({}, facility)
+        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this.loading = false
+      },
+      getFacility() {
+        this.fetchFacility({projectId: this.currentProject.id, facilityId: this.DV_facility.id}).then(facility => {
+          this.loadFacility(facility)
+        }).catch((err) => {
+          console.error(err)
+        })
       },
       updateFacility(e) {
         if (e.target) e.target.blur()
@@ -353,7 +367,7 @@
       },
       refreshFacility() {
         this.loading = true
-        this.fetchFacility({cb: true})
+        this.getFacility()
       },
       isBlockedStatus(status) {
         return status && status.name.toLowerCase().includes('complete') && this.DV_facility.progress < 100
@@ -371,15 +385,18 @@
         'taskTypes',
         'getAllFilterNames',
         'getFilterValue',
+        'contentLoaded',
         'currentProject',
         'taskTypeFilter',
         'issueTypeFilter',
-        'myActionsFilter',
-        'onWatchFilter',
-        'taskStageFilter',
         'issueSeverityFilter',
+        'taskUserFilter',
+        'taskStageFilter',
         'issueStageFilter',
-        'statuses'
+        'issueUserFilter',
+        'statuses',
+        'myActionsFilter',
+        'onWatchFilter'
       ]),
       C_taskTypeFilter: {
         get() {
@@ -416,14 +433,15 @@
 
         return _.filter(this.DV_facility.tasks, (resource) => {
           let valid = true
-
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
-          if(taskIssueUsers.length > 0){
-            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+          if (taskIssueUsers.length > 0) {  
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
           }
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowSheetsTasks')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowTasks')
 
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
@@ -469,7 +487,7 @@
             }
           }
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowSheetsIssues')
+          valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowIssues')
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
@@ -506,14 +524,14 @@
     },
     watch: {
       facility: {
-        handler: function(value) {
+        handler(value) {
           this.DV_facility = Object.assign({}, value)
           this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
           this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
             this.loading = true
-            this.fetchFacility()
+            this.getFacility()
           }
         }, deep: true
       },
