@@ -11,7 +11,7 @@
     </div>
     <div v-else>
       <div class="mb-3 row" :class="{'align-items-center justify-content-between': _isallowed('write')}">
-        <div class="col-md-5">
+        <div class="col-md-6">
           <div class="input-group" :class="{'search-tab': _isallowed('write')}">
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-5 form-check-inline w-100 mb-2 font-sm">
+      <div class="col-md-6 form-check-inline w-100 mb-2 font-sm">
         <div class="px-0 float-left" v-if="_isallowed('write')">
           <button @click.prevent="addNewNote"
           class="btn btn-md btn-primary addNote"
@@ -36,10 +36,10 @@
           </label> -->
         </div>
       </div>
-      <hr/>
-      <div class="notes-container row py-2">
-      <div v-if="_isallowed('read')" class="notes-rows col-md-5" > 
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" :key="note.id" class="mb-2">
+      
+      <div class="notes-container row pt-2">
+      <div v-if="_isallowed('read')" class="notes-rows col-md-6" > 
+        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" :key="note.id" class="mb-1">
           <notes-sheets
             :facility="DV_facility"
             :note="note"
@@ -170,11 +170,14 @@
   .notes-container {
     position: relative;
     overflow: hidden;  
-    height: 55vh;
+    height: 61vh;    
   }
   .notes-rows {
     overflow-y: scroll;
-    max-height: 52vh;
+    box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
+    max-height: 59vh;
+    border-top: solid 4px #ededed;
+    padding-top: 8px;  
   }
   
 </style>

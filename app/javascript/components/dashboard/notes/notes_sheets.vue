@@ -34,10 +34,9 @@
           v-if="permitted('write')"
           title="Edit Note"
           :note="DV_note"
-          :facility="facility" 
-          :load="log(facility)"
+          :facility="facility"       
            class="form-inside-modal"               
-          @on-close-form="onCloseForm"
+           @close-note-input="show=true"
           @note-updated="noteUpdated"
         />      
       </div>
@@ -64,7 +63,7 @@
         show: true,
         loading: true,
         DV_note: null,  
-        has_note: false        
+        // has_note: false        
       }
     },
     mounted() {
@@ -80,9 +79,11 @@
      editNoteMode() {
         if (this.from == "manager_view") {                
           this.setTaskForManager({key: 'note', value: this.DV_note})
-        } else {
-          this.DV_note = this.note
           this.$refs.notesFormModal && this.$refs.notesFormModal.open() 
+        } else {
+          this.show = false
+          // this.DV_note = this.note
+          // this.$refs.notesFormModal && this.$refs.notesFormModal.open() 
         }
       },
       log(fac){
@@ -94,7 +95,7 @@
       },
       onCloseForm() {
         this.$refs.notesFormModal && this.$refs.notesFormModal.close()
-        this.has_note = false    
+        // this.has_note = false    
       },
       deleteNote() {
         var confirm = window.confirm(`Are you sure, you want to delete this note?`)

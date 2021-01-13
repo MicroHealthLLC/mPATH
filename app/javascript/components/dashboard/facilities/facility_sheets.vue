@@ -305,9 +305,10 @@
             closable: false
           },
            {
-            label: 'Risks',
+            label: 'Risks (Coming Soon)',
             key: 'risks',
-            closable: false,           
+            closable: false, 
+            disabled: true          
           },
           {
             label: 'Notes',

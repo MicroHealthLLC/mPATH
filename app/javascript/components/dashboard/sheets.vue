@@ -159,7 +159,7 @@
         }, deep: true
       },
       currentFacility: {
-        handler(value) {
+        handler(value, previous) {
           if (_.isEmpty(value) || value.id !== previous.id) {
             this.goBackFromEdits()
           }
