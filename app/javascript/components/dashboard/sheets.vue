@@ -6,7 +6,7 @@
           :hide-close-button="true"
           :blocking="true"
           >
-          <div v-if="managerView.task || managerView.issue" class="w-100">
+          <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100">
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -24,6 +24,16 @@
               @issue-created="updateFacilityIssue"
               class="form-inside-modal"
             ></issue-form>
+              <notes-form
+              v-if="managerView.note"
+              from="manager_view"
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote=false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+              class="form-inside-modal"
+            ></notes-form>
           </div>
         </sweet-modal>
   </div>
@@ -37,6 +47,8 @@
   import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
+  import NotesForm from "./notes/notes_form"
+
 
   export default {
     name: "ProjectSheets",
@@ -45,6 +57,7 @@
       FacilityRollup,
       TaskForm,
       IssueForm,
+      NotesForm,
       FacilitySidebar,
       SweetModal
     },
@@ -146,15 +159,15 @@
         }, deep: true
       },
       currentFacility: {
-        handler(value) {
-          if (_.isEmpty(value)) {
+        handler(value, previous) {
+          if (_.isEmpty(value) || value.id !== previous.id) {
             this.goBackFromEdits()
           }
         }, deep: true
       },
       managerView: {
         handler(value) {
-          if (value.task || value.issue) {
+          if (value.task || value.issue || value.note) {
             this.$refs.formModals && this.$refs.formModals.open()
           } else {
             this.$refs.formModals && this.$refs.formModals.close()
