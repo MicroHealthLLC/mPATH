@@ -295,7 +295,7 @@
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
-        currentTab: 'overview',
+        currentTab: 'tasks',
         tabs: [
           {
             label: 'Overview',
@@ -313,10 +313,9 @@
             closable: false
           },
            {
-            label: 'Risks (Coming Soon)',
+            label: 'Risks',
             key: 'risks',
-            closable: false,
-            disabled: false
+            closable: false,                      
           },
           {
             label: 'Notes',
@@ -343,7 +342,7 @@
         'fetchFacility'
       ]),
       onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'overview'
+        this.currentTab = tab ? tab.key : 'tasks'
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)

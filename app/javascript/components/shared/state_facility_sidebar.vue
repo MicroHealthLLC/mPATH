@@ -50,7 +50,7 @@
               from="manager_view"
               :facility="currentFacility"
               :note="managerView.note"
-              @close-note-input=""
+              @close-note-input="newNote=false"
               @note-created="createdFacilityNote"
               @note-updated="updatedFacilityNote"
             ></notes-form>
@@ -72,7 +72,9 @@
         </div>
       </div>
 
-       <div class="col-md-10 facility-show-tab pr-3" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView">
+      <!-- Sheets View starts here -->
+
+       <div class="col-md-10 facility-show-tab px-4" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView">
         <div class="mt-3">
           <facility-sheets
             v-if="C_showFacilityTab"
@@ -82,8 +84,47 @@
           ></facility-sheets>
           <facility-rollup v-else></facility-rollup>
         </div>
-
+        <div v-if="isSheetsView">   
+        <sweet-modal
+          class="form_modal"
+          ref="formModals"
+          :hide-close-button="true"
+          :blocking="true"
+          >
+           
+          <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100" >
+            <task-form
+              v-if="managerView.task"
+              :facility="currentFacility"
+              :task="managerView.task"
+              title="Edit Task"
+              @task-created="updateFacilityTask"
+              @task-updated="updateFacilityTask"
+              class="form-inside-modal"
+            ></task-form>
+            <issue-form
+              v-else-if="managerView.issue"
+              :facility="currentFacility"
+              :issue="managerView.issue"
+              @issue-updated="updateFacilityIssue"
+              @issue-created="updateFacilityIssue"
+              class="form-inside-modal"
+            ></issue-form>
+              <notes-form
+              v-else-if="managerView.note"            
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote=false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+              class="form-inside-modal"
+            ></notes-form>
+          </div>
+        </sweet-modal>
+      
       </div>
+
+      <!-- Sheets View ends here -->
 
       <!-- Kanban Starts here -->
        <div class="col-md-10 facility-show-tab pr-3" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isKanbanView" >
@@ -91,14 +132,13 @@
              <div class="d-inline align-item-center kanban-filters-bar w-100">
        
             <div v-if="currentTab === 'tasks'">              
-                 <div class="mt-4 input-group w-25 mr-1 d-inline-flex">
+                 <div class="searchBar input-group w-25 mr-1 d-inline-flex">
                     <div class="input-group-prepend d-inline">
-                     <span class="input-group-text"><i class="fa fa-search"></i></span>
+                     <span class="input-group-text searchB"><i class="fa fa-search"></i></span>
                     </div>
                     <input
-                      type="search"
-                      style="height:30px"
-                      class="form-control form-control-sm"
+                      type="search"                
+                      class="form-control searchB form-control-sm"
                       placeholder="Search Tasks"
                       aria-label="Search"
                       aria-describedby="search-addon"
@@ -107,7 +147,7 @@
                     />
                   </div>
 
-                  <div class="simple-select w-25  d-inline-block mr-1">
+                  <div class="simple-select w-25  d-inline mr-1" style="position:absolute">
                      <label class="font-sm mb-0">Task Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -127,7 +167,7 @@
                     </multiselect>
                   </div>
 
-                   <div class="simple-select w-25 d-inline-block">
+                   <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
                     <label class="font-sm mb-0">Flags</label>
                     <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
                       <template slot="singleLabel" slot-scope="{option}">
@@ -143,22 +183,16 @@
                     </label>
                   </div> -->
                 </div>
-                <!-- Kanban Tasks end here -->
-                      
-
-                 
-            
-            
+                        
               <div v-if="currentTab === 'issues'">
               
-                  <div class="mt-4 input-group w-25 mr-1 d-inline-flex">
+                  <div class="searchBar input-group w-25 mr-1 d-inline-flex">
                     <div class="input-group-prepend d-inline">
-                      <span class="input-group-text"><i class="fa fa-search"></i></span>
+                      <span class="input-group-text searchB"><i class="fa fa-search"></i></span>
                     </div>
                     <input
-                      type="search"
-                      style="height:30px"
-                      class="form-control form-control-sm"
+                      type="search"                   
+                      class="form-control searchB form-control-sm"
                       placeholder="Search Issues"
                       aria-label="Search"
                       aria-describedby="search-addon"
@@ -166,7 +200,7 @@
                       data-cy="search_issues"
                     />
                   </div>
-                  <div class="simple-select w-25 mr-1  d-inline-block">
+                  <div class="simple-select w-25 mr-1 d-inline" style="position:absolute">
                     <label class="font-sm mb-0">Task Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -185,7 +219,7 @@
                       </template>
                     </multiselect>
                   </div>
-                     <div class="simple-select w-25 d-inline-block">
+                     <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
                     <label class="font-sm mb-0">Flags</label>
                     <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
                       <template slot="singleLabel" slot-scope="{option}">
@@ -245,15 +279,15 @@
 
 
 
+
               <div v-if="currentTab === 'risks'">              
-                  <div class="mt-4 input-group w-25 d-inline-flex mr-1">
+                  <div class="searchBar input-group w-25 d-inline-flex mr-1">
                     <div class="input-group-prepend d-inline">
-                      <span class="input-group-text"><i class="fa fa-search"></i></span>
+                      <span class="input-group-text searchB"><i class="fa fa-search"></i></span>
                     </div>
                     <input
-                      type="search"
-                      style="height:30px"
-                      class="form-control form-control-sm"
+                      type="search"                
+                      class="form-control searchB form-control-sm"
                       placeholder="Search Risks"
                       aria-label="Search"
                       aria-describedby="search-addon"
@@ -262,7 +296,7 @@
                     />
                   </div>
                            
-                  <div class="simple-select w-25 d-inline-block">
+                  <div class="simple-select w-25 d-inline" style="position:absolute">
                     <label class="font-sm mb-0">Task Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
@@ -362,7 +396,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import {SweetModal} from 'sweet-modal-vue'
-   import CustomTabs from './custom-tabs'
+  import CustomTabs from './custom-tabs'
   import FacilityShow from './../dashboard/facilities/facility_show'
   import FacilitySheets from './../dashboard/facilities/facility_sheets'
   import FacilityRollup from './../dashboard/facilities/facility_rollup'
@@ -438,7 +472,7 @@
     computed: {
       ...mapGetters([ 
         'managerView',
-         'getAdvancedFilterOptions',
+        'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'taskIssueProgressFilter',
         'getTaskIssueUserFilter',
@@ -900,6 +934,15 @@
           }
         }, deep: true
       },
+        managerView: {
+        handler(value) {
+          if (value.task || value.issue || value.note) {
+            this.$refs.formModals && this.$refs.formModals.open()
+          } else {
+            this.$refs.formModals && this.$refs.formModals.close()
+          }
+        }, deep: true      
+      },
       filteredFacilityGroups: {
         handler(value) {
           if (!(this.currentFacilityGroup && _.map(value, 'id').includes(this.currentFacilityGroup.id))) {
@@ -980,9 +1023,16 @@
     padding-right:5px;
     box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
+  .searchBar {
+    margin-top: 24px;
+  }
+  .searchB {
+    height:32px;
+  }
   .kanban-filters-bar {
     background-color: #fff;
     border-top:solid .3px #ededed;
+    padding-bottom: 9px;
     margin-left:200px;
     position: absolute;
     z-index: 10; 
