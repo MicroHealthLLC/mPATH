@@ -86,7 +86,8 @@ export default new Vuex.Store({
       issue: null,
       note: null,
       risk: null
-    }
+    },
+    mapZoomFilter: new Array
   },
 
   mutations: {
@@ -251,7 +252,8 @@ export default new Vuex.Store({
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
       }
-    }
+    },
+    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds
   },
 
   getters: {
@@ -1125,7 +1127,8 @@ export default new Vuex.Store({
     },
     riskApproaches: () => {
       return ['avoid', 'mitigate', 'transfer', 'accept']
-    }
+    },
+    getMapZoomFilter: (state) => state.mapZoomFilter
   },
 
   actions: {
