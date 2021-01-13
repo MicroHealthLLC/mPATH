@@ -30,6 +30,17 @@ describe('Admin Panel Organization', function() {
     cy.get('#logout').click()
   })
 
+  it('Could not create new Organization if title is blank', function() {
+    cy.get('.action_item > a').contains('New Organization').click()
+    cy.get('#page_title').contains('New Organization').should('be.visible')
+    cy.get('#organization_submit_action').contains('Create Organization').click()
+    cy.get('.errors').contains("Title can't be blank")
+    cy.get('.inline-errors').contains("can't be blank")
+    cy.get('#page_title').contains('New Organization').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+
   it('Delete Organization', function() {
     cy.get('#index_table_organizations').should('be.visible')
     cy.get('#index_table_organizations > tbody > tr').first().within(() => {
@@ -49,6 +60,17 @@ describe('Admin Panel Organization', function() {
     cy.get('.current_filter').contains('Title contains Test Organization').should('be.visible')
     cy.get('#index_table_organizations > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
+  })
+
+  it('Delete all organizations', function() {
+    cy.get('.disabled').contains('Batch Actions').should('be.visible')
+    cy.get('#collection_selection_toggle_all').click()
+    cy.get('.dropdown_menu_button').click()
+    cy.get('.batch_action').contains('Delete Selected').click()
+    cy.get('.ui-dialog-buttonset > :nth-child(1)').contains('OK').click()
+    cy.get('.flashes').contains('Successfully deleted 1 Organizations').should('be.visible')
+    cy.get('.blank_slate').contains('There are no Organizations yet. Create one').should('be.visible')
     cy.get('#logout').click()
   })
 })

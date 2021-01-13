@@ -4,6 +4,7 @@ describe('Sheet Overview Page', function() {
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
+    cy.get('[data-cy=facility_tabs]').contains('Overview').should('be.visible').click()
   })
 
   it('Open Sheet overview to display the summary of a facility', function() {

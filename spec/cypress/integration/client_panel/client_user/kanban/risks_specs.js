@@ -29,26 +29,26 @@ describe('Kanban Risks View', function() {
     cy.logout()
   })
 
-  it('Drag a risk from first stage and drop it to next stage', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
-      cy.get('[data-cy=risks]').first().as('origin')
-    })
+  // it('Drag a risk from first stage and drop it to next stage', function() {
+  //   cy.get('[data-cy=kanban_col]').first().within(() => {
+  //     cy.get('[data-cy=risks]').first().as('origin')
+  //   })
 
-    cy.get('[data-cy=kanban_col]').last().within(() => {
-      cy.get('[data-cy=risks]').as('destination')
-    })
+  //   cy.get('[data-cy=kanban_col]').last().within(() => {
+  //     cy.get('[data-cy=risks]').as('destination')
+  //   })
 
-    cy.get('@origin').drag('@destination', {force: true})
+  //   cy.get('@origin').drag('@destination', {force: true})
 
-    cy.get('[data-cy=kanban_col]').first().within(() => {
-      cy.get('[data-cy=risks]').should('not.exist')
-    })
+  //   cy.get('[data-cy=kanban_col]').first().within(() => {
+  //     cy.get('[data-cy=risks]').should('not.exist')
+  //   })
 
-    cy.get('[data-cy=kanban_col]').last().within(() => {
-      cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
-    })
-    cy.logout()
-  })
+  //   cy.get('[data-cy=kanban_col]').last().within(() => {
+  //     cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
+  //   })
+  //   cy.logout()
+  // })
 
   // it('Search risk by typing title', function() {
   //   cy.get('[data-cy=kanban_search]').should('be.visible').first().click({force: true})

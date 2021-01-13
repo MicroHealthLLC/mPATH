@@ -19,6 +19,7 @@ describe('Projects List', function() {
 
   it('Open a facility of a project', function() {
     cy.openFacility()
+    cy.get('[data-cy=facility_tabs]').contains('Overview').should('be.visible').click()
     cy.contains('Facility Group:').should('be.visible')
     cy.contains('Project Completion Date:').should('be.visible')
     cy.contains('Project Status:').should('be.visible')

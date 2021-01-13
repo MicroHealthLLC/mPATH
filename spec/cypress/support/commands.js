@@ -7,13 +7,13 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-cy=user_password]').type(password).should('have.value', password)
   cy.get('[data-cy=user_remember_me]').click()
   cy.get('[data-cy=submit]').click()
-  cy.contains('Welcome to MicroHealth Geographical Information System')
+  cy.contains('Welcome to MicroHealth Geographical Information System').should('be.visible')
 })
 
 // Logout Command
 Cypress.Commands.add("logout", () => {
   cy.get('[data-cy=logout]').click()
-  cy.contains('You need to sign in before continuing.')
+  cy.contains('You need to sign in before continuing.', { timeout: 60000 }).should('be.visible')
 })
 
 // Open first Project
@@ -35,7 +35,8 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
   cy.facilityUnderGroup()
-  cy.contains('Facility Summary')
+  cy.get('[data-cy=facility_manager_tab]').contains('Facility Manager').should('be.visible').click()
+  // cy.contains('Facility Summary').should('be.visible')
 })
 
 // Open Teams page of a project
@@ -205,5 +206,13 @@ Cypress.Commands.add("openTaskStageAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
     cy.get('#task_stages').contains('Task Stages').click({force: true})
+  })
+})
+
+// Open Role from Admin panel
+Cypress.Commands.add("openRoleAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#roles').contains('Roles').click({force: true})
   })
 })

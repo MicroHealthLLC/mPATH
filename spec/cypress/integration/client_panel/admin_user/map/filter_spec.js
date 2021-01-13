@@ -156,7 +156,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Task Stages: New Task Stage').should('be.visible')
     })
-    cy.testNewTaskStageFilter()
+    cy.facilityClientFilter()
     cy.logout()
   })
 
@@ -207,7 +207,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Issue Stages: New Issue Stage').should('be.visible')
     })
-    cy.testNewIssueStageFilter()
+    cy.issueUserFilter()
     cy.logout()
   })
 

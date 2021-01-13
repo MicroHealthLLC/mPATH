@@ -117,4 +117,34 @@ describe('Admin Panel Users', function() {
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
     cy.get('#logout').click()
   })
+
+  it('Sort User according to First Name', function() {
+    cy.get('.sortable').contains('First Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Test2').should('be.visible')
+    cy.get('.sortable').contains('First Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Test1').should('be.visible')
+    cy.get('.sortable').contains('First Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Test2').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort User according to Last Name', function() {
+    cy.get('.sortable').contains('Last Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Client').should('be.visible')
+    cy.get('.sortable').contains('Last Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Admin').should('be.visible')
+    cy.get('.sortable').contains('Last Name').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Client').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort User according to Email', function() {
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('client@test.com').should('be.visible')
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('admin@test.com').should('be.visible')
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('client@test.com').should('be.visible')
+    cy.get('#logout').click()
+  })
 })
