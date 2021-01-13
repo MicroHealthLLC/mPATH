@@ -8,7 +8,7 @@ describe('Sheet Overview Page', function() {
 
   it('Open Sheet overview to display the summary of a facility', function() {
     cy.get('[data-cy=facility_sheets]').within(() => {
-      cy.get('[data-cy=facility_tabs]').first().contains('Overview').should('be.visible')
+      cy.get('[data-cy=facility_tabs]').first().contains('Overview').should('be.visible').click()
       cy.contains('Facility Summary').should('be.visible')
       cy.contains('Facility Group:').should('be.visible')
       cy.contains('Project Completion Date:').should('be.visible')
