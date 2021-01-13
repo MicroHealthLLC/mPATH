@@ -5,7 +5,7 @@ admin.assign_attributes(
   password: 'T3$tAdmin',
   password_confirmation: 'T3$tAdmin',
   title: 'Mr.',
-  first_name: 'Test',
+  first_name: 'Test1',
   role: "superadmin",
   last_name: 'Admin'
 )
@@ -16,7 +16,7 @@ client.assign_attributes(
   password: 'T3$tClient',
   password_confirmation: 'T3$tClient',
   title: 'Mr.',
-  first_name: 'Test',
+  first_name: 'Test2',
   last_name: 'Client',
   role: 'client'
 )

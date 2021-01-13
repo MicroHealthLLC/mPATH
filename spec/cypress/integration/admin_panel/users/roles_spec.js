@@ -51,4 +51,13 @@ describe('Admin Panel Roles', function() {
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
     cy.get('#logout').click()
   })
+
+  it('Sort Role according to name', function() {
+    cy.get('#index_table_roles > tbody > tr').first().contains('client').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_roles > tbody > tr').first().contains('superadmin').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_roles > tbody > tr').first().contains('client').should('be.visible')
+    cy.get('#logout').click()
+  })
 })
