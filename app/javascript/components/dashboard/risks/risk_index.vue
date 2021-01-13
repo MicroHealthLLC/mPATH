@@ -238,6 +238,7 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypes',
+        'riskStageFilter',
         'riskUserFilter',
         'currentProject',
         'taskTypeFilter',
@@ -252,6 +253,8 @@
       filteredRisks() {
 
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
@@ -265,10 +268,12 @@
           let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
           if(taskIssueUsers.length > 0){
             valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-
           }
+
           //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
+
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
@@ -276,7 +281,7 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
