@@ -249,6 +249,7 @@
   import NotesSheetsIndex from './../notes/notes_sheets_index'
   import IssueSheetsIndex from './../issues/issue_sheets_index'
   import TaskSheetsIndex from './../tasks/task_sheets_index'
+  import RiskSheetsIndex from './../risks/sheets/index'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
 
@@ -308,7 +309,7 @@
             label: 'Risks (Coming Soon)',
             key: 'risks',
             closable: false, 
-            disabled: true          
+            disabled: false          
           },
           {
             label: 'Notes',
