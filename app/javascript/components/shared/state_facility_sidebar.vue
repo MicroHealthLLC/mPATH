@@ -85,13 +85,12 @@
           <facility-rollup v-else></facility-rollup>
         </div>
         <div v-if="isSheetsView">   
-        <sweet-modal
-          class="form_modal"
-          ref="formModals"
-          :hide-close-button="true"
-          :blocking="true"
-          >
-           
+          <sweet-modal
+            class="form_modal"
+            ref="formModals"
+            :hide-close-button="true"
+            :blocking="true"
+            >           
           <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100" >
             <task-form
               v-if="managerView.task"
@@ -118,9 +117,10 @@
               @note-created="createdFacilityNote"
               @note-updated="updatedFacilityNote"
               class="form-inside-modal"
-            ></notes-form>
-          </div>
-        </sweet-modal>
+            ></notes-form>  
+           </div>       
+          </sweet-modal>
+         </div>
       
       </div>
 
