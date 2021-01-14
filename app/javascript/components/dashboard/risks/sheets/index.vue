@@ -66,9 +66,9 @@
           <font-awesome-icon icon="file-excel"/>         
         </button>
       <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
-        <h5>Total: {{filteredTasks.length}}</h5>
+        <h5>Total: {{filteredRisks.length}}</h5>
       </label>
-      <div v-if="filteredTasks.length > 0">
+      <div v-if="filteredRisks.length > 0">
         <div style="margin-bottom:100px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
@@ -98,7 +98,7 @@
               v-for="(task, i) in sortedTasks"
               class="taskHover"
               href="#"
-              :class="{'b_border': !!filteredTasks[i+1]}"
+              :class="{'b_border': !!filteredRisks[i+1]}"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -107,7 +107,7 @@
             />
           <div class="float-right mb-4">
           <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
@@ -137,7 +137,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks">
+        <tr  v-for="(task, i) in filteredRisks">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -167,7 +167,7 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   // import moment from 'moment'
-  import Risk from "./risk"
+  import RiskSheets from "./risk"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
@@ -216,7 +216,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredTasks.length) this.currentPage++;
+        if((this.currentPage*this.pageSize) < this.filteredRisks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -271,57 +271,30 @@
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
-      filteredTasks() {
-        let typeIds = _.map(this.C_taskTypeFilter, 'id')
-        let stageIds = _.map(this.taskStageFilter, 'id')
-        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+      filteredRisks() {
+
+        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+
+        const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        
         let taskIssueProgress = this.taskIssueProgressFilter
-
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
-          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
-
-          if (taskIssueUsers.length > 0) {  
-            if(taskIssueUsers.length > 0){
-              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-            }
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
 
-          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
-          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
-
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
-            var is_valid = resource.notes.length > 0
-            for (var createdAt of _notesCreatedAt) {
-              var nDate = moment(createdAt, "YYYY-MM-DD")
-              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if (is_valid) break
-            }
-            valid = valid && is_valid
-          }
-
-          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = valid && is_valid
-          }
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
@@ -329,11 +302,15 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
 
-          return valid
-        }), ['dueDate'])
-        return tasks
+          if (search_query) valid = valid && search_query.test(resource.riskName)
+
+
+          return valid;
+        })), ['dueDate'])
+
+        return risks
       },
       C_sheetsTaskFilter: {
         get() {
@@ -380,7 +357,7 @@
         }
       },
       sortedTasks:function() {
-          return this.filteredTasks.sort((a,b) => {
+          return this.filteredRisks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;

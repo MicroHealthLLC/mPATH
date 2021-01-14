@@ -55,16 +55,15 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import {SweetModal} from 'sweet-modal-vue'
-  import TaskForm from "./task_form"
+  import RiskForm from "./form"
   // import IssueForm from "./../issues/issue_form"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
   export default {
-    name: 'TaskSheets',
+    name: 'RiskSheets',
     components: {
-      TaskForm,
-      IssueForm,
+      RiskForm,
       SweetModal,
     },
     props: {
