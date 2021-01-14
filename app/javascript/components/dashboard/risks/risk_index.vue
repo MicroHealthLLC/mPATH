@@ -62,6 +62,51 @@
         </div>
       </div>
 
+       <div class="d-flex font-sm w-100 mt-2">
+        <div class="simple-select w-50 mr-1">
+          <multiselect
+            v-model="C_riskApproachFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Risk Approach"
+            :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div class="simple-select w-50">
+          <multiselect
+            v-model="C_riskApproachFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Risk Approach"
+            :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+
+       
+        
+
       <div class="mt-3">
         <button v-if="_isallowed('write')"
           class="btn btn-md btn-primary addRiskBtn mr-3"
@@ -80,6 +125,7 @@
             <hr/>
             <risk-show
               v-for="(risk, i) in filteredRisks"
+              :load="log(risk)"
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -171,18 +217,20 @@
     methods: {
       ...mapMutations([
         'setAdvancedFilter',
+        'setRiskApproachFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setRiskApproachFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-      // log(r) {
-      //   console.log(r)
-      // },
+      log(r) {
+        console.log(r)
+      },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)
         this.newRisk = false
@@ -226,6 +274,8 @@
     computed: {
       ...mapGetters([
         'getAdvancedFilterOptions',
+        'getRiskApproachFilterOptions',
+        'getRiskApproachFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
@@ -242,6 +292,8 @@
         'riskUserFilter',
         'currentProject',
         'taskTypeFilter',
+        'riskApproach',
+        'riskApproaches',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -254,6 +306,7 @@
 
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
 
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
@@ -282,6 +335,8 @@
           }
 
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
+
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
@@ -326,6 +381,26 @@
           this.setTaskTypeFilter(value)
         }
       },
+      C_riskApproachFilter: {
+      get() {
+        // Note: This code will be useful if want active as default select and never want advanced filter blank
+        // if (this.getAdvancedFilter.length == 0) {
+        //   // return [{ id: 'active', name: 'Active' }]
+        //   this.setRiskApproachFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+        //   return this.getAdvancedFilter
+        // }else{
+        //   return this.getAdvancedFilter
+        // }
+        return this.getRiskApproachFilter
+      },
+      set(value) {
+        if (!value) {
+          this.setRiskApproachFilter([])
+        } else {
+          this.setRiskApproachFilter(value)
+        }
+      }
+    },
       C_myRisks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('risks')

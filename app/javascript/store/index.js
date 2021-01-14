@@ -35,6 +35,8 @@ export default new Vuex.Store({
 
     riskStages: new Array,
     riskStageFilter: new Array,
+    riskApproachFilter: new Array,
+    riskApproachFilterOptions: new Array,
 
     issueStages: new Array,
     issueTypes: new Array,
@@ -97,6 +99,7 @@ export default new Vuex.Store({
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
+    setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
       // var _taskIssueOverdueFilter = []
@@ -311,6 +314,18 @@ export default new Vuex.Store({
       ]
       return options;
     },
+
+    getRiskApproachFilter: state => state.riskApproachFilter,
+    getRiskApproachFilterOptions: (state, getters) => {
+      var options = [
+        {id: 'accept', name: 'Accept', value: 'accept'},
+        {id: 'avoid', name: 'Avoid', value: 'avoid'},
+        {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
+        {id: 'transfer', name: 'Transfer', value: "transfer"},      
+      ]
+      return options;
+    },
+
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
       return [
@@ -331,6 +346,7 @@ export default new Vuex.Store({
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
+        ['riskApproachFilter', 'Risk Approach'],
 
         // Advanced Filters
         // The first index value is filterCategoryId in advanced filter
@@ -507,6 +523,8 @@ export default new Vuex.Store({
 
     riskStages: state => state.riskStages,
     riskStageFilter: state => state.riskStageFilter,
+    riskApproach: state => state.riskApproach,
+    riskApproachFilter: state => state.riskApproachFilter,
 
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
@@ -786,6 +804,15 @@ export default new Vuex.Store({
             case "riskStageIds": {
               var risks = facility.risks
               var resources = _.filter(risks, ti => f[k].includes(ti.riskStageId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              break
+            }
+            case "riskApproaches": {
+              var risks = facility.risks
+              var resources = _.filter(risks, ti => f[k].includes(ti.riskApproach) )
               if(resources.length < 1){
                 valid = false
               }
@@ -1173,7 +1200,7 @@ export default new Vuex.Store({
             commit('setFacilityGroups', res.data.project.facilityGroups)
             commit('setProjectUsers', res.data.project.users)
             commit('setStatuses', res.data.project.statuses)
-            commit('setTaskTypes', res.data.project.taskTypes)
+            commit('setTaskTypes', res.data.project.taskTypes)            
             commit('setTaskStages', res.data.project.taskStages)
             commit('setRiskStages', res.data.project.riskStages)
             commit('setIssueStages', res.data.project.issueStages)
@@ -1391,6 +1418,7 @@ export default new Vuex.Store({
         'issueStageFilter',
         
         'riskStageFilter',
+        'riskApproachFilter',
 
         'taskIssueProgressFilter',
         'myActionsFilter',
