@@ -199,6 +199,7 @@ export default {
       },
       initialFacilities: [],
       facilitiesSet: false,
+      mapFacilityCount: null,
     };
   },
   computed: {
@@ -294,29 +295,30 @@ export default {
       if (!this.facilitiesSet && this.contentLoaded) {
         this.initialFacilities = this.facilities;
         this.facilitiesSet = true;
+        this.mapFacilityCount = this.initialFacilities.length;
       }
       // Verify bounds_changed event payload is not undefined
       if (payload && this.facilitiesSet) {
         var bounds = JSON.parse(JSON.stringify(payload));
-
         this.mapBounds.south = bounds.south;
         this.mapBounds.west = bounds.west;
         this.mapBounds.north = bounds.north;
         this.mapBounds.east = bounds.east;
-        // Reset facilities to initial state
-        this.setFacilities(this.initialFacilities);
         // Update array of Ids of facilities that are visible on map
         this.setMapZoomFilter(this.visibleMarkers());
         // Set facilities at state level by filtering out non-visible facilities
-        this.setFacilities(
-          this.facilities.filter((item) =>
-            this.getMapZoomFilter.includes(item.id)
-          )
-        );
+        if (this.getMapZoomFilter.length !== this.mapFacilityCount) {
+          this.setFacilities(
+            this.initialFacilities.filter((item) =>
+              this.getMapZoomFilter.includes(item.id)
+            )
+          );
+          this.mapFacilityCount = this.facilities.length;
+        }
       }
     },
     visibleMarkers() {
-      return this.facilities
+      return this.initialFacilities
         .filter(
           (item) =>
             Number(item.lng) > this.mapBounds.west &&
@@ -326,6 +328,9 @@ export default {
         )
         .map((item) => Number(item.id));
     },
+  },
+  beforeDestroy() {
+    this.setFacilities(this.initialFacilities);
   },
 };
 </script>
