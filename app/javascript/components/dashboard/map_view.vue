@@ -27,6 +27,15 @@
               scaleControl: true,
               streetViewControl: false,
               fullscreenControl: true,
+              restriction: {
+                latLngBounds: {
+                  north: 85,
+                  south: -85,
+                  west: -179.5,
+                  east: 179.5,
+                },
+                strictBounds: true,
+              },
             }"
             @click="resetView"
             @bounds_changed="captureMapBounds($event)"
