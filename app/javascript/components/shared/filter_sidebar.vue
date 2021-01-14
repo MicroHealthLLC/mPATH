@@ -193,15 +193,8 @@
                 </div>
               </div>
               <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
-            </div> 
-
-            
-          </div>
-        
-          
-            <!-- First row: Filter View Title/Header -->
-
-        
+            </div>             
+          </div>        
         </div>
       </div>
     </div>
