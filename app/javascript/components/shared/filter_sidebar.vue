@@ -24,18 +24,8 @@
         <div class="row justify-content-between">
           <div class="col-md-6">
             <div>
-              <label class="font-sm mb-0">Project Name</label>
-              <multiselect v-model="currentProject" track-by="name" label="name" :options="projects" :searchable="false" :allow-empty="false" select-label="Select" @select="updateProjectQuery">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Project Status</label>
-              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
+              <label class="font-sm mb-0">Facility Group</label>
+              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -43,8 +33,17 @@
                 </template>
               </multiselect>
             </div>
-            <div class="">
-              <label class="font-sm mb-0">Facility % Progress Range</label>
+           <label class="font-sm mb-0">Facility Name</label>
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.facilityName}}</span>
+                  </div>
+                </template>
+                <span slot="noOptions">...</span>
+              </multiselect>
+            <div>
+               <label class="font-sm mb-0">Facility % Progress Range</label>
               <div class="form-row">
                 <div class="form-group col mb-0">
                   <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
@@ -55,32 +54,25 @@
               </div>
               <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
             </div>
+            </div>
+            <div class="">
+            
           </div>
           <div class="col-md-6">
-            <div>
-              <label class="font-sm mb-0">Facility Group</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
+             <label class="font-sm mb-0">Project Status</label>
+              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
-              </multiselect>
-            </div>
+              </multiselect>      
             <div>
-              <label class="font-sm mb-0">Facility Name</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.facilityName}}</span>
-                  </div>
-                </template>
-                <span slot="noOptions">...</span>
-              </multiselect>
+              <!-- Available row for filter -->
             </div>
             <div>
               <label class="font-sm mb-0">Project Completion Date Range</label>
-              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
+              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
           </div>
         </div>
@@ -740,6 +732,9 @@ export default {
   z-index: 1000;
   transition: .4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
+}
+.vdp-datepicker.dp {
+  height: 42.8px !important;
 }
 #filter_bar {
   overflow-y: auto;
