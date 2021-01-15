@@ -35,7 +35,7 @@ export default new Vuex.Store({
 
     riskStages: new Array,
     riskStageFilter: new Array,
-    riskApproachFilter: new Array,
+    riskApproachFilter: null,
     riskApproachFilterOptions: new Array,
 
     issueStages: new Array,
@@ -99,7 +99,6 @@ export default new Vuex.Store({
     setTaskIssueUserFilter: (state, filter) => state.taskIssueUserFilter = filter,
     setTaskIssueProgressStatusFilter: (state, filter) => state.taskIssueProgressStatusFilter = filter,
     setTaskIssueProgressFilter: (state, filter) => state.taskIssueProgressFilter = filter,
-    setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
     setAdvancedFilter: (state, selectedOptions) => {
       state.advancedFilter = selectedOptions
       // var _taskIssueOverdueFilter = []
@@ -148,6 +147,7 @@ export default new Vuex.Store({
 
     setRiskStages: (state, riskStages) => state.riskStages = riskStages,
     setRiskStageFilter: (state, filter) => state.riskStageFilter = filter,
+    setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
 
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,

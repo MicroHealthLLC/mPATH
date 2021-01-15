@@ -62,7 +62,7 @@
         </div>
       </div>
 
-       <div class="d-flex font-sm w-100 mt-2">
+       <div class="d-flex font-sm w-100 mt-1">
         <div class="simple-select w-50 mr-1">
           <multiselect
             v-model="C_riskApproachFilter"
@@ -82,31 +82,10 @@
             </template>
           </multiselect>
         </div>
-        <div class="simple-select w-50">
-          <multiselect
-            v-model="C_riskApproachFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Risk Approach"
-            :options="getRiskApproachFilterOptions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div>
+        <!-- Another filter fits here -->
         </div>
       </div>
-
-
-       
-        
-
       <div class="mt-3">
         <button v-if="_isallowed('write')"
           class="btn btn-md btn-primary addRiskBtn mr-3"
@@ -216,8 +195,7 @@
     },
     methods: {
       ...mapMutations([
-        'setAdvancedFilter',
-        'setRiskApproachFilter',
+        'setAdvancedFilter',  
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -382,25 +360,13 @@
         }
       },
       C_riskApproachFilter: {
-      get() {
-        // Note: This code will be useful if want active as default select and never want advanced filter blank
-        // if (this.getAdvancedFilter.length == 0) {
-        //   // return [{ id: 'active', name: 'Active' }]
-        //   this.setRiskApproachFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
-        //   return this.getAdvancedFilter
-        // }else{
-        //   return this.getAdvancedFilter
-        // }
-        return this.getRiskApproachFilter
-      },
-      set(value) {
-        if (!value) {
-          this.setRiskApproachFilter([])
-        } else {
-          this.setRiskApproachFilter(value)
+        get() {      
+          return this.getRiskApproachFilter
+        },
+        set(value) {     
+            this.setRiskApproachFilter(value)
         }
-      }
-    },
+      },
       C_myRisks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('risks')
