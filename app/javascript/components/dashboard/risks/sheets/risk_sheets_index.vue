@@ -1,25 +1,25 @@
 <template>
-  <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
+  <div id="risks-index" class="my-4" data-cy="risk_sheet_index">
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
+        <div class="input-group risk-search-bar w-100">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Tasks"
+            placeholder="Search Risks"
             aria-label="Search"
             aria-describedby="search-addon"
-            v-model="tasksQuery"
-            data-cy="search_tasks">
+            v-model="risksQuery"
+            data-cy="search_risks">
           </div>
         <div class="simple-select w-100 mx-1 d-flex">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Risk Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -46,12 +46,12 @@
     </div>
 
       <button v-if="_isallowed('write')"
-         class="btn btn-md btn-primary mr-3 addTaskBtn"
-        @click.prevent="addNewTask"
-        data-cy="add_task"
+         class="btn btn-md btn-primary mr-3 addRiskBtn"
+        @click.prevent="addNewRisk"
+        data-cy="add_risk"
       >
         <font-awesome-icon icon="plus-circle" /> 
-        Add Task
+        Add Risk
       </button>
        <button
           v-tooltip="`Export to PDF`"
@@ -61,15 +61,15 @@
         </button>
         <button
           v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Task List')"
+          @click.prevent="exportToExcel('table', 'Risk List')"
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
+      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="risk_total">
         <h5>Total: {{filteredRisks.length}}</h5>
       </label>
       <div v-if="filteredRisks.length > 0">
-        <div style="margin-bottom:100px" data-cy="tasks_table">
+        <div style="margin-bottom:100px" data-cy="risks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="sixteen" />
@@ -83,8 +83,8 @@
               <col class="twenty" />
             </colgroup>
             <tr style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('text')">Risk<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('riskType')">Risk Category <i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
@@ -94,15 +94,16 @@
               <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
             </tr>
           </table>
-             <task-sheets
-              v-for="(task, i) in sortedTasks"
-              class="taskHover"
+             <risk-sheets
+              v-for="(risk, i) in sortedRisks"
+              class="riskHover"
               href="#"
+              :load="log(risk)"
               :class="{'b_border': !!filteredRisks[i+1]}"
-              :key="task.id"
-              :task="task"
+              :key="risk.id"
+              :risk="risk"
               :from-view="from"
-              @edit-task="editTask"
+              @edit-risk="editRisk"
               @toggle-watched="toggleWatched"
             />
           <div class="float-right mb-4">
@@ -112,20 +113,20 @@
            </div>
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
     
     <table
       class="table table-sm table-bordered table-striped"
-      ref="table" id="taskSheetsList1"
+      ref="table" id="riskSheetsList1"
       style="display:none"
       >
       <thead>
         <tr style="background-color:#ededed">
-          <th>Task</th>
-          <th>Task Category</th>
+          <th>Risk</th>
+          <th>Risk Category</th>
           <th>Facility</th>
           <th>Start Date</th>
           <th>Due Date</th>
@@ -137,22 +138,22 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredRisks">
-          <td>{{task.text}}</td>
-          <td>{{task.taskType}}</td>
-          <td>{{task.facilityName}}</td>
-          <td>{{formatDate(task.startDate)}}</td>
-          <td>{{formatDate(task.dueDate)}}</td>
-          <td v-if="(task.userNames.length) > 0">{{ task.userNames }}</td>
+        <tr  v-for="(risk, i) in filteredRisks">
+          <td>{{risk.text}}</td>
+          <td>{{risk.riskType}}</td>
+          <td>{{risk.facilityName}}</td>
+          <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
           <td v-else></td>
-          <td>{{task.progress + "%"}}</td>
-          <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+          <td>{{risk.progress + "%"}}</td>
+          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.watched) == true"><h5>X</h5></td>
+          <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
-             By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+          <td v-if="(risk.notes.length) > 0">
+             By: {{ risk.notes[0].user.fullName}} on
+            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -167,7 +168,7 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   // import moment from 'moment'
-  import RiskSheets from "./risk"
+  import RiskSheets from "./risk_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
@@ -185,9 +186,9 @@
     props: ['facility', 'from'],
     data() {
       return {
-        tasks: Object,
+        risks: Object,
         now: new Date().toISOString(),
-        tasksQuery: '',
+        risksQuery: '',
         pageSize:15,
         currentPage:1,
         currentSort:'text',
@@ -206,8 +207,11 @@
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
-        'setTaskForManager'
+        'setRiskForManager'
       ]),
+      log(t){
+        console.log(t)
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -221,24 +225,24 @@
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
       },
-      addNewTask() {
+      addNewRisk() {
         if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'task', value: {}})
+          this.setRiskForManager({key: 'risk', value: {}})
         } else {
           this.$emit('show-hide')
         }
       },
-      editTask(task) {
-        this.$emit('show-hide', task)
+      editRisk(risk) {
+        this.$emit('show-hide', risk)
       },
-      toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
+      toggleWatched(risk) {
+        this.$emit('toggle-watch-risk', risk)
       },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#taskSheetsList1"})
-        doc.save("Task_List.pdf")
+        doc.autoTable({html: "#riskSheetsList1"})
+        doc.save("Risk_List.pdf")
       },
       exportToExcel(table, name){      
         if (!table.nodeType) table = this.$refs.table
@@ -261,18 +265,17 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
-        'taskStageFilter',
+        'riskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
-        'taskUserFilter',
+        'riskUserFilter',
         'taskTypes',
         'viewPermit'
       ]),
       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
       },
       filteredRisks() {
-
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
 
@@ -302,7 +305,7 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
@@ -312,7 +315,7 @@
 
         return risks
       },
-      C_sheetsTaskFilter: {
+      C_sheetsRiskFilter: {
         get() {
           return this.getAdvancedFilter
         },
@@ -347,16 +350,16 @@
           this.setTaskTypeFilter(value)
         }
       },
-      C_myTasks: {
+      C_myRisks: {
         get() {
-          return _.map(this.myActionsFilter, 'value').includes('tasks')
+          return _.map(this.myActionsFilter, 'value').includes('risks')
         },
         set(value) {
-          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
-          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Risks", value: "risks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
         }
       },
-      sortedTasks:function() {
+      sortedRisks:function() {
           return this.filteredRisks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
@@ -375,7 +378,7 @@
 </script>
 
 <style lang="scss">
-  #tasks-index {
+  #risks-index {
     background-color: #ffffff;
     z-index: 100;
     height: 500px
@@ -389,7 +392,7 @@
     color: #383838 !important;
     padding-left:4px !important
   }
-  .task-search-bar {
+  .risk-search-bar {
     height: 31px;
     width: 310px;
     border-radius: 5px;
@@ -453,7 +456,7 @@
     border-radius: 4px;
     padding: 4px;
   }
-  .taskHover:hover {
+  .riskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
@@ -496,7 +499,7 @@
   .pagination {
     margin-bottom: 50px !important;
   }
-  .addTaskBtn, .exportBtns {
+  .addRiskBtn, .exportBtns {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
  .exportBtns { 

@@ -39,14 +39,14 @@
           class="form-inside-modal"
         ></risk-form>
 
-<!--         <issue-form
+        <issue-form
           v-if="Object.entries(DV_edit_issue).length"
           :facility="facility"
           :issue="DV_edit_issue"
           @issue-updated="updateRelatedRiskIssue"
           @on-close-form="onCloseForm"
           class="form-inside-modal"
-        ></issue-form> -->
+        ></issue-form>
       </div>
     </sweet-modal>
   </div>
@@ -55,7 +55,7 @@
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import {SweetModal} from 'sweet-modal-vue'
-  import RiskForm from "./form"
+  import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
   import moment from 'moment'
   Vue.prototype.moment = moment
@@ -71,85 +71,85 @@
         type: String,
         default: 'map_view'
       },
-      task: Object
+      risk: Object
     },
     data() {
       return {
         loading: true,
         now: new Date().toISOString(),
-        DV_task: {},
-        DV_edit_task: {},
-        DV_edit_issue: {},
-        has_task: false
+        DV_risk: {},
+        DV_edit_risk: {},
+        has_risk: false
       }
     },
     mounted() {
-      if (this.task) {
+      if (this.risk) {
         this.loading = false
-        this.DV_task = this.task
+        this.DV_risk = this.risk
       }
     },
     methods: {
       ...mapMutations([
-        'updateTasksHash',
-        'setTaskForManager'
+        'updateRisksHash',
+        'setRiskForManager'
       ]),
       ...mapActions([
-        'taskDeleted',
-        'taskUpdated',
-        'updateWatchedTasks'
+        'riskDeleted',
+        'riskUpdated',
+        'updateWatchedRisks'
       ]),
-      deleteTask() {
-        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
+      deleteRisk() {
+        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
-        this.taskDeleted(this.DV_task)
+        this.riskDeleted(this.DV_risk)
       },
-      openSubTask(subTask) {
-        let task = this.currentTasks.find(t => t.id == subTask.id)
-        if (!task) return
-        this.has_task = Object.entries(task).length > 0
-        this.DV_edit_task = task
-        this.$refs.taskFormModal && this.$refs.taskFormModal.open()
+      openSubRisk(subRisk) {
+        let risk = this.currentRisks.find(t => t.id == subRisk.id)
+        if (!risk) return
+        this.has_risk = Object.entries(risk).length > 0
+        this.DV_edit_risk = risk
+        this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
       openSubIssue(subIssue) {
         let issue = this.currentIssues.find(t => t.id == subIssue.id)
         if (!issue) return
-        this.has_task = Object.entries(issue).length > 0
+        this.has_risk = Object.entries(issue).length > 0
         this.DV_edit_issue = issue
-        this.$refs.taskFormModal && this.$refs.taskFormModal.open()
+        this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
-      editTask() {
+      editRisk() {
+
         if (this.fromView == 'map_view') {
-          this.$emit('edit-task', this.DV_task)
+          this.$emit('edit-risk', this.DV_risk)
         }
         else if (this.fromView == 'manager_view') {
-          this.setTaskForManager({key: 'task', value: this.DV_task})
+          this.setRiskForManager({key: 'risk', value: this.DV_risk})
         }
         else {
-          this.has_task = Object.entries(this.DV_task).length > 0
-          this.DV_edit_task = this.DV_task
-          this.$refs.taskFormModal && this.$refs.taskFormModal.open()
+          this.has_risk = Object.entries(this.DV_risk).length > 0
+          this.DV_edit_risk = this.DV_risk
+          this.$refs.riskFormModal && this.$refs.riskFormModal.open()
         }
       },
       onCloseForm() {
-        this.$refs.taskFormModal && this.$refs.taskFormModal.close()
-        this.has_task = false
-        this.DV_edit_task = {}
+        this.$refs.riskFormModal && this.$refs.riskFormModal.close()
+        this.has_risk = false
+        this.DV_edit_risk = {}
         this.DV_edit_issue = {}
       },
       toggleWatched() {
-        if (this.DV_task.watched) {
-          var confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+        if (this.DV_risk.watched) {
+          var confirm = window.confirm(`Are you sure, you want to remove this risk from on-watch?`)
           if (!confirm) {return}
         }
-        this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.updateWatchedTasks(this.DV_task)
+        this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
+        this.updateWatchedRisks(this.DV_risk)
       },
-      updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
+      updateRelatedRiskIssue(risk) {
+        this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
       },
-      getTask(task) {
-        return this.currentTasks.find(t => t.id == task.id) || {}
+      getRisk(risk) {
+        return this.currentRisks.find(t => t.id == risk.id) || {}
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
@@ -160,30 +160,30 @@
         'facilities',
         'facilityGroups',
         'managerView',
-        'currentTasks',
+        'currentRisks',
         'currentIssues',
         'viewPermit'
       ]),
       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
       },
       is_overdue() {
-        return this.DV_task.progress !== 100 && new Date(this.DV_task.dueDate).getTime() < new Date().getTime()
+        return this.DV_risk.progress !== 100 && new Date(this.DV_risk.dueDate).getTime() < new Date().getTime()
       },
       facility() {
-        return this.facilities.find(f => f.id == this.DV_task.facilityId)
+        return this.facilities.find(f => f.id == this.DV_risk.facilityId)
       },
       facilityGroup() {
         return this.facilityGroups.find(f => f.id == this.facility.facilityGroupId)
       },
       C_editForManager() {
-        return this.managerView.task && this.managerView.task.id == this.DV_task.id
+        return this.managerView.risk && this.managerView.risk.id == this.DV_risk.id
       }
     },
     watch: {
-      task: {
+      risk: {
         handler(value) {
-          this.DV_task = Object.assign({}, value)
+          this.DV_risk = Object.assign({}, value)
         },
         deep: true
       }
@@ -230,10 +230,10 @@
   td {
     overflow-wrap: break-word;
   }
-  .task_form_modal.sweet-modal-overlay {
+  .risk_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
-  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+  .risk_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
     .sweet-content {

@@ -394,7 +394,7 @@
         });
        }
       }
-    }
+    };
 </script>
 
 <style lang="scss">
