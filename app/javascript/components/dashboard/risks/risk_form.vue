@@ -582,11 +582,11 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager'
+        'setRiskForManager'
       ]),
       ...mapActions([
         'riskDeleted',
-        'taskUpdated',
+        'riskUpdated',
         'updateWatchedRisks'
       ]),
       INITIAL_RISK_STATE() {
@@ -598,7 +598,7 @@
           impactLevel: 1,
           riskApproach: 'avoid',
           riskApproachDescription: '',
-          taskTypeId: '',
+          riskTypeId: '',
           riskStageId: '',
           progress: 0,
           startDate: '',
@@ -637,6 +637,7 @@
         }
       },
       loadRisk(risk) {
+        debugger;
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))

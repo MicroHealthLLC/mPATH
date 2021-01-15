@@ -91,7 +91,7 @@
             :hide-close-button="true"
             :blocking="true"
             >           
-          <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100" >
+          <div v-if="managerView.task || managerView.issue || managerView.risk || managerView.note " class="w-100" >
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -101,6 +101,15 @@
               @task-updated="updateFacilityTask"
               class="form-inside-modal"
             ></task-form>
+            <risk-form
+              v-if="managerView.risk"
+              :facility="currentFacility"
+              :task="managerView.risk"
+              title="Edit Risk"
+              @risk-created="updateFacilityRisk"
+              @risk-updated="updateFacilityRisk"
+              class="form-inside-modal"
+            ></risk-form>
             <issue-form
               v-else-if="managerView.issue"
               :facility="currentFacility"
@@ -969,7 +978,7 @@
         }, deep: true
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>
