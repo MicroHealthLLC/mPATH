@@ -236,7 +236,13 @@
             @refresh-facility="refreshFacility"
           ></issue-sheets-index>
         </div>
-       
+        <div v-if="currentTab == 'risks'">
+          <risk-sheets-index
+            :facility="DV_facility"
+            :from="from"
+            @refresh-facility="refreshFacility"
+          ></risk-sheets-index>
+        </div>
       </div>
     </div>
   </div>
@@ -249,6 +255,7 @@
   import NotesSheetsIndex from './../notes/notes_sheets_index'
   import IssueSheetsIndex from './../issues/issue_sheets_index'
   import TaskSheetsIndex from './../tasks/task_sheets_index'
+  import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
 
@@ -259,6 +266,7 @@
       NotesSheetsIndex,
       IssueSheetsIndex,
       TaskSheetsIndex,
+      RiskSheetsIndex,
       CustomTabs,
       Loader
     },
@@ -305,10 +313,10 @@
             closable: false
           },
            {
-            label: 'Risks (Coming Soon)',
+            label: 'Risks',
             key: 'risks',
             closable: false, 
-            disabled: true          
+            disabled: false          
           },
           {
             label: 'Notes',
@@ -547,7 +555,7 @@
         this.nullifyTasksForManager()
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>

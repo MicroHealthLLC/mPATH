@@ -91,7 +91,7 @@
             :hide-close-button="true"
             :blocking="true"
             >           
-          <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100" >
+          <div v-if="managerView.task || managerView.issue || managerView.risk || managerView.note " class="w-100" >
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -101,6 +101,15 @@
               @task-updated="updateFacilityTask"
               class="form-inside-modal"
             ></task-form>
+            <risk-form
+              v-if="managerView.risk"
+              :facility="currentFacility"
+              :risk="managerView.risk"
+              title="Edit Risk"
+              @risk-created="updateFacilityRisk"
+              @risk-updated="updateFacilityRisk"
+              class="form-inside-modal"
+            ></risk-form>
             <issue-form
               v-else-if="managerView.issue"
               :facility="currentFacility"
@@ -834,6 +843,7 @@
         'updateIssuesHash',
         'updateRisksHash',
         'setTaskForManager',
+         'setRiskForManager',
         'setAdvancedFilter',
         'setTaskIssueOverdueFilter',
         'setMyActionsFilter',
@@ -896,6 +906,8 @@
         this.setTaskForManager({key: 'task', value: null})
         this.setTaskForManager({key: 'issue', value: null})
         this.setTaskForManager({key: 'note', value: null})
+        this.setTaskForManager({key: 'risk', value: null})
+         this.setRiskForManager({key: 'risk', value: null})
       },
       onCloseForm() {
         this.fixedStageId = null
@@ -936,7 +948,7 @@
       },
         managerView: {
         handler(value) {
-          if (value.task || value.issue || value.note) {
+          if (value.task || value.issue || value.note || value.risk) {
             this.$refs.formModals && this.$refs.formModals.open()
           } else {
             this.$refs.formModals && this.$refs.formModals.close()
@@ -969,7 +981,7 @@
         }, deep: true
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>

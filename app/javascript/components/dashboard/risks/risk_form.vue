@@ -582,11 +582,11 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager'
+        'setRiskForManager'
       ]),
       ...mapActions([
         'riskDeleted',
-        'taskUpdated',
+        'riskUpdated',
         'updateWatchedRisks'
       ]),
       INITIAL_RISK_STATE() {
@@ -598,7 +598,7 @@
           impactLevel: 1,
           riskApproach: 'avoid',
           riskApproachDescription: '',
-          taskTypeId: '',
+          riskTypeId: '',
           riskStageId: '',
           progress: 0,
           startDate: '',
@@ -636,7 +636,7 @@
           count++
         }
       },
-      loadRisk(risk) {
+      loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
@@ -688,8 +688,8 @@
         this.updateWatchedRisks(this.DV_risk)
       },
       cancelRiskSave() {
-        this.$emit('on-close-form')
-        this.setTaskForManager({key: 'risk', value: null})
+        this.$emit('on-close-form')      
+        this.setRiskForManager({key: 'risk', value: null})
       },
       validateThenSave() {
         this.$validator.validate().then((success) => {

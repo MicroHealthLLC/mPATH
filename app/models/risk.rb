@@ -64,6 +64,7 @@ class Risk < ApplicationRecord
       user_ids: users.map(&:id).compact.uniq,
       risk_owners: users.map(&:full_name).compact.join(", "),
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      user_names: users.map(&:full_name).compact.join(", "),
       notes: notes.as_json,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
