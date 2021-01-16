@@ -119,8 +119,7 @@
         this.DV_edit_issue = issue
         this.$refs.taskFormModal && this.$refs.taskFormModal.open()
       },
-      editTask() {
-        debugger;
+      editTask() {      
         if (this.fromView == 'map_view') {
           this.$emit('edit-task', this.DV_task)
         }

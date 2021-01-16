@@ -271,9 +271,8 @@ export default new Vuex.Store({
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
       }
-    }
-    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds
-     testingbranch
+    },
+    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds    
   },
 
   getters: {

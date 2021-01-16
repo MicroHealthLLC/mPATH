@@ -104,7 +104,7 @@
             <risk-form
               v-if="managerView.risk"
               :facility="currentFacility"
-              :task="managerView.risk"
+              :risk="managerView.risk"
               title="Edit Risk"
               @risk-created="updateFacilityRisk"
               @risk-updated="updateFacilityRisk"
@@ -843,6 +843,7 @@
         'updateIssuesHash',
         'updateRisksHash',
         'setTaskForManager',
+         'setRiskForManager',
         'setAdvancedFilter',
         'setTaskIssueOverdueFilter',
         'setMyActionsFilter',
@@ -905,6 +906,8 @@
         this.setTaskForManager({key: 'task', value: null})
         this.setTaskForManager({key: 'issue', value: null})
         this.setTaskForManager({key: 'note', value: null})
+        this.setTaskForManager({key: 'risk', value: null})
+         this.setRiskForManager({key: 'risk', value: null})
       },
       onCloseForm() {
         this.fixedStageId = null
@@ -945,7 +948,7 @@
       },
         managerView: {
         handler(value) {
-          if (value.task || value.issue || value.note) {
+          if (value.task || value.issue || value.note || value.risk) {
             this.$refs.formModals && this.$refs.formModals.open()
           } else {
             this.$refs.formModals && this.$refs.formModals.close()
