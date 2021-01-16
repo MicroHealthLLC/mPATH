@@ -1,7 +1,7 @@
 <template>
   <div id="risks-index" class="my-4" data-cy="risk_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+      <div class="d-flex align-item-center justify-content-between mb-1 w-100">
         <div class="input-group risk-search-bar w-100">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
@@ -44,6 +44,27 @@
           </multiselect>
         </div>
     </div>
+     <div class="d-flex align-item-center justify-content-start filter-second-row w-60"> 
+       <div class="simple-select w-50 mr-1">
+          <multiselect
+            v-model="C_riskApproachFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Risk Approach"
+            :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+     </div>
 
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addRiskBtn"
@@ -207,7 +228,8 @@
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
-        'setRiskForManager'
+        'setRiskApproachFilter',
+        'setRiskForManager',
       ]),
       log(t){
         console.log(t)
@@ -265,6 +287,8 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
+        'getRiskApproachFilterOptions',
+        'getRiskApproachFilter',
         'riskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
@@ -278,6 +302,7 @@
       filteredRisks() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
 
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
@@ -306,6 +331,9 @@
           }
 
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
@@ -348,6 +376,14 @@
         },
         set(value) {
           this.setTaskTypeFilter(value)
+        }
+      },
+      C_riskApproachFilter: {
+        get() {      
+          return this.getRiskApproachFilter
+        },
+        set(value) {     
+            this.setRiskApproachFilter(value)
         }
       },
       C_myRisks: {
