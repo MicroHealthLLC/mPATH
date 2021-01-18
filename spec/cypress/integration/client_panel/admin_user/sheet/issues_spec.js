@@ -82,6 +82,24 @@ describe('Sheets Issues View', function() {
     cy.logout()
   })
 
+  it('Sort Issue according to Issue name', function() {
+    cy.get('[data-cy=issue_row]').first().contains('New Issue').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test Issue').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=issue_row]').first().contains('New Issue').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Assigned User', function() {
+    cy.get('[data-cy=issue_row]').first().contains('Test2 Client').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test2 Client').should('be.visible')
+    cy.logout()
+  })
+
   // it('Select issue status from list to display related issues', function() {
   //   cy.get('[data-cy=issues_table]').within(() => {
   //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
