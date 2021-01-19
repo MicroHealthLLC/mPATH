@@ -223,3 +223,9 @@ Cypress.Commands.add("openSettingAP", () => {
   cy.get('#settings').click()
   cy.get('#page_title').contains('App configurations').should('be.visible')
 })
+
+// Open User profile page
+Cypress.Commands.add("openUserProfile", () => {
+  cy.get('[data-cy=user_profile]').should('be.visible').click()
+  cy.get('[data-cy=edit_profile]', { timeout: 60000 }).contains('Edit User Profile').should('be.visible')
+})
