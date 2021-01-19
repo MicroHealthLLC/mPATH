@@ -29,4 +29,14 @@ describe('User Profile', function() {
     cy.get('[data-cy=email]').should('have.attr', 'readonly', 'readonly')
     cy.logout()
   })
+
+  it('User profile password should be read only', function() {
+    cy.get('[data-cy=password]').should('have.attr', 'readonly', 'readonly')
+    cy.logout()
+  })
+
+  it('User profile password confirmation should be read only', function() {
+    cy.get('[data-cy=password_confirmation]').should('have.attr', 'readonly', 'readonly')
+    cy.logout()
+  })
 })
