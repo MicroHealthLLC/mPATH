@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Category"
+            placeholder="Filter by Task Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -52,6 +52,25 @@
             label="name"
             placeholder="Filter by Risk Approach"
             :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+       <div class="simple-select w-50 mr-1">
+          <multiselect
+            v-model="C_riskPriorityLevelFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Priority Level"
+            :options="getRiskPriorityLevelFilterOptions"
             :searchable="false"
             :multiple="true"
             select-label="Select"
@@ -222,6 +241,7 @@
     },
     methods: {
       ...mapMutations([
+        'setRiskPriorityLevelFilter',
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
@@ -274,6 +294,8 @@
     },
     computed: {
       ...mapGetters([
+        'getRiskPriorityLevelFilter',
+        'getRiskPriorityLevelFilterOptions',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -303,6 +325,8 @@
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
         let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+        let riskPriorityLevelFilterIds = _.flatten(_.map(this.C_riskPriorityLevelFilter, 'id'))
+        let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
 
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
@@ -333,6 +357,8 @@
           if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
 
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+          
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevel)
 
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
@@ -342,6 +368,14 @@
         })), ['dueDate'])
 
         return risks
+      },
+      C_riskPriorityLevelFilter: {
+        get() {
+          return this.getRiskPriorityLevelFilter
+        },
+        set(value) {
+          this.setRiskPriorityLevelFilter(value)
+        }
       },
       C_sheetsRiskFilter: {
         get() {

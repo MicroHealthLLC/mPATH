@@ -37,6 +37,7 @@ export default new Vuex.Store({
     riskStageFilter: new Array,
     riskApproachFilter: null,
     riskApproachFilterOptions: new Array,
+    riskPriorityLevelFilter: new Array,
 
     issueStages: new Array,
     issueTypes: new Array,
@@ -149,6 +150,7 @@ export default new Vuex.Store({
     setRiskStages: (state, riskStages) => state.riskStages = riskStages,
     setRiskStageFilter: (state, filter) => state.riskStageFilter = filter,
     setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
+    setRiskPriorityLevelFilter: (state, filter) =>  state.riskPriorityLevelFilter = filter,
 
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
@@ -332,7 +334,16 @@ export default new Vuex.Store({
       ]
       return options;
     },
-
+    getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
+    getRiskPriorityLevelFilterOptions: (state, getters) => {
+      var options = [
+        {id: [1,2,3], name: 'Low', value: [1,2,3]},
+        {id: [4,5,6], name: 'Moderate', value: [4,5,6]},
+        {id: [8,9,10,12] , name: 'High', value: [8,9,10,12] },
+        {id: [15,16,20,25], name: 'Extreme', value: [15,16,20,25]}     
+      ]
+      return options;
+    },
     // This method is used to show filters applied in overview tabs
     getAllFilterNames: (state, getters) => {
       return [
