@@ -227,5 +227,5 @@ Cypress.Commands.add("openSettingAP", () => {
 // Open User profile page
 Cypress.Commands.add("openUserProfile", () => {
   cy.get('[data-cy=user_profile]').should('be.visible').click()
-  cy.get('[data-cy=edit_profile]', { timeout: 60000 }).contains('Edit User Profile').should('be.visible')
+  cy.get('[data-cy=edit_profile]', { timeout: 70000 }).contains('Edit User Profile').should('be.visible')
 })
