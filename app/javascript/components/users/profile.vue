@@ -12,7 +12,7 @@
         <label class="col-sm-2 col-form-label">First Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
           <input type="text" name="firstName" v-validate="'required'" class="form-control" v-model="profile.firstName" placeholder="John" :class="{'error': errors.has('firstName')}" data-cy="first_name">
-          <div v-show="errors.has('firstName')" class="text-danger mt-1">
+          <div v-show="errors.has('firstName')" class="text-danger mt-1" data-cy="first_name_error">
             {{errors.first('firstName')}}
           </div>
         </div>
@@ -21,7 +21,7 @@
         <label class="col-sm-2 col-form-label">Last Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
           <input type="text" name="lastName" v-validate="'required'" class="form-control" v-model="profile.lastName" placeholder="John" :class="{'error': errors.has('lastName') }" data-cy="last_name">
-          <div v-show="errors.has('lastName')" class="text-danger mt-1">
+          <div v-show="errors.has('lastName')" class="text-danger mt-1" data-cy="last_name_error">
             {{errors.first('lastName')}}
           </div>
         </div>
