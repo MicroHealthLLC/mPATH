@@ -70,7 +70,7 @@
             class='gmap-input form-control'
             @place_changed="updateAddress"
             :value="profile.address"
-            @input.stop="profile.address.address=$event.target.value"
+            @input.stop="profile.address=$event.target.value"
             @keypress.enter="$event.preventDefault"
           />
           <div v-if="C_addressDrawn" class='gmap-wraper'>
