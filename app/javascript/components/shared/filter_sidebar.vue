@@ -321,8 +321,6 @@ export default {
 
     C_riskPriorityLevelFilter: {
       get() {
-        console.log("C_riskPriorityLevelFilter")
-        console.log(this.getRiskPriorityLevelFilter)
         return this.getRiskPriorityLevelFilter
       },
       set(value) {
