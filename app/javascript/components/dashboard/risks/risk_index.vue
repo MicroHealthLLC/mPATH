@@ -96,7 +96,7 @@
          <button v-tooltip="`Export to PDF`" @click.prevent="exportToPdf" class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-pdf" />
         </button>
-        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Risks Log')" class="btn btn-md exportBtns text-light">
+        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Risk Register')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
         <div v-if="_isallowed('read')">

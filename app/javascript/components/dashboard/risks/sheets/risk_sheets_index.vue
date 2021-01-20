@@ -101,7 +101,7 @@
         </button>
         <button
           v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Risk List')"
+          @click.prevent="exportToExcel('table', 'Risk Register')"
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
