@@ -32,6 +32,15 @@ class Risk < ApplicationRecord
     end.as_json
   end
 
+  def priority_level_name
+    n = 'low'
+    n = "low" if [1,2,3].include?(priority_level)
+    n = "moderate" if [4,5,6].include?(priority_level)
+    n = "high" if [8,9,10,12].include?(priority_level)
+    n = "extreme" if [15,16,20,25].include?(priority_level)
+    n
+  end
+
   def to_json
     attach_files = []
     rf = self.risk_files
@@ -54,6 +63,7 @@ class Risk < ApplicationRecord
       progress_status = "completed"
     end
     self.as_json.merge(
+      priority_level_name: priority_level_name,
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),

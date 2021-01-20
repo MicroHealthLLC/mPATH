@@ -490,7 +490,9 @@ export default {
       'clearProgressFilters',
       'setTaskStageFilter',
       'setIssueStageFilter',
-      'setRiskStageFilter'
+      'setRiskStageFilter',
+      'setRiskApproachFilter',
+      'setRiskPriorityLevelFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -538,6 +540,8 @@ export default {
       this.clearProgressFilters()
       this.setIssueUserFilter([])
       this.setTaskUserFilter(null)
+      this.setRiskApproachFilter([])
+      this.setRiskPriorityLevelFilter([])
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;
