@@ -113,6 +113,46 @@
                   </div>
                 </template>
               </multiselect>
+
+              <label class="font-sm mb-0">Risk Approaches</label>
+              <multiselect
+                v-model="C_riskApproachFilter"
+                track-by="name"
+                label="name"
+                placeholder="Filter by Risk Approach"
+                :options="getRiskApproachFilterOptions"
+                :searchable="false"
+                :multiple="true"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+
+              <label class="font-sm mb-0">Risk Priority Level</label>
+              <multiselect
+                v-model="C_riskPriorityLevelFilter"
+                track-by="name"
+                label="name"
+                placeholder="Filter by Priority Level"
+                :options="getRiskPriorityLevelFilterOptions"
+                :searchable="false"
+                :multiple="true"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+
+
             </div>
           </div>
 
@@ -243,6 +283,10 @@ export default {
 
       'riskStages',
       'riskStageFilter',
+      'getRiskApproachFilterOptions',
+      'getRiskApproachFilter',
+      'getRiskPriorityLevelFilter',
+      'getRiskPriorityLevelFilterOptions',
 
       'issueSeverities',
       'issueTypes',
@@ -274,6 +318,26 @@ export default {
       'progressFilter',
       'viewPermit'
     ]),
+
+    C_riskPriorityLevelFilter: {
+      get() {
+        console.log("C_riskPriorityLevelFilter")
+        console.log(this.getRiskPriorityLevelFilter)
+        return this.getRiskPriorityLevelFilter
+      },
+      set(value) {
+        this.setRiskPriorityLevelFilter(value)
+      }
+    },
+
+    C_riskApproachFilter: {
+      get() {      
+        return this.getRiskApproachFilter
+      },
+      set(value) {     
+        this.setRiskApproachFilter(value)
+      }
+    },
     C_taskIssueProgress: {
       get() {
         return this.progressFilter.taskIssue
@@ -638,6 +702,14 @@ export default {
     }
   },
   watch: {
+
+    getRiskApproachFilter(value) {
+      this.updateMapFilters({ key: 'riskApproachFilter', filter: value, same: true })
+    },
+    getRiskPriorityLevelFilter(value) {
+      this.updateMapFilters({ key: 'riskPriorityLevelFilter', filter: value, same: true })
+    },
+
     getAdvancedFilter(value) {
       this.updateMapFilters({ key: 'advancedFilter', filter: value, same: true })
     },

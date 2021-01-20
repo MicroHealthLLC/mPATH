@@ -45,7 +45,7 @@
         </div>
     </div>
      <div class="d-flex align-item-center justify-content-start filter-second-row w-60"> 
-       <div class="simple-select w-50 mr-1" v-if="false">
+       <div class="simple-select w-50 mr-1" v-if="true">
           <multiselect
             v-model="C_riskApproachFilter"
             track-by="name"
@@ -64,7 +64,7 @@
             </template>
           </multiselect>
         </div>
-       <div class="simple-select w-50 mr-1" v-if="false">
+       <div class="simple-select w-50 mr-1" v-if="true">
           <multiselect
             v-model="C_riskPriorityLevelFilter"
             track-by="name"
@@ -358,7 +358,7 @@
 
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
           
-          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevel)
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName)
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
