@@ -10,7 +10,7 @@
           @on-expand-facility="showFacility"
         ></facility-sidebar>
       </div>
-       <div class="col-md-4 facility-show-tab" v-if="isFacilityManagerView">
+       <div class="col-md-4 facility-show-tab px-4" v-if="isFacilityManagerView">
         <div class="my-3">
           <facility-show
             v-if="C_showFacilityTab"
