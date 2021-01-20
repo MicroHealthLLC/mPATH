@@ -236,8 +236,10 @@
               </div>
             </template>
           </multiselect>
-        </div>        
-              <div class="simple-select form-group mx-4">
+        </div>    
+
+         <div class="d-flex align-item-center justify-content-between w-100 mb-2">    
+              <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">
                 <label class="font-sm">*Probablity:</label>
                 <multiselect
                   v-model="DV_risk.probability"
@@ -261,8 +263,7 @@
                   {{errors.first('Risk Probability')}}
                 </div>
               </div>
-
-              <div class="simple-select form-group mx-4">
+              <div class="simple-select form-group mr-2 risk-matrix-row">
                 <label class="font-sm">*Impact Level:</label>
                 <multiselect
                   v-model="DV_risk.impactLevel"
@@ -286,6 +287,21 @@
                   {{errors.first('Impact Level')}}
                 </div>
               </div>
+
+              <div class="simple-select form-group mr-4" style="width:10%">
+                <label class="font-sm">Priority Level:</label>
+                <div class="risk-priorityLevel text-center mr-1">
+                  <span class="risk-pL p-2 mx-0"> {{ DV_risk.priorityLevel }}</span>                  
+                </div>
+                <button 
+                  class="btn btn-sm btn-warning mt-1 py-0 px-4 font-sm rmBtn"
+                  @click.prevent="scrollToRiskMatrix"  
+                >Risk Matrix</button>
+              </div>
+         </div>
+
+           
+                
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
@@ -529,7 +545,7 @@
         </paginate>
       </div>
      </div>
-      <h6 class="text-danger text-small pr-1 mr-1 float-right">*Indicates required fields</h6>
+      <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
 
@@ -541,18 +557,20 @@
                 <div class="vertical-head risk-matrix-header"><h6>PROBABILITY</h6></div>
              </div>
          <div class="col">
- <!-- Risk Matrix first row, Category headers -->
+
             <div class="row">
               <div class="col"><h4 class="mb-3">Risk Matrix for: <span id="riskName">{{DV_risk.text}}</span></h4>            
               </div>
               <!-- <div class="col text-right"><h4 class="mb-3">Risk Priority Level: <span id="riskName">{{DV_risk.priorityLevel}}</span></h4>            
               </div> -->
             </div>   
+
             <div class="row"> 
               <div class="col text-center">           
                 <h6 class="mb-1">IMPACT</h6>
               </div>
-            </div>       
+            </div>    
+              <!-- Risk Matrix first row, Category headers -->   
  
             <div class="container mb-2 mt-0 risk-matrix" >              
                 <div class="row">            
@@ -781,7 +799,10 @@
       scrollToUpdates(){
         this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
         this.DV_risk.notes.unshift({body: '', user_id: '', guid: this.guid()})        
-      },   
+      },  
+      scrollToRiskMatrix(){
+        this.$refs.riskMatrix.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});   
+      },  
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
@@ -1326,6 +1347,7 @@
     margin-bottom: 5px;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
+  .rmBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
     position: sticky;
     position: -webkit-sticky; 
@@ -1394,6 +1416,22 @@
   }
   .scrollToChecklist {      
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .risk-priorityLevel {
+    border-radius: 5px;  
+    font-size: 13px;
+    min-height: 33px;
+    background-color: #efefef;
+    background-image: linear-gradient(180deg, #efefef, #dfe1e2);
+    color: #5E6469;
+    font-weight: bold; 
+  }
+  .risk-pL {
+    // margin-right: 50px;
+    font-size: large;   
+  }
+  .risk-matrix-row {
+    width: 45%
   }
     // Risk Matrix styling (Hexcodes are Bootstrap colors)
 

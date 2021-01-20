@@ -112,19 +112,21 @@
         <div style="margin-bottom:100px" data-cy="risks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
-              <col class="sixteen" />
-              <col class="ten" />
+              <col class="oneFive" />
               <col class="eight" />
               <col class="eight" />
-              <col class="ten" />
-              <col class="ten" />
-              <col class="ten" />
+              <col class="seven" />
+              <col class="seven" />
+              <col class="nine" />
+              <col class="nine" />
+              <col class="nine" />
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
             <tr style="background-color:#ededed;">
               <th class="sort-th" @click="sort('text')">Risk<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('riskType')">Risk Category <i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('riskApproach')">Risk Approach<i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('priorityLevel')">Priority Level<i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
@@ -166,8 +168,9 @@
       <thead>
         <tr style="background-color:#ededed">
           <th>Risk</th>
-          <th>Risk Category</th>
           <th>Facility</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>         
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
@@ -178,10 +181,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(risk, i) in filteredRisks">
+        <tr  v-for="(risk, index) in filteredRisks" :key="index">
           <td>{{risk.text}}</td>
-          <td>{{risk.riskType}}</td>
           <td>{{risk.facilityName}}</td>
+          <td>{{risk.riskApproach}}</td>
+          <td>{{risk.priorityLevel}}</td>         
           <td>{{formatDate(risk.startDate)}}</td>
           <td>{{formatDate(risk.dueDate)}}</td>
           <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
@@ -284,7 +288,7 @@
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#riskSheetsList1"})
-        doc.save("Risk_List.pdf")
+        doc.save("Risk Register.pdf")
       },
       exportToExcel(table, name){      
         if (!table.nodeType) table = this.$refs.table
@@ -546,11 +550,20 @@
     top: 0;
     width: 100%;
   }
+  .seven {
+    width: 7%;
+  }
   .eight {
     width: 8%;
   }
+  .nine {
+    width: 9%;
+  }
   .ten {
     width: 10%;
+  }
+  .oneFive{
+    width: 15%;
   }
   .sixteen {
     width: 16%;
