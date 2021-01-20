@@ -3,20 +3,21 @@
   <div id="risk-sheets">
     <table class="table table-sm table-bordered table-striped">
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
-        <td class="sixteen">{{risk.text}}</td>
-        <td class="ten">{{risk.riskType}}</td>
-        <td class="eight">{{formatDate(risk.startDate)}}</td>
-        <td class="eight">{{formatDate(risk.dueDate)}}</td>
-        <td class="ten" v-if="(risk.userNames.length) >= 0">{{ risk.userNames }}</td>
-        <td class="ten" v-else></td>
-        <td class="ten">{{risk.progress + "%"}}</td>
-        <td class="ten" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
-        <td class="ten" v-else></td>
+        <td class="oneFive">{{risk.text}}</td>
+        <td class="eight">{{risk.riskApproach}}</td>
+        <td class="eight">{{risk.priorityLevel}}</td>
+        <td class="seven">{{formatDate(risk.startDate)}}</td>
+        <td class="seven">{{formatDate(risk.dueDate)}}</td>
+        <td class="nine" v-if="(risk.userNames.length) >= 0">{{ risk.userNames }}</td>
+        <td class="nine" v-else></td>
+        <td class="nine">{{risk.progress + "%"}}</td>
+        <td class="nine" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
+        <td class="nine" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="twenty" v-if="(risk.notes.length) > 0">
-          By: {{ risk.notes[0].user.fullName}} on
-          {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
+         <span class="toolTip" v-tooltip="(moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a'))"> 
+           By: {{ risk.notes[0].user.fullName}}:</span><br> {{risk.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -210,11 +211,20 @@
     margin-bottom: 0 !important;
     overflow: auto;
   }
+  .seven {
+    width: 7%;
+  }
   .eight {
     width: 8%;
   }
+  .nine {
+    width: 9%;
+  }
   .ten {
     width: 10%;
+  }
+  .oneFive {
+    width: 15%;
   }
   .sixteen {
     width: 16%;
@@ -226,6 +236,13 @@
     width: 100%;
     height: 20px;
     font-weight: bold;
+  }
+  .toolTip {
+    background-color: #6c757d;
+    font-size: .75rem;
+    padding:1px;
+    color: #fff;
+    border-radius: 3px;
   }
   td {
     overflow-wrap: break-word;

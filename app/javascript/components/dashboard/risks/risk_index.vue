@@ -121,30 +121,37 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
          <table style="display:none" class="table table-sm table-bordered" ref="table" id="riskList1">
       <thead>
-        <tr>
-          <th></th>
-          <th>Risk Name</th>
-          <th>Task Category</th>
+        <tr>          
+          <th>Risk</th>
+          <th>Facility</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>         
           <th>Start Date</th>
           <th>Due Date</th>
-          <th>Risk Owner(s)</th>
-          <th>Priority Level</th>
-          <th>Risk Approach</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>
+          <th>Overdue</th>
+          <th>On Watch</th>
           <th>Last Update</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(risk, i) in filteredRisks">
-          <td class="text-center">{{i+1}}</td>
           <td>{{risk.text}}</td>
-          <td>{{risk.taskType}}</td>
-          <td>{{risk.startDate}}</td>
-          <td>{{risk.dueDate}}</td>
-          <td>{{risk.riskOwners}}</td>
-          <td>{{risk.priorityLevel}}</td>
+          <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach}}</td>
-           <td v-if="(risk.notes.length) > 0">
-            By: {{ risk.notes[0].user.fullName}} on
+          <td>{{risk.priorityLevel}}</td>         
+          <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
+          <td v-else></td>
+          <td>{{risk.progress + "%"}}</td>
+          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.watched) == true"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.notes.length) > 0">
+             By: {{ risk.notes[0].user.fullName}} on
             {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
@@ -228,8 +235,8 @@
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
         doc.autoTable({ html: "#riskList1" })
-        doc.text(150, 285, "Risks List")
-        doc.save("Risks_List.pdf")
+        doc.text(150, 285, "Risk Register")
+        doc.save("Risk Register.pdf")
       },
      exportToExcel(table, name) {
         if (!table.nodeType) table = this.$refs.table
