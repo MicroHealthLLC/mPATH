@@ -626,7 +626,7 @@
                 <div class ="col-md-2 orange p-2 text-center" :class="[matrix24 == true ? 'reg-opacity' : '']">
                 High<br> 8
                 </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
                 High<br> 12                
                 </div>
                 <div class ="col-md-2 red p-2 text-center" :class="[matrix44 == true ? 'reg-opacity' : '']">
@@ -655,7 +655,7 @@
                 High<br> 12
                 </div>
                 <div class ="col-md-2 red p-2 text-center" :class="[matrix53 == true ? 'reg-opacity' : '']">
-                Extreme<br> 14
+                Extreme<br> 15
                 </div>
             </div>
 

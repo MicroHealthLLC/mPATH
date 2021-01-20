@@ -15,9 +15,9 @@
         <td class="nine" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-        <td class="twenty" v-if="(risk.notes.length) > 0">
-         <span class="toolTip" v-tooltip="(moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a'))"> 
-           By: {{ risk.notes[0].user.fullName}}:</span><br> {{risk.notes[0].body}}
+         <td class="twenty" v-if="(risk.notes.length) > 0">
+         <span class="toolTip px-1" v-tooltip="(risk.notes[0].user.fullName)">{{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}
+        </span><br> {{risk.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -238,7 +238,7 @@
     font-weight: bold;
   }
   .toolTip {
-    background-color: #6c757d;
+    background-color: rgba(132, 133, 133, 1);
     font-size: .75rem;
     padding:1px;
     color: #fff;
