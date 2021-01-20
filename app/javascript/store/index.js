@@ -319,7 +319,19 @@ export default new Vuex.Store({
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'}
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
+
+        // Priority Level is specific to Risk
+        {id: 'low', name: 'Low', value: 'low', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+        {id: 'moderate', name: 'Moderate', value: 'moderate', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+        {id: 'high', name: 'High', value: 'high', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level' },
+        {id: 'extreme', name: 'Extreme', value: 'extreme', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+
+        // Risk Approach is specific to Risk
+        {id: 'accept', name: 'Accept', value: 'accept', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        {id: 'avoid', name: 'Avoid', value: 'avoid', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        {id: 'mitigate', name: 'Mitigate', value: "mitigate", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        {id: 'transfer', name: 'Transfer', value: "transfer", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'}  
       ]
       return options;
     },
@@ -337,10 +349,10 @@ export default new Vuex.Store({
     getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
       var options = [
-        {id: [1,2,3], name: 'Low', value: [1,2,3]},
-        {id: [4,5,6], name: 'Moderate', value: [4,5,6]},
-        {id: [8,9,10,12] , name: 'High', value: [8,9,10,12] },
-        {id: [15,16,20,25], name: 'Extreme', value: [15,16,20,25]}     
+        {id: 'low', name: 'Low', value: 'low'},
+        {id: 'moderate', name: 'Moderate', value: 'moderate'},
+        {id: 'high', name: 'High', value: 'high' },
+        {id: 'extreme', name: 'Extreme', value: 'extreme'}     
       ]
       return options;
     },
@@ -371,7 +383,8 @@ export default new Vuex.Store({
         ['overDueFilter','Action Overdue'],
         ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
-        ['progressStatusFilter', 'Action Status']
+        ['progressStatusFilter', 'Action Status'],
+        ['riskPriorityLevelFilter', 'Priority Level']
 
       ]
     },
@@ -383,7 +396,7 @@ export default new Vuex.Store({
         return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
 
       // Advanced filters
-      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter'].includes(_filterValue) ){
+      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'riskPriorityLevelFilter', 'riskApproachFilter'].includes(_filterValue) ){
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
@@ -592,6 +605,12 @@ export default new Vuex.Store({
       let taskIssueActiveProgressStatus = _.map(aFilter, 'id').includes("active")
       let taskIssueCompletedProgressStatus = _.map(aFilter, 'id').includes("completed")
 
+      let riskPriorityLevel = _.map(aFilter, 'filterCategoryId').includes("riskPriorityLevelFilter")
+      let riskPriorityLevelNames = _.map(aFilter, 'id')
+
+      let riskApproach = _.map(aFilter, 'filterCategoryId').includes("riskApproachFilter")
+      let riskApproachNames = _.map(aFilter, 'id')
+
       let valid = true
 
       if ( 
@@ -658,6 +677,16 @@ export default new Vuex.Store({
       
       if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
         valid = valid && watches.includes(false)
+      }
+
+      if(riskPriorityLevel == true){
+        var pLevels = _.uniq(_.compact( _.map(resources, 'priorityLevelName') ) )
+        valid = valid && ( _.intersection(riskPriorityLevelNames, pLevels ).length > 0 )
+      }
+
+      if(riskApproach == true){
+        var rApproaches = _.uniq(_.compact( _.map(resources, 'riskApproach') ) )
+        valid = valid && ( _.intersection(riskApproachNames, rApproaches ).length > 0 )
       }
 
       return valid
@@ -1437,7 +1466,7 @@ export default new Vuex.Store({
         'issueStageFilter',
         
         'riskStageFilter',
-        'riskApproachFilter',
+        // 'riskApproachFilter',
 
         'taskIssueProgressFilter',
         'myActionsFilter',

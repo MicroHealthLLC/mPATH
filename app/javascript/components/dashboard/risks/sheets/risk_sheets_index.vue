@@ -45,7 +45,7 @@
         </div>
     </div>
      <div class="d-flex align-item-center justify-content-start filter-second-row w-60"> 
-       <div class="simple-select w-50 mr-1">
+       <div class="simple-select w-50 mr-1" v-if="false">
           <multiselect
             v-model="C_riskApproachFilter"
             track-by="name"
@@ -64,7 +64,7 @@
             </template>
           </multiselect>
         </div>
-       <div class="simple-select w-50 mr-1">
+       <div class="simple-select w-50 mr-1" v-if="false">
           <multiselect
             v-model="C_riskPriorityLevelFilter"
             track-by="name"
@@ -329,7 +329,7 @@
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
         let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
-        let riskPriorityLevelFilterIds = _.flatten(_.map(this.C_riskPriorityLevelFilter, 'id'))
+        let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
         let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
 
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
@@ -363,7 +363,6 @@
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevel)
-
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
