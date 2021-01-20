@@ -4,7 +4,7 @@
       id="risks-form"
       @submit.prevent="validateThenSave"
       :class="{'_disabled': loading}"
-      class="mx-auto"
+      class="mx-auto pb-4"
       accept-charset="UTF-8"
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
@@ -236,57 +236,56 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Probablity:</label>
-          <multiselect
-            v-model="DV_risk.probability"
-            v-validate="'required'"
-            placeholder="Risk Probablity"
-            :options="probabilities"
-            :searchable="false"
-            :allow-empty="false"
-            select-label="Select"
-            :disabled="!_isallowed('write')"
-            :class="{'error': errors.has('Risk Probability')}"
-            data-cy="risk_probability"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option}}</span>
+        </div>        
+              <div class="simple-select form-group mx-4">
+                <label class="font-sm">*Probablity:</label>
+                <multiselect
+                  v-model="DV_risk.probability"
+                  v-validate="'required'"
+                  placeholder="Risk Probablity"
+                  :options="probabilities"
+                  :searchable="false"
+                  :allow-empty="false"
+                  select-label="Select"
+                  :disabled="!_isallowed('write')"
+                  :class="{'error': errors.has('Risk Probability')}"
+                  data-cy="risk_probability"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+                <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
+                  {{errors.first('Risk Probability')}}
+                </div>
               </div>
-            </template>
-          </multiselect>
-          <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
-            {{errors.first('Risk Probability')}}
-          </div>
-        </div>
 
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Impact Level:</label>
-          <multiselect
-            v-model="DV_risk.impactLevel"
-            v-validate="'required'"
-            placeholder="Impact Level"
-            :options="impactLevels"
-            :searchable="false"
-            select-label="Select"
-            :disabled="!_isallowed('write')"
-            :allow-empty="false"
-            :class="{'error': errors.has('Impact Level')}"
-            data-cy="impact_level"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option}}</span>
+              <div class="simple-select form-group mx-4">
+                <label class="font-sm">*Impact Level:</label>
+                <multiselect
+                  v-model="DV_risk.impactLevel"
+                  v-validate="'required'"
+                  placeholder="Impact Level"
+                  :options="impactLevels"
+                  :searchable="false"
+                  select-label="Select"
+                  :disabled="!_isallowed('write')"
+                  :allow-empty="false"
+                  :class="{'error': errors.has('Impact Level')}"
+                  data-cy="impact_level"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+                <div v-show="errors.has('Impact Level')" class="text-danger" data-cy="impact_level_error">
+                  {{errors.first('Impact Level')}}
+                </div>
               </div>
-            </template>
-          </multiselect>
-          <div v-show="errors.has('Impact Level')" class="text-danger" data-cy="impact_level_error">
-            {{errors.first('Impact Level')}}
-          </div>
-        </div>
-
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
@@ -530,8 +529,170 @@
         </paginate>
       </div>
      </div>
-      <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
-      <div ref="addUpdates" class="pt-0 mt-0"> </div>
+      <h6 class="text-danger text-small pr-1 mr-1 float-right">*Indicates required fields</h6>
+      <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
+      <div>
+
+<!-- Risk Matrix begins here -->
+      <div class="container mt-2">
+<!-- This first row is not a true row...Just a transformed vertical div header -->
+        <div class="row">              
+             <div style="position:relative">
+                <div class="vertical-head risk-matrix-header"><h6>PROBABILITY</h6></div>
+             </div>
+         <div class="col">
+ <!-- Risk Matrix first row, Category headers -->
+            <div class="row">
+              <div class="col"><h4 class="mb-3">Risk Matrix for: <span id="riskName">{{DV_risk.text}}</span></h4>            
+              </div>
+              <!-- <div class="col text-right"><h4 class="mb-3">Risk Priority Level: <span id="riskName">{{DV_risk.priorityLevel}}</span></h4>            
+              </div> -->
+            </div>   
+            <div class="row"> 
+              <div class="col text-center">           
+                <h6 class="mb-1">IMPACT</h6>
+              </div>
+            </div>       
+ 
+            <div class="container mb-2 mt-0 risk-matrix" >              
+                <div class="row">            
+                <div class ="col-md-2 p-2 gray text-center">                
+                </div>
+                <div class ="col-md-2 gray p-2 text-center">
+                 Negigible <br>1
+                </div>
+                <div class ="col-md-2 gray p-2 text-center">
+                 Minor <br>2
+                </div>
+                <div class ="col-md-2 gray p-2 text-center">
+                 Moderate<br> 3
+                </div>
+                <div class ="col-md-2 gray p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
+                  Major<br> 4
+                </div>
+                <div class ="col-md-2 gray p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
+                  Catastrophic<br> 5
+                </div>
+            </div>
+
+  <!-- Risk Matrix 2nd row (first color row) -->
+            <div class="row">                
+                <div class ="col-md-2 gray p-2 text-center">
+                Almost<br>Certain<br> 5
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
+                Moderate<br> 5
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix25 == true ? 'reg-opacity' : '']">
+                High<br> 10
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix35 == true ? 'reg-opacity' : '']">
+                Extreme <br>15
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix45 == true ? 'reg-opacity' : '']">
+                Extreme<br> 20
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix55 == true ? 'reg-opacity' : '']">
+                 Extreme<br> 25
+                </div>
+            </div>
+
+<!-- Risk Matrix 3rd row -->
+            <div class="row">        
+               <div class ="col-md-2 gray p-2 text-center">
+                Likely<br> 4
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
+                Moderate<br> 4
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix24 == true ? 'reg-opacity' : '']">
+                High<br> 8
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
+                High<br> 12                
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix44 == true ? 'reg-opacity' : '']">
+                Extreme<br> 16
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix54 == true ? 'reg-opacity' : '']">
+                Extreme<br> 20 
+                </div>
+            </div>
+
+ <!-- Risk Matrix 4th row -->
+            <div class="row">           
+               <div class ="col-md-2 gray p-2 text-center">
+                Possible<br> 3
+                </div>
+                <div class ="col-md-2 green p-2 text-center" :class="[matrix13 == true ? 'reg-opacity' : '']">
+                Low<br> 3 
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix23 == true ? 'reg-opacity' : '']">
+                Moderate<br> 6
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix33 == true ? 'reg-opacity' : '']">
+                High<br> 9 
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix43 == true ? 'reg-opacity' : '']">
+                High<br> 12
+                </div>
+                <div class ="col-md-2 red p-2 text-center" :class="[matrix53 == true ? 'reg-opacity' : '']">
+                Extreme<br> 14
+                </div>
+            </div>
+
+ <!-- Risk Matrix 5th row -->
+            <div class="row">
+                <div class ="col-md-2 gray p-2 text-center">
+                Unlikely<br> 2
+                </div>
+                <div class ="col-md-2 green p-2 text-center" :class="[matrix12 == true ? 'reg-opacity' : '']">
+                Low<br> 2
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix22 == true ? 'reg-opacity' : '']">
+                Moderate<br> 4
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix32 == true ? 'reg-opacity' : '']">
+                Moderate<br> 6
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix42 == true ? 'reg-opacity' : '']" >
+                High<br> 8
+                </div>
+                <div class ="col-md-2 orange p-2 text-center" :class="[matrix52 == true ? 'reg-opacity' : '']">
+                High<br> 10
+                </div>
+            </div>
+
+  <!-- Risk Matrix 6th row (last row) -->
+            <div class="row">
+                <div class ="col-md-2 gray p-2 text-center">
+                Rare<br> 1
+                </div>
+                <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
+                Low<br> 1
+                </div>
+                <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
+                Low<br> 2
+                </div>
+                <div class ="col-md-2 green p-2 text-center" :class="[matrix31 == true ? 'reg-opacity' : '']">
+                Low<br> 3 
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix41 == true ? 'reg-opacity' : '']">
+                Moderate<br> 4
+                </div>
+                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix51 == true ? 'reg-opacity' : '']">
+                Moderate<br> 5
+                </div>
+            </div>             
+
+         </div>     
+         </div>
+         <!-- Risk Matrix Container ends at this top div  -->      
+         </div>
+       </div>
+
+
+      </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
 
@@ -627,6 +788,7 @@
       },
       log(r) {
         console.log(r)
+        
       },
       handleEnd(e, checklists) {
         let cc = this.DV_risk.checklists
@@ -690,6 +852,13 @@
       cancelRiskSave() {
         this.$emit('on-close-form')      
         this.setRiskForManager({key: 'risk', value: null})
+      },
+      matrixLogic() {
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 1){
+          let i1p1
+          return 
+        }
+        
       },
       validateThenSave() {
         this.$validator.validate().then((success) => {
@@ -924,7 +1093,107 @@
       },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
-      }
+      },
+      matrix11() {       
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 1)
+        return true
+      },
+      matrix12() {       
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 2)
+        return true
+      },
+       matrix13() {       
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 3)
+        return true
+      },
+       matrix14() {       
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 4)
+        return true
+      },
+       matrix15() {       
+        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 5)
+        return true
+      },
+      matrix21() {       
+        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 1)
+        return true
+      },
+      matrix22() {       
+        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 2)
+        return true
+      },
+       matrix23() {       
+        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 3)
+        return true
+      },
+       matrix24() {       
+        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 4)
+        return true
+      },
+       matrix25() {       
+        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 5)
+        return true
+      },
+      matrix31() {       
+        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 1)
+        return true
+      },
+      matrix32() {       
+        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 2)
+        return true
+      },
+       matrix33() {       
+        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 3)
+        return true
+      },
+       matrix34() {       
+        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 4)
+        return true
+      },
+       matrix35() {       
+        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 5)
+        return true
+      },
+       matrix41() {       
+        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 1)
+        return true
+      },
+      matrix42() {       
+        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 2)
+        return true
+      },
+       matrix43() {       
+        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 3)
+        return true
+      },
+       matrix44() {       
+        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 4)
+        return true
+      },
+       matrix45() {       
+        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 5)
+        return true
+      },
+      matrix51() {       
+        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 1)
+        return true
+      },
+      matrix52() {       
+        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 2)
+        return true
+      },
+       matrix53() {       
+        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 3)
+        return true
+      },
+       matrix54() {       
+        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 4)
+        return true
+      },
+       matrix55() {       
+        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 5)
+        return true  
+       }      
     },
     watch: {
       risk: {
@@ -1124,6 +1393,64 @@
       transform: translate(-50%, -50%);
   }
   .scrollToChecklist {      
-      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
+    // Risk Matrix styling (Hexcodes are Bootstrap colors)
+
+  .risk-matrix {
+    font-size: .85rem; 
+    border-radius: 4px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);      
+  }
+  .risk-matrix-header {
+    color: #5E6469;
+    font-weight: bold;
+    background-color: #efefef;
+    background-image: linear-gradient(180deg, #efefef, #dfe1e2);
+  }
+  .vertical-head {
+    transform: rotate(-90deg);
+    position:absolute;
+    top: 64%;
+    left: 34%;
+    width: 30%;
+    font-weight: 500;
+  }
+  .gray {
+    background-color: #f7f7f7;
+  }
+  .red {
+    background-color: #d9534f;
+  }
+  .yellow {
+    background-color: yellow;    
+  }
+  .orange {
+    background-color: #f0ad4e;
+  }
+  .green {
+    background-color: #5cb85c;
+  }
+  .red, .yellow, .orange, .green {
+    opacity: .44;
+    min-height: 76px;
+  }
+  .red:hover, .yellow:hover, 
+  .orange:hover, .green:hover {
+    opacity: 1;
+    cursor: pointer;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .reg-opacity {
+    opacity: 1 !important;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  #riskName {
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    border: 1px solid transparent
+  }
+  
 </style>
