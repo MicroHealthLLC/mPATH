@@ -42,4 +42,34 @@ describe('Teams List', function() {
     })
     cy.logout()
   })
+
+  it('Sort Team according to First Name', function() {
+    cy.get('.has-gutter > tr > .el-table_1_column_2 > .cell').contains('First Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_2 > .cell').first().contains('Test1').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_2 > .cell').contains('First Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_2 > .cell').first().contains('Test2').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_2 > .cell').contains('First Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_2 > .cell').first().contains('Test1').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Last Name', function() {
+    cy.get('.has-gutter > tr > .el-table_1_column_3 > .cell').contains('Last Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_3 > .cell').first().contains('Admin').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_3 > .cell').contains('Last Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_3 > .cell').first().contains('Client').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_3 > .cell').contains('Last Name').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_3 > .cell').first().contains('Admin').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Email', function() {
+    cy.get('.has-gutter > tr > .el-table_1_column_7 > .cell').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_7 > .cell').first().contains('admin@test.com').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_7 > .cell').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_7 > .cell').first().contains('client@test.com').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_7 > .cell').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_7 > .cell').first().contains('admin@test.com').should('be.visible')
+    cy.logout()
+  })
 })

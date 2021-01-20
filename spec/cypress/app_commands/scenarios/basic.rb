@@ -408,7 +408,7 @@ Risk.find_or_create_by(
 
 facility_4 = Facility.find_or_create_by(
   facility_name: 'Test Facility 4',
-  address: 'Abo Simbel Desert, Aswan Governorate 81514, Egypt',
+  address: 'Axford, Marlborough SN8, UK',
   point_of_contact: 'Test points',
   phone_number: '+447400123454',
   email: 'facility4@test.com',
@@ -416,7 +416,7 @@ facility_4 = Facility.find_or_create_by(
   lng: '32.7181357' ,
   status: 'active',
   country_code: 'GB',
-  creator_id: admin.id,
+  creator_id: client.id,
   facility_group_id: facility_group_2.id
 )
 

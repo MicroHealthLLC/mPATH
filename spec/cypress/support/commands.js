@@ -216,3 +216,16 @@ Cypress.Commands.add("openRoleAP", () => {
     cy.get('#roles').contains('Roles').click({force: true})
   })
 })
+
+// Open Settings from Admin panel
+Cypress.Commands.add("openSettingAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#settings').click()
+  cy.get('#page_title').contains('App configurations').should('be.visible')
+})
+
+// Open User profile page
+Cypress.Commands.add("openUserProfile", () => {
+  cy.get('[data-cy=user_profile]').should('be.visible').click()
+  cy.get('[data-cy=edit_profile]', { timeout: 70000 }).contains('Edit User Profile').should('be.visible')
+})

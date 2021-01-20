@@ -41,6 +41,25 @@ describe('Sheets Tasks View', function() {
     cy.logout()
   })
 
+  it('Sort Task list according to Task name', function() {
+    cy.get('[data-cy=task_row]').first().contains('New Task').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test Task').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=task_row]').first().contains('New Task').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task list according to Assigned User', function() {
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test1 Admin, Test2 Client').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.logout()
+  })
+
   // it('Select task status from list to display related tasks', function() {
   //   cy.get('[data-cy=tasks_table]').within(() => {
   //     cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)

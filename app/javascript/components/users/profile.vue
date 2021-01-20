@@ -1,18 +1,18 @@
 <template>
   <div id="users_wrapper" v-if="!loading">
-    <h5 class="my-3">Edit User Profile</h5>
+    <h5 class="my-3" data-cy="edit_profile">Edit User Profile</h5>
     <form @submit.prevent="handleSubmit" class="w-100" autocomplete="off">
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Title</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" v-model="profile.title" placeholder="Mr.">
+          <input type="text" class="form-control" v-model="profile.title" placeholder="Mr." data-cy="title">
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Firt Name<abbr title="required">*</abbr></label>
+        <label class="col-sm-2 col-form-label">First Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="text" name="firstName" v-validate="'required'" class="form-control" v-model="profile.firstName" placeholder="John" :class="{'error': errors.has('firstName')}">
-          <div v-show="errors.has('firstName')" class="text-danger mt-1">
+          <input type="text" name="firstName" v-validate="'required'" class="form-control" v-model="profile.firstName" placeholder="John" :class="{'error': errors.has('firstName')}" data-cy="first_name">
+          <div v-show="errors.has('firstName')" class="text-danger mt-1" data-cy="first_name_error">
             {{errors.first('firstName')}}
           </div>
         </div>
@@ -20,8 +20,8 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Last Name<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="text" name="lastName" v-validate="'required'" class="form-control" v-model="profile.lastName" placeholder="John" :class="{'error': errors.has('lastName') }">
-          <div v-show="errors.has('lastName')" class="text-danger mt-1">
+          <input type="text" name="lastName" v-validate="'required'" class="form-control" v-model="profile.lastName" placeholder="John" :class="{'error': errors.has('lastName') }" data-cy="last_name">
+          <div v-show="errors.has('lastName')" class="text-danger mt-1" data-cy="last_name_error">
             {{errors.first('lastName')}}
           </div>
         </div>
@@ -29,13 +29,13 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Email<abbr title="required">*</abbr></label>
         <div class="col-sm-10">
-          <input type="email" readOnly class="form-control" v-model="profile.email" placeholder="johndoe@example.com" autocomplete="off" required>
+          <input type="email" readOnly class="form-control" v-model="profile.email" placeholder="johndoe@example.com" autocomplete="off" required data-cy="email">
         </div>
       </div>
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Password <span class="font-sm text-success" @click.prevent.stop="editPass=true">(click to edit)</span></label>
         <div class="col-sm-10">
-          <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off">
+          <input type="password" class="form-control" placeholder="Password" v-model="profile.password" :readOnly="!editPass" autocomplete="off" data-cy="password">
           <div class="ml-1">
             <div v-if="C_passValidationCheck.length" class="font-sm text-danger">{{C_passValidationCheck.length}}</div>
             <div v-if="C_passValidationCheck.uppercase" class="font-sm text-danger">{{C_passValidationCheck.uppercase}}</div>
@@ -48,7 +48,7 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Password Confirmation</label>
         <div class="col-sm-10">
-          <input type="password" :readOnly="!editPass" class="form-control" placeholder="Password Confirm" v-model="profile.passwordConfirmation" autocomplete="off">
+          <input type="password" :readOnly="!editPass" class="form-control" placeholder="Password Confirm" v-model="profile.passwordConfirmation" autocomplete="off" data-cy="password_confirmation">
           <span v-if="!C_passCheck" class="font-sm text-danger">Password mismatch</span>
         </div>
       </div>
@@ -99,8 +99,8 @@
         </div>
       </div>
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
-        <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
-        <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
+        <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard" data-cy="cancel">Cancel</button>
+        <button class="btn btn-sm btn-primary" :disabled="!enableEdit" data-cy="update">Update</button>
       </div>
     </form>
   </div>

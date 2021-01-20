@@ -124,6 +124,34 @@ describe('Admin Panel Facility', function() {
     cy.get('#logout').click()
   })
 
+  it('Search Facility by creator', function() {
+    cy.get('#index_table_facilities').should('be.visible')
+    cy.get('#q_creator_id').select('Test1 Admin')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#q_creator_id').select('Test2 Client')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 1)
+    cy.get('#q_creator_id').select('Any')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
+    cy.get('#logout').click()
+  })
+
+  it('Search Facility by facility group', function() {
+    cy.get('#index_table_facilities').should('be.visible')
+    cy.get('#q_facility_group_id').select('Test Facility Group 1')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#q_facility_group_id').select('Test Facility Group 2')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#q_facility_group_id').select('Any')
+    cy.get('[type=submit]').first().contains('Filter').click()
+    cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
+    cy.get('#logout').click()
+  })
+
   it('Search facility contains name', function() {
     cy.get('#index_table_facilities').should('be.visible')
     cy.get('#q_facility_name').type('Test Facility 1').should('have.value', 'Test Facility 1')
