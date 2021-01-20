@@ -559,7 +559,7 @@
                 <div class ="col-md-2 p-2 gray text-center">                
                 </div>
                 <div class ="col-md-2 gray p-2 text-center">
-                 Negigible <br>1
+                 Negligible <br>1
                 </div>
                 <div class ="col-md-2 gray p-2 text-center">
                  Minor <br>2
