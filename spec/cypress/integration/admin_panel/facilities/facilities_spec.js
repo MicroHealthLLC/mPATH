@@ -222,7 +222,7 @@ describe('Admin Panel Facility', function() {
     cy.get('#logout').click()
   })
 
-  it.only('Search Facility by state', function() {
+  it('Search Facility by state', function() {
     cy.get('#index_table_facilities').should('be.visible')
     cy.get('#q_status').select('inactive')
     cy.get('[type=submit]').first().contains('Filter').click()

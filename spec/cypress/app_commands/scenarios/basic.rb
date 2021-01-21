@@ -4,7 +4,7 @@ admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
   password: 'T3$tAdmin',
   password_confirmation: 'T3$tAdmin',
-  title: 'Mr.',
+  title: 'Manager',
   first_name: 'Test1',
   role: "superadmin",
   last_name: 'Admin'
