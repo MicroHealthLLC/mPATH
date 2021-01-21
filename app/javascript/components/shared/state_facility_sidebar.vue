@@ -104,8 +104,7 @@
             <risk-form
               v-if="managerView.risk"
               :facility="currentFacility"
-              :risk="managerView.risk"
-              title="Edit Risk"
+              :risk="managerView.risk"          
               @risk-created="updateFacilityRisk"
               @risk-updated="updateFacilityRisk"
               class="form-inside-modal"
