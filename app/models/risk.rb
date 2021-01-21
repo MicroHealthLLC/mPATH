@@ -13,7 +13,7 @@ class Risk < ApplicationRecord
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
-  validates_inclusion_of :probability, in: 1..5
+  # validates_inclusion_of :probability, in: 1..5
   validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description, :start_date, :due_date
 
@@ -41,6 +41,16 @@ class Risk < ApplicationRecord
     n
   end
 
+  def probability_name
+    n = 'Rare'
+    n = "Rare" if [1].include?(probability)
+    n = "Unlikely" if [2].include?(probability)
+    n = "Possible" if [3].include?(probability)
+    n = "Likely" if [4].include?(probability)
+    n = "Almost Certain" if [5].include?(probability)
+    n
+  end
+
   def to_json
     attach_files = []
     rf = self.risk_files
@@ -64,6 +74,7 @@ class Risk < ApplicationRecord
     end
     self.as_json.merge(
       priority_level_name: priority_level_name,
+      probability_name: probability_name,
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),

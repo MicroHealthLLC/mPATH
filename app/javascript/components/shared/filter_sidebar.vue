@@ -6,14 +6,14 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row mt-3">
+      <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
-      <div class="filter-border filter-sections px-3 pb-2">
+      <div class="filter-border filter-sections px-3 pb-1 pt-0">
         <div class="row">
           <div class="col-md-12">
             <h5 class="mb-0">Facilities</h5>
@@ -78,12 +78,12 @@
         </div>
       </div>
       <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border mb-1 px-3 py-2" style="margin-top:12.75px">
+      <div class="filter-sections filter-border px-3 py-1 my-1">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
-            <h5>Tasks</h5>
+            <h5 class="mb-0">Tasks</h5>
             <div>
-              <label class="font-sm mb-0">Task Category</label>
+              <label class="font-sm mb-1">Task Category</label>
               <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -101,12 +101,11 @@
                   </div>
                 </template>
               </multiselect>
-            </div>
-            <hr/>
-             <h5>Risks</h5>
+            </div>           
+             <h5 class="mb-0 pt-1">Risks</h5>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Risk Stages</label>
-              <multiselect v-model="C_riskStageFilter" track-by="name" label="name" placeholder="Filter by risk stages" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
+              <multiselect v-model="C_riskStageFilter" track-by="name" label="name" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -118,8 +117,7 @@
               <multiselect
                 v-model="C_riskApproachFilter"
                 track-by="name"
-                label="name"
-                placeholder="Filter by Risk Approach"
+                label="name"                  
                 :options="getRiskApproachFilterOptions"
                 :searchable="false"
                 :multiple="true"
@@ -137,8 +135,7 @@
               <multiselect
                 v-model="C_riskPriorityLevelFilter"
                 track-by="name"
-                label="name"
-                placeholder="Filter by Priority Level"
+                label="name"              
                 :options="getRiskPriorityLevelFilterOptions"
                 :searchable="false"
                 :multiple="true"
@@ -157,7 +154,7 @@
           </div>
 
           <div class="col-md-4" style="border-right:solid lightgray .8px">
-           <h5>Issues</h5>
+           <h5 class="mb-0">Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Type</label>
               <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
@@ -191,7 +188,7 @@
           </div>
 
           <div class="col-md-4">
-              <h5>Combined</h5>
+              <h5 class="mb-0">Combined</h5>
                <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">

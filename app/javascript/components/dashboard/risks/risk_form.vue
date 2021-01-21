@@ -243,7 +243,7 @@
                 <label class="font-sm">*Probablity:</label>
                 <multiselect
                   v-model="DV_risk.probability"
-                  v-validate="'required'"
+                  v-validate="'required'"          
                   placeholder="Risk Probablity"
                   :options="probabilities"
                   :searchable="false"
@@ -733,8 +733,8 @@
     },
     data() {
       return {
-        DV_risk: this.INITIAL_RISK_STATE(),
-        probabilities: [1,2,3,4,5],
+        DV_risk: this.INITIAL_RISK_STATE(),     
+        probabilities: [1, 2, 3, 4, 5],
         impactLevels: [1,2,3,4,5],
         paginate: ['filteredNotes'],
         destroyedFiles: [],
