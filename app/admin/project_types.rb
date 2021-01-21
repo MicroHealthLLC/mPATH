@@ -1,5 +1,5 @@
 ActiveAdmin.register ProjectType do
-  menu parent: "Projects"
+  menu parent: "Projects", label: "Program Types"
   actions :all, except: [:show]
 
   permit_params do
@@ -8,14 +8,18 @@ ActiveAdmin.register ProjectType do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Project Types', admin_project_types_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Program Types', admin_project_types_path)]
     if %(show edit).include?(params['action'])
       links << link_to(project_type.name, edit_admin_project_type_path)
     end
     links
   end
+  config.clear_action_items!
 
-  index do
+  action_item :only => :index do
+    link_to "New Program Type" , new_admin_project_type_path
+  end
+  index title: "Program Types" do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column :id
@@ -24,6 +28,18 @@ ActiveAdmin.register ProjectType do
       item "Edit", edit_admin_project_type_path(project_type), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_project_type_path(project_type), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
     end
+  end
+
+  form title: 'New Program Type' do |f|
+    f.semantic_errors *f.object.errors.keys
+    f.inputs nil do
+      f.input :name
+    end
+    f.actions do
+      f.action :submit, :as => :button, :label => "Create Program Type"
+      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
+    end
+
   end
 
   controller do
@@ -59,9 +75,9 @@ ActiveAdmin.register ProjectType do
     end
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Project Types?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Program Types?" do |ids|
     deleted = ProjectType.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Project Types"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Program Types"
   end
 
   filter :name

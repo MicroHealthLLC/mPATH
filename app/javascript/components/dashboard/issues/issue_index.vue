@@ -91,7 +91,7 @@
           <th></th>
           <th>Issue</th>
           <th>Issue Type</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Issue Severity</th>
           <th>Start Date</th>
           <th>Due Date</th>

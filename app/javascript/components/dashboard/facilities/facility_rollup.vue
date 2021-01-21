@@ -4,7 +4,7 @@
     <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div>
     <br>
     <div class="text-center mt-1">
-      <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
+      <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Projects</h2>
       <p class="mt-2 d-flex align-items-center">
         <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
           <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="my-3 p-3 fac-proj-status">
-      <h5 class="text-center">Facility Project Status</h5>
+      <h5 class="text-center">Project Status</h5>
       <hr>
       <div v-if="contentLoaded && C_facilityCount > 0">
         <div v-for="status in facilitiesByProjectStatus">
@@ -160,7 +160,7 @@
       </div>
     </div>
     <div class="mb-3 p-3 fac-groups" v-if="from !== 'manager_view'" data-cy="facility_group_summary">
-    <h5 class="text-center">Facility Groups</h5>
+    <h5 class="text-center">Project Groups</h5>
     <hr>
       <div v-if="contentLoaded" class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
         <div class="col-md-9 font-md">

@@ -168,7 +168,7 @@
       <thead>
         <tr style="background-color:#ededed">
           <th>Risk</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Risk Approach</th>
           <th>Priority Level</th>         
           <th>Start Date</th>
