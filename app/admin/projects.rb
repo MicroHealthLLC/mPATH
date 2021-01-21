@@ -62,7 +62,7 @@ ActiveAdmin.register Project do
     end
   end
 
-  form title: 'New Program' do |f|
+  form title: proc{|g| g.new_record? ? "New Program" : "Edit Program" } do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do

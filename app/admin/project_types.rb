@@ -30,7 +30,7 @@ ActiveAdmin.register ProjectType do
     end
   end
 
-  form title: 'New Program Type' do |f|
+  form title: proc{|g| g.new_record? ? "New Program Type" : "Edit Program Type" } do |f|
     f.semantic_errors *f.object.errors.keys
     f.inputs nil do
       f.input :name
