@@ -170,7 +170,8 @@ test_issue_1 = Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
-  watched: true
+  watched: true,
+  progress: 10
 )
 
 IssueUser.find_or_create_by(issue_id: test_issue_1.id, user_id: admin.id)
@@ -185,7 +186,8 @@ new_issue_1 = Issue.find_or_create_by(
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 IssueUser.find_or_create_by(issue_id: new_issue_1.id, user_id: client.id)
@@ -289,7 +291,8 @@ test_issue_2 = Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_2.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 IssueUser.find_or_create_by(issue_id: test_issue_2.id, user_id: admin.id)
@@ -304,7 +307,8 @@ new_issue_2 = Issue.find_or_create_by(
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_2.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 IssueUser.find_or_create_by(issue_id: new_issue_2.id, user_id: client.id)
@@ -389,7 +393,8 @@ Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_3.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 Risk.find_or_create_by(
@@ -447,7 +452,8 @@ Issue.find_or_create_by(
   task_type_id: task_type.id,
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
-  facility_project_id: facility_project_4.id
+  facility_project_id: facility_project_4.id,
+  progress: 100
 )
 
 Risk.find_or_create_by(
