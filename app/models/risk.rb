@@ -14,7 +14,7 @@ class Risk < ApplicationRecord
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
-  validates_inclusion_of :impact_level, in: 1..5
+  # validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description, :start_date, :due_date
 
   before_validation :cast_constants_to_i
@@ -34,21 +34,39 @@ class Risk < ApplicationRecord
 
   def priority_level_name
     n = 'low'
-    n = "low" if [1,2,3].include?(priority_level)
-    n = "moderate" if [4,5,6].include?(priority_level)
-    n = "high" if [8,9,10,12].include?(priority_level)
-    n = "extreme" if [15,16,20,25].include?(priority_level)
+    n = "Low" if [1,2,3].include?(priority_level)
+    n = "Moderate" if [4,5,6].include?(priority_level)
+    n = "High" if [8,9,10,12].include?(priority_level)
+    n = "Extreme" if [15,16,20,25].include?(priority_level)
     n
   end
 
+  def impact_level_name_hash
+    {
+      1 => "1 - Negligible",
+      2 => "2 - Minor",
+      3 => "3 - Moderate",
+      4 => "4 - Major",
+      5 => "5 - Catastrophic"
+    }
+  end
+
+  def impact_level_name
+    impact_level_name_hash[impact_level] || impact_level_name_hash[1]
+  end
+
+  def probability_name_hash
+    {
+      1 => "1 - Rare",
+      2 => "2 - Unlikely",
+      3 => "3 - Possible",
+      4 => "4 - Likely",
+      5 => "5 - Almost Certain"
+    }
+  end
+  
   def probability_name
-    n = 'Rare'
-    n = "Rare" if [1].include?(probability)
-    n = "Unlikely" if [2].include?(probability)
-    n = "Possible" if [3].include?(probability)
-    n = "Likely" if [4].include?(probability)
-    n = "Almost Certain" if [5].include?(probability)
-    n
+    probability_name_hash[probability] || probability_name_hash[1]
   end
 
   def to_json

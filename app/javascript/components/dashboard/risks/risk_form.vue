@@ -239,13 +239,13 @@
         </div>    
 
          <div class="d-flex align-item-center justify-content-between w-100 mb-2">    
-              <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">
-                <label class="font-sm">*Probablity:</label>
+              <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">               
+                <label class="font-sm">*Probablity: </label>
                 <multiselect
                   v-model="DV_risk.probability"
                   v-validate="'required'"          
                   placeholder="Risk Probablity"
-                  :options="probabilities"
+                  :options="probabilityNames"
                   :searchable="false"
                   :allow-empty="false"
                   select-label="Select"
@@ -269,7 +269,7 @@
                   v-model="DV_risk.impactLevel"
                   v-validate="'required'"
                   placeholder="Impact Level"
-                  :options="impactLevels"
+                  :options="impactLevelNames"
                   :searchable="false"
                   select-label="Select"
                   :disabled="!_isallowed('write')"
@@ -290,13 +290,18 @@
 
               <div class="simple-select form-group mr-4" style="width:10%">
                 <label class="font-sm">Priority Level:</label>
-                <div class="risk-priorityLevel text-center mr-1">
-                  <span class="risk-pL p-2 mx-0"> {{ DV_risk.priorityLevel }}</span>                  
+                <div class="risk-priorityLevel text-center">
+                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ DV_risk.priorityLevel }}</span> 
+                  <br> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}} </span> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1">{{DV_risk.priorityLevelName}} </span> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1">{{DV_risk.priorityLevelName}} </span>   
+                  <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1">{{DV_risk.priorityLevelName}} </span>                                       
                 </div>
                 <button 
-                  class="btn btn-sm btn-warning mt-1 py-0 px-4 font-sm rmBtn"
+                  class="btn btn-sm btn-primary mt-1 py-0 px-0 font-sm rmBtn w-100"
                   @click.prevent="scrollToRiskMatrix"  
-                >Risk Matrix</button>
+                >See Risk Matrix</button>
               </div>
          </div>
 
@@ -585,10 +590,10 @@
                 <div class ="col-md-2 gray p-2 text-center">
                  Moderate<br> 3
                 </div>
-                <div class ="col-md-2 gray p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
+                <div class ="col-md-2 gray p-2 text-center">
                   Major<br> 4
                 </div>
-                <div class ="col-md-2 gray p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
+                <div class ="col-md-2 gray p-2 text-center">
                   Catastrophic<br> 5
                 </div>
             </div>
@@ -731,11 +736,10 @@
       AttachmentInput,
       Draggable
     },
+    
     data() {
       return {
-        DV_risk: this.INITIAL_RISK_STATE(),     
-        probabilities: [1, 2, 3, 4, 5],
-        impactLevels: [1,2,3,4,5],
+        DV_risk: this.INITIAL_RISK_STATE(),           
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         riskUsers: [],
@@ -772,9 +776,7 @@
         return {
           text: '',
           riskDescription: '',
-          impactDescription: '',
-          probability: 1,
-          impactLevel: 1,
+          impactDescription: '',            
           riskApproach: 'avoid',
           riskApproachDescription: '',
           riskTypeId: '',
@@ -872,14 +874,7 @@
       },
       cancelRiskSave() {
         this.$emit('on-close-form')      
-        this.setRiskForManager({key: 'risk', value: null})
-      },
-      matrixLogic() {
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 1){
-          let i1p1
-          return 
-        }
-        
+        this.setRiskForManager({key: 'risk', value: null})        
       },
       validateThenSave() {
         this.$validator.validate().then((success) => {
@@ -887,7 +882,6 @@
             this.showErrors = !success
             return;
           }
-
           this.loading = true
           let formData = new FormData()
           formData.append('risk[text]', this.DV_risk.text)
@@ -1067,6 +1061,8 @@
         'myActionsFilter',
         'taskTypes',
         'riskStages',
+        'impactLevelNames',
+        'probabilityNames',
         'riskApproaches',
         'currentTasks',
         'currentIssues',
@@ -1214,7 +1210,11 @@
        matrix55() {       
         if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 5)
         return true  
-       }      
+       },  
+      //  priorityGreen() {       
+      //   if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 5)
+      //   return true  
+      //  }     
     },
     watch: {
       risk: {
@@ -1419,11 +1419,9 @@
   }
   .risk-priorityLevel {
     border-radius: 5px;  
-    font-size: 13px;
     min-height: 33px;
-    background-color: #efefef;
-    background-image: linear-gradient(180deg, #efefef, #dfe1e2);
-    color: #5E6469;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    background-color: rgba(255, 255, 255, 1);
     font-weight: bold; 
   }
   .risk-pL {
@@ -1467,7 +1465,25 @@
     background-color: #f0ad4e;
   }
   .green {
-    background-color: #5cb85c;
+    background-color: rgb(92,184,92);
+  }
+  .red1 {
+    background-color: #d9534f;
+  }
+  .yellow1 {
+    background-color: yellow;  
+    color:#383838;  
+    display: block;
+  }
+  .orange1 {
+    background-color: #f0ad4e;
+  }
+  .green1 {
+    background-color: rgb(92,184,92);
+  }  
+  .green1, .orange1, .red1 {
+    display: block;
+    color:#fff;
   }
   .red, .yellow, .orange, .green {
     opacity: .44;
