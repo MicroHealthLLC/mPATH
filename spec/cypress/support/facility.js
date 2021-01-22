@@ -20,7 +20,7 @@ Cypress.Commands.add("facilityRollup", () => {
     // Display Issues summary
     cy.get('[data-cy=issues_summary]').scrollIntoView()
     cy.get('[data-cy=issues_summary]').within(() => {
-      cy.contains('6 Issues').should('be.visible')
+      cy.contains('5 Issues').should('be.visible')
       cy.contains('Issue Types').should('be.visible')
       cy.contains('Test Issue Type').should('be.visible')
     })

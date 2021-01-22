@@ -226,7 +226,7 @@ describe('Admin Panel Facility', function() {
     cy.get('#index_table_facilities').should('be.visible')
     cy.get('#q_status').select('inactive')
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_facilities').should('not.visible')
+    cy.get('.blank_slate').contains('No Facilities found').should('be.visible')
     cy.get('#q_status').select('active')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_facilities > tbody > tr').its('length').should('be.eq', 4)
