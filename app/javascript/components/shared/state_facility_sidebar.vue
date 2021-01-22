@@ -323,7 +323,16 @@
                       </template>
                     </multiselect>
                   </div>
-      
+                  <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
+                    <label class="font-sm mb-0">Flags</label>
+                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                  </div>
                 <!-- <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-4 pl-0" data-cy="search_risk_total">
                     <label class="form-check-label text-primary">

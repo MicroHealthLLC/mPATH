@@ -238,13 +238,13 @@
             @refresh-facility="refreshFacility"
           ></issue-index>
         </div>
-        <!-- <div v-if="currentTab == 'risks'">
+        <div v-if="currentTab == 'risks'">
           <risk-index
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
           ></risk-index>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -311,7 +311,12 @@
             label: 'Issues',
             key: 'issues',
             closable: false
-          },           
+          },     
+            {
+            label: 'Risks',
+            key: 'risks',
+            closable: false
+          },                
           {
             label: 'Notes',
             key: 'notes',

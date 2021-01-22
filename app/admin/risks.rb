@@ -19,6 +19,7 @@ ActiveAdmin.register Risk do
       :impact_level,
       :risk_approach,
       :risk_approach_description,
+      :task_type,
       :task_type_id,
       :risk_stage_id,
       :progress,

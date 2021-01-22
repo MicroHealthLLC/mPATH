@@ -94,6 +94,7 @@ class Risk < ApplicationRecord
       priority_level_name: priority_level_name,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
+      task_type: task_type.as_json, 
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
