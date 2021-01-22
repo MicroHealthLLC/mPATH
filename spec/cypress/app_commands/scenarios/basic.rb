@@ -205,7 +205,8 @@ test_risk_1 = Risk.find_or_create_by(
   facility_project_id: facility_project_1.id,
   task_type_id: task_type.id,
   risk_stage_id: risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 10
 )
 
 RiskUser.find_or_create_by(risk_id: test_risk_1.id, user_id: admin.id)
@@ -221,7 +222,8 @@ new_risk_1 = Risk.find_or_create_by(
   facility_project_id: facility_project_1.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 RiskUser.find_or_create_by(risk_id: new_risk_1.id, user_id: client.id)
@@ -328,7 +330,8 @@ test_risk_2 = Risk.find_or_create_by(
   facility_project_id: facility_project_2.id,
   task_type_id: task_type.id,
   risk_stage_id: risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 RiskUser.find_or_create_by(risk_id: test_risk_2.id, user_id: admin.id)
@@ -344,7 +347,8 @@ new_risk_2 = Risk.find_or_create_by(
   facility_project_id: facility_project_2.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 RiskUser.find_or_create_by(risk_id: new_risk_2.id, user_id: client.id)
@@ -413,7 +417,8 @@ Risk.find_or_create_by(
   facility_project_id: facility_project_3.id,
   task_type_id: task_type.id,
   risk_stage_id: risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 facility_4 = Facility.find_or_create_by(
@@ -473,5 +478,6 @@ Risk.find_or_create_by(
   facility_project_id: facility_project_4.id,
   task_type_id: task_type.id,
   risk_stage_id: risk_stage.id,
-  watched: true
+  watched: true,
+  progress: 100
 )
