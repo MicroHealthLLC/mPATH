@@ -173,5 +173,4 @@ describe('Admin Panel Issue', function() {
 
     cy.get('#logout').click()
   })
-
 })

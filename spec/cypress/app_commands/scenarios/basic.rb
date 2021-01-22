@@ -140,7 +140,8 @@ test_task_1 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_1.id,
-  watched: true
+  watched: true,
+  progress: 10
 )
 
 TaskUser.find_or_create_by(task_id: test_task_1.id, user_id: admin.id)
@@ -155,7 +156,8 @@ new_task_1 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_1.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: admin.id)
@@ -261,7 +263,8 @@ test_task_2 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_2.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 TaskUser.find_or_create_by(task_id: test_task_2.id, user_id: admin.id)
@@ -276,7 +279,8 @@ new_task_2 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_2.id,
-  watched: true
+  watched: true,
+  progress: 40
 )
 
 TaskUser.find_or_create_by(task_id: new_task_2.id, user_id: admin.id)
@@ -380,7 +384,8 @@ Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_3.id,
-  watched: true
+  watched: true,
+  progress: 70
 )
 
 Issue.find_or_create_by(
@@ -440,7 +445,8 @@ Task.find_or_create_by(
   progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
-  facility_project_id: facility_project_4.id
+  facility_project_id: facility_project_4.id,
+  progress: 100
 )
 
 Issue.find_or_create_by(
