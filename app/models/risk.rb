@@ -33,7 +33,7 @@ class Risk < ApplicationRecord
   end
 
   def priority_level_name
-    n = 'low'
+    n = 'Low'
     n = "Low" if [1,2,3].include?(priority_level)
     n = "Moderate" if [4,5,6].include?(priority_level)
     n = "High" if [8,9,10,12].include?(priority_level)

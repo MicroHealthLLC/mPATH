@@ -439,6 +439,8 @@
     },
     computed: {
       ...mapGetters([
+        'getRiskApproachFilter',
+        'getRiskPriorityLevelFilter',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'taskIssueProgressFilter',
@@ -679,6 +681,10 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
 
+        let riskPriorityLevelFilterIds = _.map(this.getRiskPriorityLevelFilter, 'id')
+
+        let riskApproachIds = _.map(this.getRiskApproachFilter, 'id')
+
         return _.orderBy(_.filter(this.currentFacility.risks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
@@ -723,6 +729,9 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
           if (this.searchStageId && this.searchStageId == resource.issueStageId) {
             if (search_query) valid = valid && search_query.test(resource.title)
