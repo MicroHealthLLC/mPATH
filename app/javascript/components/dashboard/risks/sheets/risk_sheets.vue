@@ -16,12 +16,15 @@
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
          <td class="twenty" v-if="(risk.notes.length) > 0">
-         <span class="toolTip px-1" v-tooltip="(risk.notes[0].user.fullName)">{{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}
-        </span><br> {{risk.notes[0].body}}
+         By:  {{risk.notes[0].user.fullName}} on 
+         {{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}: 
+        {{risk.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
     </table>
+
+
 
     <sweet-modal
       class="risk_form_modal"

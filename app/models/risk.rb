@@ -93,6 +93,7 @@ class Risk < ApplicationRecord
     self.as_json.merge(
       priority_level_name: priority_level_name,
       probability_name: probability_name,
+      impact_level_name: impact_level_name,
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
