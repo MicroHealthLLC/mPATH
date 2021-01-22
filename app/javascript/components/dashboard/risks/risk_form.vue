@@ -249,8 +249,8 @@
                   placeholder="Risk Probablity"
                   :options="getRiskProbabilityNames"
                   :searchable="false"
-                  :allow-empty="false"
-                  select-label="Select"
+                  :allow-empty="false" 
+                  :deselect-label='false'           
                   :disabled="!_isallowed('write')"
                   :class="{'error': errors.has('Risk Probability')}"
                   data-cy="risk_probability"
@@ -268,15 +268,15 @@
               <div class="simple-select form-group mr-2 risk-matrix-row">
                 <label class="font-sm">*Impact Level:</label>
                 <multiselect
-                   v-model="selectedRiskImpactLevel"
-                   :load="log(selectedRiskImpactLevel)"
+                  v-model="selectedRiskImpactLevel"
+                  :load="log(selectedRiskImpactLevel)"
                   v-validate="'required'"
                   placeholder="Impact Level"
                   :options="getRiskImpactLevelNames"
                   track-by="value"   
                   label="name"     
                   :searchable="false"
-                  select-label="Select"
+                  :deselect-label='false'       
                   :disabled="!_isallowed('write')"
                   :allow-empty="false"
                   :class="{'error': errors.has('Impact Level')}"

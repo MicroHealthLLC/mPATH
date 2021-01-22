@@ -42,20 +42,7 @@
                 fromView="kanban_view"
                 class="mr-2 mb-2 task-card"
               ></div>
-            </draggable>
-            <div :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="viewPermit('kanban_view', 'read')">
-              <div
-                :is="cardShow"
-                v-for="task in column.tasks"
-                :load="log(task)"
-                :key="`${task.id}_${column.stage.id}`"
-                :task="task"
-                :issue="task"
-                :risk="task"
-                fromView="kanban_view"
-                class="mr-2 mb-2 task-card"
-              ></div>
-            </div>
+            </draggable>            
           </div>
         </div>
       </div>

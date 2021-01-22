@@ -311,7 +311,12 @@
             label: 'Issues',
             key: 'issues',
             closable: false
-          },           
+          },     
+          //   {
+          //   label: 'Risks',
+          //   key: 'risks',
+          //   closable: false
+          // },                
           {
             label: 'Notes',
             key: 'notes',
