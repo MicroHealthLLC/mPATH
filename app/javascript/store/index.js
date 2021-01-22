@@ -37,7 +37,9 @@ export default new Vuex.Store({
     riskStageFilter: new Array,
     riskApproachFilter: null,
     riskApproachFilterOptions: new Array,
+    riskProbabilityOptions: new Array,
     riskPriorityLevelFilter: new Array,
+    riskImpactLevelOptions: new Array,
 
     issueStages: new Array,
     issueTypes: new Array,
@@ -151,6 +153,8 @@ export default new Vuex.Store({
     setRiskStageFilter: (state, filter) => state.riskStageFilter = filter,
     setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
     setRiskPriorityLevelFilter: (state, filter) =>  state.riskPriorityLevelFilter = filter,
+    setRiskProbabilityOptions: (state, riskProbabilityOptions) => state.riskProbabilityOptions = riskProbabilityOptions,
+    setRiskImpactLevelOptions: (state, riskImpactLevelOptions) => state.riskImpactLevelOptions = riskImpactLevelOptions,
 
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
@@ -345,6 +349,31 @@ export default new Vuex.Store({
         {id: 'transfer', name: 'Transfer', value: "transfer"},      
       ]
       return options;
+    },
+
+    getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,    
+    getRiskImpactLevelNames: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "1 - Negligible"},
+        {id: 2, value: 2, name: "2 - Minor"},
+        {id: 3, value: 3, name: "3 - Moderate"},
+        {id: 4, value: 4, name: "4 - Major"},
+        {id: 5, value: 5, name: "5 - Catastrophic"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+      return options
+    },
+    getRiskProbabilityOptions: state => state.riskProbabilityOptions,    
+    getRiskProbabilityNames: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "1 - Rare"},
+        {id: 2, value: 2, name: "2 - Unlikely"},
+        {id: 3, value: 3, name: "3 - Possible"},
+        {id: 4, value: 4, name: "4 - Likely"},
+        {id: 5, value: 5, name: "5 - Almost Certain"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+      return options
     },
     getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
@@ -570,6 +599,8 @@ export default new Vuex.Store({
     riskStageFilter: state => state.riskStageFilter,
     riskApproach: state => state.riskApproach,
     riskApproachFilter: state => state.riskApproachFilter,
+    riskProbabilityOptions: state => state.riskProbabilityOptions,
+    riskImpactLevelOptions: state => state.riskImpactLevelOptions,
 
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
@@ -1239,6 +1270,19 @@ export default new Vuex.Store({
     riskApproaches: () => {
       return ['avoid', 'mitigate', 'transfer', 'accept']
     },
+    probabilityNames: () => {
+      return [
+        {id: 1, value: 1, name: "1 - Rare"},
+        {id: 2, value: 2, name: "2 - Unlikely"},
+        {id: 3, value: 3, name: "3 - Possible"},
+        {id: 4, value: 4, name: "4 - Likely"},
+        {id: 5, value: 5, name: "5 - Almost Certain"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+    },
+    impactLevelNames: () => {
+      return ["1 - Negligible", "2 - Minor", "3 - Moderate", "4 - Major", "5 - Catastrophic"]
+    },
     getMapZoomFilter: (state) => state.mapZoomFilter
   },
 
@@ -1493,6 +1537,8 @@ export default new Vuex.Store({
         'riskStageFilter',
         'riskApproachFilter',
         'riskPriorityLevelFilter',
+        'riskProbabilityOptions',
+        'riskImpactLevelOptions',
 
         'taskIssueProgressFilter',
         'myActionsFilter',
