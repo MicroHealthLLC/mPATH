@@ -92,7 +92,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Task Category: Test Task Type(milestone)').should('be.visible')
     })
-    cy.facilityRollup()
+    cy.taskCategoryAndIssueTypeFilter()
     cy.logout()
   })
 
@@ -175,7 +175,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Issue Type: Test Issue Type').should('be.visible')
     })
-    cy.facilityRollup()
+    cy.taskCategoryAndIssueTypeFilter()
     cy.logout()
   })
 
