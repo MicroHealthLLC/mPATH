@@ -242,7 +242,7 @@
               <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">               
                 <label class="font-sm">*Probablity: </label>
                 <multiselect
-                  v-model="C_riskProbabilityOptions"
+                  v-model="selectedRiskPossibility"
                   v-validate="'required'"  
                   track-by="value"   
                   label="name"     
@@ -268,7 +268,7 @@
               <div class="simple-select form-group mr-2 risk-matrix-row">
                 <label class="font-sm">*Impact Level:</label>
                 <multiselect
-                  v-model="C_riskImpactLevelOptions"
+                  v-model="selectedRiskImpactLevel"
                   v-validate="'required'"
                   placeholder="Impact Level"
                   :options="getRiskImpactLevelNames"
@@ -750,9 +750,11 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         riskUsers: [],
-        probability: [],        
+        probability: [],
         selectedTaskType: null,
         selectedRiskStage: null,
+        selectedRiskPossibility: null,
+        selectedRiskImpactLevel: null,
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
@@ -792,7 +794,7 @@
           riskTypeId: '',
           riskStageId: '',
           probability: 1,
-          impactLevel:1,
+          impactLevel: 1,
           probabilityName: "1 - Rare",
           impactLevelName: "1 - Negligible",
           progress: 0,
@@ -836,7 +838,7 @@
           count++
         }
       },
-      loadRisk(risk) {  
+      loadRisk(risk) {
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
@@ -844,6 +846,9 @@
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_risk.taskTypeId)
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.DV_risk.riskStageId)
+        this.selectedRiskPossibility = this.getRiskProbabilityNames.find(t => t.id === this.DV_risk.probability)
+        this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(t => t.id === this.DV_risk.impactLevel)
+
         if (risk.attachFiles) this.addFile(risk.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -904,10 +909,10 @@
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
-          formData.append('risk[probability_name]', this.C_riskProbabilityOptions.value)
-          formData.append('risk[probability]', this.DV_risk.probability)
-          formData.append('risk[impact_level_name]', this.C_riskImpactLevelOptions.value)
-          formData.append('risk[impact_level]', this.DV_risk.impactLevel )
+          formData.append('risk[probability_name]', this.selectedRiskPossibility.name)
+          formData.append('risk[probability]', this.selectedRiskPossibility.id)
+          formData.append('risk[impact_level_name]', this.selectedRiskImpactLevel.name)
+          formData.append('risk[impact_level]', this.selectedRiskImpactLevel.id )
           formData.append('risk[risk_approach]', this.DV_risk.riskApproach)
           formData.append('risk[risk_approach_description]', this.DV_risk.riskApproachDescription)
           formData.append('risk[task_type_id]', this.DV_risk.taskTypeId)
@@ -1120,14 +1125,16 @@
       C_myRisks() {
         return _.map(this.myActionsFilter, 'value').includes('risks')
       },
+      // TODO: Not in use, remove if no error found
       C_riskProbabilityOptions: {
-        get() {      
+        get() {
           return this.getRiskProbabilityOptions
         },
         set(value) {     
             this.setRiskProbabilityOptions(value)
         }
       },
+      // TODO: Not in use, remove if no error found
        C_riskImpactLevelOptions: {
         get() {      
           return this.getRiskImpactLevelOptions
