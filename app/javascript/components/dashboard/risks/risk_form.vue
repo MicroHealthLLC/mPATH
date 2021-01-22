@@ -242,7 +242,7 @@
               <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">               
                 <label class="font-sm">*Probablity: </label>
                 <multiselect
-                 v-model="selectedRiskPossibility"
+                  v-model="selectedRiskPossibility"
                   v-validate="'required'"  
                   track-by="value"   
                   label="name"     
@@ -296,23 +296,18 @@
               <div class="simple-select form-group mr-4" style="width:10%">
                 <label class="font-sm">Priority Level:</label> 
                 <div class="risk-priorityLevel text-center">
-                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ priorityLev }}</span> 
+                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
                   <br> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}} </span> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1">{{DV_risk.priorityLevelName}} </span> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1">{{DV_risk.priorityLevelName}} </span>   
-                  <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1">{{DV_risk.priorityLevelName}} </span>  
-                  <span v-if="(DV_risk.priorityLevelName) == ''" class="green1">{{DV_risk.priorityLevelName}} </span>    
-                  <!-- <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) <= (3)" class="green1">Low</span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (4)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (5)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (6)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (8)"  class="orange1">High </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (9)"  class="orange1">High </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (10)"  class="orange1">High </span> 
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) == (12)"  class="orange1">High </span>   
-                  <span v-if="(this.DV_risk.probability * this.DV_risk.impactLevel) >= (15)"  class="red1">Extreme </span>                                        -->
-                </div>
+                 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>                                                      </div>
                 <button 
                   class="btn btn-sm btn-primary mt-1 py-0 px-0 font-sm rmBtn w-100"
                   @click.prevent="scrollToRiskMatrix"  
@@ -757,8 +752,8 @@
         destroyedFiles: [],
         riskUsers: [],
         probability: [], 
-        selectedRiskPossibility: "1 - Rare",
-        selectedRiskImpactLevel: "1 - Negligible",       
+        selectedRiskPossibility: {id: 1, value: 1, name: "1 - Rare"},
+        selectedRiskImpactLevel: {id: 1, value: 1, name: "1 - Negligible"},       
         selectedTaskType: null,
         selectedRiskStage: null,
         relatedIssues: [],
@@ -908,9 +903,7 @@
             return;
           }
           this.loading = true
-          let formData = new FormData()
-          this.DV_risk.probability = this.DV_risk.probability
-          this.DV_risk.impactLevel = this.DV_risk.impactLevel
+          let formData = new FormData()         
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
@@ -1110,10 +1103,10 @@
           this.exists(this.DV_risk.text) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
-          this.exists(this.DV_risk.probability) &&
-          this.exists(this.DV_risk.impactLevel) &&
-          this.exists(this.DV_risk.probability) &&
-          this.exists(this.DV_risk.impactLevel) &&
+          this.exists(this.selectedRiskPossibility.id) &&
+          this.exists(this.selectedRiskImpactLevel.id) &&
+          this.exists(this.selectedRiskPossibility.id) &&
+          this.exists(this.selectedRiskImpactLevel.id) &&
           this.exists(this.DV_risk.riskApproach) &&
           this.exists(this.DV_risk.riskApproachDescription) &&
           this.exists(this.DV_risk.taskTypeId) &&
@@ -1149,8 +1142,8 @@
       title() {
         return this._isallowed('write') ? this.DV_risk.id ? 'Edit Risk' : 'Create Risk' : 'Risk'
       },
-      priorityLev() {
-        return this.DV_risk.probability * this.DV_risk.impactLevel
+      calculatePriorityLevel() {
+        return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
       },
       filteredTasks() {
         return this.currentTasks
@@ -1168,107 +1161,107 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
       },
       matrix11() {       
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 1)
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 1)
         return true
       },
       matrix12() {       
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 2)
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 2)
         return true
       },
        matrix13() {       
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 3)
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 3)
         return true
       },
        matrix14() {       
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 4)
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 4)
         return true
       },
        matrix15() {       
-        if (this.DV_risk.impactLevel == 1 && this.DV_risk.probability == 5)
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 5)
         return true
       },
       matrix21() {       
-        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 1)
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 1)
         return true
       },
       matrix22() {       
-        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 2)
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 2)
         return true
       },
        matrix23() {       
-        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 3)
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 3)
         return true
       },
        matrix24() {       
-        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 4)
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 4)
         return true
       },
        matrix25() {       
-        if (this.DV_risk.impactLevel == 2 && this.DV_risk.probability == 5)
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 5)
         return true
       },
       matrix31() {       
-        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 1)
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 1)
         return true
       },
       matrix32() {       
-        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 2)
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 2)
         return true
       },
        matrix33() {       
-        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 3)
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 3)
         return true
       },
        matrix34() {       
-        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 4)
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 4)
         return true
       },
        matrix35() {       
-        if (this.DV_risk.impactLevel == 3 && this.DV_risk.probability == 5)
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 5)
         return true
       },
        matrix41() {       
-        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 1)
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 1)
         return true
       },
       matrix42() {       
-        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 2)
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 2)
         return true
       },
        matrix43() {       
-        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 3)
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 3)
         return true
       },
        matrix44() {       
-        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 4)
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 4)
         return true
       },
        matrix45() {       
-        if (this.DV_risk.impactLevel == 4 && this.DV_risk.probability == 5)
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 5)
         return true
       },
       matrix51() {       
-        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 1)
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 1)
         return true
       },
       matrix52() {       
-        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 2)
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 2)
         return true
       },
        matrix53() {       
-        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 3)
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 3)
         return true
       },
        matrix54() {       
-        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 4)
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 4)
         return true
       },
        matrix55() {       
-        if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 5)
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
         return true  
        },  
       //  priorityGreen() {       
-      //   if (this.DV_risk.impactLevel == 5 && this.DV_risk.probability == 5)
+      //   if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
       //   return true  
       //  }     
     },
