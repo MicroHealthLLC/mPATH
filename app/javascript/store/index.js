@@ -915,7 +915,7 @@ export default new Vuex.Store({
             case "riskPriorityLevelFilter": {
               var risks = facility.risks
               var fPriorityLevels = _.map(f[k], "id")
-              var resources = _.filter(risks, ti => fPriorityLevels.includes(ti.priorityLevelName) )
+              var resources = _.filter(risks, ti => fPriorityLevels.includes(ti.priorityLevelName.toLowerCase()) )
               if(resources.length < 1){
                 valid = false
               }
