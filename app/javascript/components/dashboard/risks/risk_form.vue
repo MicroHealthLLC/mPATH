@@ -130,38 +130,38 @@
 
         <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
-            <label class="font-sm">*Start Date:</label>
+            <label class="font-sm">*Identified Date:</label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_risk.startDate"
               value-type="YYYY-MM-DD"
               format="DD MMM YYYY"
               placeholder="DD MM YYYY"
-              name="Start Date"
+              name="Identified Date"
               class="w-100 vue2-datepicker"
               :disabled="!_isallowed('write')"
               data-cy="risk_start_date"
             />
-            <div v-show="errors.has('Start Date')" class="text-danger" data-cy="risk_start_date_error">
-              {{errors.first('Start Date')}}
+            <div v-show="errors.has('Identified Date')" class="text-danger" data-cy="risk_start_date_error">
+              {{errors.first('Identified Date')}}
             </div>
           </div>
           <div class="form-group col-md-6 pr-0">
-            <label class="font-sm">*Estimated Completion Date:</label>
+            <label class="font-sm">*Risk Approach Due Date:</label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_risk.dueDate"
               value-type="YYYY-MM-DD"
               format="DD MMM YYYY"
               placeholder="DD MM YYYY"
-              name="Estimated Completion Date"
+              name="Risk Approach Due Date"
               class="w-100 vue2-datepicker"
               :disabled="!_isallowed('write') || DV_risk.startDate === '' || DV_risk.startDate === null"
               :disabled-date="disabledDueDate"
               data-cy="risk_due_date"
             />
-            <div v-show="errors.has('Estimated Completion Date')" class="text-danger" data-cy="risk_due_date_error">
-              {{errors.first('Estimated Completion Date')}}
+            <div v-show="errors.has('Risk Approach Due Date')" class="text-danger" data-cy="risk_due_date_error">
+              {{errors.first('Risk Approach Due Date')}}
             </div>
           </div>
         </div>
