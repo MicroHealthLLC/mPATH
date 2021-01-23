@@ -372,7 +372,7 @@
           v-if="currentTab === 'risks'"
           :facility="currentFacility"
           :fixed-stage="fixedStageId"
-          @issue-created="handleNewRisk"
+          @risk-created="handleNewRisk"
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></risk-form>
@@ -915,7 +915,7 @@
         this.setTaskForManager({key: 'issue', value: null})
         this.setTaskForManager({key: 'note', value: null})
         this.setTaskForManager({key: 'risk', value: null})
-         this.setRiskForManager({key: 'risk', value: null})
+        this.setRiskForManager({key: 'risk', value: null})
       },
       onCloseForm() {
         this.fixedStageId = null
@@ -943,6 +943,9 @@
         }
         if ($(searchElement).attr("data-kanban-type") == "tasks") {
           this.searchTasksQuery = $(searchElement).val()
+        }
+        if ($(searchElement).attr("data-kanban-type") == "risks") {
+          this.searchIssuesQuery = $(searchElement).val()
         }
       },
     },

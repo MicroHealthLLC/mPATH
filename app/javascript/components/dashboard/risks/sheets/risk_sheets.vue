@@ -5,7 +5,12 @@
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
         <td class="oneFive">{{risk.text}}</td>
         <td class="eight">{{risk.riskApproach}}</td>
-        <td class="eight">{{risk.priorityLevel}}</td>
+        <td class="eight pt-2 font-sm">
+            <span v-if="(risk.priorityLevelName) == 'Low'" class="green1">{{risk.priorityLevelName}}</span> 
+            <span v-if="(risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{risk.priorityLevelName}} </span> 
+            <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
+            <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
+        </td>
         <td class="seven">{{formatDate(risk.startDate)}}</td>
         <td class="seven">{{formatDate(risk.dueDate)}}</td>
         <td class="nine" v-if="(risk.userNames.length) >= 0">{{ risk.userNames }}</td>
@@ -283,5 +288,28 @@
         position: inherit !important;
       }
     }
+  }
+    .red1 {
+    background-color: #d9534f;
+  }
+  .yellow1 {
+    background-color: yellow;  
+    color:#383838;  
+    display: block;
+  }
+  .orange1 {
+    background-color: #f0ad4e;
+  }
+  .green1 {
+    background-color: rgb(92,184,92);
+  }  
+  .green1, .orange1, .red1, .yellow1 {
+    display: inline;   
+    border-radius: 2px; 
+    padding: 1px 1px;
+    box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
+  }
+   .green1, .orange1, .red1 {   
+    color:#fff;   
   }
 </style>
