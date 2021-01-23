@@ -249,8 +249,8 @@
                   placeholder="Risk Probablity"
                   :options="getRiskProbabilityNames"
                   :searchable="false"
-                  :allow-empty="false" 
-                  :deselect-label='false'           
+                  deselect-label=""    
+                  :allow-empty="false"                       
                   :disabled="!_isallowed('write')"
                   :class="{'error': errors.has('Risk Probability')}"
                   data-cy="risk_probability"
@@ -276,7 +276,7 @@
                   track-by="value"   
                   label="name"     
                   :searchable="false"
-                  :deselect-label='false'       
+                   deselect-label=""       
                   :disabled="!_isallowed('write')"
                   :allow-empty="false"
                   :class="{'error': errors.has('Impact Level')}"
