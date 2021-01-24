@@ -1,18 +1,18 @@
 <template>
-  <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
+  <div id="risks-index" class="my-4" data-cy="risk_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
+      <div class="d-flex align-item-center justify-content-between mb-1 w-100">
+        <div class="input-group risk-search-bar w-100">
              <div class="input-group-prepend">
              <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Tasks"
+            placeholder="Search Risks"
             aria-label="Search"
             aria-describedby="search-addon"
-            v-model="tasksQuery"
-            data-cy="search_tasks">
+            v-model="risksQuery"
+            data-cy="search_risks">
           </div>
         <div class="simple-select w-100 mx-1 d-flex">
           <multiselect
@@ -35,7 +35,7 @@
         </div>
 
         <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -44,14 +44,54 @@
           </multiselect>
         </div>
     </div>
+     <div class="d-flex align-item-center justify-content-start filter-second-row w-60"> 
+       <div class="simple-select w-50 mr-1" v-if="true">
+          <multiselect
+            v-model="C_riskApproachFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Risk Approach"
+            :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+       <div class="simple-select w-50 mr-1" v-if="true">
+          <multiselect
+            v-model="C_riskPriorityLevelFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Priority Level"
+            :options="getRiskPriorityLevelFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+     </div>
 
       <button v-if="_isallowed('write')"
-         class="btn btn-md btn-primary mr-3 addTaskBtn"
-        @click.prevent="addNewTask"
-        data-cy="add_task"
+         class="btn btn-md btn-primary mr-3 addRiskBtn"
+        @click.prevent="addNewRisk"
+        data-cy="add_risk"
       >
         <font-awesome-icon icon="plus-circle" /> 
-        Add Task
+        Add Risk
       </button>
        <button
           v-tooltip="`Export to PDF`"
@@ -61,30 +101,32 @@
         </button>
         <button
           v-tooltip="`Export to Excel`"
-          @click.prevent="exportToExcel('table', 'Task List')"
+          @click.prevent="exportToExcel('table', 'Risk Register')"
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
-        <h5>Total: {{filteredTasks.length}}</h5>
+      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="risk_total">
+        <h5>Total: {{filteredRisks.length}}</h5>
       </label>
-      <div v-if="filteredTasks.length > 0">
-        <div style="margin-bottom:100px" data-cy="tasks_table">
+      <div v-if="filteredRisks.length > 0">
+        <div style="margin-bottom:100px" data-cy="risks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
-              <col class="sixteen" />
-              <col class="ten" />
+              <col class="oneFive" />
               <col class="eight" />
               <col class="eight" />
-              <col class="ten" />
-              <col class="ten" />
-              <col class="ten" />
+              <col class="seven" />
+              <col class="seven" />
+              <col class="nine" />
+              <col class="nine" />
+              <col class="nine" />
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
             <tr style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('text')">Risk<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('riskApproach')">Risk Approach<i class="fas fa-sort scroll"></i> </th>
+              <th class="sort-th" @click="sort('priorityLevel')">Priority Level<i class="fas fa-sort scroll"></i> </th>
               <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
               <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
               <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
@@ -94,39 +136,41 @@
               <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
             </tr>
           </table>
-             <task-sheets
-              v-for="(task, i) in sortedTasks"
-              class="taskHover"
+             <risk-sheets
+              v-for="(risk, i) in sortedRisks"
+              class="riskHover"
               href="#"
-              :class="{'b_border': !!filteredTasks[i+1]}"
-              :key="task.id"
-              :task="task"
+              :load="log(risk)"
+              :class="{'b_border': !!filteredRisks[i+1]}"
+              :key="risk.id"
+              :risk="risk"
               :from-view="from"
-              @edit-task="editTask"
+              @edit-risk="editRisk"
               @toggle-watched="toggleWatched"
             />
           <div class="float-right mb-4">
           <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
     
     <table
       class="table table-sm table-bordered table-striped"
-      ref="table" id="taskSheetsList1"
+      ref="table" id="riskSheetsList1"
       style="display:none"
       >
       <thead>
         <tr style="background-color:#ededed">
-          <th>Task</th>
-          <th>Task Category</th>
+          <th>Risk</th>
           <th>Facility</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>         
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
@@ -137,22 +181,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks">
-          <td>{{task.text}}</td>
-          <td>{{task.taskType}}</td>
-          <td>{{task.facilityName}}</td>
-          <td>{{formatDate(task.startDate)}}</td>
-          <td>{{formatDate(task.dueDate)}}</td>
-          <td v-if="(task.userNames.length) > 0">{{ task.userNames }}</td>
+        <tr  v-for="(risk, index) in filteredRisks" :key="index">
+          <td>{{risk.text}}</td>
+          <td>{{risk.facilityName}}</td>
+          <td>{{risk.riskApproach}}</td>
+          <td>{{risk.priorityLevel}}</td>         
+          <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
           <td v-else></td>
-          <td>{{task.progress + "%"}}</td>
-          <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
+          <td>{{risk.progress + "%"}}</td>
+          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.watched) == true"><h5>X</h5></td>
+          <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
-             By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+          <td v-if="(risk.notes.length) > 0">
+             By: {{ risk.notes[0].user.fullName}} on
+            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -167,7 +212,7 @@
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
   // import moment from 'moment'
-  import TaskSheets from "./task_sheets"
+  import RiskSheets from "./risk_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
   library.add(faFilePdf)
@@ -178,16 +223,16 @@
   const moment = extendMoment(Moment)
 
   export default {
-    name: 'TasksSheetsIndex',
+    name: 'RiskSheetsIndex',
     components: {
-      TaskSheets
+      RiskSheets
     },
     props: ['facility', 'from'],
     data() {
       return {
-        tasks: Object,
+        risks: Object,
         now: new Date().toISOString(),
-        tasksQuery: '',
+        risksQuery: '',
         pageSize:15,
         currentPage:1,
         currentSort:'text',
@@ -200,14 +245,19 @@
     },
     methods: {
       ...mapMutations([
+        'setRiskPriorityLevelFilter',
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
-        'setTaskForManager'
+        'setRiskApproachFilter',
+        'setRiskForManager',
       ]),
+      log(t){
+        console.log(t)
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -216,29 +266,29 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredTasks.length) this.currentPage++;
+        if((this.currentPage*this.pageSize) < this.filteredRisks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
       },
-      addNewTask() {
+      addNewRisk() {
         if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'task', value: {}})
+          this.setRiskForManager({key: 'risk', value: {}})
         } else {
           this.$emit('show-hide')
         }
       },
-      editTask(task) {
-        this.$emit('show-hide', task)
+      editRisk(risk) {
+        this.$emit('show-hide', risk)
       },
-      toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
+      toggleWatched(risk) {
+        this.$emit('toggle-watch-risk', risk)
       },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
-        doc.autoTable({html: "#taskSheetsList1"})
-        doc.save("Task_List.pdf")
+        doc.autoTable({html: "#riskSheetsList1"})
+        doc.save("Risk Register.pdf")
       },
       exportToExcel(table, name){      
         if (!table.nodeType) table = this.$refs.table
@@ -248,6 +298,8 @@
     },
     computed: {
       ...mapGetters([
+        'getRiskPriorityLevelFilter',
+        'getRiskPriorityLevelFilterOptions',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -261,67 +313,44 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
-        'taskStageFilter',
+        'getRiskApproachFilterOptions',
+        'getRiskApproachFilter',
+        'riskStageFilter',
         'myActionsFilter',
         'onWatchFilter',
-        'taskUserFilter',
+        'riskUserFilter',
         'taskTypes',
         'viewPermit'
       ]),
       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
       },
-      filteredTasks() {
-        let typeIds = _.map(this.C_taskTypeFilter, 'id')
-        let stageIds = _.map(this.taskStageFilter, 'id')
-        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+      filteredRisks() {
+        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+        let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
+        let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
+
+        const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        
         let taskIssueProgress = this.taskIssueProgressFilter
-
         let taskIssueUsers = this.getTaskIssueUserFilter
         var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
-          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
-
-          if (taskIssueUsers.length > 0) {  
-            if(taskIssueUsers.length > 0){
-              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-            }
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
 
-          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
-          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
-
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
-            var is_valid = resource.notes.length > 0
-            for (var createdAt of _notesCreatedAt) {
-              var nDate = moment(createdAt, "YYYY-MM-DD")
-              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if (is_valid) break
-            }
-            valid = valid && is_valid
-          }
-
-          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-
-            var is_valid = true
-            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = valid && is_valid
-          }
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
@@ -329,13 +358,29 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
 
-          return valid
-        }), ['dueDate'])
-        return tasks
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+          
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
+
+          if (search_query) valid = valid && search_query.test(resource.riskName)
+
+
+          return valid;
+        })), ['dueDate'])
+
+        return risks
       },
-      C_sheetsTaskFilter: {
+      C_riskPriorityLevelFilter: {
+        get() {
+          return this.getRiskPriorityLevelFilter
+        },
+        set(value) {
+          this.setRiskPriorityLevelFilter(value)
+        }
+      },
+      C_sheetsRiskFilter: {
         get() {
           return this.getAdvancedFilter
         },
@@ -370,17 +415,25 @@
           this.setTaskTypeFilter(value)
         }
       },
-      C_myTasks: {
-        get() {
-          return _.map(this.myActionsFilter, 'value').includes('tasks')
+      C_riskApproachFilter: {
+        get() {      
+          return this.getRiskApproachFilter
         },
-        set(value) {
-          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Tasks", value: "tasks"}])
-          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "tasks"))
+        set(value) {     
+            this.setRiskApproachFilter(value)
         }
       },
-      sortedTasks:function() {
-          return this.filteredTasks.sort((a,b) => {
+      C_myRisks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Risks", value: "risks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
+        }
+      },
+      sortedRisks:function() {
+          return this.filteredRisks.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
           if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -398,7 +451,7 @@
 </script>
 
 <style lang="scss">
-  #tasks-index {
+  #risks-index {
     background-color: #ffffff;
     z-index: 100;
     height: 500px
@@ -412,7 +465,7 @@
     color: #383838 !important;
     padding-left:4px !important
   }
-  .task-search-bar {
+  .risk-search-bar {
     height: 31px;
     width: 310px;
     border-radius: 5px;
@@ -476,7 +529,7 @@
     border-radius: 4px;
     padding: 4px;
   }
-  .taskHover:hover {
+  .riskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
     border-left: solid rgb(91, 192, 222);
@@ -496,11 +549,20 @@
     top: 0;
     width: 100%;
   }
+  .seven {
+    width: 7%;
+  }
   .eight {
     width: 8%;
   }
+  .nine {
+    width: 9%;
+  }
   .ten {
     width: 10%;
+  }
+  .oneFive{
+    width: 15%;
   }
   .sixteen {
     width: 16%;
@@ -519,7 +581,7 @@
   .pagination {
     margin-bottom: 50px !important;
   }
-  .addTaskBtn, .exportBtns {
+  .addRiskBtn, .exportBtns {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
  .exportBtns { 

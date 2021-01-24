@@ -4,7 +4,7 @@
       id="risks-form"
       @submit.prevent="validateThenSave"
       :class="{'_disabled': loading}"
-      class="mx-auto"
+      class="mx-auto pb-4"
       accept-charset="UTF-8"
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
@@ -130,38 +130,38 @@
 
         <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
-            <label class="font-sm">*Start Date:</label>
+            <label class="font-sm">*Identified Date:</label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_risk.startDate"
               value-type="YYYY-MM-DD"
               format="DD MMM YYYY"
               placeholder="DD MM YYYY"
-              name="Start Date"
+              name="Identified Date"
               class="w-100 vue2-datepicker"
               :disabled="!_isallowed('write')"
               data-cy="risk_start_date"
             />
-            <div v-show="errors.has('Start Date')" class="text-danger" data-cy="risk_start_date_error">
-              {{errors.first('Start Date')}}
+            <div v-show="errors.has('Identified Date')" class="text-danger" data-cy="risk_start_date_error">
+              {{errors.first('Identified Date')}}
             </div>
           </div>
           <div class="form-group col-md-6 pr-0">
-            <label class="font-sm">*Estimated Completion Date:</label>
+            <label class="font-sm">*Risk Approach Due Date:</label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_risk.dueDate"
               value-type="YYYY-MM-DD"
               format="DD MMM YYYY"
               placeholder="DD MM YYYY"
-              name="Estimated Completion Date"
+              name="Risk Approach Due Date"
               class="w-100 vue2-datepicker"
               :disabled="!_isallowed('write') || DV_risk.startDate === '' || DV_risk.startDate === null"
               :disabled-date="disabledDueDate"
               data-cy="risk_due_date"
             />
-            <div v-show="errors.has('Estimated Completion Date')" class="text-danger" data-cy="risk_due_date_error">
-              {{errors.first('Estimated Completion Date')}}
+            <div v-show="errors.has('Risk Approach Due Date')" class="text-danger" data-cy="risk_due_date_error">
+              {{errors.first('Risk Approach Due Date')}}
             </div>
           </div>
         </div>
@@ -236,57 +236,255 @@
               </div>
             </template>
           </multiselect>
-        </div>
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Probablity:</label>
-          <multiselect
-            v-model="DV_risk.probability"
-            v-validate="'required'"
-            placeholder="Risk Probablity"
-            :options="probabilities"
-            :searchable="false"
-            :allow-empty="false"
-            select-label="Select"
-            :disabled="!_isallowed('write')"
-            :class="{'error': errors.has('Risk Probability')}"
-            data-cy="risk_probability"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option}}</span>
-              </div>
-            </template>
-          </multiselect>
-          <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
-            {{errors.first('Risk Probability')}}
-          </div>
-        </div>
+        </div>    
 
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Impact Level:</label>
-          <multiselect
-            v-model="DV_risk.impactLevel"
-            v-validate="'required'"
-            placeholder="Impact Level"
-            :options="impactLevels"
-            :searchable="false"
-            select-label="Select"
-            :disabled="!_isallowed('write')"
-            :allow-empty="false"
-            :class="{'error': errors.has('Impact Level')}"
-            data-cy="impact_level"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option}}</span>
+         <div class="container">
+         <div class="row mb-2">   
+            <div class="col-md-3 simple-select form-group">
+                <label class="font-sm">Priority Level:</label> 
+                <div class="risk-priorityLevel text-center">
+                    <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
+                    <br>                  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>    
+                </div>                
+                <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>            
               </div>
-            </template>
-          </multiselect>
-          <div v-show="errors.has('Impact Level')" class="text-danger" data-cy="impact_level_error">
-            {{errors.first('Impact Level')}}
-          </div>
-        </div>
 
+               <div class="col-md"> 
+                 <div class="simple-select form-group mb-0">            
+                  <label class="font-sm">*Probablity: </label>
+                    <multiselect
+                      v-model="selectedRiskPossibility"
+                      v-validate="'required'"  
+                      track-by="value"   
+                      label="name"     
+                      placeholder="Risk Probablity"
+                      :options="getRiskProbabilityNames"
+                      :searchable="false"
+                      deselect-label=""    
+                      :allow-empty="false"                       
+                      :disabled="!_isallowed('write')"
+                      :class="{'error': errors.has('Risk Probability')}"
+                      data-cy="risk_probability"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                    <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
+                      {{errors.first('Risk Probability')}}
+                    </div>
+                  </div>
+
+              <div class="simple-select form-group">
+                <label class="font-sm">*Impact Level:</label>
+                <multiselect
+                  v-model="selectedRiskImpactLevel"
+                  :load="log(selectedRiskImpactLevel)"
+                  v-validate="'required'"
+                  placeholder="Impact Level"
+                  :options="getRiskImpactLevelNames"
+                  track-by="value"   
+                  label="name"     
+                  :searchable="false"
+                   deselect-label=""       
+                  :disabled="!_isallowed('write')"
+                  :allow-empty="false"
+                  :class="{'error': errors.has('Impact Level')}"
+                  data-cy="impact_level"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+                <div v-show="errors.has('Impact Level')" class="text-danger" data-cy="impact_level_error">
+                  {{errors.first('Impact Level')}}
+                </div>
+              </div>
+            </div>
+          </div>
+         </div>    
+    <div class="container mr-4 mb-4 ml-2 justify-content-center text-center">                 
+      <el-collapse accordion>           
+        <el-collapse-item title="Click to see Priority Level Risk Matrix" name="1">  
+        <div>      
+  <!-- Risk Matrix begins here -->
+        <div class="container mt-2 px-4">
+  <!-- This first row is not a true row...Just a transformed vertical div header -->
+          <div class="row">              
+              <div style="position:relative">
+                  <div class="vertical-head risk-matrix-header"><h6>PROBABILITY</h6></div>
+              </div>
+          <div class="col">
+
+              <div class="row">
+                <div class="col"><h4 class="mb-3">Risk Matrix for: <span id="riskName">{{DV_risk.text}}</span></h4>            
+                </div>
+                <!-- <div class="col text-right"><h4 class="mb-3">Risk Priority Level: <span id="riskName">{{DV_risk.priorityLevel}}</span></h4>            
+                </div> -->
+              </div>   
+
+              <div class="row"> 
+                <div class="col text-center">           
+                  <h6 class="mb-1">IMPACT</h6>
+                </div>
+              </div>    
+                <!-- Risk Matrix first row, Category headers -->   
+  
+              <div class="container mb-2 mt-0 risk-matrix" >              
+                  <div class="row">            
+                  <div class ="col-md-2 p-2 gray text-center">                
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Negligible <br>1
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Minor <br>2
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Moderate<br> 3
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                    Major<br> 4
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                    Catastrophic<br> 5
+                  </div>
+              </div>
+
+    <!-- Risk Matrix 2nd row (first color row) -->
+              <div class="row">                
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Almost<br>Certain<br> 5
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 5
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix25 == true ? 'reg-opacity' : '']">
+                  High<br> 10
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix35 == true ? 'reg-opacity' : '']">
+                  Extreme <br>15
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix45 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 20
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix55 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 25
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 3rd row -->
+              <div class="row">        
+                <div class ="col-md-2 gray p-2 text-center">
+                  Likely<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix24 == true ? 'reg-opacity' : '']">
+                  High<br> 8
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
+                  High<br> 12                
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix44 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 16
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix54 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 20 
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 4th row -->
+              <div class="row">           
+                <div class ="col-md-2 gray p-2 text-center">
+                  Possible<br> 3
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix13 == true ? 'reg-opacity' : '']">
+                  Low<br> 3 
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix23 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 6
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix33 == true ? 'reg-opacity' : '']">
+                  High<br> 9 
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix43 == true ? 'reg-opacity' : '']">
+                  High<br> 12
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix53 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 15
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 5th row -->
+              <div class="row">
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Unlikely<br> 2
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix12 == true ? 'reg-opacity' : '']">
+                  Low<br> 2
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix22 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix32 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 6
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix42 == true ? 'reg-opacity' : '']" >
+                  High<br> 8
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix52 == true ? 'reg-opacity' : '']">
+                  High<br> 10
+                  </div>
+              </div>
+
+    <!-- Risk Matrix 6th row (last row) -->
+              <div class="row">
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Rare<br> 1
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
+                  Low<br> 1
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
+                  Low<br> 2
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix31 == true ? 'reg-opacity' : '']">
+                  Low<br> 3 
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix41 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix51 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 5
+                  </div>
+              </div>
+              </div>     
+            </div>
+                <!-- Risk Matrix Container ends at this top div  -->      
+                </div>
+              </div>
+            </div>
+          </el-collapse-item>
+      </el-collapse>
+    
+    </div>
+
+                             
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
@@ -353,7 +551,7 @@
           </span>
           <div v-if="filteredChecks.length > 0">
             <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_risk.checklists)" :list="DV_risk.checklists" :animation="100" ghost-class="ghost-card" class="drag">
-              <div v-for="(check, index) in DV_risk.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)">
+              <div v-for="(check, index) in DV_risk.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)" :key="index">
                 <div class="form-control h-100" :key="index">
                   <div class="row">
                     <div class="col justify-content-start">
@@ -390,6 +588,7 @@
                           v-model="check.dueDate"
                           :value="check.dueDate"
                           @selected="updateCheckItem($event, 'dueDate', index)"
+                          :disabled="!_isallowed('write')"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
@@ -529,8 +728,10 @@
         </paginate>
       </div>
      </div>
-      <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
-      <div ref="addUpdates" class="pt-0 mt-0"> </div>
+      <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
+      <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
+      <div>
+      </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
 
@@ -551,14 +752,17 @@
       AttachmentInput,
       Draggable
     },
+    
     data() {
       return {
-        DV_risk: this.INITIAL_RISK_STATE(),
-        probabilities: [1,2,3,4,5],
-        impactLevels: [1,2,3,4,5],
+        DV_risk: this.INITIAL_RISK_STATE(), 
+        // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],
         destroyedFiles: [],
-        riskUsers: [],
+        riskUsers: [],      
+        probability: [], 
+        selectedRiskPossibility: {id: 1, value: 1, name: "1 - Rare"},
+        selectedRiskImpactLevel: {id: 1, value: 1, name: "1 - Negligible"},       
         selectedTaskType: null,
         selectedRiskStage: null,
         relatedIssues: [],
@@ -581,26 +785,31 @@
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager'
+        'setRiskForManager', 
+        'setRiskProbabilityOptions',
+        'setRiskImpactLevelOptions'
       ]),
       ...mapActions([
         'riskDeleted',
-        'taskUpdated',
+        'riskUpdated',
         'updateWatchedRisks'
       ]),
       INITIAL_RISK_STATE() {
         return {
           text: '',
           riskDescription: '',
-          impactDescription: '',
-          probability: 1,
-          impactLevel: 1,
-          riskApproach: 'avoid',
+          impactDescription: '',            
+          riskApproach: 'avoid',         
           riskApproachDescription: '',
-          taskTypeId: '',
+          riskTypeId: '',
           riskStageId: '',
+          probability: 1,
+          impactLevel:1,
+          probabilityName: "1 - Rare",
+          impactLevelName: "1 - Negligible",
           progress: 0,
           startDate: '',
+          getRiskImpactLevelNames:"1 - Negligible",
           dueDate: '',
           autoCalculate: true,
           userIds: [],
@@ -619,13 +828,17 @@
       scrollToUpdates(){
         this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
         this.DV_risk.notes.unshift({body: '', user_id: '', guid: this.guid()})        
-      },   
+      },  
+      scrollToRiskMatrix(){
+        this.$refs.riskMatrix.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});   
+      },  
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
       },
       log(r) {
         console.log(r)
+        
       },
       handleEnd(e, checklists) {
         let cc = this.DV_risk.checklists
@@ -635,7 +848,7 @@
           count++
         }
       },
-      loadRisk(risk) {
+      loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
@@ -643,6 +856,8 @@
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_risk.taskTypeId)
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.DV_risk.riskStageId)
+        this.selectedRiskPossibility = this.getRiskProbabilityNames.find(t => t.id === this.DV_risk.probability)
+        this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(t => t.id === this.DV_risk.impactLevel)
         if (risk.attachFiles) this.addFile(risk.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -687,8 +902,8 @@
         this.updateWatchedRisks(this.DV_risk)
       },
       cancelRiskSave() {
-        this.$emit('on-close-form')
-        this.setTaskForManager({key: 'risk', value: null})
+        this.$emit('on-close-form')      
+        this.setRiskForManager({key: 'risk', value: null})        
       },
       validateThenSave() {
         this.$validator.validate().then((success) => {
@@ -696,14 +911,15 @@
             this.showErrors = !success
             return;
           }
-
           this.loading = true
-          let formData = new FormData()
+          let formData = new FormData()         
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
-          formData.append('risk[probability]', this.DV_risk.probability)
-          formData.append('risk[impact_level]', this.DV_risk.impactLevel)
+          formData.append('risk[probability_name]', this.selectedRiskPossibility.name)
+          formData.append('risk[probability]', this.selectedRiskPossibility.id)
+          formData.append('risk[impact_level_name]', this.selectedRiskImpactLevel.name)
+          formData.append('risk[impact_level]', this.selectedRiskImpactLevel.id )
           formData.append('risk[risk_approach]', this.DV_risk.riskApproach)
           formData.append('risk[risk_approach_description]', this.DV_risk.riskApproachDescription)
           formData.append('risk[task_type_id]', this.DV_risk.taskTypeId)
@@ -876,6 +1092,12 @@
         'myActionsFilter',
         'taskTypes',
         'riskStages',
+        'impactLevelNames',
+        'getRiskProbabilityOptions',  
+        'getRiskProbabilityNames',
+        'getRiskImpactLevelOptions', 
+        'getRiskImpactLevelNames', 
+        'probabilityNames',
         'riskApproaches',
         'currentTasks',
         'currentIssues',
@@ -885,11 +1107,15 @@
       readyToSave() {
         return (
           this.DV_risk &&
+          // this.C_riskProbabilityOptions &&
+          // this.C_riskImpactLevelOptions &&
           this.exists(this.DV_risk.text) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
-          this.exists(this.DV_risk.probability) &&
-          this.exists(this.DV_risk.impactLevel) &&
+          this.exists(this.selectedRiskPossibility.id) &&
+          this.exists(this.selectedRiskImpactLevel.id) &&
+          this.exists(this.selectedRiskPossibility.id) &&
+          this.exists(this.selectedRiskImpactLevel.id) &&
           this.exists(this.DV_risk.riskApproach) &&
           this.exists(this.DV_risk.riskApproachDescription) &&
           this.exists(this.DV_risk.taskTypeId) &&
@@ -906,8 +1132,27 @@
       C_myRisks() {
         return _.map(this.myActionsFilter, 'value').includes('risks')
       },
+      C_riskProbabilityOptions: {
+        get() {      
+          return this.getRiskProbabilityOptions
+        },
+        set(value) {     
+            this.setRiskProbabilityOptions(value)
+        }
+      },
+       C_riskImpactLevelOptions: {
+        get() {      
+          return this.getRiskImpactLevelOptions
+        },
+        set(value) {     
+            this.setRiskImpactLevelOptions(value)
+        }
+      },
       title() {
         return this._isallowed('write') ? this.DV_risk.id ? 'Edit Risk' : 'Create Risk' : 'Risk'
+      },
+      calculatePriorityLevel() {
+        return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
       },
       filteredTasks() {
         return this.currentTasks
@@ -923,7 +1168,111 @@
       },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
-      }
+      },
+      matrix11() {       
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 1)
+        return true
+      },
+      matrix12() {       
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 2)
+        return true
+      },
+       matrix13() {       
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 3)
+        return true
+      },
+       matrix14() {       
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 4)
+        return true
+      },
+       matrix15() {       
+        if (this.selectedRiskImpactLevel.id == 1 && this.selectedRiskPossibility.id == 5)
+        return true
+      },
+      matrix21() {       
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 1)
+        return true
+      },
+      matrix22() {       
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 2)
+        return true
+      },
+       matrix23() {       
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 3)
+        return true
+      },
+       matrix24() {       
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 4)
+        return true
+      },
+       matrix25() {       
+        if (this.selectedRiskImpactLevel.id == 2 && this.selectedRiskPossibility.id == 5)
+        return true
+      },
+      matrix31() {       
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 1)
+        return true
+      },
+      matrix32() {       
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 2)
+        return true
+      },
+       matrix33() {       
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 3)
+        return true
+      },
+       matrix34() {       
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 4)
+        return true
+      },
+       matrix35() {       
+        if (this.selectedRiskImpactLevel.id == 3 && this.selectedRiskPossibility.id == 5)
+        return true
+      },
+       matrix41() {       
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 1)
+        return true
+      },
+      matrix42() {       
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 2)
+        return true
+      },
+       matrix43() {       
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 3)
+        return true
+      },
+       matrix44() {       
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 4)
+        return true
+      },
+       matrix45() {       
+        if (this.selectedRiskImpactLevel.id == 4 && this.selectedRiskPossibility.id == 5)
+        return true
+      },
+      matrix51() {       
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 1)
+        return true
+      },
+      matrix52() {       
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 2)
+        return true
+      },
+       matrix53() {       
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 3)
+        return true
+      },
+       matrix54() {       
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 4)
+        return true
+      },
+       matrix55() {       
+        if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
+        return true  
+       },  
+      //  priorityGreen() {       
+      //   if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
+      //   return true  
+      //  }     
     },
     watch: {
       risk: {
@@ -1056,6 +1405,7 @@
     margin-bottom: 5px;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
+  .rmBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
     position: sticky;
     position: -webkit-sticky; 
@@ -1123,6 +1473,94 @@
       transform: translate(-50%, -50%);
   }
   .scrollToChecklist {      
-      box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
+  .risk-priorityLevel {
+    border-radius: 5px;  
+    min-height: 33px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    background-color: rgba(255, 255, 255, 1);
+    font-weight: bold; 
+  }
+  .risk-pL {
+    // margin-right: 50px;
+    font-size: large;   
+  }
+
+    // Risk Matrix styling (Hexcodes are Bootstrap colors)
+
+  .risk-matrix {
+    font-size: .85rem; 
+    border-radius: 4px;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);      
+  }
+  .risk-matrix-header {
+    color: #5E6469;
+    font-weight: bold;
+    background-color: #efefef;
+    background-image: linear-gradient(180deg, #efefef, #dfe1e2);
+  }
+  .vertical-head {
+    transform: rotate(-90deg);
+    position:absolute;
+    top: 64%;
+    left: 34%;
+    width: 30%;
+    font-weight: 500;
+  }
+  .gray {
+    background-color: #f7f7f7;
+  }
+  .red {
+    background-color: #d9534f;
+  }
+  .yellow {
+    background-color: yellow;    
+  }
+  .orange {
+    background-color: #f0ad4e;
+  }
+  .green {
+    background-color: rgb(92,184,92);
+  }
+  .red1 {
+    background-color: #d9534f;
+  }
+  .yellow1 {
+    background-color: yellow;  
+    color:#383838;  
+    display: block;
+  }
+  .orange1 {
+    background-color: #f0ad4e;
+  }
+  .green1 {
+    background-color: rgb(92,184,92);
+  }  
+  .green1, .orange1, .red1 {
+    display: block;
+    color:#fff;
+  }
+  .red, .yellow, .orange, .green {
+    opacity: .44;
+    min-height: 76px;
+  }
+  .red:hover, .yellow:hover, 
+  .orange:hover, .green:hover {
+    opacity: 1;
+    cursor: pointer;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .reg-opacity {
+    opacity: 1 !important;
+    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  #riskName {
+    padding: 4px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    border: 1px solid transparent
+  }
+  
 </style>

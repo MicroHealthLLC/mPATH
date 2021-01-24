@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-3"
+          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-2"
           data-cy="kanban_col"
           >
           <div>
@@ -30,19 +30,32 @@
             </div> -->
           </div>
           <div class="kan-body">
-          <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable">
-            <div
-              :is="cardShow"
-              v-for="task in column.tasks"
-              :load="log(task)"
-              :key="`${task.id}_${column.stage.id}`"
-              :task="task"
-              :issue="task"
-              :risk="task"
-              fromView="kanban_view"
-              class="mr-2 mb-2 task-card"
-            ></div>
-          </draggable>
+            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
+              <div
+                :is="cardShow"
+                v-for="task in column.tasks"
+                :load="log(task)"
+                :key="`${task.id}_${column.stage.id}`"
+                :task="task"
+                :issue="task"
+                :risk="task"
+                fromView="kanban_view"
+                class="mr-2 mb-2 task-card"
+              ></div>
+            </draggable> 
+             <div :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-else>
+              <div
+                :is="cardShow"
+                v-for="task in column.tasks"
+                :load="log(task)"
+                :key="`${task.id}_${column.stage.id}`"
+                :task="task"
+                :issue="task"
+                :risk="task"
+                fromView="kanban_view"
+                class="mr-2 mb-2 read-only-card"
+              ></div>
+            </div>           
           </div>
         </div>
       </div>
@@ -127,6 +140,9 @@ export default {
     ...mapGetters([
       'viewPermit'
     ]),
+    _isallowed() {
+    return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+    },
     cardShow() {
       return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)
     }
@@ -143,15 +159,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .task-card {
-    border-radius: 3px;
-    cursor: move;
+  .task-card, .read-only-card {
+    border-radius: 3px;   
     background: #fff;
     border: none !important;
     border-top: solid 8px #ffa500 !important;
     padding: 6px;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;
   }
+  .task-card { cursor: move;}
+  .read-only-card { cursor: pointer;}
+
   .kanban-draggable {
     min-height: calc(100vh - 230px);
   }
@@ -162,6 +180,7 @@ export default {
   }
   .overflow-x-auto {
     overflow-x: auto;
+    margin-top: 55px;
     margin-right: -10px;
     overflow-y: hidden !important;
   }

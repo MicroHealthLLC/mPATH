@@ -6,14 +6,14 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row mt-3">
+      <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
-      <div class="filter-border filter-sections px-3 pb-2">
+      <div class="filter-border filter-sections px-3 pb-1 pt-0">
         <div class="row">
           <div class="col-md-12">
             <h5 class="mb-0">Facilities</h5>
@@ -22,40 +22,6 @@
 
         <!-- Next row for two columns that will contain Facilities-related menus -->
         <div class="row justify-content-between">
-          <div class="col-md-6">
-            <div>
-              <label class="font-sm mb-0">Project Type</label>
-              <multiselect v-model="currentProject" track-by="name" label="name" :options="projects" :searchable="false" :allow-empty="false" select-label="Select" @select="updateProjectQuery">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
-              <label class="font-sm mb-0">Project Status</label>
-              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div class="">
-              <label class="font-sm mb-0">Facility % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
-                </div>
-              </div>
-              <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
-            </div>
-          </div>
           <div class="col-md-6">
             <div>
               <label class="font-sm mb-0">Facility Group</label>
@@ -67,8 +33,7 @@
                 </template>
               </multiselect>
             </div>
-            <div>
-              <label class="font-sm mb-0">Facility Name</label>
+           <label class="font-sm mb-0">Facility Name</label>
               <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -77,21 +42,48 @@
                 </template>
                 <span slot="noOptions">...</span>
               </multiselect>
+            <div>
+               <label class="font-sm mb-0">Facility % Progress Range</label>
+              <div class="form-row">
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                </div>
+                <div class="form-group col mb-0">
+                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                </div>
+              </div>
+              <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+            </div>
+            </div>
+            <div class="">
+            
+          </div>
+          <div class="col-md-6">
+             <label class="font-sm mb-0">Project Status</label>
+              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>      
+            <div>
+              <!-- Available row for filter -->
             </div>
             <div>
               <label class="font-sm mb-0">Project Completion Date Range</label>
-              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
+              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
           </div>
         </div>
       </div>
       <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border mt-2 mb-1 px-3 py-2">
+      <div class="filter-sections filter-border px-3 py-1 my-1">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
-            <h5>Tasks</h5>
+            <h5 class="mb-0">Tasks</h5>
             <div>
-              <label class="font-sm mb-0">Task Category</label>
+              <label class="font-sm mb-1">Task Category</label>
               <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -109,10 +101,60 @@
                   </div>
                 </template>
               </multiselect>
+            </div>           
+             <h5 class="mb-0 pt-1">Risks</h5>
+            <div v-if="viewPermit('kanban_view', 'read')">
+              <label class="font-sm mb-0">Risk Stages</label>
+              <multiselect v-model="C_riskStageFilter" track-by="name" label="name" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+
+              <label class="font-sm mb-0">Risk Approaches</label>
+              <multiselect
+                v-model="C_riskApproachFilter"
+                track-by="name"
+                label="name"                  
+                :options="getRiskApproachFilterOptions"
+                :searchable="false"
+                :multiple="true"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+
+              <label class="font-sm mb-0">Risk Priority Level</label>
+              <multiselect
+                v-model="C_riskPriorityLevelFilter"
+                track-by="name"
+                label="name"              
+                :options="getRiskPriorityLevelFilterOptions"
+                :searchable="false"
+                :multiple="true"
+                select-label="Select"
+                deselect-label="Remove"
+                >
+                <template slot="singleLabel" slot-scope="{option}">
+                  <div class="d-flex">
+                    <span class='select__tag-name'>{{option.name}}</span>
+                  </div>
+                </template>
+              </multiselect>
+
+
             </div>
           </div>
-          <div class="col-md-4">
-            <h5>Issues</h5>
+
+          <div class="col-md-4" style="border-right:solid lightgray .8px">
+           <h5 class="mb-0">Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Type</label>
               <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
@@ -142,13 +184,12 @@
                   </div>
                 </template>
               </multiselect>
-            </div>
+            </div>            
           </div>
-          <div class="col-md-4" style="border-left:solid lightgray .8px">
-            <h5>Combined</h5>
-            <!-- Task and Issue Users Filter -->
 
-              <div>
+          <div class="col-md-4">
+              <h5 class="mb-0">Combined</h5>
+               <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
@@ -189,11 +230,8 @@
                 </div>
               </div>
               <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
-            </div>
-
-            <!-- First row: Filter View Title/Header -->
-
-          </div>
+            </div>             
+          </div>        
         </div>
       </div>
     </div>
@@ -233,15 +271,34 @@ export default {
       'getAdvancedFilterOptions',
       'getAdvancedFilter',
       'projectStatusFilter',
+
+      'taskTypes',
+      'taskStages',
       'taskTypeFilter',
+      'taskStageFilter',
+      'taskUserFilter',
+
+      'riskStages',
+      'riskStageFilter',
+      'getRiskApproachFilterOptions',
+      'getRiskApproachFilter',
+      'getRiskPriorityLevelFilter',
+      'getRiskPriorityLevelFilterOptions',
+
+      'issueSeverities',
+      'issueTypes',
+      'issueStages',
+      'issueStageFilter',
+      'issueUserFilter',
+      'issueTypeFilter',
+      'issueSeverityFilter',
+
       'facilityGroupFilter',
       'facilityNameFilter',
       'facilityProgressFilter',
       'facilityDueDateFilter',
       'noteDateFilter',
       'taskIssueDueDateFilter',
-      'issueTypeFilter',
-      'issueSeverityFilter',
       'taskIssueProgressFilter',
       'projects',
       'currentProject',
@@ -250,23 +307,32 @@ export default {
       'getTaskIssueOverdueOptions',
       'taskIssueOverdueFilter',
       'activeFacilityGroups',
-      'taskTypes',
-      'issueTypes',
-      'issueSeverities',
-      'taskStages',
-      'issueStages',
       'unFilterFacilities',
       'filterFacilitiesWithActiveFacilityGroups',
       'ganttData',
       'myActionsFilter',
       'onWatchFilter',
-      'taskUserFilter',
-      'issueUserFilter',
       'progressFilter',
-      'taskStageFilter',
-      'issueStageFilter',
       'viewPermit'
     ]),
+
+    C_riskPriorityLevelFilter: {
+      get() {
+        return this.getRiskPriorityLevelFilter
+      },
+      set(value) {
+        this.setRiskPriorityLevelFilter(value)
+      }
+    },
+
+    C_riskApproachFilter: {
+      get() {      
+        return this.getRiskApproachFilter
+      },
+      set(value) {     
+        this.setRiskApproachFilter(value)
+      }
+    },
     C_taskIssueProgress: {
       get() {
         return this.progressFilter.taskIssue
@@ -315,6 +381,16 @@ export default {
         this.setTaskIssueOverdueFilter(value)
       }
     },
+
+    C_riskStageFilter: {
+      get() {
+        return this.riskStageFilter
+      },
+      set(value) {
+        this.setRiskStageFilter(value)
+      }
+    },
+
     C_taskTypeFilter: {
       get() {
         return this.taskTypeFilter
@@ -323,6 +399,15 @@ export default {
         this.setTaskTypeFilter(value)
       }
     },
+    C_taskStageFilter: {
+      get() {
+        return this.taskStageFilter
+      },
+      set(value) {
+        this.setTaskStageFilter(value)
+      }
+    },
+
     C_facilityGroupFilter: {
       get() {
         return this.facilityGroupFilter
@@ -382,14 +467,6 @@ export default {
         this.setIssueSeverityFilter(value)
       }
     },
-    C_taskStageFilter: {
-      get() {
-        return this.taskStageFilter
-      },
-      set(value) {
-        this.setTaskStageFilter(value)
-      }
-    },
     C_issueStageFilter: {
       get() {
         return this.issueStageFilter
@@ -398,6 +475,7 @@ export default {
         this.setIssueStageFilter(value)
       }
     },
+
     C_taskIssueUserFilter: {
       get() {
         return this.getTaskIssueUserFilter
@@ -470,7 +548,10 @@ export default {
       'setProgressFilters',
       'clearProgressFilters',
       'setTaskStageFilter',
-      'setIssueStageFilter'
+      'setIssueStageFilter',
+      'setRiskStageFilter',
+      'setRiskApproachFilter',
+      'setRiskPriorityLevelFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -510,6 +591,7 @@ export default {
       this.setIssueSeverityFilter(null)
       this.setIssueStageFilter(null)
       this.setTaskStageFilter(null)
+      this.setRiskStageFilter(null)
       this.setTaskIssueProgressFilter(null)
       this.setMyActionsFilter([])
       this.setOnWatchFilter([])
@@ -517,6 +599,8 @@ export default {
       this.clearProgressFilters()
       this.setIssueUserFilter([])
       this.setTaskUserFilter(null)
+      this.setRiskApproachFilter([])
+      this.setRiskPriorityLevelFilter([])
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;
@@ -613,6 +697,14 @@ export default {
     }
   },
   watch: {
+
+    getRiskApproachFilter(value) {
+      this.updateMapFilters({ key: 'riskApproachFilter', filter: value, same: true })
+    },
+    getRiskPriorityLevelFilter(value) {
+      this.updateMapFilters({ key: 'riskPriorityLevelFilter', filter: value, same: true })
+    },
+
     getAdvancedFilter(value) {
       this.updateMapFilters({ key: 'advancedFilter', filter: value, same: true })
     },
@@ -661,6 +753,9 @@ export default {
     taskStageFilter(value) {
       this.updateMapFilters({ key: 'taskStageIds', filter: value })
     },
+    riskStageFilter(value) {
+      this.updateMapFilters({ key: 'riskStageIds', filter: value })
+    },
     getTaskIssueUserFilter(value) {
       this.updateMapFilters({ key: 'taskIssueUsers', filter: value })
     },
@@ -702,6 +797,9 @@ export default {
   transition: .4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.19), 0 24px 24px rgba(0, 0, 0, 0.23);
 }
+.vdp-datepicker.dp {
+  height: 42.8px !important;
+}
 #filter_bar {
   overflow-y: auto;
   border-radius: 4px;
@@ -713,6 +811,7 @@ export default {
 }
 .filter-sections {
   background-color: #fff;
+  border-top:solid #41b883 3.5px;
 }
 .filters_wrap {
   width: 90%;

@@ -62,6 +62,30 @@
         </div>
       </div>
 
+       <div class="d-flex font-sm w-100 mt-1">
+        <div class="simple-select w-50 mr-1">
+          <multiselect
+            v-model="C_riskApproachFilter"
+            track-by="name"
+            label="name"
+            placeholder="Filter by Risk Approach"
+            :options="getRiskApproachFilterOptions"
+            :searchable="false"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+        <div>
+        <!-- Another filter fits here -->
+        </div>
+      </div>
       <div class="mt-3">
         <button v-if="_isallowed('write')"
           class="btn btn-md btn-primary addRiskBtn mr-3"
@@ -72,7 +96,7 @@
          <button v-tooltip="`Export to PDF`" @click.prevent="exportToPdf" class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-pdf" />
         </button>
-        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Risks Log')" class="btn btn-md exportBtns text-light">
+        <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Risk Register')" class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel" />
         </button>
         <div v-if="_isallowed('read')">
@@ -80,6 +104,7 @@
             <hr/>
             <risk-show
               v-for="(risk, i) in filteredRisks"
+              :load="log(risk)"
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -96,30 +121,37 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
          <table style="display:none" class="table table-sm table-bordered" ref="table" id="riskList1">
       <thead>
-        <tr>
-          <th></th>
-          <th>Risk Name</th>
-          <th>Task Category</th>
+        <tr>          
+          <th>Risk</th>
+          <th>Facility</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>         
           <th>Start Date</th>
           <th>Due Date</th>
-          <th>Risk Owner(s)</th>
-          <th>Priority Level</th>
-          <th>Risk Approach</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>
+          <th>Overdue</th>
+          <th>On Watch</th>
           <th>Last Update</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(risk, i) in filteredRisks">
-          <td class="text-center">{{i+1}}</td>
           <td>{{risk.text}}</td>
-          <td>{{risk.taskType}}</td>
-          <td>{{risk.startDate}}</td>
-          <td>{{risk.dueDate}}</td>
-          <td>{{risk.riskOwners}}</td>
-          <td>{{risk.priorityLevel}}</td>
+          <td>{{risk.facilityName}}</td>
           <td>{{risk.riskApproach}}</td>
-           <td v-if="(risk.notes.length) > 0">
-            By: {{ risk.notes[0].user.fullName}} on
+          <td>{{risk.priorityLevel}}</td>         
+          <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
+          <td v-else></td>
+          <td>{{risk.progress + "%"}}</td>
+          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.watched) == true"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.notes.length) > 0">
+             By: {{ risk.notes[0].user.fullName}} on
             {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
@@ -170,19 +202,20 @@
     },
     methods: {
       ...mapMutations([
-        'setAdvancedFilter',
+        'setAdvancedFilter',  
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setRiskApproachFilter',
         'setIssueSeverityFilter',
         'setMyActionsFilter',
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-      // log(r) {
-      //   console.log(r)
-      // },
+      log(r) {
+        console.log(r)
+      },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)
         this.newRisk = false
@@ -202,8 +235,8 @@
         const doc = new jsPDF("l")
         const html = this.$refs.table.innerHTML
         doc.autoTable({ html: "#riskList1" })
-        doc.text(150, 285, "Risks List")
-        doc.save("Risks_List.pdf")
+        doc.text(150, 285, "Risk Register")
+        doc.save("Risk Register.pdf")
       },
      exportToExcel(table, name) {
         if (!table.nodeType) table = this.$refs.table
@@ -226,6 +259,8 @@
     computed: {
       ...mapGetters([
         'getAdvancedFilterOptions',
+        'getRiskApproachFilterOptions',
+        'getRiskApproachFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
@@ -238,9 +273,12 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypes',
+        'riskStageFilter',
         'riskUserFilter',
         'currentProject',
         'taskTypeFilter',
+        'riskApproach',
+        'riskApproaches',
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
@@ -252,6 +290,9 @@
       filteredRisks() {
 
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
@@ -265,10 +306,12 @@
           let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
           if(taskIssueUsers.length > 0){
             valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-
           }
+
           //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
+
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
 
           if (taskIssueProgress && taskIssueProgress[0]) {
             var min = taskIssueProgress[0].value.split("-")[0]
@@ -276,7 +319,9 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
+
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
           if (search_query) valid = valid && search_query.test(resource.riskName)
 
@@ -319,6 +364,14 @@
         },
         set(value) {
           this.setTaskTypeFilter(value)
+        }
+      },
+      C_riskApproachFilter: {
+        get() {      
+          return this.getRiskApproachFilter
+        },
+        set(value) {     
+            this.setRiskApproachFilter(value)
         }
       },
       C_myRisks: {

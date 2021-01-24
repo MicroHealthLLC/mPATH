@@ -2,7 +2,7 @@
   <div>
     <tabsbar></tabsbar>
     <filter-sidebar v-if="contentLoaded"></filter-sidebar>   
-    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView"></state-facility-sidebar>    
+    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>    
     <router-view></router-view>
   </div>
 </template>
@@ -39,6 +39,9 @@
       },
       isFacilityManagerView() {
         return this.$route.name === 'FacilityManagerView'
+      },
+      isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
       },
     }
   }

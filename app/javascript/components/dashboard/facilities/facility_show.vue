@@ -238,13 +238,13 @@
             @refresh-facility="refreshFacility"
           ></issue-index>
         </div>
-        <div v-if="currentTab == 'risks'">
+        <!-- <div v-if="currentTab == 'risks'">
           <risk-index
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
           ></risk-index>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -295,7 +295,7 @@
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
-        currentTab: 'overview',
+        currentTab: 'tasks',
         tabs: [
           {
             label: 'Overview',
@@ -311,13 +311,12 @@
             label: 'Issues',
             key: 'issues',
             closable: false
-          },
-           {
-            label: 'Risks (Coming Soon)',
-            key: 'risks',
-            closable: false,
-            disabled: true
-          },
+          },     
+          //   {
+          //   label: 'Risks',
+          //   key: 'risks',
+          //   closable: false
+          // },                
           {
             label: 'Notes',
             key: 'notes',
@@ -343,7 +342,7 @@
         'fetchFacility'
       ]),
       onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'overview'
+        this.currentTab = tab ? tab.key : 'tasks'
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
