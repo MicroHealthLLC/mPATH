@@ -243,18 +243,18 @@
             <div class="col-md-3 simple-select form-group">
                 <label class="font-sm">Priority Level:</label> 
                 <div class="risk-priorityLevel text-center">
-                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
-                  <br>                  
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>                                                      </div>
-                
+                    <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
+                    <br>                  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>    
+                </div>                
                 <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>            
               </div>
 
