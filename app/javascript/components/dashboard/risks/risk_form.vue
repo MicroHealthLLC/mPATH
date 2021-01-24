@@ -238,34 +238,60 @@
           </multiselect>
         </div>    
 
-         <div class="d-flex align-item-center justify-content-between w-100 mb-2">    
-              <div class="simple-select form-group ml-4 mr-2 risk-matrix-row">               
-                <label class="font-sm">*Probablity: </label>
-                <multiselect
-                  v-model="selectedRiskPossibility"
-                  v-validate="'required'"  
-                  track-by="value"   
-                  label="name"     
-                  placeholder="Risk Probablity"
-                  :options="getRiskProbabilityNames"
-                  :searchable="false"
-                  deselect-label=""    
-                  :allow-empty="false"                       
-                  :disabled="!_isallowed('write')"
-                  :class="{'error': errors.has('Risk Probability')}"
-                  data-cy="risk_probability"
-                  >
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.name}}</span>
-                    </div>
-                  </template>
-                </multiselect>
-                <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
-                  {{errors.first('Risk Probability')}}
-                </div>
+         <div class="container">
+         <div class="row mb-2">   
+            <div class="col-md-3 simple-select form-group">
+                <label class="font-sm">Priority Level:</label> 
+                <div class="risk-priorityLevel text-center">
+                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
+                  <br> 
+                 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
+                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>                                                      </div>
+                
+                <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>
+                <!-- <button 
+                  class="btn btn-sm btn-primary mt-1 py-0 px-0 font-sm rmBtn w-100"
+                  @click.prevent="scrollToRiskMatrix"  
+                >See Risk Matrix</button> -->
               </div>
-              <div class="simple-select form-group mr-2 risk-matrix-row">
+
+               <div class="col-md"> 
+                 <div class="simple-select form-group mb-0">            
+                  <label class="font-sm">*Probablity: </label>
+                    <multiselect
+                      v-model="selectedRiskPossibility"
+                      v-validate="'required'"  
+                      track-by="value"   
+                      label="name"     
+                      placeholder="Risk Probablity"
+                      :options="getRiskProbabilityNames"
+                      :searchable="false"
+                      deselect-label=""    
+                      :allow-empty="false"                       
+                      :disabled="!_isallowed('write')"
+                      :class="{'error': errors.has('Risk Probability')}"
+                      data-cy="risk_probability"
+                      >
+                      <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name'>{{option.name}}</span>
+                        </div>
+                      </template>
+                    </multiselect>
+                    <div v-show="errors.has('Risk Probability')" class="text-danger" data-cy="risk_probability_error">
+                      {{errors.first('Risk Probability')}}
+                    </div>
+                  </div>
+
+              <div class="simple-select form-group">
                 <label class="font-sm">*Impact Level:</label>
                 <multiselect
                   v-model="selectedRiskImpactLevel"
@@ -292,28 +318,178 @@
                   {{errors.first('Impact Level')}}
                 </div>
               </div>
-
-              <div class="simple-select form-group mr-4" style="width:10%">
-                <label class="font-sm">Priority Level:</label> 
-                <div class="risk-priorityLevel text-center">
-                  <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
-                  <br> 
-                 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (8)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (9)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (10)"  class="orange1">High </span> 
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
-                  <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>                                                      </div>
-                <button 
-                  class="btn btn-sm btn-primary mt-1 py-0 px-0 font-sm rmBtn w-100"
-                  @click.prevent="scrollToRiskMatrix"  
-                >See Risk Matrix</button>
+            </div>
+          </div>
+         </div>    
+    <div class="container mr-4 mb-4 ml-2 justify-content-center text-center">                 
+      <el-collapse accordion>           
+        <el-collapse-item title="Click to see Priority Level Risk Matrix" name="1">  
+        <div>      
+  <!-- Risk Matrix begins here -->
+        <div class="container mt-2 px-4">
+  <!-- This first row is not a true row...Just a transformed vertical div header -->
+          <div class="row">              
+              <div style="position:relative">
+                  <div class="vertical-head risk-matrix-header"><h6>PROBABILITY</h6></div>
               </div>
-         </div>                          
+          <div class="col">
+
+              <div class="row">
+                <div class="col"><h4 class="mb-3">Risk Matrix for: <span id="riskName">{{DV_risk.text}}</span></h4>            
+                </div>
+                <!-- <div class="col text-right"><h4 class="mb-3">Risk Priority Level: <span id="riskName">{{DV_risk.priorityLevel}}</span></h4>            
+                </div> -->
+              </div>   
+
+              <div class="row"> 
+                <div class="col text-center">           
+                  <h6 class="mb-1">IMPACT</h6>
+                </div>
+              </div>    
+                <!-- Risk Matrix first row, Category headers -->   
+  
+              <div class="container mb-2 mt-0 risk-matrix" >              
+                  <div class="row">            
+                  <div class ="col-md-2 p-2 gray text-center">                
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Negligible <br>1
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Minor <br>2
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Moderate<br> 3
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                    Major<br> 4
+                  </div>
+                  <div class ="col-md-2 gray p-2 text-center">
+                    Catastrophic<br> 5
+                  </div>
+              </div>
+
+    <!-- Risk Matrix 2nd row (first color row) -->
+              <div class="row">                
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Almost<br>Certain<br> 5
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 5
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix25 == true ? 'reg-opacity' : '']">
+                  High<br> 10
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix35 == true ? 'reg-opacity' : '']">
+                  Extreme <br>15
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix45 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 20
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix55 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 25
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 3rd row -->
+              <div class="row">        
+                <div class ="col-md-2 gray p-2 text-center">
+                  Likely<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix24 == true ? 'reg-opacity' : '']">
+                  High<br> 8
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
+                  High<br> 12                
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix44 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 16
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix54 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 20 
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 4th row -->
+              <div class="row">           
+                <div class ="col-md-2 gray p-2 text-center">
+                  Possible<br> 3
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix13 == true ? 'reg-opacity' : '']">
+                  Low<br> 3 
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix23 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 6
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix33 == true ? 'reg-opacity' : '']">
+                  High<br> 9 
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix43 == true ? 'reg-opacity' : '']">
+                  High<br> 12
+                  </div>
+                  <div class ="col-md-2 red p-2 text-center" :class="[matrix53 == true ? 'reg-opacity' : '']">
+                  Extreme<br> 15
+                  </div>
+              </div>
+
+  <!-- Risk Matrix 5th row -->
+              <div class="row">
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Unlikely<br> 2
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix12 == true ? 'reg-opacity' : '']">
+                  Low<br> 2
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix22 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix32 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 6
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix42 == true ? 'reg-opacity' : '']" >
+                  High<br> 8
+                  </div>
+                  <div class ="col-md-2 orange p-2 text-center" :class="[matrix52 == true ? 'reg-opacity' : '']">
+                  High<br> 10
+                  </div>
+              </div>
+
+    <!-- Risk Matrix 6th row (last row) -->
+              <div class="row">
+                  <div class ="col-md-2 gray p-2 text-center">
+                  Rare<br> 1
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
+                  Low<br> 1
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
+                  Low<br> 2
+                  </div>
+                  <div class ="col-md-2 green p-2 text-center" :class="[matrix31 == true ? 'reg-opacity' : '']">
+                  Low<br> 3 
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix41 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 4
+                  </div>
+                  <div class ="col-md-2 yellow p-2 text-center" :class="[matrix51 == true ? 'reg-opacity' : '']">
+                  Moderate<br> 5
+                  </div>
+              </div>
+              </div>     
+            </div>
+                <!-- Risk Matrix Container ends at this top div  -->      
+                </div>
+              </div>
+            </div>
+          </el-collapse-item>
+      </el-collapse>
+    
+    </div>
+
+                             
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
@@ -380,7 +556,7 @@
           </span>
           <div v-if="filteredChecks.length > 0">
             <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_risk.checklists)" :list="DV_risk.checklists" :animation="100" ghost-class="ghost-card" class="drag">
-              <div v-for="(check, index) in DV_risk.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)">
+              <div v-for="(check, index) in DV_risk.checklists" class="d-flex w-100 mb-3 drag-item" v-if="!check._destroy && isMyCheck(check)" :key="index">
                 <div class="form-control h-100" :key="index">
                   <div class="row">
                     <div class="col justify-content-start">
@@ -560,168 +736,6 @@
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
-
-<!-- Risk Matrix begins here -->
-      <div class="container mt-2">
-<!-- This first row is not a true row...Just a transformed vertical div header -->
-        <div class="row">              
-             <div style="position:relative">
-                <div class="vertical-head risk-matrix-header"><h6>PROBABILITY</h6></div>
-             </div>
-         <div class="col">
-
-            <div class="row">
-              <div class="col"><h4 class="mb-3">Risk Matrix for: <span id="riskName">{{DV_risk.text}}</span></h4>            
-              </div>
-              <!-- <div class="col text-right"><h4 class="mb-3">Risk Priority Level: <span id="riskName">{{DV_risk.priorityLevel}}</span></h4>            
-              </div> -->
-            </div>   
-
-            <div class="row"> 
-              <div class="col text-center">           
-                <h6 class="mb-1">IMPACT</h6>
-              </div>
-            </div>    
-              <!-- Risk Matrix first row, Category headers -->   
- 
-            <div class="container mb-2 mt-0 risk-matrix" >              
-                <div class="row">            
-                <div class ="col-md-2 p-2 gray text-center">                
-                </div>
-                <div class ="col-md-2 gray p-2 text-center">
-                 Negligible <br>1
-                </div>
-                <div class ="col-md-2 gray p-2 text-center">
-                 Minor <br>2
-                </div>
-                <div class ="col-md-2 gray p-2 text-center">
-                 Moderate<br> 3
-                </div>
-                <div class ="col-md-2 gray p-2 text-center">
-                  Major<br> 4
-                </div>
-                <div class ="col-md-2 gray p-2 text-center">
-                  Catastrophic<br> 5
-                </div>
-            </div>
-
-  <!-- Risk Matrix 2nd row (first color row) -->
-            <div class="row">                
-                <div class ="col-md-2 gray p-2 text-center">
-                Almost<br>Certain<br> 5
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix15 == true ? 'reg-opacity' : '']">
-                Moderate<br> 5
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix25 == true ? 'reg-opacity' : '']">
-                High<br> 10
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix35 == true ? 'reg-opacity' : '']">
-                Extreme <br>15
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix45 == true ? 'reg-opacity' : '']">
-                Extreme<br> 20
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix55 == true ? 'reg-opacity' : '']">
-                 Extreme<br> 25
-                </div>
-            </div>
-
-<!-- Risk Matrix 3rd row -->
-            <div class="row">        
-               <div class ="col-md-2 gray p-2 text-center">
-                Likely<br> 4
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix14 == true ? 'reg-opacity' : '']">
-                Moderate<br> 4
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix24 == true ? 'reg-opacity' : '']">
-                High<br> 8
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix34 == true ? 'reg-opacity' : '']">
-                High<br> 12                
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix44 == true ? 'reg-opacity' : '']">
-                Extreme<br> 16
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix54 == true ? 'reg-opacity' : '']">
-                Extreme<br> 20 
-                </div>
-            </div>
-
- <!-- Risk Matrix 4th row -->
-            <div class="row">           
-               <div class ="col-md-2 gray p-2 text-center">
-                Possible<br> 3
-                </div>
-                <div class ="col-md-2 green p-2 text-center" :class="[matrix13 == true ? 'reg-opacity' : '']">
-                Low<br> 3 
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix23 == true ? 'reg-opacity' : '']">
-                Moderate<br> 6
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix33 == true ? 'reg-opacity' : '']">
-                High<br> 9 
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix43 == true ? 'reg-opacity' : '']">
-                High<br> 12
-                </div>
-                <div class ="col-md-2 red p-2 text-center" :class="[matrix53 == true ? 'reg-opacity' : '']">
-                Extreme<br> 15
-                </div>
-            </div>
-
- <!-- Risk Matrix 5th row -->
-            <div class="row">
-                <div class ="col-md-2 gray p-2 text-center">
-                Unlikely<br> 2
-                </div>
-                <div class ="col-md-2 green p-2 text-center" :class="[matrix12 == true ? 'reg-opacity' : '']">
-                Low<br> 2
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix22 == true ? 'reg-opacity' : '']">
-                Moderate<br> 4
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix32 == true ? 'reg-opacity' : '']">
-                Moderate<br> 6
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix42 == true ? 'reg-opacity' : '']" >
-                High<br> 8
-                </div>
-                <div class ="col-md-2 orange p-2 text-center" :class="[matrix52 == true ? 'reg-opacity' : '']">
-                High<br> 10
-                </div>
-            </div>
-
-  <!-- Risk Matrix 6th row (last row) -->
-            <div class="row">
-                <div class ="col-md-2 gray p-2 text-center">
-                Rare<br> 1
-                </div>
-                <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
-                Low<br> 1
-                </div>
-                <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
-                Low<br> 2
-                </div>
-                <div class ="col-md-2 green p-2 text-center" :class="[matrix31 == true ? 'reg-opacity' : '']">
-                Low<br> 3 
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix41 == true ? 'reg-opacity' : '']">
-                Moderate<br> 4
-                </div>
-                <div class ="col-md-2 yellow p-2 text-center" :class="[matrix51 == true ? 'reg-opacity' : '']">
-                Moderate<br> 5
-                </div>
-            </div>             
-
-         </div>     
-         </div>
-         <!-- Risk Matrix Container ends at this top div  -->      
-         </div>
-       </div>
-
-
       </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -751,6 +765,7 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         riskUsers: [],
+      
         probability: [], 
         selectedRiskPossibility: {id: 1, value: 1, name: "1 - Rare"},
         selectedRiskImpactLevel: {id: 1, value: 1, name: "1 - Negligible"},       
@@ -1477,9 +1492,7 @@
     // margin-right: 50px;
     font-size: large;   
   }
-  .risk-matrix-row {
-    width: 45%
-  }
+
     // Risk Matrix styling (Hexcodes are Bootstrap colors)
 
   .risk-matrix {
