@@ -244,8 +244,7 @@
                 <label class="font-sm">Priority Level:</label> 
                 <div class="risk-priorityLevel text-center">
                   <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
-                  <br> 
-                 
+                  <br>                  
                   <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
                   <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
                   <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
@@ -256,11 +255,7 @@
                   <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (12)"  class="orange1">High </span>   
                   <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) >= (15)"  class="red1">Extreme </span>                                                      </div>
                 
-                <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>
-                <!-- <button 
-                  class="btn btn-sm btn-primary mt-1 py-0 px-0 font-sm rmBtn w-100"
-                  @click.prevent="scrollToRiskMatrix"  
-                >See Risk Matrix</button> -->
+                <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>            
               </div>
 
                <div class="col-md"> 
@@ -764,8 +759,7 @@
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],
         destroyedFiles: [],
-        riskUsers: [],
-      
+        riskUsers: [],      
         probability: [], 
         selectedRiskPossibility: {id: 1, value: 1, name: "1 - Rare"},
         selectedRiskImpactLevel: {id: 1, value: 1, name: "1 - Negligible"},       
