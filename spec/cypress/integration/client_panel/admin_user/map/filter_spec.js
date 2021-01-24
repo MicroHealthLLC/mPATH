@@ -33,6 +33,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on inactive project status', function() {
     cy.toggleFilterTab()
+    cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=project_status]').as('list')
       cy.get('@list').click()
@@ -79,7 +80,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on task category', function() {
     cy.toggleFilterTab()
-    cy.get('[data-cy=clear_filter]').click()
+    // cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=task_category]').as('list')
       cy.get('@list').click()
@@ -91,7 +92,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Task Category: Test Task Type(milestone)').should('be.visible')
     })
-    cy.facilityRollup()
+    cy.taskCategoryAndIssueTypeFilter()
     cy.logout()
   })
 
@@ -162,7 +163,7 @@ describe('Apply filters in Map Page', function() {
 
   it('Apply filter on issue type', function() {
     cy.toggleFilterTab()
-    cy.get('[data-cy=clear_filter]').click()
+    // cy.get('[data-cy=clear_filter]').click()
     cy.get('[data-cy=filter_bar]').within(() => {
       cy.get('[data-cy=issue_type]').as('list')
       cy.get('@list').click()
@@ -174,7 +175,7 @@ describe('Apply filters in Map Page', function() {
     cy.get('[data-cy=date_set_filter]').within(() => {
       cy.contains('Issue Type: Test Issue Type').should('be.visible')
     })
-    cy.facilityRollup()
+    cy.taskCategoryAndIssueTypeFilter()
     cy.logout()
   })
 
