@@ -868,15 +868,18 @@
         this.currentTab = tab ? tab.key : 'tasks'
       },
       expandFacilityGroup(group) {
+        debugger;
         if (group.id == this.expanded.id) {
           this.expanded.id = ''
-          this.currentFacilityGroup = {}
+          //this.currentFacilityGroup = {}
         }
         else {
           this.expanded.id = group.id
           this.currentFacilityGroup = group
+          this.currentFacility = this.facilityGroupFacilities(group)[0] || {}
+
         }
-        this.currentFacility = {}
+        //this.currentFacility = {}
       },
       handleAddNew(stage) {
         if (!this.viewPermit(this.currentTab, 'write')) return
@@ -988,6 +991,12 @@
               this.currentFacility = {}
               this.expanded.id = ''
             }
+          }
+          // NOTE: https://github.com/MicroHealthLLC/mGis/issues/1037
+          if(!this.currentFacilityGroup.id && value[0]){
+            this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
+            this.currentFacilityGroup = value[0]
+            this.expanded.id = value[0].id
           }
         }, deep: true
       }
