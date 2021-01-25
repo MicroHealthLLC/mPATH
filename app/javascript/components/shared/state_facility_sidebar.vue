@@ -18,11 +18,11 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-          <facility-rollup
+<!--           <facility-rollup
             v-else
             :facility-group="C_showFacilityRollup ? currentFacilityGroup : null"
             from="manager_view"
-          ></facility-rollup>
+          ></facility-rollup> -->
         </div>
       </div>
         <div class="col-md-6 facility-forms-tab" v-if="isFacilityManagerView">
@@ -82,7 +82,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-sheets>
-          <facility-rollup v-else></facility-rollup>
+          <!-- <facility-rollup v-else></facility-rollup> -->
         </div>
         <div v-if="isSheetsView">   
           <sweet-modal
@@ -868,7 +868,6 @@
         this.currentTab = tab ? tab.key : 'tasks'
       },
       expandFacilityGroup(group) {
-        debugger;
         if (group.id == this.expanded.id) {
           this.expanded.id = ''
           //this.currentFacilityGroup = {}
