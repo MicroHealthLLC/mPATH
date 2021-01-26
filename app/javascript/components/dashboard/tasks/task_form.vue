@@ -221,8 +221,8 @@
         </span>
         <div v-if="filteredChecks.length > 0">
         <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-            <div class="form-control h-100" :key="index">
+          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+            <div class="form-control h-100">
               <div class="row">
                 <div class="col justify-content-start">
                   <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -260,12 +260,16 @@
                       :disabled="!_isallowed('write')"
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
                       placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                      name="Checkpoint Due Date"
+                      class="w-100 vue2-datepicker d-flex ml-auto" 
+                      value-type="DD MMM YYYY"
+                      format="DD MMM YYYY"
+                      v-validate="{ date_format:'DD MMM YYYY', date_between: [formatDate(DV_task.startDate), formatDate(DV_task.dueDate)] }"              
                     />
+                    <div v-show="errors.has('Checkpoint Due Date')" class="text-danger">
+                      {{errors.first('Checkpoint Due Date')}}
+                    </div>
                  </div>
                 </div>       
                </div>
@@ -694,7 +698,17 @@
       },
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
-      }
+      },
+      formatDate(date) {
+        const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+        const aDate = new Date(date)
+        // VeeValidate requires a leading 0 for comparsion in the current date format
+        if (aDate.getDate() < 10) {
+          return "0" + aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
+        } else {
+          return aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
+        } 
+      },
     },
     computed: {
       ...mapGetters([
