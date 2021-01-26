@@ -261,14 +261,14 @@
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
                       placeholder="DD MM YYYY"
-                      name="Checkpoint Due Date"
+                      :name="checkpointName(index)"
                       class="w-100 vue2-datepicker d-flex ml-auto" 
                       value-type="DD MMM YYYY"
                       format="DD MMM YYYY"
-                      v-validate="{ date_format:'DD MMM YYYY', date_between: [formatDate(DV_task.startDate), formatDate(DV_task.dueDate)] }"              
+                      v-validate="{ date_format:'DD MMM YYYY', date_between: [formatDate(DV_task.startDate), formatDate(DV_task.dueDate)] }"             
                     />
-                    <div v-show="errors.has('Checkpoint Due Date')" class="text-danger">
-                      {{errors.first('Checkpoint Due Date')}}
+                    <div v-show="errors.has(`${checkpointName(index)}`)" class="text-danger">
+                      {{errors.first(`${checkpointName(index)}`)}}
                     </div>
                  </div>
                 </div>       
@@ -709,6 +709,10 @@
           return aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
         } 
       },
+      // Dynamically generates name attribute for checklist items based on index
+      checkpointName(index) {
+        return "Checkpoint Due Date " + (index + 1)
+      }
     },
     computed: {
       ...mapGetters([
