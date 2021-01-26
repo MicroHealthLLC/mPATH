@@ -1255,6 +1255,37 @@ export default new Vuex.Store({
         return valid
       })
     },
+    filteredAllRisks: (state, getters) => {
+      let ids = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
+      let stages = getters.riskStageFilter && getters.riskStageFilter.length ? _.map(getters.riskStageFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
+
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'risks')), t => {
+        let valid = true
+        if (ids.length > 0) valid = valid && ids.includes(t.taskTypeId)
+        if (stages.length > 0) valid = valid && stages.includes(t.riskStageId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+          valid = is_valid
+        }
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].name == "overdue"){
+          valid = (t.isOverdue == true)
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
+          valid = (t.isOverdue == false)
+        }
+        return valid
+      })
+
+    },
     on_watched: (state, getters) => {
       let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
       let issues = _.filter(getters.filteredAllIssues, t => t.watched)

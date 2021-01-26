@@ -1,16 +1,305 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="m-2" data-cy="facility_rollup">
-    <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div>
-    <br>
-    <div class="text-center mt-1">
+  <div class="container m-2" data-cy="facility_rollup">
+      <div class="row">
+        <div class="col"> 
+          <h3 class="d-inline mr-2"> <b>PROJECTS</b></h3>   
+          <h3 v-if="contentLoaded" class="d-inline"> <b class="badge badge-secondary badge-pill">{{C_facilityCount}}</b></h3> 
+        </div>
+      <!-- <p class="mt-2 d-flex align-items-center">
+        <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
+          <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
+        </span>
+      </p> -->
+      </div>
+<!-- First Row -->
+    <div class="row row-1 mt-3">
+       <div class="col-md-6 col-lg-6 col-sm-12">
+         <el-card class="box-card">
+            <div class="row">
+              <div class="col">
+                <span> <h5>Project Program Status</h5></span>    
+                <hr>
+              </div>             
+            </div>
+             <div v-if="contentLoaded && C_facilityCount > 0">
+             <div v-for="status in facilitiesByProjectStatus">
+             
+              <div class="row">
+                <div class="col">
+                  <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
+                  <span> {{status.name}}</span>
+                  <span class="badge badge-secondary badge-pill">{{status.length}}</span>
+                </div>
+                <div class="col">            
+                  <span class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}">
+                   <div class="progress-bar bg-info" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
+                  </span>         
+                </div>
+              </div>
+             
+              </div>
+              </div>           
+               <div v-if="!contentLoaded" class="my-4">
+                  <loader type="code"></loader>
+               </div>          
+         </el-card>     
+       </div>  
+
+        <div class="col-md-6 col-lg-6 col-sm-12" data-cy="date_set_filter">         
+          <el-card class="box-card" style="background-color:#fff">
+            <div class="row">
+              <div class="col">
+                 <h5 class="d-inline">Data Set Filters</h5>               
+                <hr>
+              </div>             
+            </div>
+
+            <div v-for="filterArray in getAllFilterNames">
+              <div class="row">
+                <div class="col" v-if="getFilterValue(filterArray[0])">                                         
+                            <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
+                </div>
+              </div>
+            </div>                    
+         </el-card>     
+       </div>  
+
+    </div>  
+
+
+<!-- This is the 2nd row, the task-issue-risk-row -->
+
+    <div class="row row-2 mt-3 task-issue-risk-row">
+
+      <div class="col-md-4 col-lg-4 col-sm-12" data-cy="tasks_summary">
+         <el-card class="box-card" style="background-color:#D5F5E3">
+
+            <div class="row">
+              <div class="col"> 
+                 <h5 class="d-inline"> <b>TASKS</b></h5>   
+                 <h5 v-if="contentLoaded" class="d-inline"> <b class="float-right badge badge-secondary badge-pill">{{filteredTasks.length}}</b></h5>                   
+                <hr> 
+              </div>             
+            </div>
+
+          <div v-if="contentLoaded"> 
+              <div class="row">
+                  <div class="col">
+                    <span>Complete</span>
+                    <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
+                    </span>
+                  </div>
+              </div>         
+
+              <div v-if="filteredTasks.length" class="row mt-4 mb-1">
+                 <div class="col font-weight-bold text-center">
+                      <h6>CATEGORIES</h6> 
+                  </div>                
+              </div>
+              <div v-for="task in currentTaskTypes">
+              <div class="row" v-if="task._display"> 
+                    <div class="col">
+                      <span> {{task.name}}</span>
+                      <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                    </div>
+
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
+                        <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
+                      </span>
+                    </div>
+              </div>  
+              </div>  
+
+            </div>                    
+             <div v-if="!contentLoaded" class="my-4">
+                  <loader type="code"></loader>
+             </div>          
+         </el-card>
+   
+       </div>  
+
+
+
+        <div class="col-md-4 col-lg-4 col-sm-12" data-cy="issues_summary">
+          
+         <el-card class="box-card" style="background-color:#fcf3cf">
+            <div class="row">
+              <div class="col">
+                 <h5 class="d-inline"> <b>ISSUES</b></h5>   
+                 <h5 v-if="contentLoaded" class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredIssues.length}}</b></h5>   
+                <hr>
+              </div>             
+            </div>
+            <div v-if="contentLoaded">     
+             
+              <div class="row">
+                    <div class="col">
+                      <span>Complete</span>
+                      <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
+                     </span>
+                    </div>
+              </div>     
+              <div class="row">
+                    <div class="col">
+                      <span>Overdue</span>
+                      <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
+                      </span>
+                    </div>
+              </div>
+
+             <div v-if="filteredIssues.length" class="font-weight-bold text-center">
+               <div class="col font-weight-bold mt-4 mb-1 text-center">
+                       <h6>CATEGORIES</h6> 
+               </div>                  
+            </div>
+             <div v-for="issue in currentIssueTypes">
+             <div class="row" v-if="issue._display">
+          
+                  <div class="col">
+                    <span> {{issue.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                    </span>
+                  </div>
+            </div>
+            </div>  
+
+            </div>  
+
+            <div v-if="!contentLoaded" class="my-4">
+              <loader type="code"></loader>
+             </div>          
+         </el-card>     
+       </div>  
+
+
+       <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_group_summary">          
+            
+         <el-card class="box-card" style="background-color:#EDBB99">
+            <div class="row">
+              <div class="col">
+                 <h5 class="d-inline"> <b>RISKS</b></h5>   
+                 <h5 v-if="contentLoaded" class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredRisks.length}}</b></h5>   
+                <hr>
+              </div>             
+            </div>
+            <div v-if="contentLoaded">     
+             
+              <div class="row">
+                    <div class="col">
+                      <span>Complete</span>
+                      <span class="badge badge-secondary badge-pill">{{riskVariation.completed.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.completed.percentage <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${riskVariation.completed.percentage}%`">{{riskVariation.completed.percentage}} %</div>
+                     </span>
+                    </div>
+              </div>     
+              <div class="row">
+                    <div class="col">
+                      <span>Overdue</span>
+                      <span class="badge badge-secondary badge-pill">{{riskVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${riskVariation.overdue.percentage}%`">{{riskVariation.overdue.percentage}} %</div>
+                      </span>
+                    </div>
+              </div>
+
+             <div v-if="filteredRisks.length" class="font-weight-bold text-center">
+               <div class="col font-weight-bold mt-3 mb-1 text-center">
+                       <h6>CATEGORIES</h6> 
+               </div>                  
+            </div>
+             <div v-for="risk in currentRiskTypes">
+             <div class="row" v-if="risk._display">
+          
+                  <div class="col">
+                    <span> {{risk.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': risk.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${risk.progress}%`">{{risk.progress}} %</div>
+                    </span>
+                  </div>
+            </div>
+            </div>  
+
+            </div>  
+
+            <div v-if="!contentLoaded" class="my-4">
+              <loader type="code"></loader>
+             </div>          
+         </el-card>     
+       </div>  
+
+    </div>
+
+<!-- Bottommost row for Filters -->
+
+    <div class="row row-3 mt-4">
+        <div class="col-md-12 col-lg-12 col-sm-12" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
+          <el-card class="box-card">
+            <div class="row">
+              <div class="col">
+                 <span> <h5 class="text-center">Project Groups</h5></span>    
+                <hr>
+              </div>             
+            </div>
+            <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">     
+             
+              <div class="row">
+                <div class="col">
+                    <span class="badge badge-pill" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
+                    {{facilityGroup.status}}
+                    </span>
+                    <span>{{facilityGroup.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
+                </div>
+                <div class="col">            
+                   <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
+                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
+                  </span>
+                </div>
+              </div>             
+            
+              </div>           
+               <div v-if="!contentLoaded" class="my-4">
+                  <loader type="code"></loader>
+               </div>          
+         </el-card>    
+       </div>  
+    </div>
+    <!-- <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div> -->
+    <!-- <br> -->
+    <!-- <div class="text-center mt-1">
       <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
       <p class="mt-2 d-flex align-items-center">
         <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
           <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
         </span>
       </p>
-      <div v-if="C_facilityCount > 0" class="d-flex justify-content-around">
+      <div v-if="C_facilityCount > 0" class="d-flex justify-content-around"> -->
         <!-- <div>
           <span> active</span>
           <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
@@ -19,168 +308,8 @@
           <span> inactive</span>
           <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
          </div>-->
-      </div>
-    </div>
-
-    <div class="my-3 p-3 fac-proj-status">
-      <h5 class="text-center">Facility Project Status</h5>
-      <hr>
-      <div v-if="contentLoaded && C_facilityCount > 0">
-        <div v-for="status in facilitiesByProjectStatus">
-          <div class="row">
-            <div class="col-md-9">
-              <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
-              <span> {{status.name}}</span>
-              <span class="badge badge-secondary badge-pill">{{status.length}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-if="!contentLoaded" class="my-4">
-        <loader type="code"></loader>
-      </div>
-    </div>
-    <hr>
-
-    <div class="my-3 tasks p-3" data-cy="date_set_filter">
-      <h5 class="text-center">Data Set Filters</h5>
-      <hr>
-      <div>
-        <div v-for="filterArray in getAllFilterNames">
-          <div class="row">
-            <div class="col-md-12 font-md" v-if="getFilterValue(filterArray[0])">
-              <span style="font-weight:700; ">{{filterArray[1]}}: </span><span >{{getFilterValue(filterArray[0])}}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="my-3 tasks p-3" data-cy="tasks_summary">
-      <h5 class="text-center"><span v-if="contentLoaded">{{filteredTasks.length}}</span> Tasks</h5>
-     <hr>
-      <div v-if="contentLoaded">
-        <div>
-          <div class="row">
-            <div class="col-md-9">
-              <span>Complete</span>
-              <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
-              </span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-9">
-              <span>Overdue</span>
-              <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
-              </span>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div v-if="filteredTasks.length" class="text-info font-weight-bold text-center">Task Categories</div>
-        <div v-for="task in currentTaskTypes">
-          <div class="row" v-if="task._display">
-            <div class="col-md-9">
-              <span> {{task.name}}</span>
-              <span class="badge badge-secondary badge-pill">{{task.length}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
-                <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-else class="my-4">
-        <loader type="code"></loader>
-      </div>
-    </div>
-
-    <div class="my-3 issues p-3" data-cy="issues_summary">
-      <h5 class="text-center"><span v-if="contentLoaded">{{filteredIssues.length}}</span> Issues</h5>
-     <hr>
-      <div v-if="contentLoaded">
-        <div>
-          <div class="row">
-            <div class="col-md-9">
-              <span>Complete</span>
-              <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
-              </span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-9">
-              <span>Overdue</span>
-              <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
-              </span>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div v-if="filteredIssues.length" class="text-info font-weight-bold text-center">Issue Types</div>
-        <div v-for="issue in currentIssueTypes">
-          <div class="row" v-if="issue._display">
-            <div class="col-md-9">
-              <span> {{issue.name}}</span>
-              <span class="badge badge-secondary badge-pill">{{issue.length}}</span>
-            </div>
-            <div class="col-md-3 d-flex align-items-center">
-              <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-else class="my-4">
-        <loader type="code"></loader>
-      </div>
-    </div>
-    <div class="mb-3 p-3 fac-groups" v-if="from !== 'manager_view'" data-cy="facility_group_summary">
-    <h5 class="text-center">Facility Groups</h5>
-    <hr>
-      <div v-if="contentLoaded" class="row my-2" v-for="facilityGroup in filteredFacilityGroups">
-        <div class="col-md-9 font-md">
-          <span class="badge badge-pill" :class="{'badge-success':
-            facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-            {{facilityGroup.status}}
-          </span>
-          <span>{{facilityGroup.name}}</span>
-          <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
-        </div>
-        <div class="col-md-3 d-flex align-items-center">
-          <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
-            <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
-          </span>
-        </div>
-      </div>
-      <div v-else class="my-4">
-        <loader type="code"></loader>
-      </div>
-    </div>
+      <!-- </div>
+    </div> -->
   </div>
 </template>
 
@@ -211,6 +340,7 @@ export default {
       'facilityGroupFacilities',
       'taskTypeFilter',
       'taskStageFilter',
+      'riskStageFilter',
       'issueStageFilter',
       'issueTypeFilter',
       'issueSeverityFilter',
@@ -220,6 +350,7 @@ export default {
       'issueTypes',
       'filteredAllTasks',
       'filteredAllIssues',
+      'filteredAllRisks',
       'myActionsFilter',
       'onWatchFilter'
     ]),
@@ -296,6 +427,24 @@ export default {
         return valid
       })
     },
+    filteredRisks() {
+      let typeIds = _.map(this.taskTypeFilter, 'id')
+      let stageIds = _.map(this.riskStageFilter, 'id')
+      let risks = this.facilityGroup ? _.flatten(_.map(this.facilityGroupFacilities(this.facilityGroup), 'risks')) : this.filteredAllRisks
+      let taskIssueUsers = this.getTaskIssueUserFilter
+      return _.filter(risks, (resource) => {
+        let valid = true
+        let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+        if(taskIssueUsers.length > 0){
+          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+        }
+        //TODO: For performance, send the whole tasks array instead of one by one
+        valid = valid && this.filterDataForAdvancedFilter([resource], 'facilitRollupTasks')
+        if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
+        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+        return valid
+      })
+    },
     activeFacilitiesByStatus() {
       return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup).length : this.filteredFacilities('active').length
     },
@@ -349,6 +498,22 @@ export default {
       }
       return issueTypes
     },
+    currentRiskTypes() {
+      let names = this.taskTypeFilter && this.taskTypeFilter.length && _.map(this.taskTypeFilter, 'name')
+      let taskTypes = new Array
+      for (let type of this.taskTypes) {
+        let risks = _.filter(this.filteredRisks, t => t.taskTypeId == type.id)
+        taskTypes.push(
+          {
+            name: type.name,
+            _display: risks.length > 0 && (names ? names.includes(type.name) : true),
+            length: risks.length,
+            progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+          }
+        )
+      }
+      return taskTypes
+    },
     taskVariation() {
       let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
@@ -364,6 +529,16 @@ export default {
       let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
       let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
+      return {
+        completed: {count: completed.length, percentage: completed_percent},
+        overdue: {count: overdue.length, percentage: overdue_percent},
+      }
+    },
+     riskVariation() {
+      let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
+      let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
+      let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
       return {
         completed: {count: completed.length, percentage: completed_percent},
         overdue: {count: overdue.length, percentage: overdue_percent},
@@ -385,6 +560,9 @@ export default {
     height: 12px;
     padding-top: 2px;
   }
+  .box-card {
+    min-height: 150px;
+  }
   .proj-type {
     display: inline;
     border-radius: 2px;
@@ -394,10 +572,17 @@ export default {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .fac-proj-status, .tasks, .issues, .fac-groups {
-   border-radius: 2px;
-   background-color: #fff;
-   box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
+  ul > li {
+    display: inline-block !important;
+    /* You can also add some margins here to make it look prettier */
+    zoom:1;
+    *display:inline;
+    /* this fix is needed for IE7- */
+   }
   // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {
   //  background-color: #fff;
   // }
