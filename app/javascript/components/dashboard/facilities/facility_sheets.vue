@@ -12,11 +12,11 @@
       <div>
         <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')" class="fac-sum p-3">
-            <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
+            <h4 v-if="extras" class="text-center"><b>Project Summary</b></h4>
             <div class="f-body mt-3 p-2">
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe mr-0"></i></span>
-                <span style="font-weight:700">Facility Group: </span>
+                <span style="font-weight:700">Project Group: </span>
                 <span> {{facilityGroup.name}}</span>
               </p>
               <div>
@@ -62,7 +62,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
+                <span style="font-weight:700; margin-right: 4px">Project Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>

@@ -18,11 +18,11 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-          <facility-rollup
+<!--           <facility-rollup
             v-else
             :facility-group="C_showFacilityRollup ? currentFacilityGroup : null"
             from="manager_view"
-          ></facility-rollup>
+          ></facility-rollup> -->
         </div>
       </div>
         <div class="col-md-6 facility-forms-tab" v-if="isFacilityManagerView">
@@ -82,7 +82,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-sheets>
-          <facility-rollup v-else></facility-rollup>
+          <!-- <facility-rollup v-else></facility-rollup> -->
         </div>
         <div v-if="isSheetsView">   
           <sweet-modal
@@ -870,13 +870,15 @@
       expandFacilityGroup(group) {
         if (group.id == this.expanded.id) {
           this.expanded.id = ''
-          this.currentFacilityGroup = {}
+          //this.currentFacilityGroup = {}
         }
         else {
           this.expanded.id = group.id
           this.currentFacilityGroup = group
+          this.currentFacility = this.facilityGroupFacilities(group)[0] || {}
+
         }
-        this.currentFacility = {}
+        //this.currentFacility = {}
       },
       handleAddNew(stage) {
         if (!this.viewPermit(this.currentTab, 'write')) return
@@ -988,6 +990,12 @@
               this.currentFacility = {}
               this.expanded.id = ''
             }
+          }
+          // NOTE: https://github.com/MicroHealthLLC/mGis/issues/1037
+          if(!this.currentFacilityGroup.id && value[0]){
+            this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
+            this.currentFacilityGroup = value[0]
+            this.expanded.id = value[0].id
           }
         }, deep: true
       }
