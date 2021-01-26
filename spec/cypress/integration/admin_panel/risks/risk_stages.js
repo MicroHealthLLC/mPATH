@@ -54,7 +54,7 @@ describe('Admin Panel Risk Stages', function() {
     cy.get('.action_item > a').contains('New Risk Stage').click()
     cy.get('#risk_stage_name').type('New Test Risk Stage').should('have.value', 'New Test Risk Stage')
     cy.get('#risk_stage_submit_action').contains('Create Risk stage').click()
-    cy.get('#index_table_risk_stages > tbody > tr').last().within(() => {
+    cy.get('#index_table_risk_stages > tbody > tr').first().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('.flashes').contains('Risk stage was successfully destroyed.').should('be.visible')
@@ -73,7 +73,6 @@ describe('Admin Panel Risk Stages', function() {
   })
 
   it('Sort Risk Stage according to Percentage', function() {
-    cy.get('.sortable').contains('Percentage').click()
     cy.get('#index_table_risk_stages > tbody > tr').first().contains(40).should('be.visible')
     cy.get('.sortable').contains('Percentage').click()
     cy.get('#index_table_risk_stages > tbody > tr').first().contains(60).should('be.visible')
