@@ -1,5 +1,5 @@
 ActiveAdmin.register FacilityGroup do
-  menu parent: "Facilities"
+  menu parent: "Facilities", label: "Project Groups"
   actions :all, except: [:show]
 
   permit_params do
@@ -12,14 +12,16 @@ ActiveAdmin.register FacilityGroup do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Facility Groups', admin_facility_groups_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Project Groups', admin_facility_groups_path)]
     if %(show edit).include?(params['action'])
       links << link_to(facility_group.name, edit_admin_facility_group_path)
     end
     links
   end
 
-  form do |f|
+  # form_title = @facility_group.new_record? ? "New Project Group" : "Edit Project Group"
+
+  form title: proc{|g| g.new_record? ? "New Project Group" : "Edit Project Group" } do |f|
     f.semantic_errors *f.object.errors.keys
 
     inputs 'Details' do
@@ -27,10 +29,18 @@ ActiveAdmin.register FacilityGroup do
       f.input :code
       f.input :status, include_blank: false, include_hidden: false, label: "State"
     end
-    actions
-  end
 
-  index do
+    f.actions do
+      f.action :submit, :as => :button, :label => "Create Project Group"
+      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
+    end
+  end
+  config.clear_action_items!
+
+  action_item :only => :index do
+    link_to "New Project Group" , new_admin_facility_group_path
+  end
+  index title: 'Project Group' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :id

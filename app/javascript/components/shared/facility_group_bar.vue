@@ -3,7 +3,7 @@
     <transition name="slide-fade">
       <div v-if="facilityGroupBar" id="facility_group-bar">
         <div class="r-header px-3">
-          <h5 class="text-muted">Facility Groups</h5>
+          <h5 class="text-muted">Project Groups</h5>
           <div class="region-minus-btn" @click="facilityGroupBar= false">
             <i class="fa fa-times"></i>
           </div>
@@ -27,7 +27,7 @@
           </li>
         </ul>
         <div v-else class="text-danger px-3 py-1">
-          The Project doesn't have any facility groups
+          The Project doesn't have any groups
         </div>
       </div>
     </transition>

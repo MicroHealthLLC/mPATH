@@ -2,12 +2,12 @@
   <form id="facilities-form" @submit.prevent="saveFacilitiy" class="mx-auto needs-validations" accept-charset="UTF-8">
     <div v-if="showErrors" class="text-danger mb-3">Please fill the required feilds before submitting</div>
     <div class="form-group">
-      <label>Facility Name:</label>
+      <label>Project Name:</label>
       <input name="Facility Name" v-validate="'required'" type="text" class="form-control" v-model="DV_facility.facilityName" placeholder="Microhealthllc facility" :class="{'form-control': true, 'error': errors.has('Facility Name') }" />
       <div v-show="errors.has('Facility Name')" class="text-danger">{{ errors.first('Facility Name') }}</div>
     </div>
     <div class="form-group">
-      <label>Facility Group:</label>
+      <label>Project Group:</label>
       <select name="Facility Group" class="form-control" v-model="DV_facility.facilityGroupId" v-validate="'required'" :class="{'form-control': true, 'error': errors.has('Facility Group')}">
         <option
           v-for="region in regions"
