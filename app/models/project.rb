@@ -63,6 +63,74 @@ class Project < SortableRecord
     json
   end
 
+  def build_json_response
+    all_facility_projects = FacilityProject.where(project_id: self.id)
+    all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
+    all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
+
+    all_tasks = Task.includes([{task_files_attachments: :blob}, :task_type, :users, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_issues = Issue.includes([{issue_files_attachments: :blob}, :issue_type, :users, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+    all_risks = Risk.includes([{risk_files_attachments: :blob}, :user, :checklists, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_facilities = Facility.where(id: all_facility_ids)
+    all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
+
+    facility_projects_hash = []
+    facility_projects_hash2 = {}
+    all_facility_projects.each do |fp|
+      h = fp.attributes
+      facility = all_facilities.detect{|f| f.id == fp.facility_id}
+      g = all_facility_groups.detect{|gg| gg.id == facility.facility_group_id}
+
+      h[:facility] = facility.attributes.merge({
+        facility_group_name: g&.name,
+        facility_group_status: g&.status
+      })
+
+      tasks = all_tasks.select{|t| t.facility_project_id == fp.id}
+      h[:tasks] = tasks.map(&:to_json)
+
+      issues = all_issues.select{|i| i.facility_project_id == fp.id}
+      h[:issues] = issues.map(&:to_json)
+
+      risks = all_risks.select{|r| r.facility_project_id == fp.id}
+      h[:risks] = risks.map(&:to_json)
+
+      facility_projects_hash2[fp.id] = h
+      facility_projects_hash << h
+    end
+
+    facility_groups_hash = []
+    all_facility_groups.each do |fg|
+      h = fg.attributes
+      h[:facilities] = []
+      h[:project_ids] = []
+      fg.facility_projects.each do |fp|
+        h[:facilities] << facility_projects_hash2[fp.id]
+        h[:project_ids] << fp.project_id
+      end
+      h[:project_ids] = h[:project_ids].compact.uniq
+      facility_groups_hash << h
+    end
+
+    hash = self.attributes
+
+    hash.merge!({
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
+      facilities: facility_projects_hash,
+      facility_groups: facility_groups_hash,
+      statuses: statuses.as_json,
+      task_types: task_types.as_json,
+      issue_types: issue_types.as_json,
+      issue_severities: issue_severities.as_json,
+      task_stages: task_stages.as_json,
+      issue_stages: issue_stages.as_json,
+      risk_stages: risk_stages.as_json
+    })
+
+    hash
+  end
+
   def reject_comment(comment)
     comment['body'].blank?
   end
