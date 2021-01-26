@@ -1,5 +1,5 @@
 ActiveAdmin.register Project do
-  menu priority: 3
+  menu priority: 3,label: 'Programs'
   actions :all, except: [:show]
 
   permit_params do
@@ -30,19 +30,25 @@ ActiveAdmin.register Project do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_projects_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Programs', admin_projects_path)]
     if %(show edit).include?(params['action'])
       links << link_to(project.name, edit_admin_project_path)
     end
     links
   end
 
-  index do
+  config.clear_action_items!
+
+  action_item :only => :index do
+    link_to "New Program" , new_admin_project_path
+  end
+
+  index title: 'Programs' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :name
     column :description
-    column :project_type, nil, sortable: 'project_types.name' do |project|
+    column "Program Type", :project_type, sortable: 'project_types.name' do |project|
       if current_user.admin_write?
         link_to "#{project.project_type.name}", "#{edit_admin_project_type_path(project.project_type)}" if project.project_type.present?
       else
@@ -56,30 +62,30 @@ ActiveAdmin.register Project do
     end
   end
 
-  form do |f|
+  form title: proc{|g| g.new_record? ? "New Program" : "Edit Program" } do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
           f.input :name
-          f.input :project_type, include_blank: false, include_hidden: false
+          f.input :project_type, include_blank: false, include_hidden: false, label: "Program Type"
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :description
         end
       end
 
       tab 'Advanced' do
-        f.inputs 'Project Details' do
-          input :users, label: 'Users in Project', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :facilities, label: 'Facilities in Project', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :statuses, label: 'Statuses in Project', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :task_stages, label: 'Task Stages in Project', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :task_types, label: 'Task Categories in Project', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :issue_types, label: 'Issue Types in Project', as: :select, collection: options_for_select( IssueType.all.map{|u| [u.name, u.id]}, f.object.issue_type_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :issue_severities, label: 'Issue Severities in Project', as: :select, collection: options_for_select( IssueSeverity.all.map{|u| [u.name, u.id]}, f.object.issue_severity_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :issue_stages, label: 'Issue Stages in Project', as: :select, collection: options_for_select( IssueStage.all.map{|u| [u.name, u.id]}, f.object.issue_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-          input :risk_stages, label: 'Risk Stages in Project', as: :select, collection: options_for_select( RiskStage.all.map{|u| [u.name, u.id]}, f.object.risk_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+        f.inputs 'Program Details' do
+          input :users, label: 'Users in Program', as: :select, collection: options_for_select(  User.client.active.map{|u| [u.email, u.id]}, f.object.user_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :facilities, label: 'Facilities in Program', as: :select, collection: options_for_select(Facility.active.map{|u| [u.facility_name, u.id]}, f.object.facility_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :statuses, label: 'Statuses in Program', as: :select, collection:  options_for_select( Status.all.map{|u| [u.name, u.id]}, f.object.status_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :task_stages, label: 'Task Stages in Program', as: :select, collection: options_for_select( TaskStage.all.map{|u| [u.name, u.id]}, f.object.task_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :task_types, label: 'Task Categories in Program', as: :select, collection: options_for_select( TaskType.all.map{|u| [u.name, u.id]}, f.object.task_type_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :issue_types, label: 'Issue Types in Program', as: :select, collection: options_for_select( IssueType.all.map{|u| [u.name, u.id]}, f.object.issue_type_ids) , multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :issue_severities, label: 'Issue Severities in Program', as: :select, collection: options_for_select( IssueSeverity.all.map{|u| [u.name, u.id]}, f.object.issue_severity_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :issue_stages, label: 'Issue Stages in Program', as: :select, collection: options_for_select( IssueStage.all.map{|u| [u.name, u.id]}, f.object.issue_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :risk_stages, label: 'Risk Stages in Program', as: :select, collection: options_for_select( RiskStage.all.map{|u| [u.name, u.id]}, f.object.risk_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
 
         end
       end
@@ -97,12 +103,15 @@ ActiveAdmin.register Project do
       end
     end
 
-    f.actions
+    f.actions do
+      f.action :submit, :as => :button, :label => "Create Program"
+      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
+    end
 
   end
 
   filter :name
-  filter :project_type
+  filter :project_type, label: "Program Type"
   filter :status, as: :select, collection: Project.statuses, label: "State"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 
@@ -113,9 +122,9 @@ ActiveAdmin.register Project do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects?" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Programs?" do |ids|
     deleted = Project.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Programs"
   end
 
   controller do
@@ -147,7 +156,7 @@ ActiveAdmin.register Project do
       project = Project.new(p_params)
       if project.save
         project.user_ids = project.user_ids + user_ids if user_ids.present?
-        redirect_to admin_projects_path , notice: "Project created Successfully"
+        redirect_to admin_projects_path , notice: "Program created Successfully"
       else
         render :new
       end

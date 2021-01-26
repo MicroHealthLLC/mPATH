@@ -126,7 +126,7 @@
         <tr style="background-color:#ededed">
           <th>Task</th>
           <th>Task Category</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
