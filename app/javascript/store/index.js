@@ -424,8 +424,11 @@ export default new Vuex.Store({
 
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
-        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityGroupFilter && getter.facilityGroupFilter[0]){
+          user_names = _.map(getter.facilityGroupFilter, 'name').join(", ")
+        }
+        return user_names
       // Advanced filters
       }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter'].includes(_filterValue) ){
 
@@ -436,8 +439,11 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
-        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
+          user_names = _.map(getter.facilityNameFilter, 'facilityName').join(", ")
+        }
+        return user_names
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
         var user_names = null
