@@ -406,7 +406,9 @@ export default new Vuex.Store({
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approach'],
-        ['riskPriorityLevelFilter', 'Priority Level'],
+        ['riskStageFilter', 'Risk Stage'],
+        ['riskPriorityLevelFilter', 'Risk Priority Level'],
+
 
         // Advanced Filters
         // The first index value is filterCategoryId in advanced filter
@@ -422,8 +424,11 @@ export default new Vuex.Store({
 
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
-        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityGroupFilter && getter.facilityGroupFilter[0]){
+          user_names = _.map(getter.facilityGroupFilter, 'name').join(", ")
+        }
+        return user_names
       // Advanced filters
       }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter'].includes(_filterValue) ){
 
@@ -434,8 +439,11 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
-        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
+          user_names = _.map(getter.facilityNameFilter, 'facilityName').join(", ")
+        }
+        return user_names
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
         var user_names = null
@@ -571,6 +579,15 @@ export default new Vuex.Store({
           user_names = _.map(getter.getRiskPriorityLevelFilter, 'name').join(", ")
         }
         return user_names
+        
+      }else if(_filterValue == 'riskStageFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.riskStageFilter && getter.riskStageFilter[0]){
+          user_names = _.map(getter.riskStageFilter, 'name').join(", ")
+        }
+        return user_names
+      
       }else if(_filterValue == 'riskApproachFilter'){
         // console.log(getter.getTaskIssueUserFilter)
         var user_names = null
