@@ -17,7 +17,7 @@
 
           <div class="row row-1 mt-2">
           <div class="col-md-5 col-lg-5 col-sm-12">
-            <el-card class="box-card" style="position:relative">               
+            <div class="box-card my-el-card p-3" style="position:relative">               
 
              <div class="row">
                 <div class="col font-weight-bold">                
@@ -87,8 +87,8 @@
                     </div>                  
                 </div>
               </div>
-               <button v-if="_isallowed('write') && DV_updated" class="btn btn-warning btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>             
-               </el-card>     
+               <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-1 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>             
+               </div>     
              </div>  
 
         <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">         
@@ -112,7 +112,7 @@
           <el-card class="box-card" style="background-color: #41b883; color:#fff">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Data Set Filters</h5>               
+                 <h5 class="d-inline">Filters</h5>               
                  <hr style="background-color: #fff; color:#fff">
               </div>             
             </div>
@@ -130,7 +130,7 @@
             <div class="row">
               <div class="col">
                  <h5 class="d-inline">Responsible</h5>               
-                 <hr>
+                 <hr class="mb-0 pb-0">
               </div>             
             </div>
               <div class="row">
@@ -139,15 +139,15 @@
                 <span class="fbody-icon"><i class="far fa-id-badge"></i></span>
                 <span>{{DV_facility.pointOfContact || 'N/A'}}</span>
               </p>      
-              <p class="mt-1">
+              <p class="mt-0">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
                 <span>{{DV_facility.address || 'N/A'}}</span>
               </p>           
-              <p class="mt-1">
+              <p class="my-0">
                 <span class="fbody-icon"><i class="fas fa-phone"></i></span>
                 <span>{{DV_facility.phoneNumber || 'N/A'}}</span>
               </p>
-              <p class="mt-1">
+              <p class="my-0">
                 <span class="fbody-icon"><i class="far fa-envelope"></i></span>
                 <span>{{DV_facility.email || 'N/A'}}</span>
               </p>                    
@@ -201,7 +201,7 @@
                       <h6>CATEGORIES</h6> 
                   </div>                
               </div>
-              <div class="row" v-for="task in taskStats">           
+              <div class="row font-sm" v-for="task in taskStats">           
                     <div class="col">
                       <span> {{task.name}}</span>
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
@@ -257,7 +257,7 @@
                </div>                  
             </div>
             
-             <div class="row" v-for="issue in issueStats">          
+             <div class="row font-sm" v-for="issue in issueStats">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -298,7 +298,7 @@
        </div>  
 
 <!-- Row 2, col-3 for Risks Card -->
-    <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_group_summary">               
+    <div class="col-md-4 col-lg-4 col-sm-12 mb-3" data-cy="facility_group_summary">               
          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -307,33 +307,30 @@
                 <hr>
               </div>             
             </div>
-
+<div v-for="p of filteredRisks" :load="log(p)"></div>
               <div class="row mb-2">
                   <div class="col text-center">
-                    Risk Priority Levels
+                    RISK PRIORITY LEVELS
                   </div>
               </div>            
             <div class="row font-sm">
-                <div class="col text-center">                
-                  <p class="mb-2 grey">Very Low</p>
+                <div class="col text-center"> 
+                  <p class="mb-2 grey2">Very Low </p>                
                   <p class="mb-2 green">Low </p>               
                   <p class="mb-2 yellow">Moderate </p>                         
                 </div>
                 <div class="col">  
-                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{ ct }}</span>
-                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">--</span>              
-                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">--</span>
-                  <!-- <p class="my-2 badge badge-secondary badge-pill d-block ">1</p>
-                  <p class="my-2 badge badge-secondary badge-pill d-block ">1</p>               
-                  <p class="my-2 badge badge-secondary badge-pill d-block ">1</p>                          -->
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.grey}}</span>
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.green}}</span>
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>                 
                 </div>
                  <div class="col text-center">                
                   <p class="mb-2 orange">High</p>
                   <p class="mb-2 red">Extreme </p>                                        
                 </div>
                 <div class="col">                
-                  <p class="my-2 badge w-50 badge-secondary badge-pill d-block">3</p>
-                  <p class="mb-2 badge w-50 badge-secondary badge-pill d-block">3</p>               
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.orange}}</span>
+                 <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span> 
                                        
                 </div>
             </div>
@@ -444,6 +441,7 @@
   import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
+import { counter } from '@fortawesome/fontawesome-svg-core'
 
   export default {
     name: 'FacilitySheets',
@@ -479,10 +477,9 @@
         loading: true,
         DV_updated: false,
         notesQuery: '',
-        ct: 0,
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
-        currentTab: 'tasks',
+        currentTab: 'overview',
         tabs: [
           {
             label: 'Overview',
@@ -524,13 +521,14 @@
       ...mapMutations([
         'setTaskTypeFilter',
         'updateFacilityHash',
-        'nullifyTasksForManager'
+        'nullifyTasksForManager',
+    
       ]),
       ...mapActions([
         'fetchFacility'
       ]),
-      log(r) {
-        console.log(r)
+      log(p) {
+        console.log(p)
       },
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'tasks'
@@ -563,6 +561,7 @@
             console.error(err);
           })
       },
+ 
       refreshFacility() {
         this.loading = true
         this.getFacility()
@@ -590,6 +589,8 @@
         'issueTypeFilter',
         'riskStageFilter',
         'issueSeverityFilter',
+        'riskPriorityLevelFilter',
+        'getRiskPriorityLevelFilter',
         'taskUserFilter',
         'taskStageFilter',
         'issueStageFilter',
@@ -626,14 +627,7 @@
         get() {
           return _.map(this.onWatchFilter, 'value').includes('issues')
         }
-      },
-      priorityGrey(ct) {       
-          ct = 0;        
-          if ( this.DV_facility.risks.priorityLevel == 1){
-          ct++ 
-          }   
-          return ct
-      },
+      },          
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
@@ -741,11 +735,17 @@
         }
       },
        filteredRisks() {
+
         let typeIds = _.map(this.taskTypeFilter, 'id')
+        let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')    
         let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
         let taskIssueUsers = this.getTaskIssueUserFilter
 
+        
+        if (riskPriorityLevelIds ){         
+          console.log(riskPriorityLevelIds)
+        }
         return _.filter(this.DV_facility.risks, (resource) => {
           let valid = true
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
@@ -759,11 +759,25 @@
           valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowTasks')
 
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
-          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)        
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
           return valid
         })
       },
+       riskPriorityLevels() {
+        let grey = _.filter(this.filteredRisks, (t) => t && t.priorityLevelName && t.priorityLevelName == "Very Low")
+        let green = _.filter(this.filteredRisks, (t) => t && t.priorityLevelName && t.priorityLevelName == "Low")
+        let yellow = _.filter(this.filteredRisks, (t) => t && t.priorityLevelName && t.priorityLevelName == "Moderate")
+        let orange = _.filter(this.filteredRisks, (t) => t && t.priorityLevelName && t.priorityLevelName == "High")
+        let red  = _.filter(this.filteredRisks, (t) => t && t.priorityLevelName && t.priorityLevelName == "Extreme")
+         return {
+            grey: grey.length,
+            green: green.length,
+            yellow: yellow.length,
+            orange: orange.length,
+            red: red.length
+          }
+       },    
        riskVariation() {
         let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
@@ -847,7 +861,7 @@
     background-color: #ededed !important;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .apply-btn, .red, .orange, .green, .grey {
+  .apply-btn, .red, .orange, .green, .grey, .grey2 {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .pg-content {
@@ -883,6 +897,9 @@
     background: #fff;
     padding: 5px;
   }
+  .my-el-card {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+  }
   .vue2-datepicker /deep/ .mx-input:disabled {
     color: #555;
     background-color: #fff;
@@ -903,6 +920,9 @@
   .grey {
     background-color: lightgray;
   }
+  .grey2 {
+    background-color: #ededed;
+  }
   .yellow {
     background-color: yellow;
   }
@@ -916,9 +936,11 @@
     background-color: #d9534f;
   }
   .red, .orange, .green, .grey {
-   color:white;
-   border-radius: 3px;
-
+    color:white;
+    border-radius: 3px;
+  }
+  .grey2 {
+    border-radius: 3px;
   }
 
 </style>

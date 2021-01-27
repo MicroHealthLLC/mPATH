@@ -6,6 +6,7 @@
         <td class="oneFive">{{risk.text}}</td>
         <td class="eight">{{risk.riskApproach}}</td>
         <td class="eight pt-2 font-sm">
+            <span v-if="(risk.priorityLevelName) == 'Very Low'" class="gray2">{{risk.priorityLevelName}}</span> 
             <span v-if="(risk.priorityLevelName) == 'Low'" class="green1">{{risk.priorityLevelName}}</span> 
             <span v-if="(risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{risk.priorityLevelName}} </span> 
             <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
@@ -303,7 +304,10 @@
   .green1 {
     background-color: rgb(92,184,92);
   }  
-  .green1, .orange1, .red1, .yellow1 {
+  .gray2 {
+    background-color: #ededed;
+  }
+  .green1, .orange1, .red1, .yellow1, .gray2 {
     display: inline;   
     border-radius: 2px; 
     padding: 1px 1px;
