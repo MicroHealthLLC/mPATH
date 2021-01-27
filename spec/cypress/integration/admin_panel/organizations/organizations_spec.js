@@ -51,6 +51,23 @@ describe('Admin Panel Organization', function() {
     cy.get('#logout').click()
   })
 
+  it('Delete all organizations', function() {
+    cy.get('.disabled').contains('Batch Actions').should('be.visible')
+    cy.get('#collection_selection_toggle_all').click()
+    cy.get('.dropdown_menu_button').click()
+    cy.get('.batch_action').contains('Delete Selected').click()
+    cy.get('.ui-dialog-buttonset > :nth-child(1)').contains('OK').click()
+    cy.get('.flashes').contains('Successfully deleted 1 Organizations').should('be.visible')
+    cy.get('.blank_slate').contains('There are no Organizations yet. Create one').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Organization according to Title', function() {
+    cy.get('.sortable').contains('Title').click()
+    cy.get('#index_table_organizations > tbody > tr').first().contains('Test Organization').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Organization contains name', function() {
     cy.get('#q_title').type('Test Organization').should('have.value', 'Test Organization')
     cy.get('[type=submit]').first().contains('Filter').click()
@@ -60,17 +77,6 @@ describe('Admin Panel Organization', function() {
     cy.get('.current_filter').contains('Title contains Test Organization').should('be.visible')
     cy.get('#index_table_organizations > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
-    cy.get('#logout').click()
-  })
-
-  it('Delete all organizations', function() {
-    cy.get('.disabled').contains('Batch Actions').should('be.visible')
-    cy.get('#collection_selection_toggle_all').click()
-    cy.get('.dropdown_menu_button').click()
-    cy.get('.batch_action').contains('Delete Selected').click()
-    cy.get('.ui-dialog-buttonset > :nth-child(1)').contains('OK').click()
-    cy.get('.flashes').contains('Successfully deleted 1 Organizations').should('be.visible')
-    cy.get('.blank_slate').contains('There are no Organizations yet. Create one').should('be.visible')
     cy.get('#logout').click()
   })
 })

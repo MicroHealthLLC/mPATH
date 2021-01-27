@@ -1,5 +1,5 @@
 class Project < SortableRecord
-  default_scope {order(Project.order_humanize)}
+  # default_scope {order(Project.order_humanize)}
   has_many :tasks, through: :facilities
   has_many :facility_projects, dependent: :destroy
   has_many :facilities, through: :facility_projects

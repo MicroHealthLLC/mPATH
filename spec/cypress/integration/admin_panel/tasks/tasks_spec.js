@@ -41,6 +41,85 @@ describe('Admin Panel Task', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Task according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task 4').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('New Task 1').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task according to Task Category', function() {
+    cy.get('.sortable').contains('Task Category').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task according to Task Stage', function() {
+    cy.get('.sortable').contains('Stage').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task Stage').should('be.visible')
+    cy.get('.sortable').contains('Stage').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('New Task Stage').should('be.visible')
+    cy.get('.sortable').contains('Stage').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task start date', function() {
+    const start_date_from = Cypress.moment().subtract(1, 'day').format('MMMM DD, YYYY')
+    const start_date_to = Cypress.moment().add(2, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(start_date_from).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task Due Date', function() {
+    const due_date_from = Cypress.moment().add(4, 'day').format('MMMM DD, YYYY')
+    const due_date_to = Cypress.moment().add(7, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(due_date_from).should('be.visible')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task according to Progress', function() {
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(10).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task according to Facility', function() {
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_tasks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Task contains name', function() {
     cy.get('#q_text').type('Test Task 1').should('have.value', 'Test Task 1')
     cy.get('[type=submit]').first().contains('Filter').click()
@@ -95,7 +174,7 @@ describe('Admin Panel Task', function() {
     cy.get('#logout').click()
   })
 
-  it('Search Task Estimated Completion Date from', function() {
+  it('Search Task Due Date from', function() {
     const completion_date = Cypress.moment().add(6, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_gteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
@@ -103,7 +182,7 @@ describe('Admin Panel Task', function() {
     cy.get('#logout').click()
   })
 
-  it('Search Task Estimated Completion Date to', function() {
+  it('Search Task Due Date to', function() {
     const completion_date = Cypress.moment().add(5, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_lteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()

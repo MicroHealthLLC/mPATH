@@ -58,6 +58,105 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Risk start date', function() {
+    const start_date_from = Cypress.moment().format('MMMM DD, YYYY')
+    const start_date_to = Cypress.moment().add(1, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(start_date_from).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk Due Date', function() {
+    const due_date_from = Cypress.moment().add(5, 'day').format('MMMM DD, YYYY')
+    const due_date_to = Cypress.moment().add(6, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(due_date_from).should('be.visible')
+    cy.get('.sortable').contains('Due Date').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Progress', function() {
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(10).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Probability', function() {
+    cy.get('.sortable').contains('Probability').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Impact Level', function() {
+    cy.get('.sortable').contains('Impact Level').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Priority Level', function() {
+    cy.get('.sortable').contains('Priority Level').click()
+    cy.get('#index_table_risks > tbody > tr').first().contains(1).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Risk Approach', function() {
+    cy.get('.sortable').contains('Risk Approach').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Avoid').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Task Category', function() {
+    cy.get('.sortable').contains('Task Category').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Risk Stage', function() {
+    cy.get('.sortable').contains('Risk Stage').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
+    cy.get('.sortable').contains('Risk Stage').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('New Risk Stage').should('be.visible')
+    cy.get('.sortable').contains('Risk Stage').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Risk according to Facility', function() {
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Risk contains name', function() {
     cy.get('#q_text').type('Test Risk 1').should('have.value', 'Test Risk 1')
     cy.get('[type=submit]').first().contains('Filter').click()

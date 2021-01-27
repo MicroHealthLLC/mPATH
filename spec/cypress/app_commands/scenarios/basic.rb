@@ -78,12 +78,12 @@ inactive_status = Status.find_or_create_by(name: 'InActive', color: '#c90d0d')
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: active_status.id)
 ProjectStatus.find_or_create_by(project_id: project.id, status_id: inactive_status.id)
 task_type = TaskType.find_or_create_by(name: 'Test Task Type(milestone)')
-task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage')
-new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage')
-issue_stage = IssueStage.find_or_create_by(name: 'Test Issue Stage')
-new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage')
-risk_stage = RiskStage.find_or_create_by(name: 'Test Risk Stage')
-new_risk_stage = RiskStage.find_or_create_by(name: 'New Risk Stage')
+task_stage = TaskStage.find_or_create_by(name: 'Test Task Stage', percentage: 40)
+new_task_stage = TaskStage.find_or_create_by(name: 'New Task Stage', percentage: 60)
+issue_stage = IssueStage.find_or_create_by(name: 'Test Issue Stage', percentage: 40)
+new_issue_stage = IssueStage.find_or_create_by(name: 'New Issue Stage', percentage: 60)
+risk_stage = RiskStage.find_or_create_by(name: 'Test Risk Stage', percentage: 40)
+new_risk_stage = RiskStage.find_or_create_by(name: 'New Risk Stage', percentage: 60)
 issue_type = IssueType.find_or_create_by(name: 'Test Issue Type')
 issue_severity = IssueSeverity.find_or_create_by(name: 'Test Issue Severity')
 
@@ -136,7 +136,6 @@ test_task_1 = Task.find_or_create_by(
   description: 'Test task 1 description',
   start_date: Date.today,
   due_date: Date.today + 5.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_1.id,
@@ -152,7 +151,6 @@ new_task_1 = Task.find_or_create_by(
   description: 'New task 1 description',
   start_date: Date.today,
   due_date: Date.today + 5.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_1.id,
@@ -261,7 +259,6 @@ test_task_2 = Task.find_or_create_by(
   description: 'Test task 2 description',
   start_date: Date.today + 1.day,
   due_date: Date.today + 6.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_2.id,
@@ -277,7 +274,6 @@ new_task_2 = Task.find_or_create_by(
   description: 'New task 2 description',
   start_date: Date.today + 1.day,
   due_date: Date.today + 6.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_2.id,
@@ -384,7 +380,6 @@ Task.find_or_create_by(
   description: 'Test task 3 description',
   start_date: Date.today - 1.day,
   due_date: Date.today + 4.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_3.id,
@@ -447,7 +442,6 @@ Task.find_or_create_by(
   description: 'Test task description',
   start_date: Date.today + 2.days,
   due_date: Date.today + 7.days,
-  progress: 0,
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_4.id,

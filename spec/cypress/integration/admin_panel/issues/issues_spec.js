@@ -34,6 +34,91 @@ describe('Admin Panel Issue', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Issue according to Title', function() {
+    cy.get('.sortable').contains('Title').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue 4').should('be.visible')
+    cy.get('.sortable').contains('Title').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('New Issue 1').should('be.visible')
+    cy.get('.sortable').contains('Title').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Issue Type', function() {
+    cy.get('.sortable').contains('Issue Type').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Type').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Issue Severity', function() {
+    cy.get('.sortable').contains('Issue Severity').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Severity').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Issue Stage', function() {
+    cy.get('.sortable').contains('Issue Stage').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Stage').should('be.visible')
+    cy.get('.sortable').contains('Issue Stage').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('New Issue Stage').should('be.visible')
+    cy.get('.sortable').contains('Issue Stage').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Issue Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Progress', function() {
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(10).should('be.visible')
+    cy.get('.sortable').contains('Progress').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(100).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue start date', function() {
+    const start_date_from = Cypress.moment().subtract(1, 'day').format('MMMM DD, YYYY')
+    const start_date_to = Cypress.moment().add(2, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(start_date_from).should('be.visible')
+    cy.get('.sortable').contains('Start Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(start_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue Estimated Completion Date', function() {
+    const due_date_from = Cypress.moment().add(4, 'day').format('MMMM DD, YYYY')
+    const due_date_to = Cypress.moment().add(7, 'day').format('MMMM DD, YYYY')
+    cy.get('.sortable').contains('Estimated Completion Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('.sortable').contains('Estimated Completion Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(due_date_from).should('be.visible')
+    cy.get('.sortable').contains('Estimated Completion Date').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains(due_date_to).should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue according to Facility', function() {
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 1').should('be.visible')
+    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').last().scrollIntoView()
+    cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Issue contains name', function() {
     cy.get('#q_title').type('Test Issue 1').should('have.value', 'Test Issue 1')
     cy.get('[type=submit]').first().contains('Filter').click()

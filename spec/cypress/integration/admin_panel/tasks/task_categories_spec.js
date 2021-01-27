@@ -62,6 +62,12 @@ describe('Admin Panel Task Categories', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Task Stage according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_task_types > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Task Type contains name', function() {
     cy.get('#q_name').type('Test Task Type').should('have.value', 'Test Task Type')
     cy.get('[type=submit]').first().contains('Filter').click()
