@@ -62,6 +62,12 @@ describe('Admin Panel Project Types', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Project type according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_project_types > tbody > tr').first().contains('Test Project Type').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Project type contains name', function() {
     cy.get('#q_name').type('Test Project Type').should('have.value', 'Test Project Type')
     cy.get('[type=submit]').first().contains('Filter').click()
