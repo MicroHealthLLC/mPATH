@@ -595,6 +595,7 @@
                           placeholder="DD MM YYYY"
                           name="dueDate"
                           class="w-100 vue2-datepicker d-flex ml-auto"
+                          :disabled-date="disabledDateRange"
                         />
                       </div>
                     </div>
@@ -1082,6 +1083,12 @@
       },
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
+      },
+      disabledDateRange(date) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return date < today || date > new Date(this.DV_risk.dueDate);
       }
     },
     computed: {
