@@ -103,8 +103,7 @@
           <div v-if="filteredRisks.length > 0">
             <hr/>
             <risk-show
-              v-for="(risk, i) in filteredRisks"
-              :load="log(risk)"
+              v-for="(risk, i) in filteredRisks"         
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
