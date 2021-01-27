@@ -260,16 +260,13 @@
                       :disabled="!_isallowed('write')"
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
-                      placeholder="DD MM YYYY"
-                      :name="checkpointName(index)"
-                      class="w-100 vue2-datepicker d-flex ml-auto" 
-                      value-type="DD MMM YYYY"
+                      value-type="YYYY-MM-DD"
                       format="DD MMM YYYY"
-                      v-validate="{ date_format:'DD MMM YYYY', date_between: [formatDate(DV_task.startDate), formatDate(DV_task.dueDate)] }"             
+                      placeholder="DD MM YYYY"
+                      name="dueDate"
+                      class="w-100 vue2-datepicker d-flex ml-auto"
+                      :disabled-date="disabledDateRange"            
                     />
-                    <div v-show="errors.has(`${checkpointName(index)}`)" class="text-danger">
-                      {{errors.first(`${checkpointName(index)}`)}}
-                    </div>
                  </div>
                 </div>       
                </div>
@@ -699,20 +696,12 @@
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       },
-      formatDate(date) {
-        const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
-        const aDate = new Date(date)
-        // VeeValidate requires a leading 0 for comparsion in the current date format
-        if (aDate.getDate() < 10) {
-          return "0" + aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
-        } else {
-          return aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
-        } 
+      disabledDateRange(date) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return date < today || date > new Date(this.DV_task.dueDate);
       },
-      // Dynamically generates name attribute for checklist items based on index
-      checkpointName(index) {
-        return "Checkpoint Due Date " + (index + 1)
-      }
     },
     computed: {
       ...mapGetters([
