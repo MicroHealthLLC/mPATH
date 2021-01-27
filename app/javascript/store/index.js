@@ -378,6 +378,7 @@ export default new Vuex.Store({
     getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
       var options = [
+        {id: 'veryLow', name: 'Very Low', value: 'veryLow'},
         {id: 'low', name: 'Low', value: 'low'},
         {id: 'moderate', name: 'Moderate', value: 'moderate'},
         {id: 'high', name: 'High', value: 'high' },
@@ -896,6 +897,15 @@ export default new Vuex.Store({
             case "riskStageIds": {
               var risks = facility.risks
               var resources = _.filter(risks, ti => f[k].includes(ti.riskStageId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              break
+            }
+            case "riskPriorityLevelIds": {
+              var risks = facility.risks
+              var resources = _.filter(risks, ti => f[k].includes(ti.riskPriorityLevelId) )
               if(resources.length < 1){
                 valid = false
               }
