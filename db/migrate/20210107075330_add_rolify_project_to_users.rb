@@ -1,6 +1,6 @@
 class AddRolifyProjectToUsers < ActiveRecord::Migration[5.2]
   def change
-    add_reference :project_users, :project_role, foreign_key: true
+    add_column :project_users, :project_role_id, :integer
 
     begin
       role = Role.create(name: 'Read only role', description: 'System generated read only role')
