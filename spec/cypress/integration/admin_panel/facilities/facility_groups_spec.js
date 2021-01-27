@@ -64,6 +64,26 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Facility Groups according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Facility Groups according to Code', function() {
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG1').should('be.visible')
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search facility group contains name', function() {
     cy.get('#q_name').type('Test Facility Group 1').should('have.value', 'Test Facility Group 1')
     cy.get('[type=submit]').first().contains('Filter').click()
