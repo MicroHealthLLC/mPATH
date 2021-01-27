@@ -57,7 +57,7 @@ Vue.use(VueGoogleMaps, {
 let current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 let permissions = {}
 for (let key in current_user.privilege) {
-  if (['id', 'created_at', 'updated_at', 'role_id'].includes(key)) continue
+  if (['id', 'created_at', 'updated_at', 'role_id', 'user_id'].includes(key)) continue
   let value = current_user.privilege[key]
   permissions[key] = {
     read: value.includes('R'),

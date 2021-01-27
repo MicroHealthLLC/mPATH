@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_09_103254) do
+ActiveRecord::Schema.define(version: 2021_01_27_214607) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
 
   create_table "facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
+    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -102,7 +103,7 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center", default: "[]"
+    t.string "center"
     t.bigint "project_id"
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
@@ -192,6 +193,7 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.string "notes", default: "R"
     t.string "issues", default: "R"
     t.string "admin", default: ""
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "map_view", default: "R"
@@ -203,8 +205,9 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.string "sheets_view", default: "R"
     t.string "kanban_view", default: "R"
     t.string "risks", default: "R"
-    t.bigint "role_id"
+    t.integer "role_id"
     t.index ["role_id"], name: "index_privileges_on_role_id"
+    t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
   create_table "project_issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -240,12 +243,10 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
   end
 
   create_table "project_roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "role_id"
-    t.bigint "project_id"
+    t.integer "role_id"
+    t.integer "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["project_id"], name: "index_project_roles_on_project_id"
-    t.index ["role_id"], name: "index_project_roles_on_role_id"
   end
 
   create_table "project_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -283,8 +284,7 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "project_role_id"
-    t.index ["project_role_id"], name: "index_project_users_on_project_role_id"
+    t.integer "project_role_id"
     t.index ["user_id"], name: "index_project_users_on_user_id"
   end
 
@@ -373,6 +373,8 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.string "text"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
+    t.string "probability_name"
+    t.string "impact_level_name"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
@@ -488,7 +490,6 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
@@ -511,18 +512,15 @@ ActiveRecord::Schema.define(version: 2021_01_09_103254) do
   add_foreign_key "issues", "issue_severities"
   add_foreign_key "issues", "issue_stages"
   add_foreign_key "issues", "issue_types"
-  add_foreign_key "privileges", "roles"
+  add_foreign_key "privileges", "users"
   add_foreign_key "project_issue_severities", "issue_severities"
   add_foreign_key "project_issue_severities", "projects"
   add_foreign_key "project_issue_types", "issue_types"
   add_foreign_key "project_issue_types", "projects"
-  add_foreign_key "project_roles", "projects"
-  add_foreign_key "project_roles", "roles"
   add_foreign_key "project_statuses", "projects"
   add_foreign_key "project_statuses", "statuses"
   add_foreign_key "project_task_types", "projects"
   add_foreign_key "project_task_types", "task_types"
-  add_foreign_key "project_users", "project_roles"
   add_foreign_key "project_users", "users"
   add_foreign_key "projects", "project_types"
   add_foreign_key "region_states", "facility_groups"
