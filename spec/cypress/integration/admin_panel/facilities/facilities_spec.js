@@ -124,6 +124,52 @@ describe('Admin Panel Facility', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Facility according to Facility Name', function() {
+    cy.get('.sortable').contains('Facility Name').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('.sortable').contains('Facility Name').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Test Facility 1').should('be.visible')
+    cy.get('.sortable').contains('Facility Name').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Test Facility 4').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Facility according to Address', function() {
+    cy.get('.sortable').contains('Address').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Axford, Marlborough SN8, UK').should('be.visible')
+    cy.get('.sortable').contains('Address').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('2-20 Western Rd, Park Royal, London NW10 7LW, UK').should('be.visible')
+    cy.get('.sortable').contains('Address').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Axford, Marlborough SN8, UK').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Facility according to Point Of Contact', function() {
+    cy.get('.sortable').contains('Point Of Contact').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('Test points').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Facility according to Email', function() {
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('facility4@test.com').should('be.visible')
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('facility1@test.com').should('be.visible')
+    cy.get('.sortable').contains('Email').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('facility4@test.com').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Facility according to Phone Number', function() {
+    cy.get('.sortable').contains('Phone Number').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('+447400123454').should('be.visible')
+    cy.get('.sortable').contains('Phone Number').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('+447400123451').should('be.visible')
+    cy.get('.sortable').contains('Phone Number').click()
+    cy.get('#index_table_facilities > tbody > tr').first().contains('+447400123454').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Facility by creator', function() {
     cy.get('#index_table_facilities').should('be.visible')
     cy.get('#q_creator_id').select('Test1 Admin')
