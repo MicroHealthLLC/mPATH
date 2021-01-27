@@ -268,7 +268,32 @@
                     </span>
                   </div>
             </div>
-                 
+
+          <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
+          <el-collapse>
+            <el-collapse-item title="See More" name="1">
+              <div v-if="contentLoaded">
+                <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
+                  <div class="col font-weight-bold mt-4 mb-1 text-center">
+                    <h6>TASK CATEGORIES</h6>
+                  </div>
+                </div>
+                <div class="row" v-for="issue in issueTaskCategories">
+                  <div class="col">
+                    <span> {{issue.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+
+
          </el-card>     
        </div>  
 
@@ -655,6 +680,7 @@
         }
       },
       filteredIssues() {
+        let taskTypeIds = _.map(this.taskTypeFilter, 'id')
         let typeIds = _.map(this.issueTypeFilter, 'id')
         let severityIds = _.map(this.issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
@@ -672,6 +698,7 @@
           //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowIssues')
 
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.issueStageId)
@@ -681,6 +708,18 @@
       issueStats() {
         let issues = new Array
         let group = _.groupBy(this.filteredIssues, 'issueType')
+        for (let type in group) {
+          issues.push({
+            name: type,
+            count: group[type].length,
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+          })
+        }
+        return issues
+      },
+      issueTaskCategories() {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'taskTypeName')
         for (let type in group) {
           issues.push({
             name: type,
