@@ -406,7 +406,9 @@ export default new Vuex.Store({
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approach'],
-        ['riskPriorityLevelFilter', 'Priority Level'],
+        ['riskStageFilter', 'Risk Stage'],
+        ['riskPriorityLevelFilter', 'Risk Priority Level'],
+
 
         // Advanced Filters
         // The first index value is filterCategoryId in advanced filter
@@ -571,6 +573,15 @@ export default new Vuex.Store({
           user_names = _.map(getter.getRiskPriorityLevelFilter, 'name').join(", ")
         }
         return user_names
+        
+      }else if(_filterValue == 'riskStageFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.riskStageFilter && getter.riskStageFilter[0]){
+          user_names = _.map(getter.riskStageFilter, 'name').join(", ")
+        }
+        return user_names
+      
       }else if(_filterValue == 'riskApproachFilter'){
         // console.log(getter.getTaskIssueUserFilter)
         var user_names = null
