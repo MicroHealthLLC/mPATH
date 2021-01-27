@@ -91,7 +91,7 @@
                </el-card>     
              </div>  
 
-        <div class="col-md-2 col-lg-2 col-sm-6" data-cy="date_set_filter">         
+        <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">         
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -125,7 +125,7 @@
          </el-card>     
        </div> 
 
-       <div class="col-md-2 col-lg-2 col-sm-6" data-cy="date_set_filter">         
+       <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">         
           <el-card class="box-card" style="background-color: #fafafa">
             <div class="row">
               <div class="col">
@@ -287,8 +287,7 @@
                   <div class="col text-center">
                     Risk Priority Levels
                   </div>
-              </div>
-
+              </div>            
             <div class="row font-sm">
                 <div class="col text-center">                
                   <p class="mb-2 grey">Very Low</p>
@@ -296,7 +295,7 @@
                   <p class="mb-2 yellow">Moderate </p>                         
                 </div>
                 <div class="col">  
-                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">--</span>
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{ ct }}</span>
                   <span class="my-2 badge w-50 badge-secondary badge-pill d-block">--</span>              
                   <span class="my-2 badge w-50 badge-secondary badge-pill d-block">--</span>
                   <!-- <p class="my-2 badge badge-secondary badge-pill d-block ">1</p>
@@ -455,6 +454,7 @@
         loading: true,
         DV_updated: false,
         notesQuery: '',
+        ct: 0,
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
         currentTab: 'tasks',
@@ -601,6 +601,13 @@
         get() {
           return _.map(this.onWatchFilter, 'value').includes('issues')
         }
+      },
+      priorityGrey(ct) {       
+          ct = 0;        
+          if ( this.DV_facility.risks.priorityLevel == 1){
+          ct++ 
+          }   
+          return ct
       },
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')

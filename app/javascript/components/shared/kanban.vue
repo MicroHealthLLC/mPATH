@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pl-3 pr-1 mt-4 mb-3 mx-2"
+          class="rounded-lg kan-col py-3 pl-2 pr-1 mt-4 mb-3 mr-4"
           data-cy="kanban_col"
           >
           <div>
@@ -189,12 +189,12 @@ export default {
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
     position: relative;
     overflow: hidden;
-    min-width: 18rem;
-    width: 18rem;
-    height: 77vh;
+    min-width: 18.5rem;
+    width: 18.5rem;
+    height: 76vh;
   }
   .kan-body {
-    max-height: 73vh;
+    max-height: 72vh;
     overflow-y: auto;
   }
   .badge {
