@@ -218,7 +218,7 @@
 
 <!-- Row 2, col-2 for Issues Card -->
 
-        <div class="col-md-4 col-lg-4 col-sm-12" data-cy="issues_summary">          
+        <div class="col-md-4 col-lg-4 col-sm-12 mb-2" data-cy="issues_summary">          
          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -253,11 +253,11 @@
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
                <div class="col font-weight-bold mt-4 mb-1 text-center">
-                       <h6>CATEGORIES</h6> 
+                       <h6>ISSUE TYPES</h6> 
                </div>                  
             </div>
             
-             <div class="row font-sm" v-for="issue in issueStats">          
+             <div class="row mb-1 font-sm" v-for="issue in issueStats">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -274,8 +274,8 @@
             <el-collapse-item title="See More" name="1">
               <div v-if="contentLoaded">
                 <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-                  <div class="col font-weight-bold mt-4 mb-1 text-center">
-                    <h6>TASK CATEGORIES</h6>
+                  <div class="col font-weight-bold mt-4 mb-2 text-center">
+                    <h6>CATEGORIES</h6>
                   </div>
                 </div>
                 <div class="row" v-for="issue in issueTaskCategories">
