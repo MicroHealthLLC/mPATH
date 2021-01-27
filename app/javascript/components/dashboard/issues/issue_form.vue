@@ -946,10 +946,7 @@ export default {
       );
     },
     disabledDateRange(date) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      return date < today || date > new Date(this.DV_issue.dueDate);
+      return date < new Date(this.DV_issue.startDate) || date > new Date(this.DV_issue.dueDate);
     },
   },
   computed: {
