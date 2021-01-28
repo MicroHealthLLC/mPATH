@@ -1,13 +1,13 @@
 <template>
   <div id="tabbar"> 
-    <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
-      <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Sheets</div>
-    </router-link>
-    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
+    <!-- <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
       <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Project Manager</div>
-    </router-link>
+    </router-link> -->
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}" data-cy="map_tab">Map</div>
+    </router-link>
+     <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
+      <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Manage</div>
     </router-link>
     <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}" data-cy="gantt_tab">Gantt</div>
@@ -47,9 +47,9 @@
       isMembersView() {
         return this.$route.name === 'TeamMembersView'
       },
-      isFacilityManagerView() {
-        return this.$route.name === 'FacilityManagerView'
-      },
+      // isFacilityManagerView() {
+      //   return this.$route.name === 'FacilityManagerView'
+      // },
        sheetsView() {
         return `/projects/${this.$route.params.projectId}/sheets`
       },
@@ -68,9 +68,9 @@
       membersView() {
         return `/projects/${this.$route.params.projectId}/member_list`
       },
-      facilityManagerView() {
-        return `/projects/${this.$route.params.projectId}/facility_manager`
-      },
+      // facilityManagerView() {
+      //   return `/projects/${this.$route.params.projectId}/facility_manager`
+      // },
       permitted() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions[salut]['read']
       }
