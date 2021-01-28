@@ -152,10 +152,12 @@
                 ></accordion>
               </div>
             </div>
+            </div>
           </div>
         </sweet-modal>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
