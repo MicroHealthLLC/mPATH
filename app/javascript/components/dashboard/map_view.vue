@@ -86,6 +86,10 @@
                     >FACILITY SUMMARY</small
                   >
                 </button>
+                <div class="knocker_side" :style="knockerStyle">
+                <button v-if="currentFacility && currentFacility.id" class="knocker btn btn-sm text-light p-1" @click="toggleOpenSideBar">
+                  <small><span class="pr-1"><i class="fas fa-building"></i></span>PROJECT  SUMMARY</small>
+                </button>             
                 <div id="map-sidebar" class="shadow-sm mr-2">
                   <facility-show
                     v-if="currentFacility && currentFacility.id"
@@ -128,6 +132,9 @@
               class="mt-3 text-danger"
             >
               There is no facility under this group
+            <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(currentFacilityGroup).length}}</span></h3>
+            <div v-if="facilityGroupFacilities(currentFacilityGroup) && facilityGroupFacilities(currentFacilityGroup).length == 0" class="mt-3 text-danger">
+              There is no project under this group
             </div>
             <div v-else>
               <div

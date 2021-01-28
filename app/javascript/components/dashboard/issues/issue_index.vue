@@ -91,7 +91,7 @@
           <th></th>
           <th>Issue</th>
           <th>Issue Type</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Issue Severity</th>
           <th>Start Date</th>
           <th>Due Date</th>
@@ -265,6 +265,7 @@ computed: {
     let taskIssueProgress = this.taskIssueProgressFilter
 
     let taskIssueUsers = this.getTaskIssueUserFilter
+    var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
     let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
       let valid = Boolean(resource && resource.hasOwnProperty('progress'))
@@ -278,7 +279,7 @@ computed: {
       }
 
       //TODO: For performance, send the whole tasks array instead of one by one
-      valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityManagerIssues')
+      valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerIssues')
 
       if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
       if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)

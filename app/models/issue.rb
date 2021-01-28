@@ -38,6 +38,7 @@ class Issue < ApplicationRecord
     if(progress >= 100)
       progress_status = "completed"
     end
+    task_type_name = self.task_type&.name
     self.as_json.merge(
       class_name: self.class.name,
       progress_status: progress_status,
@@ -46,6 +47,7 @@ class Issue < ApplicationRecord
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
+      task_type_name: task_type_name,
       responsible_user_names: users.map(&:full_name).compact.join(", "),
       user_ids: users.map(&:id).compact.uniq,
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),

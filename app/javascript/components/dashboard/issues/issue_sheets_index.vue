@@ -178,7 +178,7 @@
           <tr style="background-color:#ededed">
             <th>Issue</th>
             <th>Issue Type</th>
-            <th>Facility</th>
+            <th>Project</th>
             <th>Issue Severity</th>
             <th>Start Date</th>
             <th>Due Date</th>
@@ -373,6 +373,7 @@
         let taskIssueProgress = this.taskIssueProgressFilter
 
         let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
 
         let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
 
@@ -387,7 +388,7 @@
           }
 
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && this.filterDataForAdvancedFilter([resource], 'sheetsIssues')
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsIssues')
 
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
           if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)

@@ -7,11 +7,11 @@
     </div>
     <div v-if="!loading" class="risk_show mx-3 mb-3 mt-1 py-1" @click.prevent="editRisk">
       <div v-if="show">
-        <div class="row">
-          <div class="col-md-9">
+        <div class="row" >
+          <div class="col-md-9 px-1">
             <div>
-              <div class="mb-1 d-flex font-sm">
-               <h6> {{DV_risk.text}}</h6>
+              <div class="mb-1 d-flex">
+               <b>{{DV_risk.text}}</b>
               </div>
               <!-- <div class="mb-1 d-flex font-sm">
                {{DV_risk.riskDescription}}
@@ -30,35 +30,42 @@
 
               <div class="row mb-1 d-flex">
                 <div class="font-sm col">
-                  <span class="mr-1">Task Category:</span>
-                  {{DV_risk.taskType}}
+                  <span class="mr-1"><b>Task Category:</b></span>
+                  {{DV_risk.taskType.name}}
                 </div>
+               
+              </div>
+                <div class="row mb-1 d-flex">           
                 <div class="font-sm col">
-                  <span class="mr-1">Approach:</span>
+                  <span class="mr-1"><b>Approach:</b></span>
                   {{DV_risk.riskApproach}}
                 </div>
               </div>
-              <div class="row mb-1 d-flex">
-                <div class="font-sm col">
+              <div class="row mb-2 d-flex">
+                <!-- <div class="font-sm col">
                   <span class="mr-1">Probablity:</span>
                   {{DV_risk.probability}}
                 </div>
                 <div class="font-sm col">
                   <span class="mr-1">Impact:</span>
                   {{DV_risk.impactLevel}}
-                </div>
-                <div class="font-sm col">
-                  <span class="mr-1">Priority:</span>
-                  {{DV_risk.priorityLevel}}
+                </div> -->
+                <div class="font-sm col" v-tooltip="(DV_risk.priorityLevel)">
+                  <span class="mr-1">Priority:</span>    
+                   <span v-if="(DV_risk.priorityLevelName) == 'Very Low'" class="gray2">{{DV_risk.priorityLevelName}}</span>              
+                  <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}}</span> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{DV_risk.priorityLevelName}} </span> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1"> {{DV_risk.priorityLevelName}} </span> 
+                  <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1"> {{DV_risk.priorityLevelName}}</span> 
                 </div>
               </div>
-              <div class="row mb-1">
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+              <div class="row mb-0">
+                <div class="font-sm col-md-6 pl-3 pr-0">
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(DV_risk.startDate)}}
                 </div>
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                <div class="font-sm col-md-6 pr-0">
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(DV_risk.dueDate)}}
                 </div>
               </div>
@@ -320,5 +327,31 @@
         position: inherit !important;
       }
     }
+  }
+  .red1 {
+    background-color: #d9534f;
+  }
+  .yellow1 {
+    background-color: yellow;  
+    color:#383838;  
+    display: block;
+  }
+  .orange1 {
+    background-color: #f0ad4e;
+  }
+  .green1 {
+    background-color: rgb(92,184,92);
+  }  
+  .gray2 {
+    background-color: #ededed;
+  }
+  .green1, .orange1, .red1, .yellow1, .gray2 {
+    display: inline;   
+    border-radius: 2px; 
+    padding: 1px 1px;
+    box-shadow: 0 1px 2.5px rgba(56,56, 56,0.19), 0 1.5px 1.5px rgba(56,56,56,0.23);
+  }
+   .green1, .orange1, .red1 {   
+    color:#fff;   
   }
 </style>

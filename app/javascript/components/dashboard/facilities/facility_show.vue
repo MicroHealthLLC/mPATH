@@ -13,11 +13,11 @@
       <div>
         <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')" class="fac-sum p-3">
-            <h4 v-if="extras" class="text-center"><b>Facility Summary</b></h4>
+            <h4 v-if="extras" class="text-center"><b>Project Summary</b></h4>
             <div v-if="contentLoaded" class="f-body mt-3 p-2">
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-globe mr-0"></i></span>
-                <span style="font-weight:700">Facility Group: </span>
+                <span style="font-weight:700">Project Group: </span>
                 <span> {{facilityGroup.name}}</span>
               </p>
               <div>
@@ -62,7 +62,7 @@
               </div>
               <p class="mt-2 d-flex align-items-center">
                 <span class="fbody-icon"><i class="fas fa-spinner"></i></span>
-                <span style="font-weight:700; margin-right: 4px">Facility Progress: </span>
+                <span style="font-weight:700; margin-right: 4px">Project Progress: </span>
                 <span class="w-50 progress pg-content" :class="{'progress-0': DV_facility.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_facility.progress}%`">{{DV_facility.progress}}%</div>
                 </span>
@@ -171,7 +171,7 @@
                       </span>
                     </div>
                   </div>
-                </div>over
+                </div>
               </div>
               <div v-if="issueStats.length > 0">
                 <div class="text-info font-weight-bold text-center">Issue Types</div>
@@ -189,6 +189,23 @@
                   </div>
                 </p>
               </div>
+              <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
+                <div class="col font-weight-bold mt-4 mb-1 text-center">
+                  <div class="text-info font-weight-bold text-center">Task Categories</div>
+                </div>
+              </div>
+              <div class="row" v-for="issue in issueTaskCategories">
+                <div class="col">
+                  <span> {{issue.name}}</span>
+                  <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
+                </div>
+                <div class="col">
+                  <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                    <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                  </span>
+                </div>
+              </div>
+
               <hr>
               <p class="mt-2">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
@@ -238,13 +255,13 @@
             @refresh-facility="refreshFacility"
           ></issue-index>
         </div>
-        <div v-if="currentTab == 'risks'">
+        <!-- <div v-if="currentTab == 'risks'">
           <risk-index
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
           ></risk-index>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -295,7 +312,7 @@
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
         selectedStatus: null,
-        currentTab: 'overview',
+        currentTab: 'tasks',
         tabs: [
           {
             label: 'Overview',
@@ -311,13 +328,12 @@
             label: 'Issues',
             key: 'issues',
             closable: false
-          },
-           {
-            label: 'Risks (Coming Soon)',
-            key: 'risks',
-            closable: false,
-            disabled: true
-          },
+          },     
+          //   {
+          //   label: 'Risks',
+          //   key: 'risks',
+          //   closable: false
+          // },                
           {
             label: 'Notes',
             key: 'notes',
@@ -343,7 +359,7 @@
         'fetchFacility'
       ]),
       onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'overview'
+        this.currentTab = tab ? tab.key : 'tasks'
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
@@ -480,6 +496,7 @@
         }
       },
       filteredIssues() {
+        let taskTypeIds = _.map(this.taskTypeFilter, 'id')
         let typeIds = _.map(this.issueTypeFilter, 'id')
         let severityIds = _.map(this.issueSeverityFilter, 'id')
         let stageIds = _.map(this.issueStageFilter, 'id')
@@ -497,11 +514,24 @@
           //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowIssues')
 
+          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
           if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.issueStageId)
           return valid
         }))
+      },
+      issueTaskCategories() {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'taskTypeName')
+        for (let type in group) {
+          issues.push({
+            name: type,
+            count: group[type].length,
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+          })
+        }
+        return issues
       },
       issueStats() {
         let issues = new Array

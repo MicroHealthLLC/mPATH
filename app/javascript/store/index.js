@@ -26,32 +26,41 @@ export default new Vuex.Store({
     statuses: new Array,
     advancedFilterOptions: new Array,
     taskIssueOverdueFilter: new Array,
+
     taskTypes: new Array,
+    taskTypeFilter: null,
     taskStages: new Array,
+    taskStageFilter: null,
+    taskProgressFilter: null,
+
     riskStages: new Array,
+    riskStageFilter: new Array,
+    riskApproachFilter: null,
+    riskApproachFilterOptions: new Array,
+    riskProbabilityOptions: new Array,
+    riskPriorityLevelFilter: new Array,
+    riskImpactLevelOptions: new Array,
+
     issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
+    issueTypeFilter: null,
+    issueSeverityFilter: null,
+    issueStageFilter: null,
+    issueProgressFilter: null,
+
     currentProject: null,
     projectUsers: new Array,
     currentFacility: null,
     currentFacilityGroup: null,
     mapFilters: new Array,
     projectStatusFilter: null,
-    taskTypeFilter: null,
     facilityGroupFilter: null,
     facilityNameFilter: null,
     facilityProgressFilter: null,
     facilityDueDateFilter: null,
     noteDateFilter: null,
     taskIssueDueDateFilter: null,
-    issueTypeFilter: null,
-    issueSeverityFilter: null,
-    taskStageFilter: null,
-    riskStageFilter: null,
-    issueStageFilter: null,
-    issueProgressFilter: null,
-    taskProgressFilter: null,
     // This filter is used for progress range number e.g. 1-19
     taskIssueProgressFilter: null,
     // This filter is used to check status e.g. active or completed
@@ -133,12 +142,28 @@ export default new Vuex.Store({
     setFacilities: (state, facilities) => state.facilities = facilities,
     setFacilityGroups: (state, facilityGroups) => state.facilityGroups = facilityGroups,
     setStatuses: (state, statuses) => state.statuses = statuses,
+
     setTaskTypes: (state, taskTypes) => state.taskTypes = taskTypes,
     setTaskStages: (state, taskStages) => state.taskStages = taskStages,
+    setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
+    setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
+    setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
+
     setRiskStages: (state, riskStages) => state.riskStages = riskStages,
+    setRiskStageFilter: (state, filter) => state.riskStageFilter = filter,
+    setRiskApproachFilter: (state, filter) =>  state.riskApproachFilter = filter,
+    setRiskPriorityLevelFilter: (state, filter) =>  state.riskPriorityLevelFilter = filter,
+    setRiskProbabilityOptions: (state, riskProbabilityOptions) => state.riskProbabilityOptions = riskProbabilityOptions,
+    setRiskImpactLevelOptions: (state, riskImpactLevelOptions) => state.riskImpactLevelOptions = riskImpactLevelOptions,
+
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
     setIssueSeverities: (state, issueSeverities) => state.issueSeverities = issueSeverities,
+    setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
+    setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
+    setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
+    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,    
+
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
@@ -221,19 +246,14 @@ export default new Vuex.Store({
     setTaskIssueOverdueFilter: (state, filter) => {
       state.taskIssueOverdueFilter = filter
     },
-    setTaskTypeFilter: (state, filter) => state.taskTypeFilter = filter,
+
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
     setTaskIssueDueDateFilter: (state, filter) => state.taskIssueDueDateFilter = filter,
-    setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
-    setTaskStageFilter: (state, filter) => state.taskStageFilter = filter,
-    setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
-    setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
-    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
-    setTaskProgressFilter: (state, filter) => state.taskProgressFilter = filter,
+
     setMyActionsFilter: (state, filter) => state.myActionsFilter = filter,
     setOnWatchFilter: (state, filter) => state.onWatchFilter = filter,
     clearProgressFilters: (state) => {
@@ -254,6 +274,12 @@ export default new Vuex.Store({
       }
     },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds
+    setRiskForManager: (state, {key, value}) => {
+      for (let k in state.managerView) {
+        state.managerView[k] = k == key ? value : null
+      }
+    },
+    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds    
   },
 
   getters: {
@@ -298,7 +324,66 @@ export default new Vuex.Store({
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'}
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
+
+        // Priority Level is specific to Risk
+        // {id: 'low', name: 'Low', value: 'low', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+        // {id: 'moderate', name: 'Moderate', value: 'moderate', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+        // {id: 'high', name: 'High', value: 'high', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level' },
+        // {id: 'extreme', name: 'Extreme', value: 'extreme', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
+
+        // Risk Approach is specific to Risk
+        // {id: 'accept', name: 'Accept', value: 'accept', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        // {id: 'avoid', name: 'Avoid', value: 'avoid', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        // {id: 'mitigate', name: 'Mitigate', value: "mitigate", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
+        // {id: 'transfer', name: 'Transfer', value: "transfer", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'}  
+      ]
+      return options;
+    },
+
+    getRiskApproachFilter: state => state.riskApproachFilter,
+    getRiskApproachFilterOptions: (state, getters) => {
+      var options = [
+        {id: 'accept', name: 'Accept', value: 'accept'},
+        {id: 'avoid', name: 'Avoid', value: 'avoid'},
+        {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
+        {id: 'transfer', name: 'Transfer', value: "transfer"},      
+      ]
+      return options;
+    },
+
+    getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,    
+    getRiskImpactLevelNames: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "1 - Negligible"},
+        {id: 2, value: 2, name: "2 - Minor"},
+        {id: 3, value: 3, name: "3 - Moderate"},
+        {id: 4, value: 4, name: "4 - Major"},
+        {id: 5, value: 5, name: "5 - Catastrophic"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+      return options
+    },
+    getRiskProbabilityOptions: state => state.riskProbabilityOptions,    
+    getRiskProbabilityNames: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "1 - Rare"},
+        {id: 2, value: 2, name: "2 - Unlikely"},
+        {id: 3, value: 3, name: "3 - Possible"},
+        {id: 4, value: 4, name: "4 - Likely"},
+        {id: 5, value: 5, name: "5 - Almost Certain"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+      return options
+    },
+    getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
+    getRiskPriorityLevelFilterOptions: (state, getters) => {
+      var options = [
+        {id: 'veryLow', name: 'Very Low', value: 'veryLow'},
+        {id: 'low', name: 'Low', value: 'low'},
+        {id: 'moderate', name: 'Moderate', value: 'moderate'},
+        {id: 'high', name: 'High', value: 'high' },
+        {id: 'extreme', name: 'Extreme', value: 'extreme'}     
       ]
       return options;
     },
@@ -322,6 +407,10 @@ export default new Vuex.Store({
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
+        ['riskApproachFilter', 'Risk Approach'],
+        ['riskStageFilter', 'Risk Stage'],
+        ['riskPriorityLevelFilter', 'Risk Priority Level'],
+
 
         // Advanced Filters
         // The first index value is filterCategoryId in advanced filter
@@ -337,8 +426,11 @@ export default new Vuex.Store({
 
       if(_filterValue == 'facilityGroupFilter'){
         // console.log(getter.facilityGroupFilter)
-        return getter.facilityGroupFilter && getter.facilityGroupFilter[0] ? getter.facilityGroupFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityGroupFilter && getter.facilityGroupFilter[0]){
+          user_names = _.map(getter.facilityGroupFilter, 'name').join(", ")
+        }
+        return user_names
       // Advanced filters
       }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter'].includes(_filterValue) ){
 
@@ -349,8 +441,11 @@ export default new Vuex.Store({
 
       }else if(_filterValue == 'facilityNameFilter'){
         // console.log(getter.facilityNameFilter)
-        return getter.facilityNameFilter && getter.facilityNameFilter[0] ? getter.facilityNameFilter[0].name : null
-
+        var user_names = null
+        if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
+          user_names = _.map(getter.facilityNameFilter, 'facilityName').join(", ")
+        }
+        return user_names
       }else if(_filterValue == 'projectStatusFilter'){
         // console.log(getter.projectStatusFilter)
         var user_names = null
@@ -479,6 +574,29 @@ export default new Vuex.Store({
           user_names = _.map(getter.getTaskIssueUserFilter, 'fullName').join(", ")
         }
         return user_names
+      }else if(_filterValue == 'riskPriorityLevelFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.getRiskPriorityLevelFilter && getter.getRiskPriorityLevelFilter[0]){
+          user_names = _.map(getter.getRiskPriorityLevelFilter, 'name').join(", ")
+        }
+        return user_names
+        
+      }else if(_filterValue == 'riskStageFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.riskStageFilter && getter.riskStageFilter[0]){
+          user_names = _.map(getter.riskStageFilter, 'name').join(", ")
+        }
+        return user_names
+      
+      }else if(_filterValue == 'riskApproachFilter'){
+        // console.log(getter.getTaskIssueUserFilter)
+        var user_names = null
+        if(getter.getRiskApproachFilter && getter.getRiskApproachFilter[0]){
+          user_names = _.map(getter.getRiskApproachFilter, 'name').join(", ")
+        }
+        return user_names
       }
     },
     contentLoaded: state => state.contentLoaded,
@@ -488,12 +606,30 @@ export default new Vuex.Store({
     facilities: state => state.facilities,
     facilityGroups: state => state.facilityGroups,
     statuses: state => state.statuses,
+    
     taskTypes: state => state.taskTypes,
     taskStages: state => state.taskStages,
+    taskTypeFilter: state => state.taskTypeFilter,
+    taskStageFilter: state => state.taskStageFilter,
+    taskProgressFilter: state => state.taskProgressFilter,
+    taskUserFilter: state => state.taskUserFilter,
+
     riskStages: state => state.riskStages,
+    riskStageFilter: state => state.riskStageFilter,
+    riskApproach: state => state.riskApproach,
+    riskApproachFilter: state => state.riskApproachFilter,
+    riskProbabilityOptions: state => state.riskProbabilityOptions,
+    riskImpactLevelOptions: state => state.riskImpactLevelOptions,
+
     issueStages: state => state.issueStages,
     issueTypes: state => state.issueTypes,
     issueSeverities: state => state.issueSeverities,
+    issueStageFilter: state => state.issueStageFilter,
+    issueTypeFilter: state => state.issueTypeFilter,
+    issueSeverityFilter: state => state.issueSeverityFilter,
+    issueProgressFilter: state => state.issueProgressFilter,
+    issueUserFilter: state => state.issueUserFilter,
+
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
     activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
@@ -501,23 +637,15 @@ export default new Vuex.Store({
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
     taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
-    taskTypeFilter: state => state.taskTypeFilter,
-    taskStageFilter: state => state.taskStageFilter,
-    riskStageFilter: state => state.riskStageFilter,
-    issueStageFilter: state => state.issueStageFilter,
+
     facilityGroupFilter: state => state.facilityGroupFilter,
     facilityNameFilter: state => state.facilityNameFilter,
     facilityProgressFilter: state => state.facilityProgressFilter,
     facilityDueDateFilter: state => state.facilityDueDateFilter,
     noteDateFilter: state => state.noteDateFilter,
     taskIssueDueDateFilter: state => state.taskIssueDueDateFilter,
-    issueTypeFilter: state => state.issueTypeFilter,
-    issueSeverityFilter: state => state.issueSeverityFilter,
-    issueProgressFilter: state => state.issueProgressFilter,
-    taskProgressFilter: state => state.taskProgressFilter,
+
     taskIssueProgressFilter: state => state.taskIssueProgressFilter,
-    taskUserFilter: state => state.taskUserFilter,
-    issueUserFilter: state => state.issueUserFilter,
     myActionsFilter: state => state.myActionsFilter,
     onWatchFilter: state => state.onWatchFilter,
     mapFilters: state => state.mapFilters,
@@ -540,6 +668,12 @@ export default new Vuex.Store({
       
       let taskIssueActiveProgressStatus = _.map(aFilter, 'id').includes("active")
       let taskIssueCompletedProgressStatus = _.map(aFilter, 'id').includes("completed")
+
+      // let riskPriorityLevel = _.map(aFilter, 'filterCategoryId').includes("riskPriorityLevelFilter")
+      // let riskPriorityLevelNames = _.map(aFilter, 'id')
+
+      // let riskApproach = _.map(aFilter, 'filterCategoryId').includes("riskApproachFilter")
+      // let riskApproachNames = _.map(aFilter, 'id')
 
       let valid = true
 
@@ -572,31 +706,24 @@ export default new Vuex.Store({
       if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
         valid = valid && _progressStatuses.includes('completed')
       }
+      
+      var notes = _.flatten(_.map(resources, 'notes'))
+      var userIds = _.uniq(_.map(notes, 'userId'))
 
-      var userIds = []
-      var resources2 = []
+      var uids = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
       if(page_name == 'filteredFacilities'){
-
-        var u = _.uniq(_.map(facility['notes'], 'userId')) 
+        var u = _.uniq(_.map(facility['notes'], 'userId'))
         userIds = userIds.concat(u)
-        resources2 = resources2.concat(facility['tasks'])
-        resources2 = resources2.concat(facility['issues'])
-        resources2 = resources2.concat(facility['risks'])
-
-      }else{
-        resources2 = resources
       }
-
-      var uids = _.compact(_.uniq([..._.flatten(_.map(resources2, 'userIds')), ..._.map(_.flatten(_.map(resources2, 'checklists')), 'userId')]))
       userIds = _.uniq(userIds.concat(uids))
-
+      
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
-      
+
       if (taskIssueMyAction == false && taksIssueNotMyAction == true) {
         var isValid = false
-        for(let res of resources2){
+        for(let res of resources){
           if( !res.userIds.includes(Vue.prototype.$currentUser.id) ){
             isValid = true
           }
@@ -606,26 +733,26 @@ export default new Vuex.Store({
         valid = valid && isValid
       }
 
-      var watches = []
-      if(page_name == 'filteredFacilities'){
-        var actions = ['tasks', 'issues', 'risks']
-        
-        for (let act of actions) {
-          watches = watches.concat(_.map(facility[act], 'watched'))
-        }        
-      }else{
-        watches = watches.concat(_.map(resources, 'watched'))
-      }
-
-      watches = _.uniq(watches)
+      var watches = _.uniq(_.map(resources, 'watched'))
 
       if(taskIssueOnWatch == true && taksIssueNotOnWatch == false){
         valid = valid && watches.includes(true)
       }
-
+      
       if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
         valid = valid && watches.includes(false)
       }
+
+      // if(riskPriorityLevel == true){
+      //   var pLevels = _.uniq(_.compact( _.map(resources, 'priorityLevelName') ) )
+      //   valid = valid && ( _.intersection(riskPriorityLevelNames, pLevels ).length > 0 )
+      // }
+
+      // if(riskApproach == true){
+      //   var rApproaches = _.uniq(_.compact( _.map(resources, 'riskApproach') ) )
+      //   valid = valid && ( _.intersection(riskApproachNames, rApproaches ).length > 0 )
+      // }
+
       return valid
     },
 
@@ -634,16 +761,17 @@ export default new Vuex.Store({
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
+        
+        var resources1 = []
+        resources1 = resources1.concat(facility.tasks)
+        resources1 = resources1.concat(facility.issues)
+        resources1 = resources1.concat(facility.risks)
+
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0]
           switch(k) {
             case "advancedFilter":{
-              var allResources = []
-              allResources = allResources.concat(facility.tasks)
-              allResources = allResources.concat(facility.issues)
-              allResources = allResources.concat(facility.risks)
-
-              valid = valid && getters.filterDataForAdvancedFilter(allResources, 'filteredFacilities', facility)
+               valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "dueDate": {
@@ -715,6 +843,7 @@ export default new Vuex.Store({
               valid = valid && is_valid
               break
             }
+            // TODO: Improve this function
             case "taskIssueProgress": {
               let progressFor = facility.tasks.concat(facility.issues).concat(facility.risks)
               let resources = []
@@ -737,68 +866,110 @@ export default new Vuex.Store({
             }
             case "issueTypeIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueTypeId, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueTypeId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
             case "issueSeverityIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueSeverityId, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueSeverityId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
             case "issueStageIds": {
               var issues = facility.issues
-              var resources = _.filter(issues, ti => _.intersection(ti.issueStageId, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              var resources = _.filter(issues, ti => f[k].includes(ti.issueStageId)   )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "taskTypeIds": {
               var tasksIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
-              var resources = _.filter(tasksIssues, ti => _.intersection(ti.taskTypeId, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              var resources = _.filter(tasksIssues, ti => f[k].includes(ti.taskTypeId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
 
               break
             }
             case "taskStageIds": {
               var tasks = facility.tasks
-              var resources = _.filter(tasks, ti => _.intersection(ti.taskStageId, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
-
-              // valid = valid && _.intersection(f[k], ids).length > 0
+              var resources = _.filter(tasks, ti => f[k].includes(ti.taskStageId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
-            // TODO: remove if not used anywhere
-            case "issueUserIds": {
-              let ids = _.uniq(_.compact(_.flatten(_.map(facility.issues, 'userIds'))))
-              valid = valid && _.intersection(f[k], ids).length > 0
+            case "riskStageIds": {
+              var risks = facility.risks
+              var resources = _.filter(risks, ti => f[k].includes(ti.riskStageId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
-            // TODO: remove if not used anywhere
-            case "taskUserIds": {
-              let ids = _.uniq(_.compact(_.flatten(_.map(facility.tasks, 'userIds'))))
-              valid = valid && _.intersection(f[k], ids).length > 0
+            case "riskPriorityLevelIds": {
+              var risks = facility.risks
+              var resources = _.filter(risks, ti => f[k].includes(ti.riskPriorityLevelId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              break
+            }
+            case "riskApproachFilter": {
+              var risks = facility.risks
+              var fApproaches = _.map(f[k], "id")
+              var resources = _.filter(risks, ti => fApproaches.includes(ti.riskApproach) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              break
+            }
+            case "riskPriorityLevelFilter": {
+              var risks = facility.risks
+              var fPriorityLevels = _.map(f[k], "id")
+              var resources = _.filter(risks, ti => fPriorityLevels.includes(ti.priorityLevelName.toLowerCase()) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "taskIssueUsers": {
 
               var taskIssues = facility.tasks.concat(facility.issues).concat(facility.risks)
               var resources = _.filter(taskIssues, ti => _.intersection(ti.userIds, f[k]).length > 0 )
-              valid = valid && getters.filterDataForAdvancedFilter(resources, 'filteredFacilities', facility)
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "facilityGroupIds": {
-              valid = valid && f[k].includes(facility.facilityGroupId)
+              valid = valid && f[k].includes(facility.facilityGroupId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "ids": {
-              valid = valid && f[k].includes(facility.id)
+              valid = valid && f[k].includes(facility.id) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             case "statusIds": {
-              valid = valid && f[k].includes(facility.statusId)
+              valid = valid && f[k].includes(facility.statusId) && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
             default: {
@@ -1127,6 +1298,19 @@ export default new Vuex.Store({
     riskApproaches: () => {
       return ['avoid', 'mitigate', 'transfer', 'accept']
     },
+    probabilityNames: () => {
+      return [
+        {id: 1, value: 1, name: "1 - Rare"},
+        {id: 2, value: 2, name: "2 - Unlikely"},
+        {id: 3, value: 3, name: "3 - Possible"},
+        {id: 4, value: 4, name: "4 - Likely"},
+        {id: 5, value: 5, name: "5 - Almost Certain"}
+        // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
+      ]
+    },
+    impactLevelNames: () => {
+      return ["1 - Negligible", "2 - Minor", "3 - Moderate", "4 - Major", "5 - Catastrophic"]
+    },
     getMapZoomFilter: (state) => state.mapZoomFilter
   },
 
@@ -1161,7 +1345,7 @@ export default new Vuex.Store({
             commit('setFacilityGroups', res.data.project.facilityGroups)
             commit('setProjectUsers', res.data.project.users)
             commit('setStatuses', res.data.project.statuses)
-            commit('setTaskTypes', res.data.project.taskTypes)
+            commit('setTaskTypes', res.data.project.taskTypes)            
             commit('setTaskStages', res.data.project.taskStages)
             commit('setRiskStages', res.data.project.riskStages)
             commit('setIssueStages', res.data.project.issueStages)
@@ -1363,18 +1547,27 @@ export default new Vuex.Store({
         // 'advancedFilter',
         'taskIssueUserFilter',
         'projectStatusFilter',
+
         'taskTypeFilter',
+        'taskStageFilter',
+
         'facilityGroupFilter',
         'facilityNameFilter',
         'facilityProgressFilter',
         'facilityDueDateFilter',
         'noteDateFilter',
         'taskIssueDueDateFilter',
+
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',
-        'taskStageFilter',
+        
         'riskStageFilter',
+        'riskApproachFilter',
+        'riskPriorityLevelFilter',
+        'riskProbabilityOptions',
+        'riskImpactLevelOptions',
+
         'taskIssueProgressFilter',
         'myActionsFilter',
         'onWatchFilter',

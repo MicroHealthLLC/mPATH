@@ -1,12 +1,12 @@
 <template>
   <div id="sheets_view" data-cy="sheets_view">   
-        <sweet-modal
+        <!-- <sweet-modal
           class="form_modal"
           ref="formModals"
           :hide-close-button="true"
           :blocking="true"
           >
-          <div v-if="managerView.task || managerView.issue" class="w-100">
+          <div v-if="managerView.task || managerView.issue || managerView.note" class="w-100">
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -17,15 +17,24 @@
               class="form-inside-modal"
             ></task-form>
             <issue-form
-              v-if="managerView.issue"
+              v-else-if="managerView.issue"
               :facility="currentFacility"
               :issue="managerView.issue"
               @issue-updated="updateFacilityIssue"
               @issue-created="updateFacilityIssue"
               class="form-inside-modal"
             ></issue-form>
+              <notes-form
+              v-else-if="managerView.note"            
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote=false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+              class="form-inside-modal"
+            ></notes-form>
           </div>
-        </sweet-modal>
+        </sweet-modal> -->
   </div>
 </template>
 
@@ -37,6 +46,8 @@
   import FacilityRollup from './facilities/facility_rollup'
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
+  import NotesForm from "./notes/notes_form"
+
 
   export default {
     name: "ProjectSheets",
@@ -45,6 +56,7 @@
       FacilityRollup,
       TaskForm,
       IssueForm,
+      NotesForm,
       FacilitySidebar,
       SweetModal
     },
@@ -61,10 +73,14 @@
       ...mapGetters([
         'filteredFacilityGroups',
         'facilityGroupFacilities',
-        'managerView'
+        'managerView',
+        
       ]),
       C_showFacilityTab() {
         return !(_.isEmpty(this.currentFacility) && _.isEmpty(this.currentFacility))
+      },
+       C_showFacilityRollup() {
+        return !_.isEmpty(this.currentFacilityGroup)
       }
     },
     mounted() {
@@ -95,12 +111,12 @@
         this.currentFacility = facility
       },
       updateFacilityTask(task) {
-        var cb = () => this.updateTasksHash({task: task})
+        let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'task', value: null})
       },
-      updateFacilityIssue(issue) {
-        var cb = () => this.updateIssuesHash({issue: issue})
+       updateFacilityIssue(issue) {
+        let cb = () => this.updateIssuesHash({issue: issue})
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
         this.setTaskForManager({key: 'issue', value: null})
       },
@@ -109,7 +125,7 @@
         this.setTaskForManager({key: 'note', value: null})
       },
       updatedFacilityNote(note) {
-        var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+        let index = this.currentFacility.notes.findIndex(n => n.id == note.id)
         if (index > -1) Vue.set(this.currentFacility.notes, index, note)
         this.setTaskForManager({key: 'note', value: null})
       },
@@ -120,6 +136,13 @@
       }
     },
     watch: {
+       currentFacility: {
+        handler(value, previous) {
+          if (_.isEmpty(value) || value.id !== previous.id) {
+            this.goBackFromEdits()
+          }
+        }, deep: true
+      },
       filteredFacilityGroups: {
         handler(value) {
           if (!(this.currentFacilityGroup && _.map(value, 'id').includes(this.currentFacilityGroup.id))) {
@@ -144,17 +167,10 @@
             }
           }
         }, deep: true
-      },
-      currentFacility: {
-        handler(value) {
-          if (_.isEmpty(value)) {
-            this.goBackFromEdits()
-          }
-        }, deep: true
-      },
+      },     
       managerView: {
         handler(value) {
-          if (value.task || value.issue) {
+          if (value.task || value.issue || value.note) {
             this.$refs.formModals && this.$refs.formModals.open()
           } else {
             this.$refs.formModals && this.$refs.formModals.close()

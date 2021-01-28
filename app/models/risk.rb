@@ -13,8 +13,8 @@ class Risk < ApplicationRecord
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
-  validates_inclusion_of :probability, in: 1..5
-  validates_inclusion_of :impact_level, in: 1..5
+  # validates_inclusion_of :probability, in: 1..5
+  # validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description, :start_date, :due_date
 
   before_validation :cast_constants_to_i
@@ -30,6 +30,44 @@ class Risk < ApplicationRecord
         uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
       }
     end.as_json
+  end
+
+  def priority_level_name
+    n = 'Very Low'
+    n = 'Very Low' if [1].include?(priority_level)
+    n = "Low" if [2,3].include?(priority_level)
+    n = "Moderate" if [4,5,6].include?(priority_level)
+    n = "High" if [8,9,10,12].include?(priority_level)
+    n = "Extreme" if [15,16,20,25].include?(priority_level)
+    n
+  end
+
+  def impact_level_name_hash
+    {
+      1 => "1 - Negligible",
+      2 => "2 - Minor",
+      3 => "3 - Moderate",
+      4 => "4 - Major",
+      5 => "5 - Catastrophic"
+    }
+  end
+
+  def impact_level_name
+    impact_level_name_hash[impact_level] || impact_level_name_hash[1]
+  end
+
+  def probability_name_hash
+    {
+      1 => "1 - Rare",
+      2 => "2 - Unlikely",
+      3 => "3 - Possible",
+      4 => "4 - Likely",
+      5 => "5 - Almost Certain"
+    }
+  end
+  
+  def probability_name
+    probability_name_hash[probability] || probability_name_hash[1]
   end
 
   def to_json
@@ -54,6 +92,11 @@ class Risk < ApplicationRecord
       progress_status = "completed"
     end
     self.as_json.merge(
+      priority_level_name: priority_level_name,
+      probability_name: probability_name,
+      impact_level_name: impact_level_name,
+      task_type: task_type.as_json, 
+      risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
@@ -64,6 +107,7 @@ class Risk < ApplicationRecord
       user_ids: users.map(&:id).compact.uniq,
       risk_owners: users.map(&:full_name).compact.join(", "),
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      user_names: users.map(&:full_name).compact.join(", "),
       notes: notes.as_json,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),

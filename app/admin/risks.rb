@@ -19,6 +19,7 @@ ActiveAdmin.register Risk do
       :impact_level,
       :risk_approach,
       :risk_approach_description,
+      :task_type,
       :task_type_id,
       :risk_stage_id,
       :progress,
@@ -51,8 +52,8 @@ ActiveAdmin.register Risk do
     column "Risk Name", :text, sortable: false
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
-    column :start_date
-    column :due_date
+    column "Identified Date", :start_date
+    column "Risk Approach Due Date", :due_date
     column :progress
     tag_column :probability
     tag_column :impact_level
@@ -123,8 +124,8 @@ ActiveAdmin.register Risk do
             fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :start_date, as: :datepicker
-      f.input :due_date, as: :datepicker
+      f.input :start_date, label: 'Identified Date', as: :datepicker
+      f.input :due_date, label: 'Risk Approach Due Date', as: :datepicker
       f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false      
       f.input :risk_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true      
       f.input :probability, include_blank: false, include_hidden: false, min: 1, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }

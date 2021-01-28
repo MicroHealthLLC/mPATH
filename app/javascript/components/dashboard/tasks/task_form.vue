@@ -221,8 +221,8 @@
         </span>
         <div v-if="filteredChecks.length > 0">
         <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-            <div class="form-control h-100" :key="index">
+          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+            <div class="form-control h-100">
               <div class="row">
                 <div class="col justify-content-start">
                   <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -257,14 +257,19 @@
                     <v2-date-picker                    
                       v-model="check.dueDate"
                       :value="check.dueDate" 
+                      :disabled="!_isallowed('write')"
                       @selected="updateCheckItem($event, 'dueDate', index)"
                       :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
                       placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"                    
+                      :name="checkpointName(index)"
+                      class="w-100 vue2-datepicker d-flex ml-auto" 
+                      value-type="DD MMM YYYY"
+                      format="DD MMM YYYY"
+                      v-validate="{ date_format:'DD MMM YYYY', date_between: [formatDate(DV_task.startDate), formatDate(DV_task.dueDate)] }"             
                     />
+                    <div v-show="errors.has(`${checkpointName(index)}`)" class="text-danger">
+                      {{errors.first(`${checkpointName(index)}`)}}
+                    </div>
                  </div>
                 </div>       
                </div>
@@ -578,9 +583,11 @@
             for (let key in check) {         
               if (key === 'user') key = 'user_id'            
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
-              if (key === "dueDate"){
-                key = "due_date"
-              }
+              // if (key === "dueDate"){
+              //   key = "due_date"
+              // }
+              key = humps.decamelize(key)
+              if(['created_at', 'updated_at'].includes(key)) continue
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
             }              
           }          
@@ -622,6 +629,7 @@
             this.$emit(callback, humps.camelizeKeys(response.data.task))
           })
           .catch((err) => {
+            // var errors = err.response.data.errors
             console.log(err)
           })
           .finally(() => {
@@ -630,7 +638,8 @@
         })
       },
       addChecks() {
-        this.DV_task.checklists.push({text: '', checked: false})
+        var postion = this.DV_task.checklists.length
+        this.DV_task.checklists.push({text: '', checked: false, position: postion})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -689,6 +698,20 @@
       },
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
+      },
+      formatDate(date) {
+        const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+        const aDate = new Date(date)
+        // VeeValidate requires a leading 0 for comparsion in the current date format
+        if (aDate.getDate() < 10) {
+          return "0" + aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
+        } else {
+          return aDate.getDate() + " " + months[aDate.getMonth()] + " " + aDate.getFullYear()
+        } 
+      },
+      // Dynamically generates name attribute for checklist items based on index
+      checkpointName(index) {
+        return "Checkpoint Due Date " + (index + 1)
       }
     },
     computed: {
