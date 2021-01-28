@@ -244,8 +244,10 @@
                 <label class="font-sm">Priority Level:</label> 
                 <div class="risk-priorityLevel text-center">
                     <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
-                    <br>                  
-                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                    <br>  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (1)" class="gray2">Very Low</span>  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (2)" class="green1">Low</span>                
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (3)" class="green1">Low</span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
@@ -457,8 +459,8 @@
                   <div class ="col-md-2 gray p-2 text-center">
                   Rare<br> 1
                   </div>
-                  <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
-                  Low<br> 1
+                  <div class ="col-md-2 gray3 p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
+                  Very Low<br> 1
                   </div>
                   <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
                   Low<br> 2
@@ -1530,8 +1532,11 @@
   .red1 {
     background-color: #d9534f;
   }
-  .yellow1 {
-    background-color: yellow;  
+  .gray2 {
+    background-color: #ededed;
+  }
+  .yellow1 {  
+    background-color: yellow;   
     color:#383838;  
     display: block;
   }
@@ -1545,12 +1550,16 @@
     display: block;
     color:#fff;
   }
-  .red, .yellow, .orange, .green {
+  .red, .yellow, .orange, .green, .gray3 {
     opacity: .44;
     min-height: 76px;
   }
+  .gray2 { 
+    display: block;
+    color:#383838;
+  }
   .red:hover, .yellow:hover, 
-  .orange:hover, .green:hover {
+  .orange:hover, .green:hover, .gray2:hover {
     opacity: 1;
     cursor: pointer;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);

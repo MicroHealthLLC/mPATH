@@ -8,7 +8,7 @@
     <div v-if="!loading" class="risk_show mx-3 mb-3 mt-1 py-1" @click.prevent="editRisk">
       <div v-if="show">
         <div class="row" >
-          <div class="col-md-9">
+          <div class="col-md-9 px-1">
             <div>
               <div class="mb-1 d-flex">
                <b>{{DV_risk.text}}</b>
@@ -51,7 +51,8 @@
                   {{DV_risk.impactLevel}}
                 </div> -->
                 <div class="font-sm col" v-tooltip="(DV_risk.priorityLevel)">
-                  <span class="mr-1">Priority:</span>                 
+                  <span class="mr-1">Priority:</span>    
+                   <span v-if="(DV_risk.priorityLevelName) == 'Very Low'" class="gray2">{{DV_risk.priorityLevelName}}</span>              
                   <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}}</span> 
                   <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{DV_risk.priorityLevelName}} </span> 
                   <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1"> {{DV_risk.priorityLevelName}} </span> 
@@ -59,12 +60,12 @@
                 </div>
               </div>
               <div class="row mb-0">
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                <div class="font-sm col-md-6 pl-3 pr-0">
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(DV_risk.startDate)}}
                 </div>
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+                <div class="font-sm col-md-6 pr-0">
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(DV_risk.dueDate)}}
                 </div>
               </div>
@@ -341,7 +342,10 @@
   .green1 {
     background-color: rgb(92,184,92);
   }  
-  .green1, .orange1, .red1, .yellow1 {
+  .gray2 {
+    background-color: #ededed;
+  }
+  .green1, .orange1, .red1, .yellow1, .gray2 {
     display: inline;   
     border-radius: 2px; 
     padding: 1px 1px;
