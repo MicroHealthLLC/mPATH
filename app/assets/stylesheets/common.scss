@@ -499,3 +499,17 @@ body /deep/ .mx-input.disabled {
   color: #ccc;
   margin: 0.6em;
 }
+.el-icon-loading {
+  font-size: 50px;
+  color: #17a2b8;
+}
+.el-icon-loading:before {
+  color: #17a2b8;
+}
+.el-loading-spinner .el-loading-text {
+    font-size: 20px;
+    color: #17a2b8;
+}
+.el-loading-spinner {
+  top: 45%
+}
