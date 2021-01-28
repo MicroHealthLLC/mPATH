@@ -78,10 +78,11 @@ class User < ApplicationRecord
 
   def as_json(options=nil)
     json = super(options)
-    json.merge(
+    j = json.merge(
       full_name: full_name,
       organization: organization.try(:title)  || ""
-    ).as_json
+    )
+    j.as_json(except: "admin_permissions")
   end
 
   def active_for_authentication?

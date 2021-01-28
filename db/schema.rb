@@ -79,7 +79,6 @@ ActiveRecord::Schema.define(version: 2021_01_27_214607) do
 
   create_table "facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
-    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -103,7 +102,7 @@ ActiveRecord::Schema.define(version: 2021_01_27_214607) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center"
+    t.string "center", default: "[]"
     t.bigint "project_id"
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
@@ -371,10 +370,9 @@ ActiveRecord::Schema.define(version: 2021_01_27_214607) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
+    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
-    t.string "probability_name"
-    t.string "impact_level_name"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
@@ -490,6 +488,7 @@ ActiveRecord::Schema.define(version: 2021_01_27_214607) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
+    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
