@@ -390,10 +390,10 @@ export default new Vuex.Store({
     getAllFilterNames: (state, getters) => {
       return [
 
-        ['facilityGroupFilter', 'Facility Group'],
-        ['facilityNameFilter', 'Facility Name'],
-        ['projectStatusFilter', 'Project Status'],
-        ['facilityProgressFilter', 'Facility Progress'],
+        ['facilityGroupFilter', 'Project Group'],
+        ['facilityNameFilter', 'Project Name'],
+        ['projectStatusFilter', 'Program Status'],
+        ['facilityProgressFilter', 'Project Progress'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
@@ -407,8 +407,8 @@ export default new Vuex.Store({
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approach'],
-        ['riskStageFilter', 'Risk Stage'],
-        ['riskPriorityLevelFilter', 'Risk Priority Level'],
+        ['riskStageFilter', 'Risk Stages'],
+        ['riskPriorityLevelFilter', 'Risk Priority Levels'],
 
 
         // Advanced Filters
