@@ -72,4 +72,14 @@ describe('Teams List', function() {
     cy.get('tbody > :nth-child(1) > .el-table_1_column_7 > .cell').first().contains('admin@test.com').should('be.visible')
     cy.logout()
   })
+
+  it('Sort Team according to Position', function() {
+    cy.get('.has-gutter > tr > .el-table_1_column_4 > .cell').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_4 > .cell').first().contains('Manager').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_4 > .cell').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_4 > .cell').first().contains('Mr.').should('be.visible')
+    cy.get('.has-gutter > tr > .el-table_1_column_4 > .cell').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > .el-table_1_column_4 > .cell').first().contains('Manager').should('be.visible')
+    cy.logout()
+  })
 })
