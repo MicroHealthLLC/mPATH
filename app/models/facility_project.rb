@@ -14,8 +14,11 @@ class FacilityProject < ApplicationRecord
 
   def as_json(options=nil)
     json = super(options)
+    fac = self.facility
     return json.merge(
-      facility: self.facility.as_json,
+      facility_project_id: self.id,
+      facility_name: fac.facility_name,
+      facility: fac.as_json,
       tasks: tasks.map(&:to_json),
       issues: issues.map(&:to_json),
       risks: risks.map(&:to_json),
