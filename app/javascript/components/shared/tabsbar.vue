@@ -51,7 +51,7 @@
       //   return this.$route.name === 'FacilityManagerView'
       // },
        sheetsView() {
-        return `/projects/${this.$route.params.projectId}/sheets`
+        return `/projects/${this.$route.params.projectId}/manage`
       },
       mapView() {
         return `/projects/${this.$route.params.projectId}`
