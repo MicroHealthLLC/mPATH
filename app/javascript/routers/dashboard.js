@@ -35,7 +35,7 @@ export default new VueRouter({
     },
     {
       name: 'ProjectSheets',
-      path: '/projects/:projectId/sheets',
+      path: '/projects/:projectId/manage',
       component: Sheets
     },
     {

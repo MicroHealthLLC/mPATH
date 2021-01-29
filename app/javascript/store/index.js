@@ -390,10 +390,10 @@ export default new Vuex.Store({
     getAllFilterNames: (state, getters) => {
       return [
 
-        ['facilityGroupFilter', 'Facility Group'],
-        ['facilityNameFilter', 'Facility Name'],
-        ['projectStatusFilter', 'Project Status'],
-        ['facilityProgressFilter', 'Facility Progress'],
+        ['facilityGroupFilter', 'Project Group'],
+        ['facilityNameFilter', 'Project Name'],
+        ['projectStatusFilter', 'Program Status'],
+        ['facilityProgressFilter', 'Project Progress'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],
         ['noteDateFilter', 'Updates Date Range'],
@@ -407,8 +407,8 @@ export default new Vuex.Store({
         ['issueStageFilter', 'Issue Stages'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approach'],
-        ['riskStageFilter', 'Risk Stage'],
-        ['riskPriorityLevelFilter', 'Risk Priority Level'],
+        ['riskStageFilter', 'Risk Stages'],
+        ['riskPriorityLevelFilter', 'Risk Priority Levels'],
 
 
         // Advanced Filters
@@ -706,14 +706,14 @@ export default new Vuex.Store({
         valid = valid && _progressStatuses.includes('completed')
       }
       
-      var notes = _.flatten(_.map(resources, 'notes'))
-      var userIds = _.uniq(_.map(notes, 'userId'))
+      // var notes = _.flatten(_.map(resources, 'notes'))
+      var userIds = [] //_.uniq(_.map(notes, 'userId'))
 
       var uids = _.compact(_.uniq([..._.flatten(_.map(resources, 'userIds')), ..._.map(_.flatten(_.map(resources, 'checklists')), 'userId')]))
-      if(page_name == 'filteredFacilities'){
-        var u = _.uniq(_.map(facility['notes'], 'userId'))
-        userIds = userIds.concat(u)
-      }
+      // if(page_name == 'filteredFacilities'){
+      //   var u = _.uniq(_.map(facility['notes'], 'userId'))
+      //   userIds = userIds.concat(u)
+      // }
       userIds = _.uniq(userIds.concat(uids))
       
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
