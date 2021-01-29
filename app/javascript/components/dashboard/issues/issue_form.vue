@@ -946,8 +946,11 @@ export default {
       );
     },
     disabledDateRange(date) {
-      return date < new Date(this.DV_issue.startDate) || date > new Date(this.DV_issue.dueDate);
-    },
+        var dueDate = new Date(this.DV_issue.dueDate)
+        dueDate.setDate(dueDate.getDate() + 1)
+
+        return date < new Date(this.DV_issue.startDate) || date > dueDate;
+      },
   },
   computed: {
     ...mapGetters([

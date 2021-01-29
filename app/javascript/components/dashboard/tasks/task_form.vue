@@ -697,7 +697,10 @@
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       },
       disabledDateRange(date) {
-        return date < new Date(this.DV_task.startDate) || date > new Date(this.DV_task.dueDate);
+        var dueDate = new Date(this.DV_task.dueDate)
+        dueDate.setDate(dueDate.getDate() + 1)
+
+        return date < new Date(this.DV_task.startDate) || date > dueDate;
       },
     },
     computed: {
