@@ -96,8 +96,6 @@ class Task < ApplicationRecord
       ]
     )
 
-    project = user.projects.active.find_by(id: params[:project_id])
-    facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
     task = self
     t_params = task_params.dup
@@ -108,7 +106,12 @@ class Task < ApplicationRecord
     notes_attributes = t_params.delete(:notes_attributes)
 
     task.attributes = t_params
-    task.facility_project_id = facility_project.id
+    if !task.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+      task.facility_project_id = facility_project.id
+    end
 
     all_checklists = task.checklists
 
