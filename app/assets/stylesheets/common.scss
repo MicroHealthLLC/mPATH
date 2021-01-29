@@ -414,6 +414,21 @@ body /deep/ .mx-input.disabled {
 .b_border {
   border-bottom: 1px solid #ccc;
 }
+.page-btns {
+  width: 20px;
+  line-height: 1 !important;
+  border: none !important;
+  height: 25px;
+  margin-right: 1px;
+  background-color: white;  
+  color: #383838;
+  cursor: pointer;
+}
+.wrapper {    
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+  border: 1px solid #dee2e6 !important;
+  margin-bottom: 20px;
+}
 
 
 // CSS for datatables

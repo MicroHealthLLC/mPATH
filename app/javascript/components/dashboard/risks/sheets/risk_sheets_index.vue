@@ -84,7 +84,7 @@
           </multiselect>
         </div>
      </div>
-
+     <div class="wrapper mt-2 p-3">
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addRiskBtn"
         @click.prevent="addNewRisk"
@@ -106,12 +106,12 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>     
-        <button class="ml-2 btn btn-md btn-info team-total" data-cy="risk_total">
+        <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
           Total: {{filteredRisks.length}}
         </button>
       </div>
       <div v-if="filteredRisks.length > 0">
-        <div style="margin-bottom:100px" data-cy="risks_table">
+        <div style="margin-bottom:50px" data-cy="risks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="oneFive" />
@@ -153,14 +153,16 @@
           </tbody>
           <div class="float-right mb-4">
           <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
       </div>
       <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
     </div>
+  </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+ 
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
     
     <table
@@ -472,20 +474,7 @@
     cursor: pointer;
     display: block;
  }
-   .page-btns {
-    width: 20px;
-    line-height: 1 !important;
-    border: none !important;
-    height: 25px;
-    margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    color: #383838;
-    cursor: pointer;
- }
-  .page-btns:hover {
-    background-color: #ededed;
-  }
+
   #page-count {
     width: auto !important;
     cursor: default;
