@@ -379,7 +379,7 @@ export default new Vuex.Store({
     getRiskPriorityLevelFilter: state => state.riskPriorityLevelFilter,
     getRiskPriorityLevelFilterOptions: (state, getters) => {
       var options = [
-        {id: 'veryLow', name: 'Very Low', value: 'veryLow'},
+        {id: 'very low', name: 'Very Low', value: 'very low'},
         {id: 'low', name: 'Low', value: 'low'},
         {id: 'moderate', name: 'Moderate', value: 'moderate'},
         {id: 'high', name: 'High', value: 'high' },

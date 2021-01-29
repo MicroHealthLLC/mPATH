@@ -54,7 +54,7 @@
         return `/projects/${this.$route.params.projectId}/manage`
       },
       mapView() {
-        return `/projects/${this.$route.params.projectId}`
+        return `/projects/${this.$route.params.projectId}/mgis`
       },
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
