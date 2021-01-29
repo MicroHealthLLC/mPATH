@@ -74,9 +74,9 @@
 
       <!-- Sheets View starts here -->
 
-       <div class="col-md-10 facility-show-tab px-4" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView">
+       <div class="col-md-10 facility-show-tab px-4" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView" v-loading="!contentLoaded" element-loading-text="Fetching your data. Please wait..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
         <div class="mt-3">
-          <facility-sheets
+          <facility-sheets 
             v-if="C_showFacilityTab"
             from="manager_view"
             :facility="currentFacility"
@@ -1093,6 +1093,6 @@
       form {
         position: inherit !important;
       }
-    } 
-  }
+    }
+  } 
 </style>
