@@ -861,7 +861,7 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
     background-color: #ededed !important;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .apply-btn, .red, .orange, .green, .grey, .grey2 {
+  .apply-btn, .red, .orange, .green, .grey, .grey2, .yellow {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .pg-content {
