@@ -12,7 +12,7 @@ Cypress.Commands.add("facilityRollup", () => {
     // Display task summary
     cy.get('[data-cy=tasks_summary]').scrollIntoView()
     cy.get('[data-cy=tasks_summary]').within(() => {
-      cy.contains('5 Tasks').should('be.visible')
+      cy.contains('7 Tasks').should('be.visible')
       cy.contains('Task Categories').should('be.visible')
       cy.contains('Test Task Type(milestone)').should('be.visible')
     })
@@ -20,7 +20,7 @@ Cypress.Commands.add("facilityRollup", () => {
     // Display Issues summary
     cy.get('[data-cy=issues_summary]').scrollIntoView()
     cy.get('[data-cy=issues_summary]').within(() => {
-      cy.contains('5 Issues').should('be.visible')
+      cy.contains('7 Issues').should('be.visible')
       cy.contains('Issue Types').should('be.visible')
       cy.contains('Test Issue Type').should('be.visible')
     })
