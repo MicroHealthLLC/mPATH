@@ -94,8 +94,8 @@
             </template>
           </multiselect>
         </div>  
-    </div>
-  
+    </div>  
+     <div class="wrapper mt-2 p-3">
       <div class="mt-2">
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
@@ -159,7 +159,7 @@
                 />
               <div class="float-right mb-4">
                 <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
-                  <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / pageSize) }}  </button> 
+                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / pageSize) }}  </button> 
                 <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
               </div>             
             </div>
@@ -169,6 +169,7 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
+     </div>
     <div>
       <table
         class="table table-sm table-bordered table-striped"
@@ -553,21 +554,6 @@
   }
   .rediconcolor {
     color: red;
-  }
-    .page-btns {
-    width: 30px;
-    border: none !important;
-    height: 36px;
-    margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    color: #383838;
-    padding: 10px 24px;
-    padding-bottom: 10px !important;
-    cursor: pointer;
- }
-  .page-btns:hover {
-    background-color: #ededed
   }
   .page-btns.active  {
     background-color: rgba(211, 211, 211, 10%);
