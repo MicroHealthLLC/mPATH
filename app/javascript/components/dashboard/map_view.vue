@@ -34,7 +34,7 @@
                   west: -179.5,
                   east: 179.5,
                 },
-                strictBounds: true,
+                strictBounds: false,
               },
             }"
             @click="resetView"
@@ -183,8 +183,8 @@ export default {
   },
   data() {
     return {
-      center: { lat: 40.64, lng: -74.66 },
-      zoom: 3,
+      center: { lat: 20, lng: 0 },
+      zoom: 0,
       openSidebar: false,
       expandedFacility: {},
       tooltip: {
