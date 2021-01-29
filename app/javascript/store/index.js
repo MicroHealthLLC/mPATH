@@ -283,6 +283,13 @@ export default new Vuex.Store({
   },
 
   getters: {
+    getFacilityProjectOptions:(state, getters) =>{
+      var options = []
+      for(let f of getters.facilities){
+        options.push({id: f.facilityProjectId, name: f.facilityName})
+      }
+      return options
+    }, 
     getTaskIssueUserFilter:(state, getters) =>{
       return state.taskIssueUserFilter
     },

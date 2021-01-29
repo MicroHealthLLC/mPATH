@@ -82,13 +82,17 @@ class Project < SortableRecord
 
     all_facility_projects.each do |fp|
 
+      facility = all_facilities.detect{|f| f.id == fp.facility_id}
+
       h = fp.attributes.merge({
+        class: fp.class.name,
         project_status: fp.status_name,
         color: fp.color,
-        progress: fp.progress
+        progress: fp.progress,
+        facility_project_id: fp.id,
+        facility_name: facility.facility_name
       })
 
-      facility = all_facilities.detect{|f| f.id == fp.facility_id}
       g = all_facility_groups.detect{|gg| gg.id == facility.facility_group_id}
 
       h[:facility] = facility.attributes.merge({
@@ -111,15 +115,15 @@ class Project < SortableRecord
 
     facility_groups_hash = []
     all_facility_groups.each do |fg|
-      h = fg.attributes
-      h[:facilities] = []
-      h[:project_ids] = []
+      h2 = fg.attributes
+      h2[:facilities] = []
+      h2[:project_ids] = []
       fg.facility_projects.each do |fp|
-        h[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
-        h[:project_ids] << fp.project_id
+        h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
+        h2[:project_ids] << fp.project_id
       end
-      h[:project_ids] = h[:project_ids].compact.uniq
-      facility_groups_hash << h
+      h2[:project_ids] = h2[:project_ids].compact.uniq
+      facility_groups_hash << h2
     end
 
     hash = self.attributes.merge({project_type: project_type_name})
