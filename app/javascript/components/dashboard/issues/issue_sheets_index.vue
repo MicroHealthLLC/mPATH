@@ -103,6 +103,7 @@
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
+      <div class="float-right">
           <button
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
@@ -115,9 +116,10 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-       <label class="form-check-label text-primary float-right mr-2 total-label" data-cy="issue_total">
-        <h5>Total: {{filteredIssues.length}}</h5>
-       </label>
+         <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
+          Total: {{filteredIssues.length}}
+         </button>
+      </div>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">      
             <div style="margin-bottom:50px" data-cy="issues_table">
@@ -135,26 +137,24 @@
                   <col class="oneFive" />
                 </colgroup>
                 <tr style="background-color:#ededed">
-                  <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
-                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
-                  <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
-                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned Users<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('watched')">Onwatch<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>               
+                  <th class="sort-th" @click="sort('title')">Issue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('issueType')">Issue Type <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
+                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned<br/> Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('watched')">Onwatch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>               
                 </tr>
               </table>            
                 <issue-sheets
-                  v-for="(issue, i) in sortedIssues"      
-                  id="issueHover"
-                  :class="{'b_border': !!filteredIssues[i+1]}"
+                  v-for="issue in sortedIssues"      
+                  id="issueHover"               
                   :key="issue.id"
                   :issue="issue"
-                  :from-view="from"
-                  @issue-edited="issueEdited"
+                  :from-view="from"                
                   @toggle-watch-issue="toggleWatched"
                 />
               <div class="float-right mb-4">
@@ -318,10 +318,10 @@
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
-      issueEdited(issue) {
-        this.currentIssue = issue
-        this.newIssue = true
-      },
+      // issueEdited(issue) {
+      //   this.currentIssue = issue
+      //   this.newIssue = true
+      // },
       reportNew() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
@@ -508,7 +508,8 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
   table {
     table-layout: fixed ;
     width: 100% ;
@@ -525,9 +526,6 @@
   }
   .oneFive {
     width: 15%;
-  }
-  th {
-    font-size: .70rem !important;
   }
   .floatRight {
     text-align: right;
@@ -552,6 +550,9 @@
   }
   .multiselect__tags {
     min-height: 25px !important;
+  }
+  .rediconcolor {
+    color: red;
   }
     .page-btns {
     width: 30px;
