@@ -57,7 +57,7 @@ class ProjectsController < AuthenticatedController
     end
   end
 
-  def sheets
+  def manage
     check_permit("sheets_view")
     respond_to do |format|
       format.json {}

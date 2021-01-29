@@ -53,6 +53,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
+       <div class="float-right">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -65,9 +66,10 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
-        <h5>Total: {{filteredTasks.length}}</h5>
-      </label>
+      <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="task_total">
+        Total: {{filteredTasks.length}}
+      </button>
+       </div>
       <div v-if="filteredTasks.length > 0">
         <div style="margin-bottom:100px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
@@ -83,22 +85,21 @@
               <col class="twenty" />
             </colgroup>
             <tr style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
-              <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('text')" >Task<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('taskType')">Category <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
+              <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('userNames')">Assigned<br/>Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('watched')">On Watch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
             </tr>
           </table>
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
-              href="#"
-              :class="{'b_border': !!filteredTasks[i+1]}"
+              href="#"           
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -125,7 +126,7 @@
       <thead>
         <tr style="background-color:#ededed">
           <th>Task</th>
-          <th>Task Category</th>
+          <th>Category</th>
           <th>Project</th>
           <th>Start Date</th>
           <th>Due Date</th>
@@ -397,36 +398,17 @@
     };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
   #tasks-index {
     background-color: #ffffff;
     z-index: 100;
     height: 500px
   }
-  .scroll {
-    cursor:pointer !important;
-    top: 35%;
-    right: 5px;
-    position:absolute;
-    font-size: 1.1rem;
-    color: #383838 !important;
-    padding-left:4px !important
-  }
   .task-search-bar {
     height: 31px;
     width: 310px;
     border-radius: 5px;
-  }
-  .sort-th {
-    font-size: .70rem !important;
-    cursor: pointer;
-    font-family: 'FuturaPTBook';
-    text-align: center;
-    position: relative;
-    vertical-align: middle !important;
-  }
-   .sort-th > #text { 
-    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
   }
   input[type=search] {
     color: #383838;
@@ -511,10 +493,6 @@
   .floatRight {
     text-align: right;
     right: 0px;
-  }
-  .fa-sort {
-    font-size: 1.2rem;
-    color: gray;
   }
   .pagination {
     margin-bottom: 50px !important;

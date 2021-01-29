@@ -198,7 +198,7 @@
 
               <div v-if="taskStats.length > 0" data-cy="task_categories" class="row mt-4 mb-1">
                  <div class="col font-weight-bold text-center">
-                      <h6>CATEGORIES</h6> 
+                      <h6>Task Categories</h6> 
                   </div>                
               </div>
               <div class="row font-sm" v-for="task in taskStats">           
@@ -275,7 +275,7 @@
               <div v-if="contentLoaded">
                 <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
                   <div class="col font-weight-bold mt-4 mb-2 text-center">
-                    <h6>CATEGORIES</h6>
+                    <h6>Associated Task Categories</h6>
                   </div>
                 </div>
                 <div class="row" v-for="issue in issueTaskCategories">
@@ -366,7 +366,7 @@
 
              <div v-if="filteredRisks.length" class="font-weight-bold text-center">
                <div class="col font-weight-bold mt-3 mb-1 text-center">
-                       <h6>CATEGORIES</h6> 
+                       <h6>Associated Task Categories</h6> 
                </div>                  
             </div>
              <div v-for="risk in currentRiskTypes" >

@@ -1,7 +1,8 @@
 
 <template>
   <div id="risk-sheets">
-    <table class="table table-sm table-bordered table-striped">
+    <table class="table table-sm table-bordered">
+    
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
         <td class="oneFive">{{risk.text}}</td>
         <td class="eight">{{risk.riskApproach}}</td>
@@ -12,13 +13,13 @@
             <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
             <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
         </td>
-        <td class="seven">{{formatDate(risk.startDate)}}</td>
+        <td class="eight">{{formatDate(risk.startDate)}}</td>
         <td class="seven">{{formatDate(risk.dueDate)}}</td>
         <td class="nine" v-if="(risk.userNames.length) >= 0">{{ risk.userNames }}</td>
         <td class="nine" v-else></td>
         <td class="nine">{{risk.progress + "%"}}</td>
-        <td class="nine" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
-        <td class="nine" v-else></td>
+        <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
          <td class="twenty" v-if="(risk.notes.length) > 0">

@@ -21,7 +21,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
               | Admin Panel
         li.nav-item
           =link_to profile_path, class: "nav-link" do
-            | Welcome #{current_user.email}!
+            | Welcome,  #{current_user.first_name}!
         li.nav-item
           =link_to destroy_user_session_path, method: :delete, id: '__logout', class: "nav-link", data: { cy: 'logout' } do
             | Log out

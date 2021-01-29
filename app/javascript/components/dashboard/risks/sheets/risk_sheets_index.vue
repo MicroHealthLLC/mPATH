@@ -69,7 +69,7 @@
             v-model="C_riskPriorityLevelFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Priority Level"
+            placeholder="Filter by Risk Priority Level"
             :options="getRiskPriorityLevelFilterOptions"
             :searchable="false"
             :multiple="true"
@@ -93,6 +93,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Risk
       </button>
+      <div class="float-right">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -104,10 +105,11 @@
           @click.prevent="exportToExcel('table', 'Risk Register')"
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
+        </button>     
+        <button class="ml-2 btn btn-md btn-info team-total" data-cy="risk_total">
+          Total: {{filteredRisks.length}}
         </button>
-      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="risk_total">
-        <h5>Total: {{filteredRisks.length}}</h5>
-      </label>
+      </div>
       <div v-if="filteredRisks.length > 0">
         <div style="margin-bottom:100px" data-cy="risks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
@@ -115,39 +117,40 @@
               <col class="oneFive" />
               <col class="eight" />
               <col class="eight" />
+              <col class="eight" />
               <col class="seven" />
-              <col class="seven" />
-              <col class="nine" />
               <col class="nine" />
               <col class="nine" />
               <col class="eight" />
+              <col class="eight" />
               <col class="twenty" />
             </colgroup>
-            <tr style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('text')">Risk<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('riskApproach')">Risk Approach<i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('priorityLevel')">Priority Level<i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
-              <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
+            <tr class="thead" style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('text')">Risk <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('riskApproach')">Risk Approach<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
+              <th class="sort-th"  @click="sort('priorityLevel')">Priority Level<span class="sort-icon scroll"><font-awesome-icon icon="sort" /> </span></th>
+              <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
+              <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th"  @click="sort('userNames')" >Assigned<br/>Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th"  @click="sort('progress')" >Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="pl-1 sort-th" @click="sort('watched')">On Watch<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
             </tr>
           </table>
+          <tbody>
              <risk-sheets
-              v-for="(risk, i) in sortedRisks"
+              v-for="risk in sortedRisks"
               class="riskHover"
               href="#"
-              :load="log(risk)"
-              :class="{'b_border': !!filteredRisks[i+1]}"
+              :load="log(risk)"             
               :key="risk.id"
               :risk="risk"
               :from-view="from"
               @edit-risk="editRisk"
               @toggle-watched="toggleWatched"
             />
+          </tbody>
           <div class="float-right mb-4">
           <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
           <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
@@ -450,37 +453,19 @@
     };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
   #risks-index {
     background-color: #ffffff;
     z-index: 100;
     height: 500px
   }
-  .scroll {
-    cursor:pointer !important;
-    top: 35%;
-    right: 5px;
-    position:absolute;
-    font-size: 1.1rem;
-    color: #383838 !important;
-    padding-left:4px !important
-  }
   .risk-search-bar {
     height: 31px;
     width: 310px;
     border-radius: 5px;
-  }
-  .sort-th {
-    font-size: .70rem !important;
-    cursor: pointer;
-    font-family: 'FuturaPTBook';
-    text-align: center;
-    position: relative;
-    vertical-align: middle !important;
-  }
-   .sort-th > #text { 
-    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-  }
+  } 
+
   input[type=search] {
     color: #383838;
     text-align: left;
@@ -514,7 +499,7 @@
     margin-top: 50px;
     margin-left: 2px;
   }
-  #printBtn, .addBtns {
+  #printBtn, .addBtns, .team-total {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   #total {
@@ -537,6 +522,7 @@
   table {
     table-layout: fixed;
     width: 100%;
+    color: #606266;
     position: relative;
     margin-bottom: 0 !important;
   }
@@ -573,10 +559,6 @@
   .floatRight {
     text-align: right;
     right: 0px;
-  }
-  .fa-sort {
-    font-size: 1.2rem;
-    color: gray;
   }
   .pagination {
     margin-bottom: 50px !important;

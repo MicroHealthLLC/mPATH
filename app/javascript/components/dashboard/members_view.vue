@@ -1,6 +1,6 @@
 <template>
-  <div id="members" data-cy="members_view" class="mt-2">
-     <div class="container my-2 p-4 wrapper" style="background-color:#ededed; border-radius: 4px" > 
+  <div id="members" data-cy="members_view" class="mt-5">
+     <div class="container my-2 p-4 wrapper" style="border-radius:3px" > 
         <h2 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h2>  
            <div class="mb-0 p-b-0">
             <el-row class="mb-2">
@@ -39,13 +39,13 @@
             </el-row>
 
            </div>              
-        <data-tables 
-          :data="tableData"  
+        <data-tables      
+         :data="tableData"  
+          :border="true"
           ref="table" 
           id="teamMemberTableId"
           class="teamMembersList"
-          data-cy="team_members_list"       
-          :header-cell-style="tableHeaderColor"
+          data-cy="team_members_list"      
           :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }"
           layout="table, pagination"
           :table-props="tableProps"
@@ -121,10 +121,10 @@ ELEMENT.locale(ELEMENT.lang.en)
         base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
         format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) },
         search: '',
-        total: 0,
-        totalRows: 1,
+        total: 0, 
         tableProps: {
-          stripe: true,         
+          stripe: false,     
+          border: true,     
         defaultSort: {
           prop: 'id',
           order: 'ascending'
@@ -167,10 +167,9 @@ ELEMENT.locale(ELEMENT.lang.en)
       }
      },
      methods: { 
-       tableHeaderColor({ row, column, rowIndex, columnIndex }) {
-        if (rowIndex === 0) {
-          return 'background-color: #606266;color: #383838;'
-        }
+       changeHead({row, column, rowIndex, columnIndex}){
+      return { backgroundColor: '#343F52', width: '100%' };
+    
        },
       exportToPdf() {
         const doc = new jsPDF("l")
@@ -203,8 +202,9 @@ ELEMENT.locale(ELEMENT.lang.en)
     margin-bottom: 6px;
     border-top: solid #ededed 1.8px;    
   }
-  .wrapper {
-     box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
+  .wrapper {    
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+    border: 1px solid #dee2e6 !important;
   }
     /deep/.el-table thead {
     color: #383838;
@@ -212,6 +212,7 @@ ELEMENT.locale(ELEMENT.lang.en)
   /deep/.el-pagination, .total {
     text-align: end;
     margin-bottom:2rem;
+    padding-right:0;
   }
   .team-total {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
