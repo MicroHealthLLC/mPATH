@@ -590,7 +590,7 @@
                           v-model="check.dueDate"
                           :value="check.dueDate"
                           @selected="updateCheckItem($event, 'dueDate', index)"
-                          :disabled="!_isallowed('write')"
+                          :disabled="!_isallowed('write') || !check.text"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
@@ -598,6 +598,7 @@
                           name="dueDate"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
+                          :class="{ disabled: disabled }"
                         />
                       </div>
                     </div>
@@ -1575,5 +1576,7 @@
     border-color: #f8f9fa;
     border: 1px solid transparent
   }
-  
+  .disabled {
+    opacity: 0.6;
+  }
 </style>
