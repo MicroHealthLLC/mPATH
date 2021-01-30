@@ -1,5 +1,6 @@
 # You can setup your Rails state here
 # MyModel.create name: 'something'
+organization = Organization.find_or_create_by(title: 'Test Organization')
 admin = User.find_or_initialize_by(email: 'admin@test.com')
 admin.assign_attributes(
   password: 'T3$tAdmin',
@@ -7,7 +8,9 @@ admin.assign_attributes(
   title: 'Manager',
   first_name: 'Test1',
   role: "superadmin",
-  last_name: 'Admin'
+  last_name: 'Admin',
+  phone_number: '+447400123440',
+  organization_id: organization.id
 )
 admin.save(validate: false)
 
@@ -18,12 +21,13 @@ client.assign_attributes(
   title: 'Mr.',
   first_name: 'Test2',
   last_name: 'Client',
-  role: 'client'
+  role: 'client',
+  phone_number: '+447400123450',
+  organization_id: organization.id
 )
 client.save(validate: false)
 
 Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
-Organization.find_or_create_by(title: 'Test Organization')
 
 project_type = ProjectType.find_or_create_by(name: 'Test Project Type')
 project = Project.find_or_create_by(
