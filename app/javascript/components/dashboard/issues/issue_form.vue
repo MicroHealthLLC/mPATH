@@ -679,7 +679,6 @@ export default {
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
-      debugger;
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
 
       this.issueUsers = _.filter(this.activeProjectUsers, (u) =>

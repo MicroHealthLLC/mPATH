@@ -31,6 +31,30 @@
       <div class="form-group">
        <label class="font-sm"><h5>Note</h5></label>
         <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..." data-cy="note_details"></textarea>
+
+        <div class="simple-select form-group mx-4">
+          <label class="font-sm">*Facility:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Facility"
+            :options="getFacilityProjectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
       </div>
       <div class="input-group mb-2">
         <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
@@ -39,6 +63,7 @@
               <i class="fas fa-file-image"></i>
             </div>
           </div>
+
           <input
             readonly
             type="text"
@@ -80,6 +105,7 @@
     data() {
       return {
         DV_note: this.INITIAL_NOTE_STATE(),
+        selectedFacilityProject: null,
         loading: true,
         destroyedFiles: []
       }
@@ -99,12 +125,15 @@
       ]),
       INITIAL_NOTE_STATE() {
         return {
+          facilityProjectId: '',
           body: '',
           noteFiles: []
         }
       },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}
+        this.DV_note.facilityProjectId = note.noteableId
+        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_note.facilityProjectId)
         if (note.attachFiles) this.addFile(note.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -144,6 +173,7 @@
 
           this.loading = true
           var formData = new FormData()
+          formData.append('facility_project_id', this.DV_note.facilityProjectId)
           formData.append('note[body]', this.DV_note.body)
           formData.append('note[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
           for (var file of this.DV_note.noteFiles) {
@@ -161,7 +191,7 @@
             method = "PUT"
             callback = "note-updated"
           }
-
+          
           axios({
             method: method,
             url: url,
@@ -197,13 +227,15 @@
     },
     computed: {
       ...mapGetters([
+        'getFacilityProjectOptions',
         'currentProject',
          'managerView'
       ]),
       readyToSave() {
         return (
           this.DV_note &&
-          this.exists(this.DV_note.body)
+          this.exists(this.DV_note.body) &&
+          this.exists(this.DV_note.facilityProjectId)
         )
       },
       titleText() {
@@ -217,6 +249,13 @@
       }
     },
     watch: {
+      selectedFacilityProject: {
+        handler: function(value) {
+          if(value){
+            this.DV_note.facilityProjectId = value.id  
+          }
+        }, deep: true
+      },
       note: {
         handler: function(value) {
           if (!('id' in value)) this.DV_note = this.INITIAL_NOTE_STATE()

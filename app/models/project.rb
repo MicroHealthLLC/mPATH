@@ -71,6 +71,7 @@ class Project < SortableRecord
     all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
     all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
     all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :risk_users, {user: :organization}, :checklists, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
     all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
@@ -108,6 +109,9 @@ class Project < SortableRecord
 
       risks = all_risks.select{|r| r.facility_project_id == fp.id}
       h[:risks] = risks.map(&:to_json)
+
+      notes = all_notes.select{|r| r.noteable_id == fp.id}
+      h[:notes] = notes.map(&:to_json)
 
       facility_projects_hash2[fp.id] = h
       facility_projects_hash << h
