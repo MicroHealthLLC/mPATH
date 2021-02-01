@@ -1602,7 +1602,7 @@
     color:#383838;
   }
   .red:hover, .yellow:hover, 
-  .orange:hover, .green:hover, .gray2:hover {
+  .orange:hover, .green:hover, .gray2:hover, .gray3:hover {
     opacity: 1;
     cursor: pointer;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
