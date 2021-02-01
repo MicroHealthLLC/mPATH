@@ -46,7 +46,7 @@
           id="teamMemberTableId"
           class="teamMembersList"
           data-cy="team_members_list"      
-          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }"
+          :pagination-props="{ pageSizes: [5, 15, 25, 50, 100, 200] }"
           layout="table, pagination"
           :table-props="tableProps"
           width="100%"

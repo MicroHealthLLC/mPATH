@@ -44,7 +44,7 @@
           </multiselect>
         </div>
     </div>
-
+    <div class="wrapper p-3">
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addTaskBtn"
         @click.prevent="addNewTask"
@@ -71,7 +71,7 @@
       </button>
        </div>
       <div v-if="filteredTasks.length > 0">
-        <div style="margin-bottom:100px" data-cy="tasks_table">
+        <div  style="margin-bottom:50px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="sixteen" />
@@ -108,16 +108,17 @@
             />
           <div class="float-right mb-4">
           <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
            </div>
         </div>
       </div>
       <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
     </div>
+      </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
-    
+  
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"
@@ -422,8 +423,7 @@
     border: none !important;
     height: 25px;
     margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    background-color: white;  
     color: #383838;
     cursor: pointer;
  }

@@ -30,7 +30,6 @@ Rails.application.routes.draw do
     get :gantt_chart, on: :member
     get :watch_view, on: :member
     get :manage, on: :member
-    get :mgis, on: :member
     get :member_list, on: :member
     get :facility_manager, on: :member
     get :kanban, on: :member

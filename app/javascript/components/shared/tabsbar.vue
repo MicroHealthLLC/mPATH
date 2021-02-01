@@ -50,11 +50,11 @@
       // isFacilityManagerView() {
       //   return this.$route.name === 'FacilityManagerView'
       // },
-       sheetsView() {
+      sheetsView() {
         return `/projects/${this.$route.params.projectId}/manage`
       },
       mapView() {
-        return `/projects/${this.$route.params.projectId}/mgis`
+        return `/projects/${this.$route.params.projectId}/`
       },
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`

@@ -10,7 +10,7 @@ export default new VueRouter({
   routes: [
     {
       name: 'ProjectMapView',
-      path: '/projects/:projectId/mgis',
+      path: '/projects/:projectId/',
       component: ProjectMapView
     },
     {

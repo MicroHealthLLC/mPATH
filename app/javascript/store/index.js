@@ -947,6 +947,16 @@ export default new Vuex.Store({
               valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
               break
             }
+            case "riskApproachFilterIds": {
+              var risks = facility.risks
+              var fApproaches = _.map(f[k], "id")
+              var resources = _.filter(risks, ti => fApproaches.includes(ti.riskApproachId) )
+              if(resources.length < 1){
+                valid = false
+              }
+              valid = valid && getters.filterDataForAdvancedFilter(resources1, 'filteredFacilities', facility)
+              break
+            }
             case "riskPriorityLevelFilter": {
               var risks = facility.risks
               var fPriorityLevels = _.map(f[k], "id")
@@ -1268,6 +1278,41 @@ export default new Vuex.Store({
         if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
         if (stages.length > 0) valid = valid && stages.includes(t.issueStageId)
         if (severities.length > 0) valid = valid && severities.includes(t.issueSeverityId)
+
+        if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
+          var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+          var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+
+          var is_valid = true
+          var nDate = moment(t.dueDate, "YYYY-MM-DD")
+          is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+          valid = is_valid
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "overdue"){
+          valid = (t.isOverdue == true)
+        }
+
+        if(taskIssueOverdue && taskIssueOverdue[0] && taskIssueOverdue[0].id == "notOverdue"){
+          valid = (t.isOverdue == false)
+        }
+
+        return valid
+      })
+    },    filteredAllRisks: (state, getters) => {
+      let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
+      let approaches = getters.riskApproachFilter && getters.riskApproachFilter.length ? _.map(getters.riskApproachFilter, 'id') : []
+      let stages = getters.riskStageFilter && getters.riskStageFilter .length ? _.map(getters.riskStageFilter, 'id') : []
+      let riskPriorityLevels = getters.riskPriorityLevelFilter && getters.riskPriorityLevelFilter.length ? _.map(getters.riskPriorityLevelFilter, 'id') : []
+      let taskIssueDueDates = getters.taskIssueDueDateFilter
+      let taskIssueOverdue = getters.taskIssueOverdueFilter
+
+      return _.filter(_.flatten(_.map(getters.filteredFacilities('active'), 'risks')), t => {
+        let valid = true
+        if (approaches.length > 0) valid = valid && approaches.includes(t.riskApproachFilterIds)
+        if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(t.taskTypeId)
+        if (stages.length > 0) valid = valid && stages.includes(t.riskStageId)
+        if (riskPriorityLevels.length > 0) valid = valid && riskPriorityLevels.includes(t.riskPriorityLevelIds)
 
         if(taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]){
           var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
