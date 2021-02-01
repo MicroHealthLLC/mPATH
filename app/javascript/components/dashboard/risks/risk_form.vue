@@ -128,6 +128,29 @@
           </div>
         </div>
 
+        <div class="simple-select form-group mx-4">
+          <label class="font-sm">*Facility:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Facility"
+            :options="getFacilityProjectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
         <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
             <label class="font-sm">*Identified Date:</label>
@@ -761,6 +784,7 @@
         DV_risk: this.INITIAL_RISK_STATE(), 
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],
+        selectedFacilityProject: null,
         destroyedFiles: [],
         riskUsers: [],      
         probability: [], 
@@ -799,6 +823,7 @@
       ]),
       INITIAL_RISK_STATE() {
         return {
+          facilityProjectId: '',
           text: '',
           riskDescription: '',
           impactDescription: '',            
@@ -853,6 +878,7 @@
       },
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
+        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
@@ -916,6 +942,7 @@
           }
           this.loading = true
           let formData = new FormData()         
+          formData.append('risk[facility_project_id]', this.DV_risk.facilityProjectId)
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
@@ -1005,6 +1032,7 @@
             method = "PUT"
             callback = "risk-updated"
           }
+          var beforeRisk = this.risk
 
           axios({
             method: method,
@@ -1015,6 +1043,8 @@
             }
           })
           .then((response) => {
+            if(beforeRisk.facilityId && beforeRisk.projectId )
+              this.$emit(callback, humps.camelizeKeys(beforeRisk));
             this.$emit(callback, humps.camelizeKeys(response.data.risk))
           })
           .catch((err) => {
@@ -1092,6 +1122,7 @@
     },
     computed: {
       ...mapGetters([
+        'getFacilityProjectOptions',
         'currentProject',
         'projectUsers',
         'activeProjectUsers',
@@ -1116,6 +1147,7 @@
           // this.C_riskProbabilityOptions &&
           // this.C_riskImpactLevelOptions &&
           this.exists(this.DV_risk.text) &&
+          this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
           this.exists(this.selectedRiskPossibility.id) &&
@@ -1281,6 +1313,13 @@
       //  }     
     },
     watch: {
+      selectedFacilityProject: {
+        handler: function(value) {
+          if(value){
+            this.DV_risk.facilityProjectId = value.id
+          }
+        }, deep: true
+      },
       risk: {
         handler: function(value) {
           if (!('id' in value)) this.DV_risk = this.INITIAL_RISK_STATE()

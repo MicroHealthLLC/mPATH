@@ -83,6 +83,7 @@ class Issue < ApplicationRecord
       :issue_type_id,
       :issue_stage_id,
       :issue_severity_id,
+      :facility_project_id,
       :task_type_id,
       :progress,
       :start_date,
@@ -110,8 +111,6 @@ class Issue < ApplicationRecord
        ]
     )
 
-    project = user.projects.active.find_by(id: params[:project_id])
-    facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
     issue = self
     i_params = issue_params.dup
@@ -122,7 +121,13 @@ class Issue < ApplicationRecord
     notes_attributes = i_params.delete(:notes_attributes)
 
     issue.attributes = i_params
-    issue.facility_project_id = facility_project.id
+    if !issue.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+      issue.facility_project_id = facility_project.id
+    end
+
 
     issue.transaction do
 

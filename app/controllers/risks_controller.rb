@@ -7,14 +7,14 @@ class RisksController < AuthenticatedController
   end
 
   def create
-    @risk = @facility_project.risks.create(risk_params.merge(user_id: current_user.id))
-    render json: {risk: @risk.to_json}
+    @risk = Risk.create(risk_params.merge(user_id: current_user.id))
+    render json: {risk: @risk.reload.to_json}
   end
 
   def update
     destroy_files_first if destroy_file_ids.present?
     @risk.update(risk_params)
-    render json: {risk: @risk.to_json}
+    render json: {risk: @risk.reload.to_json}
   end
 
   def show
@@ -35,8 +35,13 @@ class RisksController < AuthenticatedController
 
   private
   def set_resources
-    @project = current_user.projects.active.find_by(id: params[:project_id])
-    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    if params[:risk][:facility_project_id]
+      @facility_project = FacilityProject.find(params[:risk][:facility_project_id])
+    else
+      @project = current_user.projects.active.find_by(id: params[:project_id])
+      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    end
+
   end
 
   def set_risk
@@ -45,6 +50,7 @@ class RisksController < AuthenticatedController
 
   def risk_params
     params.require(:risk).permit(
+      :facility_project_id,
       :risk_description,
       :impact_description,
       :probability,

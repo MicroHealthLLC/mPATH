@@ -8,13 +8,13 @@ class IssuesController < AuthenticatedController
 
   def create
     @issue = Issue.new.create_or_update_issue(params, current_user)
-    render json: {issue: @issue.to_json}
+    render json: {issue: @issue.reload.to_json}
   end
 
   def update
     destroy_files_first if destroy_file_ids.present?
     @issue.update(issue_params)
-    render json: {issue: @issue.to_json}
+    render json: {issue: @issue.reload.to_json}
   end
 
   def show
@@ -50,6 +50,7 @@ class IssuesController < AuthenticatedController
       :issue_type_id,
       :issue_stage_id,
       :issue_severity_id,
+      :facility_project_id,
       :progress,
       :start_date,
       :due_date,

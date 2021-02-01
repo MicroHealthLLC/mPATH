@@ -99,6 +99,30 @@
           data-cy="task_description"
         />
       </div>
+
+      <div class="simple-select form-group mx-4">
+        <label class="font-sm">*Facility:</label>
+        <multiselect
+          v-model="selectedFacilityProject"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Select Facility"
+          :options="getFacilityProjectOptions"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          data-cy="facility_project_id"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
       <div class="simple-select form-group mx-4">
         <label class="font-sm">*Task Category:</label>
         <multiselect
@@ -404,6 +428,7 @@
         DV_task: this.INITIAL_TASK_STATE(),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
+        selectedFacilityProject: null,
         selectedTaskType: null,
         selectedTaskStage: null,
         taskUsers: [],
@@ -439,6 +464,7 @@
           text: '',
           startDate: '',
           dueDate: '',
+          facilityProjectId: '',
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',
@@ -486,6 +512,7 @@
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
+        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (task.attachFiles) this.addFile(task.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -545,6 +572,7 @@
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
+          formData.append('task[facility_project_id]', this.DV_task.facilityProjectId)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
           if (this.DV_task.userIds.length) {
@@ -614,6 +642,8 @@
             callback = "task-updated"
           }
 
+          var beforeSaveTask = this.task
+
           axios({
             method: method,
             url: url,
@@ -623,6 +653,8 @@
             }
           })
           .then((response) => {
+            if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
+              this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
             this.$emit(callback, humps.camelizeKeys(response.data.task))
           })
           .catch((err) => {
@@ -702,6 +734,7 @@
     },
     computed: {
       ...mapGetters([
+        'getFacilityProjectOptions',
         'currentProject',
         'taskTypes',
         'taskStages',
@@ -718,6 +751,7 @@
           this.exists(this.DV_task.text) &&
           this.exists(this.DV_task.taskTypeId) &&
           this.exists(this.DV_task.dueDate) &&
+          this.exists(this.DV_task.facilityProjectId) &&
           this.exists(this.DV_task.startDate)
         )
       },
@@ -747,6 +781,13 @@
       }
     },
     watch: {
+      selectedFacilityProject: {
+        handler: function(value) {
+          if(value){
+            this.DV_task.facilityProjectId = value.id  
+          }
+        }, deep: true
+      },
       task: {
         handler: function(value) {
           if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()
@@ -818,7 +859,7 @@
         })
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss">

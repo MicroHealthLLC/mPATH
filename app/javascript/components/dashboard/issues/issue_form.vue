@@ -114,6 +114,30 @@
             data-cy="issue_description"
           />
         </div>
+
+        <div class="simple-select form-group mx-4">
+          <label class="font-sm">*Facility:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Facility"
+            :options="getFacilityProjectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Issue Type:</label>
           <multiselect
@@ -574,6 +598,7 @@ export default {
   data() {
     return {
       DV_issue: this.INITIAL_ISSUE_STATE(),
+      selectedFacilityProject: null,
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
@@ -608,6 +633,7 @@ export default {
         title: "",
         startDate: "",
         dueDate: "",
+        facilityProjectId: '',
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,
@@ -653,6 +679,8 @@ export default {
     },
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
+      this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
+
       this.issueUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.userIds.includes(u.id)
       );
@@ -749,6 +777,7 @@ export default {
         formData.append("issue[start_date]", this.DV_issue.startDate);
         formData.append("issue[issue_type_id]", this.DV_issue.issueTypeId);
         formData.append("issue[task_type_id]", this.DV_issue.taskTypeId);
+        formData.append('issue[facility_project_id]', this.DV_issue.facilityProjectId)
         formData.append(
           "issue[issue_severity_id]",
           this.DV_issue.issueSeverityId
@@ -836,6 +865,7 @@ export default {
           method = "PUT";
           callback = "issue-updated";
         }
+        var beforeIssue = this.issue
 
         axios({
           method: method,
@@ -847,6 +877,8 @@ export default {
           },
         })
           .then((response) => {
+            if(beforeIssue.facilityId && beforeIssue.projectId )
+              this.$emit(callback, humps.camelizeKeys(beforeIssue));
             this.$emit(callback, humps.camelizeKeys(response.data.issue));
           })
           .catch((err) => {
@@ -951,6 +983,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'getFacilityProjectOptions',
       "currentProject",
       "projectUsers",
       "activeProjectUsers",
@@ -969,6 +1002,7 @@ export default {
         this.exists(this.DV_issue.title) &&
         this.exists(this.DV_issue.issueTypeId) &&
         this.exists(this.DV_issue.issueSeverityId) &&
+        this.exists(this.DV_issue.facilityProjectId) &&
         this.exists(this.DV_issue.dueDate) &&
         this.exists(this.DV_issue.startDate)
       );
@@ -1009,6 +1043,13 @@ export default {
     },
   },
   watch: {
+    selectedFacilityProject: {
+      handler: function(value) {
+        if(value){
+          this.DV_issue.facilityProjectId = value.id  
+        }
+      }, deep: true
+    },
     issue: {
       handler: function (value) {
         if (!("id" in value)) this.DV_issue = this.INITIAL_ISSUE_STATE();
