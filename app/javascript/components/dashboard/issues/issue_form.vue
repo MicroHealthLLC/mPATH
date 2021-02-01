@@ -414,7 +414,7 @@
                         <br />
                         <v2-date-picker
                           v-model="check.dueDate"
-                          :disabled="!_isallowed('write')"
+                          :disabled="!_isallowed('write') || !check.text"
                           :value="check.dueDate"
                           @selected="updateCheckItem($event, 'dueDate', index)"
                           :key="`dueDate_${index}`"
@@ -424,6 +424,7 @@
                           name="dueDate"
                           class="w-100 vue2-datepicker d-flex ml-auto"
                           :disabled-date="disabledDateRange"
+                          :class="{ disabled: disabled }"
                         />
                       </div>
                     </div>
@@ -1223,4 +1224,7 @@ ul {
 .check-due-date {
   text-align: end;
 }
+.disabled {
+    opacity: 0.6;
+  }
 </style>
