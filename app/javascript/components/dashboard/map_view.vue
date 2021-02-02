@@ -50,13 +50,11 @@
                 ref="marker"
                 :key="`${facility.id}__${index}`"
                 :animation="4"
-                v-for="(
-                  facility, index
-                ) in filterFacilitiesWithActiveFacilityGroups"
+                v-for="( facility, index ) in filterFacilitiesWithActiveFacilityGroups"
                 :position="getLatLngForFacility(facility)"
-                @click="showFacility(facility)"
-                @mouseover="toggleTooltip(facility, `${facility.id}__${index}`)"
-                @mouseout="tooltip.opened = false"
+                @click=" showFacility(facility); toggleTooltip(facility, `${facility.id}__${index}`); "
+                @mouseover=" tooltipMouseOver(facility, `${facility.id}__${index}`) "
+                @mouseout="tooltipMouseOut"
                 :icon="{ url: getStatusIconLink(facility) }"
               />
             </GmapCluster>
@@ -303,6 +301,7 @@ export default {
       if (this.openSidebar) {
         this.setCurrentFacility(null);
         this.openSidebar = false;
+        this.tooltip.opened = false;
       }
     },
     toggleTooltip(marker, key) {
@@ -310,6 +309,21 @@ export default {
       this.tooltip.content = marker.facilityName;
       this.tooltip.opened = true;
       this.tooltip.key = key;
+    },
+    tooltipMouseOut() {
+      // Tooltip closes only if there is no current facility selected
+      if (this.currentFacility === null) {
+        this.tooltip.opened = false;
+      }
+    },
+    tooltipMouseOver(marker, key) {
+      // Tooltip only appears if appears if there is no current facility selected
+      if (this.currentFacility === null) {
+        this.tooltip.position = this.getLatLngForFacility(marker);
+        this.tooltip.content = marker.facilityName;
+        this.tooltip.opened = true;
+        this.tooltip.key = key;
+      }
     },
     onCloseAccordion() {
       this.$refs.facilitiesAccordion && this.$refs.facilitiesAccordion.close();
