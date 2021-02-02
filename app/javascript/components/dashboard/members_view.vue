@@ -56,7 +56,7 @@
             </tr>
           </thead>
           <tbody>          
-            <tr v-for="(user, index) in sortedRisks" :key="index">        
+            <tr v-for="(user, index) in sortedMembers" :key="index">        
               <td class="text-center">{{user.id}}</td>
               <td>{{user.fullName}}</td>
               <!-- <td>{{user.lastName}}</td> -->
@@ -67,11 +67,29 @@
             </tr>
           </tbody>          
         </table>
-         <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / pageSize) }} </button>
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+         <div class="float-right mb-4 font-sm">
+           <span>Displaying </span>
+           <div class="simple-select d-inline-block font-sm">
+          
+            <multiselect 
+              v-model="C_membersPerPage" 
+              track-by="value"
+              label="name"      
+              deselect-label=""                     
+              :allow-empty="false"
+              :options="getMembersPerPageFilterOptions">
+                <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                      </div>
+                </template>
+            </multiselect>            
            </div>
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+          <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_membersPerPage.value) }} </button>
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>
            </div>
      </div>   
   </div>
@@ -80,7 +98,7 @@
 
 <script>
 
-import {mapGetters} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 import {jsPDF} from "jspdf"
 import 'jspdf-autotable'
 
@@ -95,8 +113,8 @@ import 'jspdf-autotable'
         base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
         format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) },
         total: 0, 
-        pageSize:15,
-        currentPage:1,
+        pages: [],       
+        currentPage:1,        
         currentSort:'id',
         currentSortDir:'asc',     
        }
@@ -105,8 +123,11 @@ import 'jspdf-autotable'
       ...mapGetters([
         'activeProjectUsers',
         'filterDataForAdvancedFilter',
+        'getMembersPerPageFilterOptions',
+        'getMembersPerPageFilter',
         'getTaskIssueUserFilter',
         'facilities',
+        'membersPerPageFilter'
       ]),
       tableData() {           
         return this.activeProjectUsers        
@@ -114,7 +135,7 @@ import 'jspdf-autotable'
       orderedUsers: function() {     
         return _.orderBy(this.activeProjectUsers, 'lastName', 'asc')    
       },
-      sortedRisks:function() {
+      sortedMembers:function() {           
           return this.tableData.sort((a,b) => {
           let modifier = 1;
           if(this.currentSortDir === 'desc') modifier = -1;
@@ -122,14 +143,26 @@ import 'jspdf-autotable'
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+              
+          let start = (this.currentPage-1)*this.C_membersPerPage.value;
+          let end = this.currentPage*this.C_membersPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
-       }
+       },
+     C_membersPerPage: {
+      get() {
+        return this.getMembersPerPageFilter
+      },
+      set(value) {
+        this.setMembersPerPageFilter(value)
+      }
+    },
      },
      methods: { 
+           ...mapMutations([  
+      'setMembersPerPageFilter'
+    ]),
        changeHead({row, column, rowIndex, columnIndex}){
       return { backgroundColor: '#343F52', width: '100%' };
     
@@ -142,7 +175,7 @@ import 'jspdf-autotable'
           this.currentSort = s;
         },
         nextPage:function() {
-          if((this.currentPage*this.pageSize) < this.tableData.length) this.currentPage++;
+          if((this.currentPage*this.C_membersPerPage.value) < this.tableData.length) this.currentPage++;
         },
         prevPage:function() {
           if(this.currentPage > 1) this.currentPage--;

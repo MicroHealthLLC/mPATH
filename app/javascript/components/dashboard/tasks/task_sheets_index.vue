@@ -106,11 +106,29 @@
               @edit-task="editTask"
               @toggle-watched="toggleWatched"
             />
-          <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+     
+          <div class="float-right mb-4 mt-2 font-sm">
+           <span>Displaying </span>
+           <div class="simple-select d-inline-block font-sm">          
+            <multiselect 
+              v-model="C_tasksPerPage" 
+              track-by="value"
+              label="name"      
+              deselect-label=""                     
+              :allow-empty="false"
+              :options="getTasksPerPageFilterOptions">
+                <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                      </div>
+                </template>
+            </multiselect>            
            </div>
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+            <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / this.C_tasksPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>       
         </div>
       </div>
       <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
@@ -189,8 +207,7 @@
       return {
         tasks: Object,
         now: new Date().toISOString(),
-        tasksQuery: '',
-        pageSize:15,
+        tasksQuery: '',      
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
@@ -203,6 +220,7 @@
     methods: {
       ...mapMutations([
         'setAdvancedFilter',
+        'setTasksPerPageFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -218,7 +236,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredTasks.length) this.currentPage++;
+        if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -252,6 +270,8 @@
       ...mapGetters([
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
+        'getTasksPerPageFilterOptions',
+        'getTasksPerPageFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
@@ -372,6 +392,14 @@
           this.setTaskTypeFilter(value)
         }
       },
+      C_tasksPerPage: {
+      get() {
+        return this.getTasksPerPageFilter
+      },
+      set(value) {
+        this.setTasksPerPageFilter(value)
+       }
+     },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -389,13 +417,13 @@
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
+          let end = this.currentPage*this.C_tasksPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
        }
-      }
+      },    
     };
 </script>
 

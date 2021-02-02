@@ -151,11 +151,28 @@
               @toggle-watched="toggleWatched"
             />
           </tbody>
-          <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / pageSize) }} </button>
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
-           </div>
+           <div class="float-right mb-4 mt-2 font-sm">
+           <span>Displaying </span>
+           <div class="simple-select d-inline-block font-sm">          
+              <multiselect 
+                v-model="C_risksPerPage" 
+                track-by="value"
+                label="name"      
+                deselect-label=""                     
+                :allow-empty="false"
+                :options="getRisksPerPageFilterOptions">
+                  <template slot="singleLabel" slot-scope="{option}">
+                        <div class="d-flex">
+                          <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                        </div>
+                  </template>
+              </multiselect>            
+            </div>
+              <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+                <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+                <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / this.C_risksPerPage.value) }} </button>
+                <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+            </div>       
         </div>
       </div>
       <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
@@ -237,8 +254,7 @@
       return {
         risks: Object,
         now: new Date().toISOString(),
-        risksQuery: '',
-        pageSize:15,
+        risksQuery: '',      
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
@@ -252,6 +268,7 @@
       ...mapMutations([
         'setRiskPriorityLevelFilter',
         'setAdvancedFilter',
+        'setRisksPerPageFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -271,7 +288,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredRisks.length) this.currentPage++;
+        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -305,6 +322,8 @@
       ...mapGetters([
         'getRiskPriorityLevelFilter',
         'getRiskPriorityLevelFilterOptions',
+        'getRisksPerPageFilterOptions',
+        'getRisksPerPageFilter',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -437,6 +456,14 @@
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
         }
       },
+      C_risksPerPage: {
+        get() {
+          return this.getRisksPerPageFilter
+        },
+        set(value) {
+          this.setRisksPerPageFilter(value)
+        }
+     },
       sortedRisks:function() {
           return this.filteredRisks.sort((a,b) => {
           let modifier = 1;
@@ -445,8 +472,8 @@
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+          let start = (this.currentPage-1)*this.C_risksPerPage.value;
+          let end = this.currentPage*this.C_risksPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });

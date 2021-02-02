@@ -157,11 +157,28 @@
                   :from-view="from"                
                   @toggle-watch-issue="toggleWatched"
                 />
-              <div class="float-right mb-4">
-                <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
-                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / pageSize) }}  </button> 
-                <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
-              </div>             
+               <div class="float-right mb-4 mt-2 font-sm">
+                <span>Displaying </span>
+                <div class="simple-select d-inline-block font-sm">          
+                  <multiselect 
+                    v-model="C_issuesPerPage" 
+                    track-by="value"
+                    label="name"      
+                    deselect-label=""                     
+                    :allow-empty="false"
+                    :options="getIssuesPerPageFilterOptions">
+                      <template slot="singleLabel" slot-scope="{option}">
+                            <div class="d-flex">
+                              <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                            </div>
+                      </template>
+                  </multiselect>            
+                </div>
+                <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+                  <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
+                  <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+            </div>             
             </div>
           </div>
           <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText" data-cy="no_issue_found">No issues found..</h6>
@@ -245,8 +262,7 @@
         viewList: 'active',
         currentIssue: null,
         now: new Date().toISOString(),
-        issuesQuery: '',
-        pageSize:15,
+        issuesQuery: '',     
         currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
@@ -263,6 +279,7 @@
       ...mapMutations([
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
+        'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
@@ -280,7 +297,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredIssues.length) this.currentPage++;
+        if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -335,6 +352,8 @@
     computed: {
       ...mapGetters([
         'getAdvancedFilterOptions',
+        'getIssuesPerPageFilterOptions',
+        'getIssuesPerPageFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
@@ -491,6 +510,14 @@
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
         }
       },
+      C_issuesPerPage: {
+        get() {
+          return this.getIssuesPerPageFilter
+        },
+        set(value) {
+          this.setIssuesPerPageFilter(value)
+        }
+     },
       sortedIssues:function() {
           return this.filteredIssues.sort((a,b) => {
           let modifier = 1;
@@ -499,8 +526,8 @@
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+          let start = (this.currentPage-1)*this.C_issuesPerPage.value;
+          let end = this.currentPage*this.C_issuesPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
