@@ -152,10 +152,7 @@ import 'jspdf-autotable'
        },
      C_membersPerPage: {
       get() {
-        if (this.getMembersPerPageFilter == NaN || null) {
-          this.getMembersPerPageFilter == 2
-        }
-        return this.getMembersPerPageFilter
+        return this.getMembersPerPageFilter || {id: 10, name: '10', value: 10}
       },
       set(value) {
         this.setMembersPerPageFilter(value)

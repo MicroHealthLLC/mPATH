@@ -551,7 +551,11 @@ export default {
       'setIssueStageFilter',
       'setRiskStageFilter',
       'setRiskApproachFilter',
-      'setRiskPriorityLevelFilter'
+      'setRiskPriorityLevelFilter',
+      'setTasksPerPageFilter',
+      'setRisksPerPageFilter',
+      'setIssuesPerPageFilter',
+      'setMembersPerPageFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -601,6 +605,11 @@ export default {
       this.setTaskUserFilter(null)
       this.setRiskApproachFilter([])
       this.setRiskPriorityLevelFilter([])
+      this.setTasksPerPageFilter(null)
+      this.setRisksPerPageFilter(null)
+      this.setIssuesPerPageFilter(null)
+      this.setMembersPerPageFilter(null)
+
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;

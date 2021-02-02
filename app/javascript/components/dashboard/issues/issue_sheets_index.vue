@@ -512,7 +512,7 @@
       },
       C_issuesPerPage: {
         get() {
-          return this.getIssuesPerPageFilter
+          return this.getIssuesPerPageFilter || {id: 15, name: '15', value: 15}
         },
         set(value) {
           this.setIssuesPerPageFilter(value)

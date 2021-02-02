@@ -394,7 +394,7 @@
       },
       C_tasksPerPage: {
       get() {
-        return this.getTasksPerPageFilter
+        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
       },
       set(value) {
         this.setTasksPerPageFilter(value)

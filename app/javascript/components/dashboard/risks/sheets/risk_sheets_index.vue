@@ -457,11 +457,8 @@
         }
       },
       C_risksPerPage: {
-        get() {
-           if (this.getRisksPerPageFilter == NaN || null) {
-            this.setRisksPerPageFilter([{ id: 5, name: '5', value:5 }])
-          }       
-          return this.getRisksPerPageFilter
+        get() {    
+          return this.getRisksPerPageFilter || {id: 15, name: '15', value: 15}
         },
         set(value) {
           this.setRisksPerPageFilter(value)
