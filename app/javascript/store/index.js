@@ -49,6 +49,12 @@ export default new Vuex.Store({
     issueStageFilter: null,
     issueProgressFilter: null,
 
+    // Datatable items per page filters
+    tasksPerPageFilter: null,
+    risksPerPageFilter: null,
+    issuesPerPageFilter: null,
+    membersPerPageFilter:  null,
+
     currentProject: null,
     projectUsers: new Array,
     currentFacility: null,
@@ -162,7 +168,12 @@ export default new Vuex.Store({
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
-    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,    
+    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,   
+    
+    setMembersPerPageFilter: (state, filter) => state.membersPerPageFilter = filter,
+    setTasksPerPageFilter: (state, filter) => state.tasksPerPageFilter = filter,
+    setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
+    setRisksPerPageFilter: (state, filter) => state.risksPerPageFilter = filter,
 
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
@@ -308,6 +319,51 @@ export default new Vuex.Store({
 
       return options;
     },
+  //  For Datatables items per page display only
+    getMembersPerPageFilter: state => state.membersPerPageFilter,
+    getMembersPerPageFilterOptions: (state, getters) => {
+      var options = [      
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},  
+        {id: 100, name: '100+', value: 100},      
+      ]
+      return options;
+    },
+    getTasksPerPageFilter: state => state.tasksPerPageFilter,
+    getTasksPerPageFilterOptions: (state, getters) => {
+      var options = [       
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},  
+        {id: 100, name: '100+', value: 100},      
+      ]
+      return options;
+    },
+    getIssuesPerPageFilter: state => state.issuesPerPageFilter,
+    getIssuesPerPageFilterOptions: (state, getters) => {
+      var options = [      
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},  
+        {id: 100, name: '100+', value: 100},      
+      ]
+      return options;
+    },
+    getRisksPerPageFilter: state => state.risksPerPageFilter,
+    getRisksPerPageFilterOptions: (state, getters) => {
+      var options = [      
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},  
+        {id: 100, name: '100+', value: 100},      
+      ]
+      return options;
+    },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
         {id: 'active', name: 'Active'},
@@ -358,6 +414,8 @@ export default new Vuex.Store({
       ]
       return options;
     },
+
+    
 
     getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,    
     getRiskImpactLevelNames: (state, getters) => {
@@ -413,6 +471,10 @@ export default new Vuex.Store({
         ['issueUserFilter', 'Issue Users'],
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
+        ['membersPerPageFilter', 'Members Per Page'],
+        ['tasksPerPageFilter', 'Tasks Per Page'],
+        ['issuesPerPageFilter', 'Issues Per Page'],
+        ['risksPerPageFilter', 'Risks Per Page'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approach'],
         ['riskStageFilter', 'Risk Stages'],
@@ -636,6 +698,12 @@ export default new Vuex.Store({
     issueSeverityFilter: state => state.issueSeverityFilter,
     issueProgressFilter: state => state.issueProgressFilter,
     issueUserFilter: state => state.issueUserFilter,
+
+    membersPerPageFilter: state => state.membersPerPageFilter,
+    tasksPerPageFilter: state => state.tasksPerPageFilter,
+    issuesPerPageFilter: state => state.issuesPerPageFilter,
+    risksPerPageFilter: state => state.risksPerPageFilter,
+
 
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
@@ -1613,6 +1681,11 @@ export default new Vuex.Store({
         'issueTypeFilter',
         'issueSeverityFilter',
         'issueStageFilter',
+
+        'membersPerPageFilter',
+        'tasksPerPageFilter',
+        'issuesPerPageFilter',
+        'risksPerPageFilter',
         
         'riskStageFilter',
         'riskApproachFilter',

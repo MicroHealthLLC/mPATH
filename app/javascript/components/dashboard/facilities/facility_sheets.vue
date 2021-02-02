@@ -13,7 +13,10 @@
         <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-0">
             <!-- <div v-if="extras"><h3>Project Overview</h3></div> -->
+<!-- <div v-if="isMapView" class="container-fluid px-0 mx-0">
+ <h1> LOOK AT ME</h1>
 
+</div> -->
 
           <div class="row row-1 mt-2">
           <div class="col-md-5 col-lg-5 col-sm-12">
@@ -804,7 +807,9 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
       }
       return taskTypes
     },
-
+       isMapView() {
+        return this.$route.name === 'ProjectMapView'
+      },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.overview[salut]
       }

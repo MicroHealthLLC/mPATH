@@ -8,7 +8,9 @@
       accept-charset="UTF-8"
       >
         <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
-        <button
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+        <div class="btn-group">
+           <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"
@@ -31,8 +33,7 @@
           >
           Close
         </button>
-        <div class="btn-group">
-        <button  
+        <!-- <button  
           v-if="_isallowed('write')"       
           class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
           @click.prevent="scrollToChecklist"            
@@ -47,7 +48,7 @@
           >
           <font-awesome-icon icon="plus-circle" />
           Updates
-        </button>
+        </button> -->
         </div>      
         
         <button
@@ -60,7 +61,7 @@
           Delete
         </button>
       </div>
-
+    
       <div class="paperLook formTitle">
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
@@ -75,6 +76,9 @@
             <small style="vertical-align:text-top">On Watch</small>
           </span>
 
+ <div v-if="currentTab == 'risk'">
+   <!-- RISK OVERVIEW TAB -->
+   <div class="form-group mx-4">
           <label class="font-sm"><h5>*Risk Name:</h5></label>
           <textarea
             v-validate="'required'"
@@ -109,25 +113,7 @@
             {{errors.first('risk_description')}}
           </div>
         </div>
-
-        <div class="form-group mx-4">
-          <label class="font-sm">*Impact Description:</label>
-          <textarea
-            v-validate="'required'"
-            class="form-control"
-            placeholder="Risk impact description"
-            v-model="DV_risk.impactDescription"
-            rows="4"
-            :readonly="!_isallowed('write')"
-            data-cy="impact_description"
-            name="impact_description"
-            :class="{'form-control': true, 'error': errors.has('impact_description') }"
-          />
-          <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
-            {{errors.first('impact_description')}}
-          </div>
-        </div>
-
+        
         <div class="simple-select form-group mx-4">
           <label class="font-sm">*Facility:</label>
           <multiselect
@@ -150,8 +136,35 @@
             </template>
           </multiselect>
         </div>
+         <div class="simple-select form-group mx-4">
+          <label class="font-sm">*Category:</label>
+          <multiselect
+            v-model="selectedTaskType"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Task Category"
+            :options="taskTypes"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            :class="{'error': errors.has('Task Category')}"
+            data-cy="risk_milestone"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+          <div v-show="errors.has('Task Category')" class="text-danger" data-cy="risk_milestone_error">
+            {{errors.first('Task Category')}}
+          </div>
+        </div>
 
-        <div class="form-row mx-4">
+
+         <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
             <label class="font-sm">*Identified Date:</label>
             <v2-date-picker
@@ -188,7 +201,8 @@
             </div>
           </div>
         </div>
-      <div class="form-group user-select mx-4">
+
+              <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="riskUsers"
@@ -211,34 +225,8 @@
             </div>
           </template>
         </multiselect>
-      </div>
-
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Task Category:</label>
-          <multiselect
-            v-model="selectedTaskType"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Task Category"
-            :options="taskTypes"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :disabled="!_isallowed('write')"
-            :class="{'error': errors.has('Task Category')}"
-            data-cy="risk_milestone"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-          <div v-show="errors.has('Task Category')" class="text-danger" data-cy="risk_milestone_error">
-            {{errors.first('Task Category')}}
-          </div>
-        </div>
+      </div>      
+      
         <div class="simple-select form-group mx-4">
           <label class="font-sm">Stage:</label>
           <multiselect
@@ -259,9 +247,35 @@
               </div>
             </template>
           </multiselect>
-        </div>    
+        </div>  
+   </div>
+</div>
+   <!-- END RISK IDENTIFY TAB SECTION -->
 
-         <div class="container">
+
+<!-- BEGIN RISK PRIORITIZE TAB -->
+
+<div v-if="currentTab == 'tab2'">
+          <div class="form-group mx-4">
+          <label class="font-sm"><h5>*Impact Description:</h5></label>
+          
+          <textarea
+            v-validate="'required'"
+            class="form-control"
+            placeholder="Risk impact description"
+            v-model="DV_risk.impactDescription"
+            rows="4"
+            :readonly="!_isallowed('write')"
+            data-cy="impact_description"
+            name="impact_description"
+            :class="{'form-control': true, 'error': errors.has('impact_description') }"
+          />
+          <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
+            {{errors.first('impact_description')}}
+          </div>
+        </div> 
+
+         <div class="container-fluid px-4">
          <div class="row mb-2">   
             <div class="col-md-3 simple-select form-group">
                 <label class="font-sm">Priority Level:</label> 
@@ -505,12 +519,10 @@
               </div>
             </div>
           </el-collapse-item>
-      </el-collapse>
-    
+      </el-collapse>    
     </div>
 
-                             
-        <div class="simple-select form-group mx-4">
+            <div class="simple-select form-group mx-4">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
             v-model="DV_risk.riskApproach"
@@ -553,7 +565,15 @@
           </div>
         </div>
 
+</div>
+<!-- END RISK PRIORITIZE TAB SECTION -->
+
+
+<!-- BEGIN RISK CONTROL TAB SECTION -->
+
+<div v-if="currentTab == 'tab3'">
         <div class="form-group mx-4">
+          <label class="font-sm mb-0"><h5>Control Risk</h5></label><br>
           <label class="font-sm mb-0">Progress: (in %)</label>
           <span class="ml-3">
             <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -569,7 +589,7 @@
           ></vue-slide-bar>
         </div>
 
-        <div class="form-group mx-4">
+    <div class="form-group mx-4">
           <label class="font-sm">Checklists:</label>
           <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
             <i class="fas fa-plus-circle"></i>
@@ -755,12 +775,34 @@
         </paginate>
       </div>
      </div>
+
+     
+ <!-- END RISK CONTROL SECTION TAB -->
+
+
+
+  <!-- BEGIN RISK DISPOSITION SECTION TAB -->
+     <div v-if="currentTab == 'tab4'" style="min-height:300px">
+       <div class="form-group mx-4">
+          <label class="font-sm mb-0"><h5>Disposition</h5></label><br>
+             <textarea class="form-control" placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release." rows="4">  
+              
+            </textarea>        
+       </div>
+    </div>
+   <!-- END RISK DISPOSITION SECTION TAB -->
+
+ </div>                     
+
+      
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
-      </div>
+        </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
+
+
 
   </div>
 </template>
@@ -769,15 +811,17 @@
   import axios from 'axios'
   import humps from 'humps'
   import Draggable from "vuedraggable"
+   import CustomTabs from './../../shared/custom-tabs'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
-
   export default {
     name: 'RiskForm',
     props: ['facility', 'risk', 'fixedStage'],
     components: {
       AttachmentInput,
+      CustomTabs,
       Draggable
+       
     },
     
     data() {
@@ -798,7 +842,30 @@
         relatedRisks: [],
         showErrors: false,
         loading: true,
-        movingSlot: ''
+        movingSlot: '',
+                currentTab: 'risk',
+        tabs: [
+          {
+            label: 'Identify',
+            key: 'risk',
+            closable: false
+          },
+          {
+            label: 'Prioritize',
+            key: 'tab2',
+            closable: false
+          },
+          {
+            label: 'Control',
+            key: 'tab3',
+            closable: false
+          },
+           {
+            label: 'Disposition',
+            key: 'tab4',
+            closable: false,                     
+          },          
+        ]
       }
     },
     mounted() {
@@ -876,6 +943,9 @@
           checklist.position = count
           count++
         }
+      },
+       onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'risk'
       },
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
@@ -1620,5 +1690,10 @@
   }
   .disabled {
     opacity: 0.6;
+  }
+  .custom-tab {
+    width: min-content;
+    background-color: #fafafa;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
 </style>
