@@ -721,6 +721,10 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
 
+        let riskPriorityLevelFilterIds = _.map(this.getRiskPriorityLevelFilter, 'id')
+
+        let riskApproachIds = _.map(this.getRiskApproachFilter, 'id')
+
         return _.orderBy(_.filter(this.currentFacility.risks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
@@ -766,10 +770,14 @@
           }
 
 
-          if (this.searchStageId && this.searchStageId == resource.issueStageId) {
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
+
+          if (this.searchStageId && this.searchStageId == resource.riskStageId) {
             if (search_query) valid = valid && search_query.test(resource.title)
           } else if(stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.issueStageId)
+            valid = valid && stageIds.includes(resource.riskStageId)
           }
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
 
