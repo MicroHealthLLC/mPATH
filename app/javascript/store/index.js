@@ -50,10 +50,10 @@ export default new Vuex.Store({
     issueProgressFilter: null,
 
     // Datatable items per page filters
-    tasksPerPageFilter: new Array, 
-    risksPerPageFilter: new Array, 
-    issuesPerPageFilter: new Array, 
-    membersPerPageFilter: new Array, 
+    tasksPerPageFilter: [{id: 15, name: '15', value: 15}],
+    risksPerPageFilter: [{id: 15, name: '15', value: 15}],
+    issuesPerPageFilter: [{id: 15, name: '15', value: 15}],
+    membersPerPageFilter:  [{id: 10, name: '10', value: 10}],
 
     currentProject: null,
     projectUsers: new Array,

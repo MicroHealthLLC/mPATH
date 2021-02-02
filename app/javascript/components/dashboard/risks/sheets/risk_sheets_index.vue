@@ -255,7 +255,7 @@
         risks: Object,
         now: new Date().toISOString(),
         risksQuery: '',      
-        currentPage:1,
+        currentPage:1,     
         currentSort:'text',
         currentSortDir:'asc',
         uri :'data:application/vnd.ms-excel;base64,',
@@ -458,12 +458,27 @@
       },
       C_risksPerPage: {
         get() {
+           if (this.getRisksPerPageFilter == NaN || null) {
+            this.setRisksPerPageFilter([{ id: 5, name: '5', value:5 }])
+          }       
           return this.getRisksPerPageFilter
         },
         set(value) {
           this.setRisksPerPageFilter(value)
         }
      },
+    // C_risksPerPage: {
+    //   get() {       
+    //         return this.getRisksPerPageFilter
+    //      },
+    //    set(value) {
+    //     if (!value) {
+    //       this.setRisksPerPageFilter([{id:5, name:5}])
+    //     } else {
+    //       this.setRisksPerPageFilter(value)
+    //     }
+    //        }
+    //    },
       sortedRisks:function() {
           return this.filteredRisks.sort((a,b) => {
           let modifier = 1;

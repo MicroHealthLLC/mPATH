@@ -18,7 +18,7 @@
          <el-card class="box-card">
             <div class="row">
               <div class="col">
-                <span> <h5>Programs Status</h5></span>    
+                <span> <h5>Projects Status</h5></span>    
                 <hr>
               </div>             
             </div>
@@ -681,7 +681,7 @@ export default {
   }
   .red, .orange, .green, .grey, .grey2, .yellow {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-}
+  }
   .grey2 {
     border-radius: 3px;
   }

@@ -14,7 +14,7 @@
                 class="form-control searchbox form-control-sm"
                 placeholder="Search Team Member Names"
                 aria-label="Search"
-                v-on:keyup="myFunction"
+                v-on:keyup="memberSearch"
                 id="memberSearch"
                 aria-describedby="search-addon"          
                 data-cy="search_team_member">
@@ -152,11 +152,15 @@ import 'jspdf-autotable'
        },
      C_membersPerPage: {
       get() {
+        if (this.getMembersPerPageFilter == NaN || null) {
+          this.getMembersPerPageFilter == 2
+        }
         return this.getMembersPerPageFilter
       },
       set(value) {
         this.setMembersPerPageFilter(value)
       }
+
     },
      },
      methods: { 
@@ -184,7 +188,7 @@ import 'jspdf-autotable'
             alert('this button works')
         // document.getElementsByClassName("searchbox").empty();
         },
-       myFunction() {
+       memberSearch() {
           var input, filter, table, tr, td, i, txtValue;
           input = document.getElementById("memberSearch");
           filter = input.value.toUpperCase();
