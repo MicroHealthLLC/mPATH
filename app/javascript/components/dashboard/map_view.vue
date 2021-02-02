@@ -50,13 +50,11 @@
                 ref="marker"
                 :key="`${facility.id}__${index}`"
                 :animation="4"
-                v-for="(
-                  facility, index
-                ) in filterFacilitiesWithActiveFacilityGroups"
+                v-for="( facility, index ) in filterFacilitiesWithActiveFacilityGroups"
                 :position="getLatLngForFacility(facility)"
-                @click="showFacility(facility)"
-                @mouseover="toggleTooltip(facility, `${facility.id}__${index}`)"
-                @mouseout="tooltip.opened = false"
+                @click=" showFacility(facility); toggleTooltip(facility, `${facility.id}__${index}`); "
+                @mouseover=" tooltipMouseOver(facility, `${facility.id}__${index}`) "
+                @mouseout="tooltipMouseOut"
                 :icon="{ url: getStatusIconLink(facility) }"
               />
             </GmapCluster>
@@ -87,77 +85,95 @@
                   >
                 </button>
                 <div class="knocker_side" :style="knockerStyle">
-                <button v-if="currentFacility && currentFacility.id" class="knocker btn btn-sm text-light p-1" @click="toggleOpenSideBar">
-                  <small><span class="pr-1"><i class="fas fa-building"></i></span>PROJECT  SUMMARY</small>
-                </button>             
-                <div id="map-sidebar" class="shadow-sm mr-2">
-                  <facility-show
+                  <button
                     v-if="currentFacility && currentFacility.id"
-                    :facility="currentFacility"
-                    :facility-group="currentFacilityGroup"
-                    from="map_view"
-                    @close-side-bar="closeSidebar"
-                    @facility-update="updateFacility"
-                  />
+                    class="knocker btn btn-sm text-light p-1"
+                    @click="toggleOpenSideBar"
+                  >
+                    <small
+                      ><span class="pr-1"><i class="fas fa-building"></i></span
+                      >PROJECT SUMMARY</small
+                    >
+                  </button>
+                  <div id="map-sidebar" class="shadow-sm mr-2">
+                    <facility-show
+                      v-if="currentFacility && currentFacility.id"
+                      :facility="currentFacility"
+                      :facility-group="currentFacilityGroup"
+                      from="map_view"
+                      @close-side-bar="closeSidebar"
+                      @facility-update="updateFacility"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <sweet-modal
-          class="facility_accordion_modal"
-          ref="facilitiesAccordion"
-          :hide-close-button="true"
-          :blocking="true"
-        >
-          <div v-if="currentFacilityGroup && currentFacilityGroup.id">
-            <div
-              class="facility_grp_close_btn"
-              @click.prevent="onCloseAccordion"
-            >
-              <i class="fa fa-times"></i>
-            </div>
-            <h3 class="mb-3 text-break">
-              {{ currentFacilityGroup.name }}
-              <span class="badge badge-secondary badge-pill">{{
-                facilityGroupFacilities(currentFacilityGroup).length
-              }}</span>
-            </h3>
-            <div
-              v-if="
-                facilityGroupFacilities(currentFacilityGroup) &&
-                facilityGroupFacilities(currentFacilityGroup).length == 0
-              "
-              class="mt-3 text-danger"
-            >
-              There is no facility under this group
-            <h3 class="mb-3 text-break">{{currentFacilityGroup.name}} <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(currentFacilityGroup).length}}</span></h3>
-            <div v-if="facilityGroupFacilities(currentFacilityGroup) && facilityGroupFacilities(currentFacilityGroup).length == 0" class="mt-3 text-danger">
-              There is no project under this group
-            </div>
-            <div v-else>
+          <sweet-modal
+            class="facility_accordion_modal"
+            ref="facilitiesAccordion"
+            :hide-close-button="true"
+            :blocking="true"
+          >
+            <div v-if="currentFacilityGroup && currentFacilityGroup.id">
               <div
-                v-for="(facility, index) in facilityGroupFacilities(
-                  currentFacilityGroup
-                )"
-                :key="index"
+                class="facility_grp_close_btn"
+                @click.prevent="onCloseAccordion"
               >
-                <accordion
-                  :expanded="expandedFacility.id"
-                  :facility="facility.facility"
-                  :statuses="statuses"
-                  :facility-group="currentFacilityGroup"
-                  @update-expanded="updateExpanded"
-                ></accordion>
+                <i class="fa fa-times"></i>
+              </div>
+              <h3 class="mb-3 text-break">
+                {{ currentFacilityGroup.name }}
+                <span class="badge badge-secondary badge-pill">{{
+                  facilityGroupFacilities(currentFacilityGroup).length
+                }}</span>
+              </h3>
+              <div
+                v-if="
+                  facilityGroupFacilities(currentFacilityGroup) &&
+                  facilityGroupFacilities(currentFacilityGroup).length == 0
+                "
+                class="mt-3 text-danger"
+              >
+                There is no facility under this group
+                <h3 class="mb-3 text-break">
+                  {{ currentFacilityGroup.name }}
+                  <span class="badge badge-secondary badge-pill">{{
+                    facilityGroupFacilities(currentFacilityGroup).length
+                  }}</span>
+                </h3>
+                <div
+                  v-if="
+                    facilityGroupFacilities(currentFacilityGroup) &&
+                    facilityGroupFacilities(currentFacilityGroup).length == 0
+                  "
+                  class="mt-3 text-danger"
+                >
+                  There is no project under this group
+                </div>
+                <div v-else>
+                  <div
+                    v-for="(facility, index) in facilityGroupFacilities(
+                      currentFacilityGroup
+                    )"
+                    :key="index"
+                  >
+                    <accordion
+                      :expanded="expandedFacility.id"
+                      :facility="facility.facility"
+                      :statuses="statuses"
+                      :facility-group="currentFacilityGroup"
+                      @update-expanded="updateExpanded"
+                    ></accordion>
+                  </div>
+                </div>
               </div>
             </div>
-            </div>
-          </div>
-        </sweet-modal>
+          </sweet-modal>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -252,8 +268,6 @@ export default {
       this.setCurrentFacilityGroup(
         this.facilityGroups.find((fg) => fg.id == facility.facilityGroupId)
       );
-      this.center = this.getLatLngForFacility(facility);
-      this.$refs.googlemap.panTo(this.center);
       this.setCurrentFacility(facility);
     },
     closeSidebar() {
@@ -287,6 +301,7 @@ export default {
       if (this.openSidebar) {
         this.setCurrentFacility(null);
         this.openSidebar = false;
+        this.tooltip.opened = false;
       }
     },
     toggleTooltip(marker, key) {
@@ -294,6 +309,21 @@ export default {
       this.tooltip.content = marker.facilityName;
       this.tooltip.opened = true;
       this.tooltip.key = key;
+    },
+    tooltipMouseOut() {
+      // Tooltip closes only if there is no current facility selected
+      if (this.currentFacility === null) {
+        this.tooltip.opened = false;
+      }
+    },
+    tooltipMouseOver(marker, key) {
+      // Tooltip only appears if appears if there is no current facility selected
+      if (this.currentFacility === null) {
+        this.tooltip.position = this.getLatLngForFacility(marker);
+        this.tooltip.content = marker.facilityName;
+        this.tooltip.opened = true;
+        this.tooltip.key = key;
+      }
     },
     onCloseAccordion() {
       this.$refs.facilitiesAccordion && this.$refs.facilitiesAccordion.close();
@@ -336,9 +366,38 @@ export default {
         )
         .map((item) => Number(item.id));
     },
+    centerMapToFacilities() {
+      var bounds = new google.maps.LatLngBounds();
+      var markerPositions = this.facilities.map((facility) =>
+        this.getLatLngForFacility(facility)
+      );
+
+      for (var i = 0; i < this.facilities.length; i++) {
+        var location = new google.maps.LatLng(
+          markerPositions[i].lat,
+          markerPositions[i].lng
+        );
+        bounds.extend(location);
+      }
+
+      this.$refs.googlemap.fitBounds(bounds);
+      this.$refs.googlemap.panToBounds(bounds);
+      this.$refs.googlemap.fitBounds(bounds);
+    },
   },
   beforeDestroy() {
     this.setFacilities(this.initialFacilities);
+    this.initialFacilities = [];
+  },
+  watch: {
+    facilities: function () {
+      if (!this.facilitiesSet) {
+        this.centerMapToFacilities();
+      }
+    },
+    initialFacilities: function () {
+      this.centerMapToFacilities();
+    },
   },
 };
 </script>
