@@ -158,7 +158,8 @@ ActiveAdmin.register Project do
         project.user_ids = project.user_ids + user_ids if user_ids.present?
         redirect_to admin_projects_path , notice: "Program created Successfully"
       else
-        render :new
+        # render :new
+        super
       end
 
     end
