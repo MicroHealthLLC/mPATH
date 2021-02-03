@@ -88,7 +88,7 @@
                   <button
                     v-if="currentFacility && currentFacility.id"
                     class="knocker btn btn-sm text-light p-1"
-                    @click="toggleOpenSideBar"
+                    @click="resetView"
                   >
                     <small
                       ><span class="pr-1"><i class="fas fa-building"></i></span
