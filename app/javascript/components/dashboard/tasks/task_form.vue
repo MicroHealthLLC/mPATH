@@ -382,6 +382,30 @@
           </template>
         </multiselect>
       </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
       <div class="form-group mx-4 paginated-updates">
         <hr class="my-4"/>
         <label class="font-sm mb-2">Updates:</label>
@@ -435,6 +459,7 @@
         taskUsers: [],
         relatedIssues: [],
         relatedTasks: [],
+        relatedRisks: [],
         _ismounted: false,
         showErrors: false,
         loading: true,
@@ -472,6 +497,7 @@
           userIds: [],
           subTaskIds: [],
           subIssueIds: [],
+          subRiskIds: [],
           description: '',
           progress: 0,
           autoCalculate: true,
@@ -511,6 +537,8 @@
         this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
+        this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
+
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
@@ -601,6 +629,15 @@
           }
           else {
             formData.append('task[sub_issue_ids][]', [])
+          }
+
+          if (this.DV_task.subRiskIds.length) {
+            for (let u_id of this.DV_task.subRiskIds) {
+              formData.append('task[sub_risk_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('task[sub_risk_ids][]', [])
           }
 
           for (let i in this.DV_task.checklists) {
@@ -747,6 +784,7 @@
         'myActionsFilter',
         'currentTasks',
         'currentIssues',
+        'currentRisks',
         'managerView'
       ]),
       readyToSave() {
@@ -770,6 +808,9 @@
       },
       filteredTasks() {
         return _.filter(this.currentTasks, t => t.id !== this.DV_task.id)
+      },
+      filteredRisks() {
+        return _.filter(this.currentRisks, t => t.id !== this.DV_task.id)
       },
       filteredIssues() {
         return this.currentIssues
@@ -833,6 +874,11 @@
           if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
+      relatedRisks: {
+        handler: function(value) {
+          if (value) this.DV_task.subRiskIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
       selectedTaskType: {
         handler: function(value) {
           this.DV_task.taskTypeId = value ? value.id : null
@@ -853,6 +899,12 @@
         handler(value) {
           let ids = _.map(value, 'id')
           this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
+        }, deep: true
+      },
+      filteredRisks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
         }, deep: true
       },
       "filteredNotes.length"(value, previous) {

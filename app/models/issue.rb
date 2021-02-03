@@ -144,18 +144,24 @@ class Issue < ApplicationRecord
 
       if sub_task_ids && sub_task_ids.any?
         related_task_objs = []
+        related_task_objs2 = []
         sub_task_ids.each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: issue.id, relatable_type: issue.class.name, task_id: sid)
+          related_task_objs2 << RelatedIssue.new(relatable_id: sid, relatable_type: "Task", issue_id: issue.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedIssue.import(related_task_objs2) if related_task_objs2.any?
       end
 
       if sub_issue_ids && sub_issue_ids.any?
         related_issue_objs = []
+        related_issue_objs2 = []
         sub_issue_ids.each do |sid|
           related_issue_objs << RelatedIssue.new(relatable_id: issue.id, relatable_type: issue.class.name, issue_id: sid)
+          related_issue_objs2 << RelatedIssue.new(relatable_id: sid, relatable_type: "Issue", issue_id: issue.id)
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedIssue.import(related_issue_objs2) if related_issue_objs2.any?
       end
 
       if checklists_attributes.present?
