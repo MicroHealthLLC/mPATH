@@ -469,24 +469,11 @@ th {
 .sort-icon {
   color:#C0C4CC !important;
 } 
-.el-table th{
-  background-color: #ededed !important;
-  font-size: .70rem;
+
+.el-collapse-item__arrow {
+  margin-left: 20px;
 }
-.el-pagination__total {
-  display: none !important;
-}
-.el-pagination__sizes, .el-input {
-  margin-right: 0 !important;
-}
-//  {
-//   mar
-// } el-input--mini el-input--suffix
-.el-table__body tr:hover>td {
-  background-color: rgba(91, 192, 222, 0.3) !important;
-  // border-left: solid rgb(91, 192, 222) !important;
-  cursor: pointer;
-}
+
 .fa-sort {font-size: .75rem !important;}
 .table {
   th {
