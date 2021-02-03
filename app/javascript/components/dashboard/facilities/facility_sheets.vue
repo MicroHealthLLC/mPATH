@@ -132,7 +132,7 @@
           <el-card class="box-card" style="background-color: #fafafa">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Responsible</h5>               
+                 <h5 class="d-inline">Contact</h5>               
                  <hr class="mb-0 pb-0">
               </div>             
             </div>
