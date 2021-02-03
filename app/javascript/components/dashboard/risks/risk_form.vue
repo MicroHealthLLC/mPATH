@@ -55,7 +55,7 @@
         </div>
                 
 
- <div v-if="currentTab == 'risk'" class="paperLook">
+ <div v-if="currentTab == 'risk'" class="paperLookTab">
    <!-- RISK OVERVIEW TAB -->
    <div class="form-group mx-4">
       <span v-if="_isallowed('write')" class="watch_action mt-3 clickable float-right" @click.prevent.stop="toggleWatched" data-cy="risk_on_watch">
@@ -319,7 +319,7 @@
 
 <!-- BEGIN RISK PRIORITIZE TAB -->
 
-<div v-if="currentTab == 'tab2'" class="paperLook">
+<div v-if="currentTab == 'tab2'" class="paperLookTab">
          
 
          <div class="container-fluid pt-2 px-4">
@@ -659,7 +659,7 @@
 
 <!-- BEGIN RISK CONTROL TAB SECTION -->
 
-<div v-if="currentTab == 'tab3'" class="paperLook">
+<div v-if="currentTab == 'tab3'" class="paperLookTab">
         <div class="form-group pt-2 mx-4">        
           <label class="font-sm mb-0 mr-3">Progress: (in %)</label>
           <!-- <span class="ml-3"> -->
@@ -876,7 +876,7 @@
 
 
   <!-- BEGIN RISK DISPOSITION SECTION TAB -->
-     <div v-if="currentTab == 'tab4'" style="min-height:300px" class="paperLook">
+     <div v-if="currentTab == 'tab4'" style="min-height:300px" class="paperLookTab">
        <div class="form-group mx-4">
           <label class="font-sm mb-0"><h5>Disposition</h5></label><br>
              <textarea class="form-control" placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release." rows="4">  
@@ -940,7 +940,7 @@
         showErrors: false,
         loading: true,
         movingSlot: '',
-                currentTab: 'risk',
+        currentTab: 'risk',
         tabs: [
           {
             label: 'IDENTIFY',
@@ -1635,7 +1635,7 @@
  .formTitle {
     padding-top: 25px;
   }
-  .paperLook {
+  .paperLookTab {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     padding-bottom: 20px;
     margin-bottom: 10px;
@@ -1811,20 +1811,5 @@
   .disabled {
     opacity: 0.6;
   }
-  .custom-tab {
-    width: min-content;
-    background-color: #fafafa;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  /deep/.badge.active {
-    background-color: #383838 !important;
-    font-weight:500 !important;
-    font-size:80% !important;
-    border-radius: 0.10rem !important;   
-  }
-   /deep/.badge:hover {
-    background-color:  rgba(91, 192, 222, 0.3);
-    border:none !important;
-   
-  }
+
 </style>

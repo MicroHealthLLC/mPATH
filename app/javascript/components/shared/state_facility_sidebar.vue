@@ -1096,9 +1096,9 @@
     min-width: 80vw;
     max-height: 90vh;
     background-color: #ededed;
-    .sweet-content {
-      padding-top: 30px;
+    .sweet-content {    
       text-align: unset;
+      padding: 10px;
     }
     .modal_close_btn {
       display: flex;

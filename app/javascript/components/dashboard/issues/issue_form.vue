@@ -35,7 +35,7 @@
         >
           Close
         </button>
-        <div class="btn-group">
+        <!-- <div class="btn-group">
           <button
             v-if="_isallowed('write')"
             class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"
@@ -52,7 +52,7 @@
             <font-awesome-icon icon="plus-circle" />
             Updates
           </button>
-        </div>
+        </div> -->
         <button
           v-if="_isallowed('delete') && DV_issue.id"
           @click.prevent="deleteIssue"
@@ -63,12 +63,24 @@
           Delete
         </button>
       </div>
-      <div class="paperLook formTitle">
+       <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">          
+          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      </div>
+      <div class="formTitle">
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
-        <div class="form-group mx-4">
-          <label class="font-sm"><h5>*Issue Name:</h5></label>
+
+
+
+  <!-- Tabbed sections begin here -->
+
+  <!-- ISSUE INFO TAB #1 -->
+
+<div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
+
+      <div class="form-group pt-3 mx-4">
+          <label class="font-sm">*Issue Name:</label>
           <span
             v-if="_isallowed('write')"
             class="watch_action clickable float-right"
@@ -102,7 +114,8 @@
           >
             {{ errors.first("title") }}
           </div>
-        </div>
+     </div>
+
         <div class="form-group mx-4">
           <label class="font-sm">Description:</label>
           <textarea
@@ -115,7 +128,9 @@
           />
         </div>
 
-        <div class="simple-select form-group mx-4">
+ <!-- Row begins -->
+     <div  class="w-100 d-flex mb-0 form-group">
+        <div class="simple-select form-group w-100 ml-4">
           <label class="font-sm">*Facility:</label>
           <multiselect
             v-model="selectedFacilityProject"
@@ -138,7 +153,7 @@
           </multiselect>
         </div>
 
-        <div class="simple-select form-group mx-4">
+        <div class="simple-select form-group w-100 mx-2">
           <label class="font-sm">*Issue Type:</label>
           <multiselect
             v-model="selectedIssueType"
@@ -168,8 +183,8 @@
             {{ errors.first("Issue Type") }}
           </div>
         </div>
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">Task Category:</label>
+        <div class="simple-select w-100 form-group mr-4">
+          <label class="font-sm">Category:</label>
           <multiselect
             v-model="selectedTaskType"
             track-by="id"
@@ -197,7 +212,11 @@
             {{ errors.first("Task Type") }}
           </div>
         </div>
-        <div class="simple-select form-group mx-4">
+     </div>
+    <!-- Tab 1 Row ends here -->
+    <!-- Tab 1 Row begins here -->
+     <div class="d-flex ml-4">
+       <div class="simple-select form-group w-100 mx-1">
           <label class="font-sm">*Issue Severity:</label>
           <multiselect
             v-model="selectedIssueSeverity"
@@ -227,7 +246,7 @@
             {{ errors.first("Issue Severity") }}
           </div>
         </div>
-        <div class="simple-select form-group mx-4">
+        <div class="simple-select form-group w-100 mx-1">
           <label class="font-sm">Stage:</label>
           <multiselect
             v-model="selectedIssueStage"
@@ -248,8 +267,8 @@
             </template>
           </multiselect>
         </div>
-        <div class="form-row mx-4">
-          <div class="form-group col-md-6 pl-0">
+     
+          <div class="form-group mx-1 w-100">
             <label class="font-sm">*Start Date:</label>
             <v2-date-picker
               v-validate="'required'"
@@ -270,7 +289,7 @@
               {{ errors.first("Start Date") }}
             </div>
           </div>
-          <div class="form-group col-md-6 pr-0">
+          <div class="form-group w-100 ml-1 mr-4">
             <label class="font-sm">*Estimated Completion Date:</label>
             <v2-date-picker
               v-validate="'required'"
@@ -296,8 +315,10 @@
               {{ errors.first("Estimated Completion Date") }}
             </div>
           </div>
+
+<!-- Next Row in Tab 1 -->
         </div>
-        <div class="form-group user-select mx-4">
+          <div class="form-group user-select mx-4">
           <label class="font-sm mb-0">Assign Users:</label>
           <multiselect
             v-model="issueUsers"
@@ -320,26 +341,15 @@
             </template>
           </multiselect>
         </div>
-        <div class="form-group mx-4">
-          <label class="font-sm mb-0">Progress: (in %)</label>
-          <span class="ml-3">
-            <label class="font-sm mb-0 d-inline-flex align-items-center"
-              ><input
-                type="checkbox"
-                v-model="DV_issue.autoCalculate"
-                :disabled="!_isallowed('write')"
-                :readonly="!_isallowed('write')"
-              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
-            >
-          </span>
-          <vue-slide-bar
-            v-model="DV_issue.progress"
-            :line-height="8"
-            :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
-            :draggable="_isallowed('write') && !DV_issue.autoCalculate"
-          ></vue-slide-bar>
-        </div>
-        <div class="form-group mx-4">
+          <!-- closing div for tab1 -->
+</div>
+
+
+
+
+  <!-- CHECKLIST TAB #2 -->
+<div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+ <div class="form-group mx-4 pt-3">
           <label class="font-sm">Checklists:</label>
           <span
             class="ml-2 clickable"
@@ -441,7 +451,15 @@
           </div>
           <p v-else class="text-danger font-sm">No checks..</p>
         </div>
-        <div class="mx-4">
+  <!-- closing div for tab2 -->
+</div>
+
+
+
+
+<!-- FILES TAB # 3-->
+<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+<div class="mx-4 pt-3">
           <div class="input-group mb-2">
             <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
               <div class="input-group-prepend">
@@ -477,8 +495,17 @@
             :show-label="true"
           ></attachment-input>
         </div>
+          <!-- closing div for tab3 -->
+</div>
 
-        <div class="form-group user-select mx-4">
+
+
+
+ <!-- RELATED TAB #4 -->  
+<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+
+
+        <div class="form-group user-select pt-3 mx-4">
           <label class="font-sm mb-0">Related Issues:</label>
           <multiselect
             v-model="relatedIssues"
@@ -523,6 +550,34 @@
             </template>
           </multiselect>
         </div>
+          <!-- closing div for tab4 -->
+</div>
+
+
+
+ <!-- UPDATE TAB 5 -->
+<div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
+
+   <div class="form-group pt-3 mx-4">
+          <label class="font-sm mb-0">Progress: (in %)</label>
+          <span class="ml-3">
+            <label class="font-sm mb-0 d-inline-flex align-items-center"
+              ><input
+                type="checkbox"
+                v-model="DV_issue.autoCalculate"
+                :disabled="!_isallowed('write')"
+                :readonly="!_isallowed('write')"
+              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
+            >
+          </span>
+          <vue-slide-bar
+            v-model="DV_issue.progress"
+            :line-height="8"
+            :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
+            :draggable="_isallowed('write') && !DV_issue.autoCalculate"
+          ></vue-slide-bar>
+        </div>
+
         <div class="form-group mx-4 paginated-updates">
           <label class="font-sm">Updates:</label>
           <span
@@ -569,6 +624,16 @@
           </paginate>
         </div>
       </div>
+          <!-- closing div for tab5 -->
+</div>
+
+      
+
+     
+       
+        
+
+        
       <h6 class="text-danger text-small pl-1 float-right">
         *Indicates required fields
       </h6>
@@ -588,6 +653,7 @@ import humps from "humps";
 import Draggable from "vuedraggable";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
+import CustomTabs from './../../shared/custom-tabs'
 
 export default {
   name: "IssueForm",
@@ -595,6 +661,7 @@ export default {
   components: {
     AttachmentInput,
     Draggable,
+    CustomTabs
   },
   data() {
     return {
@@ -612,7 +679,37 @@ export default {
       showErrors: false,
       loading: true,
       movingSlot: "",
-    };
+           currentTab: 'tab1',
+        tabs: [
+          {
+            label: 'ISSUE INFO',
+            key: 'tab1',
+            closable: false
+          },
+          {
+            label: 'CHECKLIST',
+            key: 'tab2',
+            closable: false
+          },
+          {
+            label: 'FILES',
+            key: 'tab3',
+            closable: false
+          },
+           {
+            label: 'RELATED',
+            key: 'tab4',
+            closable: false,     
+                      
+          },          
+           {
+            label: 'UPDATES',
+            key: 'tab5',
+            closable: false,     
+                      
+          },          
+        ]
+      }
   },
   mounted() {
     if (!_.isEmpty(this.issue)) {
@@ -658,6 +755,9 @@ export default {
       });
       this.DV_issue.checklists.push({ text: "", checked: false });
     },
+     onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'tab1'
+     },
     scrollToUpdates() {
       this.$refs.addUpdates.scrollIntoView({
         behavior: "smooth",
@@ -1184,13 +1284,8 @@ ul {
 .drag {
   cursor: all-scroll;
 }
-.formTitle {
-  padding-top: 25px;
-}
 .paperLook {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  padding-bottom: 20px;
-  margin-bottom: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); 
   position: relative;
 }
 .sticky-btn {
@@ -1228,6 +1323,16 @@ ul {
   text-align: end;
 }
 .disabled {
-    opacity: 0.6;
+  opacity: 0.6;
+  }
+.custom-tab {
+  width: min-content;
+  background-color: #fafafa;
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
+
+.tab2, .tab3, .tab4, .tab5 {
+  min-height: 500px;
+  background-color: #fff;
   }
 </style>
