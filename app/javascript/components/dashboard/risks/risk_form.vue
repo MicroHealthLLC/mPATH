@@ -913,8 +913,7 @@
     components: {
       AttachmentInput,
       CustomTabs,
-      Draggable
-       
+      Draggable       
     },
     
     data() {
