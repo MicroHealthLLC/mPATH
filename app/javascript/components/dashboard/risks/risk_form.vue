@@ -1254,7 +1254,6 @@
   // RACI USERS START HERE Awaiting backend work
 
       // Responsible User id
-
          if (this.DV_risk.responsibleUserIds.length) {
             for (let u_id of this.DV_risk.responsibleUserIds) {
               formData.append('responsible_user_ids[]', u_id)
@@ -1265,7 +1264,6 @@
           }
 
        // Accountable UserId
-
          if (this.DV_risk.accountableUserIds.length) {
             for (let u_id of this.DV_risk.accountableUserIds) {
               formData.append('accountable_user_ids[]', u_id)
@@ -1678,12 +1676,12 @@
 // RACI USERS HERE awaiting backend work
    responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.responsibleUserIds = [value.id]
+          if (value && value.id) this.DV_risk.responsibleUserIds = [value.id]
         }, deep: true
       },
     accountableRiskUsers: {
           handler: function(value) {
-            if (value) this.DV_risk.accountableUserIds = [value.id]
+            if (value && value.id) this.DV_risk.accountableUserIds = [value.id]
           }, deep: true
         },
     consultedRiskUsers: {
