@@ -211,9 +211,9 @@
             </div>
           </div>
         </div>
-    <div class="form-group mb-0 d-flex w-100">
+    <!-- <div class="form-group mb-0 d-flex w-100">
       <div class="form-group user-select ml-4 mr-1 w-100">
-        <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+       
         <label class="font-sm mb-0">Responsible:</label>
         <multiselect
           v-model="riskUsers"        
@@ -307,7 +307,7 @@
           </template>
         </multiselect>
       </div>             
- </div> 
+ </div>  -->
       
       
        
@@ -343,7 +343,7 @@
                 <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>            
               </div>
 
-               <div class="col-md-3"> 
+               <div class="col-md-3 p-0"> 
                  <div class="simple-select form-group mb-5">            
                   <label class="font-sm">*Probablity: </label>
                     <multiselect
@@ -403,7 +403,8 @@
               <!-- COLUMN FOR TEXT FIELD            -->
                
                </div>
-                <div class="col-md-6"> 
+                <div class="col-md-6 pl-1 pr-0"> 
+                  <!-- PROBABILITY DESCRIPTION REQUIRES BACKEND WORK -->
                   <div class="form-group mr-4 mb-0">
                   <label class="font-sm">Probability Description:</label>                  
                   <textarea                  
@@ -641,7 +642,7 @@
             class="form-control"
             placeholder="Risk Approach description"
             v-model="DV_risk.riskApproachDescription"
-            rows="4"
+            rows="3"
             :readonly="!_isallowed('write')"
             data-cy="approach_description"
             name="approach_description"
@@ -875,7 +876,7 @@
 
 
   <!-- BEGIN RISK DISPOSITION SECTION TAB -->
-     <div v-if="currentTab == 'tab4'" style="min-height:300px" class="paperLookTab">
+     <div v-if="currentTab == 'tab5'" style="min-height:300px" class="paperLookTab">
        <div class="form-group mx-4">
           <label class="font-sm mb-0"><h5>Disposition</h5></label><br>
              <textarea class="form-control" placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release." rows="4">  
@@ -887,7 +888,112 @@
 
  </div>                     
 
+  <!-- ASSIGN USERS TAB # 4-->
+  <div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect
+            v-model="riskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
+          <multiselect
+            v-model="accountableRiskUsers"              
+            track-by="id"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect
+            disabled
+            v-model="consultedRiskUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect
+            disabled
+            v-model="informedRiskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"         
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>         
+    </div>
+  </div>
       
+
+
+
+
+      <!-- TABBED OUT SECTION END HERE -->
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
@@ -956,11 +1062,16 @@
             closable: false
           },
            {
-            label: 'DISPOSITION',
+            label: 'ASSIGN',
             key: 'tab4',
+            closable: false,                      
+          },        
+           {
+            label: 'DISPOSITION',
+            key: 'tab5',
             closable: false,     
             disabled:true                
-          },          
+          },           
         ]
       }
     },
@@ -1046,14 +1157,15 @@
        onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'risk'
       },
+        // RACI USERS commented out out here.....Awaiting backend work
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         // debugger;
-        this.accountableUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
-        // this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
-        // this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
+        // this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
+        // this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
+        // this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -1134,14 +1246,20 @@
           formData.append('risk[auto_calculate]', this.DV_risk.autoCalculate)
           formData.append('risk[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-         // if (this.DV_risk.userIds.length) {
-         //    for (let u_id of this.DV_risk.userIds) {
-         //      formData.append('risk[user_ids][]', u_id)
-         //    }
-         //  }
-         //  else {
-         //    formData.append('risk[user_ids][]', [])
-         //  }
+  // RACI USERS START HERE Awaiting backend work
+
+      // Responsible User id
+
+        //  if (this.DV_risk.userIds.length) {
+        //     for (let u_id of this.DV_risk.userIds) {
+        //       formData.append('risk[user_ids][]', u_id)
+        //     }
+        //   }
+        //   else {
+        //     formData.append('risk[user_ids][]', [])
+        //   }
+
+       // Accountable UserId
 
          if (this.DV_risk.accountableUserIds.length) {
             for (let u_id of this.DV_risk.accountableUserIds) {
@@ -1151,6 +1269,31 @@
           else {
             formData.append('accountable_user_ids[]', [])
           }
+
+          // Consulted UserId
+          
+          if (this.DV_risk.consultedUserIds.length) {
+            for (let u_id of this.DV_risk.consultedUserIds) {
+              formData.append('consulted_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('consulted_user_ids[]', [])
+          }
+
+          // Informed UserId
+          
+          if (this.DV_risk.informedUserIds.length) {
+            for (let u_id of this.DV_risk.informedUserIds) {
+              formData.append('informed_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('informed_user_ids[]', [])
+          }
+
+  // RACI USERS ABOVE THIS LINE  Awaiting backend work
+  // More RACI Users in Computed section below
 
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
@@ -1310,14 +1453,8 @@
       ...mapGetters([
         'getFacilityProjectOptions',
         'currentProject',
-        'projectUsers',
-        // 'accountableUsers',
-        'consultedUsers',
-        'informedUsers',
-        'activeProjectUsers',
-        'accountableProjectUsers',
-        'consultedProjectUsers',
-        'informedProjectUsers',
+        'projectUsers',    
+        'activeProjectUsers',   
         'myActionsFilter',
         'taskTypes',
         'riskStages',
@@ -1531,27 +1668,29 @@
       "DV_risk.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
+
+// RACI USERS HERE awaiting backend work
       riskUsers: {
         handler: function(value) {
           if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
-     accountableRiskUsers: {
-        handler: function(value) {
-          if (value) this.DV_risk.accountableUserIds = [value.id]
-        }, deep: true
-      },
-      //   consultedRiskUsers: {
+   //  accountableRiskUsers: {
+      //     handler: function(value) {
+      //       if (value) this.DV_risk.accountableUserIds = [value.id]
+      //     }, deep: true
+      //   },
+    // consultedRiskUsers: {
       //   handler: function(value) {
-      //     if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
+      //     if (value) this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
       //   }, deep: true
       // },
-      // informedRiskUsers: {
+  //   informedRiskUsers: {
       //   handler: function(value) {
-      //     if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
+      //     if (value) this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
       //   }, deep: true
       // },
-      relatedIssues: {
+     relatedIssues: {
         handler: function(value) {
           if (value) this.DV_risk.subIssueIds = _.uniq(_.map(value, 'id'))
         }, deep: true

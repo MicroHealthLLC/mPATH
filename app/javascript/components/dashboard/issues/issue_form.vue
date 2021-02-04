@@ -324,7 +324,7 @@ Tab 1 Row Begins here -->
          
 
 <!-- Next Row in Tab 1 -->
-       
+<!--        
           <div class="form-group user-select mx-4">
           <label class="font-sm mb-0">Assign Users:</label>
           <multiselect
@@ -347,7 +347,7 @@ Tab 1 Row Begins here -->
               </div>
             </template>
           </multiselect>
-        </div>
+        </div> -->
           <!-- closing div for tab1 -->
 </div>
 
@@ -634,6 +634,107 @@ Tab 1 Row Begins here -->
           <!-- closing div for tab5 -->
 </div>
 
+ <!-- ASSIGN USERS TAB # 6-->
+  <div v-if="currentTab == 'tab6'" class="paperLookTab tab6">
+   
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect
+            v-model="issueUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="issue_user"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
+          <multiselect
+            v-model="accountableIssueUsers"              
+            track-by="id"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="true"
+              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect
+            disabled
+            v-model="consultedIssueUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect
+            disabled
+            v-model="informedIssueUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false" 
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>         
+    </div>
+  </div>
       
 
      
@@ -681,6 +782,9 @@ export default {
       selectedIssueSeverity: null,
       selectedIssueStage: null,
       issueUsers: [],
+      accountableIssueUsers:[],
+      consultedIssueUsers:[],
+      informedIssueUsers:[],
       relatedIssues: [],
       relatedTasks: [],
       showErrors: false,
@@ -714,7 +818,13 @@ export default {
             key: 'tab5',
             closable: false,     
                       
-          },          
+          },      
+            {
+            label: 'ASSIGN',
+            key: 'tab6',
+            closable: false,     
+                      
+          },              
         ]
       }
   },
@@ -747,6 +857,9 @@ export default {
         description: "",
         autoCalculate: true,
         userIds: [],
+        accountableUserIds:[],
+        consultedUserIds:[],
+        informedUserIds:[],
         subTaskIds: [],
         subIssueIds: [],
         issueFiles: [],
@@ -788,9 +901,18 @@ export default {
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
-
+// RACI USERS awaiting backend work
       this.issueUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.userIds.includes(u.id)
+      );
+      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.accountableUserIds.includes(u.id)
+      );
+      this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.consultedUserIds.includes(u.id)
+      );
+      this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.informedUserIds.includes(u.id)
       );
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_issue.subIssueIds.includes(u.id)
@@ -899,6 +1021,10 @@ export default {
           _.map(this.destroyedFiles, "id")
         );
 
+
+  // RACI USERS HERE Awaiting backend work
+     
+     //Responsible USer Id
         if (this.DV_issue.userIds.length) {
           for (let u_id of this.DV_issue.userIds) {
             formData.append("issue[user_ids][]", u_id);
@@ -906,6 +1032,44 @@ export default {
         } else {
           formData.append("issue[user_ids][]", []);
         }
+
+
+          // Accountable UserId
+
+         if (this.DV_issue.accountableUserIds.length) {
+            for (let u_id of this.DV_issue.accountableUserIds) {
+              formData.append('accountable_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('accountable_user_ids[]', [])
+          }
+
+          // Consulted UserId
+          
+          if (this.DV_issue.consultedUserIds.length) {
+            for (let u_id of this.DV_issue.consultedUserIds) {
+              formData.append('consulted_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('consulted_user_ids[]', [])
+          }
+
+          // Informed UserId
+          
+          if (this.DV_issue.informedUserIds.length) {
+            for (let u_id of this.DV_issue.informedUserIds) {
+              formData.append('informed_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('informed_user_ids[]', [])
+          }
+
+  // RACI USERS ABOVE THIS LINE  Awaiting backend work
+  // More RACI Users in Computed section below
+
 
         if (this.DV_issue.subTaskIds.length) {
           for (let u_id of this.DV_issue.subTaskIds) {
@@ -1182,12 +1346,29 @@ export default {
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
     },
+
+    //RACI USERS HERE awaiting backend work
     issueUsers: {
       handler: function (value) {
         if (value) this.DV_issue.userIds = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
+//  accountableIssueUsers: {
+     // handler: function(value) {
+     //  if (value) this.DV_issue.accountableUserIds = [value.id]
+      //     }, deep: true
+      //   },
+  // consultedIssueUsers: {
+  //   handler: function(value) {
+  //     if (value) this.DV_issue.consultedUserIds = _.uniq(_.map(value, 'id'))
+   //   }, deep: true
+      // },
+//   informedIssueUsers: {
+  //   handler: function(value) {
+  //     if (value) this.DV_issue.informedUserIds = _.uniq(_.map(value, 'id'))
+  //   }, deep: true
+      // },
     relatedIssues: {
       handler: function (value) {
         if (value) this.DV_issue.subIssueIds = _.uniq(_.map(value, "id"));

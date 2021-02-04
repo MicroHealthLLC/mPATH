@@ -18,7 +18,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-<!--           <facility-rollup
+          <!-- <facility-rollup
             v-else
             :facility-group="C_showFacilityRollup ? currentFacilityGroup : null"
             from="manager_view"
@@ -27,7 +27,7 @@
       </div>
         <div class="col-md-6 facility-forms-tab" v-if="isFacilityManagerView">
         <div class="default-background">
-          <div class="bg-white mt-4">
+          <div class="bg-white mt-2">
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
