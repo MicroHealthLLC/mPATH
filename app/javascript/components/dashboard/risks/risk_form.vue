@@ -1050,7 +1050,7 @@
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
         this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
-        debugger;
+        // debugger;
         this.accountableUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
         // this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
         // this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
