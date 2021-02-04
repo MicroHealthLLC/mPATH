@@ -59,7 +59,7 @@
           Delete
         </button>
       </div>
-      <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
           
       <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
       
@@ -414,13 +414,17 @@
 
 
   <!-- UPDATE TAB 5 -->
-  <div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
-        
-      <div class="form-group mx-4 paginated-updates">
-      <div class="form-group mx-4">
+  <div v-if="currentTab == 'tab5'" class="paperLookTab tab5">       
+     
+      <div class="form-group pt-3 mx-4">
         <label class="font-sm mb-0">Progress: (in %)</label>
         <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate" :disabled="!_isallowed('write')" :readonly="!_isallowed('write')"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
         </span>
         <vue-slide-bar
           v-model="DV_task.progress"
@@ -428,10 +432,10 @@
           :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
           :draggable="_isallowed('write') && !DV_task.autoCalculate"
         ></vue-slide-bar>
-      </div>
-      
-        <hr class="my-4"/>
-        <label class="font-sm mb-2">Updates:</label>
+      </div>      
+    
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Updates:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
@@ -446,7 +450,7 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
-      </div>         
+      </div>       
      </div>
      <!-- closing div for tab5 -->
   </div>
@@ -1091,10 +1095,6 @@
     width: min-content;
     background-color: #fafafa;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  .tab2, .tab3, .tab4, .tab5 {
-    min-height: 500px;
-    background-color: #fff;
   }
 
 </style>
