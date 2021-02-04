@@ -83,6 +83,7 @@ class RisksController < AuthenticatedController
       :facility_project_id,
       :risk_description,
       :impact_description,
+      :probability_description,
       :probability,
       :probability_name,
       :impact_level,

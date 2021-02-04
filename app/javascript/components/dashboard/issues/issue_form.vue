@@ -856,7 +856,7 @@ export default {
         issueStageId: "",
         description: "",
         autoCalculate: true,
-        userIds: [],
+        responsibleUserIds: [],
         accountableUserIds:[],
         consultedUserIds:[],
         informedUserIds:[],
@@ -902,8 +902,8 @@ export default {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
 // RACI USERS awaiting backend work
-      this.issueUsers = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_issue.userIds.includes(u.id)
+      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
+        this.DV_issue.responsibleUserIds.includes(u.id)
       );
       this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_issue.accountableUserIds.includes(u.id)
@@ -1025,12 +1025,12 @@ export default {
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
-        if (this.DV_issue.userIds.length) {
-          for (let u_id of this.DV_issue.userIds) {
-            formData.append("issue[user_ids][]", u_id);
+        if (this.DV_issue.responsibleUserIds.length) {
+          for (let u_id of this.DV_issue.responsibleUserIds) {
+            formData.append("responsible_user_ids[]", u_id);
           }
         } else {
-          formData.append("issue[user_ids][]", []);
+          formData.append("responsible_user_ids[]", []);
         }
 
 
@@ -1348,27 +1348,27 @@ export default {
     },
 
     //RACI USERS HERE awaiting backend work
-    issueUsers: {
+  responsibleUsers: {
       handler: function (value) {
-        if (value) this.DV_issue.userIds = _.uniq(_.map(value, "id"));
+        if (value) this.DV_issue.responsibleUserIds = [value.id]
       },
       deep: true,
     },
-//  accountableIssueUsers: {
-     // handler: function(value) {
-     //  if (value) this.DV_issue.accountableUserIds = [value.id]
-      //     }, deep: true
-      //   },
-  // consultedIssueUsers: {
-  //   handler: function(value) {
-  //     if (value) this.DV_issue.consultedUserIds = _.uniq(_.map(value, 'id'))
-   //   }, deep: true
-      // },
-//   informedIssueUsers: {
-  //   handler: function(value) {
-  //     if (value) this.DV_issue.informedUserIds = _.uniq(_.map(value, 'id'))
-  //   }, deep: true
-      // },
+  accountableIssueUsers: {
+     handler: function(value) {
+      if (value) this.DV_issue.accountableUserIds = [value.id]
+          }, deep: true
+        },
+  consultedIssueUsers: {
+    handler: function(value) {
+      if (value) this.DV_issue.consultedUserIds = _.uniq(_.map(value, 'id'))
+     }, deep: true
+      },
+  informedIssueUsers: {
+    handler: function(value) {
+      if (value) this.DV_issue.informedUserIds = _.uniq(_.map(value, 'id'))
+    }, deep: true
+      },
     relatedIssues: {
       handler: function (value) {
         if (value) this.DV_issue.subIssueIds = _.uniq(_.map(value, "id"));

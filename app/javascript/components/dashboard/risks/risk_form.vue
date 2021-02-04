@@ -408,15 +408,20 @@
                   <div class="form-group mx-1 mb-0">
                   <label class="font-sm">Probability Description:</label>                  
                   <textarea                  
+                    v-validate="'required'"
                     class="form-control"
-                    disabled             
+                    placeholder="Risk Probability description"
+                    v-model="DV_risk.probabilityDescription"
                     rows="3"
-                    :readonly="!_isallowed('write')"                 
+                    :readonly="!_isallowed('write')"
+                    data-cy="probability_description"
+                    name="probability_description"
+                    :class="{'form-control': true, 'error': errors.has('probability_description') }"            
                   
                   />
-                  <!-- <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
-                    {{errors.first('impact_description')}}
-                  </div> -->
+                  <div v-show="errors.has('probability_description')" class="text-danger" data-cy="probability_description_error">
+                    {{errors.first('probability_description')}}
+                  </div>
                 </div> 
                 <div class="form-group mx-1">
                   <label class="font-sm mb-0">*Impact Description:</label>                  
@@ -895,7 +900,7 @@
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
           <label class="font-sm mb-0">Responsible:</label>
-          <multiselect
+          <multiselect         
             v-model="responsibleUsers"        
             track-by="id"
             label="fullName"
@@ -1099,7 +1104,8 @@
           facilityProjectId: '',
           text: '',
           riskDescription: '',
-          impactDescription: '',            
+          impactDescription: '',   
+          probabilityDescription: '',            
           riskApproach: 'avoid',         
           riskApproachDescription: '',
           riskTypeId: '',
@@ -1159,11 +1165,11 @@
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
-        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
+        // this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
         // debugger;
-        this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
-        this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
-        this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
+        // this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
+        // this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
+        // this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -1230,6 +1236,7 @@
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
+          formData.append('risk[probability_description]', this.DV_risk.probabilityDescription)
           formData.append('risk[probability_name]', this.selectedRiskPossibility.name)
           formData.append('risk[probability]', this.selectedRiskPossibility.id)
           formData.append('risk[impact_level_name]', this.selectedRiskImpactLevel.name)
@@ -1477,6 +1484,7 @@
           this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
+          this.exists(this.DV_risk.probabilityDescription) &&
           this.exists(this.selectedRiskPossibility.id) &&
           this.exists(this.selectedRiskImpactLevel.id) &&
           this.exists(this.selectedRiskPossibility.id) &&

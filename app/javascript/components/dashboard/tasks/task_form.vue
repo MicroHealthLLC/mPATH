@@ -465,7 +465,7 @@
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
           <label class="font-sm mb-0">Responsible:</label>
           <multiselect
-            v-model="taskUsers"      
+            v-model="responsibleUsers"      
             track-by="id"
             label="fullName"
             placeholder="Select Responsible User"
@@ -599,7 +599,7 @@
         selectedFacilityProject: null,
         selectedTaskType: null,
         selectedTaskStage: null,
-        taskUsers: [],
+        responsibleUsers: [],
         accountableTaskUsers:[],
         consultedTaskUsers:[],
         informedTaskUsers:[],
@@ -674,7 +674,7 @@
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',      
-          userIds: [],
+          responsibleUserIds: [],
           accountableUserIds:[],
           consultedUserIds:[],
           informedUserIds:[],
@@ -720,10 +720,10 @@
          // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
-        // this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.accountableUserIds.includes(u.id))
-        // this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.consultedUserIds.includes(u.id))
-        // this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.informedUserIds.includes(u.id))       
+        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_task.responsibleUserIds.includes(u.id))
+        this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.accountableUserIds.includes(u.id))
+        this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.consultedUserIds.includes(u.id))
+        this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.informedUserIds.includes(u.id))       
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
@@ -797,13 +797,13 @@
      //Responsible USer Id
 
 
-     if (this.DV_task.userIds.length) {
-            for (let u_id of this.DV_task.userIds) {
-              formData.append('task[user_ids][]', u_id)
+     if (this.DV_task.responsibleUserIds.length) {
+            for (let u_id of this.DV_task.responsibleUserIds) {
+              formData.append('responsible_user_ids[]', u_id)
             }
           }
           else {
-            formData.append('task[user_ids][]', [])
+            formData.append('responsible_user_ids[]', [])
           }
 
       // Accountable UserId
@@ -1078,26 +1078,26 @@
       },
 
   // RACI USERS HERE awaiting backend work
-      taskUsers: {
+    responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.userIds = _.uniq(_.map(value, 'id'))
+          if (value) this.DV_task.responsibleUserIds = [value.id]
         }, deep: true
       },
-   //  accountableTaskUsers: {
-    //     handler: function(value) {
-    //       if (value) this.DV_task.accountableUserIds = [value.id]
-    //     }, deep: true
-    //   },
-      //   consultedTaskUsers: {
-      //   handler: function(value) {
-      //     if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
-      //   }, deep: true
-      // },
-      // informedTaskUsers: {
-      //   handler: function(value) {
-      //     if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
-      //   }, deep: true
-      // },
+    accountableTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.accountableUserIds = [value.id]
+        }, deep: true
+      },
+        consultedTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      informedTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
       relatedIssues: {
         handler: function(value) {
           if (value) this.DV_task.subIssueIds = _.uniq(_.map(value, 'id'))
