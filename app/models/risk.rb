@@ -88,7 +88,7 @@ class Risk < ApplicationRecord
     resource_users = self.risk_users.where(user_id: users.map(&:id) )
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
-    counsulted_user_ids = resource_users.map{|ru| ru.user_id if ru.counsulted? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
 
     sub_tasks = self.sub_tasks
@@ -120,7 +120,7 @@ class Risk < ApplicationRecord
       # Add accountable users
       accountable_user_ids: accountable_user_ids,
       responsible_user_ids: responsible_user_ids,
-      counsulted_user_ids: counsulted_user_ids,
+      consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
       notes: notes.as_json,

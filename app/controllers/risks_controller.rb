@@ -28,9 +28,9 @@ class RisksController < AuthenticatedController
       end
     end
 
-    if params[:counsulted_user_ids].present?
-      params[:counsulted_user_ids].each do |uid|
-        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'counsulted')
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'consulted')
       end
     end
 
