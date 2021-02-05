@@ -57,6 +57,10 @@ export default new Vuex.Store({
 
     currentProject: null,
     projectUsers: new Array,
+    accountableUsers: new Array,
+    consultedUsers: new Array,
+    informedUsers: new Array,
+  
     currentFacility: null,
     currentFacilityGroup: null,
     mapFilters: new Array,
@@ -177,6 +181,10 @@ export default new Vuex.Store({
 
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
+    setAccountableUsers: (state, users) => state.accountableUsers = users,
+    setConsultedUsers: (state, consulted) => state.consultedUsers = consulted,
+    setInformedUsers: (state, informed) => state.informedUsers = informed,
+
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
     setMapFilters: (state, filters) => state.mapFilters = filters,
@@ -707,7 +715,14 @@ export default new Vuex.Store({
 
     currentProject: state => state.currentProject,
     projectUsers: state => state.projectUsers,
+    accountableUsers: state => state.accountableUsers,
+    consultedUsers: state => state.consultedUsers,
+    informedUsers: state => state.informedUsers,
     activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
+    accountableProjectUsers: state => _.filter(state.accountableUsers, u => u.status == "active"),  
+    consultedProjectUsers: state => _.filter(state.consultedUsers, u => u.status == "active"),
+    informedProjectUsers: state => _.filter(state.informedUsers, u => u.status == "active"),
+  
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
@@ -1464,6 +1479,9 @@ export default new Vuex.Store({
             commit('setCurrentProject', res.data.project)
             commit('setFacilityGroups', res.data.project.facilityGroups)
             commit('setProjectUsers', res.data.project.users)
+            commit('setAccountableUsers', res.data.project.accountableUsers)
+            commit('setConsultedUsers', res.data.project.consulted)
+            commit('setInformedUsers', res.data.project.informed)            
             commit('setStatuses', res.data.project.statuses)
             commit('setTaskTypes', res.data.project.taskTypes)            
             commit('setTaskStages', res.data.project.taskStages)

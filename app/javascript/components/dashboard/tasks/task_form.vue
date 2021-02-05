@@ -31,7 +31,7 @@
           >
           Close
         </button>
-        <div class="btn-group">
+        <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
           class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
@@ -48,7 +48,7 @@
           <font-awesome-icon icon="plus-circle" />
           Updates
         </button>
-        </div>        
+        </div>         -->
         <button
           v-if="_isallowed('delete') && DV_task.id"
           @click.prevent="deleteTask"
@@ -59,36 +59,50 @@
           Delete
         </button>
       </div>
-     <div class="paperLook formTitle">
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
+          
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      
+      </div>
+    
+     <div class="formTitle pt-1">
       <div
         v-if="showErrors"
         class="text-danger mb-3"
         >
         Please fill the required fields before submitting
       </div>
-      <div class="form-group mx-4">
-        <label class="font-sm"><h5>*Task Name:</h5></label>
+
+
+<!-- Tabbed sections begin here -->
+
+  <!-- TASK INFO TAB #1 -->
+  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
+        
+    <div class="form-group pt-3 mx-4">
+        <label class="font-sm">*Task Name:</label>
             <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
               <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
             </span>
-        <input
-          name="Name"
-          v-validate="'required'"
-          type="text"
-          class="form-control form-control-sm"
-          v-model="DV_task.text"
-          placeholder="Task Name"
-          :readonly="!_isallowed('write')"
-          :class="{'form-control': true, 'error': errors.has('Name') }"
-          data-cy="task_name"
-        />
+            <input
+              name="Name"
+              v-validate="'required'"
+              type="text"
+              class="form-control form-control-sm"
+              v-model="DV_task.text"
+              placeholder="Task Name"
+              :readonly="!_isallowed('write')"
+              :class="{'form-control': true, 'error': errors.has('Name') }"
+              data-cy="task_name"
+            />
         <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
       </div>
-       <div class="form-group mx-4">
+
+        <div class="form-group mx-4">
         <label class="font-sm">Description:</label>
         <textarea
           class="form-control"
@@ -100,7 +114,9 @@
         />
       </div>
 
-      <div class="simple-select form-group mx-4">
+  <!-- Row begins -->
+       <div  class="w-100 d-flex mb-0 form-group">
+         <div class="simple-select form-group w-100 ml-4">
         <label class="font-sm">*Facility:</label>
         <multiselect
           v-model="selectedFacilityProject"
@@ -122,8 +138,7 @@
           </template>
         </multiselect>
       </div>
-
-      <div class="simple-select form-group mx-4">
+      <div class="simple-select form-group w-100 mx-2">
         <label class="font-sm">*Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
@@ -145,7 +160,7 @@
           </template>
         </multiselect>
       </div>
-      <div class="simple-select form-group mx-4">
+      <div class="simple-select w-100 form-group mr-4">
         <label class="font-sm">Stage:</label>
         <multiselect
           v-model="selectedTaskStage"
@@ -166,7 +181,9 @@
           </template>
         </multiselect>
       </div>
-      <div class="form-row mx-4">
+    </div>
+    <!-- Row ends -->
+    <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
           <label class="font-sm">*Start Date:</label>
           <v2-date-picker
@@ -203,6 +220,7 @@
           </div>
         </div>
       </div>
+
       <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
@@ -226,19 +244,15 @@
           </template>
         </multiselect>
       </div>
-      <div class="form-group mx-4">
-        <label class="font-sm mb-0">Progress: (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate" :disabled="!_isallowed('write')" :readonly="!_isallowed('write')"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <vue-slide-bar
-          v-model="DV_task.progress"
-          :line-height="8"      
-          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :draggable="_isallowed('write') && !DV_task.autoCalculate"
-        ></vue-slide-bar>
-      </div>
-      <div class="form-group mx-4">
+      <!-- closing div for tab1 -->
+</div>
+
+
+<!-- CHECKLIST TAB #2-->
+
+<div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+      
+      <div class="form-group pt-3 mx-4">
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
           <i class="fas fa-plus-circle" ></i>
@@ -304,8 +318,15 @@
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
       </div>
+ <!-- closing div for tab2 -->
+</div>
+
+
+   <!-- FILES TAB # 3-->
+<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+
       <div class="mx-4">
-        <div class="input-group mb-2">
+        <div class="input-group pt-3 mb-2">
           <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
             <div class="input-group-prepend">
               <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
@@ -328,7 +349,7 @@
           </div>
         </div>
       </div>
-     <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div>
+
       <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
         <attachment-input
@@ -336,8 +357,14 @@
           :show-label="true"
         ></attachment-input>
       </div>
+<!-- closing div for tab3 -->
+</div>
 
-      <div class="form-group user-select mx-4">
+
+ <!-- RELATED TAB #4 -->  
+<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+           
+      <div class="form-group user-select pt-3 mx-4">
         <label class="font-sm mb-0">Related Tasks:</label>
         <multiselect
           v-model="relatedTasks"
@@ -382,8 +409,7 @@
           </template>
         </multiselect>
       </div>
-
-      <div class="form-group user-select mx-4">
+        <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Related Risks:</label>
         <multiselect
           v-model="relatedRisks"
@@ -406,9 +432,34 @@
         </multiselect>
       </div>
 
-      <div class="form-group mx-4 paginated-updates">
-        <hr class="my-4"/>
-        <label class="font-sm mb-2">Updates:</label>
+        
+    <!-- closing div for tab4 -->
+ </div>
+
+
+  <!-- UPDATE TAB 5 -->
+  <div v-if="currentTab == 'tab5'" class="paperLookTab tab5">       
+     
+      <div class="form-group pt-3 mx-4">
+        <label class="font-sm mb-0">Progress: (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"      
+          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
+          :draggable="_isallowed('write') && !DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>      
+    
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Updates:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
@@ -423,11 +474,17 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
-      </div>         
+      </div>       
      </div>
+     <!-- closing div for tab5 -->
+  </div>
+     <!-- <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div> -->
+      
+
+      
     
      <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
-       <div ref="addUpdates" class="pt-0 mt-0"> </div>
+       <!-- <div ref="addUpdates" class="pt-0 mt-0"> </div> -->
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
   </div>
@@ -436,6 +493,7 @@
 <script>
   import axios from 'axios'
   import Draggable from "vuedraggable"
+  import CustomTabs from './../../shared/custom-tabs'
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
@@ -446,7 +504,7 @@
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
-      AttachmentInput, Draggable
+      AttachmentInput, Draggable, CustomTabs
     },
     data() {
       return {
@@ -463,7 +521,37 @@
         _ismounted: false,
         showErrors: false,
         loading: true,
-        movingSlot: ''
+        movingSlot: '',
+        currentTab: 'tab1',
+        tabs: [
+          {
+            label: 'TASK INFO',
+            key: 'tab1',
+            closable: false
+          },
+          {
+            label: 'CHECKLIST',
+            key: 'tab2',
+            closable: false
+          },
+          {
+            label: 'FILES',
+            key: 'tab3',
+            closable: false
+          },
+           {
+            label: 'RELATED',
+            key: 'tab4',
+            closable: false,     
+                      
+          },          
+           {
+            label: 'UPDATES',
+            key: 'tab5',
+            closable: false,     
+                      
+          },          
+        ]
       }
     },
     mounted() {
@@ -517,6 +605,9 @@
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
+      },
+      onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'tab1'
       },
       handleEnd(e, checklists){
         var cc = this.DV_task.checklists
@@ -923,7 +1014,7 @@
     z-index: 100;
     width: 100%;
     position: absolute;
-    background-color: #fff;
+    background-color: #ededed;
   }
   .form-control.error {
     border-color: #E84444;
@@ -951,9 +1042,6 @@
   ul {
     list-style-type: none;
     padding: 0;
-  }
- .formTitle {
-    padding-top: 25px;
   }
   .paperLook {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
@@ -1038,4 +1126,10 @@
   .disabled {
     opacity: 0.6;
   }
+  .custom-tab {
+    width: min-content;
+    background-color: #fafafa;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+
 </style>

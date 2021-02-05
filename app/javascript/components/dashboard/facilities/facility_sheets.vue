@@ -132,7 +132,7 @@
           <el-card class="box-card" style="background-color: #fafafa">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Responsible</h5>               
+                 <h5 class="d-inline">Contact</h5>               
                  <hr class="mb-0 pb-0">
               </div>             
             </div>
@@ -864,6 +864,8 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
   }
   .custom-tab {
     background-color: #ededed !important;
+    width: auto;
+    text-transform: uppercase;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .apply-btn, .red, .orange, .green, .grey, .grey2, .yellow {
