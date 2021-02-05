@@ -134,6 +134,72 @@ class Risk < ApplicationRecord
     ).as_json
   end
 
+  def assign_users(params)
+    accountable_resource_users = []
+    responsible_resource_users = []
+    consulted_resource_users = []
+    informed_resource_users = []
+
+    resource = self
+    resource_users = resource.risk_users
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
+    users_to_delete = []
+
+    if params[:accountable_user_ids].present?
+      params[:accountable_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !accountable_user_ids.include?(uid.to_i)
+          accountable_resource_users << RiskUser.new(user_id: uid, risk_id: resource.id, user_type: 'accountable')
+        end
+      end
+      users_to_delete += accountable_user_ids - params[:accountable_user_ids].map(&:to_i)
+    end
+
+    if params[:responsible_user_ids].present?
+      params[:responsible_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !responsible_user_ids.include?(uid.to_i)
+          responsible_resource_users << RiskUser.new(user_id: uid, risk_id: resource.id, user_type: 'responsible')
+        end
+      end
+      users_to_delete += responsible_user_ids - params[:responsible_user_ids].map(&:to_i)
+    end
+
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !consulted_user_ids.include?(uid.to_i)
+          consulted_resource_users << RiskUser.new(user_id: uid, risk_id: resource.id, user_type: 'consulted')
+        end
+      end
+      users_to_delete += consulted_user_ids - params[:consulted_user_ids].map(&:to_i)
+    end
+
+    if params[:informed_user_ids].present?
+      params[:informed_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !informed_user_ids.include?(uid.to_i)
+          informed_resource_users << RiskUser.new(user_id: uid, risk_id: resource.id, user_type: 'informed')
+        end
+      end
+      users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
+    end
+    
+    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    
+    if users_to_delete.any?
+      resource_users.where(user_id: users_to_delete).destroy_all
+    end
+
+    if records_to_import.any?
+      RiskUser.import(records_to_import)
+    end
+  end
+
   def manipulate_files(params)
     return unless params[:risk][:risk_files].present?
     file_blobs = JSON.parse(params[:risk][:risk_files])

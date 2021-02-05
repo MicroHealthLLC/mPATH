@@ -103,13 +103,13 @@
         
         <div  class="w-100 d-flex mb-0 form-group">
         <div class="simple-select w-100 form-group ml-4">
-          <label class="font-sm">*Facility:</label>
+          <label class="font-sm">*Project:</label>
           <multiselect
             v-model="selectedFacilityProject"
             v-validate="'required'"
             track-by="id"
             label="name"
-            placeholder="Select Facility"
+            placeholder="Select Project"
             :options="getFacilityProjectOptions"
             :searchable="false"
             select-label="Select"
@@ -1677,12 +1677,12 @@
 // RACI USERS HERE awaiting backend work
    responsibleUsers: {
         handler: function(value) {
-          if (value && value.id) this.DV_risk.responsibleUserIds = [value.id]
+          if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }, deep: true
       },
     accountableRiskUsers: {
           handler: function(value) {
-            if (value && value.id) this.DV_risk.accountableUserIds = [value.id]
+            if (value) this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
           }, deep: true
         },
     consultedRiskUsers: {

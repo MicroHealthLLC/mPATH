@@ -131,13 +131,13 @@
  <!-- Row begins -->
      <div  class="w-100 d-flex mb-0 form-group">
         <div class="simple-select form-group w-100 ml-4">
-          <label class="font-sm">*Facility:</label>
+          <label class="font-sm">*Project:</label>
           <multiselect
             v-model="selectedFacilityProject"
             v-validate="'required'"
             track-by="id"
             label="name"
-            placeholder="Select Facility"
+            placeholder="Select Project"
             :options="getFacilityProjectOptions"
             :searchable="false"
             select-label="Select"
@@ -774,6 +774,7 @@ export default {
       selectedIssueSeverity: null,
       selectedIssueStage: null,
       issueUsers: [],
+      responsibleUsers: [],
       accountableIssueUsers:[],
       consultedIssueUsers:[],
       informedIssueUsers:[],
@@ -891,9 +892,10 @@ export default {
       }
     },
     loadIssue(issue) {
+
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
-      debugger;
+
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id) );
       this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id) );
       this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.consultedUserIds.includes(u.id) );
@@ -993,24 +995,21 @@ export default {
         formData.append("issue[issue_type_id]", this.DV_issue.issueTypeId);
         formData.append("issue[task_type_id]", this.DV_issue.taskTypeId);
         formData.append('issue[facility_project_id]', this.DV_issue.facilityProjectId)
-        formData.append(
-          "issue[issue_severity_id]",
-          this.DV_issue.issueSeverityId
-        );
+        formData.append("issue[issue_severity_id]",this.DV_issue.issueSeverityId);
         formData.append("issue[issue_stage_id]", this.DV_issue.issueStageId);
         formData.append("issue[progress]", this.DV_issue.progress);
         formData.append("issue[description]", this.DV_issue.description);
         formData.append("issue[auto_calculate]", this.DV_issue.autoCalculate);
-        formData.append(
-          "issue[destroy_file_ids]",
-          _.map(this.destroyedFiles, "id")
-        );
+        formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
 
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
         if (this.DV_issue.responsibleUserIds.length) {
+          // console.log("this.DV_issue.responsibleUserIds.length")
+          // console.log(this.DV_issue.responsibleUserIds.length)
+          // console.log(this.DV_issue.responsibleUserIds)
           for (let u_id of this.DV_issue.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
@@ -1022,6 +1021,9 @@ export default {
           // Accountable UserId
 
          if (this.DV_issue.accountableUserIds.length) {
+          // console.log("this.DV_issue.responsibleUserIds.length")
+          // console.log(this.DV_issue.accountableUserIds.length)
+          // console.log(this.DV_issue.accountableUserIds)
             for (let u_id of this.DV_issue.accountableUserIds) {
               formData.append('accountable_user_ids[]', u_id)
             }
@@ -1033,6 +1035,9 @@ export default {
           // Consulted UserId
           
           if (this.DV_issue.consultedUserIds.length) {
+            // console.log("this.DV_issue.responsibleUserIds.length")
+            // console.log(this.DV_issue.consultedUserIds.length)
+            // console.log(this.DV_issue.consultedUserIds)
             for (let u_id of this.DV_issue.consultedUserIds) {
               formData.append('consulted_user_ids[]', u_id)
             }
@@ -1044,6 +1049,9 @@ export default {
           // Informed UserId
           
           if (this.DV_issue.informedUserIds.length) {
+            // console.log("this.DV_issue.responsibleUserIds.length")
+            // console.log(this.DV_issue.informedUserIds.length)
+            // console.log(this.DV_issue.informedUserIds)
             for (let u_id of this.DV_issue.informedUserIds) {
               formData.append('informed_user_ids[]', u_id)
             }
@@ -1335,13 +1343,13 @@ export default {
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
-        if (value) this.DV_issue.responsibleUserIds = [value.id]
+        if (value) this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
       },
       deep: true,
     },
   accountableIssueUsers: {
      handler: function(value) {
-      if (value) this.DV_issue.accountableUserIds = [value.id]
+      if (value) this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
           }, deep: true
         },
   consultedIssueUsers: {

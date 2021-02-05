@@ -117,13 +117,13 @@
   <!-- Row begins -->
        <div  class="w-100 d-flex mb-0 form-group">
          <div class="simple-select form-group w-100 ml-4">
-        <label class="font-sm">*Facility:</label>
+        <label class="font-sm">*Project:</label>
         <multiselect
           v-model="selectedFacilityProject"
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Select Facility"
+          placeholder="Select Project"
           :options="getFacilityProjectOptions"
           :searchable="false"
           select-label="Select"
@@ -511,7 +511,6 @@
         <div class="form-group user-select ml-4 mr-1 w-100">
           <label class="font-sm mb-0">Consulted:</label>
           <multiselect
-            disabled
             v-model="consultedTaskUsers"         
             track-by="id"
             label="fullName"
@@ -535,7 +534,6 @@
         <div class="form-group user-select ml-1 mr-4 w-100">
           <label class="font-sm mb-0">Informed:</label>
           <multiselect
-            disabled
             v-model="informedTaskUsers"        
             track-by="id"
             label="fullName"
@@ -1080,12 +1078,12 @@
   // RACI USERS HERE awaiting backend work
     responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.responsibleUserIds = [value.id]
+          if (value) this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }, deep: true
       },
     accountableTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.accountableUserIds = [value.id]
+          if (value) this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }, deep: true
       },
         consultedTaskUsers: {
