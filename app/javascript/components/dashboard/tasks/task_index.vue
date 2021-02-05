@@ -60,7 +60,7 @@
       </div>
       <div v-else>
         <br />
-        <h6 class="text-danger mt-4 ml-1">No tasks found..</h6>
+        <h6 class="text-danger mt-2 ml-1">No tasks found..</h6>
       </div>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>

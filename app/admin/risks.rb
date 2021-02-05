@@ -15,6 +15,7 @@ ActiveAdmin.register Risk do
       :text,
       :risk_description,
       :impact_description,
+      :probability_description,
       :probability,
       :impact_level,
       :risk_approach,
@@ -52,6 +53,7 @@ ActiveAdmin.register Risk do
     column "Risk Name", :text, sortable: false
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
+    column "Probability Description", :probability_description, sortable: false
     column "Identified Date", :start_date
     column "Risk Approach Due Date", :due_date
     column :progress
@@ -118,6 +120,7 @@ ActiveAdmin.register Risk do
       f.input :text, label: 'Risk Name'
       f.input :risk_description, label: 'Risk Description', input_html: { rows: 8 }
       f.input :impact_description, label: 'Impact Description', input_html: { rows: 8 }
+      f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
             fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
@@ -198,6 +201,7 @@ ActiveAdmin.register Risk do
   filter :risk_stage
   filter :risk_description
   filter :impact_description
+  filter :probability_description
   filter :probability
   filter :impact_level
   filter :risk_approach, as: :select, collection: Risk.risk_approaches

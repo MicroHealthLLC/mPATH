@@ -14,6 +14,7 @@ class TasksController < AuthenticatedController
   def update
     destroy_files_first if destroy_file_ids.present?
     @task.update(task_params)
+    @task.assign_users(params)
     # @task.create_or_update_task(params, current_user)
     render json: {task: @task.reload.to_json}
   end

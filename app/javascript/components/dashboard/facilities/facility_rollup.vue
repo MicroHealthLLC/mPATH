@@ -135,7 +135,7 @@
    
        </div>     
         <div class="col-md-6 pl-0" data-cy="date_set_filter">         
-          <el-card class="box-card" style="background-color:rgb(92,184,92);color:#fff">
+          <el-card class="box-card" style="background-color:#41b883;color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline">Filters</h5>               

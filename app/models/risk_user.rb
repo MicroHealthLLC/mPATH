@@ -16,8 +16,8 @@ class RiskUser < ApplicationRecord
     user_type == "responsible"
   end
 
-  def counsulted?
-    user_type == "counsulted"
+  def consulted?
+    user_type == "consulted"
   end
 
   def informed?
