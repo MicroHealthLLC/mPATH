@@ -642,7 +642,7 @@ Tab 1 Row Begins here -->
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
           <label class="font-sm mb-0">Responsible:</label>
           <multiselect
-            v-model="issueUsers"        
+            v-model="responsibleUsers"        
             track-by="id"
             label="fullName"
             placeholder="Select Responsible User"
@@ -689,7 +689,6 @@ Tab 1 Row Begins here -->
         <div class="form-group user-select ml-4 mr-1 w-100">
           <label class="font-sm mb-0">Consulted:</label>
           <multiselect
-            disabled
             v-model="consultedIssueUsers"         
             track-by="id"
             label="fullName"
@@ -713,7 +712,6 @@ Tab 1 Row Begins here -->
         <div class="form-group user-select ml-1 mr-4 w-100">
           <label class="font-sm mb-0">Informed:</label>
           <multiselect
-            disabled
             v-model="informedIssueUsers"        
             track-by="id"
             label="fullName"
@@ -735,13 +733,7 @@ Tab 1 Row Begins here -->
         </div>         
     </div>
   </div>
-      
 
-     
-       
-        
-
-        
       <h6 class="text-danger text-small pl-1 float-right">
         *Indicates required fields
       </h6>
@@ -901,19 +893,12 @@ export default {
     loadIssue(issue) {
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
       this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
-// RACI USERS awaiting backend work
-      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_issue.responsibleUserIds.includes(u.id)
-      );
-      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_issue.accountableUserIds.includes(u.id)
-      );
-      this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_issue.consultedUserIds.includes(u.id)
-      );
-      this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_issue.informedUserIds.includes(u.id)
-      );
+      debugger;
+      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id) );
+      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id) );
+      this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.consultedUserIds.includes(u.id) );
+      this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.informedUserIds.includes(u.id) );
+
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_issue.subIssueIds.includes(u.id)
       );

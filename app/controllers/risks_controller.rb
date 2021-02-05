@@ -14,34 +14,34 @@ class RisksController < AuthenticatedController
   def update
     destroy_files_first if destroy_file_ids.present?
     @risk.update(risk_params)
-    risk_users = []
+    resource_users = []
     
     if params[:accountable_user_ids].present?
       params[:accountable_user_ids].each do |uid|
-        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'accountable')
+        resource_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'accountable')
       end
     end
 
     if params[:responsible_user_ids].present?
       params[:responsible_user_ids].each do |uid|
-        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'responsible')
+        resource_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'responsible')
       end
     end
 
     if params[:consulted_user_ids].present?
       params[:consulted_user_ids].each do |uid|
-        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'consulted')
+        resource_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'consulted')
       end
     end
 
     if params[:informed_user_ids].present?
       params[:informed_user_ids].each do |uid|
-        risk_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'informed')
+        resource_users << RiskUser.new(user_id: uid, risk_id: @risk.id, user_type: 'informed')
       end
     end
-    if risk_users.any?
+    if resource_users.any?
       @risk.risk_users.destroy_all
-      RiskUser.import(risk_users)
+      RiskUser.import(resource_users)
     end
 
     render json: {risk: @risk.reload.to_json}

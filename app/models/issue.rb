@@ -32,6 +32,13 @@ class Issue < ApplicationRecord
 
     fp = self.facility_project
     users = self.users.active
+
+    resource_users = self.issue_users.where(user_id: users.map(&:id) )
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
@@ -51,6 +58,13 @@ class Issue < ApplicationRecord
       responsible_user_names: users.map(&:full_name).compact.join(", "),
       user_ids: users.map(&:id).compact.uniq,
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      
+      # Add accountable users
+      accountable_user_ids: accountable_user_ids,
+      responsible_user_ids: responsible_user_ids,
+      consulted_user_ids: consulted_user_ids,
+      informed_user_ids: informed_user_ids,
+
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),
@@ -179,6 +193,38 @@ class Issue < ApplicationRecord
     end
 
     issue
+  end
+
+  def assign_users(params)
+    resource_users = []
+    issue = self
+    if params[:accountable_user_ids].present?
+      params[:accountable_user_ids].each do |uid|
+        resource_users << IssueUser.new(user_id: uid, issue_id: issue.id, user_type: 'accountable')
+      end
+    end
+
+    if params[:responsible_user_ids].present?
+      params[:responsible_user_ids].each do |uid|
+        resource_users << IssueUser.new(user_id: uid, issue_id: issue.id, user_type: 'responsible')
+      end
+    end
+
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        resource_users << IssueUser.new(user_id: uid, issue_id: issue.id, user_type: 'consulted')
+      end
+    end
+
+    if params[:informed_user_ids].present?
+      params[:informed_user_ids].each do |uid|
+        resource_users << IssueUser.new(user_id: uid, issue_id: issue.id, user_type: 'informed')
+      end
+    end
+    if resource_users.any?
+      issue.issue_users.destroy_all
+      IssueUser.import(resource_users)
+    end
   end
 
   def manipulate_files(params)

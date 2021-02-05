@@ -1165,11 +1165,12 @@
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
-        // this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
-        // debugger;
-        // this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
-        // this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
-        // this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
+
+        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
+        this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
+        this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
+        this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
+
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
