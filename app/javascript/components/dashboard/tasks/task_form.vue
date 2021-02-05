@@ -31,6 +31,15 @@
           >
           Close
         </button>
+        <button
+          class="btn btn-sm sticky-btn btn-warning ml-2"
+          @click.prevent="createDuplicate"
+          data-cy="task_close_btn"
+          :load="log(task)"
+          v-if="DV_task.id"
+        >
+          Duplicate
+        </button>
         <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
@@ -117,7 +126,7 @@
   <!-- Row begins -->
        <div  class="w-100 d-flex mb-0 form-group">
          <div class="simple-select form-group w-100 ml-4">
-        <label class="font-sm">*Facility:</label>
+        <label class="font-sm">*Project:</label>
         <multiselect
           v-model="selectedFacilityProject"
           v-validate="'required'"
@@ -594,6 +603,8 @@
           notes: []
         }
       },
+      log(e){
+      },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         this.DV_task.checklists.push({text: '', checked: false})
@@ -672,6 +683,35 @@
       cancelSave() {
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
+      },
+      createDuplicate(){
+
+        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.DV_task.id}/create_duplicate.json`
+        let method = "POST"
+        let callback = "task-created"
+
+        this.loading = true
+        let formData = new FormData()
+        formData.append('id', this.DV_task.id)
+
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.$emit(callback, humps.camelizeKeys(response.data.task))
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
       },
       saveTask() {
         if (!this._isallowed('write')) return
