@@ -53,7 +53,8 @@ class Task < ApplicationRecord
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
-      sub_issue_ids: sub_issues.map(&:id)
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
 
@@ -77,6 +78,7 @@ class Task < ApplicationRecord
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
+      sub_risk_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,
@@ -102,6 +104,7 @@ class Task < ApplicationRecord
     user_ids = t_params.delete(:user_ids)
     sub_task_ids = t_params.delete(:sub_task_ids)
     sub_issue_ids = t_params.delete(:sub_issue_ids)
+    sub_risk_ids = t_params.delete(:sub_risk_ids)
     checklists_attributes = t_params.delete(:checklists_attributes)
     notes_attributes = t_params.delete(:notes_attributes)
 
@@ -128,18 +131,35 @@ class Task < ApplicationRecord
 
       if sub_task_ids && sub_task_ids.any?
         related_task_objs = []
+        related_task_objs2 = []
         sub_task_ids.each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: task.id, relatable_type: "Task", task_id: sid)
+          related_task_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Task", task_id: task.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedTask.import(related_task_objs2) if related_task_objs2.any?
       end
 
       if sub_issue_ids && sub_issue_ids.any?
         related_issue_objs = []
+        related_issue_objs2 = []
         sub_issue_ids.each do |sid|
           related_issue_objs << RelatedIssue.new(relatable_id: task.id, relatable_type: "Task", issue_id: sid)
+          related_issue_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Issue", task_id: task.id)
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
+      end
+      
+      if sub_risk_ids && sub_risk_ids.any?
+        related_risk_objs = []
+        related_risk_objs2 = []
+        sub_risk_ids.each do |sid|
+          related_risk_objs << RelatedRisk.new(relatable_id: task.id, relatable_type: "Task", risk_id: sid)
+          related_risk_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Risk", task_id: task.id)
+        end
+        RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
+        RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
       end
 
       if checklists_attributes.present?
