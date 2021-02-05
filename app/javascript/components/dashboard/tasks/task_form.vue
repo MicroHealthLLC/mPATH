@@ -31,6 +31,15 @@
           >
           Close
         </button>
+        <button
+          class="btn btn-sm sticky-btn btn-warning ml-2"
+          @click.prevent="createDuplicate"
+          data-cy="task_close_btn"
+          :load="log(task)"
+          v-if="DV_task.id"
+        >
+          Duplicate
+        </button>
         <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
@@ -409,6 +418,30 @@
           </template>
         </multiselect>
       </div>
+        <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+        
     <!-- closing div for tab4 -->
  </div>
 
@@ -554,13 +587,6 @@
         </div>         
     </div>
   </div>
-
-
-      
-  
-
-
-
      <!-- <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div> -->
       
 
@@ -603,6 +629,7 @@
         informedTaskUsers:[],
         relatedIssues: [],
         relatedTasks: [],
+        relatedRisks: [],
         _ismounted: false,
         showErrors: false,
         loading: true,
@@ -678,6 +705,7 @@
           informedUserIds:[],
           subTaskIds: [],
           subIssueIds: [],
+          subRiskIds: [],
           description: '',
           progress: 0,
           autoCalculate: true,
@@ -685,6 +713,8 @@
           checklists: [],
           notes: []
         }
+      },
+      log(e){
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -724,6 +754,8 @@
         this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.informedUserIds.includes(u.id))       
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
+        this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
+
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
@@ -766,6 +798,35 @@
       cancelSave() {
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
+      },
+      createDuplicate(){
+
+        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.DV_task.id}/create_duplicate.json`
+        let method = "POST"
+        let callback = "task-created"
+
+        this.loading = true
+        let formData = new FormData()
+        formData.append('id', this.DV_task.id)
+
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.$emit(callback, humps.camelizeKeys(response.data.task))
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
       },
       saveTask() {
         if (!this._isallowed('write')) return
@@ -857,6 +918,15 @@
           }
           else {
             formData.append('task[sub_issue_ids][]', [])
+          }
+
+          if (this.DV_task.subRiskIds.length) {
+            for (let u_id of this.DV_task.subRiskIds) {
+              formData.append('task[sub_risk_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('task[sub_risk_ids][]', [])
           }
 
           for (let i in this.DV_task.checklists) {
@@ -1003,6 +1073,7 @@
         'myActionsFilter',
         'currentTasks',
         'currentIssues',
+        'currentRisks',
         'managerView'
       ]),
       readyToSave() {
@@ -1026,6 +1097,9 @@
       },
       filteredTasks() {
         return _.filter(this.currentTasks, t => t.id !== this.DV_task.id)
+      },
+      filteredRisks() {
+        return _.filter(this.currentRisks, t => t.id !== this.DV_task.id)
       },
       filteredIssues() {
         return this.currentIssues
@@ -1106,6 +1180,11 @@
           if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
+      relatedRisks: {
+        handler: function(value) {
+          if (value) this.DV_task.subRiskIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
       selectedTaskType: {
         handler: function(value) {
           this.DV_task.taskTypeId = value ? value.id : null
@@ -1126,6 +1205,12 @@
         handler(value) {
           let ids = _.map(value, 'id')
           this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
+        }, deep: true
+      },
+      filteredRisks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
         }, deep: true
       },
       "filteredNotes.length"(value, previous) {

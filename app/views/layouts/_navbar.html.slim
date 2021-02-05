@@ -20,6 +20,9 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
             =link_to admin_root_path, class: "nav-link", data: { turbolinks: false, cy: 'admin_panel' } do
               | Admin Panel
         li.nav-item
+          =link_to "/Help/home.htm", class: "nav-link" do
+            | Help
+        li.nav-item
           =link_to profile_path, class: "nav-link" do
             | Welcome,  #{current_user.first_name}!
         li.nav-item
