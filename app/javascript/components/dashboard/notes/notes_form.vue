@@ -32,8 +32,8 @@
        <label class="font-sm"><h5>Note</h5></label>
         <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..." data-cy="note_details"></textarea>
 
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Facility:</label>
+        <div class="simple-select form-group mx-0">
+          <label class="font-sm">*Project:</label>
           <multiselect
             v-model="selectedFacilityProject"
             v-validate="'required'"

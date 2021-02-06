@@ -31,15 +31,18 @@
           >
           Close
         </button>
+        <div class="duplicate">
         <button
-          class="btn btn-sm sticky-btn btn-warning ml-2"
+          class="btn btn-sm sticky-btn btn-success ml-2"
           @click.prevent="createDuplicate"
           data-cy="task_close_btn"
           :load="log(task)"
           v-if="DV_task.id"
         >
+         <font-awesome-icon icon="copy" />
           Duplicate
         </button>
+        </div>
         <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
@@ -124,30 +127,8 @@
       </div>
 
   <!-- Row begins -->
-       <div  class="w-100 d-flex mb-0 form-group">
-         <div class="simple-select form-group w-100 ml-4">
-        <label class="font-sm">*Project:</label>
-        <multiselect
-          v-model="selectedFacilityProject"
-          v-validate="'required'"
-          track-by="id"
-          label="name"
-          placeholder="Select Project"
-          :options="getFacilityProjectOptions"
-          :searchable="false"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :disabled="!_isallowed('write')"
-          data-cy="facility_project_id"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.name}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
-      <div class="simple-select form-group w-100 mx-2">
+     <div  class="d-flex mb-0 mx-4 form-group">        
+      <div class="simple-select form-group w-100">
         <label class="font-sm">*Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
@@ -169,7 +150,7 @@
           </template>
         </multiselect>
       </div>
-      <div class="simple-select w-100 form-group mr-4">
+      <div class="simple-select w-100 form-group mx-1">
         <label class="font-sm">Stage:</label>
         <multiselect
           v-model="selectedTaskStage"
@@ -182,6 +163,28 @@
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write') || !!fixedStage"
           data-cy="task_stage"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+       <div class="simple-select form-group w-100">
+        <label class="font-sm">*Project:</label>
+        <multiselect
+          v-model="selectedFacilityProject"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Select Project"
+          :options="getFacilityProjectOptions"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          data-cy="facility_project_id"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -256,242 +259,7 @@
       <!-- closing div for tab1 -->
 </div>
 
-
-<!-- CHECKLIST TAB #2-->
-
-<div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
-      
-      <div class="form-group pt-3 mx-4">
-        <label class="font-sm">Checklists:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
-          <i class="fas fa-plus-circle" ></i>
-        </span>
-        <div v-if="filteredChecks.length > 0">
-        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-            <div class="form-control h-100">
-              <div class="row">
-                <div class="col justify-content-start">
-                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
-                </div>
-              </div>
-              <div class="row justify-content-end">             
-               <div class="simple-select form-group col mb-0">
-                <label class="font-sm">Assigned To:</label>
-                <multiselect
-                  v-model="check.user"
-                  track-by="id"
-                  label="fullName"
-                  placeholder="Search and select users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :disabled="!_isallowed('write') || !check.text"
-                  select-label="Select"
-                  deselect-label="Enter to remove"
-                  >
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.fullName}}</span>
-                    </div>
-                  </template>
-              </multiselect>
-             </div>
-               <div class="simple-select form-group col mb-0">
-                 <div class="float-right">
-                   <label class="font-sm dueDate">Due Date:</label>  
-                   <br/>                    
-                    <v2-date-picker                    
-                      v-model="check.dueDate"
-                      :value="check.dueDate" 
-                      :disabled="!_isallowed('write') || !check.text"
-                      @selected="updateCheckItem($event, 'dueDate', index)"
-                      :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
-                      placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"
-                      :disabled-date="disabledDateRange"
-                      :class="{ disabled: disabled }"          
-                    />
-                 </div>
-                </div>       
-               </div>
-            </div>             
-            <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
-              <i class="fas fa-times"></i>
-            </span>
-          </div>
-        </draggable>       
-        </div>
-        <p v-else class="text-danger font-sm">No checks..</p>
-      </div>
- <!-- closing div for tab2 -->
-</div>
-
-
-   <!-- FILES TAB # 3-->
-<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
-
-      <div class="mx-4">
-        <div class="input-group pt-3 mb-2">
-          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
-            <div class="input-group-prepend">
-              <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
-                <i class="fas fa-file-image"></i>
-              </div>
-            </div>
-            <input
-              readonly
-              type="text"
-              class="form-control form-control-sm mw-95"
-              :value="file.name || file.uri"
-            />
-            <div
-              :class="{'_disabled': loading || !_isallowed('write') }"
-              class="del-check clickable"
-              @click.prevent="deleteFile(file)"
-              >
-              <i class="fas fa-times"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="_isallowed('write')" class="form-group mx-4" >
-        <label class="font-sm">Files:</label>
-        <attachment-input
-          @input="addFile"
-          :show-label="true"
-        ></attachment-input>
-      </div>
-<!-- closing div for tab3 -->
-</div>
-
-
- <!-- RELATED TAB #4 -->  
-<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
-           
-      <div class="form-group user-select pt-3 mx-4">
-        <label class="font-sm mb-0">Related Tasks:</label>
-        <multiselect
-          v-model="relatedTasks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-tasks"
-          :options="filteredTasks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
-
-      <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Issues:</label>
-        <multiselect
-          v-model="relatedIssues"
-          track-by="id"
-          label="title"
-          placeholder="Search and select Related-issues"
-          :options="filteredIssues"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.title}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
-        <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Risks:</label>
-        <multiselect
-          v-model="relatedRisks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-risks"
-          :options="filteredRisks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
-
-        
-    <!-- closing div for tab4 -->
- </div>
-
-
-  <!-- UPDATE TAB 5 -->
-  <div v-if="currentTab == 'tab5'" class="paperLookTab tab5">       
-     
-      <div class="form-group pt-3 mx-4">
-        <label class="font-sm mb-0">Progress: (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center">
-            <input type="checkbox" 
-            v-model="DV_task.autoCalculate" 
-            :disabled="!_isallowed('write')" 
-            :readonly="!_isallowed('write')">
-            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <vue-slide-bar
-          v-model="DV_task.progress"
-          :line-height="8"      
-          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :draggable="_isallowed('write') && !DV_task.autoCalculate"
-        ></vue-slide-bar>
-      </div>      
-    
-     <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Updates:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
-          <i class="fas fa-plus-circle"></i>
-        </span>
-        <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
-        <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
-          <div v-for="note in paginated('filteredNotes')" class="form-group">
-            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
-              <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-            </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
-          </div>
-        </paginate>
-      </div>       
-     </div>
-     <!-- closing div for tab5 -->
-  </div>
-
-  <!-- TABBED OUT SECTION END HERE -->
-
-     <!-- ASSIGN USERS TAB # 6-->
-  <div v-if="currentTab == 'tab6'" class="paperLookTab tab6">
+  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
    
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
@@ -587,6 +355,241 @@
         </div>         
     </div>
   </div>
+
+<!-- CHECKLIST TAB #3-->
+
+<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+      
+      <div class="form-group pt-3 mx-4">
+        <label class="font-sm">Checklists:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
+          <i class="fas fa-plus-circle" ></i>
+        </span>
+        <div v-if="filteredChecks.length > 0">
+        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
+          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+            <div class="form-control h-100">
+              <div class="row">
+                <div class="col justify-content-start">
+                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
+                </div>
+              </div>
+              <div class="row justify-content-end">             
+               <div class="simple-select form-group col mb-0">
+                <label class="font-sm">Assigned To:</label>
+                <multiselect
+                  v-model="check.user"
+                  track-by="id"
+                  label="fullName"
+                  placeholder="Search and select users"
+                  :options="activeProjectUsers"
+                  :searchable="true"
+                  :disabled="!_isallowed('write') || !check.text"
+                  select-label="Select"
+                  deselect-label="Enter to remove"
+                  >
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.fullName}}</span>
+                    </div>
+                  </template>
+              </multiselect>
+             </div>
+               <div class="simple-select form-group col mb-0">
+                 <div class="float-right">
+                   <label class="font-sm dueDate">Due Date:</label>  
+                   <br/>                    
+                    <v2-date-picker                    
+                      v-model="check.dueDate"
+                      :value="check.dueDate" 
+                      :disabled="!_isallowed('write') || !check.text"
+                      @selected="updateCheckItem($event, 'dueDate', index)"
+                      :key="`dueDate_${index}`"
+                      value-type="YYYY-MM-DD"
+                      format="DD MMM YYYY"
+                      placeholder="DD MM YYYY"
+                      name="dueDate"
+                      class="w-100 vue2-datepicker d-flex ml-auto"
+                      :disabled-date="disabledDateRange"
+                      :class="{ disabled: disabled }"          
+                    />
+                 </div>
+                </div>       
+               </div>
+            </div>             
+            <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
+              <i class="fas fa-times"></i>
+            </span>
+          </div>
+        </draggable>       
+        </div>
+        <p v-else class="text-danger font-sm">No checks..</p>
+      </div>
+ <!-- closing div for tab2 -->
+</div>
+
+
+   <!-- FILES TAB # 4-->
+<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+
+      <div class="mx-4">
+        <div class="input-group pt-3 mb-2">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+            <div class="input-group-prepend">
+              <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                <i class="fas fa-file-image"></i>
+              </div>
+            </div>
+            <input
+              readonly
+              type="text"
+              class="form-control form-control-sm mw-95"
+              :value="file.name || file.uri"
+            />
+            <div
+              :class="{'_disabled': loading || !_isallowed('write') }"
+              class="del-check clickable"
+              @click.prevent="deleteFile(file)"
+              >
+              <i class="fas fa-times"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="_isallowed('write')" class="form-group mx-4" >
+        <label class="font-sm">Files:</label>
+        <attachment-input
+          @input="addFile"
+          :show-label="true"
+        ></attachment-input>
+      </div>
+<!-- closing div for tab3 -->
+</div>
+
+
+ <!-- RELATED TAB #5 -->  
+<div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
+           
+      <div class="form-group user-select pt-3 mx-4">
+        <label class="font-sm mb-0">Related Tasks:</label>
+        <multiselect
+          v-model="relatedTasks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-tasks"
+          :options="filteredTasks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Issues:</label>
+        <multiselect
+          v-model="relatedIssues"
+          track-by="id"
+          label="title"
+          placeholder="Search and select Related-issues"
+          :options="filteredIssues"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.title}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+        <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+        
+    <!-- closing div for tab4 -->
+ </div>
+
+
+  <!-- UPDATE TAB 6 -->
+  <div v-if="currentTab == 'tab6'" class="paperLookTab tab5">       
+     
+      <div class="form-group pt-3 mx-4">
+        <label class="font-sm mb-0">Progress: (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"      
+          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
+          :draggable="_isallowed('write') && !DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>      
+    
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Updates:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
+          <div v-for="note in paginated('filteredNotes')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
+              <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
+          </div>
+        </paginate>
+      </div>       
+     </div>
+     <!-- closing div for tab5 -->
+  </div>
+
+  <!-- TABBED OUT SECTION END HERE -->
+
+
      <!-- <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div> -->
       
 
@@ -641,33 +644,33 @@
             key: 'tab1',
             closable: false
           },
+           {
+            label: 'ASSIGNMENTS',
+            key: 'tab2',
+            closable: false,                       
+          },      
           {
             label: 'CHECKLIST',
-            key: 'tab2',
+            key: 'tab3',
             closable: false
           },
           {
             label: 'FILES',
-            key: 'tab3',
+            key: 'tab4',
             closable: false
           },
            {
             label: 'RELATED',
-            key: 'tab4',
+            key: 'tab5',
             closable: false,     
                       
           },          
            {
             label: 'UPDATES',
-            key: 'tab5',
+            key: 'tab6',
             closable: false,     
                       
-          },     
-          {
-            label: 'ASSIGN',
-            key: 'tab6',
-            closable: false,                       
-          },              
+          },                      
         ]
       }
     },
@@ -1331,7 +1334,7 @@
   .check-due-date {
     text-align: end;
   }
-  .btn-group{
+  .duplicate{
     position: absolute;
     top: 50%;
     left: 50%;

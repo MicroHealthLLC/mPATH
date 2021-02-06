@@ -101,30 +101,8 @@
           </div>
         </div>
         
-        <div  class="w-100 d-flex mb-0 form-group">
-        <div class="simple-select w-100 form-group ml-4">
-          <label class="font-sm">*Project:</label>
-          <multiselect
-            v-model="selectedFacilityProject"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Select Project"
-            :options="getFacilityProjectOptions"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :disabled="!_isallowed('write')"
-            data-cy="facility_project_id"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-         <div class="simple-select form-group w-100 mx-2">
+        <div  class="d-flex mb-0 form-group mx-4">
+         <div class="simple-select form-group w-100">
           <label class="font-sm">*Category:</label>
           <multiselect
             v-model="selectedTaskType"
@@ -150,7 +128,7 @@
             {{errors.first('Task Category')}}
           </div>
         </div>
-         <div class="simple-select form-group w-100 mr-4">
+         <div class="simple-select form-group w-100 mx-1">
           <label class="font-sm">Stage:</label>
           <multiselect
             v-model="selectedRiskStage"
@@ -171,7 +149,29 @@
             </template>
           </multiselect>
         </div>  
+                <div class="simple-select w-100 form-group">
+          <label class="font-sm">*Project:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Project"
+            :options="getFacilityProjectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
+       </div>
 
 
          <div class="form-row mx-4">
@@ -315,10 +315,113 @@
 </div>
    <!-- END RISK IDENTIFY TAB SECTION -->
 
+   <!-- BEGIN ASSIGN Tab 2 -->
+
+  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect         
+            v-model="responsibleUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
+          <multiselect
+            v-model="accountableRiskUsers"              
+            track-by="id"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect          
+            v-model="consultedRiskUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect           
+            v-model="informedRiskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"         
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>         
+    </div>
+  </div>
+      
+   <!-- END ASSIGN Tab 2-->
+
+
 
 <!-- BEGIN RISK PRIORITIZE TAB -->
 
-<div v-if="currentTab == 'tab2'" class="paperLookTab">
+<div v-if="currentTab == 'tab3'" class="paperLookTab">
          
 
          <div class="container-fluid pt-2 px-4">
@@ -664,7 +767,7 @@
 
 <!-- BEGIN RISK CONTROL TAB SECTION -->
 
-<div v-if="currentTab == 'tab3'" class="paperLookTab">
+<div v-if="currentTab == 'tab4'" class="paperLookTab">
         <div class="form-group pt-2 mx-4">        
           <label class="font-sm mb-0 mr-3">Progress: (in %)</label>
           <!-- <span class="ml-3"> -->
@@ -893,105 +996,7 @@
 
  </div>                     
 
-  <!-- ASSIGN USERS TAB # 4-->
-  <div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
 
-  <div class="form-group mb-0 pt-3 d-flex w-100">
-        <div class="form-group user-select ml-4 mr-1 w-100">
-          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-sm mb-0">Responsible:</label>
-          <multiselect         
-            v-model="responsibleUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Responsible User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label=""
-            :close-on-select="true"
-            :disabled="!_isallowed('write')"
-            data-cy="risk_owner"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>     
-        <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Accountable:</label>
-          <multiselect
-            v-model="accountableRiskUsers"              
-            track-by="id"
-            label="fullName"
-            placeholder="Select Accountable User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label=""
-            :close-on-select="true"
-              
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>             
-  </div> 
-  <div class="form-group  mt-0 d-flex w-100">
-        <div class="form-group user-select ml-4 mr-1 w-100">
-          <label class="font-sm mb-0">Consulted:</label>
-          <multiselect          
-            v-model="consultedRiskUsers"         
-            track-by="id"
-            label="fullName"
-            placeholder="Select Consulted Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label=""
-            :close-on-select="false"
-    
-            data-cy="risk_owner"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>     
-        <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Informed:</label>
-          <multiselect           
-            v-model="informedRiskUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Informed Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false"         
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>         
-    </div>
-  </div>
-      
 
 
 
@@ -1055,20 +1060,21 @@
             closable: false
           },
           {
-            label: 'PRIORITIZE',
+            label: 'ASSIGN',
             key: 'tab2',
+            closable: false,                      
+          },        
+          {
+            label: 'PRIORITIZE',
+            key: 'tab3',
             closable: false
           },
           {
             label: 'CONTROL',
-            key: 'tab3',
+            key: 'tab4',
             closable: false
           },
-           {
-            label: 'ASSIGN',
-            key: 'tab4',
-            closable: false,                      
-          },        
+           
            {
             label: 'DISPOSITION',
             key: 'tab5',
