@@ -129,31 +129,38 @@
         </div>
 
  <!-- Row begins -->
-     <div  class="w-100 d-flex mb-0 form-group">
-        <div class="simple-select form-group w-100 ml-4">
-          <label class="font-sm">*Project:</label>
+     <div  class="d-flex mb-0 mx-4 form-group">
+       <div class="simple-select w-100 form-group">
+          <label class="font-sm">Category:</label>
           <multiselect
-            v-model="selectedFacilityProject"
-            v-validate="'required'"
+            v-model="selectedTaskType"
             track-by="id"
             label="name"
-            placeholder="Select Project"
-            :options="getFacilityProjectOptions"
+            placeholder="Task category"
+            :options="taskTypes"
             :searchable="false"
             select-label="Select"
             deselect-label="Enter to remove"
             :disabled="!_isallowed('write')"
-            data-cy="facility_project_id"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
+            :class="{ error: errors.has('Task Category') }"
+            data-cy="task_type"
+          >
+            <template slot="singleLabel" slot-scope="{ option }">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+                <span class="select__tag-name">{{ option.name }}</span>
               </div>
             </template>
           </multiselect>
-        </div>
+          <div
+            v-show="errors.has('Task Type')"
+            class="text-danger"
+            data-cy="task_type_error"
+          >
+            {{ errors.first("Task Type") }}
+          </div>
+        </div>        
 
-        <div class="simple-select form-group w-100 mx-2">
+        <div class="simple-select form-group w-100 mx-1">
           <label class="font-sm">*Issue Type:</label>
           <multiselect
             v-model="selectedIssueType"
@@ -183,34 +190,27 @@
             {{ errors.first("Issue Type") }}
           </div>
         </div>
-        <div class="simple-select w-100 form-group mr-4">
-          <label class="font-sm">Category:</label>
+    <div class="simple-select form-group w-100">
+          <label class="font-sm">*Project:</label>
           <multiselect
-            v-model="selectedTaskType"
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
             track-by="id"
             label="name"
-            placeholder="Task category"
-            :options="taskTypes"
+            placeholder="Select Project"
+            :options="getFacilityProjectOptions"
             :searchable="false"
             select-label="Select"
             deselect-label="Enter to remove"
             :disabled="!_isallowed('write')"
-            :class="{ error: errors.has('Task Category') }"
-            data-cy="task_type"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
+                <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
           </multiselect>
-          <div
-            v-show="errors.has('Task Type')"
-            class="text-danger"
-            data-cy="task_type_error"
-          >
-            {{ errors.first("Task Type") }}
-          </div>
         </div>
      </div>
     <!-- Tab 1 Row ends here -->
@@ -352,10 +352,110 @@ Tab 1 Row Begins here -->
 </div>
 
 
+ <!-- ASSIGN USERS TAB # 2-->
+  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+   
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect
+            v-model="responsibleUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="issue_user"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
+          <multiselect
+            v-model="accountableIssueUsers"              
+            track-by="id"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="true"
+              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect
+            v-model="consultedIssueUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect
+            v-model="informedIssueUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false" 
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>         
+    </div>
+  </div>
 
 
-  <!-- CHECKLIST TAB #2 -->
-<div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+
+  <!-- CHECKLIST TAB #3 -->
+<div v-if="currentTab == 'tab3'" class="paperLookTab tab2">
  <div class="form-group mx-4 pt-3">
           <label class="font-sm">Checklists:</label>
           <span
@@ -458,14 +558,14 @@ Tab 1 Row Begins here -->
           </div>
           <p v-else class="text-danger font-sm">No checks..</p>
         </div>
-  <!-- closing div for tab2 -->
+  <!-- closing div for tab3 -->
 </div>
 
 
 
 
-<!-- FILES TAB # 3-->
-<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+<!-- FILES TAB # 4-->
+<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
 <div class="mx-4 pt-3">
           <div class="input-group mb-2">
             <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
@@ -502,14 +602,14 @@ Tab 1 Row Begins here -->
             :show-label="true"
           ></attachment-input>
         </div>
-          <!-- closing div for tab3 -->
+          <!-- closing div for tab4 -->
 </div>
 
 
 
 
- <!-- RELATED TAB #4 -->  
-<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+ <!-- RELATED TAB #5 -->  
+<div v-if="currentTab == 'tab5'" class="paperLookTab tab4">
 
 
         <div class="form-group user-select pt-3 mx-4">
@@ -562,8 +662,8 @@ Tab 1 Row Begins here -->
 
 
 
- <!-- UPDATE TAB 5 -->
-<div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
+ <!-- UPDATE TAB 6 -->
+<div v-if="currentTab == 'tab6'" class="paperLookTab tab5">
 
    <div class="form-group pt-3 mx-4">
           <label class="font-sm mb-0">Progress: (in %)</label>
@@ -634,105 +734,8 @@ Tab 1 Row Begins here -->
           <!-- closing div for tab5 -->
 </div>
 
- <!-- ASSIGN USERS TAB # 6-->
-  <div v-if="currentTab == 'tab6'" class="paperLookTab tab6">
-   
-  <div class="form-group mb-0 pt-3 d-flex w-100">
-        <div class="form-group user-select ml-4 mr-1 w-100">
-          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-sm mb-0">Responsible:</label>
-          <multiselect
-            v-model="responsibleUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Responsible User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="true"
-            :disabled="!_isallowed('write')"
-            data-cy="issue_user"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>     
-        <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Accountable:</label>
-          <multiselect
-            v-model="accountableIssueUsers"              
-            track-by="id"
-            label="fullName"
-            placeholder="Select Accountable User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="true"
-              
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>             
-  </div> 
-  <div class="form-group  mt-0 d-flex w-100">
-        <div class="form-group user-select ml-4 mr-1 w-100">
-          <label class="font-sm mb-0">Consulted:</label>
-          <multiselect
-            v-model="consultedIssueUsers"         
-            track-by="id"
-            label="fullName"
-            placeholder="Select Consulted Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false"
-    
-            data-cy="risk_owner"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>     
-        <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Informed:</label>
-          <multiselect
-            v-model="informedIssueUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Informed Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false" 
-            data-cy="risk_owner"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>         
-    </div>
-  </div>
+
+
 
       <h6 class="text-danger text-small pl-1 float-right">
         *Indicates required fields
@@ -790,34 +793,34 @@ export default {
             key: 'tab1',
             closable: false
           },
+           {
+            label: 'ASSIGNMENTS',
+            key: 'tab2',
+            closable: false,                       
+          },        
           {
             label: 'CHECKLIST',
-            key: 'tab2',
+            key: 'tab3',
             closable: false
           },
           {
             label: 'FILES',
-            key: 'tab3',
+            key: 'tab4',
             closable: false
           },
            {
             label: 'RELATED',
-            key: 'tab4',
+            key: 'tab5',
             closable: false,     
                       
           },          
            {
             label: 'UPDATES',
-            key: 'tab5',
-            closable: false,     
-                      
-          },      
-            {
-            label: 'ASSIGN',
             key: 'tab6',
             closable: false,     
                       
-          },              
+          },      
+                 
         ]
       }
   },
