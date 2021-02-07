@@ -118,14 +118,25 @@
               class="form-inside-modal"
             ></issue-form>
               <notes-form
-              v-else-if="managerView.note"            
+              v-else-if="managerView.note"
+              from="manager_view"
               :facility="currentFacility"
               :note="managerView.note"
               @close-note-input="newNote=false"
               @note-created="createdFacilityNote"
               @note-updated="updatedFacilityNote"
-              class="form-inside-modal"
-            ></notes-form>  
+            ></notes-form>
+
+             <!-- <notes-form
+              v-else-if="managerView.note"
+              from="manager_view"
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote=false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+            ></notes-form> -->
+            
            </div>       
           </sweet-modal>
          </div>
