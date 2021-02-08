@@ -63,6 +63,91 @@ class Project < SortableRecord
     json
   end
 
+  def build_json_response
+    all_facility_projects = FacilityProject.includes(:tasks).where(project_id: self.id)
+    all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
+    all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
+
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :risk_users, {user: :organization}, :checklists, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
+    all_facilities = Facility.where(id: all_facility_ids)
+    all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
+    all_facility_groups = FacilityGroup.includes(:facilities, :facility_projects).where(id: all_facility_group_ids)
+
+    facility_projects_hash = []
+    facility_projects_hash2 = {}
+
+    project_type_name = self.project_type.try(:name)
+
+    all_facility_projects.each do |fp|
+
+      facility = all_facilities.detect{|f| f.id == fp.facility_id}
+
+      h = fp.attributes.merge({
+        class: fp.class.name,
+        project_status: fp.status_name,
+        color: fp.color,
+        progress: fp.progress,
+        facility_project_id: fp.id,
+        facility_name: facility.facility_name
+      })
+
+      g = all_facility_groups.detect{|gg| gg.id == facility.facility_group_id}
+
+      h[:facility] = facility.attributes.merge({
+        facility_group_name: g&.name,
+        facility_group_status: g&.status,
+      })
+
+      tasks = all_tasks.select{|t| t.facility_project_id == fp.id}
+      h[:tasks] = tasks.map(&:to_json)
+
+      issues = all_issues.select{|i| i.facility_project_id == fp.id}
+      h[:issues] = issues.map(&:to_json)
+
+      risks = all_risks.select{|r| r.facility_project_id == fp.id}
+      h[:risks] = risks.map(&:to_json)
+
+      notes = all_notes.select{|r| r.noteable_id == fp.id}
+      h[:notes] = notes.map(&:to_json)
+
+      facility_projects_hash2[fp.id] = h
+      facility_projects_hash << h
+    end
+
+    facility_groups_hash = []
+    all_facility_groups.each do |fg|
+      h2 = fg.attributes
+      h2[:facilities] = []
+      h2[:project_ids] = []
+      fg.facility_projects.each do |fp|
+        h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
+        h2[:project_ids] << fp.project_id
+      end
+      h2[:project_ids] = h2[:project_ids].compact.uniq
+      facility_groups_hash << h2
+    end
+
+    hash = self.attributes.merge({project_type: project_type_name})
+
+    hash.merge!({
+      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
+      facilities: facility_projects_hash,
+      facility_groups: facility_groups_hash,
+      statuses: statuses.as_json,
+      task_types: task_types.as_json,
+      issue_types: issue_types.as_json,
+      issue_severities: issue_severities.as_json,
+      task_stages: task_stages.as_json,
+      issue_stages: issue_stages.as_json,
+      risk_stages: risk_stages.as_json
+    })
+
+    hash
+  end
+
   def reject_comment(comment)
     comment['body'].blank?
   end

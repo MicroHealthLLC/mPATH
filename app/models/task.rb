@@ -15,6 +15,11 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
+  amoeba do
+    enable
+    append :text => " - Copy"
+  end
+
   def to_json
     attach_files = []
     tf = self.task_files
@@ -29,6 +34,13 @@ class Task < ApplicationRecord
     end
     fp = self.facility_project
     users = self.users.active
+
+    resource_users = self.task_users.where(user_id: users.map(&:id) )
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
@@ -47,13 +59,21 @@ class Task < ApplicationRecord
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
+
+      # Add accountable users
+      accountable_user_ids: accountable_user_ids,
+      responsible_user_ids: responsible_user_ids,
+      consulted_user_ids: consulted_user_ids,
+      informed_user_ids: informed_user_ids,
+
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
-      sub_issue_ids: sub_issues.map(&:id)
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
 
@@ -65,6 +85,7 @@ class Task < ApplicationRecord
       :text,
       :task_type_id,
       :task_stage_id,
+      :facility_project_id,
       :due_date,
       :start_date,
       :description,
@@ -76,6 +97,7 @@ class Task < ApplicationRecord
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
+      sub_risk_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,
@@ -95,19 +117,23 @@ class Task < ApplicationRecord
       ]
     )
 
-    project = user.projects.active.find_by(id: params[:project_id])
-    facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
     task = self
     t_params = task_params.dup
     user_ids = t_params.delete(:user_ids)
     sub_task_ids = t_params.delete(:sub_task_ids)
     sub_issue_ids = t_params.delete(:sub_issue_ids)
+    sub_risk_ids = t_params.delete(:sub_risk_ids)
     checklists_attributes = t_params.delete(:checklists_attributes)
     notes_attributes = t_params.delete(:notes_attributes)
 
     task.attributes = t_params
-    task.facility_project_id = facility_project.id
+    if !task.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+      task.facility_project_id = facility_project.id
+    end
 
     all_checklists = task.checklists
 
@@ -124,18 +150,35 @@ class Task < ApplicationRecord
 
       if sub_task_ids && sub_task_ids.any?
         related_task_objs = []
+        related_task_objs2 = []
         sub_task_ids.each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: task.id, relatable_type: "Task", task_id: sid)
+          related_task_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Task", task_id: task.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedTask.import(related_task_objs2) if related_task_objs2.any?
       end
 
       if sub_issue_ids && sub_issue_ids.any?
         related_issue_objs = []
+        related_issue_objs2 = []
         sub_issue_ids.each do |sid|
           related_issue_objs << RelatedIssue.new(relatable_id: task.id, relatable_type: "Task", issue_id: sid)
+          related_issue_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Issue", task_id: task.id)
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
+      end
+      
+      if sub_risk_ids && sub_risk_ids.any?
+        related_risk_objs = []
+        related_risk_objs2 = []
+        sub_risk_ids.each do |sid|
+          related_risk_objs << RelatedRisk.new(relatable_id: task.id, relatable_type: "Task", risk_id: sid)
+          related_risk_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Risk", task_id: task.id)
+        end
+        RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
+        RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
       end
 
       if checklists_attributes.present?
@@ -167,9 +210,77 @@ class Task < ApplicationRecord
         Note.import(notes_objs) if notes_objs.any?
       end
 
+      task.assign_users(params)
+
     end
 
     task.reload
+  end
+
+  def assign_users(params)
+    accountable_resource_users = []
+    responsible_resource_users = []
+    consulted_resource_users = []
+    informed_resource_users = []
+
+    resource = self
+    resource_users = resource.task_users
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
+    users_to_delete = []
+
+    if params[:accountable_user_ids].present?
+      params[:accountable_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !accountable_user_ids.include?(uid.to_i)
+          accountable_resource_users << TaskUser.new(user_id: uid, task_id: resource.id, user_type: 'accountable')
+        end
+      end
+      users_to_delete += accountable_user_ids - params[:accountable_user_ids].map(&:to_i)
+    end
+
+    if params[:responsible_user_ids].present?
+      params[:responsible_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !responsible_user_ids.include?(uid.to_i)
+          responsible_resource_users << TaskUser.new(user_id: uid, task_id: resource.id, user_type: 'responsible')
+        end
+      end
+      users_to_delete += responsible_user_ids - params[:responsible_user_ids].map(&:to_i)
+    end
+
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !consulted_user_ids.include?(uid.to_i)
+          consulted_resource_users << TaskUser.new(user_id: uid, task_id: resource.id, user_type: 'consulted')
+        end
+      end
+      users_to_delete += consulted_user_ids - params[:consulted_user_ids].map(&:to_i)
+    end
+
+    if params[:informed_user_ids].present?
+      params[:informed_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !informed_user_ids.include?(uid.to_i)
+          informed_resource_users << TaskUser.new(user_id: uid, task_id: resource.id, user_type: 'informed')
+        end
+      end
+      users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
+    end
+    
+    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    
+    if users_to_delete.any?
+      resource_users.where(user_id: users_to_delete).destroy_all
+    end
+
+    if records_to_import.any?
+      TaskUser.import(records_to_import)
+    end
   end
 
   def files_as_json

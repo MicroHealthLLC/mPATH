@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheets]
+  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet]
 
   def index
     respond_to do |format|
@@ -12,7 +12,9 @@ class ProjectsController < AuthenticatedController
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
-        format.json {render json: {project: @project.as_complete_json}, status: 200}
+        
+        format.json {render json: {project: @project.build_json_response}, status: 200}
+        # format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end
      else
@@ -55,7 +57,7 @@ class ProjectsController < AuthenticatedController
     end
   end
 
-  def sheets
+  def sheet
     check_permit("sheets_view")
     respond_to do |format|
       format.json {}
@@ -90,7 +92,7 @@ class ProjectsController < AuthenticatedController
         notes: [{note_files_attachments: :blob}, :user]
       }
       projects_include_hash = {
-        users: [],
+        users: [],     
         facility_projects: fp_hash,
         facility_groups: fg_hash,
         statuses: [],

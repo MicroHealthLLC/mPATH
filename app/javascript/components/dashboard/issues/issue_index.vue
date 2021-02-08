@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_list">
+  <div v-if="!loading" class="mt-2 issues-index" data-cy="issue_list">
     <div v-if="newIssue && from != 'manager_view'">
       <issue-form :facility="facility" :issue="currentIssue" @on-close-form="newIssue=false" @issue-created="issueCreated" @issue-updated="issueUpdated" class="issue-form-modal" />
     </div>
@@ -91,7 +91,7 @@
           <th></th>
           <th>Issue</th>
           <th>Issue Type</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Issue Severity</th>
           <th>Start Date</th>
           <th>Due Date</th>

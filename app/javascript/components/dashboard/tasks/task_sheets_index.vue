@@ -44,7 +44,7 @@
           </multiselect>
         </div>
     </div>
-
+    <div class="wrapper p-3">
       <button v-if="_isallowed('write')"
          class="btn btn-md btn-primary mr-3 addTaskBtn"
         @click.prevent="addNewTask"
@@ -53,6 +53,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
+       <div class="float-right">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -65,11 +66,12 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-      <label class="form-check-label text-primary total-label float-right mr-2" data-cy="task_total">
-        <h5>Total: {{filteredTasks.length}}</h5>
-      </label>
+      <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="task_total">
+        Total: {{filteredTasks.length}}
+      </button>
+       </div>
       <div v-if="filteredTasks.length > 0">
-        <div style="margin-bottom:100px" data-cy="tasks_table">
+        <div  style="margin-bottom:50px" data-cy="tasks_table">
           <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
             <colgroup>
               <col class="sixteen" />
@@ -83,40 +85,58 @@
               <col class="twenty" />
             </colgroup>
             <tr style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('text')">Task<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('taskType')">Task Category <i class="fas fa-sort scroll"></i> </th>
-              <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll ml-2"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('userNames')">Assigned Users<i class="fas fa-sort scroll" ></i></th>
-              <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('watched')">On Watch<i class="fas fa-sort scroll"></i></th>
-              <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>
+              <th class="sort-th" @click="sort('text')" >Task<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('taskType')">Category <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
+              <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('userNames')">Assigned<br/>Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('watched')">On Watch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
             </tr>
           </table>
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
-              href="#"
-              :class="{'b_border': !!filteredTasks[i+1]}"
+              href="#"           
               :key="task.id"
               :task="task"
               :from-view="from"
               @edit-task="editTask"
               @toggle-watched="toggleWatched"
             />
-          <div class="float-right mb-4">
-          <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / pageSize) }} </button>
-          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+     
+          <div class="float-right mb-4 mt-2 font-sm">
+           <span>Displaying </span>
+           <div class="simple-select d-inline-block font-sm">          
+            <multiselect 
+              v-model="C_tasksPerPage" 
+              track-by="value"
+              label="name"      
+              deselect-label=""                     
+              :allow-empty="false"
+              :options="getTasksPerPageFilterOptions">
+                <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                      </div>
+                </template>
+            </multiselect>            
            </div>
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+            <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / this.C_tasksPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>       
         </div>
       </div>
       <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
     </div>
+      </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
-    
+  
     <table
       class="table table-sm table-bordered table-striped"
       ref="table" id="taskSheetsList1"
@@ -125,8 +145,8 @@
       <thead>
         <tr style="background-color:#ededed">
           <th>Task</th>
-          <th>Task Category</th>
-          <th>Facility</th>
+          <th>Category</th>
+          <th>Project</th>
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
@@ -187,8 +207,7 @@
       return {
         tasks: Object,
         now: new Date().toISOString(),
-        tasksQuery: '',
-        pageSize:15,
+        tasksQuery: '',      
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
@@ -201,6 +220,7 @@
     methods: {
       ...mapMutations([
         'setAdvancedFilter',
+        'setTasksPerPageFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -216,7 +236,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredTasks.length) this.currentPage++;
+        if((this.currentPage*this.C_tasksPerPage.value) < this.filteredTasks.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -250,6 +270,8 @@
       ...mapGetters([
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
+        'getTasksPerPageFilterOptions',
+        'getTasksPerPageFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
         'getTaskIssueTabFilterOptions',
@@ -370,6 +392,14 @@
           this.setTaskTypeFilter(value)
         }
       },
+      C_tasksPerPage: {
+      get() {
+        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
+      },
+      set(value) {
+        this.setTasksPerPageFilter(value)
+       }
+     },
       C_myTasks: {
         get() {
           return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -387,46 +417,27 @@
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
+          let end = this.currentPage*this.C_tasksPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
        }
-      }
+      },    
     };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
   #tasks-index {
     background-color: #ffffff;
     z-index: 100;
     height: 500px
   }
-  .scroll {
-    cursor:pointer !important;
-    top: 35%;
-    right: 5px;
-    position:absolute;
-    font-size: 1.1rem;
-    color: #383838 !important;
-    padding-left:4px !important
-  }
   .task-search-bar {
     height: 31px;
     width: 310px;
     border-radius: 5px;
-  }
-  .sort-th {
-    font-size: .70rem !important;
-    cursor: pointer;
-    font-family: 'FuturaPTBook';
-    text-align: center;
-    position: relative;
-    vertical-align: middle !important;
-  }
-   .sort-th > #text { 
-    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
   }
   input[type=search] {
     color: #383838;
@@ -440,8 +451,7 @@
     border: none !important;
     height: 25px;
     margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
+    background-color: white;  
     color: #383838;
     cursor: pointer;
  }
@@ -511,10 +521,6 @@
   .floatRight {
     text-align: right;
     right: 0px;
-  }
-  .fa-sort {
-    font-size: 1.2rem;
-    color: gray;
   }
   .pagination {
     margin-bottom: 50px !important;

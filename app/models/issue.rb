@@ -32,12 +32,20 @@ class Issue < ApplicationRecord
 
     fp = self.facility_project
     users = self.users.active
+
+    resource_users = self.issue_users.where(user_id: users.map(&:id) )
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
     if(progress >= 100)
       progress_status = "completed"
     end
+    task_type_name = self.task_type&.name
     self.as_json.merge(
       class_name: self.class.name,
       progress_status: progress_status,
@@ -46,9 +54,17 @@ class Issue < ApplicationRecord
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
+      task_type_name: task_type_name,
       responsible_user_names: users.map(&:full_name).compact.join(", "),
       user_ids: users.map(&:id).compact.uniq,
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      
+      # Add accountable users
+      accountable_user_ids: accountable_user_ids,
+      responsible_user_ids: responsible_user_ids,
+      consulted_user_ids: consulted_user_ids,
+      informed_user_ids: informed_user_ids,
+
       checklists: checklists.as_json,
       notes: notes.as_json,
       facility_id: fp.try(:facility_id),
@@ -81,6 +97,7 @@ class Issue < ApplicationRecord
       :issue_type_id,
       :issue_stage_id,
       :issue_severity_id,
+      :facility_project_id,
       :task_type_id,
       :progress,
       :start_date,
@@ -108,8 +125,6 @@ class Issue < ApplicationRecord
        ]
     )
 
-    project = user.projects.active.find_by(id: params[:project_id])
-    facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
     issue = self
     i_params = issue_params.dup
@@ -120,7 +135,13 @@ class Issue < ApplicationRecord
     notes_attributes = i_params.delete(:notes_attributes)
 
     issue.attributes = i_params
-    issue.facility_project_id = facility_project.id
+    if !issue.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+      issue.facility_project_id = facility_project.id
+    end
+
 
     issue.transaction do
 
@@ -137,18 +158,24 @@ class Issue < ApplicationRecord
 
       if sub_task_ids && sub_task_ids.any?
         related_task_objs = []
+        related_task_objs2 = []
         sub_task_ids.each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: issue.id, relatable_type: issue.class.name, task_id: sid)
+          related_task_objs2 << RelatedIssue.new(relatable_id: sid, relatable_type: "Task", issue_id: issue.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedIssue.import(related_task_objs2) if related_task_objs2.any?
       end
 
       if sub_issue_ids && sub_issue_ids.any?
         related_issue_objs = []
+        related_issue_objs2 = []
         sub_issue_ids.each do |sid|
           related_issue_objs << RelatedIssue.new(relatable_id: issue.id, relatable_type: issue.class.name, issue_id: sid)
+          related_issue_objs2 << RelatedIssue.new(relatable_id: sid, relatable_type: "Issue", issue_id: issue.id)
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedIssue.import(related_issue_objs2) if related_issue_objs2.any?
       end
 
       if checklists_attributes.present?
@@ -169,9 +196,77 @@ class Issue < ApplicationRecord
         Note.import(notes_objs) if notes_objs.any?
       end
 
+      issue.assign_users(params)
+
     end
 
     issue
+  end
+
+  def assign_users(params)
+    accountable_resource_users = []
+    responsible_resource_users = []
+    consulted_resource_users = []
+    informed_resource_users = []
+
+    resource = self
+    resource_users = resource.issue_users
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
+    users_to_delete = []
+
+    if params[:accountable_user_ids].present?
+      params[:accountable_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !accountable_user_ids.include?(uid.to_i)
+          accountable_resource_users << IssueUser.new(user_id: uid, issue_id: resource.id, user_type: 'accountable')
+        end
+      end
+      users_to_delete += accountable_user_ids - params[:accountable_user_ids].map(&:to_i)
+    end
+
+    if params[:responsible_user_ids].present?
+      params[:responsible_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !responsible_user_ids.include?(uid.to_i)
+          responsible_resource_users << IssueUser.new(user_id: uid, issue_id: resource.id, user_type: 'responsible')
+        end
+      end
+      users_to_delete += responsible_user_ids - params[:responsible_user_ids].map(&:to_i)
+    end
+
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !consulted_user_ids.include?(uid.to_i)
+          consulted_resource_users << IssueUser.new(user_id: uid, issue_id: resource.id, user_type: 'consulted')
+        end
+      end
+      users_to_delete += consulted_user_ids - params[:consulted_user_ids].map(&:to_i)
+    end
+
+    if params[:informed_user_ids].present?
+      params[:informed_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !informed_user_ids.include?(uid.to_i)
+          informed_resource_users << IssueUser.new(user_id: uid, issue_id: resource.id, user_type: 'informed')
+        end
+      end
+      users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
+    end
+    
+    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    
+    if users_to_delete.any?
+      resource_users.where(user_id: users_to_delete).destroy_all
+    end
+
+    if records_to_import.any?
+      IssueUser.import(records_to_import)
+    end
   end
 
   def manipulate_files(params)

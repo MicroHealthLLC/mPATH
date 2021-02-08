@@ -10,7 +10,7 @@ export default new VueRouter({
   routes: [
     {
       name: 'ProjectMapView',
-      path: '/projects/:projectId',
+      path: '/projects/:projectId/',
       component: ProjectMapView
     },
     {
@@ -35,7 +35,7 @@ export default new VueRouter({
     },
     {
       name: 'ProjectSheets',
-      path: '/projects/:projectId/sheets',
+      path: '/projects/:projectId/sheet',
       component: Sheets
     },
     {

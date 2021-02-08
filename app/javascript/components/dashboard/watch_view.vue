@@ -266,7 +266,7 @@
           tooltip: {
             template: (data) => {
               return `<div>
-                        <div>Facility: ${data.item.facilityName}</div>
+                        <div>Project: ${data.item.facilityName}</div>
                         <div>Type: ${data.taskType}</div>
                         <div>Start: ${this.formatDate(data.item.startDate)}</div>
                         <div class="${data.overdue ? 'text-danger' : ''}">Due: ${this.formatDate(data.item.dueDate)}<span>${data.overdue ? '<span class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>' : ''}</span></div>

@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   around_action :user_time_zone, if: :current_user
 
-  after_action :release_memory, if: -> {Rails.env.development?}
+  after_action :release_memory#, if: -> {Rails.env.development?}
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|

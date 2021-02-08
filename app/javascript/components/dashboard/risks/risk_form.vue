@@ -7,8 +7,9 @@
       class="mx-auto pb-4"
       accept-charset="UTF-8"
       >
-        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
-        <button
+      <div class="form-group mb-1">
+        <div v-if="_isallowed('read')" class="d-flex form-group sticky py-0 px-1 mb-1 justify-content-start">             
+         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
           class="btn btn-sm sticky-btn btn-success"
@@ -31,24 +32,6 @@
           >
           Close
         </button>
-        <div class="btn-group">
-        <button  
-          v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
-          @click.prevent="scrollToChecklist"            
-          >
-          <font-awesome-icon icon="plus-circle" />
-          Checklists
-        </button>
-         <button  
-          v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-light scrollToChecklist"    
-          @click.prevent="scrollToUpdates"            
-          >
-          <font-awesome-icon icon="plus-circle" />
-          Updates
-        </button>
-        </div>      
         
         <button
           v-if="_isallowed('delete') && DV_risk.id"
@@ -60,13 +43,22 @@
           Delete
         </button>
       </div>
-
-      <div class="paperLook formTitle">
+        <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">
+          
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      
+      </div>
+    
+ <div >
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
-        <div class="form-group mx-4">
-          <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="risk_on_watch">
+                
+
+ <div v-if="currentTab == 'risk'" class="paperLookTab">
+   <!-- RISK OVERVIEW TAB -->
+   <div class="form-group mx-4">
+      <span v-if="_isallowed('write')" class="watch_action mt-3 clickable float-right" @click.prevent.stop="toggleWatched" data-cy="risk_on_watch">
             <span v-show="DV_risk.watched" class="check_box mx-1">
               <i class="far fa-check-square font-md"></i>
             </span>
@@ -74,8 +66,7 @@
             <span><i class="fas fa-eye mr-1"></i></span>
             <small style="vertical-align:text-top">On Watch</small>
           </span>
-
-          <label class="font-sm"><h5>*Risk Name:</h5></label>
+          <label class="font-sm mt-3">*Risk Name:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
@@ -99,7 +90,7 @@
             class="form-control"
             placeholder="Risk brief description"
             v-model="DV_risk.riskDescription"
-            rows="4"
+            rows="3"
             :readonly="!_isallowed('write')"
             data-cy="risk_description"
             name="risk_description"
@@ -109,26 +100,81 @@
             {{errors.first('risk_description')}}
           </div>
         </div>
-
-        <div class="form-group mx-4">
-          <label class="font-sm">*Impact Description:</label>
-          <textarea
+        
+        <div  class="d-flex mb-0 form-group mx-4">
+         <div class="simple-select form-group w-100">
+          <label class="font-sm">*Category:</label>
+          <multiselect
+            v-model="selectedTaskType"
             v-validate="'required'"
-            class="form-control"
-            placeholder="Risk impact description"
-            v-model="DV_risk.impactDescription"
-            rows="4"
-            :readonly="!_isallowed('write')"
-            data-cy="impact_description"
-            name="impact_description"
-            :class="{'form-control': true, 'error': errors.has('impact_description') }"
-          />
-          <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
-            {{errors.first('impact_description')}}
+            track-by="id"
+            label="name"
+            placeholder="Task Category"
+            :options="taskTypes"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            :class="{'error': errors.has('Task Category')}"
+            data-cy="risk_milestone"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+          <div v-show="errors.has('Task Category')" class="text-danger" data-cy="risk_milestone_error">
+            {{errors.first('Task Category')}}
           </div>
         </div>
+         <div class="simple-select form-group w-100 mx-1">
+          <label class="font-sm">Stage:</label>
+          <multiselect
+            v-model="selectedRiskStage"
+            track-by="id"
+            label="name"
+            placeholder="Select Stage"
+            :options="riskStages"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write') || !!fixedStage"
+            data-cy="risk_stage"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>  
+                <div class="simple-select w-100 form-group">
+          <label class="font-sm">*Project:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Project"
+            :options="getFacilityProjectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+       </div>
 
-        <div class="form-row mx-4">
+
+         <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
             <label class="font-sm">*Identified Date:</label>
             <v2-date-picker
@@ -165,11 +211,12 @@
             </div>
           </div>
         </div>
-      <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Assign Users:</label>
+    <!-- <div class="form-group mb-0 d-flex w-100">
+      <div class="form-group user-select ml-4 mr-1 w-100">
+       
+        <label class="font-sm mb-0">Responsible:</label>
         <multiselect
-          v-model="riskUsers"
-          :load="log(riskUsers)"
+          v-model="riskUsers"        
           track-by="id"
           label="fullName"
           placeholder="Search and select users"
@@ -188,64 +235,205 @@
             </div>
           </template>
         </multiselect>
-      </div>
+      </div>     
+       <div class="form-group user-select ml-1 mr-4 w-100">
+        <label class="font-sm mb-0">Accountable:</label>
+        <multiselect
+          v-model="accountableRiskUsers"              
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="activeProjectUsers"
+          :searchable="true"
+          :multiple="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="true"
+             
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>             
+ </div> 
+ <div class="form-group  mt-0 d-flex w-100">
+      <div class="form-group user-select ml-4 mr-1 w-100">
+        <label class="font-sm mb-0">Consulted:</label>
+        <multiselect
+          disabled
+          v-model="consultedRiskUsers"         
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="activeProjectUsers"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+   
+          data-cy="risk_owner"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>     
+       <div class="form-group user-select ml-1 mr-4 w-100">
+        <label class="font-sm mb-0">Informed:</label>
+        <multiselect
+          disabled
+          v-model="informedRiskUsers"        
+          track-by="id"
+          label="fullName"
+          placeholder="Search and select users"
+          :options="activeProjectUsers"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false" 
+          data-cy="risk_owner"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.fullName}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>             
+ </div>  -->
+      
+      
+       
+   </div>
+</div>
+   <!-- END RISK IDENTIFY TAB SECTION -->
 
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Task Category:</label>
-          <multiselect
-            v-model="selectedTaskType"
-            v-validate="'required'"
+   <!-- BEGIN ASSIGN Tab 2 -->
+
+  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect         
+            v-model="responsibleUsers"        
             track-by="id"
-            label="name"
-            placeholder="Task Category"
-            :options="taskTypes"
-            :searchable="false"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label=""
+            :close-on-select="true"
             :disabled="!_isallowed('write')"
-            :class="{'error': errors.has('Task Category')}"
-            data-cy="risk_milestone"
+            data-cy="risk_owner"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+                <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
           </multiselect>
-          <div v-show="errors.has('Task Category')" class="text-danger" data-cy="risk_milestone_error">
-            {{errors.first('Task Category')}}
-          </div>
-        </div>
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">Stage:</label>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
           <multiselect
-            v-model="selectedRiskStage"
+            v-model="accountableRiskUsers"              
             track-by="id"
-            label="name"
-            placeholder="Select Stage"
-            :options="riskStages"
-            :searchable="false"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect          
+            v-model="consultedRiskUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect           
+            v-model="informedRiskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
             select-label="Select"
             deselect-label="Enter to remove"
-            :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="risk_stage"
+            :close-on-select="false"         
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
+                <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
           </multiselect>
-        </div>    
+        </div>         
+    </div>
+  </div>
+      
+   <!-- END ASSIGN Tab 2-->
 
-         <div class="container">
-         <div class="row mb-2">   
-            <div class="col-md-3 simple-select form-group">
+
+
+<!-- BEGIN RISK PRIORITIZE TAB -->
+
+<div v-if="currentTab == 'tab3'" class="paperLookTab">
+         
+
+         <div class="container-fluid pt-2 px-4">
+         <div class="row mb-0">   
+             <div class="col-md-3 simple-select form-group">
                 <label class="font-sm">Priority Level:</label> 
                 <div class="risk-priorityLevel text-center">
                     <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0"> {{ calculatePriorityLevel }}</span> 
-                    <br>                  
-                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) <= (3)" class="green1">Low</span> 
+                    <br>  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (1)" class="gray2">Very Low</span>  
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (2)" class="green1">Low</span>                
+                    <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (3)" class="green1">Low</span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (4)" class="yellow1">Moderate </span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (5)" class="yellow1">Moderate </span> 
                     <span v-if="(this.selectedRiskPossibility.id * this.selectedRiskImpactLevel.id) == (6)" class="yellow1">Moderate </span> 
@@ -258,8 +446,8 @@
                 <p class="font-sm mt-2"><b>HINT:</b> Update Probability and/or Impact Level to change Priority Level.</p>            
               </div>
 
-               <div class="col-md"> 
-                 <div class="simple-select form-group mb-0">            
+               <div class="col-md-3 p-0"> 
+                 <div class="simple-select form-group mb-5">            
                   <label class="font-sm">*Probablity: </label>
                     <multiselect
                       v-model="selectedRiskPossibility"
@@ -286,8 +474,9 @@
                     </div>
                   </div>
 
+                    <!-- COLUMN ROW 2 -->
               <div class="simple-select form-group">
-                <label class="font-sm">*Impact Level:</label>
+                <label class="font-sm mb-0">*Impact Level:</label>
                 <multiselect
                   v-model="selectedRiskImpactLevel"
                   :load="log(selectedRiskImpactLevel)"
@@ -313,10 +502,54 @@
                   {{errors.first('Impact Level')}}
                 </div>
               </div>
-            </div>
+
+              <!-- COLUMN FOR TEXT FIELD            -->
+               
+               </div>
+                <div class="col-md-6 pl-1 pr-0"> 
+                  <!-- PROBABILITY DESCRIPTION REQUIRES BACKEND WORK -->
+                  <div class="form-group mx-1 mb-0">
+                  <label class="font-sm">Probability Description:</label>                  
+                  <textarea                  
+                    v-validate="'required'"
+                    class="form-control"
+                    placeholder="Risk Probability description"
+                    v-model="DV_risk.probabilityDescription"
+                    rows="3"
+                    :readonly="!_isallowed('write')"
+                    data-cy="probability_description"
+                    name="probability_description"
+                    :class="{'form-control': true, 'error': errors.has('probability_description') }"            
+                  
+                  />
+                  <div v-show="errors.has('probability_description')" class="text-danger" data-cy="probability_description_error">
+                    {{errors.first('probability_description')}}
+                  </div>
+                </div> 
+                <div class="form-group mx-1">
+                  <label class="font-sm mb-0">*Impact Description:</label>                  
+                  <textarea
+                    v-validate="'required'"
+                    class="form-control"
+                    placeholder="Risk impact description"
+                    v-model="DV_risk.impactDescription"
+                    rows="3"
+                    :readonly="!_isallowed('write')"
+                    data-cy="impact_description"
+                    name="impact_description"
+                    :class="{'form-control': true, 'error': errors.has('impact_description') }"
+                  />
+                  <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
+                    {{errors.first('impact_description')}}
+                  </div>
+                </div> 
+                </div>
+<!-- ROW ENDS -->
           </div>
-         </div>    
-    <div class="container mr-4 mb-4 ml-2 justify-content-center text-center">                 
+<!-- CONTAINER ENDS -->
+     </div>    
+
+    <div class="container mr-4 my-0 ml-2 justify-content-center text-center">                 
       <el-collapse accordion>           
         <el-collapse-item title="Click to see Priority Level Risk Matrix" name="1">  
         <div>      
@@ -457,8 +690,8 @@
                   <div class ="col-md-2 gray p-2 text-center">
                   Rare<br> 1
                   </div>
-                  <div class ="col-md-2 green p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
-                  Low<br> 1
+                  <div class ="col-md-2 gray3 p-2 text-center" :class="[matrix11 == true ? 'reg-opacity' : '']">
+                  Very Low<br> 1
                   </div>
                   <div class ="col-md-2 green p-2 text-center" :class="[matrix21 == true ? 'reg-opacity' : '']">
                   Low<br> 2
@@ -480,12 +713,12 @@
               </div>
             </div>
           </el-collapse-item>
-      </el-collapse>
-    
+      </el-collapse>    
     </div>
 
-                             
-        <div class="simple-select form-group mx-4">
+
+      <div class="row form-group ml-0 pl-0 ml-4">
+        <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
           <label class="font-sm">*Risk Approach:</label>
           <multiselect
             v-model="DV_risk.riskApproach"
@@ -510,14 +743,14 @@
           </div>
         </div>
 
-        <div class="form-group mx-4">
+        <div class="col-md-7 form-group px-0 mx-0">
           <label class="font-sm">*Risk Approach Description:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
             placeholder="Risk Approach description"
             v-model="DV_risk.riskApproachDescription"
-            rows="4"
+            rows="3"
             :readonly="!_isallowed('write')"
             data-cy="approach_description"
             name="approach_description"
@@ -527,15 +760,24 @@
             {{errors.first('approach_description')}}
           </div>
         </div>
+    </div>
+  </div>
+<!-- END RISK PRIORITIZE TAB SECTION -->
 
-        <div class="form-group mx-4">
-          <label class="font-sm mb-0">Progress: (in %)</label>
-          <span class="ml-3">
+
+<!-- BEGIN RISK CONTROL TAB SECTION -->
+
+<div v-if="currentTab == 'tab4'" class="paperLookTab">
+        <div class="form-group pt-2 mx-4">        
+          <label class="font-sm mb-0 mr-3">Progress: (in %)</label>
+          <!-- <span class="ml-3"> -->
+            <div class="float-right">
             <label class="font-sm mb-0 d-inline-flex align-items-center">
               <input type="checkbox" v-model="DV_risk.autoCalculate" :disabled="!_isallowed('write')" :readonly="!_isallowed('write')">
               <span>&nbsp;&nbsp;Auto Calculate Progress</span>
             </label>
-          </span>
+            </div>
+          <!-- </span> -->
           <vue-slide-bar
             v-model="DV_risk.progress"
             :line-height="8"
@@ -544,7 +786,7 @@
           ></vue-slide-bar>
         </div>
 
-        <div class="form-group mx-4">
+    <div class="form-group mx-4">
           <label class="font-sm">Checklists:</label>
           <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
             <i class="fas fa-plus-circle"></i>
@@ -588,13 +830,15 @@
                           v-model="check.dueDate"
                           :value="check.dueDate"
                           @selected="updateCheckItem($event, 'dueDate', index)"
-                          :disabled="!_isallowed('write')"
+                          :disabled="!_isallowed('write') || !check.text"
                           :key="`dueDate_${index}`"
                           value-type="YYYY-MM-DD"
                           format="DD MMM YYYY"
                           placeholder="DD MM YYYY"
                           name="dueDate"
                           class="w-100 vue2-datepicker d-flex ml-auto"
+                          :disabled-date="disabledDateRange"
+                          :class="{ disabled: disabled }"
                         />
                       </div>
                     </div>
@@ -641,7 +885,9 @@
           ></attachment-input>
         </div>
 
-        <div class="form-group user-select mx-4">
+         <div  class="w-100 d-flex mb-0 form-group">
+
+        <div class="form-group user-select w-100 mb-0 ml-4">
           <label class="font-sm mb-0">Related Issues:</label>
           <multiselect
             v-model="relatedIssues"
@@ -664,7 +910,7 @@
           </multiselect>
         </div>
 
-        <div class="form-group user-select mx-4">
+        <div class="form-group user-select w-100 mb-0 mx-2">
           <label class="font-sm mb-0">Related Tasks:</label>
           <multiselect
             v-model="relatedTasks"
@@ -687,7 +933,7 @@
           </multiselect>
         </div>
 
-        <div class="form-group user-select mx-4">
+        <div class="form-group user-select w-100 mb-0 mr-4">
           <label class="font-sm mb-0">Related Risks:</label>
           <multiselect
             v-model="relatedRisks"
@@ -709,6 +955,9 @@
             </template>
           </multiselect>
         </div>
+     </div>
+
+
           <div class="form-group mx-4 paginated-updates">
         <hr class="my-4"/>
         <label class="font-sm mb-2">Updates:</label>
@@ -728,12 +977,39 @@
         </paginate>
       </div>
      </div>
+
+     
+ <!-- END RISK CONTROL SECTION TAB -->
+
+
+
+  <!-- BEGIN RISK DISPOSITION SECTION TAB -->
+     <div v-if="currentTab == 'tab5'" style="min-height:300px" class="paperLookTab">
+       <div class="form-group mx-4">
+          <label class="font-sm mb-0"><h5>Disposition</h5></label><br>
+             <textarea class="form-control" placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release." rows="4">  
+              
+            </textarea>        
+       </div>
+    </div>
+   <!-- END RISK DISPOSITION SECTION TAB -->
+
+ </div>                     
+
+
+
+
+
+
+      <!-- TABBED OUT SECTION END HERE -->
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
-      </div>
+        </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
+
+
 
   </div>
 </template>
@@ -742,15 +1018,16 @@
   import axios from 'axios'
   import humps from 'humps'
   import Draggable from "vuedraggable"
+   import CustomTabs from './../../shared/custom-tabs'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
-
   export default {
     name: 'RiskForm',
     props: ['facility', 'risk', 'fixedStage'],
     components: {
       AttachmentInput,
-      Draggable
+      CustomTabs,
+      Draggable       
     },
     
     data() {
@@ -758,8 +1035,12 @@
         DV_risk: this.INITIAL_RISK_STATE(), 
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],
+        selectedFacilityProject: null,
         destroyedFiles: [],
-        riskUsers: [],      
+        responsibleUsers: [],  
+        accountableRiskUsers:[],
+        consultedRiskUsers:[],
+        informedRiskUsers:[],
         probability: [], 
         selectedRiskPossibility: {id: 1, value: 1, name: "1 - Rare"},
         selectedRiskImpactLevel: {id: 1, value: 1, name: "1 - Negligible"},       
@@ -770,7 +1051,37 @@
         relatedRisks: [],
         showErrors: false,
         loading: true,
-        movingSlot: ''
+        movingSlot: '',
+        currentTab: 'risk',
+        tabs: [
+          {
+            label: 'IDENTIFY',
+            key: 'risk',
+            closable: false
+          },
+          {
+            label: 'ASSIGN',
+            key: 'tab2',
+            closable: false,                      
+          },        
+          {
+            label: 'PRIORITIZE',
+            key: 'tab3',
+            closable: false
+          },
+          {
+            label: 'CONTROL',
+            key: 'tab4',
+            closable: false
+          },
+           
+           {
+            label: 'DISPOSITION',
+            key: 'tab5',
+            closable: false,     
+            disabled:true                
+          },           
+        ]
       }
     },
     mounted() {
@@ -796,9 +1107,11 @@
       ]),
       INITIAL_RISK_STATE() {
         return {
+          facilityProjectId: '',
           text: '',
           riskDescription: '',
-          impactDescription: '',            
+          impactDescription: '',   
+          probabilityDescription: '',            
           riskApproach: 'avoid',         
           riskApproachDescription: '',
           riskTypeId: '',
@@ -812,7 +1125,10 @@
           getRiskImpactLevelNames:"1 - Negligible",
           dueDate: '',
           autoCalculate: true,
-          userIds: [],
+          responsibleUserIds: [],
+          accountableUserIds:[],
+          consultedUserIds:[],
+          informedUserIds:[],
           riskFiles: [],
           subTaskIds: [],
           subIssueIds: [],
@@ -848,9 +1164,19 @@
           count++
         }
       },
+       onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'risk'
+      },
+        // RACI USERS commented out out here.....Awaiting backend work
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
-        this.riskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.userIds.includes(u.id))
+        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
+
+        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
+        this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
+        this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
+        this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
+
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -913,9 +1239,11 @@
           }
           this.loading = true
           let formData = new FormData()         
+          formData.append('risk[facility_project_id]', this.DV_risk.facilityProjectId)
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
+          formData.append('risk[probability_description]', this.DV_risk.probabilityDescription)
           formData.append('risk[probability_name]', this.selectedRiskPossibility.name)
           formData.append('risk[probability]', this.selectedRiskPossibility.id)
           formData.append('risk[impact_level_name]', this.selectedRiskImpactLevel.name)
@@ -930,14 +1258,52 @@
           formData.append('risk[auto_calculate]', this.DV_risk.autoCalculate)
           formData.append('risk[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-         if (this.DV_risk.userIds.length) {
-            for (let u_id of this.DV_risk.userIds) {
-              formData.append('risk[user_ids][]', u_id)
+  // RACI USERS START HERE Awaiting backend work
+
+      // Responsible User id
+         if (this.DV_risk.responsibleUserIds.length) {
+            for (let u_id of this.DV_risk.responsibleUserIds) {
+              formData.append('responsible_user_ids[]', u_id)
             }
           }
           else {
-            formData.append('risk[user_ids][]', [])
+            formData.append('responsible_user_ids[]', [])
           }
+
+       // Accountable UserId
+         if (this.DV_risk.accountableUserIds.length) {
+            for (let u_id of this.DV_risk.accountableUserIds) {
+              formData.append('accountable_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('accountable_user_ids[]', [])
+          }
+
+          // Consulted UserId
+          
+          if (this.DV_risk.consultedUserIds.length) {
+            for (let u_id of this.DV_risk.consultedUserIds) {
+              formData.append('consulted_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('consulted_user_ids[]', [])
+          }
+
+          // Informed UserId
+          
+          if (this.DV_risk.informedUserIds.length) {
+            for (let u_id of this.DV_risk.informedUserIds) {
+              formData.append('informed_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('informed_user_ids[]', [])
+          }
+
+  // RACI USERS ABOVE THIS LINE  Awaiting backend work
+  // More RACI Users in Computed section below
 
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
@@ -1002,6 +1368,7 @@
             method = "PUT"
             callback = "risk-updated"
           }
+          var beforeRisk = this.risk
 
           axios({
             method: method,
@@ -1012,6 +1379,8 @@
             }
           })
           .then((response) => {
+            if(beforeRisk.facilityId && beforeRisk.projectId )
+              this.$emit(callback, humps.camelizeKeys(beforeRisk));
             this.$emit(callback, humps.camelizeKeys(response.data.risk))
           })
           .catch((err) => {
@@ -1082,13 +1451,20 @@
       },
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
-      }
+      },
+      disabledDateRange(date) {
+        var dueDate = new Date(this.DV_risk.dueDate)
+        dueDate.setDate(dueDate.getDate() + 1)
+
+        return date < new Date(this.DV_risk.startDate) || date > dueDate;
+      },
     },
     computed: {
       ...mapGetters([
+        'getFacilityProjectOptions',
         'currentProject',
-        'projectUsers',
-        'activeProjectUsers',
+        'projectUsers',    
+        'activeProjectUsers',   
         'myActionsFilter',
         'taskTypes',
         'riskStages',
@@ -1110,8 +1486,10 @@
           // this.C_riskProbabilityOptions &&
           // this.C_riskImpactLevelOptions &&
           this.exists(this.DV_risk.text) &&
+          this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
+          this.exists(this.DV_risk.probabilityDescription) &&
           this.exists(this.selectedRiskPossibility.id) &&
           this.exists(this.selectedRiskImpactLevel.id) &&
           this.exists(this.selectedRiskPossibility.id) &&
@@ -1275,6 +1653,13 @@
       //  }     
     },
     watch: {
+      selectedFacilityProject: {
+        handler: function(value) {
+          if(value){
+            this.DV_risk.facilityProjectId = value.id
+          }
+        }, deep: true
+      },
       risk: {
         handler: function(value) {
           if (!('id' in value)) this.DV_risk = this.INITIAL_RISK_STATE()
@@ -1294,12 +1679,29 @@
       "DV_risk.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-      riskUsers: {
+
+// RACI USERS HERE awaiting backend work
+   responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.userIds = _.uniq(_.map(value, 'id'))
+          if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }, deep: true
       },
-      relatedIssues: {
+    accountableRiskUsers: {
+          handler: function(value) {
+            if (value) this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }, deep: true
+        },
+    consultedRiskUsers: {
+        handler: function(value) {
+          if (value) this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+    informedRiskUsers: {
+        handler: function(value) {
+          if (value) this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+     relatedIssues: {
         handler: function(value) {
           if (value) this.DV_risk.subIssueIds = _.uniq(_.map(value, 'id'))
         }, deep: true
@@ -1358,7 +1760,7 @@
     z-index: 10;
     width: 100%;
     position: absolute;
-    background-color: #fff;
+    background-color: #ededed;
   }
   .form-control.error {
     border-color: #E84444;
@@ -1394,11 +1796,12 @@
  .formTitle {
     padding-top: 25px;
   }
-  .paperLook {
+  .paperLookTab {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     padding-bottom: 20px;
     margin-bottom: 10px;
     position: relative;
+    background-color: #fff;
   }
   .sticky-btn {
     margin-top: 5px;
@@ -1408,16 +1811,13 @@
   .rmBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
     position: sticky;
-    position: -webkit-sticky; 
-    justify-content: center;
+    position: -webkit-sticky;   
     margin-bottom: -2.5rem;
     z-index: 1000;
     left: 15;
     top: 0;
-    width: 100%;
-    padding: 6px;
-    background-color: rgba(237, 237, 237, 0.85);
-    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  
+  
   }
   .check-due-date {
     text-align: end;
@@ -1526,8 +1926,11 @@
   .red1 {
     background-color: #d9534f;
   }
-  .yellow1 {
-    background-color: yellow;  
+  .gray2 {
+    background-color: #ededed;
+  }
+  .yellow1 {  
+    background-color: yellow;   
     color:#383838;  
     display: block;
   }
@@ -1541,12 +1944,16 @@
     display: block;
     color:#fff;
   }
-  .red, .yellow, .orange, .green {
+  .red, .yellow, .orange, .green, .gray3 {
     opacity: .44;
     min-height: 76px;
   }
+  .gray2 { 
+    display: block;
+    color:#383838;
+  }
   .red:hover, .yellow:hover, 
-  .orange:hover, .green:hover {
+  .orange:hover, .green:hover, .gray2:hover, .gray3:hover {
     opacity: 1;
     cursor: pointer;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
@@ -1562,5 +1969,8 @@
     border-color: #f8f9fa;
     border: 1px solid transparent
   }
-  
+  .disabled {
+    opacity: 0.6;
+  }
+
 </style>

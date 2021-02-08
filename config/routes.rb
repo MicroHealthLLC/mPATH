@@ -29,7 +29,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
     get :watch_view, on: :member
-    get :sheets, on: :member
+    get :sheet, on: :member
     get :member_list, on: :member
     get :facility_manager, on: :member
     get :kanban, on: :member
@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       end
       resources :tasks do
         post :batch_update, on: :collection
+        post :create_duplicate, on: :member
       end
     end
   end

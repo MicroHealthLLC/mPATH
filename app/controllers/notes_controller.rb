@@ -11,7 +11,7 @@ class NotesController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    if @note.update(note_params)
+    if @note.update(note_params.merge({noteable: @noteable}))
       render json: @note.to_json, status: 200
     else
       render json: {}, status: 500

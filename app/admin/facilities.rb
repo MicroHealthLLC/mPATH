@@ -1,5 +1,5 @@
 ActiveAdmin.register Facility do
-  menu priority: 4
+  menu priority: 4, label: "Projects"
   actions :all, except: [:show]
 
   breadcrumb do
@@ -35,17 +35,22 @@ ActiveAdmin.register Facility do
       ]
     ]
   end
+  config.clear_action_items!
 
-  index do
+  action_item :only => :index do
+    link_to "New Project" , new_admin_facility_path
+  end
+
+  index title: 'Project' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
-    column :facility_name
+    column "Project Name", :facility_name
     column :address
     column :point_of_contact
     column :email
     column :phone_number
-    column :facility_group, nil, sortable: 'facility_groups.name' do |facility|
+    column "Project Group", :facility_group, nil, sortable: 'facility_groups.name' do |facility|
       if current_user.admin_write?
         link_to "#{facility.facility_group.name}", "#{edit_admin_facility_group_path(facility.facility_group)}" if facility.facility_group.present?
       else
@@ -53,7 +58,7 @@ ActiveAdmin.register Facility do
       end
     end
     tag_column "State", :status
-    column :projects do |facility|
+    column "Programs" , :projects do |facility|
       if current_user.admin_write?
         facility.projects.active
       else
@@ -66,14 +71,14 @@ ActiveAdmin.register Facility do
     end
   end
 
-  form do |f|
+  form title: proc{|g| g.new_record? ? "New Project" : "Edit Project" } do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do
       tab 'Basic' do
         f.inputs 'Basic Details' do
-          f.input :facility_name
-          f.input :facility_group, include_blank: false, include_hidden: false
+          f.input :facility_name, label: "Project Name"
+          f.input :facility_group, include_blank: false, include_hidden: false, label: "Project Group"
           f.input :address
           f.input :lat
           f.input :lng
@@ -89,8 +94,8 @@ ActiveAdmin.register Facility do
       end
 
       tab 'Advanced' do
-        f.inputs 'Assign Projects' do
-          f.input :projects, label: 'Projects', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+        f.inputs 'Assign Programs' do
+          f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
         end
         div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
@@ -108,7 +113,10 @@ ActiveAdmin.register Facility do
       end
     end
 
-    f.actions
+    f.actions do
+      f.action :submit, :as => :button, :label => "Create Project"
+      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
+    end
 
   end
 
@@ -258,8 +266,8 @@ ActiveAdmin.register Facility do
   end
 
   filter :creator_id, as: :select, collection: -> {User.admin.where.not(last_name: ['', nil]).or(User.admin.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}
-  filter :facility_group
-  filter :facility_name
+  filter :facility_group, label: "Project Group"
+  filter :facility_name, label: "Project Name"
   filter :address
   filter :point_of_contact
   filter :email
@@ -267,8 +275,8 @@ ActiveAdmin.register Facility do
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
   filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Category'
-  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
-  filter :projects
+  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Program Status'
+  filter :projects, label: "Programs"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :creator
   remove_filter :country_code

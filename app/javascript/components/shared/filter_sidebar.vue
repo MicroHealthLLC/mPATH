@@ -16,7 +16,7 @@
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
         <div class="row">
           <div class="col-md-12">
-            <h5 class="mb-0">Facilities</h5>
+            <h5 class="mb-0">Projects</h5>
           </div>
         </div>
 
@@ -24,7 +24,7 @@
         <div class="row justify-content-between">
           <div class="col-md-6">
             <div>
-              <label class="font-sm mb-0">Facility Group</label>
+              <label class="font-sm mb-0">Project Group</label>
               <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -33,7 +33,7 @@
                 </template>
               </multiselect>
             </div>
-           <label class="font-sm mb-0">Facility Name</label>
+           <label class="font-sm mb-0">Project Name</label>
               <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -43,7 +43,7 @@
                 <span slot="noOptions">...</span>
               </multiselect>
             <div>
-               <label class="font-sm mb-0">Facility % Progress Range</label>
+               <label class="font-sm mb-0">Project % Progress Range</label>
               <div class="form-row">
                 <div class="form-group col mb-0">
                   <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
@@ -551,7 +551,11 @@ export default {
       'setIssueStageFilter',
       'setRiskStageFilter',
       'setRiskApproachFilter',
-      'setRiskPriorityLevelFilter'
+      'setRiskPriorityLevelFilter',
+      'setTasksPerPageFilter',
+      'setRisksPerPageFilter',
+      'setIssuesPerPageFilter',
+      'setMembersPerPageFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -601,6 +605,11 @@ export default {
       this.setTaskUserFilter(null)
       this.setRiskApproachFilter([])
       this.setRiskPriorityLevelFilter([])
+      this.setTasksPerPageFilter(null)
+      this.setRisksPerPageFilter(null)
+      this.setIssuesPerPageFilter(null)
+      this.setMembersPerPageFilter(null)
+
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;

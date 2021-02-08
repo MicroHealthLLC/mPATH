@@ -94,8 +94,8 @@
             </template>
           </multiselect>
         </div>  
-    </div>
-  
+    </div>  
+     <div class="wrapper mt-2 p-3">
       <div class="mt-2">
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
@@ -103,6 +103,7 @@
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
+      <div class="float-right">
           <button
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
@@ -115,9 +116,10 @@
           class="btn btn-md exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
-       <label class="form-check-label text-primary float-right mr-2 total-label" data-cy="issue_total">
-        <h5>Total: {{filteredIssues.length}}</h5>
-       </label>
+         <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
+          Total: {{filteredIssues.length}}
+         </button>
+      </div>
         <div v-if="_isallowed('read')">
           <div v-if="filteredIssues.length > 0">      
             <div style="margin-bottom:50px" data-cy="issues_table">
@@ -135,33 +137,48 @@
                   <col class="oneFive" />
                 </colgroup>
                 <tr style="background-color:#ededed">
-                  <th class="sort-th" @click="sort('title')">Issue<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('issueType')">Issue Type <i class="fas fa-sort scroll"></i> </th>
-                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<i class="fas fa-sort scroll ml-2"></i></th>
-                  <th class="sort-th" @click="sort('startDate')">Start<br/> Date<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('dueDate')">Due<br/>Date<i class="fas fa-sort scroll" ></i></th>
-                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned Users<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('progress')">Progress<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('dueDate')">Overdue<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('watched')">Onwatch<i class="fas fa-sort scroll"></i></th>
-                  <th class="sort-th" @click="sort('notes')">Last Update<i class="fas fa-sort scroll"></i></th>               
+                  <th class="sort-th" @click="sort('title')">Issue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('issueType')">Issue Type <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
+                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned<br/> Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('watched')">Onwatch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+                  <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>               
                 </tr>
               </table>            
                 <issue-sheets
-                  v-for="(issue, i) in sortedIssues"      
-                  id="issueHover"
-                  :class="{'b_border': !!filteredIssues[i+1]}"
+                  v-for="issue in sortedIssues"      
+                  id="issueHover"               
                   :key="issue.id"
                   :issue="issue"
-                  :from-view="from"
-                  @issue-edited="issueEdited"
+                  :from-view="from"                
                   @toggle-watch-issue="toggleWatched"
                 />
-              <div class="float-right mb-4">
-                <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button> 
-                  <button class="btn btn-sm page-btns" id="page-count">Page {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / pageSize) }}  </button> 
-                <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>          
-              </div>             
+               <div class="float-right mb-4 mt-2 font-sm">
+                <span>Displaying </span>
+                <div class="simple-select d-inline-block font-sm">          
+                  <multiselect 
+                    v-model="C_issuesPerPage" 
+                    track-by="value"
+                    label="name"      
+                    deselect-label=""                     
+                    :allow-empty="false"
+                    :options="getIssuesPerPageFilterOptions">
+                      <template slot="singleLabel" slot-scope="{option}">
+                            <div class="d-flex">
+                              <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                            </div>
+                      </template>
+                  </multiselect>            
+                </div>
+                <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+                  <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+                  <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
+                  <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+            </div>             
             </div>
           </div>
           <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText" data-cy="no_issue_found">No issues found..</h6>
@@ -169,6 +186,7 @@
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
       </div>
     </div>
+     </div>
     <div>
       <table
         class="table table-sm table-bordered table-striped"
@@ -178,7 +196,7 @@
           <tr style="background-color:#ededed">
             <th>Issue</th>
             <th>Issue Type</th>
-            <th>Facility</th>
+            <th>Project</th>
             <th>Issue Severity</th>
             <th>Start Date</th>
             <th>Due Date</th>
@@ -244,8 +262,7 @@
         viewList: 'active',
         currentIssue: null,
         now: new Date().toISOString(),
-        issuesQuery: '',
-        pageSize:15,
+        issuesQuery: '',     
         currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
@@ -262,6 +279,7 @@
       ...mapMutations([
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
+        'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
         'setIssueSeverityFilter',
@@ -279,7 +297,7 @@
         this.currentSort = s;
       },
       nextPage:function() {
-        if((this.currentPage*this.pageSize) < this.filteredIssues.length) this.currentPage++;
+        if((this.currentPage*this.C_issuesPerPage.value) < this.filteredIssues.length) this.currentPage++;
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
@@ -318,10 +336,10 @@
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },
-      issueEdited(issue) {
-        this.currentIssue = issue
-        this.newIssue = true
-      },
+      // issueEdited(issue) {
+      //   this.currentIssue = issue
+      //   this.newIssue = true
+      // },
       reportNew() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
@@ -334,6 +352,8 @@
     computed: {
       ...mapGetters([
         'getAdvancedFilterOptions',
+        'getIssuesPerPageFilterOptions',
+        'getIssuesPerPageFilter',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
         'getAdvancedFilter',
@@ -490,6 +510,14 @@
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
         }
       },
+      C_issuesPerPage: {
+        get() {
+          return this.getIssuesPerPageFilter || {id: 15, name: '15', value: 15}
+        },
+        set(value) {
+          this.setIssuesPerPageFilter(value)
+        }
+     },
       sortedIssues:function() {
           return this.filteredIssues.sort((a,b) => {
           let modifier = 1;
@@ -498,8 +526,8 @@
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-          let start = (this.currentPage-1)*this.pageSize;
-          let end = this.currentPage*this.pageSize;
+          let start = (this.currentPage-1)*this.C_issuesPerPage.value;
+          let end = this.currentPage*this.C_issuesPerPage.value;
           if(index >= start && index < end) return true;
           return this.end
         });
@@ -508,7 +536,8 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
   table {
     table-layout: fixed ;
     width: 100% ;
@@ -525,9 +554,6 @@
   }
   .oneFive {
     width: 15%;
-  }
-  th {
-    font-size: .70rem !important;
   }
   .floatRight {
     text-align: right;
@@ -553,20 +579,8 @@
   .multiselect__tags {
     min-height: 25px !important;
   }
-    .page-btns {
-    width: 30px;
-    border: none !important;
-    height: 36px;
-    margin-right: 1px;
-    background-color: white;
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
-    color: #383838;
-    padding: 10px 24px;
-    padding-bottom: 10px !important;
-    cursor: pointer;
- }
-  .page-btns:hover {
-    background-color: #ededed
+  .rediconcolor {
+    color: red;
   }
   .page-btns.active  {
     background-color: rgba(211, 211, 211, 10%);

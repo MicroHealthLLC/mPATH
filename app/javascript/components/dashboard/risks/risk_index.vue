@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-4 risks-index" data-cy="risk_list">
+  <div v-if="!loading" class="mt-2 risks-index" data-cy="risk_list">
     <div v-if="newRisk && from != 'manager_view'">
       <risk-form
         :facility="facility"
@@ -103,8 +103,7 @@
           <div v-if="filteredRisks.length > 0">
             <hr/>
             <risk-show
-              v-for="(risk, i) in filteredRisks"
-              :load="log(risk)"
+              v-for="(risk, i) in filteredRisks"         
               class="riskHover"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
@@ -123,7 +122,7 @@
       <thead>
         <tr>          
           <th>Risk</th>
-          <th>Facility</th>
+          <th>Project</th>
           <th>Risk Approach</th>
           <th>Priority Level</th>         
           <th>Start Date</th>

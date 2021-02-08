@@ -3,7 +3,7 @@
     <!-- <div class="row">
       <div class="col-md-2 facility-groups-tab">
         <facility-sidebar
-          title="Facility Manager"
+          title="Project Manager"
           :current-facility-group="currentFacilityGroup"
           :expanded="expanded"
           :current-facility="currentFacility"

@@ -4,11 +4,15 @@ class Facilities::NotesController < NotesController
 
   private
   def set_noteable
-    @project = current_user.projects.active.find(params[:project_id])
-    @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    if params[:facility_project_id].present?
+      @noteable = FacilityProject.find(params[:facility_project_id])
+    else
+      @project = current_user.projects.active.find(params[:project_id])
+      @noteable = @project.facility_projects.find_by(facility_id: params[:facility_id])
+    end
   end
 
   def set_note
-    @note = @noteable.notes.find_by(id: params[:id])
+    @note = Note.find(params[:id])    
   end
 end

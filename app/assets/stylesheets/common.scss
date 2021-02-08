@@ -49,7 +49,11 @@ input[type=button]:focus {
 .progress-0 {
   .progress-bar {
     margin-left: 5px;
+    color: #383838
   }
+}
+.el-card__body {
+  padding: 15px !important;
 }
 .pg-content {
   width: 100%;
@@ -73,6 +77,10 @@ input[type=button]:focus {
 }
 // This (el-collapse....) is the collapse/accordion component in the Risk Form
 .el-collapse-item__header {color:#0275d8 !important}
+.el-collapse {
+  border-top: none !important;
+  border-bottom: 1px solid #EBEEF5 !important;
+}
 .brand-sidebar {
   background-image: url('map-image.png');
   background-size: auto;
@@ -112,6 +120,20 @@ input[type=button]:focus {
   font-size: 15px;
   color: gray;
   margin-right: 10px;
+}
+
+// Tabbed out form inside modals
+.tab2, .tab3, .tab4, .tab5, .tab6 {
+  min-height: 400px;
+  background-color: #fff;
+}
+// Tabbed out form inside modals
+.paperLookTab {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  position: relative;
+  background-color: #fff;
 }
 .warning-icon {
   font-size: 16px;
@@ -414,18 +436,78 @@ body /deep/ .mx-input.disabled {
 .b_border {
   border-bottom: 1px solid #ccc;
 }
+.page-btns {
+  width: 20px;
+  line-height: 1 !important;
+  border: none !important;
+  height: 25px;
+  margin-right: 1px;
+  background-color: white;  
+  color: #383838;
+  cursor: pointer;
+}
+.wrapper {    
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+  border: 1px solid #dee2e6 !important;
+  margin-bottom: 20px;
+}
+
+
+// CSS for datatables
+.scroll {
+  cursor:pointer !important;
+  top: 35%;
+  right: 5px;
+  position:absolute; 
+  color: #383838 !important;
+  padding-left:4px !important
+}
+.exportBtns, #printBtn { 
+  transition: all .2s ease-in-out; 
+  background-color: #41b883;
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+}
+.total-table-btns {box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); }
+.exportBtns:hover, #printBtn:hover { transform: scale(1.06); }
+th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.sort-th {    
+  cursor: pointer;
+  font-family: 'FuturaPTBook';
+  text-align: center;
+  position: relative;
+  vertical-align: middle !important;
+}
+.sort-icon {
+  color:#C0C4CC !important;
+} 
+
+.el-collapse-item__arrow {
+  margin-left: 20px;
+}
+
+.fa-sort {font-size: .75rem !important;}
 .table {
   th {
-    text-align: center;
-    text-transform: uppercase;
+    text-align: center;  
     letter-spacing: 0.2em;
     padding: 10px;
-    font-size: 0.9em;
+    font-size: 0.70rem;
+    color: #383838;
   }
   td {
     padding: 6px;
+    font-size: 14px;
+    color: #606266;
   }
 }
+// CSSS for datatable ends
 .badge-active {
   color: #fff;
   text-transform: uppercase;
@@ -498,4 +580,18 @@ body /deep/ .mx-input.disabled {
   pointer-events: none;
   color: #ccc;
   margin: 0.6em;
+}
+.el-icon-loading {
+  font-size: 50px;
+  color: #17a2b8;
+}
+.el-icon-loading:before {
+  color: #17a2b8;
+}
+.el-loading-spinner .el-loading-text {
+    font-size: 20px;
+    color: #17a2b8;
+}
+.el-loading-spinner {
+  top: 45%
 }

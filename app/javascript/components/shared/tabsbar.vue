@@ -1,13 +1,16 @@
 <template>
   <div id="tabbar"> 
-    <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
-      <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Sheets</div>
-    </router-link>
-    <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
-      <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Facility Manager</div>
-    </router-link>
+    <!-- <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
+      <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Project Manager</div>
+    </router-link> -->
     <router-link v-if="permitted('map_view')" :to="mapView" tag="div">
       <div class="badge" :class="{'active': isMapView}" data-cy="map_tab">Map</div>
+    </router-link>
+     <router-link v-if="permitted('sheets_view')" :to="sheetsView" tag="div">
+      <div class="badge" :class="{'active': isSheetsView}" data-cy="sheets_tab">Sheet</div>
+    </router-link>
+    <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
+      <div class="badge" :class="{'active': isKanbanView}" data-cy="kanban_tab">Kanban</div>
     </router-link>
     <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}" data-cy="gantt_tab">Gantt</div>
@@ -15,9 +18,7 @@
     <!-- <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}" data-cy="on_watch_tab">On Watch</div>
     </router-link> -->
-    <router-link v-if="permitted('kanban_view')" :to="kanbanView" tag="div">
-      <div class="badge" :class="{'active': isKanbanView}" data-cy="kanban_tab">Kanban</div>
-    </router-link>
+ 
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
@@ -47,14 +48,14 @@
       isMembersView() {
         return this.$route.name === 'TeamMembersView'
       },
-      isFacilityManagerView() {
-        return this.$route.name === 'FacilityManagerView'
-      },
-       sheetsView() {
-        return `/projects/${this.$route.params.projectId}/sheets`
+      // isFacilityManagerView() {
+      //   return this.$route.name === 'FacilityManagerView'
+      // },
+      sheetsView() {
+        return `/projects/${this.$route.params.projectId}/sheet`
       },
       mapView() {
-        return `/projects/${this.$route.params.projectId}`
+        return `/projects/${this.$route.params.projectId}/`
       },
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
@@ -68,9 +69,9 @@
       membersView() {
         return `/projects/${this.$route.params.projectId}/member_list`
       },
-      facilityManagerView() {
-        return `/projects/${this.$route.params.projectId}/facility_manager`
-      },
+      // facilityManagerView() {
+      //   return `/projects/${this.$route.params.projectId}/facility_manager`
+      // },
       permitted() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions[salut]['read']
       }

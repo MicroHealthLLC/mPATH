@@ -25,6 +25,8 @@ import GanttElasticHeader   from 'gantt-elastic-header'
 import VuePaginate          from 'vue-paginate'
 import vco                  from "v-click-outside"
 import { FontAwesomeIcon }  from '@fortawesome/vue-fontawesome'
+import VueDataTables        from 'vue-data-tables'
+
 
 Vue.use(vco)
 Vue.mixin(utils)
@@ -32,6 +34,7 @@ Vue.use(VTooltip)
 Vue.use(VModal)
 Vue.use(VueTelInput)
 Vue.use(VuePaginate)
+Vue.use(VueDataTables)
 Vue.component('loader', FadeLoader)
 Vue.component('gantt-elastic', GanttElastic)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -43,6 +46,7 @@ Vue.component('GmapCluster', GmapCluster)
 Vue.component('GmapCustomMarker', GmapCustomMarker)
 Vue.component('multiselect', Multiselect)
 Vue.config.productionTip = false
+ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
 Vue.use(VueGoogleMaps, {

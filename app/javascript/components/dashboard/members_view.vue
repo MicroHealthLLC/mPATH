@@ -1,20 +1,22 @@
 <template>
-  <div id="members" data-cy="members_view" class="mt-2">
-     <div class="container my-2 p-4 wrapper" style="background-color:#ededed; border-radius: 4px" > 
+  <div id="members" data-cy="members_view" class="mt-5">
+     <div class="container my-2 p-4 wrapper" style="border-radius:3px" > 
         <h2 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h2>  
-           <div class="mb-0 p-b-0">
-            <el-row class="mb-2">
+           <div class="mb-0 p-b-0">              
+            <el-row>
              <el-col :span="9">
              <div class="input-group w-100 task-search-bar">
                 <div class="input-group-prepend">
-                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-                </div>
-               <input type="search"
-                class="form-control form-control-sm"
-                placeholder="Search All"
+                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>                
+            </div>
+               <input 
+                type="text"
+                class="form-control searchbox form-control-sm"
+                placeholder="Search Team Member Names"
                 aria-label="Search"
-                aria-describedby="search-addon"
-                v-model="filters[0].value"
+                v-on:keyup="memberSearch"
+                id="memberSearch"
+                aria-describedby="search-addon"          
                 data-cy="search_team_member">
             </div>
             </el-col>            
@@ -38,154 +40,174 @@
               </div>
             </el-row>
 
-           </div>              
-        <data-tables 
-          :data="tableData"  
-          ref="table" 
-          id="teamMemberTableId"
-          class="teamMembersList"
-          data-cy="team_members_list"       
-          :header-cell-style="tableHeaderColor"
-          :pagination-props="{ pageSizes: [15, 25, 50, 100, 200] }"
-          layout="table, pagination"
-          :table-props="tableProps"
-          width="100%"
-          :filters="filters">
-        <el-table-column
-            prop="id"
-            label="#"
-            width="55"
-            sortable="custom">
-        </el-table-column>        
-        <el-table-column
-          v-for="title in titles"
-          :prop="title.prop"
-          :label="title.label"
-          :key="title.label"
-          sortable="custom">
-        </el-table-column>
-        <el-table-column
-            prop="email"
-            label="Email"
-            width="200"
-            sortable="custom">
-        </el-table-column>
-      </data-tables>
-     </div>
-     <div style="display:none">
-        <table class="table table-sm table-bordered" ref="table">        
+           </div>
+       <div class="pb-3">              
+         <table class="table table-sm table-bordered" id="taskList1"  ref="table">        
           <thead>
-            <tr>
-              <th></th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Position</th>
-              <th>Organization</th>
-              <th>Phone Number</th>
-              <th>Email</th>                     
+              <tr class="thead" style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('id')"># <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('fullName')">Name <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <!-- <th class="sort-th" @click="sort('lastName')">Last Name<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th> -->
+              <th class="sort-th"  @click="sort('title')">Position<span class="sort-icon scroll"><font-awesome-icon icon="sort" /> </span></th>
+              <th class="pl-1 sort-th" @click="sort('organization')">Organization<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
+              <th class="pl-1 sort-th" @click="sort('phoneNumber')">Phone Number<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th"  @click="sort('email')" >Email<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              
             </tr>
           </thead>
           <tbody>          
-            <tr v-for="(user, i) in orderedUsers">        
-              <td class="text-center">{{i+1}}</td>
-              <td>{{user.firstName}}</td>
-              <td>{{user.lastName}}</td>
+            <tr v-for="(user, index) in sortedMembers" :key="index">        
+              <td class="text-center">{{user.id}}</td>
+              <td>{{user.fullName}}</td>
+              <!-- <td>{{user.lastName}}</td> -->
               <td>{{user.title}}</td>
               <td>{{user.organization}}</td>             
               <td>{{user.phoneNumber}}</td>
               <td>{{user.email}}</td>                        
             </tr>
-          </tbody>
+          </tbody>          
         </table>
-     </div>
+         <div class="float-right mb-4 font-sm">
+           <span>Displaying </span>
+           <div class="simple-select d-inline-block font-sm">
+          
+            <multiselect 
+              v-model="C_membersPerPage" 
+              track-by="value"
+              label="name"      
+              deselect-label=""                     
+              :allow-empty="false"
+              :options="getMembersPerPageFilterOptions">
+                <template slot="singleLabel" slot-scope="{option}">
+                      <div class="d-flex">
+                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
+                      </div>
+                </template>
+            </multiselect>            
+           </div>
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+          <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_membersPerPage.value) }} </button>
+          <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>
+           </div>
+     </div>   
   </div>
 
 </template>
 
 <script>
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {faFilePdf} from '@fortawesome/free-solid-svg-icons'
-import {mapGetters, mapActions} from 'vuex'
-import VueDataTables from 'vue-data-tables'
+
+import {mapGetters, mapMutations} from 'vuex'
 import {jsPDF} from "jspdf"
 import 'jspdf-autotable'
-Vue.use(VueDataTables)
-library.add(faFilePdf)
-ELEMENT.locale(ELEMENT.lang.en)
+
+
   export default {
     name: "TeamMembersView",
+    props: ['facility', 'from'],
      data() {
       return {
         uri :'data:application/vnd.ms-excel;base64,',
         template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
         base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
         format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) },
-        search: '',
-        total: 0,
-        totalRows: 1,
-        tableProps: {
-          stripe: true,         
-        defaultSort: {
-          prop: 'id',
-          order: 'ascending'
-        },          
-       },
-        filters: [
-        {
-          prop: ['id', 'firstName', 'lastName', 'title', 'organization', 'email', 'phoneNumber'],
-          value: ''
-        }
-        ],
-        layout: 'table, pagination',
-        titles: [{         
-          prop: "firstName",
-          label: "First Name"
-          }, {
-          prop: "lastName",
-          label: "Last Name"
-          }, {
-          prop: "title",
-          label: "Position"
-          }, {
-          prop: "organization",
-          label: "Organization"       
-          }, {  
-          prop: "phoneNumber",
-          label: "Phone Number"
-        }]
-      }
-    },
+        total: 0, 
+        pages: [],       
+        currentPage:1,        
+        currentSort:'id',
+        currentSortDir:'asc',     
+       }
+     },
      computed: {
       ...mapGetters([
-        'activeProjectUsers'
+        'activeProjectUsers',
+        'filterDataForAdvancedFilter',
+        'getMembersPerPageFilterOptions',
+        'getMembersPerPageFilter',
+        'getTaskIssueUserFilter',
+        'facilities',
+        'membersPerPageFilter'
       ]),
-      tableData() {
-        return this.activeProjectUsers
+      tableData() {           
+        return this.activeProjectUsers        
       },
       orderedUsers: function() {     
         return _.orderBy(this.activeProjectUsers, 'lastName', 'asc')    
+      },
+      sortedMembers:function() {           
+          return this.tableData.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+              
+          let start = (this.currentPage-1)*this.C_membersPerPage.value;
+          let end = this.currentPage*this.C_membersPerPage.value;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
+       },
+     C_membersPerPage: {
+      get() {
+        return this.getMembersPerPageFilter || {id: 10, name: '10', value: 10}
+      },
+      set(value) {
+        this.setMembersPerPageFilter(value)
       }
+
+    },
      },
      methods: { 
-       tableHeaderColor({ row, column, rowIndex, columnIndex }) {
-        if (rowIndex === 0) {
-          return 'background-color: #606266;color: #383838;'
-        }
+           ...mapMutations([  
+      'setMembersPerPageFilter'
+    ]),
+       changeHead({row, column, rowIndex, columnIndex}){
+      return { backgroundColor: '#343F52', width: '100%' };
+    
        },
-      exportToPdf() {
-        const doc = new jsPDF("l")
-        const html = this.$refs.table.innerHTML
-        var headers = ["id", "First Name", "Last Name","Position", "Organization", "Phone Number", "Email"]
-        var thead = $("<thead>")
-        var tr = $("<tr>")
-        for(var h of headers){
-          tr.append($("<th>",{text: h}))
+      sort:function(s) {
+        //if s == current sort, reverse
+        if(s === this.currentSort) {
+          this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
         }
-        thead.append(tr)
-        $(".el-table__body").append(thead)
-        doc.autoTable({html: '.el-table .el-table__body-wrapper .el-table__body' })
-        doc.save("Team_Members_list.pdf")
-        thead.remove()
+          this.currentSort = s;
+        },
+        nextPage:function() {
+          if((this.currentPage*this.C_membersPerPage.value) < this.tableData.length) this.currentPage++;
+        },
+        prevPage:function() {
+          if(this.currentPage > 1) this.currentPage--;
+        },
+       clear: function(){
+            alert('this button works')
+        // document.getElementsByClassName("searchbox").empty();
+        },
+       memberSearch() {
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("memberSearch");
+          filter = input.value.toUpperCase();
+          table = this.$refs.table;
+          tr = table.getElementsByTagName("tr");
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];      
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }       
+         }
+      },
+      exportToPdf() {     
+        const doc = new jsPDF("l")
+        const html = this.$refs.table.innerHTML    
+        doc.autoTable({html: '#taskList1' })
+        doc.save("Team_Members_list.pdf")   
       }, 
       exportToExcel(table, name){      
         if (!table.nodeType) table = this.$refs.table
@@ -196,25 +218,25 @@ ELEMENT.locale(ELEMENT.lang.en)
   }
 </script>
 <style scoped lang="scss">
-  /deep/.el-table {
-    padding-top: 0px;
-    margin-top:-1.5rem;
-    width: 100%;
-    margin-bottom: 6px;
-    border-top: solid #ededed 1.8px;    
+  .wrapper {    
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+    border: 1px solid #dee2e6 !important;
   }
-  .wrapper {
-     box-shadow: 0 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
-  }
-    /deep/.el-table thead {
-    color: #383838;
-  }
-  /deep/.el-pagination, .total {
+ .total {
     text-align: end;
-    margin-bottom:2rem;
+    margin-bottom:.75rem;
+    padding-right:0;
   }
   .team-total {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+  }
+  #page-count {
+    width: auto !important;
+    cursor: default;
   }
   input[type=search] {
     color: #383838;
@@ -222,4 +244,8 @@ ELEMENT.locale(ELEMENT.lang.en)
     cursor: pointer;
     display: block;
  }
+  #clear {
+      cursor: pointer;
+      margin: auto -23px;
+    }
 </style>
