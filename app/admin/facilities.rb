@@ -35,11 +35,6 @@ ActiveAdmin.register Facility do
       ]
     ]
   end
-  config.clear_action_items!
-
-  action_item :only => :index do
-    link_to "New Project" , new_admin_facility_path
-  end
 
   index title: 'Project' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
@@ -71,7 +66,7 @@ ActiveAdmin.register Facility do
     end
   end
 
-  form title: proc{|g| g.new_record? ? "New Project" : "Edit Project" } do |f|
+  form do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do
@@ -112,12 +107,7 @@ ActiveAdmin.register Facility do
         end
       end
     end
-
-    f.actions do
-      f.action :submit, :as => :button, :label => "Create Project"
-      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
-    end
-
+    f.actions
   end
 
   batch_action :"Assign/Unassign Facility Group", if: proc {current_user.admin_write?}, form: -> {{
