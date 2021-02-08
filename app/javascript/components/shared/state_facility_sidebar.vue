@@ -922,24 +922,29 @@
         this.currentFacility.notes.unshift(note)
         this.setTaskForManager({key: 'note', value: null})
       },
-      updatedFacilityNote(note) {
-        var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
-        var f = facilities.find((t) => t.facilityId === note.noteableId);
-        if(!f.notes){
-          f.notes = []
-        }
-        if(note.noteableId == this.currentFacility.facilityId ){
-          var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
-          if (index > -1) Vue.set(this.currentFacility.notes, index, note)
-        }else{
-          var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
-          if (index > -1) this.currentFacility.notes.splice(index, 1)
-          f.notes.unshift(note)
-          //this.currentFacility = f
-        }
-
+       updatedFacilityNote(note) {
+        let index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+        if (index > -1) Vue.set(this.currentFacility.notes, index, note)
         this.setTaskForManager({key: 'note', value: null})
       },
+      // updatedFacilityNote(note) {
+      //   var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
+      //   var f = facilities.find((t) => t.facilityId === note.noteableId);
+      //   if(!f.notes){
+      //     f.notes = []
+      //   }
+      //   if(note.noteableId == this.currentFacility.facilityId ){
+      //     var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+      //     if (index > -1) Vue.set(this.currentFacility.notes, index, note)
+      //   }else{
+      //     var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+      //     if (index > -1) this.currentFacility.notes.splice(index, 1)
+      //     f.notes.unshift(note)
+      //     //this.currentFacility = f
+      //   }
+
+      //   this.setTaskForManager({key: 'note', value: null})
+      // },
       updateFacilityRisk(risk) {
         let cb = () => this.updateRisksHash({risk: risk})
         this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
