@@ -919,13 +919,7 @@
         this.setTaskForManager({key: 'issue', value: null})
       },
       createdFacilityNote(note) {
-        var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
-        var f = facilities.find((t) => t.facilityId === note.noteableId);
-        if(!f.notes){
-          f.notes = []
-        }
-        f.notes.unshift(note)
-        this.currentFacility = f
+        this.currentFacility.notes.unshift(note)
         this.setTaskForManager({key: 'note', value: null})
       },
       updatedFacilityNote(note) {
