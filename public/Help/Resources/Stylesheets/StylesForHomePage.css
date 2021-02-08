@@ -1,0 +1,866 @@
+/*<meta />*/
+
+@namespace MadCap url(http://www.madcapsoftware.com/Schemas/MadCap.xsd);
+
+/* Home Page General Styles */
+
+:root
+{
+	--Blue-Dark: #0b6ca3;
+	--Blue-Light: #cef0fd;
+	--Blue-Border: #20558a;
+	--Blue-Gradient: #d3e7fa;
+	--Green: #598527;
+	--Header-Background: #eef3fa;
+	--Black: #000000;
+	--Gray-Dark: #333333;
+	--Gray-Medium: #b9bec1;
+	--Gray-Light: #d0d3d5;
+	--White: #ffffff;
+	--Font-Main: Arial, Calibri, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* Main containers. */
+
+body
+{
+	font-family: Arial, Calibri, 'Helvetica Neue', Helvetica, sans-serif;
+	line-height: 1em;
+	color: #333333;
+	background-color: #ffffff;
+	padding: 0;
+	margin-top: 0;
+}
+
+nav.title-bar
+{
+	border-bottom: 3px solid #20558a;
+	padding-bottom: 4px;
+}
+
+div.content-container
+{
+	max-width: 850px;
+	margin: auto;
+	background-color: transparent;
+	mc-hidden: hidden;
+}
+
+#contentBody
+{
+	background-color: ;
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.off-canvas-main
+{
+	background-color: ;
+	margin-top: 0;
+	padding-top: 0;
+	mc-hidden: hidden;
+}
+
+/* Top and bottom section divs that create the gradient on the home page. */
+
+#grad
+{
+	background-image: linear-gradient(var(--Blue-Gradient), var(--White));
+}
+
+div.white
+{
+	background-color: #ffffff;
+	padding-bottom: 40px;
+	padding-top: 5px;
+	mc-hidden: hidden;
+}
+
+/* Hide the navigation menu on the home page. */
+
+.navigation-wrapper
+{
+	display: none;
+	mc-hidden: hidden;
+}
+
+/* Link styles. */
+
+a:link,
+MadCap|xref:link
+{
+	color: inherit;
+	text-decoration: none;
+	font-weight: inherit;
+}
+
+a:visited,
+MadCap|xref:visited
+{
+	color: inherit;
+	text-decoration: none;
+	font-weight: inherit;
+}
+
+a:hover,
+MadCap|xref:hover
+{
+	color: #ffffff;
+	background-color: #0b6ca3;
+	text-decoration: none;
+	font-weight: inherit;
+}
+
+/* Link style for no hover action in header and footer */
+
+a.BlankHover:hover
+{
+	color: inherit;
+	background-color: inherit;
+	text-decoration: none;
+	font-weight: inherit;
+}
+
+/* Border below header*/
+
+div.content-break
+{
+	width: 100%;
+	height: 40px;
+	background-color: #d3e7fa;
+	border-top: 5px solid #598527;
+	margin: 0;
+	padding: 0;
+	mc-hidden: hidden;
+}
+
+/* Blue text fields with rounded corners. Use H2 as text. */
+
+div.BlueField
+{
+	background-color: #0b6ca3;
+	border: 5px solid #0b6ca3;
+	padding: 0;
+	border-radius: 5px;
+	margin: auto;
+	margin-top: 35px;
+	max-width: 450px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	mc-hidden: hidden;
+}
+
+.pointer
+{
+	cursor: pointer;
+}
+
+/* Top container with links to HHS, HRSA, and OPA. Because Flare always puts the navigation banner at the top,
+this uses absolute positioning to move the link container to the top of the screen. May need to be adjusted if
+the navigation banner elements change in height. */
+
+div.top-links-container
+{
+	width: 100%;
+	background-color: #20558a;
+	color: #ffffff;
+	top: 0;
+	left: 0;
+	mc-hidden: hidden;
+	position: fixed;
+	z-index: 1000;
+	height: 25px;
+}
+
+div.top-links
+{
+	max-width: 82.5em;
+	margin: auto;
+	color: #ffffff;
+	z-index: 3;
+	mc-hidden: hidden;
+}
+
+/* Footer at the bottom of the page. */
+
+div.footer-container
+{
+	width: 100%;
+	background-color: #ffffff;
+	border-top: 3px solid #20558a;
+	color: #20558a;
+	z-index: 2;
+	mc-hidden: hidden;
+	mc-disable-glossary-terms: true;
+}
+
+div.footer
+{
+	max-width: 62.5em;
+	margin: auto;
+	z-index: 3;
+	padding-top: 6px;
+	text-align: center;
+	mc-hidden: hidden;
+}
+
+/* Style the search form skin on the home page. */
+
+form.search
+{
+	margin-top: 20px;
+	padding: 0px 5px 5px 5px;
+	max-width: 550px;
+	mc-hidden: hidden;
+}
+
+/* Paragraph styles. */
+
+p
+{
+	color: #000000;
+	margin-bottom: 8px;
+	margin-top: 8px;
+}
+
+/* Paragraph styles for header and footer */
+
+div.top-links p
+{
+	font: Arial, Calibri, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	color: #ffffff;
+	margin: -4px 0 0 0;
+	padding: 0;
+	line-height: 14px;
+	mc-hidden: hidden;
+}
+
+div.footer p
+{
+	font: Arial, Calibri, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 1.2em;
+	line-height: 1.4em;
+	font-weight: 600;
+	color: #20558a;
+	margin: 0;
+	padding: 0;
+	mc-hidden: hidden;
+	mc-disable-glossary-terms: true;
+}
+
+div.footer p.Copyright
+{
+	font-size: 1em;
+	line-height: 1.2em;
+	font-weight: 400;
+	mc-hidden: hidden;
+	mc-disable-glossary-terms: true;
+	mc-hidden: hidden;
+}
+
+h1
+{
+	font-size: 40px;
+	margin: 0;
+	padding: 20px 0 10px 0;
+	text-align: center;
+	line-height: 60px;
+	color: #20558a;
+	letter-spacing: 1px;
+}
+
+h2
+{
+	font-size: 24px;
+	margin: 0;
+	padding: 2px 20px 5px 20px;
+	text-align: center;
+	line-height: normal;
+	font-weight: 600;
+	color: #ffffff;
+	letter-spacing: 2.5px;
+}
+
+/* Content browse tiles. */
+
+div.TileContainer
+{
+	margin: auto;
+	padding-top: 10px;
+	max-width: 1200px;
+	mc-hidden: hidden;
+	mc-disable-glossary-terms: true;
+}
+
+div.Tile
+{
+	display: block;
+	vertical-align: top;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	width: 150px;
+	height: auto;
+	padding: 10px 10px 10px 10px;
+	text-align: center;
+	overflow: hidden;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	mc-hidden: hidden;
+	mc-disable-glossary-terms: true;
+}
+
+div.Tile p
+{
+	color: #0b6ca3;
+	margin-bottom: 8px;
+	margin-top: 8px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	mc-disable-glossary-terms: true;
+}
+
+div.Tile li,
+div.Tile li p
+{
+	color: #0b6ca3;
+	line-height: 18px;
+	margin-bottom: 4px;
+	margin-top: 4px;
+	margin-left: 2px;
+	padding: 2px 0px 2px 5px;
+	font-weight: 600;
+	text-transform: none;
+	letter-spacing: 0px;
+	mc-disable-glossary-terms: true;
+}
+
+div.Tile li:hover
+{
+	color: #ffffff;
+	background-color: #0b6ca3;
+}
+
+div.Tile ul
+{
+	list-style-image: url('../Images/Bullet1.png');
+	list-style-position: outside;
+	margin: 0;
+	padding-left: 2px;
+}
+
+img.Shadow
+{
+	box-shadow: 4px 4px 8px 0px #d0d3d5;
+}
+
+/* Responsive Layout THREE TILES Per Row. Responsive layout that places tiles in a row as 3-2-1 in web/tablet/mobile. */
+
+div.TileContentThreeRow
+{
+	mc-grid-row: true;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding: 0;
+	mc-hidden: hidden;
+}
+
+div.TileContentThreeRow::before
+{
+	content: ' ';
+	display: table;
+}
+
+div.TileContentThreeRow::after
+{
+	content: ' ';
+	display: table;
+	clear: both;
+}
+
+div.TileContentThreeRow > div
+{
+	float: left;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+div.TileContentThreeRow > div:nth-child(1)
+{
+	width: 30.66666%;
+	margin: 0;
+}
+
+div.TileContentThreeRow > div:nth-child(1) > div.Tile
+{
+	margin: 0;
+	float: right;
+}
+
+div.TileContentThreeRow > div:nth-child(2)
+{
+	width: 30.66666%;
+	margin-left: 4%;
+	margin-right: 4%;
+}
+
+div.TileContentThreeRow > div:nth-child(2) > div.Tile
+{
+	margin: auto;
+}
+
+div.TileContentThreeRow > div:nth-child(3)
+{
+	width: 30.66666%;
+	margin: 0;
+}
+
+div.TileContentThreeRow > div:nth-child(3) > div.Tile
+{
+	margin: 0;
+	float: left;
+}
+
+/* Responsive Layout FIVE TILES Per Row. Responsive layout that places tiles in a row as 5-3-2-1 in web/tablet/mobile. */
+
+div.TileContentFiveRow
+{
+	mc-grid-row: true;
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding: 0;
+	mc-hidden: hidden;
+}
+
+div.TileContentFiveRow::before
+{
+	content: ' ';
+	display: table;
+}
+
+div.TileContentFiveRow::after
+{
+	content: ' ';
+	display: table;
+	clear: both;
+}
+
+div.TileContentFiveRow > div
+{
+	float: left;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+div.TileContentFiveRow > div:nth-child(1)
+{
+	width: 18%;
+	margin-left: 2%;
+}
+
+div.TileContentFiveRow > div:nth-child(1) > div.Tile
+{
+	margin: auto;
+}
+
+div.TileContentFiveRow > div:nth-child(2)
+{
+	width: 18%;
+	margin-left: 2%;
+}
+
+div.TileContentFiveRow > div:nth-child(2) > div.Tile
+{
+	margin: auto;
+}
+
+div.TileContentFiveRow > div:nth-child(3)
+{
+	width: 18%;
+	margin-left: 2%;
+}
+
+div.TileContentFiveRow > div:nth-child(3) > div.Tile
+{
+	margin: auto;
+}
+
+div.TileContentFiveRow > div:nth-child(4)
+{
+	width: 18%;
+	margin-left: 2%;
+}
+
+div.TileContentFiveRow > div:nth-child(4) > div.Tile
+{
+	margin: auto;
+}
+
+div.TileContentFiveRow > div:nth-child(5)
+{
+	width: 18%;
+	margin-left: 2%;
+}
+
+div.TileContentFiveRow > div:nth-child(5) > div.Tile
+{
+	margin: auto;
+}
+
+/* Generic and miscellaneous styles. */
+
+.centered-text
+{
+	text-align: center;
+}
+
+.center
+{
+	position: relative;
+	margin-right: auto;
+	margin-left: auto;
+	float: none !important;
+	text-align: center;
+}
+
+.inner-wrap .main-section > .outer-row
+{
+	max-width: 100%;
+	padding: 0;
+}
+
+/* Medium Layout */
+
+@media only screen and (max-width: 997px)
+{
+	#content-section .right-section,
+	#content-section .left-section
+	{
+		padding: 0;
+	}
+
+	/* Responsive tile layout for two tiles on top row, one tile on bottom row. */
+
+	div.TileContentThreeRow,
+	div.TileContentFiveRow
+	{
+		max-width: auto;
+	}
+
+	div.Tile
+	{
+		width: 200px;
+	}
+
+	/* TABLET three cells to a row responsive layout */
+
+	div.TileContentThreeRow > div:nth-child(1)
+	{
+		width: 46%;
+		margin-right: 2%;
+	}
+
+	div.TileContentThreeRow > div:nth-child(1) > div.Tile
+	{
+		margin-right: 0;
+		float: right;
+	}
+
+	div.TileContentThreeRow > div:nth-child(2)
+	{
+		width: 46%;
+		margin-left: 2%;
+	}
+
+	div.TileContentThreeRow > div:nth-child(2) > div.Tile
+	{
+		margin-left: 0;
+		float: left;
+	}
+
+	div.TileContentThreeRow > div:nth-child(3)
+	{
+		padding-top: 5px;
+		padding-right: 4%;
+		width: 100%;
+		margin: auto;
+		border-top: 1px solid #20558a;
+	}
+
+	div.TileContentThreeRow > div:nth-child(3) > div.Tile
+	{
+		float: none;
+		margin: auto;
+	}
+
+	/* TABLET five cells to a row responsive layout */
+
+	div.TileContentFiveRow > div
+	{
+		height: 375px;
+	}
+
+	div.TileContentFiveRow > div:nth-child(1)
+	{
+		width: 46%;
+		margin-right: 2%;
+		margin-left: 0;
+		float: right;
+	}
+
+	div.TileContentFiveRow > div:nth-child(1) > div.Tile
+	{
+		float: none;
+		margin: auto;
+		min-height: 300px;
+	}
+
+	div.TileContentFiveRow > div:nth-child(2)
+	{
+		width: 46%;
+		margin-left: 2%;
+		margin-right: 0;
+		float: left;
+	}
+
+	div.TileContentFiveRow > div:nth-child(2) > div.Tile
+	{
+		float: none;
+		margin: auto;
+		min-height: 300px;
+	}
+
+	div.TileContentFiveRow > div:nth-child(3)
+	{
+		width: 46%;
+		margin-right: 2%;
+		margin-left: 0;
+		float: right;
+		padding-top: 10px;
+		border-top: 1px solid #20558a;
+		border-bottom: 1px solid #20558a;
+	}
+
+	div.TileContentFiveRow > div:nth-child(3) > div.Tile
+	{
+		float: none;
+		margin: auto;
+		min-height: 300px;
+	}
+
+	div.TileContentFiveRow > div:nth-child(4)
+	{
+		width: 46%;
+		margin-left: 2%;
+		margin-right: 0;
+		float: left;
+		padding-top: 10px;
+		border-top: 1px solid #20558a;
+		border-bottom: 1px solid #20558a;
+	}
+
+	div.TileContentFiveRow > div:nth-child(4) > div.Tile
+	{
+		float: none;
+		margin: auto;
+		min-height: 300px;
+	}
+
+	div.TileContentFiveRow > div:nth-child(5)
+	{
+		padding-top: 10px;
+		padding-right: 5%;
+		padding-left: 5%;
+		width: 100%;
+		margin: auto;
+	}
+
+	div.TileContentFiveRow > div:nth-child(5) > div.Tile
+	{
+		float: none;
+		margin: auto;
+	}
+
+	div.white
+	{
+		padding-bottom: 10px;
+	}
+
+	div.footer p
+	{
+		font-size: 1em;
+		line-height: 1.2em;
+		mc-hidden: hidden;
+	}
+
+	div.footer p.Copyright
+	{
+		font-size: 0.9em;
+		line-height: 1em;
+		font-weight: 400;
+		mc-hidden: hidden;
+	}
+}
+
+/* Small Layout */
+
+@media only screen and (max-width: 597px)
+{
+	MadCap|searchBarProxy.homeSearchBar
+	{
+		width: 100%;
+	}
+
+	.left-content
+	{
+		margin-bottom: 60px;
+	}
+
+	/* Hide top links container in mobile. */
+
+	div.top-links-container
+	{
+		display: none;
+	}
+
+	h1
+	{
+		font-size: 32px;
+		line-height: 40px;
+		margin: 0px 0 15px 0;
+	}
+
+	/* MOBILE responsive tile layout for one tile per row. */
+
+	div.TileContentThreeRow,
+	div.TileContentFiveRow
+	{
+		margin-top: 0px;
+		margin-bottom: 0px;
+		max-width: 75%;
+		margin: auto;
+	}
+
+	/* MOBILE three tiles to a row */
+
+	div.TileContentThreeRow > div:nth-child(1),
+	div.TileContentThreeRow > div:nth-child(2)
+	{
+		width: 100%;
+		margin: auto;
+		padding: 5px 20px 5px 20px;
+		border-bottom: 1px solid #20558a;
+	}
+
+	div.TileContentThreeRow > div:nth-child(1) > div.Tile,
+	div.TileContentThreeRow > div:nth-child(2) > div.Tile
+	{
+		margin: auto;
+		float: none;
+	}
+
+	div.TileContentThreeRow > div:nth-child(3)
+	{
+		width: 100%;
+		margin: auto;
+		padding: 5px 20px 5px 20px;
+		border-top: none;
+	}
+
+	div.TileContentThreeRow > div:nth-child(3) > div.Tile
+	{
+		margin: auto;
+		float: none;
+	}
+
+	/* MOBILE five tiles to a row */
+
+	div.TileContentFiveRow > div
+	{
+		height: auto;
+	}
+
+	div.TileContentFiveRow > div:nth-child(1),
+	div.TileContentFiveRow > div:nth-child(2),
+	div.TileContentFiveRow > div:nth-child(3),
+	div.TileContentFiveRow > div:nth-child(4)
+	{
+		width: 100%;
+		margin: auto;
+		padding: 5px 20px 5px 20px;
+		border-bottom: 1px solid #20558a;
+		border-top: none;
+	}
+
+	div.TileContentFiveRow > div:nth-child(1) > div.Tile,
+	div.TileContentFiveRow > div:nth-child(2) > div.Tile,
+	div.TileContentFiveRow > div:nth-child(3) > div.Tile,
+	div.TileContentFiveRow > div:nth-child(4) > div.Tile
+	{
+		margin: auto;
+		float: none;
+		min-height: auto;
+	}
+
+	div.TileContentFiveRow > div:nth-child(5)
+	{
+		width: 100%;
+		margin: auto;
+		padding: 5px 20px 5px 20px;
+		border-top: none;
+	}
+
+	div.TileContentFiveRow > div:nth-child(5) > div.Tile
+	{
+		margin: auto;
+		float: none;
+	}
+
+	/* MOBILE common tile. */
+
+	div.Tile
+	{
+		width: 65%;
+	}
+
+	div.footer p
+	{
+		font-size: 0.8em;
+		line-height: 1.1em;
+		mc-hidden: hidden;
+	}
+
+	div.footer p.Copyright
+	{
+		font-size: 0.7em;
+		line-height: 1em;
+		font-weight: 400;
+		mc-hidden: hidden;
+	}
+
+	div.white
+	{
+		padding-bottom: 10px;
+	}
+
+	form.search
+	{
+		max-width: 85%;
+	}
+
+	div.BlueField
+	{
+		max-width: 400px;
+	}
+}
+
