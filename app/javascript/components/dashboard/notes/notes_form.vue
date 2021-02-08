@@ -56,7 +56,8 @@
         </div> -->
 
       </div>
-      <!-- <div class="input-group mb-2">
+      <div class="input-group mb-2">
+        <label>Files Associated with this Note:</label>
         <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
           <div class="input-group-prepend">
             <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
@@ -78,13 +79,13 @@
             <i class="fas fa-times"></i>
           </div>
         </div>
-      </div> -->
-      <!-- <div class="form-group" >
+      </div>
+      <div class="form-group" >
         <attachment-input
           @input="addFile"
           :show-label="true"
         />
-      </div> -->
+      </div>
 
     </div>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
