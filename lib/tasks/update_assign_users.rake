@@ -1,4 +1,4 @@
-desc "Populating database"
+desc "Update assigned user"
 task :update_assign_users => :environment do
 
   ["Task", "Risk", "Issue"].each do |resource_class|
