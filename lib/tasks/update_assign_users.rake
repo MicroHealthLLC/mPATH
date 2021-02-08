@@ -1,6 +1,7 @@
 desc "Update assigned user"
 task :update_assign_users => :environment do
 
+  puts "Updating Assign users"
   ["Task", "Risk", "Issue"].each do |resource_class|
     all_resources = resource_class.constantize.all
 
@@ -17,15 +18,9 @@ task :update_assign_users => :environment do
       # if more than 2 users are available then make 1st responsible 2nd accountable and 2 to consulted and others to informed
       elsif resource_users.size > 2
         resource_users[1].update(user_type: "accountable")
-        consulted_count = 0
         resource_users.each_with_index do |ts, index|
           next if index < 2
-          if consulted_count < 2
-            ts.update(user_type: "consulted")
-            consulted_count = consulted_count + 1
-          else
-            ts.update(user_type: "informed")
-          end
+          ts.update(user_type: "consulted")
         end
       end
     end
