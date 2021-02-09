@@ -1,5 +1,5 @@
 ActiveAdmin.register Project do
-  menu priority: 3,label: 'Programs'
+  menu priority: 3, label: 'Programs'
   actions :all, except: [:show]
 
   permit_params do
@@ -37,12 +37,6 @@ ActiveAdmin.register Project do
     links
   end
 
-  config.clear_action_items!
-
-  action_item :only => :index do
-    link_to "New Program" , new_admin_project_path
-  end
-
   index title: 'Programs' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
@@ -62,7 +56,7 @@ ActiveAdmin.register Project do
     end
   end
 
-  form title: proc{|g| g.new_record? ? "New Program" : "Edit Program" } do |f|
+  form do |f|
     f.semantic_errors *f.object.errors.keys
 
     tabs do
@@ -102,12 +96,7 @@ ActiveAdmin.register Project do
         end
       end
     end
-
-    f.actions do
-      f.action :submit, :as => :button, :label => "Create Program"
-      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
-    end
-
+    f.actions
   end
 
   filter :name
