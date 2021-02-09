@@ -42,13 +42,13 @@
          <font-awesome-icon icon="copy" />
           Duplicate
         </button>
-        <el-dropdown placement="bottom">
+        <el-dropdown v-show="!isSheetsView" placement="bottom">
           <button @click.prevent="" class="btn btn-sm sticky-btn btn-success ml-2">
             <font-awesome-icon icon="arrow-alt-circle-right" /> Move
           </button>
           <el-dropdown-menu slot="dropdown">
             <div v-for="(facility, index) in facilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
-                <el-dropdown-item :title="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
+                <el-dropdown-item :title="facility.facility.facilityName" :name="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
               </el-dropdown-item>
             </div>
           </el-dropdown-menu>
@@ -1176,6 +1176,9 @@
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
+      },
+      isSheetsView() {
+        return this.$route.name === 'ProjectSheets'
       }
     },
     watch: {
@@ -1409,5 +1412,15 @@
     width: min-content;
     background-color: #fafafa;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .el-dropdown-menu {
+    max-height: 200px;
+    max-width: 200px;
+    overflow-y: scroll;
+  }
+  .el-dropdown-menu__item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>
