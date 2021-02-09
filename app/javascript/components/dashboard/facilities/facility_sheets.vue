@@ -120,7 +120,7 @@
               </div>             
             </div>
 
-            <div v-for="filterArray in getAllFilterNames">              
+            <div v-for="(filterArray, index) in getAllFilterNames" :key="index">              
                 <span v-if="getFilterValue(filterArray[0])">                                         
                             <span><b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}} </span>                    
                 </span>            
@@ -204,7 +204,7 @@
                       <h6>Categories</h6> 
                   </div>                
               </div>
-              <div class="row font-sm" v-for="task in taskStats">           
+              <div class="row font-sm" v-for="(task, index) in taskStats" :key="index">           
                     <div class="col">
                       <span> {{task.name}}</span>
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
@@ -260,7 +260,7 @@
                </div>                  
             </div>
             
-             <div class="row font-sm" v-for="issue in issueStats">          
+             <div class="row font-sm" v-for="(issue, index) in issueStats" :key="index">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -281,7 +281,7 @@
                     <h6>Categories</h6>
                   </div>
                 </div>
-                <div class="row" v-for="issue in issueTaskCategories">
+                <div class="row" v-for="(issue, index) in issueTaskCategories" :key="index">
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -310,7 +310,7 @@
                 <hr>
               </div>             
             </div>
-<div v-for="p of filteredRisks" :load="log(p)"></div>
+<div v-for="(p, index) of filteredRisks" :load="log(p)" :key="index"></div>
               <div class="row mb-2">
                   <div class="col text-center">
                     RISK PRIORITY LEVELS
@@ -372,7 +372,7 @@
                        <h6>Categories</h6> 
                </div>                  
             </div>
-             <div v-for="risk in currentRiskTypes" >
+             <div v-for="(risk, index) in currentRiskTypes" :key="index">
              <div class="row" v-if="risk._display">          
                   <div class="col">
                     <span> {{risk.name}}</span>
