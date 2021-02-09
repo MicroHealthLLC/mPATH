@@ -98,6 +98,28 @@
           </div>
         </div>
       </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Navigation</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedNavigation"
+            track-by="id"
+            label="name"
+            placeholder="Select Navigation"
+            :options="navigationOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
         <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
         <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
@@ -108,11 +130,16 @@
 
 <script>
   import http from './../../common/http'
+
   export default {
     data() {
       return {
         loading: true,
         editPass: false,
+        navigationOptions: [
+          {id: 'sheets', name: 'Sheets', value: 'sheets'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
+          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt', name: 'Gantt', value: 'gantt'}, {id: 'team', name: 'Team', value: 'team'}
+        ],
         profile: {
           email: '',
           firstName: '',
@@ -183,6 +210,9 @@
       }
     },
     computed: {
+      selectedNavigation(){
+        return 'sheets'
+      },
       C_phone() {
         return this.phoneData.phoneNumber ? this.phoneData.formatNational : this.profile.phoneNumber
       },
@@ -245,7 +275,7 @@
         }, deep: true
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>
