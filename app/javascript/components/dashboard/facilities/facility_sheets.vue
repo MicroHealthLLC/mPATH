@@ -181,7 +181,7 @@
                     <span>Complete</span>
                     <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                     </span>
@@ -192,7 +192,7 @@
                       <span>Overdue</span>
                       <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
                    </div>
-                   <div class="col">
+                   <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
                       </span>
@@ -210,7 +210,7 @@
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
                     </div>
 
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
                         <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
                       </span>
@@ -236,7 +236,7 @@
                       <span>Complete</span>
                       <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                      </span>
@@ -247,7 +247,7 @@
                       <span>Overdue</span>
                       <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
                       </span>
@@ -260,12 +260,12 @@
                </div>                  
             </div>
             
-             <div class="row mb-1 font-sm" v-for="issue in issueStats">          
+             <div class="row font-sm" v-for="issue in issueStats">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
                     </span>
@@ -286,7 +286,7 @@
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
                     </span>
@@ -346,8 +346,8 @@
              
               <div class="row">
                     <div class="col">
-                      <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.completed.count}}</span>
+                      <span class="risk-card-title">Complete</span>
+                      <span class="badge badge-secondary badge-pill font-12">{{riskVariation.completed.count}}</span>
                     </div>
                     <div class="col">
                       <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.completed.percentage <= 0}">
@@ -356,11 +356,11 @@
                     </div>
               </div>     
               <div class="row">
-                    <div class="col">
-                      <span>Overdue</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.overdue.count}}</span>
+                    <div class="col mt-neg-4">
+                      <span class="risk-card-title">Overdue</span>
+                      <span class="badge badge-secondary badge-pill font-12">{{riskVariation.overdue.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mt-neg-4">
                       <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${riskVariation.overdue.percentage}%`">{{riskVariation.overdue.percentage}} %</div>
                       </span>
@@ -378,7 +378,7 @@
                     <span> {{risk.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': risk.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${risk.progress}%`">{{risk.progress}} %</div>
                     </span>
@@ -949,5 +949,13 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
   .grey2 {
     border-radius: 3px;
   }
-
+  .risk-card-title {
+    font-size: 1rem;
+  }
+  .font-12 {
+    font-size: 12px;
+  }
+  .mt-neg-4 {
+    margin-top: -4px
+  }
 </style>
