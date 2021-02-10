@@ -180,7 +180,7 @@
           label="name"
           placeholder="Select Project"
           :options="getFacilityProjectOptions"
-          :searchable="false"
+          :searchable="true"
           select-label="Select"
           deselect-label="Enter to remove"
           :disabled="!_isallowed('write')"
@@ -677,6 +677,8 @@
     mounted() {
       if (!_.isEmpty(this.task)) {
         this.loadTask(this.task)
+      }else{
+        this.loadTask(this.DV_task)
       }
       if (this.fixedStage) {
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.fixedStage)
@@ -698,7 +700,7 @@
           text: '',
           startDate: '',
           dueDate: '',
-          facilityProjectId: '',
+          facilityProjectId: this.facility.id,
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',      
@@ -761,6 +763,7 @@
 
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
+
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (task.attachFiles) this.addFile(task.attachFiles)
         this.$nextTick(() => {
