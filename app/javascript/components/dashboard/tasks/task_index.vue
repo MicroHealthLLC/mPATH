@@ -1,5 +1,5 @@
 <template>
-  <div id="tasks-index" class="mt-3" data-cy="task_list">
+  <div id="tasks-index" class="mt-2" data-cy="task_list">
     <div v-if="_isallowed('read')">
 
        <div class="d-flex align-item-center justify-content-between w-100 mb-1">        
@@ -60,7 +60,7 @@
       </div>
       <div v-else>
         <br />
-        <h6 class="text-danger mt-4 ml-1">No tasks found..</h6>
+        <h6 class="text-danger mt-2 ml-1">No tasks found..</h6>
       </div>
     </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>

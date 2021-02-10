@@ -56,7 +56,7 @@
             </div>
             </div>
             <div class="">
-            
+
           </div>
           <div class="col-md-6">
              <label class="font-sm mb-0">Project Status</label>
@@ -66,7 +66,7 @@
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
-              </multiselect>      
+              </multiselect>
             <div>
               <!-- Available row for filter -->
             </div>
@@ -101,7 +101,7 @@
                   </div>
                 </template>
               </multiselect>
-            </div>           
+            </div>
              <h5 class="mb-0 pt-1">Risks</h5>
             <div v-if="viewPermit('kanban_view', 'read')">
               <label class="font-sm mb-0">Risk Stages</label>
@@ -117,7 +117,7 @@
               <multiselect
                 v-model="C_riskApproachFilter"
                 track-by="name"
-                label="name"                  
+                label="name"
                 :options="getRiskApproachFilterOptions"
                 :searchable="false"
                 :multiple="true"
@@ -135,7 +135,7 @@
               <multiselect
                 v-model="C_riskPriorityLevelFilter"
                 track-by="name"
-                label="name"              
+                label="name"
                 :options="getRiskPriorityLevelFilterOptions"
                 :searchable="false"
                 :multiple="true"
@@ -184,7 +184,7 @@
                   </div>
                 </template>
               </multiselect>
-            </div>            
+            </div>
           </div>
 
           <div class="col-md-4">
@@ -230,8 +230,8 @@
                 </div>
               </div>
               <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
-            </div>             
-          </div>        
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -251,7 +251,7 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
-      
+
       facilities: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -326,10 +326,10 @@ export default {
     },
 
     C_riskApproachFilter: {
-      get() {      
+      get() {
         return this.getRiskApproachFilter
       },
-      set(value) {     
+      set(value) {
         this.setRiskApproachFilter(value)
       }
     },
@@ -620,8 +620,8 @@ export default {
     exportMapData() {
       try {
         let filters = [`Map Filters: ${this.currentProject.name} \n
-            Facility Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
-            Facility Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
+            Project Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
+            Project Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
             Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
             Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
@@ -631,12 +631,12 @@ export default {
             Issue % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
-        let header = ["Facility Name", "Facility Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
+        let header = ["Project Name", "Project Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
         let ex_data = []
         for (let facility of this.filterFacilitiesWithActiveFacilityGroups) {
           ex_data.push({
-            "Facility Name": facility.facilityName || 'N/A',
-            "Facility Group": facility.facilityGroupName || 'N/A',
+            "Project Name": facility.facilityName || 'N/A',
+            "Project Group": facility.facilityGroupName || 'N/A',
             "Project Status": facility.projectStatus || 'N/A',
             "Due Date": facility.dueDate || 'N/A',
             "Percentage Complete": facility.progress || 0,
@@ -694,7 +694,7 @@ export default {
           error = "Both fields are required."
         }
       }
-      
+
       hash[option.type] = (input <= 0 ? 0 : Number(input) )
       if (hash.max < 0 || hash.min < 0) error = "Both fields are required."
       if (hash.max == "" && hash.min == "") error = ""

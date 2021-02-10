@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4">
+  <div class="mt-2">
     <div v-if="showDetails">
       <div>
         <task-index

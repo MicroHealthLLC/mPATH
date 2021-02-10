@@ -31,7 +31,30 @@
           >
           Close
         </button>
-        <div class="btn-group">
+        <div class="duplicate">
+        <button
+          class="btn btn-sm sticky-btn btn-success ml-2"
+          @click.prevent="createDuplicate"
+          data-cy="task_close_btn"
+          :load="log(task)"
+          v-if="DV_task.id"
+        >
+         <font-awesome-icon icon="copy" />
+          Duplicate
+        </button>
+        <el-dropdown v-show="!isSheetsView" placement="bottom">
+          <button @click.prevent="" class="btn btn-sm sticky-btn btn-success ml-2">
+            <font-awesome-icon icon="arrow-alt-circle-right" /> Move
+          </button>
+          <el-dropdown-menu slot="dropdown">
+            <div v-for="(facility, index) in facilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
+                <el-dropdown-item :title="facility.facility.facilityName" :name="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
+              </el-dropdown-item>
+            </div>
+          </el-dropdown-menu>
+        </el-dropdown> 
+        </div>
+        <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
           class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
@@ -48,7 +71,7 @@
           <font-awesome-icon icon="plus-circle" />
           Updates
         </button>
-        </div>        
+        </div>         -->
         <button
           v-if="_isallowed('delete') && DV_task.id"
           @click.prevent="deleteTask"
@@ -59,36 +82,50 @@
           Delete
         </button>
       </div>
-     <div class="paperLook formTitle">
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
+          
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      
+      </div>
+    
+     <div class="formTitle pt-1">
       <div
         v-if="showErrors"
         class="text-danger mb-3"
         >
         Please fill the required fields before submitting
       </div>
-      <div class="form-group mx-4">
-        <label class="font-sm"><h5>*Task Name:</h5></label>
+
+
+<!-- Tabbed sections begin here -->
+
+  <!-- TASK INFO TAB #1 -->
+  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
+        
+    <div class="form-group pt-3 mx-4">
+        <label class="font-sm">*Task Name:</label>
             <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
               <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
             </span>
-        <input
-          name="Name"
-          v-validate="'required'"
-          type="text"
-          class="form-control form-control-sm"
-          v-model="DV_task.text"
-          placeholder="Task Name"
-          :readonly="!_isallowed('write')"
-          :class="{'form-control': true, 'error': errors.has('Name') }"
-          data-cy="task_name"
-        />
+            <input
+              name="Name"
+              v-validate="'required'"
+              type="text"
+              class="form-control form-control-sm"
+              v-model="DV_task.text"
+              placeholder="Task Name"
+              :readonly="!_isallowed('write')"
+              :class="{'form-control': true, 'error': errors.has('Name') }"
+              data-cy="task_name"
+            />
         <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
           {{errors.first('Name')}}
         </div>
       </div>
-       <div class="form-group mx-4">
+
+        <div class="form-group mx-4">
         <label class="font-sm">Description:</label>
         <textarea
           class="form-control"
@@ -100,30 +137,9 @@
         />
       </div>
 
-      <div class="simple-select form-group mx-4">
-        <label class="font-sm">*Facility:</label>
-        <multiselect
-          v-model="selectedFacilityProject"
-          v-validate="'required'"
-          track-by="id"
-          label="name"
-          placeholder="Select Facility"
-          :options="getFacilityProjectOptions"
-          :searchable="false"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :disabled="!_isallowed('write')"
-          data-cy="facility_project_id"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.name}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
-
-      <div class="simple-select form-group mx-4">
+  <!-- Row begins -->
+     <div  class="d-flex mb-0 mx-4 form-group">        
+      <div class="simple-select form-group w-100">
         <label class="font-sm">*Task Category:</label>
         <multiselect
           v-model="selectedTaskType"
@@ -145,7 +161,7 @@
           </template>
         </multiselect>
       </div>
-      <div class="simple-select form-group mx-4">
+      <div class="simple-select w-100 form-group mx-1">
         <label class="font-sm">Stage:</label>
         <multiselect
           v-model="selectedTaskStage"
@@ -166,7 +182,31 @@
           </template>
         </multiselect>
       </div>
-      <div class="form-row mx-4">
+       <div class="simple-select form-group w-100">
+        <label class="font-sm">*Project:</label>
+        <multiselect
+          v-model="selectedFacilityProject"
+          v-validate="'required'"
+          track-by="id"
+          label="name"
+          placeholder="Select Project"
+          :options="getFacilityProjectOptions"
+          :searchable="false"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :disabled="!_isallowed('write')"
+          data-cy="facility_project_id"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.name}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+    </div>
+    <!-- Row ends -->
+    <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
           <label class="font-sm">*Start Date:</label>
           <v2-date-picker
@@ -203,7 +243,8 @@
           </div>
         </div>
       </div>
-      <div class="form-group user-select mx-4">
+
+      <!-- <div class="form-group user-select mx-4">
         <label class="font-sm mb-0">Assign Users:</label>
         <multiselect
           v-model="taskUsers"
@@ -225,20 +266,112 @@
             </div>
           </template>
         </multiselect>
-      </div>
-      <div class="form-group mx-4">
-        <label class="font-sm mb-0">Progress: (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center"><input type="checkbox" v-model="DV_task.autoCalculate" :disabled="!_isallowed('write')" :readonly="!_isallowed('write')"><span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <vue-slide-bar
-          v-model="DV_task.progress"
-          :line-height="8"      
-          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :draggable="_isallowed('write') && !DV_task.autoCalculate"
-        ></vue-slide-bar>
-      </div>
-      <div class="form-group mx-4">
+      </div> -->
+      <!-- closing div for tab1 -->
+</div>
+
+  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+   
+  <div class="form-group mb-0 pt-3 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+          <label class="font-sm mb-0">Responsible:</label>
+          <multiselect
+            v-model="responsibleUsers"      
+            track-by="id"
+            label="fullName"
+            placeholder="Select Responsible User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Accountable:</label>
+          <multiselect
+            v-model="accountableTaskUsers"              
+            track-by="id"
+            label="fullName"
+            placeholder="Select Accountable User"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="true"              
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>             
+  </div> 
+  <div class="form-group  mt-0 d-flex w-100">
+        <div class="form-group user-select ml-4 mr-1 w-100">
+          <label class="font-sm mb-0">Consulted:</label>
+          <multiselect
+            v-model="consultedTaskUsers"         
+            track-by="id"
+            label="fullName"
+            placeholder="Select Consulted Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"
+    
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>     
+        <div class="form-group user-select ml-1 mr-4 w-100">
+          <label class="font-sm mb-0">Informed:</label>
+          <multiselect
+            v-model="informedTaskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="false"            
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>         
+    </div>
+  </div>
+
+<!-- CHECKLIST TAB #3-->
+
+<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+      
+      <div class="form-group pt-3 mx-4">
         <label class="font-sm">Checklists:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
           <i class="fas fa-plus-circle" ></i>
@@ -304,8 +437,15 @@
         </div>
         <p v-else class="text-danger font-sm">No checks..</p>
       </div>
+ <!-- closing div for tab2 -->
+</div>
+
+
+   <!-- FILES TAB # 4-->
+<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+
       <div class="mx-4">
-        <div class="input-group mb-2">
+        <div class="input-group pt-3 mb-2">
           <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
             <div class="input-group-prepend">
               <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
@@ -328,7 +468,7 @@
           </div>
         </div>
       </div>
-     <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div>
+
       <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
         <attachment-input
@@ -336,8 +476,14 @@
           :show-label="true"
         ></attachment-input>
       </div>
+<!-- closing div for tab3 -->
+</div>
 
-      <div class="form-group user-select mx-4">
+
+ <!-- RELATED TAB #5 -->  
+<div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
+           
+      <div class="form-group user-select pt-3 mx-4">
         <label class="font-sm mb-0">Related Tasks:</label>
         <multiselect
           v-model="relatedTasks"
@@ -382,9 +528,57 @@
           </template>
         </multiselect>
       </div>
-      <div class="form-group mx-4 paginated-updates">
-        <hr class="my-4"/>
-        <label class="font-sm mb-2">Updates:</label>
+        <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
+
+        
+    <!-- closing div for tab4 -->
+ </div>
+
+
+  <!-- UPDATE TAB 6 -->
+  <div v-if="currentTab == 'tab6'" class="paperLookTab tab5">       
+     
+      <div class="form-group pt-3 mx-4">
+        <label class="font-sm mb-0">Progress: (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"      
+          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
+          :draggable="_isallowed('write') && !DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>      
+    
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Updates:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
@@ -399,11 +593,21 @@
             <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
-      </div>         
+      </div>       
      </div>
+     <!-- closing div for tab5 -->
+  </div>
+
+  <!-- TABBED OUT SECTION END HERE -->
+
+
+     <!-- <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div> -->
+      
+
+      
     
      <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
-       <div ref="addUpdates" class="pt-0 mt-0"> </div>
+       <!-- <div ref="addUpdates" class="pt-0 mt-0"> </div> -->
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
   </div>
@@ -412,6 +616,7 @@
 <script>
   import axios from 'axios'
   import Draggable from "vuedraggable"
+  import CustomTabs from './../../shared/custom-tabs'
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
@@ -422,7 +627,7 @@
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
-      AttachmentInput, Draggable
+      AttachmentInput, Draggable, CustomTabs
     },
     data() {
       return {
@@ -432,13 +637,52 @@
         selectedFacilityProject: null,
         selectedTaskType: null,
         selectedTaskStage: null,
-        taskUsers: [],
+        responsibleUsers: [],
+        accountableTaskUsers:[],
+        consultedTaskUsers:[],
+        informedTaskUsers:[],
         relatedIssues: [],
         relatedTasks: [],
+        relatedRisks: [],
         _ismounted: false,
         showErrors: false,
         loading: true,
-        movingSlot: ''
+        movingSlot: '',
+        currentTab: 'tab1',
+        tabs: [
+          {
+            label: 'TASK INFO',
+            key: 'tab1',
+            closable: false
+          },
+           {
+            label: 'ASSIGNMENTS',
+            key: 'tab2',
+            closable: false,                       
+          },      
+          {
+            label: 'CHECKLIST',
+            key: 'tab3',
+            closable: false
+          },
+          {
+            label: 'FILES',
+            key: 'tab4',
+            closable: false
+          },
+           {
+            label: 'RELATED',
+            key: 'tab5',
+            closable: false,     
+                      
+          },          
+           {
+            label: 'UPDATES',
+            key: 'tab6',
+            closable: false,     
+                      
+          },                      
+        ]
       }
     },
     mounted() {
@@ -453,7 +697,8 @@
      },    
     methods: {
        ...mapMutations([
-        'setTaskForManager'
+        'setTaskForManager',
+        'updateTasksHash'
       ]),
       ...mapActions([
         'taskDeleted',
@@ -468,10 +713,14 @@
           facilityProjectId: '',
           checklistDueDate: '',
           taskTypeId: '',
-          taskStageId: '',
-          userIds: [],
+          taskStageId: '',      
+          responsibleUserIds: [],
+          accountableUserIds:[],
+          consultedUserIds:[],
+          informedUserIds:[],
           subTaskIds: [],
           subIssueIds: [],
+          subRiskIds: [],
           description: '',
           progress: 0,
           autoCalculate: true,
@@ -479,6 +728,8 @@
           checklists: [],
           notes: []
         }
+      },
+      log(e){
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -491,6 +742,9 @@
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
+      },
+      onChangeTab(tab) {
+        this.currentTab = tab ? tab.key : 'tab1'
       },
       handleEnd(e, checklists){
         var cc = this.DV_task.checklists
@@ -506,11 +760,17 @@
         this.taskDeleted(this.DV_task)
         this.cancelSave()
       },
+         // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
         this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.taskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.userIds.includes(u.id))
+        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_task.responsibleUserIds.includes(u.id))
+        this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.accountableUserIds.includes(u.id))
+        this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.consultedUserIds.includes(u.id))
+        this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.informedUserIds.includes(u.id))       
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
+        this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
+
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
@@ -554,6 +814,35 @@
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
       },
+      createDuplicate(){
+
+        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.DV_task.id}/create_duplicate.json`
+        let method = "POST"
+        let callback = "task-created"
+
+        this.loading = true
+        let formData = new FormData()
+        formData.append('id', this.DV_task.id)
+
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.$emit(callback, humps.camelizeKeys(response.data.task))
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      },
       saveTask() {
         if (!this._isallowed('write')) return
         this.$validator.validate().then((success) =>
@@ -576,14 +865,57 @@
           formData.append('task[facility_project_id]', this.DV_task.facilityProjectId)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-          if (this.DV_task.userIds.length) {
-            for (let u_id of this.DV_task.userIds) {
-              formData.append('task[user_ids][]', u_id)
+
+  // RACI USERS START HERE Awaiting backend work
+     
+     //Responsible USer Id
+
+
+     if (this.DV_task.responsibleUserIds.length) {
+            for (let u_id of this.DV_task.responsibleUserIds) {
+              formData.append('responsible_user_ids[]', u_id)
             }
           }
           else {
-            formData.append('task[user_ids][]', [])
+            formData.append('responsible_user_ids[]', [])
           }
+
+      // Accountable UserId
+
+         if (this.DV_task.accountableUserIds.length) {
+            for (let u_id of this.DV_task.accountableUserIds) {
+              formData.append('accountable_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('accountable_user_ids[]', [])
+          }
+
+          // Consulted UserId
+          
+          if (this.DV_task.consultedUserIds.length) {
+            for (let u_id of this.DV_task.consultedUserIds) {
+              formData.append('consulted_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('consulted_user_ids[]', [])
+          }
+
+          // Informed UserId
+          
+          if (this.DV_task.informedUserIds.length) {
+            for (let u_id of this.DV_task.informedUserIds) {
+              formData.append('informed_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('informed_user_ids[]', [])
+          }
+
+  // RACI USERS ABOVE THIS LINE  Awaiting backend work
+  // More RACI Users in Computed section below
+
 
           if (this.DV_task.subTaskIds.length) {
             for (let u_id of this.DV_task.subTaskIds) {
@@ -601,6 +933,15 @@
           }
           else {
             formData.append('task[sub_issue_ids][]', [])
+          }
+
+          if (this.DV_task.subRiskIds.length) {
+            for (let u_id of this.DV_task.subRiskIds) {
+              formData.append('task[sub_risk_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('task[sub_risk_ids][]', [])
           }
 
           for (let i in this.DV_task.checklists) {
@@ -735,6 +1076,54 @@
 
         return date < new Date(this.DV_task.startDate) || date > dueDate;
       },
+      moveTask(task, facilityProjectId) {
+        if (!this._isallowed("write")) return;
+        this.$validator.validate().then((success) => {
+          if (!success || this.loading) {
+            this.showErrors = !success;
+            return;
+          }
+          this.loading = true;
+          let formData = new FormData();
+          formData.append("task[facility_project_id]", facilityProjectId);
+          let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+          let method = "PUT";
+          let callback = "task-updated";
+          var beforeSaveTask = task;
+          axios({
+            method: method,
+            url: url,
+            data: formData,
+            headers: {
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+                .attributes["content"].value,
+            },
+          })
+            .then((response) => {
+              if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
+                this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
+                this.$emit(callback, humps.camelizeKeys(response.data.task));
+                this.updateFacilities(humps.camelizeKeys(response.data.task), facilityProjectId);
+              })
+            .catch((err) => {
+              // var errors = err.response.data.errors
+              console.log(err);
+            })
+            .finally(() => {
+              this.loading = false;
+              this.updateTasksHash({task: task, action: 'delete'})
+            });
+        });
+      },
+      updateFacilities(updatedTask, id) {
+        var facilities = this.facilities;
+        
+        facilities.forEach(facility => {
+          if (facility.facilityProjectId === id) {
+            facility.tasks.push(updatedTask)
+          }
+        })
+      }
     },
     computed: {
       ...mapGetters([
@@ -747,7 +1136,9 @@
         'myActionsFilter',
         'currentTasks',
         'currentIssues',
-        'managerView'
+        'currentRisks',
+        'managerView',
+        'facilities'
       ]),
       readyToSave() {
         return (
@@ -771,6 +1162,9 @@
       filteredTasks() {
         return _.filter(this.currentTasks, t => t.id !== this.DV_task.id)
       },
+      filteredRisks() {
+        return _.filter(this.currentRisks, t => t.id !== this.DV_task.id)
+      },
       filteredIssues() {
         return this.currentIssues
       },
@@ -782,6 +1176,9 @@
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
+      },
+      isSheetsView() {
+        return this.$route.name === 'ProjectSheets'
       }
     },
     watch: {
@@ -818,9 +1215,26 @@
       "DV_task.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-      taskUsers: {
+
+  // RACI USERS HERE awaiting backend work
+    responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.userIds = _.uniq(_.map(value, 'id'))
+          if (value) this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }, deep: true
+      },
+    accountableTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }, deep: true
+      },
+        consultedTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      informedTaskUsers: {
+        handler: function(value) {
+          if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
       relatedIssues: {
@@ -831,6 +1245,11 @@
       relatedTasks: {
         handler: function(value) {
           if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+      },
+      relatedRisks: {
+        handler: function(value) {
+          if (value) this.DV_task.subRiskIds = _.uniq(_.map(value, 'id'))
         }, deep: true
       },
       selectedTaskType: {
@@ -855,6 +1274,12 @@
           this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
         }, deep: true
       },
+      filteredRisks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
+        }, deep: true
+      },
       "filteredNotes.length"(value, previous) {
         this.$nextTick(() => {
           if (this.$refs.paginator && (value === 1 || previous === 0)) {
@@ -871,7 +1296,7 @@
     z-index: 100;
     width: 100%;
     position: absolute;
-    background-color: #fff;
+    background-color: #ededed;
   }
   .form-control.error {
     border-color: #E84444;
@@ -899,9 +1324,6 @@
   ul {
     list-style-type: none;
     padding: 0;
-  }
- .formTitle {
-    padding-top: 25px;
   }
   .paperLook {
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
@@ -976,7 +1398,7 @@
   .check-due-date {
     text-align: end;
   }
-  .btn-group{
+  .duplicate{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -985,5 +1407,20 @@
   }
   .disabled {
     opacity: 0.6;
+  }
+  .custom-tab {
+    width: min-content;
+    background-color: #fafafa;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .el-dropdown-menu {
+    max-height: 200px;
+    max-width: 200px;
+    overflow-y: scroll;
+  }
+  .el-dropdown-menu__item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>

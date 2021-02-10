@@ -8,12 +8,15 @@ class RisksController < AuthenticatedController
 
   def create
     @risk = Risk.create(risk_params.merge(user_id: current_user.id))
+    @risk.assign_users(params)
     render json: {risk: @risk.reload.to_json}
   end
 
   def update
     destroy_files_first if destroy_file_ids.present?
     @risk.update(risk_params)
+    @risk.assign_users(params)
+
     render json: {risk: @risk.reload.to_json}
   end
 
@@ -53,6 +56,7 @@ class RisksController < AuthenticatedController
       :facility_project_id,
       :risk_description,
       :impact_description,
+      :probability_description,
       :probability,
       :probability_name,
       :impact_level,

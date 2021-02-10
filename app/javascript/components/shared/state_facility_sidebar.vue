@@ -18,7 +18,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-show>
-<!--           <facility-rollup
+          <!-- <facility-rollup
             v-else
             :facility-group="C_showFacilityRollup ? currentFacilityGroup : null"
             from="manager_view"
@@ -27,7 +27,7 @@
       </div>
         <div class="col-md-6 facility-forms-tab" v-if="isFacilityManagerView">
         <div class="default-background">
-          <div class="bg-white mt-4">
+          <div class="bg-white mt-2">
             <task-form
               v-if="managerView.task"
               :facility="currentFacility"
@@ -118,14 +118,25 @@
               class="form-inside-modal"
             ></issue-form>
               <notes-form
-              v-else-if="managerView.note"            
+              v-else-if="managerView.note"
+              from="manager_view"
               :facility="currentFacility"
               :note="managerView.note"
               @close-note-input="newNote=false"
               @note-created="createdFacilityNote"
               @note-updated="updatedFacilityNote"
-              class="form-inside-modal"
-            ></notes-form>  
+            ></notes-form>
+
+             <!-- <notes-form
+              v-else-if="managerView.note"
+              from="manager_view"
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote=false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+            ></notes-form> -->
+            
            </div>       
           </sweet-modal>
          </div>
@@ -356,6 +367,7 @@
           :fixed-stage="fixedStageId"
           @on-close-form="onCloseForm"
           @task-created="handleNewTask"
+          @create-duplicate-task="createDuplicateTask"
           class="form-inside-modal"
         ></task-form>
 
@@ -721,6 +733,10 @@
         let taskIssueProgress = this.taskIssueProgressFilter
         let taskIssueUsers = this.getTaskIssueUserFilter
 
+        let riskPriorityLevelFilterIds = _.map(this.getRiskPriorityLevelFilter, 'id')
+
+        let riskApproachIds = _.map(this.getRiskApproachFilter, 'id')
+
         return _.orderBy(_.filter(this.currentFacility.risks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
 
@@ -766,10 +782,14 @@
           }
 
 
-          if (this.searchStageId && this.searchStageId == resource.issueStageId) {
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
+
+          if (this.searchStageId && this.searchStageId == resource.riskStageId) {
             if (search_query) valid = valid && search_query.test(resource.title)
           } else if(stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.issueStageId)
+            valid = valid && stageIds.includes(resource.riskStageId)
           }
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
 
@@ -899,33 +919,32 @@
         this.setTaskForManager({key: 'issue', value: null})
       },
       createdFacilityNote(note) {
-        var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
-        var f = facilities.find((t) => t.facilityId === note.noteableId);
-        if(!f.notes){
-          f.notes = []
-        }
-        f.notes.unshift(note)
-        this.currentFacility = f
+        this.currentFacility.notes.unshift(note)
         this.setTaskForManager({key: 'note', value: null})
       },
-      updatedFacilityNote(note) {
-        var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
-        var f = facilities.find((t) => t.facilityId === note.noteableId);
-        if(!f.notes){
-          f.notes = []
-        }
-        if(note.noteableId == this.currentFacility.facilityId ){
-          var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
-          if (index > -1) Vue.set(this.currentFacility.notes, index, note)
-        }else{
-          var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
-          if (index > -1) this.currentFacility.notes.splice(index, 1)
-          f.notes.unshift(note)
-          //this.currentFacility = f
-        }
+       updatedFacilityNote(note) {
+        let index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+        if (index > -1) Vue.set(this.currentFacility.notes, index, note)
+        this.setTaskForManager({key: 'note', value: null})
+      },
+      // updatedFacilityNote(note) {
+      //   var facilities =  this.facilityGroupFacilities(this.currentFacilityGroup)
+      //   var f = facilities.find((t) => t.facilityId === note.noteableId);
+      //   if(!f.notes){
+      //     f.notes = []
+      //   }
+      //   if(note.noteableId == this.currentFacility.facilityId ){
+      //     var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+      //     if (index > -1) Vue.set(this.currentFacility.notes, index, note)
+      //   }else{
+      //     var index = this.currentFacility.notes.findIndex(n => n.id == note.id)
+      //     if (index > -1) this.currentFacility.notes.splice(index, 1)
+      //     f.notes.unshift(note)
+      //     //this.currentFacility = f
+      //   }
 
-        this.setTaskForManager({key: 'note', value: null})
-      },
+      //   this.setTaskForManager({key: 'note', value: null})
+      // },
       updateFacilityRisk(risk) {
         let cb = () => this.updateRisksHash({risk: risk})
         this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
@@ -1096,9 +1115,9 @@
     min-width: 80vw;
     max-height: 90vh;
     background-color: #ededed;
-    .sweet-content {
-      padding-top: 30px;
+    .sweet-content {    
       text-align: unset;
+      padding: 10px;
     }
     .modal_close_btn {
       display: flex;

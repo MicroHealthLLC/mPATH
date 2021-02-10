@@ -30,10 +30,10 @@
    <div class="notes_input mt-2 paperLook formTitle" :class="{'_disabled': loading, 'border-0': from == 'manager_view'}">
       <div class="form-group">
        <label class="font-sm"><h5>Note</h5></label>
-        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="type notes here..." data-cy="note_details"></textarea>
+        <textarea class="form-control" v-model="DV_note.body" rows="5" v-validate="'required'" placeholder="Write note here..." data-cy="note_details"></textarea>
 
-        <div class="simple-select form-group mx-4">
-          <label class="font-sm">*Facility:</label>
+        <!-- <div class="simple-select form-group mx-0">
+          <label class="font-sm">*Project:</label>
           <multiselect
             v-model="selectedFacilityProject"
             v-validate="'required'"
@@ -53,10 +53,11 @@
               </div>
             </template>
           </multiselect>
-        </div>
+        </div> -->
 
       </div>
       <div class="input-group mb-2">
+        <label>Files Associated with this Note:</label>
         <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
           <div class="input-group-prepend">
             <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
@@ -234,8 +235,10 @@
       readyToSave() {
         return (
           this.DV_note &&
-          this.exists(this.DV_note.body) &&
-          this.exists(this.DV_note.facilityProjectId)
+          this.exists(this.DV_note.body)
+          // this.DV_note &&
+          // this.exists(this.DV_note.body) &&
+          // this.exists(this.DV_note.facilityProjectId)
         )
       },
       titleText() {

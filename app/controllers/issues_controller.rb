@@ -14,6 +14,8 @@ class IssuesController < AuthenticatedController
   def update
     destroy_files_first if destroy_file_ids.present?
     @issue.update(issue_params)
+    @issue.assign_users(params)
+
     render json: {issue: @issue.reload.to_json}
   end
 

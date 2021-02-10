@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_22_022456) do
+ActiveRecord::Schema.define(version: 2021_02_04_220816) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
     t.bigint "issue_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "user_type", default: "responsible"
     t.index ["issue_id"], name: "index_issue_users_on_issue_id"
     t.index ["user_id"], name: "index_issue_users_on_user_id"
   end
@@ -240,12 +241,10 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
   end
 
   create_table "project_roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "role_id"
-    t.bigint "project_id"
+    t.integer "role_id"
+    t.integer "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["project_id"], name: "index_project_roles_on_project_id"
-    t.index ["role_id"], name: "index_project_roles_on_role_id"
   end
 
   create_table "project_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -347,6 +346,7 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
     t.bigint "user_id"
     t.bigint "risk_id"
     t.string "timestamps"
+    t.string "user_type", default: "responsible"
     t.index ["risk_id"], name: "index_risk_users_on_risk_id"
     t.index ["user_id"], name: "index_risk_users_on_user_id"
   end
@@ -376,6 +376,7 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
+    t.text "probability_description"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
@@ -442,6 +443,7 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
     t.bigint "task_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "user_type", default: "responsible"
     t.index ["task_id"], name: "index_task_users_on_task_id"
     t.index ["user_id"], name: "index_task_users_on_user_id"
   end
@@ -518,8 +520,6 @@ ActiveRecord::Schema.define(version: 2021_01_22_022456) do
   add_foreign_key "project_issue_severities", "projects"
   add_foreign_key "project_issue_types", "issue_types"
   add_foreign_key "project_issue_types", "projects"
-  add_foreign_key "project_roles", "projects"
-  add_foreign_key "project_roles", "roles"
   add_foreign_key "project_statuses", "projects"
   add_foreign_key "project_statuses", "statuses"
   add_foreign_key "project_task_types", "projects"

@@ -31,12 +31,14 @@
     .badge {
       cursor: pointer;
       padding: 7px 10px;
+      border-radius: .10rem;      
+      font-weight: 500;
       letter-spacing: 0.12em;
       margin: 4px 7px;
       transition: auto;
       &.active {
-        color: #fff;
-        background-color: #17a2b8;
+        color: #fff !important;
+        background-color: #383838 !important;
       }
       &.disabled {
         pointer-events: none;
@@ -46,9 +48,10 @@
         padding: 7px 10px !important;
       }
       &:hover {
-        padding: 6px 9px;
-        border: 1px solid #17a2b8;
-      }
+      background-color:  rgba(91, 192, 222, 0.3);
+      border:none !important;
+       color: #383838;
+     }
     }
   }
   .tab-shadow {
