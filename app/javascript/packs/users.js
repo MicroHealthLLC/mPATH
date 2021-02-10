@@ -9,6 +9,7 @@ import * as VueGoogleMaps  from 'vue2-google-maps'
 import FadeLoader          from 'vue-spinner/src/FadeLoader.vue'
 import VuePhoneNumberInput from 'vue-phone-number-input'
 import 'vue-phone-number-input/dist/vue-phone-number-input.css'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('loader', FadeLoader)

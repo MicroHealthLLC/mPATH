@@ -21,6 +21,15 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
 
+  has_settings do |s|
+    s.key :preferences, defaults: { 
+      navigation_menu: 'sheets', 
+      sub_navigation_menu: 'overview', 
+      project_id: nil,
+      project_group_id: nil
+    }
+  end
+
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
       where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|
@@ -67,7 +76,7 @@ class User < ApplicationRecord
     json = super(options)
     json.merge(
       full_name: full_name,
-      organization: organization.try(:title)  || ""
+      organization: organization.try(:title)  || ""      
     ).as_json
   end
 

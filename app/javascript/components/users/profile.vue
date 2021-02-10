@@ -120,6 +120,74 @@
           </multiselect>
         </div>
       </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Sub Navigation</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedSubNavigation"
+            track-by="id"
+            label="name"
+            placeholder="Select Sub Navigation"
+            :options="selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Project Group</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedProjectGroupId"
+            track-by="id"
+            label="name"
+            placeholder="Select Project Group"
+            :options="projectGroupOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Project</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedProjectId"
+            track-by="id"
+            label="name"
+            placeholder="Select Project"
+            :options="projectOptions"
+            :searchable="false"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
         <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
         <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
@@ -140,6 +208,21 @@
           {id: 'sheets', name: 'Sheets', value: 'sheets'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
           {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt', name: 'Gantt', value: 'gantt'}, {id: 'team', name: 'Team', value: 'team'}
         ],
+        subNavigationOptions: [
+          {id: 'tasks', name: 'Tasks', value: 'tasks'},
+          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
+          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
+        ],
+        kanbanSubNavigationOptions: [
+          {id: 'tasks', name: 'Tasks', value: 'tasks'},
+          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
+        ],
+        projectGroupOptions: [],
+        projectOptions: [],
+        selectedNavigation: null,
+        selectedSubNavigation: null,
+        selectedProjectId: null,
+        selectedProjectGroupId: null,
         profile: {
           email: '',
           firstName: '',
@@ -153,6 +236,13 @@
           passwordConfirmation: '',
           countryCode: ''
         },
+        // Do not change this property name.
+        preferences: {
+          navigationMenu: 'sheets',
+          subNavigationMenu: 'overview',
+          projectId: null,
+          projectGroupId: null
+        },
         phoneData: {},
         gmap_address: {},
         center: {lat: 40.64, lng: -74.66}
@@ -165,7 +255,25 @@
       fetchProfile() {
         http.get('/current_user.json')
           .then((res) => {
-            this.profile = {...this.profile, ...res.data}
+
+            this.profile = {...this.profile, ...res.data.currentUser}
+            this.preferences = {...this.preferences, ...res.data.preferences}
+
+            this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
+            this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+
+            this.projectGroupOptions = res.data.projectGroups
+            this.selectedProjectGroupId = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
+
+            var group = this.projectGroupOptions.find((t) => t.id === this.selectedProjectGroupId.id );
+            this.projectOptions = []
+            _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
+
+
+            this.selectedProjectId = this.projectOptions.find((t) => t.id === this.preferences.projectId );
+            console.log(this.projectOptions)
+            console.log(this.selectedProjectId)
+            console.log(this.preferences.projectId)
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
               this.center = {lat: this.profile.lat, lng: this.profile.lng}
@@ -188,14 +296,31 @@
         this.$validator.validate().then((success) => {
           if (!success || !this.enableEdit) return;
           let data = Object.assign({}, this.profile)
+          let preferences = Object.assign({}, this.preferences)
+
           if (!this.editPass) {
             delete data.password
             delete data.passwordConfirmation
           }
           delete data.email
 
+          if(this.selectedNavigation){
+            preferences.navigationMenu = this.selectedNavigation.id
+          }
+          if(this.selectedSubNavigation){
+            preferences.subNavigationMenu = this.selectedSubNavigation.id
+          }
+
+          if(this.selectedProjectGroupId){
+            preferences.projectGroupId = this.selectedProjectGroupId.id
+          }
+
+          if(this.selectedProjectId){
+            preferences.projectId = this.selectedProjectId.id
+          }
+
           http
-            .post('/profile.json', {profile: data})
+            .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
               this.gotoDashboard()
@@ -210,9 +335,6 @@
       }
     },
     computed: {
-      selectedNavigation(){
-        return 'sheets'
-      },
       C_phone() {
         return this.phoneData.phoneNumber ? this.phoneData.formatNational : this.profile.phoneNumber
       },
@@ -265,6 +387,21 @@
       }
     },
     watch: {
+      selectedProjectGroupId: {
+        handler: function(value) {
+          var group = this.projectGroupOptions.find((t) => t.id === value.id );
+          this.projectOptions = []
+          _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
+
+        }, deep: true
+      },
+      navigationOptions: {
+        handler: function(value) {
+          if (value.id == "kanban") {
+            this.subNavigationOptions
+          }
+        }, deep: true
+      },
       gmap_address: {
         handler: function(value) {
           this.profile.address = value.formatted_address
