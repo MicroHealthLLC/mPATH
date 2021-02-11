@@ -425,6 +425,7 @@ export default {
         this.facilities.length === this.getUnfilteredFacilities.length
       ) {
         this.initialFacilities = this.getUnfilteredFacilities;
+        this.centerMapToFacilities();
       }
     },
     initialFacilities: function () {
