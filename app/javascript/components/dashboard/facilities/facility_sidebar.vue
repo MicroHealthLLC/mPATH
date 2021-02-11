@@ -51,6 +51,10 @@
     mounted() {
       // make the first facility_group expanded
       if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      if(Vue.prototype.$preferences.project_group_id){
+        debugger
+        this.currentFacilityGroup = this.filteredFacilityGroups.find((t) => t.id === Vue.prototype.$preferences.project_group_id) 
+      }
     },
     methods: {
       expandFacilityGroup(group) {

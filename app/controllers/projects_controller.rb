@@ -73,6 +73,22 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+  def map
+    check_permit("map_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
+  def gantt
+    check_permit("gantt_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
   private
   def set_project
       fg_hash = {

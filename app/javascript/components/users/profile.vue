@@ -129,7 +129,7 @@
             track-by="id"
             label="name"
             placeholder="Select Sub Navigation"
-            :options="selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
+            :options="selectedNavigation && selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
             :searchable="false"
             select-label="Select"
             deselect-label="Enter to remove"
@@ -205,8 +205,8 @@
         loading: true,
         editPass: false,
         navigationOptions: [
-          {id: 'sheets', name: 'Sheets', value: 'sheets'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
-          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt', name: 'Gantt', value: 'gantt'}, {id: 'team', name: 'Team', value: 'team'}
+          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
+          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
         ],
         subNavigationOptions: [
           {id: 'tasks', name: 'Tasks', value: 'tasks'},
@@ -269,11 +269,8 @@
             this.projectOptions = []
             _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
 
-
             this.selectedProjectId = this.projectOptions.find((t) => t.id === this.preferences.projectId );
-            console.log(this.projectOptions)
-            console.log(this.selectedProjectId)
-            console.log(this.preferences.projectId)
+
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
               this.center = {lat: this.profile.lat, lng: this.profile.lng}
@@ -397,9 +394,7 @@
       },
       navigationOptions: {
         handler: function(value) {
-          if (value.id == "kanban") {
-            this.subNavigationOptions
-          }
+
         }, deep: true
       },
       gmap_address: {

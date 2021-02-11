@@ -473,13 +473,12 @@
             closable: false
           }
         ],
-        currentTab: 'tasks',
         expanded: {
           id: ''
         },
         currentFacility: {},
         currentFacilityGroup: {},
-        currentTab: 'tasks',
+        currentTab: 'issues',
         fixedStageId: null,
         viewList: 'all',
         listOptions: ['active','all', 'completed'],  
@@ -497,6 +496,7 @@
     mounted() {
       // make the first facility_group expanded
       if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+
       // Display notification when leaving map view to another page and conditions met
       if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
         this.$notify.info({
@@ -512,6 +512,7 @@
     },
     computed: {
       ...mapGetters([ 
+        'facilityGroups',
         'managerView',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',

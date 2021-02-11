@@ -76,8 +76,20 @@ class User < ApplicationRecord
     json = super(options)
     json.merge(
       full_name: full_name,
+      preferences: self.settings(:preferences).value,
       organization: organization.try(:title)  || ""      
     ).as_json
+  end
+
+  def get_preferences
+    preferences = self.settings(:preferences)
+    # if preferences.project_group_id.present?
+    #   preferences.project_group = FacilityGroup.find(preferences.project_group_id)
+    # end
+    # if preferences.project_id.present?
+    #   preferences.project = FacilityProject.where(facility_id: preferences.project_id).first
+    # end
+    preferences
   end
 
   def active_for_authentication?
