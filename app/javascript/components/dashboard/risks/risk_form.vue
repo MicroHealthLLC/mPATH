@@ -158,7 +158,7 @@
             label="name"
             placeholder="Select Project"
             :options="getFacilityProjectOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
             :disabled="!_isallowed('write')"
@@ -1089,6 +1089,7 @@
         this.loadRisk(this.risk)
       } else {
         this.loading = false
+        this.loadRisk(this.DV_risk)
       }
       if (this.fixedStage) {
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.fixedStage)
@@ -1107,7 +1108,7 @@
       ]),
       INITIAL_RISK_STATE() {
         return {
-          facilityProjectId: '',
+          facilityProjectId: this.facility.id,
           text: '',
           riskDescription: '',
           impactDescription: '',   
