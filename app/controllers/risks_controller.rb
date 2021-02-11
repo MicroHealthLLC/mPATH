@@ -38,14 +38,10 @@ class RisksController < AuthenticatedController
 
   private
   def set_resources
-    if params[:risk][:facility_project_id]
-      @facility_project = FacilityProject.find(params[:risk][:facility_project_id])
-    else
-      @project = current_user.projects.active.find_by(id: params[:project_id])
-      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
-    end
-
+    @project = current_user.projects.active.find_by(id: params[:project_id])
+    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
+  
 
   def set_risk
     @risk = @facility_project.risks.find_by(id: params[:id])
