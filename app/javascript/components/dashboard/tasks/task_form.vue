@@ -585,7 +585,7 @@
         <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
           <div v-for="note in paginated('filteredNotes')" class="form-group">
-            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Update by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
               <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
                 <i class="fas fa-trash-alt"></i>
               </span>

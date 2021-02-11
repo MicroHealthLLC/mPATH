@@ -93,11 +93,11 @@
             rows="3"
             :readonly="!_isallowed('write')"
             data-cy="risk_description"
-            name="risk_description"
-            :class="{'form-control': true, 'error': errors.has('risk_description') }"
+            name="Risk Description"
+            :class="{'form-control': true, 'error': errors.has('Risk Description') }"
           />
-          <div v-show="errors.has('risk_description')" class="text-danger" data-cy="risk_description_error">
-            {{errors.first('risk_description')}}
+          <div v-show="errors.has('Risk Description')" class="text-danger" data-cy="risk_description_error">
+            {{errors.first('Risk Description')}}
           </div>
         </div>
         
@@ -509,7 +509,7 @@
                 <div class="col-md-6 pl-1 pr-0"> 
                   <!-- PROBABILITY DESCRIPTION REQUIRES BACKEND WORK -->
                   <div class="form-group mx-1 mb-0">
-                  <label class="font-sm">Probability Description:</label>                  
+                  <label class="font-sm">*Probability Description:</label>                  
                   <textarea                  
                     v-validate="'required'"
                     class="form-control"
@@ -518,12 +518,12 @@
                     rows="3"
                     :readonly="!_isallowed('write')"
                     data-cy="probability_description"
-                    name="probability_description"
-                    :class="{'form-control': true, 'error': errors.has('probability_description') }"            
+                    name="Probability Description"
+                    :class="{'form-control': true, 'error': errors.has('Probability Description') }"            
                   
                   />
-                  <div v-show="errors.has('probability_description')" class="text-danger" data-cy="probability_description_error">
-                    {{errors.first('probability_description')}}
+                  <div v-show="errors.has('Probability Description')" class="text-danger" data-cy="probability_description_error">
+                    {{errors.first('Probability Description')}}
                   </div>
                 </div> 
                 <div class="form-group mx-1">
@@ -536,11 +536,11 @@
                     rows="3"
                     :readonly="!_isallowed('write')"
                     data-cy="impact_description"
-                    name="impact_description"
-                    :class="{'form-control': true, 'error': errors.has('impact_description') }"
+                    name="Impact Description"
+                    :class="{'form-control': true, 'error': errors.has('Impact Description') }"
                   />
-                  <div v-show="errors.has('impact_description')" class="text-danger" data-cy="impact_description_error">
-                    {{errors.first('impact_description')}}
+                  <div v-show="errors.has('Impact Description')" class="text-danger" data-cy="impact_description_error">
+                    {{errors.first('Impact Description')}}
                   </div>
                 </div> 
                 </div>
@@ -753,11 +753,11 @@
             rows="3"
             :readonly="!_isallowed('write')"
             data-cy="approach_description"
-            name="approach_description"
-            :class="{'form-control': true, 'error': errors.has('approach_description') }"
+            name="Risk Approach Description"
+            :class="{'form-control': true, 'error': errors.has('Risk Approach Description') }"
           />
-          <div v-show="errors.has('approach_description')" class="text-danger" data-cy="approach_description_error">
-            {{errors.first('approach_description')}}
+          <div v-show="errors.has('Risk Approach Description')" class="text-danger" data-cy="approach_description_error">
+            {{errors.first('Risk Approach Description')}}
           </div>
         </div>
     </div>
@@ -967,7 +967,7 @@
         <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
           <div v-for="note in paginated('filteredNotes')" class="form-group">
-            <span class="d-inline-block w-100"><label class="badge badge-secondary">Note by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Update by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
               <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
                 <i class="fas fa-trash-alt"></i>
               </span>
@@ -1971,6 +1971,9 @@
   }
   .disabled {
     opacity: 0.6;
+  }
+  .error {
+    font-size: .8rem;
   }
 
 </style>
