@@ -27,7 +27,7 @@
           <hr />
           <div class="dropdown-context-menu">
             <el-menu-item
-              v-for="(facility, index) in facilities"
+              v-for="(facility, index) in getUnfilteredFacilities"
               :key="index"
               :title="facility.facility.facilityName"
               @click="moveTask(task, facility.facilityProjectId)"
@@ -244,7 +244,8 @@
         'currentTasks',
         'currentIssues',
         'viewPermit',
-        'currentProject'
+        'currentProject',
+        'getUnfilteredFacilities'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]

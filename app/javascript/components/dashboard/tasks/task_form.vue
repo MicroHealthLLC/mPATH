@@ -47,7 +47,7 @@
             <font-awesome-icon icon="arrow-alt-circle-right" /> Move
           </button>
           <el-dropdown-menu slot="dropdown">
-            <div v-for="(facility, index) in facilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
+            <div v-for="(facility, index) in getUnfilteredFacilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
                 <el-dropdown-item :title="facility.facility.facilityName" :name="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
               </el-dropdown-item>
             </div>
@@ -1138,7 +1138,8 @@
         'currentIssues',
         'currentRisks',
         'managerView',
-        'facilities'
+        'facilities',
+        'getUnfilteredFacilities'
       ]),
       readyToSave() {
         return (
