@@ -74,6 +74,11 @@
               <label class="font-sm mb-0">Project Completion Date Range</label>
               <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
+            <!-- To Do: Convert to multiselect to match other filter toggles -->
+            <div class="d-flex flex-column">
+              <label class="font-sm mb-0">Map Boundary Filter</label>
+              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
+            </div>
           </div>
         </div>
       </div>
@@ -313,7 +318,10 @@ export default {
       'myActionsFilter',
       'onWatchFilter',
       'progressFilter',
-      'viewPermit'
+      'viewPermit',
+      'getMapZoomFilter',
+      'getUnfilteredFacilities',
+      'getMapZoomFilter'
     ]),
 
     C_riskPriorityLevelFilter: {
@@ -520,6 +528,9 @@ export default {
     },
     isGanttView() {
       return this.$route.name === 'ProjectGanttChart'
+    },
+    mapFilterApplied() {
+      return this.getMapZoomFilter.length === this.getUnfilteredFacilities.length
     }
   },
   methods: {
@@ -555,7 +566,8 @@ export default {
       'setTasksPerPageFilter',
       'setRisksPerPageFilter',
       'setIssuesPerPageFilter',
-      'setMembersPerPageFilter'
+      'setMembersPerPageFilter',
+      'setFacilities'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -609,7 +621,7 @@ export default {
       this.setRisksPerPageFilter(null)
       this.setIssuesPerPageFilter(null)
       this.setMembersPerPageFilter(null)
-
+      this.setFacilities(this.getUnfilteredFacilities)
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;
@@ -703,6 +715,9 @@ export default {
       if((input === 0 || input === "" ) && option.type == 'max') hash.max = ""
 
       this.setProgressFilters({ key: option.variable, value: hash })
+    },
+    resetMapFilter() {
+      this.setFacilities(this.getUnfilteredFacilities)
     }
   },
   watch: {

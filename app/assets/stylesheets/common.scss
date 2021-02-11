@@ -595,3 +595,15 @@ th {
 .el-loading-spinner {
   top: 45%
 }
+.el-notification {
+  background-color: #17a2b8;
+  h2, p, .__closeBtn {
+    color: white;
+  }
+}
+.el-notification__closeBtn {
+  color: white;
+}
+.el-notification .el-icon-info {
+  color: white;
+}
