@@ -119,8 +119,8 @@
               <col class="eight" />
               <col class="eight" />
               <col class="seven" />
-              <col class="nine" />
-              <col class="nine" />
+              <col class="ten" />
+              <col class="eight" />
               <col class="eight" />
               <col class="eight" />
               <col class="twenty" />

@@ -17,7 +17,7 @@
           </span>
         </div>
         <div class="note_by my-2">
-          <span class="badge badge-secondary">Note by</span>
+          <!-- <span class="badge badge-secondary">Note by</span> -->
           <span class="text-muted font-sm">{{noteBy}}</span>
         </div>
         <div v-if="DV_note.attachFiles.length > 0" class="note_files">
