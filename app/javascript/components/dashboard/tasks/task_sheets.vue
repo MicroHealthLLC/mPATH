@@ -7,16 +7,20 @@
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
         <td class="eight">{{formatDate(task.dueDate)}}</td>
-        <td class="ten" v-if="(task.userNames.length) >= 0">{{ task.userNames }}</td>
-        <td class="ten" v-else></td>
-        <td class="ten">{{task.progress + "%"}}</td>
+        <td class="twelve" >
+          <span v-if="(task.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(task.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{task.accountableUsers[0].name}}<br></span>   
+          <span v-if="(task.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{task.consultedUsers[0].name}}<br></span> 
+          <span v-if="(task.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{task.informedUsers[0].name}}</span>       
+        </td>
+        <td class="eight">{{task.progress + "%"}}</td>
         <td class="ten" v-if="(task.dueDate) <= now"><h5>x</h5></td>
         <td class="ten" v-else></td>
         <td class="eight" v-if="(task.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="twenty" v-if="(task.notes.length) > 0">
-          By: {{ task.notes[0].user.fullName}} on
-          {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+           <span class="toolTip" v-tooltip="(moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a'))"> 
+           By: {{ task.notes[0].user.fullName}}:</span><br> {{task.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -27,7 +31,7 @@
           <hr />
           <div class="dropdown-context-menu">
             <el-menu-item
-              v-for="(facility, index) in facilities"
+              v-for="(facility, index) in getUnfilteredFacilities"
               :key="index"
               :title="facility.facility.facilityName"
               @click="moveTask(task, facility.facilityProjectId)"
@@ -244,7 +248,8 @@
         'currentTasks',
         'currentIssues',
         'viewPermit',
-        'currentProject'
+        'currentProject',
+        'getUnfilteredFacilities'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
@@ -298,6 +303,9 @@
   .ten {
     width: 10%;
   }
+  .twelve {
+    width: 12%;
+  }
   .sixteen {
     width: 16%;
   }
@@ -308,6 +316,9 @@
     width: 100%;
     height: 20px;
     font-weight: bold;
+  }
+  .badge-pill {
+    font-size: .85rem;
   }
   td {
     overflow-wrap: break-word;
@@ -353,6 +364,13 @@
     max-height: 200px;
     max-width: 200px;
     overflow-y: scroll;
+  }
+  .toolTip {
+    background-color: #6c757d;
+    font-size: .75rem;
+    padding:1px;
+    color: #fff;
+    border-radius: 3px;
   }
   .el-menu-item {
     padding: 10px;

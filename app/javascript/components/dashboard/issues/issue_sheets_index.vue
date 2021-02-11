@@ -130,8 +130,8 @@
                   <col class="nine" />
                   <col class="eight" />
                   <col class="eight" />
-                  <col class="ten" />
-                  <col class="nine" />
+                  <col class="elev" />
+                  <col class="eight" />
                   <col class="nine" />
                   <col class="nine" />
                   <col class="oneFive" />
@@ -551,6 +551,9 @@
   }
   .ten {
     width: 10%;
+  }
+  .elev {
+    width: 11%;
   }
   .oneFive {
     width: 15%;

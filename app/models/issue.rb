@@ -32,6 +32,10 @@ class Issue < ApplicationRecord
 
     fp = self.facility_project
     users = self.users.active
+    users_hash = {} 
+    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+
+
 
     resource_users = self.issue_users.where(user_id: users.map(&:id) )
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
@@ -59,9 +63,16 @@ class Issue < ApplicationRecord
       user_ids: users.map(&:id).compact.uniq,
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       
-      # Add accountable users
-      accountable_user_ids: accountable_user_ids,
+
+    # Add RACI user names
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
+      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+
+     # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
+      accountable_user_ids: accountable_user_ids,  
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
