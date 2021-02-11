@@ -106,7 +106,9 @@ export default new Vuex.Store({
       note: null,
       risk: null
     },
-    mapZoomFilter: new Array
+    mapZoomFilter: new Array,
+    unfilteredFacilities: new Array,
+    previousRoute: ''
   },
 
   mutations: {
@@ -150,6 +152,7 @@ export default new Vuex.Store({
     setSideLoading: (state, loading) => state.sideLoading = loading,
     setProjects: (state, projects) => state.projects = projects,
     setFacilities: (state, facilities) => state.facilities = facilities,
+    setUnfilteredFacilities: (state, facilities) => state.unfilteredFacilities = facilities,
     setFacilityGroups: (state, facilityGroups) => state.facilityGroups = facilityGroups,
     setStatuses: (state, statuses) => state.statuses = statuses,
 
@@ -298,7 +301,8 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null
       }
     },
-    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds    
+    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
+    setPreviousRoute: (state, route) => state.previousRoute = route    
   },
 
   getters: {
@@ -327,7 +331,7 @@ export default new Vuex.Store({
 
       return options;
     },
-  //  For Datatables items per page display only
+    //For Datatables items per page display only
     getMembersPerPageFilter: state => state.membersPerPageFilter,
     getMembersPerPageFilterOptions: (state, getters) => {
       var options = [      
@@ -1446,7 +1450,9 @@ export default new Vuex.Store({
     impactLevelNames: () => {
       return ["1 - Negligible", "2 - Minor", "3 - Moderate", "4 - Major", "5 - Catastrophic"]
     },
-    getMapZoomFilter: (state) => state.mapZoomFilter
+    getMapZoomFilter: (state) => state.mapZoomFilter,
+    getUnfilteredFacilities: (state) => state.unfilteredFacilities,
+    getPreviousRoute: (state) => state.previousRoute
   },
 
   actions: {

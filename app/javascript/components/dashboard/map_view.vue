@@ -50,10 +50,17 @@
                 ref="marker"
                 :key="`${facility.id}__${index}`"
                 :animation="4"
-                v-for="( facility, index ) in filterFacilitiesWithActiveFacilityGroups"
+                v-for="(
+                  facility, index
+                ) in filterFacilitiesWithActiveFacilityGroups"
                 :position="getLatLngForFacility(facility)"
-                @click=" showFacility(facility); toggleTooltip(facility, `${facility.id}__${index}`); "
-                @mouseover=" tooltipMouseOver(facility, `${facility.id}__${index}`) "
+                @click="
+                  showFacility(facility);
+                  toggleTooltip(facility, `${facility.id}__${index}`);
+                "
+                @mouseover="
+                  tooltipMouseOver(facility, `${facility.id}__${index}`)
+                "
                 @mouseout="tooltipMouseOut"
                 :icon="{ url: getStatusIconLink(facility) }"
               />
@@ -224,6 +231,7 @@ export default {
       initialFacilities: [],
       facilitiesSet: false,
       mapFacilityCount: null,
+      boundsCapturedCount: 0,
     };
   },
   computed: {
@@ -240,6 +248,7 @@ export default {
       "filteredFacilities",
       "facilityGroupFacilities",
       "getMapZoomFilter",
+      "getUnfilteredFacilities",
     ]),
     knockerStyle() {
       return this.openSidebar
@@ -257,6 +266,8 @@ export default {
       "setCurrentFacility",
       "setMapZoomFilter",
       "setFacilities",
+      "setUnfilteredFacilities",
+      "setPreviousRoute",
     ]),
     getLatLngForFacility(facility) {
       return { lat: Number(facility.lat), lng: Number(facility.lng) };
@@ -345,7 +356,10 @@ export default {
         // Update array of Ids of facilities that are visible on map
         this.setMapZoomFilter(this.visibleMarkers());
         // Set facilities at state level by filtering out non-visible facilities
-        if (this.getMapZoomFilter.length !== this.mapFacilityCount) {
+        if (
+          this.getMapZoomFilter.length !== this.mapFacilityCount &&
+          this.boundsCapturedCount > 2
+        ) {
           this.setFacilities(
             this.initialFacilities.filter((item) =>
               this.getMapZoomFilter.includes(item.id)
@@ -354,6 +368,7 @@ export default {
           this.mapFacilityCount = this.facilities.length;
         }
       }
+      this.boundsCapturedCount++;
     },
     visibleMarkers() {
       return this.initialFacilities
@@ -385,14 +400,31 @@ export default {
       this.$refs.googlemap.fitBounds(bounds);
     },
   },
-  beforeDestroy() {
-    this.setFacilities(this.initialFacilities);
-    this.initialFacilities = [];
+  mounted() {
+    // Display notification if the Map Boundary Filter is still on
+    if (this.facilities.length !== this.getUnfilteredFacilities.length) {
+      this.$notify.info({
+        title: "Filter Set",
+        message:
+          "A filter was set based on the previous map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
+        offset: 150,
+        position: "bottom-left",
+      });
+    }
+    // Store the map route name for check when redirecting to other pages
+    this.setPreviousRoute(this.$route.name);
   },
   watch: {
     facilities: function () {
       if (!this.facilitiesSet) {
         this.centerMapToFacilities();
+      }
+      // This will fire off when Map Boundary Filter is reset due to facilities changing
+      if (
+        this.facilitiesSet &&
+        this.facilities.length === this.getUnfilteredFacilities.length
+      ) {
+        this.initialFacilities = this.getUnfilteredFacilities;
       }
     },
     initialFacilities: function () {
