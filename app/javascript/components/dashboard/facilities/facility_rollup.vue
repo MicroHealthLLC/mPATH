@@ -149,7 +149,8 @@
                             <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
                 </div>
               </div>
-            </div>                    
+            </div>
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                    
          </el-card>     
        </div>  
 
@@ -430,7 +431,8 @@ export default {
       'filteredAllIssues',
       'filteredAllRisks',
       'myActionsFilter',
-      'onWatchFilter'
+      'onWatchFilter',
+      'getUnfilteredFacilities'
     ]),
     C_taskTypeFilter: {
       get() {

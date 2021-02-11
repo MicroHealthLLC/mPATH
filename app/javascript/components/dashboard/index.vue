@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions, mapMutations} from 'vuex'
   import Tabsbar from './../shared/tabsbar'
   import FilterSidebar from './../shared/filter_sidebar'
   import StateFacilitySidebar from './../shared/state_facility_sidebar'
@@ -28,11 +28,16 @@
     methods: {
       ...mapActions([
         'fetchDashboardData'
+      ]),
+      ...mapMutations([
+        'setUnfilteredFacilities'
       ])
     },
     computed: {
       ...mapGetters([
-        'contentLoaded'
+        'contentLoaded',
+        'facilities',
+        'getUnfilteredFacilities'
       ]),
       isSheetsView() {
         return this.$route.name === 'ProjectSheets'
@@ -43,6 +48,12 @@
       isKanbanView() {
         return this.$route.name === 'ProjectKanbanView'
       },
+    },
+    updated() {
+      if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
+        this.setUnfilteredFacilities(this.facilities)
+      }
+      
     }
   }
 </script>
