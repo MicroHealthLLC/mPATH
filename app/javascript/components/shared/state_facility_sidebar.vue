@@ -497,6 +497,16 @@
     mounted() {
       // make the first facility_group expanded
       if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      // Display notification when leaving map view to another page and conditions met
+      if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
+        this.$notify.info({
+          title: "Filter Set",
+          message:
+            "A filter was set based on the map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
+          offset: 150,
+          position: "bottom-left"
+        });
+      }
     },
     computed: {
       ...mapGetters([ 
@@ -530,7 +540,10 @@
         'facilityGroupFacilities',
         'taskTypes',
         'issueTypes',
-        'issueSeverities'
+        'issueSeverities',
+        'facilities',
+        'getUnfilteredFacilities',
+        'getPreviousRoute'
       ]),
        filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
