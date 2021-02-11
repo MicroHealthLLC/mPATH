@@ -506,6 +506,8 @@
           offset: 150,
           position: "bottom-left"
         });
+
+        this.setPreviousRoute(this.$route.name)
       }
     },
     computed: {
@@ -892,7 +894,8 @@
         'setIssueSeverityFilter',
         'setIssueTypeFilter',
         'setTaskTypeFilter',
-        'updateTasksHash',               
+        'updateTasksHash',
+        'setPreviousRoute'              
       ]),
       ...mapActions([
         'taskUpdated'

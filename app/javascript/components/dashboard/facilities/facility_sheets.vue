@@ -123,8 +123,9 @@
             <div v-for="filterArray in getAllFilterNames">              
                 <span v-if="getFilterValue(filterArray[0])">                                         
                             <span><b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}} </span>                    
-                </span>            
-            </div>                    
+                </span>           
+            </div>
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                 
          </el-card>     
        </div> 
 
@@ -601,7 +602,9 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         'issueUserFilter',
         'statuses',
         'myActionsFilter',
-        'onWatchFilter'
+        'onWatchFilter',
+        'facilities',
+        'getUnfilteredFacilities'
       ]),
       C_taskTypeFilter: {
         get() {

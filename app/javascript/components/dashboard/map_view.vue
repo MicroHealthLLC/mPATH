@@ -231,6 +231,7 @@ export default {
       initialFacilities: [],
       facilitiesSet: false,
       mapFacilityCount: null,
+      boundsCapturedCount: 0,
     };
   },
   computed: {
@@ -355,7 +356,10 @@ export default {
         // Update array of Ids of facilities that are visible on map
         this.setMapZoomFilter(this.visibleMarkers());
         // Set facilities at state level by filtering out non-visible facilities
-        if (this.getMapZoomFilter.length !== this.mapFacilityCount) {
+        if (
+          this.getMapZoomFilter.length !== this.mapFacilityCount &&
+          this.boundsCapturedCount > 2
+        ) {
           this.setFacilities(
             this.initialFacilities.filter((item) =>
               this.getMapZoomFilter.includes(item.id)
@@ -364,6 +368,7 @@ export default {
           this.mapFacilityCount = this.facilities.length;
         }
       }
+      this.boundsCapturedCount++;
     },
     visibleMarkers() {
       return this.initialFacilities
@@ -403,7 +408,7 @@ export default {
         message:
           "A filter was set based on the previous map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
         offset: 150,
-        position: "bottom-left"
+        position: "bottom-left",
       });
     }
     // Store the map route name for check when redirecting to other pages

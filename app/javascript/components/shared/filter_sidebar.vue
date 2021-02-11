@@ -77,7 +77,7 @@
             <!-- To Do: Convert to multiselect to match other filter toggles -->
             <div class="d-flex flex-column">
               <label class="font-sm mb-0">Map Boundary Filter</label>
-              <el-button @click="resetMapFilter" size="small">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
+              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
             </div>
           </div>
         </div>
@@ -320,7 +320,8 @@ export default {
       'progressFilter',
       'viewPermit',
       'getMapZoomFilter',
-      'getUnfilteredFacilities'
+      'getUnfilteredFacilities',
+      'getMapZoomFilter'
     ]),
 
     C_riskPriorityLevelFilter: {
@@ -527,6 +528,9 @@ export default {
     },
     isGanttView() {
       return this.$route.name === 'ProjectGanttChart'
+    },
+    mapFilterApplied() {
+      return this.getMapZoomFilter.length === this.getUnfilteredFacilities.length
     }
   },
   methods: {
