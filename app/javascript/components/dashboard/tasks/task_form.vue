@@ -42,6 +42,17 @@
          <font-awesome-icon icon="copy" />
           Duplicate
         </button>
+        <el-dropdown v-show="!isSheetsView" placement="bottom">
+          <button @click.prevent="" class="btn btn-sm sticky-btn btn-success ml-2">
+            <font-awesome-icon icon="arrow-alt-circle-right" /> Move
+          </button>
+          <el-dropdown-menu slot="dropdown">
+            <div v-for="(facility, index) in facilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
+                <el-dropdown-item :title="facility.facility.facilityName" :name="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
+              </el-dropdown-item>
+            </div>
+          </el-dropdown-menu>
+        </el-dropdown> 
         </div>
         <!-- <div class="btn-group">
            <button  
@@ -686,7 +697,8 @@
      },    
     methods: {
        ...mapMutations([
-        'setTaskForManager'
+        'setTaskForManager',
+        'updateTasksHash'
       ]),
       ...mapActions([
         'taskDeleted',
@@ -1064,6 +1076,54 @@
 
         return date < new Date(this.DV_task.startDate) || date > dueDate;
       },
+      moveTask(task, facilityProjectId) {
+        if (!this._isallowed("write")) return;
+        this.$validator.validate().then((success) => {
+          if (!success || this.loading) {
+            this.showErrors = !success;
+            return;
+          }
+          this.loading = true;
+          let formData = new FormData();
+          formData.append("task[facility_project_id]", facilityProjectId);
+          let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+          let method = "PUT";
+          let callback = "task-updated";
+          var beforeSaveTask = task;
+          axios({
+            method: method,
+            url: url,
+            data: formData,
+            headers: {
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+                .attributes["content"].value,
+            },
+          })
+            .then((response) => {
+              if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
+                this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
+                this.$emit(callback, humps.camelizeKeys(response.data.task));
+                this.updateFacilities(humps.camelizeKeys(response.data.task), facilityProjectId);
+              })
+            .catch((err) => {
+              // var errors = err.response.data.errors
+              console.log(err);
+            })
+            .finally(() => {
+              this.loading = false;
+              this.updateTasksHash({task: task, action: 'delete'})
+            });
+        });
+      },
+      updateFacilities(updatedTask, id) {
+        var facilities = this.facilities;
+        
+        facilities.forEach(facility => {
+          if (facility.facilityProjectId === id) {
+            facility.tasks.push(updatedTask)
+          }
+        })
+      }
     },
     computed: {
       ...mapGetters([
@@ -1077,7 +1137,8 @@
         'currentTasks',
         'currentIssues',
         'currentRisks',
-        'managerView'
+        'managerView',
+        'facilities'
       ]),
       readyToSave() {
         return (
@@ -1115,6 +1176,9 @@
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
+      },
+      isSheetsView() {
+        return this.$route.name === 'ProjectSheets'
       }
     },
     watch: {
@@ -1349,5 +1413,14 @@
     background-color: #fafafa;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-
+  .el-dropdown-menu {
+    max-height: 200px;
+    max-width: 200px;
+    overflow-y: scroll;
+  }
+  .el-dropdown-menu__item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 </style>

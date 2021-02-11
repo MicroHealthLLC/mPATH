@@ -38,6 +38,18 @@ en:
       task_type:
         one: Task Category
         other: Task Categories
+      project:
+        one: Program
+        other: Programs
+      facility:
+        one: Project
+        other: Projects
+      project_type:
+        one: Program Type
+        other: Program Types
+      facility_group:
+        one: Project Group
+        other: Project Groups
     attributes:
       task:
         text: ""

@@ -120,11 +120,12 @@
               </div>             
             </div>
 
-            <div v-for="filterArray in getAllFilterNames">              
+            <div v-for="(filterArray, index) in getAllFilterNames" :key="index">              
                 <span v-if="getFilterValue(filterArray[0])">                                         
                             <span><b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}} </span>                    
-                </span>            
-            </div>                    
+                </span>           
+            </div>
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                 
          </el-card>     
        </div> 
 
@@ -181,7 +182,7 @@
                     <span>Complete</span>
                     <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.completed.percentage <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                     </span>
@@ -192,7 +193,7 @@
                       <span>Overdue</span>
                       <span class="badge badge-secondary badge-pill">{{taskVariation.overdue.count}}</span>
                    </div>
-                   <div class="col">
+                   <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
                       </span>
@@ -204,13 +205,13 @@
                       <h6>Categories</h6> 
                   </div>                
               </div>
-              <div class="row font-sm" v-for="task in taskStats">           
+              <div class="row font-sm" v-for="(task, index) in taskStats" :key="index">           
                     <div class="col">
                       <span> {{task.name}}</span>
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
                     </div>
 
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{ 'progress-0': task.progress <= 0 }">
                         <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
                       </span>
@@ -236,7 +237,7 @@
                       <span>Complete</span>
                       <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                      </span>
@@ -247,7 +248,7 @@
                       <span>Overdue</span>
                       <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mb-1">
                       <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
                       </span>
@@ -260,12 +261,12 @@
                </div>                  
             </div>
             
-             <div class="row mb-1 font-sm" v-for="issue in issueStats">          
+             <div class="row font-sm" v-for="(issue, index) in issueStats" :key="index">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
                     </span>
@@ -281,12 +282,12 @@
                     <h6>Categories</h6>
                   </div>
                 </div>
-                <div class="row" v-for="issue in issueTaskCategories">
+                <div class="row" v-for="(issue, index) in issueTaskCategories" :key="index">
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
                     </span>
@@ -310,7 +311,7 @@
                 <hr>
               </div>             
             </div>
-<div v-for="p of filteredRisks" :load="log(p)"></div>
+<div v-for="(p, index) of filteredRisks" :load="log(p)" :key="index"></div>
               <div class="row mb-2">
                   <div class="col text-center">
                     RISK PRIORITY LEVELS
@@ -346,8 +347,8 @@
              
               <div class="row">
                     <div class="col">
-                      <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.completed.count}}</span>
+                      <span class="risk-card-title">Complete</span>
+                      <span class="badge badge-secondary badge-pill font-12">{{riskVariation.completed.count}}</span>
                     </div>
                     <div class="col">
                       <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.completed.percentage <= 0}">
@@ -356,11 +357,11 @@
                     </div>
               </div>     
               <div class="row">
-                    <div class="col">
-                      <span>Overdue</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.overdue.count}}</span>
+                    <div class="col mt-neg-4">
+                      <span class="risk-card-title">Overdue</span>
+                      <span class="badge badge-secondary badge-pill font-12">{{riskVariation.overdue.count}}</span>
                     </div>
-                    <div class="col">
+                    <div class="col mt-neg-4">
                       <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${riskVariation.overdue.percentage}%`">{{riskVariation.overdue.percentage}} %</div>
                       </span>
@@ -372,13 +373,13 @@
                        <h6>Categories</h6> 
                </div>                  
             </div>
-             <div v-for="risk in currentRiskTypes" >
+             <div v-for="(risk, index) in currentRiskTypes" :key="index">
              <div class="row" v-if="risk._display">          
                   <div class="col">
                     <span> {{risk.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
                   </div>
-                  <div class="col">
+                  <div class="col mb-1">
                     <span class="w-100 progress pg-content" :class="{'progress-0': risk.progress <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${risk.progress}%`">{{risk.progress}} %</div>
                     </span>
@@ -601,7 +602,9 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         'issueUserFilter',
         'statuses',
         'myActionsFilter',
-        'onWatchFilter'
+        'onWatchFilter',
+        'facilities',
+        'getUnfilteredFacilities'
       ]),
       C_taskTypeFilter: {
         get() {
@@ -949,5 +952,13 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
   .grey2 {
     border-radius: 3px;
   }
-
+  .risk-card-title {
+    font-size: 1rem;
+  }
+  .font-12 {
+    font-size: 12px;
+  }
+  .mt-neg-4 {
+    margin-top: -4px
+  }
 </style>

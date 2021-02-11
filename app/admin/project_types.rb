@@ -14,11 +14,7 @@ ActiveAdmin.register ProjectType do
     end
     links
   end
-  config.clear_action_items!
 
-  action_item :only => :index do
-    link_to "New Program Type" , new_admin_project_type_path
-  end
   index title: "Program Types" do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
@@ -30,16 +26,12 @@ ActiveAdmin.register ProjectType do
     end
   end
 
-  form title: proc{|g| g.new_record? ? "New Program Type" : "Edit Program Type" } do |f|
+  form do |f|
     f.semantic_errors *f.object.errors.keys
     f.inputs nil do
       f.input :name
     end
-    f.actions do
-      f.action :submit, :as => :button, :label => "Create Program Type"
-      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
-    end
-
+    f.actions
   end
 
   controller do

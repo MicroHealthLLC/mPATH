@@ -19,9 +19,7 @@ ActiveAdmin.register FacilityGroup do
     links
   end
 
-  # form_title = @facility_group.new_record? ? "New Project Group" : "Edit Project Group"
-
-  form title: proc{|g| g.new_record? ? "New Project Group" : "Edit Project Group" } do |f|
+  form do |f|
     f.semantic_errors *f.object.errors.keys
 
     inputs 'Details' do
@@ -30,16 +28,9 @@ ActiveAdmin.register FacilityGroup do
       f.input :status, include_blank: false, include_hidden: false, label: "State"
     end
 
-    f.actions do
-      f.action :submit, :as => :button, :label => "Create Project Group"
-      f.action :cancel, :label => "Cancel", wrapper_html: {class: "cancel"}
-    end
+    f.actions
   end
-  config.clear_action_items!
 
-  action_item :only => :index do
-    link_to "New Project Group" , new_admin_facility_group_path
-  end
   index title: 'Project Group' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
