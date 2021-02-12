@@ -19,9 +19,9 @@
         <td class="eight" v-if="(task.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="twenty" v-if="(task.notes.length) > 0">
-           <span class="toolTip" v-tooltip="(moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a'))"> 
-           By: {{ task.notes[0].user.fullName}}:</span><br> {{task.notes[0].body}}
-        </td>
+           <span class="toolTip" v-tooltip="('By: ' + task.notes[0].user.fullName)">              
+           {{ moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}</span><br> {{task.notes[0].body}}
+        </td>       
         <td v-else class="twenty">No Updates</td>
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
