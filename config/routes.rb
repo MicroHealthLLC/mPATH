@@ -59,6 +59,8 @@ Rails.application.routes.draw do
   get '/task_types', to: 'data#task_types'
   get '/statuses', to: 'data#statuses'
 
+  post '/progress_lists', to: 'progress_lists#create'
+
   root 'landing#index'
   mount ActiveStorage::Engine, at: '/rails/active_storage'
 
