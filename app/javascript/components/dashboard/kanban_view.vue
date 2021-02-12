@@ -369,9 +369,7 @@
     mounted() {
       // make the first facility_group expanded
       if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
-      if(Vue.prototype.$preferences.sub_navigation_menu){
-        this.currentTab = Vue.prototype.$preferences.sub_navigation_menu
-      }
+
     },
     methods: {
       ...mapMutations([
