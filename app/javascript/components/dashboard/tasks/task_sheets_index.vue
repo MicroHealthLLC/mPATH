@@ -78,8 +78,8 @@
               <col class="ten" />
               <col class="eight" />
               <col class="eight" />
-              <col class="ten" />
-              <col class="ten" />
+              <col class="twelve" />
+              <col class="eight" />
               <col class="ten" />
               <col class="eight" />
               <col class="twenty" />
@@ -157,7 +157,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks">
+        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -228,6 +228,9 @@
         'setOnWatchFilter',
         'setTaskForManager'
       ]),
+      log(t){
+        console.log(t)
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -511,6 +514,9 @@
   }
   .ten {
     width: 10%;
+  }
+  .twelve {
+    width: 12%;
   }
   .sixteen {
     width: 16%;
