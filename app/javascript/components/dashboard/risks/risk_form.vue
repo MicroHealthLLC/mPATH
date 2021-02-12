@@ -761,6 +761,59 @@
           </div>
         </div>
     </div>
+
+
+      <div class="row form-group ml-0 pl-0 ml-4">
+       <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
+          <label class="font-sm mb-0">Risk Approach Approver:</label>
+           <multiselect         
+            v-model="riskApprover"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Risk Approver"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>    
+         <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
+          <label class="font-sm mb-0">Date Approved:</label>
+          <multiselect           
+            v-model="informedRiskUsers"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Informed Users"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :close-on-select="false"         
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>    
+
+
+
+      </div>  
+
+
   </div>
 <!-- END RISK PRIORITIZE TAB SECTION -->
 
@@ -1037,7 +1090,8 @@
         paginate: ['filteredNotes'],
         selectedFacilityProject: null,
         destroyedFiles: [],
-        responsibleUsers: [],  
+        responsibleUsers: [],
+        riskApprover: [],  
         accountableRiskUsers:[],
         consultedRiskUsers:[],
         informedRiskUsers:[],
@@ -1125,6 +1179,7 @@
           getRiskImpactLevelNames:"1 - Negligible",
           dueDate: '',
           autoCalculate: true,
+          riskApproverUserIds:[],
           responsibleUserIds: [],
           accountableUserIds:[],
           consultedUserIds:[],
@@ -1176,6 +1231,7 @@
         this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
         this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
         this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
+        this.riskApprover = _.filter(this.activeProjectUsers, u => this.DV_risk.riskApproverUserIds.includes(u.id))
 
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
@@ -1258,7 +1314,7 @@
           formData.append('risk[auto_calculate]', this.DV_risk.autoCalculate)
           formData.append('risk[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
-  // RACI USERS START HERE Awaiting backend work
+
 
       // Responsible User id
          if (this.DV_risk.responsibleUserIds.length) {
@@ -1302,8 +1358,17 @@
             formData.append('informed_user_ids[]', [])
           }
 
-  // RACI USERS ABOVE THIS LINE  Awaiting backend work
-  // More RACI Users in Computed section below
+      // Risk Approver User id
+         if (this.DV_risk.riskApproverUserIds.length) {
+            for (let u_id of this.DV_risk.riskApproverUserIds) {
+              formData.append('risk_approver_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('risk_approver_user_ids[]', [])
+          }
+
+
 
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
@@ -1679,8 +1744,11 @@
       "DV_risk.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-
-// RACI USERS HERE awaiting backend work
+   riskApprover: {
+        handler: function(value) {
+          if (value) this.DV_risk.riskApproverUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }, deep: true
+      },
    responsibleUsers: {
         handler: function(value) {
           if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))

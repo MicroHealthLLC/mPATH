@@ -1,0 +1,2 @@
+      invoke  active_record
+      remove    db/migrate/20210212162535_add_approved_to_risks.rb

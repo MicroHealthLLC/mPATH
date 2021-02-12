@@ -6,7 +6,8 @@ class RiskUser < ApplicationRecord
   # Responsible
   # Accountable
   # Consulted
-  # Informed
+  # Informed 
+  
 
   def accountable?
     user_type == "accountable"
@@ -22,6 +23,12 @@ class RiskUser < ApplicationRecord
 
   def informed?
     user_type == "informed"
+  end
+
+ # Risk Approver https://github.com/MicroHealthLLC/mGis/issues/1734
+
+  def approver?
+    user_type == "approver"
   end
 
 end
