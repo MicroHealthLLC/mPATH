@@ -20,8 +20,8 @@
         <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
         <td class="nine" v-else></td>
         <td class="oneFive" v-if="(issue.notes.length) > 0">
-           <span class="toolTip" v-tooltip="(moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a'))"> 
-           By: {{ issue.notes[0].user.fullName}}:</span><br> {{issue.notes[0].body}}
+           <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
+           {{ moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}</span><br> {{issue.notes[0].body}}
         </td>
         <td class="oneFive" v-else>No Updates</td>
       </tr>
