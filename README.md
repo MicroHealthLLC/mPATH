@@ -84,31 +84,6 @@ rake secret
 
 put that output in config/secrets.yml
 
-# Configure Nginx repo for CentOS 7
-
-nano /etc/yum.repos.d/nginx.repo
-
-# then enter this below and save
-
-[nginx-stable]
-
-name=nginx stable repo
-
-baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
-
-gpgcheck=1
-
-enabled=1
-
-gpgkey=https://nginx.org/keys/nginx_signing.key
-
-
-# Update yum and install nginx
-yum update
-
-yum install -y nginx
-
-sudo systemctl enable nginx
 
 # install passenger phusion
 
@@ -116,28 +91,58 @@ yum install -y pygpgme curl
 
 curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 
-yum install -y nginx passenger || sudo yum-config-manager --enable cr && sudo yum install -y nginx passenger
+yum install -y  passenger || sudo yum-config-manager --enable cr && sudo yum install -y  passenger
 
-# then go edit passenger.conf
-nano /etc/nginx/conf.d/passenger.conf
-
-# -where it says passenger_ruby change what you see there to what you see below.  If that doesn't work then do this "which passenger-config" to get the path to put next to passenger_ruby
-
-passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
-
---uncomment the line above and the line below along with the passenger_ruby line e.g. remove this"#"
-
-echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+# install nginx
+passenger-install-nginx-module
+choose one.  install it into the directory of your choice.  but for the conf below, chose /etc/nginx/
 
 # edit nginx.conf
-nano /etc/nginx/nginx.conf
+
+nano /etc/nginx/conf/nginx.conf
+
+Below "http {+ section
+add these
+    passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
+    passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
+    passenger_instance_registry_dir /var/run/passenger-instreg;
+
+Below "server {" section
 add these
 
         passenger_enabled on;
         rails_env production;
 
 # restart nginx
-service nginx restart
+you will have to create an nginx service now
+
+nano /lib/systemd/system/nginx.service
+---then this below----
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/etc/nginx/sbin/nginx -t
+ExecStart=/etc/nginx/sbin/nginx
+ExecReload=/etc/nginx/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+----end---
+
+enable the service
+
+systemctl enable nginx
+
+then start the service 
+
+service nginx start
 
 # Setup
 go to https://your-url/admin
