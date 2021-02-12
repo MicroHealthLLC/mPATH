@@ -590,7 +590,7 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="Enter your update here..." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
       </div>       

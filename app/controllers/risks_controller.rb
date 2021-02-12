@@ -63,7 +63,7 @@ class RisksController < AuthenticatedController
       :risk_approach_description,
       :task_type_id,
       :task_type,
-      :risk_stage, 
+      # :risk_stage, <-- :risk_stage created error when saving watched status
       :risk_stage_id,
       :progress,
       :start_date,

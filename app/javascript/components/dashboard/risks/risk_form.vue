@@ -59,9 +59,7 @@
    <!-- RISK OVERVIEW TAB -->
    <div class="form-group mx-4">
       <span v-if="_isallowed('write')" class="watch_action mt-3 clickable float-right" @click.prevent.stop="toggleWatched" data-cy="risk_on_watch">
-            <span v-show="DV_risk.watched" class="check_box mx-1">
-              <i class="far fa-check-square font-md"></i>
-            </span>
+            <span v-show="DV_risk.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
             <span v-show="!DV_risk.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
             <span><i class="fas fa-eye mr-1"></i></span>
             <small style="vertical-align:text-top">On Watch</small>
@@ -447,8 +445,8 @@
               </div>
 
                <div class="col-md-3 p-0"> 
-                 <div class="simple-select form-group mb-5">            
-                  <label class="font-sm">*Probablity: </label>
+                 <div class="simple-select form-group mb-4">            
+                  <label class="font-sm">*Probability: </label>
                     <multiselect
                       v-model="selectedRiskPossibility"
                       v-validate="'required'"  
@@ -506,8 +504,8 @@
               <!-- COLUMN FOR TEXT FIELD            -->
                
                </div>
-                <div class="col-md-6 pl-1 pr-0"> 
-                  <!-- PROBABILITY DESCRIPTION REQUIRES BACKEND WORK -->
+                <div class="col-md-6 pl-1 pr-3"> 
+               
                   <div class="form-group mx-1 mb-0">
                   <label class="font-sm">*Probability Description:</label>                  
                   <textarea                  
@@ -515,7 +513,7 @@
                     class="form-control"
                     placeholder="Risk Probability description"
                     v-model="DV_risk.probabilityDescription"
-                    rows="3"
+                    rows="2"
                     :readonly="!_isallowed('write')"
                     data-cy="probability_description"
                     name="Probability Description"
@@ -533,7 +531,7 @@
                     class="form-control"
                     placeholder="Risk impact description"
                     v-model="DV_risk.impactDescription"
-                    rows="3"
+                    rows="2"
                     :readonly="!_isallowed('write')"
                     data-cy="impact_description"
                     name="Impact Description"
@@ -717,9 +715,9 @@
     </div>
 
 
-      <div class="row form-group ml-0 pl-0 ml-4">
-        <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
-          <label class="font-sm">*Risk Approach:</label>
+      <div class="row form-group mx-4 mb-0">
+        <div class="col-md-12 px-0 simple-select form-group">
+          <label class="font-sm">**Risk Approach:</label>
           <multiselect
             v-model="DV_risk.riskApproach"
             v-validate="'required'"
@@ -741,16 +739,18 @@
           <div v-show="errors.has('Risk Approach')" class="text-danger" data-cy="risk_approach_error">
             {{errors.first('Risk Approach')}}
           </div>
-        </div>
+        </div>      
+     </div>
 
-        <div class="col-md-7 form-group px-0 mx-0">
-          <label class="font-sm">*Risk Approach Description:</label>
+      <div class="row form-group mx-4 mb-0">
+        <div class="col-md-12 px-0 simple-select form-group">    
+          <label class="font-sm">**Risk Approach Description:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
-            placeholder="Risk Approach description"
+            placeholder="Describe how the Risk will be controlled"
             v-model="DV_risk.riskApproachDescription"
-            rows="3"
+            rows="2"
             :readonly="!_isallowed('write')"
             data-cy="approach_description"
             name="Risk Approach Description"
@@ -763,8 +763,8 @@
     </div>
 
 
-      <div class="row form-group ml-0 pl-0 ml-4">
-       <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
+      <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">
+       <div class="col-md-4 px-0 simple-select form-group">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
             v-model="riskApprover"        
@@ -786,32 +786,34 @@
               </div>
             </template>
           </multiselect>
-        </div>    
-         <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
-          <label class="font-sm mb-0">Date Approved:</label>
-          <multiselect           
-            v-model="informedRiskUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Informed Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false"         
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
+
+         
         </div>    
 
+         <div class="col-md-3 pl-0 text-center">
+             <label class="font-sm mb-0">Risk Approach Approved:</label>
+            <span v-if="_isallowed('write')" class="d-block" @click.prevent.stop="toggleApproved">
+                <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
+                <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square"></i></span>              
+                <small style="vertical-align:text-top">Approved</small>
+            </span>
+          </div>
 
+      
+         <div class="col-md-4 pr-0 simple-select form-group ml-0 mr-3">
+          <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>
+          
+            <div class="risk-approved-date">
+            </div>
+        </div>    
 
+        
       </div>  
+      <div class="row my-0 justify-content-end pr-4">
+       <div class="col-md-4 text-right font-sm float-right py-0">          
+            **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
+        </div>   
+      </div>
 
 
   </div>
@@ -1025,7 +1027,7 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="Enter your update here..." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
       </div>
@@ -1157,7 +1159,8 @@
       ...mapActions([
         'riskDeleted',
         'riskUpdated',
-        'updateWatchedRisks'
+        'updateWatchedRisks',
+        'updateApprovedRisks'
       ]),
       INITIAL_RISK_STATE() {
         return {
@@ -1282,6 +1285,14 @@
         }
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
+      },
+      toggleApproved() {
+        // if (this.DV_risk.approved) {
+        //   let confirm = window.confirm(`Are you sure you want to remove this risk from on-watch?`)
+        //   if (!confirm) {return}
+        // }
+        this.DV_risk = {...this.DV_risk, approved: !this.DV_risk.approved}
+        this.updateApprovedRisks(this.DV_risk)
       },
       cancelRiskSave() {
         this.$emit('on-close-form')      
@@ -1547,9 +1558,7 @@
       ]),
       readyToSave() {
         return (
-          this.DV_risk &&
-          // this.C_riskProbabilityOptions &&
-          // this.C_riskImpactLevelOptions &&
+          this.DV_risk &&        
           this.exists(this.DV_risk.text) &&
           this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
@@ -1711,11 +1720,7 @@
        matrix55() {       
         if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
         return true  
-       },  
-      //  priorityGreen() {       
-      //   if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
-      //   return true  
-      //  }     
+       },       
     },
     watch: {
       selectedFacilityProject: {
@@ -2042,6 +2047,18 @@
   }
   .error {
     font-size: .8rem;
+  }
+
+  .risk-approved-date { 
+    min-height: 32px;
+    width: 100px;
+    padding: 5px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    text-align: left;
+    color: #35495e;
+    background-color: #fff;
   }
 
 </style>
