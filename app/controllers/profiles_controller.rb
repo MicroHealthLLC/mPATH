@@ -5,7 +5,7 @@ class ProfilesController < AuthenticatedController
     @active_projects = current_user.projects.includes(:facility_groups).active
     facility_groups = @active_projects.map(&:facility_groups).flatten.uniq
 
-    preferences = current_user.settings(:preferences).value
+    preferences = current_user.get_preferences.value
     h = {
       current_user: current_user.as_json,
       preferences: preferences,

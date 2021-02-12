@@ -238,8 +238,8 @@
         },
         // Do not change this property name.
         preferences: {
-          navigationMenu: 'sheets',
-          subNavigationMenu: 'overview',
+          navigationMenu: null,
+          subNavigationMenu: null,
           projectId: null,
           projectGroupId: null
         },
@@ -258,18 +258,20 @@
 
             this.profile = {...this.profile, ...res.data.currentUser}
             this.preferences = {...this.preferences, ...res.data.preferences}
-
+            
             this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
 
             this.projectGroupOptions = res.data.projectGroups
             this.selectedProjectGroupId = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
 
-            var group = this.projectGroupOptions.find((t) => t.id === this.selectedProjectGroupId.id );
-            this.projectOptions = []
-            _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
+            if(this.selectedProjectGroupId){
+              var group = this.projectGroupOptions.find((t) => t.id === this.selectedProjectGroupId.id );
+              this.projectOptions = []
+              _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
 
-            this.selectedProjectId = this.projectOptions.find((t) => t.id === this.preferences.projectId );
+              this.selectedProjectId = this.projectOptions.find((t) => t.id === this.preferences.projectId );
+            }
 
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
@@ -386,6 +388,7 @@
     watch: {
       selectedProjectGroupId: {
         handler: function(value) {
+          if(!value) return;
           var group = this.projectGroupOptions.find((t) => t.id === value.id );
           this.projectOptions = []
           _.forEach(group.facilities, (f) => this.projectOptions.push({id: f.facilityId, name: f.facilityName, value: f.facilityId }))
