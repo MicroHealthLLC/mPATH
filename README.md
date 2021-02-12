@@ -99,10 +99,10 @@ choose one.  install it into the directory of your choice.  but for the conf bel
 
 # edit nginx.conf
 
-nano /etc/nginx/conf/nginx.conf
+        nano /etc/nginx/conf/nginx.conf
 
-Below "http {+ section
-add these
+Below "http {+ section, add these
+
         passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
         passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
         passenger_instance_registry_dir /var/run/passenger-instreg;
@@ -119,6 +119,7 @@ you will have to create an nginx service now
         nano /lib/systemd/system/nginx.service
         
 ---then this below----
+        
         Description=The NGINX HTTP and reverse proxy server
         After=syslog.target network-online.target remote-fs.target nss-lookup.target
         Wants=network-online.target
