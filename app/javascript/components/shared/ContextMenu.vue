@@ -37,6 +37,7 @@ export default {
   methods: {
     // closes context menu
     close() {
+      console.log("Clossssse?")
       this.show = false;
       this.left = 0;
       this.top = 0;
