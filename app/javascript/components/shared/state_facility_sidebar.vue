@@ -82,7 +82,7 @@
             :facility="currentFacility"
             :facility-group="currentFacilityGroup"
           ></facility-sheets>
-          <!-- <facility-rollup v-else></facility-rollup> -->
+          <facility-rollup v-else></facility-rollup>
         </div>
         <div v-if="isSheetsView">   
           <sweet-modal
