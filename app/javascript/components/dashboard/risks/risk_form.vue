@@ -59,9 +59,7 @@
    <!-- RISK OVERVIEW TAB -->
    <div class="form-group mx-4">
       <span v-if="_isallowed('write')" class="watch_action mt-3 clickable float-right" @click.prevent.stop="toggleWatched" data-cy="risk_on_watch">
-            <span v-show="DV_risk.watched" class="check_box mx-1">
-              <i class="far fa-check-square font-md"></i>
-            </span>
+            <span v-show="DV_risk.watched" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
             <span v-show="!DV_risk.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
             <span><i class="fas fa-eye mr-1"></i></span>
             <small style="vertical-align:text-top">On Watch</small>
@@ -447,8 +445,8 @@
               </div>
 
                <div class="col-md-3 p-0"> 
-                 <div class="simple-select form-group mb-5">            
-                  <label class="font-sm">*Probablity: </label>
+                 <div class="simple-select form-group mb-4">            
+                  <label class="font-sm">*Probability: </label>
                     <multiselect
                       v-model="selectedRiskPossibility"
                       v-validate="'required'"  
@@ -506,8 +504,8 @@
               <!-- COLUMN FOR TEXT FIELD            -->
                
                </div>
-                <div class="col-md-6 pl-1 pr-0"> 
-                  <!-- PROBABILITY DESCRIPTION REQUIRES BACKEND WORK -->
+                <div class="col-md-6 pl-1 pr-3"> 
+               
                   <div class="form-group mx-1 mb-0">
                   <label class="font-sm">*Probability Description:</label>                  
                   <textarea                  
@@ -515,7 +513,7 @@
                     class="form-control"
                     placeholder="Risk Probability description"
                     v-model="DV_risk.probabilityDescription"
-                    rows="3"
+                    rows="2"
                     :readonly="!_isallowed('write')"
                     data-cy="probability_description"
                     name="Probability Description"
@@ -533,7 +531,7 @@
                     class="form-control"
                     placeholder="Risk impact description"
                     v-model="DV_risk.impactDescription"
-                    rows="3"
+                    rows="2"
                     :readonly="!_isallowed('write')"
                     data-cy="impact_description"
                     name="Impact Description"
@@ -717,9 +715,9 @@
     </div>
 
 
-      <div class="row form-group ml-0 pl-0 ml-4">
-        <div class="col-md-4 px-0 simple-select form-group ml-0 mr-3">
-          <label class="font-sm">*Risk Approach:</label>
+      <div class="row form-group mx-4 mb-0">
+        <div class="col-md-12 px-0 simple-select form-group">
+          <label class="font-sm">**Risk Approach:</label>
           <multiselect
             v-model="DV_risk.riskApproach"
             v-validate="'required'"
@@ -741,16 +739,18 @@
           <div v-show="errors.has('Risk Approach')" class="text-danger" data-cy="risk_approach_error">
             {{errors.first('Risk Approach')}}
           </div>
-        </div>
+        </div>      
+     </div>
 
-        <div class="col-md-7 form-group px-0 mx-0">
-          <label class="font-sm">*Risk Approach Description:</label>
+      <div class="row form-group mx-4 mb-0">
+        <div class="col-md-12 px-0 simple-select form-group">    
+          <label class="font-sm">**Risk Approach Description:</label>
           <textarea
             v-validate="'required'"
             class="form-control"
-            placeholder="Risk Approach description"
+            placeholder="Describe how the Risk will be controlled"
             v-model="DV_risk.riskApproachDescription"
-            rows="3"
+            rows="2"
             :readonly="!_isallowed('write')"
             data-cy="approach_description"
             name="Risk Approach Description"
@@ -761,6 +761,62 @@
           </div>
         </div>
     </div>
+
+
+      <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">
+       <div class="col-md-4 py-2 mb-0 px-0 simple-select form-group">
+          <label class="font-sm mb-0">Risk Approach Approver:</label>
+           <multiselect         
+            v-model="riskApprover"        
+            track-by="id"
+            label="fullName"
+            placeholder="Select Risk Approver"
+            :options="activeProjectUsers"
+            :searchable="true"
+            :multiple="false"
+            select-label="Select"
+            deselect-label=""
+            :close-on-select="true"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.fullName}}</span>
+              </div>
+            </template>
+          </multiselect>
+
+         
+        </div>    
+
+         <div class="col-md-3 pl-0 py-2 mb-0 text-center">
+             <label class="font-sm mb-0">Risk Approach Approved:</label>
+            <span v-if="_isallowed('write')" class="d-block" @click.prevent="toggleApproved">
+                <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
+                <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square"></i></span>              
+                <small style="vertical-align:text-top">Approved</small>
+            </span>
+          </div>
+
+      
+         <div class="col-md-4 pr-0 py-2 mb-0simple-select form-group ml-0 mr-3">
+          <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>
+          
+            <div class="risk-approved-date" id="saveDate">
+              {{approvedAt}} 
+            </div>
+        </div>    
+
+        
+      </div>  
+      <div class="row my-0 justify-content-end pr-4">
+       <div class="col-md-4 text-right font-sm float-right py-0">          
+            **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
+        </div>   
+      </div>
+
+
   </div>
 <!-- END RISK PRIORITIZE TAB SECTION -->
 
@@ -972,7 +1028,7 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="note.body" rows="3" placeholder="your note comes here." :readonly="!allowEditNote(note)"></textarea>
+            <textarea class="form-control" v-model="note.body" rows="3" placeholder="Enter your update here..." :readonly="!allowEditNote(note)"></textarea>
           </div>
         </paginate>
       </div>
@@ -1019,6 +1075,7 @@
   import humps from 'humps'
   import Draggable from "vuedraggable"
    import CustomTabs from './../../shared/custom-tabs'
+   import * as Moment from 'moment'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
   export default {
@@ -1034,10 +1091,12 @@
       return {
         DV_risk: this.INITIAL_RISK_STATE(), 
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
-        paginate: ['filteredNotes'],
+        paginate: ['filteredNotes'],     
+        now: new Date().toLocaleString(),      
         selectedFacilityProject: null,
         destroyedFiles: [],
-        responsibleUsers: [],  
+        responsibleUsers: [],
+        riskApprover: [],  
         accountableRiskUsers:[],
         consultedRiskUsers:[],
         informedRiskUsers:[],
@@ -1103,12 +1162,14 @@
       ...mapActions([
         'riskDeleted',
         'riskUpdated',
-        'updateWatchedRisks'
+        'updateWatchedRisks',
+        'updateApprovedRisks'
       ]),
       INITIAL_RISK_STATE() {
         return {
           facilityProjectId: '',
           text: '',
+          
           riskDescription: '',
           impactDescription: '',   
           probabilityDescription: '',            
@@ -1125,6 +1186,7 @@
           getRiskImpactLevelNames:"1 - Negligible",
           dueDate: '',
           autoCalculate: true,
+          riskApproverUserIds:[],
           responsibleUserIds: [],
           accountableUserIds:[],
           consultedUserIds:[],
@@ -1171,12 +1233,11 @@
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
-
         this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
         this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
         this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
         this.informedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.informedUserIds.includes(u.id))
-
+        this.riskApprover = _.filter(this.activeProjectUsers, u => this.DV_risk.riskApproverUserIds.includes(u.id))
         this.relatedIssues = _.filter(this.currentIssues, u => this.DV_risk.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.currentTasks, u => this.DV_risk.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.currentRisks, u => this.DV_risk.subRiskIds.includes(u.id))
@@ -1209,7 +1270,6 @@
         if (!file) return;
         let confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
-
         if (file.uri) {
           let index = this.DV_risk.riskFiles.findIndex(f => f.guid === file.guid)
           Vue.set(this.DV_risk.riskFiles, index, {...file, _destroy: true})
@@ -1227,6 +1287,12 @@
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
       },
+      
+      toggleApproved() {          
+        this.DV_risk = {...this.DV_risk, approved: !this.DV_risk.approved}
+        this.updateApprovedRisks(this.DV_risk)     
+      },
+ 
       cancelRiskSave() {
         this.$emit('on-close-form')      
         this.setRiskForManager({key: 'risk', value: null})        
@@ -1257,9 +1323,6 @@
           formData.append('risk[due_date]', this.DV_risk.dueDate)
           formData.append('risk[auto_calculate]', this.DV_risk.autoCalculate)
           formData.append('risk[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
-
-  // RACI USERS START HERE Awaiting backend work
-
       // Responsible User id
          if (this.DV_risk.responsibleUserIds.length) {
             for (let u_id of this.DV_risk.responsibleUserIds) {
@@ -1269,7 +1332,6 @@
           else {
             formData.append('responsible_user_ids[]', [])
           }
-
        // Accountable UserId
          if (this.DV_risk.accountableUserIds.length) {
             for (let u_id of this.DV_risk.accountableUserIds) {
@@ -1279,7 +1341,6 @@
           else {
             formData.append('accountable_user_ids[]', [])
           }
-
           // Consulted UserId
           
           if (this.DV_risk.consultedUserIds.length) {
@@ -1290,7 +1351,6 @@
           else {
             formData.append('consulted_user_ids[]', [])
           }
-
           // Informed UserId
           
           if (this.DV_risk.informedUserIds.length) {
@@ -1301,10 +1361,15 @@
           else {
             formData.append('informed_user_ids[]', [])
           }
-
-  // RACI USERS ABOVE THIS LINE  Awaiting backend work
-  // More RACI Users in Computed section below
-
+      // Risk Approver User id
+         if (this.DV_risk.riskApproverUserIds.length) {
+            for (let u_id of this.DV_risk.riskApproverUserIds) {
+              formData.append('risk_approver_user_ids[]', u_id)
+            }
+          }
+          else {
+            formData.append('risk_approver_user_ids[]', [])
+          }
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
               formData.append('risk[sub_task_ids][]', u_id)
@@ -1313,7 +1378,6 @@
           else {
             formData.append('risk[sub_task_ids][]', [])
           }
-
           if (this.DV_risk.subIssueIds.length) {
             for (let u_id of this.DV_risk.subIssueIds) {
               formData.append('risk[sub_issue_ids][]', u_id)
@@ -1322,7 +1386,6 @@
           else {
             formData.append('risk[sub_issue_ids][]', [])
           }
-
           if (this.DV_risk.subRiskIds.length) {
             for (let u_id of this.DV_risk.subRiskIds) {
               formData.append('risk[sub_risk_ids][]', u_id)
@@ -1331,7 +1394,6 @@
           else {
             formData.append('risk[sub_risk_ids][]', [])
           }
-
           for (let i in this.DV_risk.checklists) {
             let check = this.DV_risk.checklists[i]
             if (!check.text && !check._destroy) continue
@@ -1342,7 +1404,6 @@
               formData.append(`risk[checklists_attributes][${i}][${key}]`, value)
             }
           }
-
            for (let i in this.DV_risk.notes) {
             let note = this.DV_risk.notes[i]
             if (!note.body && !note._destroy) continue
@@ -1351,25 +1412,20 @@
               formData.append(`risk[notes_attributes][${i}][${key}]`, value)
             }
           }
-
-
           for (let file of this.DV_risk.riskFiles) {
             if (!file.id) {
               formData.append('risk[risk_files][]', file)
             }
           }
-
           let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/risks.json`
           let method = "POST"
           let callback = "risk-created"
-
           if (this.risk && this.risk.id) {
             url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}.json`
             method = "PUT"
             callback = "risk-updated"
           }
           var beforeRisk = this.risk
-
           axios({
             method: method,
             url: url,
@@ -1419,7 +1475,6 @@
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure, you want to delete this checklist item?`)
         if (!confirm) return;
-
         let i = check.id ? this.DV_risk.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_risk.checklists, i, {...check, _destroy: true})
       },
@@ -1455,7 +1510,6 @@
       disabledDateRange(date) {
         var dueDate = new Date(this.DV_risk.dueDate)
         dueDate.setDate(dueDate.getDate() + 1)
-
         return date < new Date(this.DV_risk.startDate) || date > dueDate;
       },
     },
@@ -1482,9 +1536,7 @@
       ]),
       readyToSave() {
         return (
-          this.DV_risk &&
-          // this.C_riskProbabilityOptions &&
-          // this.C_riskImpactLevelOptions &&
+          this.DV_risk &&        
           this.exists(this.DV_risk.text) &&
           this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
@@ -1531,6 +1583,11 @@
       },
       calculatePriorityLevel() {
         return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
+      },
+      approvedAt() {
+           if (this.DV_risk.approved) {
+            return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
+        }         
       },
       filteredTasks() {
         return this.currentTasks
@@ -1646,11 +1703,7 @@
        matrix55() {       
         if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
         return true  
-       },  
-      //  priorityGreen() {       
-      //   if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
-      //   return true  
-      //  }     
+       },       
     },
     watch: {
       selectedFacilityProject: {
@@ -1679,8 +1732,11 @@
       "DV_risk.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-
-// RACI USERS HERE awaiting backend work
+   riskApprover: {
+        handler: function(value) {
+          if (value) this.DV_risk.riskApproverUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }, deep: true
+      },
    responsibleUsers: {
         handler: function(value) {
           if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
@@ -1886,9 +1942,7 @@
     // margin-right: 50px;
     font-size: large;   
   }
-
     // Risk Matrix styling (Hexcodes are Bootstrap colors)
-
   .risk-matrix {
     font-size: .85rem; 
     border-radius: 4px;
@@ -1975,5 +2029,15 @@
   .error {
     font-size: .8rem;
   }
-
+  .risk-approved-date { 
+    min-height: 32px;
+    max-width: 225px;
+    padding: 5px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    text-align: left;
+    color: #35495e;
+    background-color: #fff;
+  }
 </style>

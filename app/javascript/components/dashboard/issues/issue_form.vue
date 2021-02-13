@@ -724,7 +724,7 @@ Tab 1 Row Begins here -->
                 class="form-control"
                 v-model="note.body"
                 rows="3"
-                placeholder="your note comes here."
+                placeholder="Enter your update here..."
                 :readonly="!allowEditNote(note)"
               ></textarea>
             </div>

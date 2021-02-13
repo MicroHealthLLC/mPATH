@@ -10,8 +10,8 @@
         <td class="twelve" >
           <span v-if="(task.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
           <span v-if="(task.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{task.accountableUsers[0].name}}<br></span>   
-          <span v-if="(task.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{task.consultedUsers[0].name}}<br></span> 
-          <span v-if="(task.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{task.informedUsers[0].name}}</span>       
+          <!-- <span v-if="(task.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{task.consultedUsers[0].name}}<br></span> 
+          <span v-if="(task.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{task.informedUsers[0].name}}</span>        -->
         </td>
         <td class="eight">{{task.progress + "%"}}</td>
         <td class="ten" v-if="(task.dueDate) <= now"><h5>x</h5></td>

@@ -14,7 +14,7 @@
       </div>
 <!-- First Row -->
     <div class="row row-1 mt-1">
-       <div class="col-md-12 col-lg-12 pl-0 col-sm-12">
+       <div class="col-md-6 col-lg-6 pl-0 col-sm-6">
          <el-card class="box-card">
             <div class="row">
               <div class="col">
@@ -25,8 +25,8 @@
              <div v-if="contentLoaded && C_facilityCount > 0">
              <div v-for="status in facilitiesByProjectStatus">
              
-              <div class="row">
-                <div class="col">
+              <div class="row font-sm">
+                <div class="col-6 mb-2 pl-2 pr-0">
                   <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
                   <span> {{status.name}}</span>
                   <span class="badge badge-secondary badge-pill">{{status.length}}</span>
@@ -47,6 +47,37 @@
                   <loader type="code"></loader>
                </div>          
          </el-card>     
+       </div>  
+        <div class="col-md-6 col-lg-6 col-sm-6 pl-0" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
+          <el-card class="box-card">
+            <div class="row">
+              <div class="col">
+                 <span> <h5 class="text-center">Project Groups</h5></span>    
+                <hr>
+              </div>             
+            </div>
+            <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">     
+             
+              <div class="row font-sm">
+                <div class="col-7 mb-2 pl-2 pr-0">
+                    <span class="badge badge-pill" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
+                    {{facilityGroup.status}}
+                    </span>
+                    <span>{{facilityGroup.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
+                </div>
+                <div class="col">            
+                   <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
+                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
+                  </span>
+                </div>
+              </div>             
+            
+              </div>           
+               <div v-if="!contentLoaded" class="my-4">
+                  <loader type="code"></loader>
+               </div>          
+         </el-card>    
        </div>  
        
        
@@ -336,7 +367,7 @@
 
 <!-- Bottommost row for Filters -->
 
-    <div class="row row-3 mt-2">
+    <!-- <div class="row row-3 mt-2">
         <div class="col-md-12 pl-0 col-lg-12 mb-3 col-sm-12" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
           <el-card class="box-card">
             <div class="row">
@@ -368,7 +399,7 @@
                </div>          
          </el-card>    
        </div>  
-    </div>
+    </div> -->
     <!-- <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div> -->
     <!-- <br> -->
     <!-- <div class="text-center mt-1">
