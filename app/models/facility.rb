@@ -1,3 +1,5 @@
+#NOTE: Facility is now Project in front end
+
 class Facility < ApplicationRecord
   strip_attributes
   belongs_to :facility_group

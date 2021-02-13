@@ -229,7 +229,7 @@
         'setTaskForManager'
       ]),
       log(t){
-        console.log(t)
+        //console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse

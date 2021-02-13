@@ -473,7 +473,6 @@
             closable: false
           }
         ],
-        currentTab: 'tasks',
         expanded: {
           id: ''
         },
@@ -496,7 +495,10 @@
     },
     mounted() {
       // make the first facility_group expanded
-      if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      // if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      if(Vue.prototype.$preferences.sub_navigation_menu){
+        this.currentTab = Vue.prototype.$preferences.sub_navigation_menu
+      }
       // Display notification when leaving map view to another page and conditions met
       if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
         this.$notify.info({
@@ -512,6 +514,7 @@
     },
     computed: {
       ...mapGetters([ 
+        'facilityGroups',
         'managerView',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
@@ -1013,7 +1016,7 @@
           }
         }, deep: true
       },
-        managerView: {
+      managerView: {
         handler(value) {
           if (value.task || value.issue || value.note || value.risk) {
             this.$refs.formModals && this.$refs.formModals.open()
@@ -1046,10 +1049,24 @@
             }
           }
           // NOTE: https://github.com/MicroHealthLLC/mGis/issues/1037
-          if(!this.currentFacilityGroup.id && value[0]){
-            this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
-            this.currentFacilityGroup = value[0]
-            this.expanded.id = value[0].id
+          // if(!this.currentFacilityGroup.id && value[0]){
+          //   this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
+          //   this.currentFacilityGroup = value[0]
+          //   this.expanded.id = value[0].id
+          // }
+
+          if(Vue.prototype.$preferences.project_group_id && value){
+            var facilityGroup = value.find(f => f.id === Vue.prototype.$preferences.project_group_id )
+            if(facilityGroup){
+              this.currentFacilityGroup = facilityGroup
+              this.expanded.id = this.currentFacilityGroup.id
+            }
+          }
+          if(Vue.prototype.$preferences.project_id){
+            var facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == Vue.prototype.$preferences.project_id)
+            if(facility){
+              this.currentFacility = facility
+            }
           }
         }, deep: true
       }
