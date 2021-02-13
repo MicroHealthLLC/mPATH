@@ -12,7 +12,7 @@
         </span>
       </p> -->
       </div>
-<!-- First Row -->
+
     <div class="row row-1 mt-1">
        <div class="col-md-6 col-lg-6 pl-0 col-sm-6">
          <el-card class="box-card">
@@ -46,9 +46,25 @@
                <div v-if="!contentLoaded" class="my-4">
                   <loader type="code"></loader>
                </div>          
-         </el-card>     
-       </div>  
-        <div class="col-md-6 col-lg-6 col-sm-6 pl-0" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
+         </el-card>  
+         <el-card class="box-card my-2" style="background-color:#41b883;color:#fff">
+            <div class="row">
+              <div class="col">
+                 <h5 class="d-inline">Filters</h5>               
+                <hr>
+              </div>             
+            </div>
+
+            <div v-for="filterArray in getAllFilterNames">
+              <div class="row">
+                <div class="col" v-if="getFilterValue(filterArray[0])">                                         
+                            <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
+                </div>
+              </div>
+            </div>
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                    
+         </el-card>    
+         <!-- <div class="col-md-6 col-lg-6 col-sm-6 pl-0" v-if="from !== 'manager_view'" data-cy="facility_group_summary">           -->
           <el-card class="box-card">
             <div class="row">
               <div class="col">
@@ -78,40 +94,10 @@
                   <loader type="code"></loader>
                </div>          
          </el-card>    
+       <!-- </div>      -->
        </div>  
-       
-       
-    </div>  
-
-    <!-- This is the 2nd row for filters -->
-      <!-- <div class="row row-1 mt-3">
-     <div class="col-md-12 col-lg-12 col-sm-12" data-cy="date_set_filter">         
-          <el-card class="box-card" style="background-color:rgb(92,184,92);color:#fff">
-            <div class="row">
-              <div class="col">
-                 <h5 class="d-inline">Filters</h5>               
-                <hr>
-              </div>             
-            </div>
-
-            <div v-for="filterArray in getAllFilterNames">
-              <div class="row">
-                <div class="col" v-if="getFilterValue(filterArray[0])">                                         
-                            <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
-                </div>
-              </div>
-            </div>                    
-         </el-card>     
-       </div>  
-      </div> -->
-
-
-
-<!-- This is the 3nd row, the task-issue-risk-row -->
-
-    <div class="row row-2 mt-2 task-issue-risk-row">
-      <div class="col-md-6 pl-0" data-cy="tasks_summary">
-         <el-card class="box-card" style="background-color:#fff">
+  <div class="col-md-6 col-lg-6 col-sm-6 pl-0" v-if="from !== 'manager_view'" data-cy="facility_group_summary">    
+         <el-card class="box-card mb-2" style="background-color:#fff">
 
             <div class="row">
               <div class="col"> 
@@ -162,36 +148,11 @@
              <div v-if="!contentLoaded" class="my-4">
                   <loader type="code"></loader>
              </div>          
-         </el-card>
-   
-       </div>     
-        <div class="col-md-6 pl-0" data-cy="date_set_filter">         
-          <el-card class="box-card" style="background-color:#41b883;color:#fff">
-            <div class="row">
-              <div class="col">
-                 <h5 class="d-inline">Filters</h5>               
-                <hr>
-              </div>             
-            </div>
-
-            <div v-for="filterArray in getAllFilterNames">
-              <div class="row">
-                <div class="col" v-if="getFilterValue(filterArray[0])">                                         
-                            <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
-                </div>
-              </div>
-            </div>
-            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                    
-         </el-card>     
-       </div>  
-
-    </div>
+         </el-card> 
 
 
-    <div class="row row-2 mt-2 task-issue-risk-row">
-          <div class="col-md-6 col-lg-6 col-sm-12 pl-0" data-cy="issues_summary">
-          
-         <el-card class="box-card" style="background-color:#fff">
+       <!-- Issues -->
+        <el-card class="box-card mb-2" style="background-color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline"> <b>ISSUES</b></h5>   
@@ -257,12 +218,7 @@
              </div>    
                    
          </el-card>     
-       </div>  
-
-
-       <div class="col-md-6 col-lg-6 col-sm-12 pl-0" data-cy="facility_group_summary">          
-            
-         <el-card class="box-card" style="background-color:#fff">
+          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline"> <b>RISKS</b></h5>   
@@ -361,65 +317,11 @@
               <loader type="code"></loader>
              </div>          
          </el-card>     
-       </div>  
+      </div>      
+    </div>  
 
-    </div>
+    <!-- This is the 2nd row for filters -->
 
-<!-- Bottommost row for Filters -->
-
-    <!-- <div class="row row-3 mt-2">
-        <div class="col-md-12 pl-0 col-lg-12 mb-3 col-sm-12" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
-          <el-card class="box-card">
-            <div class="row">
-              <div class="col">
-                 <span> <h5 class="text-center">Project Groups</h5></span>    
-                <hr>
-              </div>             
-            </div>
-            <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">     
-             
-              <div class="row">
-                <div class="col">
-                    <span class="badge badge-pill" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-                    {{facilityGroup.status}}
-                    </span>
-                    <span>{{facilityGroup.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
-                </div>
-                <div class="col">            
-                   <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
-                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
-                  </span>
-                </div>
-              </div>             
-            
-              </div>           
-               <div v-if="!contentLoaded" class="my-4">
-                  <loader type="code"></loader>
-               </div>          
-         </el-card>    
-       </div>  
-    </div> -->
-    <!-- <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div> -->
-    <!-- <br> -->
-    <!-- <div class="text-center mt-1">
-      <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
-      <p class="mt-2 d-flex align-items-center">
-        <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
-          <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
-        </span>
-      </p>
-      <div v-if="C_facilityCount > 0" class="d-flex justify-content-around"> -->
-        <!-- <div>
-          <span> active</span>
-          <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
-        </div>
-        <div>
-          <span> inactive</span>
-          <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
-         </div>-->
-      <!-- </div>
-    </div> -->
   </div>
 </template>
 
