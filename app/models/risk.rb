@@ -157,153 +157,153 @@ class Risk < ApplicationRecord
 
 
   # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
-  # def create_or_update_risk(params, user)
-  #   risk_params = params.require(:risk).permit(
-  #     :approved,
-  #     :approved_at,
-  #     :facility_project_id,
-  #     :risk_description,
-  #     :impact_description,
-  #     :probability_description,
-  #     :probability,
-  #     :probability_name,
-  #     :impact_level,
-  #     :impact_level_name,
-  #     :risk_approach,
-  #     :risk_approach_description,
-  #     :task_type_id,
-  #     :task_type,
-  #     :risk_stage, 
-  #     :risk_stage_id,
-  #     :progress,
-  #     :start_date,
-  #     :due_date,
-  #     :auto_calculate,
-  #     :text,
-  #     :watched,
-  #     user_ids: [],
-  #     risk_files: [],
-  #     sub_task_ids: [],
-  #     sub_issue_ids: [],
-  #     sub_risk_ids: [],
-  #     checklists_attributes: [
-  #       :id,
-  #       :_destroy,
-  #       :text,
-  #       :user_id,
-  #       :checked,
-  #       :due_date,
-  #       :listable_type,
-  #       :listable_id,
-  #       :position
-  #     ],
-  #     notes_attributes: [
-  #       :id,
-  #       :_destroy,
-  #       :user_id,
-  #       :body
-  #     ]
-  #   )
+  def create_or_update_risk(params, user)
+    risk_params = params.require(:risk).permit(
+      :approved,
+      :approved_at,
+      :facility_project_id,
+      :risk_description,
+      :impact_description,
+      :probability_description,
+      :probability,
+      :probability_name,
+      :impact_level,
+      :impact_level_name,
+      :risk_approach,
+      :risk_approach_description,
+      :task_type_id,
+      :task_type,
+      :risk_stage, 
+      :risk_stage_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :text,
+      :watched,
+      user_ids: [],
+      risk_files: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :due_date,
+        :listable_type,
+        :listable_id,
+        :position
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    )
 
 
-  #   risk = self
-  #   r_params = risk_params.dup
-  #   user_ids = r_params.delete(:user_ids)
-  #   sub_task_ids = r_params.delete(:sub_task_ids)
-  #   sub_issue_ids = r_params.delete(:sub_issue_ids)
-  #   sub_risk_ids = r_params.delete(:sub_risk_ids)
-  #   checklists_attributes = r_params.delete(:checklists_attributes)
-  #   notes_attributes = r_params.delete(:notes_attributes)
+    risk = self
+    r_params = risk_params.dup
+    user_ids = r_params.delete(:user_ids)
+    sub_task_ids = r_params.delete(:sub_task_ids)
+    sub_issue_ids = r_params.delete(:sub_issue_ids)
+    sub_risk_ids = r_params.delete(:sub_risk_ids)
+    checklists_attributes = r_params.delete(:checklists_attributes)
+    notes_attributes = r_params.delete(:notes_attributes)
 
-  #   risk.attributes = r_params
-  #   if !risk.facility_project_id.present?
-  #     project = user.projects.active.find_by(id: params[:project_id])
-  #     facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+    risk.attributes = r_params
+    if !risk.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
 
-  #     risk.facility_project_id = facility_project.id
-  #   end
+      risk.facility_project_id = facility_project.id
+    end
 
-  #   all_checklists = risk.checklists
+    all_checklists = risk.checklists
 
-  #   risk.transaction do
-  #     risk.save
-  #     if user_ids && user_ids.present?
-  #       risk_users_obj = []
-  #       user_ids.each do |uid|
-  #         next if !uid.present?
-  #         risk_users_obj << RiskUser.new(risk_id: risk.id, user_id: uid)
-  #       end
-  #       RiskUser.import(risk_users_obj) if risk_users_obj.any?
-  #     end
+    risk.transaction do
+      risk.save
+      if user_ids && user_ids.present?
+        risk_users_obj = []
+        user_ids.each do |uid|
+          next if !uid.present?
+          risk_users_obj << RiskUser.new(risk_id: risk.id, user_id: uid)
+        end
+        RiskUser.import(risk_users_obj) if risk_users_obj.any?
+      end
 
-  #     if sub_risk_ids && sub_risk_ids.any?
-  #       related_risk_objs = []
-  #       related_risk_objs2 = []
-  #       sub_risk_ids.each do |sid|
-  #         related_risk_objs << RelatedRisk.new(relatable_id: risk.id, relatable_type: "Risk", risk_id: sid)
-  #         related_risk_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Risk", risk_id: risk.id)
-  #       end
-  #       RelatedRisk.import(related_rik_objs) if related_risk_objs.any?
-  #       RelatedRisk.import(related_risk_objs2) if related_risk_objs2.any?
-  #     end
+      if sub_risk_ids && sub_risk_ids.any?
+        related_risk_objs = []
+        related_risk_objs2 = []
+        sub_risk_ids.each do |sid|
+          related_risk_objs << RelatedRisk.new(relatable_id: risk.id, relatable_type: "Risk", risk_id: sid)
+          related_risk_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Risk", risk_id: risk.id)
+        end
+        RelatedRisk.import(related_rik_objs) if related_risk_objs.any?
+        RelatedRisk.import(related_risk_objs2) if related_risk_objs2.any?
+      end
 
-  #     if sub_issue_ids && sub_issue_ids.any?
-  #       related_issue_objs = []
-  #       related_issue_objs2 = []
-  #       sub_issue_ids.each do |sid|
-  #         related_issue_objs << RelatedIssue.new(relatable_id: risk.id, relatable_type: "Risk", issue_id: sid)
-  #         related_issue_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Issue", risk_id: risk.id)
-  #       end
-  #       RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
-  #       RelatedRisk.import(related_issue_objs2) if related_issue_objs2.any?
-  #     end
+      if sub_issue_ids && sub_issue_ids.any?
+        related_issue_objs = []
+        related_issue_objs2 = []
+        sub_issue_ids.each do |sid|
+          related_issue_objs << RelatedIssue.new(relatable_id: risk.id, relatable_type: "Risk", issue_id: sid)
+          related_issue_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Issue", risk_id: risk.id)
+        end
+        RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedRisk.import(related_issue_objs2) if related_issue_objs2.any?
+      end
       
-  #     if sub_task_ids && sub_task_ids.any?
-  #       related_task_objs = []
-  #       related_task_objs2 = []
-  #       sub_task_ids.each do |sid|
-  #         related_task_objs << RelatedTask.new(relatable_id: risk.id, relatable_type: "Risk", task_id: sid)
-  #         related_task_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Task", risk_id: risk.id)
-  #       end
-  #       RelatedTask.import(related_task_objs) if related_task_objs.any?
-  #       RelatedRisk.import(related_task_objs2) if related_task_objs2.any?
-  #     end
+      if sub_task_ids && sub_task_ids.any?
+        related_task_objs = []
+        related_task_objs2 = []
+        sub_task_ids.each do |sid|
+          related_task_objs << RelatedTask.new(relatable_id: risk.id, relatable_type: "Risk", task_id: sid)
+          related_task_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Task", risk_id: risk.id)
+        end
+        RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedRisk.import(related_task_objs2) if related_task_objs2.any?
+      end
 
-  #     if checklists_attributes.present?
-  #       checklist_objs = []
-  #       checklists_attributes.each do |key, value|
-  #         if value["id"].present?
-  #           c = all_checklists.detect{|cc| cc.id == value["id"].to_i}
-  #           if value["_destroy"].present? && value["_destroy"] == "true"
-  #             c.destroy
-  #           else
-  #             # TODO: Use upsert_all in Rails 6
-  #             c.attributes = value
-  #             c.save
-  #           end
-  #         else
-  #           value.delete("_destroy")
-  #           checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
-  #         end
-  #       end
-  #       Checklist.import(checklist_objs) if checklist_objs.any?
-  #     end
+      if checklists_attributes.present?
+        checklist_objs = []
+        checklists_attributes.each do |key, value|
+          if value["id"].present?
+            c = all_checklists.detect{|cc| cc.id == value["id"].to_i}
+            if value["_destroy"].present? && value["_destroy"] == "true"
+              c.destroy
+            else
+              # TODO: Use upsert_all in Rails 6
+              c.attributes = value
+              c.save
+            end
+          else
+            value.delete("_destroy")
+            checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+          end
+        end
+        Checklist.import(checklist_objs) if checklist_objs.any?
+      end
 
-  #     if notes_attributes.present?
-  #       notes_objs = []
-  #       notes_attributes.each do |key, value|
-  #         value.delete("_destroy")
-  #         notes_objs << Note.new(value.merge({noteable_id: risk.id, noteable_type: "Risk"}) )
-  #       end
-  #       Note.import(notes_objs) if notes_objs.any?
-  #     end
+      if notes_attributes.present?
+        notes_objs = []
+        notes_attributes.each do |key, value|
+          value.delete("_destroy")
+          notes_objs << Note.new(value.merge({noteable_id: risk.id, noteable_type: "Risk"}) )
+        end
+        Note.import(notes_objs) if notes_objs.any?
+      end
 
-  #     risk.assign_users(params)
+      risk.assign_users(params)
 
-  #   end
+    end
 
-  #   risk.reload
-  # end
+    risk.reload
+  end
 
   # Above this line Added by JR to fix Watched and add Approved values
 

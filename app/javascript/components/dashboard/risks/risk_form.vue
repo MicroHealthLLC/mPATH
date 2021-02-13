@@ -764,7 +764,7 @@
 
 
       <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">
-       <div class="col-md-4 px-0 simple-select form-group">
+       <div class="col-md-4 py-2 mb-0 px-0 simple-select form-group">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
             v-model="riskApprover"        
@@ -790,9 +790,9 @@
          
         </div>    
 
-         <div class="col-md-3 pl-0 text-center">
+         <div class="col-md-3 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>
-            <span v-if="_isallowed('write')" class="d-block" @click.prevent.stop="toggleApproved">
+            <span v-if="_isallowed('write')" class="d-block" @click.prevent="toggleApproved">
                 <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
                 <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
@@ -800,10 +800,11 @@
           </div>
 
       
-         <div class="col-md-4 pr-0 simple-select form-group ml-0 mr-3">
+         <div class="col-md-4 pr-0 py-2 mb-0simple-select form-group ml-0 mr-3">
           <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>
           
-            <div class="risk-approved-date">
+            <div class="risk-approved-date" id="saveDate">
+              {{now}} 
             </div>
         </div>    
 
@@ -1074,6 +1075,7 @@
   import humps from 'humps'
   import Draggable from "vuedraggable"
    import CustomTabs from './../../shared/custom-tabs'
+   import * as Moment from 'moment'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
   export default {
@@ -1089,7 +1091,8 @@
       return {
         DV_risk: this.INITIAL_RISK_STATE(), 
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
-        paginate: ['filteredNotes'],
+        paginate: ['filteredNotes'],     
+        now: new Date().toLocaleString(),
         selectedFacilityProject: null,
         destroyedFiles: [],
         responsibleUsers: [],
@@ -1292,7 +1295,7 @@
         //   if (!confirm) {return}
         // }
         this.DV_risk = {...this.DV_risk, approved: !this.DV_risk.approved}
-        this.updateApprovedRisks(this.DV_risk)
+        this.updateApprovedRisks(this.DV_risk)       
       },
       cancelRiskSave() {
         this.$emit('on-close-form')      
@@ -1606,6 +1609,9 @@
       calculatePriorityLevel() {
         return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
       },
+      // timeOfApproval() {
+      //   return  
+      // },
       filteredTasks() {
         return this.currentTasks
       },
@@ -2051,7 +2057,7 @@
 
   .risk-approved-date { 
     min-height: 32px;
-    width: 100px;
+    max-width: 225px;
     padding: 5px 40px 0 8px;
     border-radius: 5px;
     border: 1px solid #ced4da;
