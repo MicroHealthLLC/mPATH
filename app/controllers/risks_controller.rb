@@ -51,6 +51,7 @@ class RisksController < AuthenticatedController
     params.require(:risk).permit(
       :approved,
       :approved_at,
+      :approval_time,
       :facility_project_id,
       :risk_description,
       :impact_description,

@@ -476,8 +476,7 @@
               <div class="simple-select form-group">
                 <label class="font-sm mb-0">*Impact Level:</label>
                 <multiselect
-                  v-model="selectedRiskImpactLevel"
-                  :load="log(selectedRiskImpactLevel)"
+                  v-model="selectedRiskImpactLevel"              
                   v-validate="'required'"
                   placeholder="Impact Level"
                   :options="getRiskImpactLevelNames"
@@ -718,7 +717,7 @@
       <div class="row form-group mx-4 mb-0">
         <div class="col-md-12 px-0 simple-select form-group">
           <label class="font-sm">**Risk Approach:</label>
-          <multiselect
+          <multiselect           
             v-model="DV_risk.riskApproach"
             v-validate="'required'"
             :allow-empty="false"
@@ -764,10 +763,11 @@
 
 
       <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">
-       <div class="col-md-4 py-2 mb-0 px-0 simple-select form-group">
+       <div class="col-md-3 py-2 mb-0 px-0 simple-select form-group">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
-            v-model="riskApprover"        
+            v-model="riskApprover"  
+            :allow-empty="true"           
             track-by="id"
             label="fullName"
             placeholder="Select Risk Approver"
@@ -775,48 +775,51 @@
             :searchable="true"
             :multiple="false"
             select-label="Select"
+            name="Risk Approver"
+            :disabled="this.DV_risk.approved"           
             deselect-label=""
-            :close-on-select="true"
-            :disabled="!_isallowed('write')"
-            data-cy="risk_owner"
+            :close-on-select="true"          
             >
-            <template slot="singleLabel" slot-scope="{option}">
+          <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
-          </multiselect>
-
-         
+          </multiselect>         
         </div>    
 
-         <div class="col-md-3 pl-0 py-2 mb-0 text-center">
-             <label class="font-sm mb-0">Risk Approach Approved:</label>
-            <span v-if="_isallowed('write')" class="d-block" @click.prevent="toggleApproved">
-                <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
-                <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square"></i></span>              
+         <div class="col-md-2 pl-0 py-2 mb-0 text-center">
+             <label class="font-sm mb-0">Risk Approach Approved:</label>            
+            <span v-if="riskApprover.length && this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block" @click.prevent="toggleApproved">
+                <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md pointer"></i></span>
+                <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square pointer"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
+            </span>       
+             <span v-else class="d-block" @click.prevent="notApprover">             
+                <span v-show="DV_risk.approved" disabled class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
+                <span v-show="!DV_risk.approved" disabled class="empty_box mr-1"><i class="far fa-square"></i></span>              
+                <small style="vertical-align:text-top">Approved</small>
+              
             </span>
           </div>
 
       
-         <div class="col-md-4 pr-0 py-2 mb-0simple-select form-group ml-0 mr-3">
-          <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>
-          
-            <div class="risk-approved-date" id="saveDate">
-              {{approvedAt}} 
-            </div>
-        </div>    
-
-        
-      </div>  
-      <div class="row my-0 justify-content-end pr-4">
-       <div class="col-md-4 text-right font-sm float-right py-0">          
-            **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
+         <div class="col-md-3 pr-0 py-2 mb-0simple-select form-group ml-0">        
+        <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>          
+          <textarea          
+            class="form-control"          
+            v-model="DV_risk.approvalTime"       
+            rows='1'        
+            :readonly="!_isallowed('write')"
+            data-cy="approach_description"
+            name="Approval Time"
+            disabled           
+         />      
         </div>   
-      </div>
-
-
+        <div class="col-md-4 font-sm pl-5 py-3">    
+            **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
+        </div>        
+      </div> 
   </div>
 <!-- END RISK PRIORITIZE TAB SECTION -->
 
@@ -1061,6 +1064,7 @@
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
+        {{resetApproval}}
         </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -1092,9 +1096,9 @@
         DV_risk: this.INITIAL_RISK_STATE(), 
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],     
-        now: new Date().toLocaleString(),      
+        now: new Date().toLocaleString(),       
         selectedFacilityProject: null,
-        destroyedFiles: [],
+        destroyedFiles: [],      
         responsibleUsers: [],
         riskApprover: [],  
         accountableRiskUsers:[],
@@ -1168,14 +1172,15 @@
       INITIAL_RISK_STATE() {
         return {
           facilityProjectId: '',
-          text: '',
-          
+          text: '',      
           riskDescription: '',
           impactDescription: '',   
           probabilityDescription: '',            
-          riskApproach: 'avoid',         
+          riskApproach: 'avoid',   
+          approvalTime: '',          
           riskApproachDescription: '',
           riskTypeId: '',
+          me:'',
           riskStageId: '',
           probability: 1,
           impactLevel:1,
@@ -1213,11 +1218,7 @@
       handleMove(item) {
         this.movingSlot = item.relatedContext.component.$vnode.key
         return true
-      },
-      log(r) {
-        console.log(r)
-        
-      },
+      },   
       handleEnd(e, checklists) {
         let cc = this.DV_risk.checklists
         let count = 0
@@ -1286,13 +1287,19 @@
         }
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
-      },
-      
-      toggleApproved() {          
+      },      
+      toggleApproved() {             
         this.DV_risk = {...this.DV_risk, approved: !this.DV_risk.approved}
-        this.updateApprovedRisks(this.DV_risk)     
-      },
- 
+        this.updateApprovedRisks(this.DV_risk)  
+        this.DV_risk.approvalTime = new Date().toLocaleString() 
+        if (!this.DV_risk.approved)   {
+          this.DV_risk.approvalTime = ""
+        }               
+      }, 
+    notApprover() {             
+       alert("Sorry.  Only Risk Approach Approver is authorized to check this box.")
+                       
+      }, 
       cancelRiskSave() {
         this.$emit('on-close-form')      
         this.setRiskForManager({key: 'risk', value: null})        
@@ -1316,6 +1323,7 @@
           formData.append('risk[impact_level]', this.selectedRiskImpactLevel.id )
           formData.append('risk[risk_approach]', this.DV_risk.riskApproach)
           formData.append('risk[risk_approach_description]', this.DV_risk.riskApproachDescription)
+          formData.append('risk[approval_time]', this.DV_risk.approvalTime)
           formData.append('risk[task_type_id]', this.DV_risk.taskTypeId)
           formData.append('risk[risk_stage_id]', this.DV_risk.riskStageId)
           formData.append('risk[progress]', this.DV_risk.progress)
@@ -1584,11 +1592,15 @@
       calculatePriorityLevel() {
         return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
       },
-      approvedAt() {
-           if (this.DV_risk.approved) {
-            return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
-        }         
-      },
+      //   approvedAt() {      
+      //       return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
+      //  },
+      // approvedAt() {          
+      //      return this.DV_risk.approved ? `${new Date(this.DV_risk.updatedAt).toLocaleString()}` : ''          
+      // },
+      //  approvedAt() {      
+      //       return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
+      //  },
       filteredTasks() {
         return this.currentTasks
       },
@@ -1703,7 +1715,12 @@
        matrix55() {       
         if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
         return true  
-       },       
+       },  
+       resetApproval() {
+         if (this.DV_risk.riskApproach !== this.DV_risk.riskApproach){
+           this.DV_risk.riskApprover == []
+         }
+       }     
     },
     watch: {
       selectedFacilityProject: {
@@ -1894,6 +1911,9 @@
       padding: 5px 12px;
       cursor: pointer;
       text-decoration-line: none !important;
+    }
+    .pointer {
+      cursor: pointer;
     }
     a:hover {
       background-color: #ededed;
