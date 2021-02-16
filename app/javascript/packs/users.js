@@ -1,6 +1,7 @@
 import                          'core-js/stable'
 import                          'regenerator-runtime/runtime'
 import _                   from 'lodash'
+import Multiselect          from 'vue-multiselect'
 import Users               from 'components/users'
 import router              from 'routers/users'
 import VeeValidate         from 'vee-validate'
@@ -8,9 +9,11 @@ import * as VueGoogleMaps  from 'vue2-google-maps'
 import FadeLoader          from 'vue-spinner/src/FadeLoader.vue'
 import VuePhoneNumberInput from 'vue-phone-number-input'
 import 'vue-phone-number-input/dist/vue-phone-number-input.css'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 Vue.component('vue-phone-number-input', VuePhoneNumberInput)
 Vue.component('loader', FadeLoader)
+Vue.component('multiselect', Multiselect)
 Vue.use(VeeValidate)
 
 Vue.use(VueGoogleMaps, {

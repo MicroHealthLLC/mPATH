@@ -520,6 +520,10 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
       } else {
         this.getFacility()
       }
+      if(Vue.prototype.$preferences.sub_navigation_menu){
+        this.currentTab = Vue.prototype.$preferences.sub_navigation_menu
+      }
+      
     },
     methods: {
       ...mapMutations([

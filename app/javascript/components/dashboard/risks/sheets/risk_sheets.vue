@@ -18,8 +18,8 @@
        <td class="ten" >
           <span v-if="(risk.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{risk.responsibleUsers[0].name}} <br></span> 
           <span v-if="(risk.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{risk.accountableUsers[0].name}}<br></span>   
-          <span v-if="(risk.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{risk.consultedUsers[0].name}}<br></span> 
-          <span v-if="(risk.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{risk.informedUsers[0].name}}</span>       
+          <!-- <span v-if="(risk.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{risk.consultedUsers[0].name}}<br></span> 
+          <span v-if="(risk.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{risk.informedUsers[0].name}}</span>        -->
         </td>
         <td class="eight">{{risk.progress + "%"}}</td>
         <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>

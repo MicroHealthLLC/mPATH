@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     get :member_list, on: :member
     get :facility_manager, on: :member
     get :kanban, on: :member
+    get :map, on: :member
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do

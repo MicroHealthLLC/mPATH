@@ -11,8 +11,8 @@
   <!-- <span v-if="(issue.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-pill" style="border:solid 1px #383838">R</span>{{issue.responsibleUsers[0].name}} <br></span>  -->
           <span v-if="(issue.responsibleUsers.length) > 0"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
           <span v-if="(issue.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
-          <span v-if="(issue.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{issue.consultedUsers[0].name}}<br></span> 
-          <span v-if="(issue.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{issue.informedUsers[0].name}}</span>       
+          <!-- <span v-if="(issue.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{issue.consultedUsers[0].name}}<br></span> 
+          <span v-if="(issue.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{issue.informedUsers[0].name}}</span>        -->
         </td>
         <td class="eight">{{issue.progress + "%"}}</td>
         <td class="nine" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
