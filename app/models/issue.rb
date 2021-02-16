@@ -84,7 +84,8 @@ class Issue < ApplicationRecord
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
       sub_task_ids: sub_tasks.map(&:id),
-      sub_issue_ids: sub_issues.map(&:id)
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
 
@@ -120,6 +121,7 @@ class Issue < ApplicationRecord
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
+      sub_risk_ids:[],
       checklists_attributes: [
         :id,
         :_destroy,
