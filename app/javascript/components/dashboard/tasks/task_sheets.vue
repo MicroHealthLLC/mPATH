@@ -36,14 +36,16 @@
           <el-menu-item @click="editTask">Open</el-menu-item>
           <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
           <hr>
-          <el-submenu index="1">
+          <!-- <el-submenu index="1">
             <template slot="title">
               <span slot="title">Duplicate to...</span>
             </template>
-            <div ref="treeMenu">
+            <div>
+              <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
               <el-tree
                 :data="treeFormattedData"
                 :props="defaultProps"
+                :filter-node-method="filterNode"
                 show-checkbox
                 ref="duplicatetree"
                 node-key="id"
@@ -52,19 +54,20 @@
               <div class="context-menu-btns">
                 <button class="btn btn-sm btn-success ml-2" @click="duplicateSelectedTasks">Submit</button>
                 <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">Select All</button>
-                <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>
-                
+                <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>         
               </div>
             </div>
-          </el-submenu>
+          </el-submenu> -->
           <el-submenu index="2">
             <template slot="title">
               <span slot="title">Move to...</span>
             </template>
             <div>
+              <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
               <el-tree
                 :data="treeFormattedData"
                 :props="defaultProps"
+                :filter-node-method="filterNode"
                 ref="movetree"
                 @node-click="move"
               >
@@ -145,6 +148,7 @@ export default {
         label: "label",
         disabled: "disabled"
       },
+      filterTree: ''
     };
   },
   mounted() {
@@ -335,6 +339,12 @@ export default {
       
       facilityNodes.forEach(facility => console.log("Duplicate task to : " + facility.label))
     },
+    filterNode(value, data) {
+      console.log(value)
+      console.log(data)
+      if (!value) return true;
+      return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    }
   },
   computed: {
     ...mapGetters([
@@ -386,7 +396,7 @@ export default {
           })],
         });
       });
-
+      
       return [...data]    
     }
   },
@@ -397,6 +407,10 @@ export default {
       },
       deep: true,
     },
+    filterTree(value) {
+      // this.$refs.duplicatetree.filter(value);
+      this.$refs.movetree.filter(value);
+    }
   },
 };
 </script>
@@ -477,11 +491,6 @@ td {
 hr {
   margin: 0;
 }
-.dropdown-context-menu {
-  // max-height: 200px;
-  // max-width: 200px;
-  overflow-y: scroll;
-}
 .el-menu-item {
   padding: 10px;
   line-height: unset;
@@ -494,13 +503,7 @@ hr {
     background-color: rgba(91, 192, 222, 0.3);
   }
 }
-#first-menu-item {
-  font-weight: bold;
-  &:hover {
-    background-color: unset;
-  }
-}
-.context-menu-btns {
+.context-menu-btns, .filter-input {
   padding: 10px;
 }
 .el-menu-item {
@@ -510,6 +513,6 @@ hr {
   padding: 10px;
   max-width: 300px;
   max-height: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>
