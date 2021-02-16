@@ -5,6 +5,7 @@ class Checklist < ApplicationRecord
   belongs_to :listable, polymorphic: true
   belongs_to :user, optional: true
   has_many :progress_lists, dependent: :destroy
+  accepts_nested_attributes_for :progress_lists, reject_if: :all_blank, allow_destroy: true
 
   def as_json(options=nil)
     json = super(options)
