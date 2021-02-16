@@ -50,8 +50,10 @@
               >
               </el-tree>
               <div class="context-menu-btns">
-                <button class="btn btn-sm btn-success ml-2" @click="getCheckedNodes">Submit</button>
-                <button class="btn btn-sm btn-outline-secondary ml-2" @click="closeTree($refs.duplicatetree)">Cancel</button>
+                <button class="btn btn-sm btn-success ml-2" @click="duplicateSelectedTasks">Submit</button>
+                <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">Select All</button>
+                <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>
+                
               </div>
             </div>
           </el-submenu>
@@ -152,19 +154,6 @@ export default {
     }
   },
   methods: {
-    closeTree(tree) {
-      console.log(tree)
-    },
-    move(node) {
-      if (!node.hasOwnProperty('children')) {
-        this.moveTask(this.task, node.id)
-      }    
-    },
-    getCheckedNodes() {
-      var facilityNodes = this.$refs.duplicatetree.getCheckedNodes().filter(item => !item.hasOwnProperty('children'));
-      
-      facilityNodes.forEach(facility => console.log("Duplicate task to : " + facility.label))
-    },
     ...mapMutations(["updateTasksHash", "setTaskForManager"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
     deleteTask() {
@@ -291,7 +280,6 @@ export default {
           facility.tasks.push(updatedTask);
         }
       });
-      console.log("Task was moved.")
     },
     updateFacilityTask(task) {
       var facilities = this.facilities;
@@ -299,60 +287,56 @@ export default {
       var facilityIndex = facilities.findIndex(item => item.facilityProjectId === task.facilityProjectId);
 
       facilities[facilityIndex].tasks.push(task);
-      console.log("Task was duplicated.")
-
     },
     createDuplicate() {
-        let url = `/projects/${this.currentProject.id}/facilities/${this.DV_task.facilityId}/tasks/${this.DV_task.id}/create_duplicate.json`
-        let method = "POST"
-        let callback = "task-created"
+      let url = `/projects/${this.currentProject.id}/facilities/${this.DV_task.facilityId}/tasks/${this.DV_task.id}/create_duplicate.json`
+      let method = "POST"
+      let callback = "task-created"
 
-        let formData = new FormData()
-        formData.append('id', this.DV_task.id)
+      let formData = new FormData()
+      formData.append('id', this.DV_task.id)
 
-        axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
-          }
-        })
-        .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task))
-          this.updateFacilityTask(
-              humps.camelizeKeys(response.data.task),
-              this.DV_task.facilityProjectId
-            );
-        })
-        .catch((err) => {
-          // var errors = err.response.data.errors
-          console.log(err)
-        })
-        .finally(() => {
-          // this.loading = false
-        })
-      },
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        this.$emit(callback, humps.camelizeKeys(response.data.task))
+        this.updateFacilityTask(
+            humps.camelizeKeys(response.data.task),
+            this.DV_task.facilityProjectId
+          );
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+    },
+    selectAllNodes() {
+      this.$refs.duplicatetree.setCheckedNodes(this.treeFormattedData)
+    },
+    clearAllNodes() {
+      this.$refs.duplicatetree.setCheckedNodes([])
+    },
+    move(node) {
+      if (!node.hasOwnProperty('children')) {
+        this.moveTask(this.task, node.id)
+      }    
+    },
+    duplicateSelectedTasks() {
+      var facilityNodes = this.$refs.duplicatetree.getCheckedNodes().filter(item => !item.hasOwnProperty('children'));
+      
+      facilityNodes.forEach(facility => console.log("Duplicate task to : " + facility.label))
+    },
   },
   computed: {
-    treeFormattedData() {
-      var data = [];
-
-      this.facilityGroups.forEach((group, index) => {
-        data.push({
-          id: index,
-          label: group.name,
-          children: [...group.facilities.map(facility => {
-            return {
-              id: facility.facilityProjectId,
-              label: facility.facilityName
-            }
-          })],
-        });
-      });
-
-      return [...data]    
-    },
     ...mapGetters([
       "facilities",
       "facilityGroups",
@@ -387,6 +371,24 @@ export default {
         this.managerView.task && this.managerView.task.id == this.DV_task.id
       );
     },
+    treeFormattedData() {
+      var data = [];
+
+      this.facilityGroups.forEach((group, index) => {
+        data.push({
+          id: index,
+          label: group.name,
+          children: [...group.facilities.filter(facility => facility.facility.id !== this.DV_task.facilityId).map(facility => {
+            return {
+              id: facility.facilityProjectId,
+              label: facility.facilityName
+            }
+          })],
+        });
+      });
+
+      return [...data]    
+    }
   },
   watch: {
     task: {
