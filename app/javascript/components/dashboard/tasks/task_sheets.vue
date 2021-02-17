@@ -36,7 +36,7 @@
           <el-menu-item @click="editTask">Open</el-menu-item>
           <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
           <hr>
-          <!-- <el-submenu index="1">
+          <el-submenu index="1">
             <template slot="title">
               <span slot="title">Duplicate to...</span>
             </template>
@@ -57,7 +57,7 @@
                 <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>         
               </div>
             </div>
-          </el-submenu> -->
+          </el-submenu>
           <el-submenu index="2">
             <template slot="title">
               <span slot="title">Move to...</span>
@@ -337,11 +337,48 @@ export default {
     duplicateSelectedTasks() {
       var facilityNodes = this.$refs.duplicatetree.getCheckedNodes().filter(item => !item.hasOwnProperty('children'));
       
-      facilityNodes.forEach(facility => console.log("Duplicate task to : " + facility.label))
+      var ids = facilityNodes.map(facility => facility.id)
+
+      let url = `/projects/${this.currentProject.id}/facilities/${this.DV_task.facilityId}/tasks/${this.DV_task.id}/create_bulk_duplicate?`
+      let method = "POST"
+      let callback = "task-created"
+
+      ids.forEach((id, index) => {
+        if (index === 0) {
+          url += `facility_project_ids[]=${id}`
+        } else {
+          url += `&facility_project_ids[]=${id}`
+        }  
+      })
+
+      let formData = new FormData()
+      formData.append('id', this.DV_task.id)
+      formData.append('facility_project_ids', ids)
+
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        this.$emit(callback, humps.camelizeKeys(response.data.task))
+
+        response.data.tasks.forEach(task => {
+          this.updateFacilityTask(humps.camelizeKeys(task), task.facilityProjectId)
+        })
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
     },
     filterNode(value, data) {
-      console.log(value)
-      console.log(data)
       if (!value) return true;
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     }
@@ -396,7 +433,7 @@ export default {
           })],
         });
       });
-      
+
       return [...data]    
     }
   },
@@ -408,7 +445,7 @@ export default {
       deep: true,
     },
     filterTree(value) {
-      // this.$refs.duplicatetree.filter(value);
+      this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
     }
   },

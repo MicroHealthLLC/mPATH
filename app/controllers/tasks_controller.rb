@@ -27,10 +27,10 @@ class TasksController < AuthenticatedController
   end
 
   def create_bulk_duplicate
-    duplicate_task = @task.amoeba_dup
     all_objs = []
     if params[:facility_project_ids].present?
       params[:facility_project_ids].each do |fp_id|
+        duplicate_task = @task.amoeba_dup
         duplicate_task.facility_project_id = fp_id
         duplicate_task.save
         all_objs << duplicate_task
