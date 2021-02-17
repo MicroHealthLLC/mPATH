@@ -31,31 +31,6 @@
           >
           Close
         </button>
-        <div class="duplicate">
-        <button
-          class="btn btn-sm sticky-btn btn-success ml-2"
-          @click.prevent="createDuplicate"
-          data-cy="task_close_btn"
-          :load="log(task)"
-          v-if="DV_task.id"
-        >
-         <font-awesome-icon icon="copy" />
-          Duplicate
-        </button>
-
-        <!-- Something in this block of code is preventing "Add Task" opening form in Map view (releated to facilityId) -->
-        <!-- <el-dropdown v-show="!isSheetsView" placement="bottom">
-          <button @click.prevent="" class="btn btn-sm sticky-btn btn-success ml-2">
-            <font-awesome-icon icon="arrow-alt-circle-right" /> Move
-          </button>
-          <el-dropdown-menu slot="dropdown">
-            <div v-for="(facility, index) in getUnfilteredFacilities" :key="index" @click="moveTask(task, facility.facilityProjectId)">
-                <el-dropdown-item :title="facility.facility.facilityName" :name="facility.facility.facilityName" :disabled="task.facilityId === facility.facilityId">{{ facility.facility.facilityName }}
-              </el-dropdown-item>
-            </div>
-          </el-dropdown-menu>
-        </el-dropdown>  -->
-        </div>
         <!-- <div class="btn-group">
            <button  
           v-if="_isallowed('write')"       
@@ -816,35 +791,6 @@
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
       },
-      createDuplicate(){
-
-        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks/${this.DV_task.id}/create_duplicate.json`
-        let method = "POST"
-        let callback = "task-created"
-
-        this.loading = true
-        let formData = new FormData()
-        formData.append('id', this.DV_task.id)
-
-        axios({
-          method: method,
-          url: url,
-          data: formData,
-          headers: {
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
-          }
-        })
-        .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task))
-        })
-        .catch((err) => {
-          // var errors = err.response.data.errors
-          console.log(err)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-      },
       saveTask() {
         if (!this._isallowed('write')) return
         this.$validator.validate().then((success) =>
@@ -1078,54 +1024,6 @@
 
         return date < new Date(this.DV_task.startDate) || date > dueDate;
       },
-      moveTask(task, facilityProjectId) {
-        if (!this._isallowed("write")) return;
-        this.$validator.validate().then((success) => {
-          if (!success || this.loading) {
-            this.showErrors = !success;
-            return;
-          }
-          this.loading = true;
-          let formData = new FormData();
-          formData.append("task[facility_project_id]", facilityProjectId);
-          let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
-          let method = "PUT";
-          let callback = "task-updated";
-          var beforeSaveTask = task;
-          axios({
-            method: method,
-            url: url,
-            data: formData,
-            headers: {
-              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-                .attributes["content"].value,
-            },
-          })
-            .then((response) => {
-              if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
-                this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
-                this.$emit(callback, humps.camelizeKeys(response.data.task));
-                this.updateFacilities(humps.camelizeKeys(response.data.task), facilityProjectId);
-              })
-            .catch((err) => {
-              // var errors = err.response.data.errors
-              console.log(err);
-            })
-            .finally(() => {
-              this.loading = false;
-              this.updateTasksHash({task: task, action: 'delete'})
-            });
-        });
-      },
-      updateFacilities(updatedTask, id) {
-        var facilities = this.facilities;
-        
-        facilities.forEach(facility => {
-          if (facility.facilityProjectId === id) {
-            facility.tasks.push(updatedTask)
-          }
-        })
-      }
     },
     computed: {
       ...mapGetters([
@@ -1141,7 +1039,6 @@
         'currentRisks',
         'managerView',
         'facilities',
-        'getUnfilteredFacilities'
       ]),
       readyToSave() {
         return (
@@ -1401,13 +1298,6 @@
   .check-due-date {
     text-align: end;
   }
-  .duplicate{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
   .disabled {
     opacity: 0.6;
   }
@@ -1415,15 +1305,5 @@
     width: min-content;
     background-color: #fafafa;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-  .el-dropdown-menu {
-    max-height: 200px;
-    max-width: 200px;
-    overflow-y: scroll;
-  }
-  .el-dropdown-menu__item {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
   }
 </style>
