@@ -790,9 +790,9 @@
 
          <div class="col-md-2 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
-            <span v-if="riskApprover.length && this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block" @click.prevent="toggleApproved">
-                <span v-show="DV_risk.approved" class="check_box mx-1"><i class="far fa-check-square font-md pointer"></i></span>
-                <span v-show="!DV_risk.approved" class="empty_box mr-1"><i class="far fa-square pointer"></i></span>              
+            <span v-if="riskApprover.length && this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
+                <span v-show="DV_risk.approved" class="check_box mx-1 approver-pointer"><i class="far fa-check-square"></i></span>
+                <span v-show="!DV_risk.approved" class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
             </span>       
              <span v-else class="d-block" @click.prevent="notApprover">             
@@ -1912,7 +1912,7 @@
       cursor: pointer;
       text-decoration-line: none !important;
     }
-    .pointer {
+    .approver-pointer {
       cursor: pointer;
     }
     a:hover {
