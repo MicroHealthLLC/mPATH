@@ -64,6 +64,7 @@ class IssuesController < AuthenticatedController
       user_ids: [],
       sub_task_ids: [],
       sub_issue_ids: [],
+      sub_risk_ids: [],
       checklists_attributes: [
         :id,
         :_destroy,

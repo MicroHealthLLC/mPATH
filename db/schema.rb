@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2021_02_12_162700) do
+ActiveRecord::Schema.define(version: 2021_02_16_140650) do
 
   create_table "accountable_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -399,6 +398,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_162700) do
     t.text "probability_description"
     t.datetime "approved_at"
     t.boolean "approved"
+    t.string "approval_time"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
