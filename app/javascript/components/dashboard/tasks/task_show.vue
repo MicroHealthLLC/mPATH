@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="tasks">
+  <div data-cy="tasks" @mouseup.right="openContextMenu" @contextmenu.prevent="">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center float-right mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
@@ -100,6 +100,52 @@
         ></issue-form>
       </div>
     </sweet-modal>
+    <!-- The context-menu appears only if table row is right-clicked -->
+    <context-menu :display="showContextMenu" ref="menu">
+      <el-menu collapse>
+        <el-menu-item @click="editTask">Open</el-menu-item>
+        <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
+        <hr>
+        <el-submenu index="1">
+          <template slot="title">
+            <span slot="title">Duplicate to...</span>
+          </template>
+          <div>
+            <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
+            <el-tree
+              :data="treeFormattedData"
+              :props="defaultProps"
+              :filter-node-method="filterNode"
+              show-checkbox
+              ref="duplicatetree"
+              node-key="id"
+            >
+            </el-tree>
+            <div class="context-menu-btns">
+              <button class="btn btn-sm btn-success ml-2" @click="duplicateSelectedTasks">Submit</button>
+              <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">Select All</button>
+              <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>         
+            </div>
+          </div>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title">
+            <span slot="title">Move to...</span>
+          </template>
+          <div>
+            <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
+            <el-tree
+              :data="treeFormattedData"
+              :props="defaultProps"
+              :filter-node-method="filterNode"
+              ref="movetree"
+              @node-click="move"
+            >
+            </el-tree>
+          </div>
+        </el-submenu>
+      </el-menu>
+    </context-menu>
   </div>
 </template>
 
@@ -108,6 +154,9 @@
   import {SweetModal} from 'sweet-modal-vue'
   import TaskForm from "./task_form"
   import IssueForm from "./../issues/issue_form"
+  import ContextMenu from "../../shared/ContextMenu"
+  import axios from "axios"
+  import humps from "humps"
 
   export default {
     name: 'TaskShow',
@@ -115,6 +164,7 @@
       TaskForm,
       IssueForm,
       SweetModal,
+      ContextMenu
     },
     props: {
       fromView: {
@@ -129,7 +179,14 @@
         DV_task: {},
         DV_edit_task: {},
         DV_edit_issue: {},
-        has_task: false
+        has_task: false,
+        showContextMenu: false,
+        defaultProps: {
+          children: "children",
+          label: "label",
+          disabled: "disabled"
+        },
+        filterTree: ''
       }
     },
     mounted() {
@@ -203,6 +260,163 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
+      moveTask(task, facilityProjectId) {
+        if (!this._isallowed("write")) return;
+        this.$validator.validate().then((success) => {
+          if (!success || this.loading) {
+            this.showErrors = !success;
+            return;
+          }
+
+          this.loading = true;
+          let formData = new FormData();
+
+          formData.append("task[facility_project_id]", facilityProjectId);
+
+          let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+          let method = "PUT";
+          let callback = "task-updated";
+
+          var beforeSaveTask = task;
+
+          axios({
+            method: method,
+            url: url,
+            data: formData,
+            headers: {
+              "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+                .attributes["content"].value,
+            },
+          })
+            .then((response) => {
+              if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
+                this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
+              this.$emit(callback, humps.camelizeKeys(response.data.task));
+              this.updateFacilities(
+                humps.camelizeKeys(response.data.task),
+                facilityProjectId
+              );
+            })
+            .catch((err) => {
+              // var errors = err.response.data.errors
+              console.log(err);
+            })
+            .finally(() => {
+              this.loading = false;
+              this.updateTasksHash({ task: task, action: "delete" });
+            });
+        });
+      },
+      updateFacilities(updatedTask, id) {
+        var facilities = this.facilities;
+
+        facilities.forEach((facility) => {
+          if (facility.facilityProjectId === id) {
+            facility.tasks.push(updatedTask);
+          }
+        });
+      },
+      updateFacilityTask(task) {
+        var facilities = this.facilities;
+
+        var facilityIndex = facilities.findIndex(item => item.facilityProjectId === task.facilityProjectId);
+
+        facilities[facilityIndex].tasks.push(task);
+      },
+      createDuplicate() {
+        let url = `/projects/${this.currentProject.id}/facilities/${this.DV_task.facilityId}/tasks/${this.DV_task.id}/create_duplicate.json`
+        let method = "POST"
+        let callback = "task-created"
+
+        let formData = new FormData()
+        formData.append('id', this.DV_task.id)
+
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.$emit(callback, humps.camelizeKeys(response.data.task))
+          this.updateFacilityTask(
+              humps.camelizeKeys(response.data.task),
+              this.DV_task.facilityProjectId
+            );
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          // this.loading = false
+        })
+      },
+      selectAllNodes() {
+        this.$refs.duplicatetree.setCheckedNodes(this.treeFormattedData)
+      },
+      clearAllNodes() {
+        this.$refs.duplicatetree.setCheckedNodes([])
+      },
+      move(node) {
+        if (!node.hasOwnProperty('children')) {
+          this.moveTask(this.task, node.id)
+        }    
+      },
+      duplicateSelectedTasks() {
+        var facilityNodes = this.$refs.duplicatetree.getCheckedNodes().filter(item => !item.hasOwnProperty('children'));
+        
+        var ids = facilityNodes.map(facility => facility.id)
+
+        let url = `/projects/${this.currentProject.id}/facilities/${this.DV_task.facilityId}/tasks/${this.DV_task.id}/create_bulk_duplicate?`
+        let method = "POST"
+        let callback = "task-created"
+
+        ids.forEach((id, index) => {
+          if (index === 0) {
+            url += `facility_project_ids[]=${id}`
+          } else {
+            url += `&facility_project_ids[]=${id}`
+          }  
+        })
+
+        let formData = new FormData()
+        formData.append('id', this.DV_task.id)
+        formData.append('facility_project_ids', ids)
+
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.$emit(callback, humps.camelizeKeys(response.data.task))
+
+          response.data.tasks.forEach(task => {
+            this.updateFacilityTask(humps.camelizeKeys(task), task.facilityProjectId)
+          })
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          // this.loading = false
+        })
+      },
+      filterNode(value, data) {
+        if (!value) return true;
+        return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
       }
     },
     computed: {
@@ -212,6 +426,7 @@
         'managerView',
         'currentTasks',
         'currentIssues',
+        'currentProject',
         'viewPermit'
       ]),
       _isallowed() {
@@ -228,6 +443,24 @@
       },
       C_editForManager() {
         return this.managerView.task && this.managerView.task.id == this.DV_task.id
+      },
+      treeFormattedData() {
+        var data = [];
+
+        this.facilityGroups.forEach((group, index) => {
+          data.push({
+            id: index,
+            label: group.name,
+            children: [...group.facilities.filter(facility => facility.facility.id !== this.DV_task.facilityId).map(facility => {
+              return {
+                id: facility.facilityProjectId,
+                label: facility.facilityName
+              }
+            })],
+          });
+        });
+
+        return [...data]    
       }
     },
     watch: {
@@ -236,6 +469,10 @@
           this.DV_task = Object.assign({}, value)
         },
         deep: true
+      },
+      filterTree(value) {
+        this.$refs.duplicatetree.filter(value);
+        this.$refs.movetree.filter(value);
       }
     }
   }
@@ -287,6 +524,33 @@
         position: inherit !important;
       }
     }
+  }
+  hr {
+    margin: 0;
+  }
+  .el-menu-item {
+    padding: 10px;
+    line-height: unset;
+    height: unset;
+    text-align: center;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    &:hover {
+      background-color: rgba(91, 192, 222, 0.3);
+    }
+  }
+  .context-menu-btns, .filter-input {
+    padding: 10px;
+  }
+  .el-menu-item {
+    padding-right: 30px;
+  }
+  .el-tree {
+    padding: 10px;
+    max-width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
   }
 </style>
 
