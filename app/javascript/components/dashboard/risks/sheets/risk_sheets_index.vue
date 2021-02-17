@@ -142,8 +142,7 @@
              <risk-sheets
               v-for="risk in sortedRisks"
               class="riskHover"
-              href="#"
-              :load="log(risk)"             
+              href="#"               
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -277,9 +276,9 @@
         'setRiskApproachFilter',
         'setRiskForManager',
       ]),
-      log(t){
-        console.log(t)
-      },
+      // log(t){
+      //   console.log(t)
+      // },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -388,7 +387,7 @@
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
-          if (search_query) valid = valid && search_query.test(resource.riskName)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
 
           return valid;

@@ -105,6 +105,7 @@
             <risk-show
               v-for="(risk, i) in filteredRisks"         
               class="riskHover"
+              :load="log(risk)"
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
               :risk="risk"
@@ -322,7 +323,7 @@
 
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
-          if (search_query) valid = valid && search_query.test(resource.riskName)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
 
           return valid;
