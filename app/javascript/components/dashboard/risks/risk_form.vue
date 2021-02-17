@@ -209,106 +209,7 @@
             </div>
           </div>
         </div>
-    <!-- <div class="form-group mb-0 d-flex w-100">
-      <div class="form-group user-select ml-4 mr-1 w-100">
-       
-        <label class="font-sm mb-0">Responsible:</label>
-        <multiselect
-          v-model="riskUsers"        
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          data-cy="risk_owner"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>     
-       <div class="form-group user-select ml-1 mr-4 w-100">
-        <label class="font-sm mb-0">Accountable:</label>
-        <multiselect
-          v-model="accountableRiskUsers"              
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="false"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="true"
-             
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>             
- </div> 
- <div class="form-group  mt-0 d-flex w-100">
-      <div class="form-group user-select ml-4 mr-1 w-100">
-        <label class="font-sm mb-0">Consulted:</label>
-        <multiselect
-          disabled
-          v-model="consultedRiskUsers"         
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
    
-          data-cy="risk_owner"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>     
-       <div class="form-group user-select ml-1 mr-4 w-100">
-        <label class="font-sm mb-0">Informed:</label>
-        <multiselect
-          disabled
-          v-model="informedRiskUsers"        
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false" 
-          data-cy="risk_owner"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>             
- </div>  -->
-      
-      
-       
    </div>
 </div>
    <!-- END RISK IDENTIFY TAB SECTION -->
@@ -725,7 +626,7 @@
             :options="riskApproaches"
             :searchable="false"
             select-label="Select"
-            :disabled="!_isallowed('write')"
+            :disabled="!_isallowed('write') || this.DV_risk.approved"   
             :class="{'error': errors.has('Risk Approach')}"
             data-cy="risk_approach"
             >
@@ -760,27 +661,25 @@
           </div>
         </div>
     </div>
+  <small v-if="!this.DV_risk.text" class="pl-4 text-danger">Risk form and Risk Approach Approver must first be saved in order to submit for approval</small>
 
-
-      <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">
-       <div class="col-md-3 py-2 mb-0 px-0 simple-select form-group">
+      <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">      
+       <div class="form-group col-md-2 py-2 mb-0 px-0 user-select w-100">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
-            v-model="riskApprover"  
-            :allow-empty="true"           
+            v-model="riskApprover"                   
             track-by="id"
             label="fullName"
             placeholder="Select Risk Approver"
             :options="activeProjectUsers"
             :searchable="true"
             :multiple="false"
-            select-label="Select"
-            name="Risk Approver"
-            :disabled="this.DV_risk.approved"           
-            deselect-label=""
-            :close-on-select="true"          
+            select-label="Select"    
+            deselect-label="" 
+            :close-on-select="true"        
+            :disabled="this.DV_risk.approved"                
             >
-          <template slot="singleLabel" slot-scope="{option}">
+             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
@@ -788,20 +687,31 @@
           </multiselect>         
         </div>    
 
-         <div class="col-md-2 pl-0 py-2 mb-0 text-center">
+         <div v-if="this.DV_risk.riskApprover" class="col-md-2 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
-            <span v-if="riskApprover.length && this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
+            <span v-if="this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
                 <span v-show="DV_risk.approved" class="check_box mx-1 approver-pointer"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_risk.approved" class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
             </span>       
-             <span v-else class="d-block" @click.prevent="notApprover">             
-                <span v-show="DV_risk.approved" disabled class="check_box mx-1"><i class="far fa-check-square font-md"></i></span>
-                <span v-show="!DV_risk.approved" disabled class="empty_box mr-1"><i class="far fa-square"></i></span>              
-                <small style="vertical-align:text-top">Approved</small>
-              
-            </span>
+            
           </div>
+          <div v-else class="col-md-2 pl-0 py-2 mb-0 text-center">
+             <label class="font-sm mb-0">Risk Approach Approved:</label>            
+           
+            <span class="d-block approver-pointer" >
+                <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
+                <small style="vertical-align:text-top">Approved</small>
+            </span>       
+           
+          </div>
+         
+          <!-- Users listed here for debugging Risk Approval Section.  Delete if no longer needed
+           Current User:  {{this.$currentUser.full_name  }} <br>
+
+              Risk Aprrover Array (before saving to db)  {{ riskApprover.fullName }}
+              Risk Aprrover Name (after saving to db)  {{this.DV_risk.riskApprover[0].name }}
+             -->
 
       
          <div class="col-md-3 pr-0 py-2 mb-0simple-select form-group ml-0">        
@@ -816,7 +726,7 @@
             disabled           
          />      
         </div>   
-        <div class="col-md-4 font-sm pl-5 py-3">    
+        <div class="col-md-4 font-sm pl-5 py-3">         
             **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
         </div>        
       </div> 
@@ -1229,8 +1139,7 @@
       },
        onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'risk'
-      },
-        // RACI USERS commented out out here.....Awaiting backend work
+      },    
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
@@ -1262,7 +1171,7 @@
         this.DV_risk.riskFiles = _files
       },
       deleteRisk() {
-        let confirm = window.confirm(`Are you sure you want to delete this issue?`)
+        let confirm = window.confirm(`Are you sure you want to delete this risk?`)
         if (!confirm) {return}
         this.riskDeleted(this.DV_risk)
         this.cancelRiskSave()
@@ -1378,6 +1287,7 @@
           else {
             formData.append('risk_approver_user_ids[]', [])
           }
+               
           if (this.DV_risk.subTaskIds.length) {
             for (let u_id of this.DV_risk.subTaskIds) {
               formData.append('risk[sub_task_ids][]', u_id)
@@ -1592,15 +1502,6 @@
       calculatePriorityLevel() {
         return this.selectedRiskImpactLevel.id * this.selectedRiskPossibility.id
       },
-      //   approvedAt() {      
-      //       return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
-      //  },
-      // approvedAt() {          
-      //      return this.DV_risk.approved ? `${new Date(this.DV_risk.updatedAt).toLocaleString()}` : ''          
-      // },
-      //  approvedAt() {      
-      //       return `${new Date(this.DV_risk.updatedAt).toLocaleString()}`        
-      //  },
       filteredTasks() {
         return this.currentTasks
       },

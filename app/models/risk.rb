@@ -106,7 +106,7 @@ class Risk < ApplicationRecord
     end
     self.as_json.merge(
       priority_level_name: priority_level_name,
-      risk_approach: risk_approach.humanize,
+      # risk_approach: risk_approach.humanize,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
       task_type: task_type.as_json, 
