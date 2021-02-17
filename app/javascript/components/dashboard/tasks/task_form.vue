@@ -437,7 +437,7 @@
               <i class="fas fa-plus-circle" ></i>
             </span>
 
-            <div v-for="(progress, pindex) in check.progressLists" :key="pindex" class="d-flex w-100 mb-3 drag" :log="log(progress)">
+            <div v-for="(progress, pindex) in check.progressLists" :key="pindex" class="d-flex w-100 mb-3 drag" :log="log(progress)"  v-if="!progress._destroy">
               <div class="row">{{progressListTitleText(progress)}}</div>
               <div class="form-control h-100">
                 <div class="row">
@@ -1087,7 +1087,7 @@
         if (!confirm) return;
 
         let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
-        Vue.set(check, i, {...progressList, _destroy: true})
+        Vue.set(check.progressLists, i, {...progressList, _destroy: true})
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
