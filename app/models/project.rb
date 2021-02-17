@@ -1,3 +1,5 @@
+#NOTE: Project is now program in front end
+
 class Project < SortableRecord
   default_scope {order(Project.order_humanize)}
   has_many :tasks, through: :facilities

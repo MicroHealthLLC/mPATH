@@ -34,12 +34,17 @@ class Task < ApplicationRecord
     end
     fp = self.facility_project
     users = self.users.active
+    users_hash = {} 
+    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+ 
 
     resource_users = self.task_users.where(user_id: users.map(&:id) )
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
+ 
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -60,11 +65,19 @@ class Task < ApplicationRecord
       checklists: checklists.as_json,
       notes: notes.as_json,
 
-      # Add accountable users
-      accountable_user_ids: accountable_user_ids,
+
+      # Add RACI user names
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
+      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+    
+    
+      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
+      accountable_user_ids: accountable_user_ids,    
       consulted_user_ids: consulted_user_ids,
-      informed_user_ids: informed_user_ids,
+      informed_user_ids: informed_user_ids, 
 
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
@@ -87,7 +100,7 @@ class Task < ApplicationRecord
       :task_stage_id,
       :facility_project_id,
       :due_date,
-      :start_date,
+      :start_date, 
       :description,
       :progress,
       :auto_calculate,

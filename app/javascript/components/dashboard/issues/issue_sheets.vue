@@ -6,17 +6,22 @@
         <td class="ten">{{issue.issueType}}</td>
         <td class="nine">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
-        <td class="eight">{{formatDate(issue.dueDate)}}</td>
-        <td class="ten" v-if="(issue.responsibleUserNames.length) > 0">{{ issue.responsibleUserNames }}</td>
-        <td class="ten" v-else></td>
-        <td class="nine">{{issue.progress + "%"}}</td>
+        <td class="eight">{{formatDate(issue.dueDate)}}</td>       
+         <td class="elev" >
+  <!-- <span v-if="(issue.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-pill" style="border:solid 1px #383838">R</span>{{issue.responsibleUsers[0].name}} <br></span>  -->
+          <span v-if="(issue.responsibleUsers.length) > 0"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(issue.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
+          <!-- <span v-if="(issue.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{issue.consultedUsers[0].name}}<br></span> 
+          <span v-if="(issue.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{issue.informedUsers[0].name}}</span>        -->
+        </td>
+        <td class="eight">{{issue.progress + "%"}}</td>
         <td class="nine" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
         <td class="nine" v-else></td>
         <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
         <td class="nine" v-else></td>
         <td class="oneFive" v-if="(issue.notes.length) > 0">
-          By: {{ issue.notes[0].user.fullName}} on
-          {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
+           <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
+           {{ moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}</span><br> {{issue.notes[0].body}}
         </td>
         <td class="oneFive" v-else>No Updates</td>
       </tr>
@@ -208,6 +213,9 @@
   .ten {
     width: 10%;
   }
+  .elev {
+    width: 11%;
+  }
   .oneFive {
     width: 15%;
   }
@@ -226,6 +234,13 @@
   .issue_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
+  .toolTip {
+    background-color: #6c757d;
+    font-size: .75rem;
+    padding:1px;
+    color: #fff;
+    border-radius: 3px;
+  }
   .issue_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;
@@ -240,6 +255,11 @@
       right: 30px;
       font-size: 20px;
       cursor: pointer;
+    }
+    .badges {
+      background-color: #fafafa;
+      color: #383838;
+      border: solid 1px #383838 !important;
     }
     .form-inside-modal {
       form {

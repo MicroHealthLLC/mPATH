@@ -72,7 +72,7 @@
 <script>
   import http from './../../common/http'
   import {SweetModal} from 'sweet-modal-vue'
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapActions, mapMutations} from 'vuex'
 
   export default {
     name: "GanttChart",
@@ -233,10 +233,25 @@
     mounted() {
       this.loading = false
       this.updateZoom(this.ganttData)
+      // Display notification when leaving map view to another page and conditions met
+      if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
+        this.$notify.info({
+          title: "Filter Set",
+          message:
+            "A filter was set based on the map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
+          offset: 150,
+          position: "bottom-left"
+        });
+
+        this.setPreviousRoute(this.$route.name)
+      }
     },
     computed: {
       ...mapGetters([
-        'ganttData'
+        'ganttData',
+        'facilities',
+        'getUnfilteredFacilities',
+        'getPreviousRoute'
       ]),
       isUpdated() {
         return this.DV_task.dueDate != this.AC_task.endDate || this.DV_task.startDate != this.AC_task.startDate || this.DV_task.progress != this.AC_task.progress
@@ -248,6 +263,9 @@
     methods: {
       ...mapActions([
         'taskUpdated'
+      ]),
+      ...mapMutations([
+        'setPreviousRoute'
       ]),
       handleClick({column, data}) {
         if (!this._isallowed("write")) return

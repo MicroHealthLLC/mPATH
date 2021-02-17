@@ -2,32 +2,26 @@
 <template>
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped">
-      <tr
-        v-if="!loading"
-        class="mx-3 mb-3 mt-2 py-4 edit-action"
-        @click.prevent="editTask"
-        data-cy="task_row"
-        @mouseup.right="openContextMenu"
-        @contextmenu.prevent=""
-      >
-        <td class="sixteen">{{ task.text }}</td>
-        <td class="ten">{{ task.taskType }}</td>
-        <td class="eight">{{ formatDate(task.startDate) }}</td>
-        <td class="eight">{{ formatDate(task.dueDate) }}</td>
-        <td class="ten" v-if="task.userNames.length >= 0">
-          {{ task.userNames }}
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
+        <td class="sixteen">{{task.text}}</td>
+        <td class="ten">{{task.taskType}}</td>
+        <td class="eight">{{formatDate(task.startDate)}}</td>
+        <td class="eight">{{formatDate(task.dueDate)}}</td>
+        <td class="twelve" >
+          <span v-if="(task.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(task.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{task.accountableUsers[0].name}}<br></span>   
+          <!-- <span v-if="(task.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{task.consultedUsers[0].name}}<br></span> 
+          <span v-if="(task.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{task.informedUsers[0].name}}</span>        -->
         </td>
-        <td class="ten" v-else></td>
-        <td class="ten">{{ task.progress + "%" }}</td>
-        <td class="ten" v-if="task.dueDate <= now"><h5>x</h5></td>
+        <td class="eight">{{task.progress + "%"}}</td>
+        <td class="ten" v-if="(task.dueDate) <= now"><h5>x</h5></td>
         <td class="ten" v-else></td>
         <td class="eight" v-if="task.watched == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-        <td class="twenty" v-if="task.notes.length > 0">
-          By: {{ task.notes[0].user.fullName }} on
-          {{ moment(task.notes[0].createdAt).format("DD MMM YYYY, h:mm a") }}:
-          {{ task.notes[0].body }}
-        </td>
+        <td class="twenty" v-if="(task.notes.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + task.notes[0].user.fullName)">              
+           {{ moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}</span><br> {{task.notes[0].body}}
+        </td>       
         <td v-else class="twenty">No Updates</td>
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
@@ -453,18 +447,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.t_actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  span {
-    font-size: 13px;
+  .t_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    span {
+      font-size: 13px;
+    }
+    .empty_box,
+    .check_box {
+      font-size: 16px;
+    }
   }
-  .empty_box,
-  .check_box {
-    font-size: 16px;
-  }
-}
 table {
   table-layout: fixed;
   width: 100%;
@@ -501,13 +495,45 @@ td {
     padding-top: 30px;
     text-align: unset;
   }
-  .modal_close_btn {
-    display: flex;
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 20px;
-    cursor: pointer;
+  .badge-pill {
+    font-size: .85rem;
+  }
+  td {
+    overflow-wrap: break-word;
+  }
+  .task_form_modal.sweet-modal-overlay {
+    z-index: 10000001;
+  }
+  .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
+    min-width: 30vw;
+    max-height: 80vh;
+    .sweet-content {
+      padding-top: 30px;
+      text-align: unset;
+    }
+    .modal_close_btn {
+      display: flex;
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .fa-long-arrow-alt-right {
+      margin-bottom: 1rem !important;
+      margin-left: 1rem !important;
+      height: .8em !important;
+    }
+    .onHover:hover {
+      cursor: pointer !important;
+      background-color: rgba(91, 192, 222, 0.3) !important;
+      border-left: solid rgb(91, 192, 222) !important;
+    }
+    .form-inside-modal {
+      form {
+        position: inherit !important;
+      }
+    }
   }
   .fa-long-arrow-alt-right {
     margin-bottom: 1rem !important;
@@ -519,9 +545,23 @@ td {
     background-color: rgba(91, 192, 222, 0.3) !important;
     border-left: solid rgb(91, 192, 222) !important;
   }
-  .form-inside-modal {
-    form {
-      position: inherit !important;
+  .toolTip {
+    background-color: #6c757d;
+    font-size: .75rem;
+    padding:1px;
+    color: #fff;
+    border-radius: 3px;
+  }
+  .el-menu-item {
+    padding: 10px;
+    line-height: unset;
+    height: unset;
+    text-align: center;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    &:hover {
+      background-color: rgba(91, 192, 222, 0.3);
     }
   }
 }

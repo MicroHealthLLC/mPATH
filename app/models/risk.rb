@@ -84,12 +84,18 @@ class Risk < ApplicationRecord
     end
     fp = self.facility_project
     users = self.users.active
+    users_hash = {} 
+    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    
 
     resource_users = self.risk_users.where(user_id: users.map(&:id) )
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+
+    risk_approver_user_ids = resource_users.map{|ru| ru.user_id if ru.approver? }.compact
+
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -108,7 +114,7 @@ class Risk < ApplicationRecord
       attach_files: attach_files,
       is_overdue: progress < 100 && (due_date < Date.today),
       progress_status: progress_status,
-      checklists: checklists.as_json,
+      checklists: checklists.as_json,  
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       # Remove this
@@ -117,12 +123,26 @@ class Risk < ApplicationRecord
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: users.map(&:full_name).compact.join(", "),
 
-      # Add accountable users
-      accountable_user_ids: accountable_user_ids,
+
+     # Add RACI user name
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
+      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+
+            
+      # Add RACI user ids     
       responsible_user_ids: responsible_user_ids,
+      accountable_user_ids: accountable_user_ids,
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
+      # Risk Approver name
+      risk_approver:   risk_approver_user_ids.map{|id| users_hash[id] }, 
+
+      # Risk Approver user ids
+      risk_approver_user_ids: risk_approver_user_ids,
+      
       notes: notes.as_json,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
@@ -134,11 +154,166 @@ class Risk < ApplicationRecord
     ).as_json
   end
 
+
+
+  # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
+  def create_or_update_risk(params, user)
+    risk_params = params.require(:risk).permit(
+      :approved,
+      :approved_at,
+      :approval_time,
+      :facility_project_id,
+      :risk_description,
+      :impact_description,
+      :probability_description,
+      :probability,
+      :probability_name,
+      :impact_level,
+      :impact_level_name,
+      :risk_approach,
+      :risk_approach_description,
+      :task_type_id,
+      :task_type,
+      :risk_stage, 
+      :risk_stage_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :text,
+      :watched,
+      user_ids: [],
+      risk_files: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :due_date,
+        :listable_type,
+        :listable_id,
+        :position
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    )
+
+
+    risk = self
+    r_params = risk_params.dup
+    user_ids = r_params.delete(:user_ids)
+    sub_task_ids = r_params.delete(:sub_task_ids)
+    sub_issue_ids = r_params.delete(:sub_issue_ids)
+    sub_risk_ids = r_params.delete(:sub_risk_ids)
+    checklists_attributes = r_params.delete(:checklists_attributes)
+    notes_attributes = r_params.delete(:notes_attributes)
+
+    risk.attributes = r_params
+    if !risk.facility_project_id.present?
+      project = user.projects.active.find_by(id: params[:project_id])
+      facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
+
+      risk.facility_project_id = facility_project.id
+    end
+
+    all_checklists = risk.checklists
+
+    risk.transaction do
+      risk.save
+      if user_ids && user_ids.present?
+        risk_users_obj = []
+        user_ids.each do |uid|
+          next if !uid.present?
+          risk_users_obj << RiskUser.new(risk_id: risk.id, user_id: uid)
+        end
+        RiskUser.import(risk_users_obj) if risk_users_obj.any?
+      end
+
+      if sub_risk_ids && sub_risk_ids.any?
+        related_risk_objs = []
+        related_risk_objs2 = []
+        sub_risk_ids.each do |sid|
+          related_risk_objs << RelatedRisk.new(relatable_id: risk.id, relatable_type: "Risk", risk_id: sid)
+          related_risk_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Risk", risk_id: risk.id)
+        end
+        RelatedRisk.import(related_rik_objs) if related_risk_objs.any?
+        RelatedRisk.import(related_risk_objs2) if related_risk_objs2.any?
+      end
+
+      if sub_issue_ids && sub_issue_ids.any?
+        related_issue_objs = []
+        related_issue_objs2 = []
+        sub_issue_ids.each do |sid|
+          related_issue_objs << RelatedIssue.new(relatable_id: risk.id, relatable_type: "Risk", issue_id: sid)
+          related_issue_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Issue", risk_id: risk.id)
+        end
+        RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedRisk.import(related_issue_objs2) if related_issue_objs2.any?
+      end
+      
+      if sub_task_ids && sub_task_ids.any?
+        related_task_objs = []
+        related_task_objs2 = []
+        sub_task_ids.each do |sid|
+          related_task_objs << RelatedTask.new(relatable_id: risk.id, relatable_type: "Risk", task_id: sid)
+          related_task_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Task", risk_id: risk.id)
+        end
+        RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedRisk.import(related_task_objs2) if related_task_objs2.any?
+      end
+
+      if checklists_attributes.present?
+        checklist_objs = []
+        checklists_attributes.each do |key, value|
+          if value["id"].present?
+            c = all_checklists.detect{|cc| cc.id == value["id"].to_i}
+            if value["_destroy"].present? && value["_destroy"] == "true"
+              c.destroy
+            else
+              # TODO: Use upsert_all in Rails 6
+              c.attributes = value
+              c.save
+            end
+          else
+            value.delete("_destroy")
+            checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+          end
+        end
+        Checklist.import(checklist_objs) if checklist_objs.any?
+      end
+
+      if notes_attributes.present?
+        notes_objs = []
+        notes_attributes.each do |key, value|
+          value.delete("_destroy")
+          notes_objs << Note.new(value.merge({noteable_id: risk.id, noteable_type: "Risk"}) )
+        end
+        Note.import(notes_objs) if notes_objs.any?
+      end
+
+      risk.assign_users(params)
+
+    end
+
+    risk.reload
+  end
+
+  # Above this line Added by JR to fix Watched and add Approved values
+
   def assign_users(params)
     accountable_resource_users = []
     responsible_resource_users = []
     consulted_resource_users = []
     informed_resource_users = []
+    approver_resource_users = []
 
     resource = self
     resource_users = resource.risk_users
@@ -146,6 +321,7 @@ class Risk < ApplicationRecord
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
+    risk_approver_user_ids = resource_users.map{|ru| ru.user_id if ru.approver? }.compact
 
     users_to_delete = []
 
@@ -188,8 +364,19 @@ class Risk < ApplicationRecord
       end
       users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
     end
+
+    # Risk Approver (aka: Risk Approach Approver is not part of RACI users but still a user within Risks module) 
+    if params[:risk_approver_user_ids].present?
+      params[:risk_approver_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !risk_approver_user_ids.include?(uid.to_i)
+          approver_resource_users << RiskUser.new(user_id: uid, risk_id: resource.id, user_type: 'approver')
+        end
+      end
+      users_to_delete += risk_approver_user_ids - params[:risk_approver_user_ids].map(&:to_i)
+    end
     
-    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users + approver_resource_users
     
     if users_to_delete.any?
       resource_users.where(user_id: users_to_delete).destroy_all
@@ -225,7 +412,7 @@ class Risk < ApplicationRecord
       self.progress = risk_stage.percentage
       self.auto_calculate = false
     end
-  end
+  end 
 
   private
   def cast_constants_to_i

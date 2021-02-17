@@ -657,6 +657,29 @@ Tab 1 Row Begins here -->
             </template>
           </multiselect>
         </div>
+
+        <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
           <!-- closing div for tab4 -->
 </div>
 
@@ -710,7 +733,7 @@ Tab 1 Row Begins here -->
           >
             <div v-for="note in paginated('filteredNotes')" class="form-group">
               <span class="d-inline-block w-100"
-                ><label class="badge badge-secondary">Note by</label>
+                ><label class="badge badge-secondary">Update by</label>
                 <span class="font-sm text-muted">{{ noteBy(note) }}</span>
                 <span
                   v-if="allowDeleteNote(note)"
@@ -724,7 +747,7 @@ Tab 1 Row Begins here -->
                 class="form-control"
                 v-model="note.body"
                 rows="3"
-                placeholder="your note comes here."
+                placeholder="Enter your update here..."
                 :readonly="!allowEditNote(note)"
               ></textarea>
             </div>
@@ -783,6 +806,7 @@ export default {
       informedIssueUsers:[],
       relatedIssues: [],
       relatedTasks: [],
+       relatedRisks: [],
       showErrors: false,
       loading: true,
       movingSlot: "",
@@ -857,6 +881,7 @@ export default {
         consultedUserIds:[],
         informedUserIds:[],
         subTaskIds: [],
+        subRiskIds: [],
         subIssueIds: [],
         issueFiles: [],
         checklists: [],
@@ -909,6 +934,9 @@ export default {
       );
       this.relatedTasks = _.filter(this.currentTasks, (u) =>
         this.DV_issue.subTaskIds.includes(u.id)
+      );
+      this.relatedRisks = _.filter(this.filteredRisks, u => 
+        this.DV_issue.subRiskIds.includes(u.id)
       );
       this.selectedIssueType = this.issueTypes.find(
         (t) => t.id === this.DV_issue.issueTypeId
@@ -1074,6 +1102,16 @@ export default {
         } else {
           formData.append("issue[sub_task_ids][]", []);
         }
+
+       if (this.DV_issue.subRiskIds.length) {
+            for (let u_id of this.DV_issue.subRiskIds) {
+              formData.append('issue[sub_risk_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[sub_risk_ids][]', [])
+          }
+
 
         if (this.DV_issue.subIssueIds.length) {
           for (let u_id of this.DV_issue.subIssueIds) {
@@ -1264,6 +1302,7 @@ export default {
       "issueStages",
       "issueSeverities",
       "currentTasks",
+      'currentRisks',
       "currentIssues",
       "managerView",
     ]),
@@ -1299,6 +1338,9 @@ export default {
     },
     filteredIssues() {
       return _.filter(this.currentIssues, (t) => t.id !== this.DV_issue.id);
+    },
+    filteredRisks() {
+        return _.filter(this.currentRisks, t => t.id !== this.DV_issue.id)
     },
     filteredNotes() {
       return _.orderBy(
@@ -1377,6 +1419,11 @@ export default {
       },
       deep: true,
     },
+    relatedRisks: {
+        handler: function(value) {
+          if (value) this.DV_issue.subRiskIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+    },
     selectedIssueType: {
       handler: function (value) {
         this.DV_issue.issueTypeId = value ? value.id : null;
@@ -1419,6 +1466,12 @@ export default {
       },
       deep: true,
     },
+    filteredRisks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
+        }, deep: true
+      },
     "filteredNotes.length"(value, previous) {
       this.$nextTick(() => {
         if (this.$refs.paginator && (value === 1 || previous === 0)) {

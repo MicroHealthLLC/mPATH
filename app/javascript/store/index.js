@@ -1386,7 +1386,8 @@ export default new Vuex.Store({
 
         return valid
       })
-    },    filteredAllRisks: (state, getters) => {
+    },
+    filteredAllRisks: (state, getters) => {
       let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let approaches = getters.riskApproachFilter && getters.riskApproachFilter.length ? _.map(getters.riskApproachFilter, 'id') : []
       let stages = getters.riskStageFilter && getters.riskStageFilter .length ? _.map(getters.riskStageFilter, 'id') : []
@@ -1425,10 +1426,17 @@ export default new Vuex.Store({
     on_watched: (state, getters) => {
       let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
       let issues = _.filter(getters.filteredAllIssues, t => t.watched)
-      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
+      let risks = _.filter(getters.filteredAllRisks, t => t.watched)
+      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId'), ..._.map(risks, 'facilityId')]   
       let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 
-      return {tasks, issues, facilities}
+      return {tasks, issues, risks, facilities}
+    },
+    approved_risks: (state, getters) => {    
+      let risks = _.filter(getters.filteredAllRisks, t => t.approved)
+      let ids = [..._.map(risks,'facilityId')]
+      let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
+      return {risks,  facilities}
     },
     viewPermit: () => (view, req) => {
       if (Vue.prototype.$currentUser.role === "superadmin") return true;
@@ -1603,7 +1611,19 @@ export default new Vuex.Store({
           })
       })
     },
-
+    updateApprovedRisks({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+          .then((res) => {
+            commit('updateRisksHash', {risk: res.data.risk})
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
     // update_from_kanban_view
     updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
       return new Promise((resolve, reject) => {
