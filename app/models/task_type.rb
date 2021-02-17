@@ -11,6 +11,6 @@ class TaskType < SortableRecord
 
   def progress
   	fp = self.facility_projects
-    fp.map(&:progress).sum / fp.size rescue 0
+    (fp.map(&:progress).sum / fp.size).round(0) rescue 0
   end
 end

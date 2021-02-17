@@ -431,7 +431,7 @@ export default {
       return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup).length : this.facilityCount
     },
     C_facilityProgress() {
-      return this.facilityGroup ? Number(_.meanBy(this.facilityGroupFacilities(this.facilityGroup), 'progress') || 0).toFixed(2) : this.facilityProgress
+      return this.facilityGroup ? Number(_.meanBy(this.facilityGroupFacilities(this.facilityGroup), 'progress') || 0).toFixed(0) : this.facilityProgress
     },
     isMapView() {
         return this.$route.name === 'ProjectMapView'
@@ -538,7 +538,7 @@ export default {
             name: type.name,
             _display: tasks.length > 0 && (names ? names.includes(type.name) : true),
             length: tasks.length,
-            progress: Number(_.meanBy(tasks, 'progress').toFixed(2))
+            progress: Number(_.meanBy(tasks, 'progress').toFixed(0))
           }
         )
       }
@@ -554,7 +554,7 @@ export default {
             name: type.name,
             _display: (names ? names.includes(type.name) : true) && issues.length > 0,
             length: issues.length,
-            progress: Number(_.meanBy(issues, 'progress').toFixed(2))
+            progress: Number(_.meanBy(issues, 'progress').toFixed(0))
           }
         )
       }
@@ -570,7 +570,7 @@ export default {
             name: type.name,
             _display: risks.length > 0 && (names ? names.includes(type.name) : true),
             length: risks.length,
-            progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+            progress: Number(_.meanBy(risks, 'progress').toFixed(0))
           }
         )
       }
@@ -582,8 +582,8 @@ export default {
       let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     },
     issueVariation() {
@@ -592,8 +592,8 @@ export default {
       let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     },
      riskVariation() {
@@ -602,8 +602,8 @@ export default {
       let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     }
   },
@@ -611,7 +611,7 @@ export default {
     facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities('active'), 'id')
       let mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
-      return Number(mean.toFixed(2))
+      return Number(mean.toFixed(0))
     }
   }
 }

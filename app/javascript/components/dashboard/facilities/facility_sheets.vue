@@ -667,11 +667,12 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
           tasks.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return tasks
       },
+      // TODO: Move this calculation to back-end so that statistics can be available for other devices
       taskVariation() {
         let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
@@ -679,8 +680,8 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent) },
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent ) },
         }
       },
       filteredIssues() {
@@ -716,7 +717,7 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
@@ -725,14 +726,16 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         let issues = new Array
         let group = _.groupBy(this.filteredIssues, 'taskTypeName')
         for (let type in group) {
+          if(!type || type == "null") continue;
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
       },
+      // TODO: Move this calculation to back-end so that statistics can be available for other devices
       issueVariation() {
         let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
@@ -740,8 +743,8 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
       },
        filteredRisks() {
@@ -787,15 +790,16 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
             orange: orange.length,
             red: red.length
           }
-       },    
+       },
+       // TODO: Move this calculation to back-end so that statistics can be available for other devices
        riskVariation() {
         let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
         let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
         let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
      },
      currentRiskTypes() {
@@ -808,7 +812,7 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
               name: type.name,
               _display: risks.length > 0 && (names ? names.includes(type.name) : true),
               length: risks.length,
-              progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+              progress: Number(_.meanBy(risks, 'progress').toFixed(0))
             }
         )
       }
