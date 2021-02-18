@@ -620,8 +620,8 @@
           <label class="font-sm">**Risk Approach:</label>
           <multiselect           
             v-model="DV_risk.riskApproach"
-            v-validate="'required'"
-            :allow-empty="false"
+            v-validate="'required'"          
+            :allow-empty="false"       
             placeholder="Risk Approach"
             :options="riskApproaches"
             :searchable="false"
@@ -632,7 +632,7 @@
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
-                <span class='select__tag-name'>{{option}}</span>
+                <span class='select__tag-name upperCase'>{{option}}</span>
               </div>
             </template>
           </multiselect>
@@ -661,10 +661,17 @@
           </div>
         </div>
     </div>
-  <small v-if="!this.DV_risk.text" class="pl-4 text-danger">Risk form and Risk Approach Approver must first be saved in order to submit for approval</small>
+  
+    <div class="row mx-4 mb-0">
+       <div class="col-md-12 font-sm pt-3 pl-0">         
+            **Note: Risk Approach and Risk Approach Description must be populated before the Risk Approach can be approved.
+        </div>  
+      </div>  
+
+
 
       <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">      
-       <div class="form-group col-md-2 py-2 mb-0 px-0 user-select w-100">
+       <div class="form-group col-md-4 py-2 mb-0 px-0 user-select w-100">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
             v-model="riskApprover"                   
@@ -687,16 +694,21 @@
           </multiselect>         
         </div>    
 
-         <div v-if="this.DV_risk.riskApprover" class="col-md-2 pl-0 py-2 mb-0 text-center">
+         <div v-if="this.DV_risk.riskApprover" class="col-md-4 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
             <span v-if="this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
                 <span v-show="DV_risk.approved" class="check_box mx-1 approver-pointer"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_risk.approved" class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
             </span>       
+             <!-- <span v-if="riskApprover.fullName !== this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" >                
+                <span class="empty_box mr-1 disabled approver-pointer"><i class="far fa-square"></i></span>              
+                <small style="vertical-align:text-top">Approved</small>
+            </span>        -->
             
           </div>
-          <div v-else class="col-md-2 pl-0 py-2 mb-0 text-center">
+          
+          <div v-if="this.DV_risk.riskApprover == undefined" class="col-md-4 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
            
             <span class="d-block approver-pointer" >
@@ -713,8 +725,8 @@
               Risk Aprrover Name (after saving to db)  {{this.DV_risk.riskApprover[0].name }}
              -->
 
-      
-         <div class="col-md-3 pr-0 py-2 mb-0simple-select form-group ml-0">        
+    
+         <div class="col-md-4 pr-0 py-2 mb-0simple-select form-group ml-0">        
         <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>          
           <textarea          
             class="form-control"          
@@ -725,11 +737,14 @@
             name="Approval Time"
             disabled           
          />      
-        </div>   
-        <div class="col-md-4 font-sm pl-5 py-3">         
-            **Note: Risk Approach and Risk Description must be populated before the Risk Approach can be approved.
-        </div>        
+        </div>  
+              
       </div> 
+      
+<small v-if="!this.DV_risk.text" class="pl-4 text-danger">Risk form and Risk Approach Approver must first be saved in order to submit for approval</small>
+
+
+
   </div>
 <!-- END RISK PRIORITIZE TAB SECTION -->
 
@@ -1471,6 +1486,9 @@
           this.exists(this.DV_risk.dueDate)
         )
       },
+      isMapView() {
+        return this.$route.name === 'ProjectMapView'
+     },
       filteredChecks() {
         return _.filter(this.DV_risk.checklists, c => !c._destroy)
       },

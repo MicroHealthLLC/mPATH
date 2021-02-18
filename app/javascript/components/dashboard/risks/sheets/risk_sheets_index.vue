@@ -142,7 +142,8 @@
              <risk-sheets
               v-for="risk in sortedRisks"
               class="riskHover"
-              href="#"               
+              href="#"    
+              :load="log(risk)"           
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -205,7 +206,7 @@
         <tr  v-for="(risk, index) in filteredRisks" :key="index">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
-          <td>{{risk.riskApproach}}</td>
+          <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
           <td>{{risk.priorityLevel}}</td>         
           <td>{{formatDate(risk.startDate)}}</td>
           <td>{{formatDate(risk.dueDate)}}</td>
@@ -276,9 +277,9 @@
         'setRiskApproachFilter',
         'setRiskForManager',
       ]),
-      // log(t){
-      //   console.log(t)
-      // },
+      log(t){
+        console.log(t)
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
