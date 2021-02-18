@@ -266,7 +266,8 @@ export default {
       onWatch: [
         { name: 'On Watch Tasks', value: 'tasks' },
         { name: 'On Watch Issues', value: 'issues' }
-      ]
+      ],
+      mapFilterSet: false
     }
   },
   computed: {
@@ -320,8 +321,7 @@ export default {
       'progressFilter',
       'viewPermit',
       'getMapZoomFilter',
-      'getUnfilteredFacilities',
-      'getMapZoomFilter'
+      'getUnfilteredFacilities'
     ]),
 
     C_riskPriorityLevelFilter: {
@@ -530,7 +530,7 @@ export default {
       return this.$route.name === 'ProjectGanttChart'
     },
     mapFilterApplied() {
-      return this.getMapZoomFilter.length === this.getUnfilteredFacilities.length
+      return this.getMapZoomFilter.length === this.getUnfilteredFacilities.length || !this.mapFilterSet
     }
   },
   methods: {
@@ -567,7 +567,8 @@ export default {
       'setRisksPerPageFilter',
       'setIssuesPerPageFilter',
       'setMembersPerPageFilter',
-      'setFacilities'
+      'setFacilities',
+      'setMapZoomFilter'
     ]),
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
@@ -718,6 +719,7 @@ export default {
     },
     resetMapFilter() {
       this.setFacilities(this.getUnfilteredFacilities)
+      this.setMapZoomFilter(this.getUnfilteredFacilities.map(facility => facility.id))
     }
   },
   watch: {
@@ -810,6 +812,11 @@ export default {
         }
       },
       deep: true
+    },
+    getMapZoomFilter: {
+      handler() {
+        this.mapFilterSet = true
+      }
     }
   }
 }
