@@ -17,6 +17,15 @@ class ApplicationController < ActionController::Base
     MallocTrim.trim
   end
 
+  def after_sign_in_path_for(resource_or_scope)
+    p = current_user.get_preferences
+    if p.program_id
+      "/projects/#{p.program_id}/#{p.navigation_menu}"
+    else
+      root_url
+    end
+  end
+
   def render_404(options={})
     render_error({message: :notice_file_not_found, status: 404}.merge(options))
   end
