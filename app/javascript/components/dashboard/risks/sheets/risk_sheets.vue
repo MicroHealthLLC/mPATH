@@ -5,7 +5,7 @@
     
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
        <td class="oneFive">{{risk.text}}</td>
-       <td class="eight">{{risk.riskApproach}}</td>
+       <td class="eight">{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1) }}</td>
        <td class="eight pt-2 font-sm">
             <span v-if="(risk.priorityLevelName) == 'Very Low'" class="gray2">{{risk.priorityLevelName}}</span> 
             <span v-if="(risk.priorityLevelName) == 'Low'" class="green1">{{risk.priorityLevelName}}</span> 
@@ -116,7 +116,7 @@
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
         this.riskDeleted(this.DV_risk)
-      },
+      },  
       openSubRisk(subRisk) {
         let risk = this.currentRisks.find(t => t.id == subRisk.id)
         if (!risk) return

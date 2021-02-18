@@ -507,6 +507,9 @@ th {
     color: #606266;
   }
 }
+.upperCase, .multiselect__option {
+  text-transform: capitalize !important;
+}
 // CSSS for datatable ends
 .badge-active {
   color: #fff;

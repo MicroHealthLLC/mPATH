@@ -38,7 +38,7 @@
                 <div class="row mb-1 d-flex">           
                 <div class="font-sm col">
                   <span class="mr-1"><b>Approach:</b></span>
-                  {{DV_risk.riskApproach}}
+                  <span class="upperCase">{{DV_risk.riskApproach}}</span>
                 </div>
               </div>
               <div class="row mb-2 d-flex">
@@ -353,5 +353,8 @@
   }
    .green1, .orange1, .red1 {   
     color:#fff;   
+  }
+  .upperCase {
+    text-transform: capitalize;
   }
 </style>
