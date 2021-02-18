@@ -329,7 +329,7 @@
         });
       },
       updateFacilities(updatedTask, id) {
-        var facilities = this.facilities;
+        var facilities = this.getUnfilteredFacilities;
 
         facilities.forEach((facility) => {
           if (facility.facilityProjectId === id) {
@@ -338,7 +338,7 @@
         });
       },
       updateFacilityTask(task) {
-        var facilities = this.facilities;
+        var facilities = this.getUnfilteredFacilities;
 
         var facilityIndex = facilities.findIndex(item => item.facilityProjectId === task.facilityProjectId);
 
@@ -474,7 +474,8 @@
         'currentTasks',
         'currentIssues',
         'currentProject',
-        'viewPermit'
+        'viewPermit',
+        'getUnfilteredFacilities'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]

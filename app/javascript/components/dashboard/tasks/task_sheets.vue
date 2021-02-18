@@ -288,7 +288,7 @@ export default {
       });
     },
     updateFacilities(updatedTask, id) {
-      var facilities = this.facilities;
+      var facilities = this.getUnfilteredFacilities;
 
       facilities.forEach((facility) => {
         if (facility.facilityProjectId === id) {
@@ -297,7 +297,7 @@ export default {
       });
     },
     updateFacilityTask(task) {
-      var facilities = this.facilities;
+      var facilities = this.getUnfilteredFacilities;
 
       var facilityIndex = facilities.findIndex(item => item.facilityProjectId === task.facilityProjectId);
 
