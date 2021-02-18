@@ -110,9 +110,11 @@
             label="name"
             placeholder="Select Program"
             :options="programOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
+            @select="programSelectChange"
+            @remove="programSelectChange"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -133,9 +135,12 @@
             label="name"
             placeholder="Select Project Group"
             :options="projectGroupOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
+            @select="projectGroupSelectChange"
+            @remove="projectGroupSelectChange"
+            :disabled="!this.selectedProgram"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -155,9 +160,10 @@
             label="name"
             placeholder="Select Project"
             :options="projectOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
+            :disabled="!this.selectedProjectGroup"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -168,6 +174,7 @@
         </div>
       </div>
 
+      <h5 class="my-3">Start On</h5>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Select Navigation</label>
@@ -178,9 +185,10 @@
             label="name"
             placeholder="Select Navigation"
             :options="navigationOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
+            @select="navigationSelectChane"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -200,7 +208,7 @@
             label="name"
             placeholder="Select Sub Navigation"
             :options="selectedNavigation && selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
-            :searchable="false"
+            :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
             >
@@ -283,6 +291,24 @@
       this.fetchProfile()
     },
     methods: {
+      programSelectChange(value){
+        this.projectGroupOptions = this.getProjectGroups(value)
+
+        this.selectedProgram = value
+        this.selectedProjectGroup = null
+        this.selectedProject = null
+      },
+      projectGroupSelectChange(value){
+
+        if(value){
+          this.projectOptions = _.filter( this.allProjects, (p) => p.facilityGroupId == value.id )
+        }
+        this.selectedProject = null
+
+      },
+      navigationSelectChane(value){
+        this.selectedSubNavigation = null
+      },
       fetchProfile() {
         http.get('/current_user.json')
           .then((res) => {
@@ -295,7 +321,8 @@
             this.allProjects = res.data.projects
 
             this.programOptions = this.allPrograms
-            this.selectedProgram = this.programOptions.find((t) => t.id === this.preferences.programId );
+            if(this.preferences.programId)
+              this.selectedProgram = this.programOptions.find((t) => t.id === this.preferences.programId );
 
             //this.projectGroupOptions = res.data.projectGroups
             //this.selectedProjectGroup = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
@@ -395,6 +422,14 @@
       },
       gotoDashboard() {
         window.location.pathname = "/dashboard"
+      },
+      getProjectGroups(program){
+        var responseProjectGroups = this.allProjectGroups
+        return _.filter(responseProjectGroups, f => program.projectGroupIds.includes(f.id) )
+      },
+      getProjects(projectGroup){
+        var responseProjects = this.allProjects
+        return _.filter(responseProjects, p => p.facilityGroupId == projectGroup.id )
       }
     },
     computed: {
@@ -450,35 +485,6 @@
       }
     },
     watch: {
-      selectedProgram: {
-        handler: function(value) {
-          if(!value){
-            this.projectGroupOptions = []
-            this.projectOptions = []
-            this.selectedProgram = null
-            this.selectedProjectGroup = null
-            this.selectedProject = null
-          }else{
-            var groups = _.filter( this.allProjectGroups, (g) => value.projectGroupIds.includes(g.id) )
-            this.projectGroupOptions = groups
-          }
-        }, deep: true
-      },
-      selectedProjectGroup: {
-        handler: function(value) {
-
-          if(!value){
-            this.projectGroupOptions = []
-            this.projectOptions = []
-            this.selectedProjectGroup = null
-            this.selectedProject = null
-          }else{
-            this.projectOptions = _.filter( this.allProjects, (p) => p.facilityGroupId == value.id )
-          }
-
-
-        }, deep: true
-      },
       gmap_address: {
         handler: function(value) {
           this.profile.address = value.formatted_address
