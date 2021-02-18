@@ -45,7 +45,7 @@
       </div>
         <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">
           
-        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />  
       
       </div>
     
@@ -670,7 +670,8 @@
 
 
 
-      <div class="row form-group px-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">      
+      <div class="row form-group pl-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">  
+        
        <div class="form-group col-md-4 py-2 mb-0 px-0 user-select w-100">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
@@ -694,29 +695,24 @@
           </multiselect>         
         </div>    
 
-         <div v-if="this.DV_risk.riskApprover" class="col-md-4 pl-0 py-2 mb-0 text-center">
+     
+          <div v-if="this.DV_risk.riskApprover" class="col-md-3 pl-0 py-2 mb-0 text-center">
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
             <span v-if="this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
                 <span v-show="DV_risk.approved" class="check_box mx-1 approver-pointer"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_risk.approved" class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
-            </span>       
-             <!-- <span v-if="riskApprover.fullName !== this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" >                
-                <span class="empty_box mr-1 disabled approver-pointer"><i class="far fa-square"></i></span>              
-                <small style="vertical-align:text-top">Approved</small>
-            </span>        -->
-            
+            </span>               
+          </div>      
+
+          <div v-else class="col-md-3 pl-0 py-2 mb-0 text-center">        
+             <label class="font-sm mb-0">Risk Approach Approved:</label>             
+              <span class="d-block approver-pointer" >
+                  <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
+                  <small style="vertical-align:text-top">Approved</small>
+              </span>           
           </div>
-          
-          <div v-if="this.DV_risk.riskApprover == undefined" class="col-md-4 pl-0 py-2 mb-0 text-center">
-             <label class="font-sm mb-0">Risk Approach Approved:</label>            
-           
-            <span class="d-block approver-pointer" >
-                <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
-                <small style="vertical-align:text-top">Approved</small>
-            </span>       
-           
-          </div>
+         
          
           <!-- Users listed here for debugging Risk Approval Section.  Delete if no longer needed
            Current User:  {{this.$currentUser.full_name  }} <br>
@@ -726,8 +722,9 @@
              -->
 
     
-         <div class="col-md-4 pr-0 py-2 mb-0simple-select form-group ml-0">        
+         <div class="col-md-5 pr-2 py-2 mb-0 simple-select form-group ml-0">        
         <label class="font-sm mb-0">Date/Time Risk Approach Approved:</label>          
+          <!-- <span v-if="riskApprover.length > 0"> -->
           <textarea          
             class="form-control"          
             v-model="DV_risk.approvalTime"       
@@ -736,16 +733,29 @@
             data-cy="approach_description"
             name="Approval Time"
             disabled           
-         />      
-        </div>  
-              
+         />   
+          <!-- </span>    -->
+          <span v-if="this.DV_risk.text">         
+           <button v-if="isMapView" 
+               class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
+               v-tooltip="`Clear Risk Approval`" 
+               @click.prevent="resetApprovalSection">
+               <i class="fas fa-redo"></i>
+           </button>  
+            <button v-else 
+               class="btn clearBtn py-0 mr-1 font-sm btn-sm btn-warning"   
+               v-tooltip="`Clear Risk Approval`"             
+               @click.prevent="resetApprovalSection">
+               <i class="fas fa-redo pr-1"></i>RISK APPROVAL SECTION
+           </button>    
+          </span>      
+         </div>             
       </div> 
       
-<small v-if="!this.DV_risk.text" class="pl-4 text-danger">Risk form and Risk Approach Approver must first be saved in order to submit for approval</small>
-
-
-
-  </div>
+      <small v-if="!this.DV_risk.text" class="pl-4 text-danger">
+        Risk form and Risk Approach Approver must first be saved in order to submit for approval
+      </small>
+ </div>
 <!-- END RISK PRIORITIZE TAB SECTION -->
 
 
@@ -989,7 +999,7 @@
       <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
-        {{resetApproval}}
+       
         </div>
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>
@@ -1219,6 +1229,28 @@
         if (!this.DV_risk.approved)   {
           this.DV_risk.approvalTime = ""
         }               
+        // if (this.DV_risk.riskApprover.length <= 0)   {
+        //   this.DV_risk.approvalTime = ""
+        //   this.DV_risk.approved = false
+        // }               
+      }, 
+     resetApprovalSection() {   
+        if (this.DV_risk.approved) {
+          this.DV_risk.approved = !this.DV_risk.approved
+        }          
+       // this.DV_risk = {...this.DV_risk, approved: this.DV_risk.approved}
+        if (!this.DV_risk.approved) {
+          !this.DV_risk.approved
+        }  
+        this.updateApprovedRisks(this.DV_risk)  
+        this.DV_risk.approvalTime = " "
+        if (this.riskApprover.length > 0) {
+          this.riskApprover = []
+        }
+        if (this.DV_risk.riskApprover.length > 0) {
+          this.DV_risk.riskApprover = []
+        }  
+
       }, 
     notApprover() {             
        alert("Sorry.  Only Risk Approach Approver is authorized to check this box.")
@@ -1634,12 +1666,7 @@
        matrix55() {       
         if (this.selectedRiskImpactLevel.id == 5 && this.selectedRiskPossibility.id == 5)
         return true  
-       },  
-       resetApproval() {
-         if (this.DV_risk.riskApproach !== this.DV_risk.riskApproach){
-           this.DV_risk.riskApprover == []
-         }
-       }     
+       },    
     },
     watch: {
       selectedFacilityProject: {
@@ -1800,7 +1827,7 @@
     margin-bottom: 5px;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
-  .rmBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
+  .rmBtn, .clearBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
     position: sticky;
     position: -webkit-sticky;   
@@ -1978,5 +2005,10 @@
     text-align: left;
     color: #35495e;
     background-color: #fff;
+  }
+  .clearBtn {
+    position: absolute;
+    top: 5%;
+    right: 1%;
   }
 </style>

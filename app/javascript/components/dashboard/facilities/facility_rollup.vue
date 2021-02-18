@@ -1,6 +1,6 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container m-2" data-cy="facility_rollup">
+  <div class="container-fluid m-2" data-cy="facility_rollup">
       <div class="row">
         <div class="col pl-0"> 
           <h3 class="d-inline mr-2"> <b>PROJECTS</b></h3>   
@@ -266,7 +266,7 @@
                       <span v-else>RISK PRIORITY LEVELS</span>
                   </div>
               </div>            
-            <div class="row">
+            <div v-if="isMapView" class="row font-sm">
                 <div class="col text-center"> 
                   <p class="mb-2 grey2" v-tooltip="`Very Low`">VL</p>                
                   <p class="mb-2 green" v-tooltip="`Low`">L</p>               
@@ -280,6 +280,27 @@
                  <div class="col text-center">                
                   <p class="mb-2 orange" v-tooltip="`High`">H</p>
                   <p class="mb-2 red" v-tooltip="`Extreme`">E</p>                                        
+                </div>
+                <div class="col">                
+                 <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.orange}}</span>
+                 <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span> 
+                                       
+                </div>
+            </div>           
+             <div v-else class="row">
+                <div class="col text-center"> 
+                  <p class="mb-2 grey2" v-tooltip="`Very Low`">Very Low</p>                
+                  <p class="mb-2 green" v-tooltip="`Low`">Low</p>               
+                  <p class="mb-2 yellow" v-tooltip="`Moderate`">Moderate</p>                         
+                </div>
+                <div class="col">  
+                  <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.grey}}</span>
+                  <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.green}}</span>
+                  <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>                 
+                </div>
+                 <div class="col text-center">                
+                  <p class="mb-2 orange" v-tooltip="`High`">High</p>
+                  <p class="mb-2 red" v-tooltip="`Extreme`">Extreme</p>                                        
                 </div>
                 <div class="col">                
                  <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.orange}}</span>
