@@ -90,6 +90,7 @@
             ref="formModals"
             :hide-close-button="true"
             :blocking="true"
+             v-if="viewPermit(currentTab, 'write')"
             >           
           <div v-if="managerView.task || managerView.issue || managerView.risk || managerView.note " class="w-100" >
             <task-form
@@ -99,6 +100,7 @@
               title="Edit Task"
               @task-created="updateFacilityTask"
               @task-updated="updateFacilityTask"
+               @on-close-form="onCloseForm"
               class="form-inside-modal"
             ></task-form>
             <risk-form
@@ -107,6 +109,7 @@
               :risk="managerView.risk"          
               @risk-created="updateFacilityRisk"
               @risk-updated="updateFacilityRisk"
+               @on-close-form="onCloseForm"
               class="form-inside-modal"
             ></risk-form>
             <issue-form
@@ -115,6 +118,7 @@
               :issue="managerView.issue"
               @issue-updated="updateFacilityIssue"
               @issue-created="updateFacilityIssue"
+               @on-close-form="onCloseForm"
               class="form-inside-modal"
             ></issue-form>
               <notes-form
@@ -809,7 +813,7 @@
           } else if(stageIds.length > 0) {
             valid = valid && stageIds.includes(resource.riskStageId)
           }
-          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.text)
 
           return valid
         }), 'kanbanOrder', 'asc')
