@@ -32,6 +32,17 @@
           >
           Close
         </button>
+
+         <div class="btn-group">
+           <button  
+          disabled
+          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"                  
+          >RISK NAME: 
+        <span v-if="this.DV_risk.text">{{this.DV_risk.text}}  </span>
+         
+        </button>
+        
+        </div>         
         
         <button
           v-if="_isallowed('delete') && DV_risk.id"
@@ -672,7 +683,7 @@
 
       <div class="row form-group pl-2 mx-4 mb-0" style="background-color:#fafafa;border:solid 1px #ededed">  
         
-       <div class="form-group col-md-4 py-2 mb-0 px-0 user-select w-100">
+       <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
           <label class="font-sm mb-0">Risk Approach Approver:</label>
            <multiselect         
             v-model="riskApprover"                   
@@ -695,23 +706,37 @@
           </multiselect>         
         </div>    
 
-     
-          <div v-if="this.DV_risk.riskApprover" class="col-md-3 pl-0 py-2 mb-0 text-center">
+     <!-- <div v-if="this.DV_risk.text"> -->
+       
+          <div v-if="riskApprover.length > 0" class="col-md-4 pl-0 py-2 mb-0 text-center">
+          <div v-if="this.DV_risk.riskApprover.length > 0" >
              <label class="font-sm mb-0">Risk Approach Approved:</label>            
             <span v-if="this.$currentUser.full_name == this.DV_risk.riskApprover[0].name" class="d-block approver-pointer" @click.prevent="toggleApproved">
                 <span v-show="DV_risk.approved" class="check_box mx-1 approver-pointer"><i class="far fa-check-square"></i></span>
                 <span v-show="!DV_risk.approved" class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                 <small style="vertical-align:text-top">Approved</small>
             </span>               
-          </div>      
-
-          <div v-else class="col-md-3 pl-0 py-2 mb-0 text-center">        
-             <label class="font-sm mb-0">Risk Approach Approved:</label>             
+          </div> 
+          </div>     
+           <div v-else class="col-md-4 pl-0 py-2 mb-0 text-center">
+            <label class="font-sm mb-0">Risk Approach Approved:</label>             
               <span class="d-block approver-pointer" >
                   <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
                   <small style="vertical-align:text-top">Approved</small>
-              </span>           
-          </div>
+              </span>             
+          </div>   
+        
+    
+        
+             <!-- <div v-if="this.DV_risk.text" class="col-md-4 pl-0 py-2 mb-0 text-center">
+            <label class="font-sm mb-0">Risk Approach Approved:</label>             
+              <span class="d-block approver-pointer" >
+                  <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>              
+                  <small style="vertical-align:text-top">Approved</small>
+              </span>             
+          </div>    -->
+
+
          
          
           <!-- Users listed here for debugging Risk Approval Section.  Delete if no longer needed
@@ -1246,11 +1271,16 @@
         this.DV_risk.approvalTime = " "
         if (this.riskApprover.length > 0) {
           this.riskApprover = []
+          this.validateThenSave();
         }
         if (this.DV_risk.riskApprover.length > 0) {
           this.DV_risk.riskApprover = []
+          this.validateThenSave();
         }  
-
+      // if (riskApprover.length > 0) {
+      //     riskApprover = []
+      //     this.validateThenSave();
+      //   }  
       }, 
     notApprover() {             
        alert("Sorry.  Only Risk Approach Approver is authorized to check this box.")
@@ -1266,7 +1296,7 @@
             this.showErrors = !success
             return;
           }
-          this.loading = true
+          this.loading = true         
           let formData = new FormData()         
           formData.append('risk[facility_project_id]', this.DV_risk.facilityProjectId)
           formData.append('risk[text]', this.DV_risk.text)
