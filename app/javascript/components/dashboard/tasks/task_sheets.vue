@@ -35,18 +35,20 @@
               <span slot="title">Duplicate to...</span>
             </template>
             <div>
-              <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
+              <div class="menu-subwindow-title">Duplicate to...</div>
+              <el-input class="filter-input" placeholder="Filter Projects..." v-model="filterTree"></el-input>
               <el-tree
                 :data="treeFormattedData"
                 :props="defaultProps"
                 :filter-node-method="filterNode"
+                @check-change="toggleSubmitBtn"
                 show-checkbox
                 ref="duplicatetree"
                 node-key="id"
               >
               </el-tree>
               <div class="context-menu-btns">
-                <button class="btn btn-sm btn-success ml-2" @click="duplicateSelectedTasks">Submit</button>
+                <button class="btn btn-sm btn-success ml-2" @click="duplicateSelectedTasks" :disabled="submitDisabled">Submit</button>
                 <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">Select All</button>
                 <button class="btn btn-sm btn-outline-secondary ml-2" @click="clearAllNodes">Clear All</button>         
               </div>
@@ -57,7 +59,8 @@
               <span slot="title">Move to...</span>
             </template>
             <div>
-              <el-input class="filter-input" placeholder="Filter Facilities..." v-model="filterTree"></el-input>
+              <div class="menu-subwindow-title">Move to...</div>
+              <el-input class="filter-input" placeholder="Filter Projects..." v-model="filterTree"></el-input>
               <el-tree
                 :data="treeFormattedData"
                 :props="defaultProps"
@@ -142,7 +145,8 @@ export default {
         label: "label",
         disabled: "disabled"
       },
-      filterTree: ''
+      filterTree: '',
+      submitted: false
     };
   },
   mounted() {
@@ -252,15 +256,28 @@ export default {
           },
         })
           .then((response) => {
-            if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
+            if (beforeSaveTask.facilityId && beforeSaveTask.projectId) {
               this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
-            this.updateFacilities(
-              humps.camelizeKeys(response.data.task),
-              facilityProjectId
-            );
+              this.$emit(callback, humps.camelizeKeys(response.data.task));
+              this.updateFacilities(
+                humps.camelizeKeys(response.data.task),
+                facilityProjectId
+              );
+              if (response.status === 200) {
+                this.$message({
+                  message: `${task.text} was moved successfully.`,
+                  type: 'success',
+                  showClose: true
+                });
+              }
+            }
           })
           .catch((err) => {
+            this.$message({
+              message: `Unable to move ${task.text}. Please try again.`,
+              type: 'error',
+              showClose: true
+            });
             // var errors = err.response.data.errors
             console.log(err);
           })
@@ -308,8 +325,20 @@ export default {
             humps.camelizeKeys(response.data.task),
             this.DV_task.facilityProjectId
           );
+        if (response.status === 200) {
+          this.$message({
+            message: `${this.DV_task.text} was duplicated successfully.`,
+            type: 'success',
+            showClose: true
+          });
+        }
       })
       .catch((err) => {
+        this.$message({
+          message: `Unable to duplicate ${this.DV_task.text}. Please try again.`,
+          type: 'error',
+          showClose: true
+        });
         // var errors = err.response.data.errors
         console.log(err)
       })
@@ -329,6 +358,8 @@ export default {
       }    
     },
     duplicateSelectedTasks() {
+      this.submitted = true;
+
       var facilityNodes = this.$refs.duplicatetree.getCheckedNodes().filter(item => !item.hasOwnProperty('children'));
       
       var ids = facilityNodes.map(facility => facility.id)
@@ -363,8 +394,21 @@ export default {
         response.data.tasks.forEach(task => {
           this.updateFacilityTask(humps.camelizeKeys(task), task.facilityProjectId)
         })
+        if (response.status === 200) {
+          this.$message({
+            message: `${this.DV_task.text} was duplicated successfully to selected projects.`,
+            type: 'success',
+            showClose: true
+          });
+        }
+        
       })
       .catch((err) => {
+        this.$message({
+          message: `Unable to duplicate ${this.DV_task.text} to selected projects. Please try again.`,
+          type: 'error',
+          showClose: true
+        });
         // var errors = err.response.data.errors
         console.log(err)
       })
@@ -375,6 +419,9 @@ export default {
     filterNode(value, data) {
       if (!value) return true;
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    },
+    toggleSubmitBtn() {
+      this.submitted = false
     }
   },
   computed: {
@@ -429,7 +476,14 @@ export default {
       });
 
       return [...data]    
-    }
+    },
+    submitDisabled() {
+      if (this.$refs.duplicatetree) {
+        return this.$refs.duplicatetree.getCheckedNodes().length === 0 || this.submitted
+      } else {
+        return this.submitted
+      }  
+    },
   },
   watch: {
     task: {
@@ -591,5 +645,10 @@ hr {
   max-width: 300px;
   max-height: 300px;
   overflow-y: auto;
+}
+.menu-subwindow-title {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
 }
 </style>
