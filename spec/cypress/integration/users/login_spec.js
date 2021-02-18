@@ -11,12 +11,12 @@ describe('Login', function() {
 
   it ('Test login functionality for admin', function() {
     cy.login('admin@test.com', 'T3$tAdmin')
-    cy.contains('Welcome admin@test.com!')
+    cy.contains('Welcome, Test!')
   })
 
   it ('Test login functionality for client', function() {
     cy.login('client@test.com', 'T3$tClient')
-    cy.contains('Welcome client@test.com!')
+    cy.contains('Welcome, Test!')
   })
 
   it('Login with wrong email', function() {
