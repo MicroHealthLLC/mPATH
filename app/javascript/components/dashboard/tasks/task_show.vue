@@ -105,6 +105,7 @@
       <el-menu collapse>
         <el-menu-item @click="editTask">Open</el-menu-item>
         <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
+        <el-menu-item @click="deleteTask">Delete</el-menu-item>
         <hr>
         <el-submenu index="1">
           <template slot="title">
@@ -464,6 +465,11 @@
       },
       toggleSubmitBtn() {
         this.submitted = false
+      },
+      deleteTask() {
+        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
+        if (!confirm) {return}
+        this.taskDeleted(this.DV_task)
       }
     },
     computed: {
