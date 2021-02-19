@@ -1145,7 +1145,7 @@ export default {
           method = "PUT";
           callback = "issue-updated";
         }
-        var beforeIssue = this.issue
+        // var beforeIssue = this.issue
 
         axios({
           method: method,
@@ -1157,8 +1157,8 @@ export default {
           },
         })
           .then((response) => {
-            if(beforeIssue.facilityId && beforeIssue.projectId )
-              this.$emit(callback, humps.camelizeKeys(beforeIssue));
+            // if(beforeIssue.facilityId && beforeIssue.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
             this.$emit(callback, humps.camelizeKeys(response.data.issue));
           })
           .catch((err) => {

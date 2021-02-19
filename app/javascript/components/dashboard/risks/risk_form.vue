@@ -1394,7 +1394,7 @@
             method = "PUT"
             callback = "risk-updated"
           }
-          var beforeRisk = this.risk
+          // var beforeRisk = this.risk
           axios({
             method: method,
             url: url,
@@ -1404,8 +1404,8 @@
             }
           })
           .then((response) => {
-            if(beforeRisk.facilityId && beforeRisk.projectId )
-              this.$emit(callback, humps.camelizeKeys(beforeRisk));
+            // if(beforeRisk.facilityId && beforeRisk.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforeRisk));
             this.$emit(callback, humps.camelizeKeys(response.data.risk))
           })
           .catch((err) => {
