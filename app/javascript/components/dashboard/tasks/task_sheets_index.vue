@@ -104,7 +104,7 @@
               :task="task"
               :from-view="from"
               @edit-task="editTask"
-              @toggle-watched="toggleWatched"
+             
             />
      
           <div class="float-right mb-4 mt-2 font-sm">
@@ -254,9 +254,9 @@
       editTask(task) {
         this.$emit('show-hide', task)
       },
-      toggleWatched(task) {
-        this.$emit('toggle-watch-task', task)
-      },
+      // toggleWatched(task) {
+      //   this.$emit('toggle-watch-task', task)
+      // },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML

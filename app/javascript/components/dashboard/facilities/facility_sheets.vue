@@ -503,8 +503,7 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
            {
             label: 'Risks',
             key: 'risks',
-            closable: false, 
-            disabled: false          
+            closable: false,                
           },
           {
             label: 'Notes',
@@ -539,7 +538,7 @@ import { counter } from '@fortawesome/fontawesome-svg-core'
         console.log(p)
       },
       onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'tasks'
+        this.currentTab = tab ? tab.key : 'overview'
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)

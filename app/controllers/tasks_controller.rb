@@ -13,7 +13,17 @@ class TasksController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    @task.update(task_params)
+    t_params = task_params.dup
+    if t_params[:checklists_attributes].present?
+      t_params[:checklists_attributes].each do |key, hash|
+        if hash["progress_lists_attributes"].present?
+          hash["progress_lists_attributes"].each do |key2, hash2|
+            hash2[:user_id] = current_user.id if hash2[:user_id].nil?
+          end
+        end
+      end
+    end
+    @task.update(t_params)
     @task.assign_users(params)
     # @task.create_or_update_task(params, current_user)
     render json: {task: @task.reload.to_json}
@@ -95,7 +105,14 @@ class TasksController < AuthenticatedController
         :due_date,
         :listable_type,
         :listable_id,
-        :position
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id,
+          :user_id
+        ]
       ],
       notes_attributes: [
         :id,

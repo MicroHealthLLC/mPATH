@@ -4,13 +4,13 @@
       id="issues-form"
       @submit.prevent="saveIssue"
       :class="{ _disabled: loading }"
-      class="mx-auto"
+      class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
     >
       <div
         v-if="_isallowed('read')"
-        class="d-flex form-group sticky mb-2 justify-content-start"
+        class="d-flex form-group sticky mb-1 px-3 justify-content-start"
       >
         <button
           v-if="_isallowed('write')"
@@ -63,10 +63,10 @@
           Delete
         </button>
       </div>
-       <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">          
-          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">          
+          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       </div>
-      <div class="formTitle">
+      <div class="formTitle mx-3">
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -760,7 +760,7 @@ Tab 1 Row Begins here -->
 
 
 
-      <h6 class="text-danger text-small pl-1 float-right">
+      <h6 class="text-danger text-small pl-1 float-right pr-3">
         *Indicates required fields
       </h6>
       <div ref="addUpdates" class="pt-0 mt-0"></div>
@@ -1488,7 +1488,6 @@ export default {
   z-index: 10;
   width: 100%;
   position: absolute;
-  background-color: #fff;
 }
 .form-control.error {
   border-color: #e84444;
@@ -1564,7 +1563,7 @@ ul {
   }
 .custom-tab {
   width: min-content;
-  background-color: #fafafa;
+  background-color: #fff;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="notes-index" data-cy="note_list">
+  <div id="notes-index" data-cy="note_list" class="px-3">
     <div v-if="_isallowed('write') && newNote" class="mb-3">
       <notes-form
         title="Add Note"

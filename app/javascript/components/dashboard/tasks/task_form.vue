@@ -3,11 +3,11 @@
     <form
       id="tasks-form"
       @submit.prevent="saveTask"
-      class="mx-auto"
+      class="mx-auto tasks-form"
       :class="{'_disabled': loading}"
       accept-charset="UTF-8"
       >
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
+       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 px-3 justify-content-start">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -59,13 +59,13 @@
           Delete
         </button>
       </div>
-      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">
           
-      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       
       </div>
     
-     <div class="formTitle pt-1">
+     <div class="formTitle pt-1 mx-3">
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -310,7 +310,6 @@
             select-label="Select"
             deselect-label="Enter to remove"
             :close-on-select="false"
-    
             data-cy="risk_owner"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -348,23 +347,28 @@
 
 <div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
       
-      <div class="form-group pt-3 mx-4">
-        <label class="font-sm">Checklists:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
-          <i class="fas fa-plus-circle" ></i>
-        </span>
-        <div v-if="filteredChecks.length > 0">
-        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-            <div class="form-control h-100">
-              <div class="row">
-                <div class="col justify-content-start">
-                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
-                </div>
+  <div class="form-group pt-3 mx-4" >
+    <label class="font-sm">Checklists:</label>
+    <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
+      <i class="fas fa-plus-circle" ></i>
+    </span>
+    <div v-if="filteredChecks.length > 0">
+      <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
+        <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+          <div class="form-control h-100 check-items" style="background-color:#fafafa">
+            <div class="row">
+              <div class="col justify-content-start">
+                <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
-              <div class="row justify-content-end">             
-               <div class="simple-select form-group col mb-0">
+            </div>
+
+            <!-- Collpase section begins here -->
+         <el-collapse id="roll_up" style="background-color:#fafafa">
+            <el-collapse-item title="Show More" name="1" style="background-color:#fafafa">
+
+            <div class="row justify-content-end" style="background-color:#fafafa">             
+              <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
                   v-model="check.user"
@@ -382,38 +386,105 @@
                       <span class='select__tag-name'>{{option.fullName}}</span>
                     </div>
                   </template>
-              </multiselect>
-             </div>
-               <div class="simple-select form-group col mb-0">
-                 <div class="float-right">
-                   <label class="font-sm dueDate">Due Date:</label>  
-                   <br/>                    
-                    <v2-date-picker                    
-                      v-model="check.dueDate"
-                      :value="check.dueDate" 
-                      :disabled="!_isallowed('write') || !check.text"
-                      @selected="updateCheckItem($event, 'dueDate', index)"
-                      :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
-                      placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"
-                      :disabled-date="disabledDateRange"
-                      :class="{ disabled: disabled }"          
-                    />
-                 </div>
-                </div>       
-               </div>
-            </div>             
-            <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
-              <i class="fas fa-times"></i>
-            </span>
-          </div>
-        </draggable>       
+                </multiselect>
+              </div>
+              <div class="simple-select form-group col mb-0">
+                <div class="float-right">
+                  <label class="font-sm dueDate">Due Date:</label>  
+                  <br/>                    
+                  <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Start Checkbox Progress List -->
+            <!-- Create component to manage progress list -->
+            <div class="pt-4" style="background-color:#fafafa">
+              <button 
+                style="background-color:#ededed"
+                class="btn btn-sm font-md btn-block addCheckProgBtn mb-2"                
+                v-if="_isallowed('write')" 
+                @click.prevent="addProgressList(check)">
+                <font-awesome-icon icon="plus-circle" class="mr-1"/>Add Checklist Progress Update
+              </button>
+              <table style="width:100%">
+                  <thead>
+                    <tr>
+                      <th style="width:60%">Progress</th>
+                      <th>Last Updated</th>
+                      <th>By</th> 
+                      <th>Action</th> 
+                    </tr>                   
+                  </thead>
+                  <tbody>
+                    <tr 
+                      v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
+                      :key="pindex" 
+                      :log="log(progress)"  
+                      v-if="!progress._destroy">
+                    <td>                     
+                      <span v-if="editToggle">
+                       <input :value="progress.body" 
+                              name="text"                               
+                              @input="updateProgressListItem($event, 'text', progress)" 
+                              :key="`ptext_${pindex}`" 
+                              placeholder="Type Progress update here"                              
+                              type="text" 
+                              class="checklist-text pl-1" 
+                              maxlength="80"                               
+                              >
+                       </span>  
+                       <span v-else>
+                        {{progress.body}}
+                       </span>                     
+                    </td>
+                    <td>{{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}}</td>     
+       
+                    <td ><span v-if="progress.user">{{progress.user.fullName}}</span></td> 
+                    <td>
+                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
+                        <font-awesome-icon icon="save" class="text-primary clickable" />
+                      </span>
+                      <span v-tooltip="`Edit`" class="px-2">
+                        <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
+                      </span>
+                      <span v-tooltip="`Delete`" class="pl-1" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
+                        <font-awesome-icon icon="trash" class="text-danger clickable" />
+                      </span>
+                      
+                    </td>                    
+                    </tr>
+                    
+                  </tbody>             
+              </table>            
+            <!-- End Checkbox Progress List -->
+            </div>
+              </el-collapse-item>
+          </el-collapse>
+
+
+          </div>             
+        
+
         </div>
-        <p v-else class="text-danger font-sm">No checks..</p>
-      </div>
+
+      </draggable>       
+    </div>
+    <p v-else class="text-danger font-sm">No checks..</p>
+  </div>
  <!-- closing div for tab2 -->
 </div>
 
@@ -583,7 +654,7 @@
 
       
     
-     <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
+     <h6 class="text-danger text-small pl-1 float-right pr-3">*Indicates required fields</h6>
        <!-- <div ref="addUpdates" class="pt-0 mt-0"> </div> -->
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
@@ -597,14 +668,17 @@
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
 
-
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
       AttachmentInput, Draggable, CustomTabs
+       
     },
     data() {
       return {
@@ -621,6 +695,7 @@
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
+        editToggle: false,
         _ismounted: false,
         showErrors: false,
         loading: true,
@@ -707,6 +782,7 @@
         }
       },
       log(e){
+        console.log(e)
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -730,12 +806,21 @@
           checklist.position = count
           count++
         }
-      },        
+      }, 
+      editProgress() {
+       this.editToggle = !this.editToggle
+      },       
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
         this.cancelSave()
+      },
+      progressListTitleText(progressList){
+        if(!progressList.id) return;
+        var date = moment(progressList.createdAt).format("MM/DD/YYYY")
+        var time = moment(progressList.createdAt).format("hh:mm:ss a")
+        return `${progressList.user.fullName} at ${date} ${time} `
       },
          // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
@@ -814,12 +899,12 @@
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
 
-  // RACI USERS START HERE Awaiting backend work
-     
-     //Responsible USer Id
+          // RACI USERS START HERE Awaiting backend work
+       
+          //Responsible USer Id
 
 
-     if (this.DV_task.responsibleUserIds.length) {
+          if (this.DV_task.responsibleUserIds.length) {
             for (let u_id of this.DV_task.responsibleUserIds) {
               formData.append('responsible_user_ids[]', u_id)
             }
@@ -828,7 +913,7 @@
             formData.append('responsible_user_ids[]', [])
           }
 
-      // Accountable UserId
+          // Accountable UserId
 
          if (this.DV_task.accountableUserIds.length) {
             for (let u_id of this.DV_task.accountableUserIds) {
@@ -861,8 +946,8 @@
             formData.append('informed_user_ids[]', [])
           }
 
-  // RACI USERS ABOVE THIS LINE  Awaiting backend work
-  // More RACI Users in Computed section below
+          // RACI USERS ABOVE THIS LINE  Awaiting backend work
+          // More RACI Users in Computed section below
 
 
           if (this.DV_task.subTaskIds.length) {
@@ -895,8 +980,8 @@
           for (let i in this.DV_task.checklists) {
             let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (let key in check) {         
-              if (key === 'user') key = 'user_id'            
+            for (let key in check) {
+              if (key === 'user') key = 'user_id'
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               // if (key === "dueDate"){
               //   key = "due_date"
@@ -904,9 +989,25 @@
               key = humps.decamelize(key)
               if(['created_at', 'updated_at'].includes(key)) continue
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-            }              
-          }          
 
+              for (let pi in check.progressLists) {
+                let progressList = check.progressLists[pi]
+                if (!progressList.body && !progressList._destroy) continue
+                for (let pkey in progressList) {
+                  if (key === 'user') key = 'user_id'
+                  let pvalue = progressList[pkey]
+                  // if (key === "dueDate"){
+                  //   key = "due_date"
+                  // }
+                  pkey = humps.decamelize(pkey)
+                  if(['created_at', 'updated_at'].includes(pkey)) continue
+                  formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
+
+                }
+              }
+
+            }
+          }          
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
             if (!note.body && !note._destroy) continue
@@ -956,13 +1057,19 @@
           })
         })
       },
+      addProgressList(check){
+        var postion = check.progressLists.length
+        check.progressLists.push({body: '', position: postion})
+        this.editToggle = true;
+      },
       addChecks() {
         var postion = this.DV_task.checklists.length
-        this.DV_task.checklists.push({text: '', checked: false, position: postion})
+        this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
+ 
       destroyNote(note) {
         let confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
@@ -975,6 +1082,13 @@
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
+      },
+      destroyProgressList(check, progressList, index) {
+        let confirm = window.confirm(`Are you sure you want to delete this Progress List item?`)
+        if (!confirm) return;
+
+        let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
+        Vue.set(check.progressLists, i, {...progressList, _destroy: true})
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
@@ -1008,6 +1122,9 @@
         } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
           this.DV_task.checklists[index].dueDate = event.target.value
         }
+      },
+      updateProgressListItem(event, name, progressList) {
+        progressList.body = event.target.value
       },
       isMyCheck(check) {
         return this.C_myTasks && check.id ? (check.user && check.user.id == this.$currentUser.id) : true
@@ -1049,7 +1166,7 @@
           this.exists(this.DV_task.facilityProjectId) &&
           this.exists(this.DV_task.startDate)
         )
-      },
+      },    
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
       },
@@ -1191,12 +1308,26 @@
   };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   #tasks-form {
     z-index: 100;
     width: 100%;
-    position: absolute;
-    background-color: #ededed;
+    position: absolute;  
+  }
+  td, th {
+    border: solid 1px #ededed;
+    padding: 1px 3px;
+  }
+  tbody {
+    background-color: #fff;
+  }
+  .checklist-text {
+    background-color: #fafafa;
+  }
+  th {
+    background:  #ededed;
+    color: #383838;
+    padding: 1px 3px;
   }
   .form-control.error {
     border-color: #E84444;
@@ -1292,8 +1423,14 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .scrollToChecklist {    
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  /deep/.el-collapse-item__header {
+    background-color: #fafafa !important;
+  }
+  .scrollToChecklist, .addCheckProgBtn, .check-items {    
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .addCheckProgBtn:hover {
+    background-color: lightgray !important;
   }
   .check-due-date {
     text-align: end;
@@ -1303,7 +1440,8 @@
   }
   .custom-tab {
     width: min-content;
-    background-color: #fafafa;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    background-color: #fff;
+    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10) !important;
+
   }
 </style>

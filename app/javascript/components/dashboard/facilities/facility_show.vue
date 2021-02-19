@@ -1,6 +1,6 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
-  <div id="facility-show"  data-cy="facility_sheets">
+  <div id="facility-show"  data-cy="facility_sheets" class="px-3"  v-loading="!contentLoaded" >
     <div  class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
@@ -19,7 +19,7 @@
             </div> -->
 
           <div class="row row-1 mt-2">
-          <div class="col-md-8 pr-2">
+          <div class="col-md-8 pr-0">
             <div class="box-card my-el-card p-3" style="position:relative">               
 
              <div class="row">
@@ -94,7 +94,7 @@
                </div>     
              </div>  
 
-        <div class="col-md-3 px-0" data-cy="date_set_filter">         
+        <div class="col-md-4 pr-3" data-cy="date_set_filter">         
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
