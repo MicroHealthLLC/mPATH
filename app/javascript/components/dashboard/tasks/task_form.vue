@@ -1008,7 +1008,7 @@
             callback = "task-updated"
           }
 
-          var beforeSaveTask = this.task
+          // var beforeSaveTask = this.task
 
           axios({
             method: method,
@@ -1019,8 +1019,8 @@
             }
           })
           .then((response) => {
-            if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-              this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
+            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
             this.$emit(callback, humps.camelizeKeys(response.data.task))
           })
           .catch((err) => {
