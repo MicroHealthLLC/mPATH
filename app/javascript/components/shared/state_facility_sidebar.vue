@@ -86,7 +86,7 @@
           <div v-if="isSheetsView" class="mt-3 px-3"  >              
             <facility-sheets 
               v-if="C_showFacilityTab"            
-              from="manager_view"            
+              from="manager_view"                  
               :facility="currentFacility"
               :facility-group="currentFacilityGroup"             
             ></facility-sheets>
@@ -1095,10 +1095,13 @@
       border-radius: 4px;
       z-index: 1;
     }
+    .action-form-overlay2 {
+      background-color: black;
+    }
     .action-form-overlay {
       position: absolute;
       top:0;
-    }
+    }  
     .center-section {
       position: absolute;
       box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
