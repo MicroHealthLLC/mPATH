@@ -407,31 +407,57 @@
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
-            <label class="font-sm">Progress List:</label>
-            <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
-              <i class="fas fa-plus-circle" ></i>
-            </span>
-
-            <div v-for="(progress, pindex) in check.progressLists" :key="pindex" class="d-flex w-100 mb-3 drag" :log="log(progress)"  v-if="!progress._destroy">
-              <div class="row">{{progressListTitleText(progress)}}</div>
-              <div class="form-control h-100">
-                <div class="row">
-                  <div class="col justify-content-start">
-                    <input :value="progress.body" name="text" @input="updateProgressListItem($event, 'text', progress)" :key="`ptext_${pindex}`" placeholder="Type Progress" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
-                  </div>
-                </div>
-              </div>             
-              <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
-                <i class="fas fa-times"></i>
-              </span>
-            </div>
+            <div class="mt-2">
+              <table style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>
+                        <button class="btn btn-sm btn-info m-1" v-tooltip="`Add Progress update`" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
+                          <font-awesome-icon icon="plus-circle"/>
+                        </button>Progress
+                      </th>
+                      <th>Last Updated</th>
+                      <th>By</th> 
+                      <th>Action</th> 
+                    </tr>                   
+                  </thead>
+                  <tbody>
+                    <tr v-for="(progress, pindex) in check.progressLists" :key="pindex" :log="log(progress)"  v-if="!progress._destroy">
+                    <td>
+                      <span v-if="editProgress">
+                      <input :value="progress.body" 
+                              name="text" 
+                              @input="updateProgressListItem($event, 'text', progress)" 
+                              :key="`ptext_${pindex}`" 
+                              placeholder="Type Progress update here" 
+                              type="text" 
+                              class="checklist-text pl-1" 
+                              maxlength="80" 
+                              :readonly="!_isallowed('write')">
+                      </span>       
+                      <span v-else>
+                        {{progress.body}}
+                      </span>
+                      
+                    </td>
+                    <td>{{progress.updatedAt}}</td>
+                    <td ><span v-if="progress.user">{{progress.user.fullName}}</span></td> 
+                    <td>
+                      <span class="px-1">
+                        <font-awesome-icon icon="pencil-alt" class="text-info" @click.prevent="editProgress()" />
+                      </span>
+                      <span class="px-1" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
+                        <font-awesome-icon icon="trash" class="text-danger" />
+                      </span>
+                    </td>                    
+                    </tr>
+                    
+                  </tbody>             
+              </table>            
             <!-- End Checkbox Progress List -->
-
-
+            </div>
           </div>             
-          <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
-            <i class="fas fa-times"></i>
-          </span>
+        
 
         </div>
 
@@ -732,7 +758,7 @@
         }
       },
       log(e){
-        //console.log(e)
+        console.log(e)
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -756,7 +782,10 @@
           checklist.position = count
           count++
         }
-      },        
+      }, 
+      editProgress() {
+        return true
+      },       
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
@@ -1015,6 +1044,7 @@
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
+ 
       destroyNote(note) {
         let confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
@@ -1111,7 +1141,7 @@
           this.exists(this.DV_task.facilityProjectId) &&
           this.exists(this.DV_task.startDate)
         )
-      },
+      },    
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
       },
@@ -1253,11 +1283,20 @@
   };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   #tasks-form {
     z-index: 100;
     width: 100%;
     position: absolute;  
+  }
+  td, th {
+    border: solid 1px #ededed;
+    padding: 1px 3px;
+  }
+  th {
+    background:  #ededed;
+    color: #383838;
+    padding: 1px 3px;
   }
   .form-control.error {
     border-color: #E84444;
