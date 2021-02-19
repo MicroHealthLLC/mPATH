@@ -33,7 +33,7 @@
           Close
         </button>
 
-         <div class="btn-group">
+         <!-- <div class="btn-group">
            <button  
           disabled
           class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"                  
@@ -42,7 +42,7 @@
          
         </button>
         
-        </div>         
+        </div>          -->
         
         <button
           v-if="_isallowed('delete') && DV_risk.id"
@@ -54,13 +54,18 @@
           Delete
         </button>
       </div>
-        <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">
-          
-        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />  
-      
+       
+      <div class="d-flex form-group pt-1 mb-1 justify-content-start">         
+        <custom-tabs  v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       </div>
+
+       <!-- <div v-else class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">          
+        <custom-tabs v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />     
+      </div> -->
+
+     
     
- <div class='mx-3' >
+ <div class='mx-0' >
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -1859,13 +1864,16 @@
   .rmBtn, .clearBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
     position: sticky;
-    position: -webkit-sticky;   
+    position: -webkit-sticky;
+    justify-content: center;
     margin-bottom: -2.5rem;
     z-index: 1000;
     left: 15;
     top: 0;
-  
-  
+    width: 100%;
+    padding: 6px;
+    background-color: rgba(237, 237, 237, 0.85);
+    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .check-due-date {
     text-align: end;

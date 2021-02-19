@@ -347,22 +347,27 @@
 
 <div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
       
-  <div class="form-group pt-3 mx-4">
+  <div class="form-group pt-3 mx-4" >
     <label class="font-sm">Checklists:</label>
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
     <div v-if="filteredChecks.length > 0">
-      <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
+      <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
         <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-          <div class="form-control h-100">
+          <div class="form-control h-100 check-items" style="background-color:#fafafa">
             <div class="row">
               <div class="col justify-content-start">
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
             </div>
-            <div class="row justify-content-end">             
+
+            <!-- Collpase section begins here -->
+         <el-collapse id="roll_up" style="background-color:#fafafa">
+            <el-collapse-item title="Show More" name="1" style="background-color:#fafafa">
+
+            <div class="row justify-content-end" style="background-color:#fafafa">             
               <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
@@ -407,48 +412,59 @@
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
-            <div class="mt-2">
+            <div class="pt-4" style="background-color:#fafafa">
+              <button 
+                style="background-color:#ededed"
+                class="btn btn-sm font-md btn-block addCheckProgBtn mb-2"                
+                v-if="_isallowed('write')" 
+                @click.prevent="addProgressList(check)">
+                <font-awesome-icon icon="plus-circle" class="mr-1"/>Add Checklist Progress Update
+              </button>
               <table style="width:100%">
                   <thead>
                     <tr>
-                      <th>
-                        <button class="btn btn-sm btn-info m-1" v-tooltip="`Add Progress update`" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
-                          <font-awesome-icon icon="plus-circle"/>
-                        </button>Progress
-                      </th>
+                      <th style="width:60%">Progress</th>
                       <th>Last Updated</th>
                       <th>By</th> 
                       <th>Action</th> 
                     </tr>                   
                   </thead>
                   <tbody>
-                    <tr v-for="(progress, pindex) in check.progressLists" :key="pindex" :log="log(progress)"  v-if="!progress._destroy">
-                    <td>
-                      <span v-if="editProgress">
-                      <input :value="progress.body" 
-                              name="text" 
+                    <tr 
+                      v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
+                      :key="pindex" 
+                      :log="log(progress)"  
+                      v-if="!progress._destroy">
+                    <td>                     
+                      <span v-if="editToggle">
+                       <input :value="progress.body" 
+                              name="text"                               
                               @input="updateProgressListItem($event, 'text', progress)" 
                               :key="`ptext_${pindex}`" 
-                              placeholder="Type Progress update here" 
+                              placeholder="Type Progress update here"                              
                               type="text" 
                               class="checklist-text pl-1" 
-                              maxlength="80" 
-                              :readonly="!_isallowed('write')">
-                      </span>       
-                      <span v-else>
+                              maxlength="80"                               
+                              >
+                       </span>  
+                       <span v-else>
                         {{progress.body}}
-                      </span>
-                      
+                       </span>                     
                     </td>
-                    <td>{{progress.updatedAt}}</td>
+                    <td>{{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}}</td>     
+       
                     <td ><span v-if="progress.user">{{progress.user.fullName}}</span></td> 
                     <td>
-                      <span class="px-1">
-                        <font-awesome-icon icon="pencil-alt" class="text-info" @click.prevent="editProgress()" />
+                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
+                        <font-awesome-icon icon="save" class="text-primary clickable" />
                       </span>
-                      <span class="px-1" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
-                        <font-awesome-icon icon="trash" class="text-danger" />
+                      <span v-tooltip="`Edit`" class="px-2">
+                        <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
                       </span>
+                      <span v-tooltip="`Delete`" class="pl-1" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
+                        <font-awesome-icon icon="trash" class="text-danger clickable" />
+                      </span>
+                      
                     </td>                    
                     </tr>
                     
@@ -456,6 +472,10 @@
               </table>            
             <!-- End Checkbox Progress List -->
             </div>
+              </el-collapse-item>
+          </el-collapse>
+
+
           </div>             
         
 
@@ -648,14 +668,17 @@
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
 
-
+  const moment = extendMoment(Moment)
 
   export default {
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
       AttachmentInput, Draggable, CustomTabs
+       
     },
     data() {
       return {
@@ -672,6 +695,7 @@
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
+        editToggle: false,
         _ismounted: false,
         showErrors: false,
         loading: true,
@@ -784,7 +808,7 @@
         }
       }, 
       editProgress() {
-        return true
+       this.editToggle = !this.editToggle
       },       
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
@@ -1036,6 +1060,7 @@
       addProgressList(check){
         var postion = check.progressLists.length
         check.progressLists.push({body: '', position: postion})
+        this.editToggle = true;
       },
       addChecks() {
         var postion = this.DV_task.checklists.length
@@ -1293,6 +1318,12 @@
     border: solid 1px #ededed;
     padding: 1px 3px;
   }
+  tbody {
+    background-color: #fff;
+  }
+  .checklist-text {
+    background-color: #fafafa;
+  }
   th {
     background:  #ededed;
     color: #383838;
@@ -1392,8 +1423,14 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .scrollToChecklist {    
-    box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  /deep/.el-collapse-item__header {
+    background-color: #fafafa !important;
+  }
+  .scrollToChecklist, .addCheckProgBtn, .check-items {    
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
+  }
+  .addCheckProgBtn:hover {
+    background-color: lightgray !important;
   }
   .check-due-date {
     text-align: end;

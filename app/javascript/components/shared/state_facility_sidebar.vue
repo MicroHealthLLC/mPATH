@@ -74,7 +74,7 @@
 
       <!-- Sheets View starts here -->
 
-       <div class="col-md-10 facility-show-tab px-0"            
+       <div class="col-md-10 facility-show-tab px-0"          
             data-cy="sheets_view" style="background-color: solid #ededed 15px" 
             v-if="isSheetsView" 
             v-loading="!contentLoaded" 
@@ -83,10 +83,9 @@
             element-loading-background="rgba(0, 0, 0, 0.8)">
               
               
-          <div v-if="isSheetsView" class="mt-3 px-3"   :class="{'no-scroll': managerView.task }" >              
+          <div v-if="isSheetsView" class="mt-3 px-3"  >              
             <facility-sheets 
-              v-if="C_showFacilityTab"
-              class="no-scroll"
+              v-if="C_showFacilityTab"            
               from="manager_view"            
               :facility="currentFacility"
               :facility-group="currentFacilityGroup"             
@@ -1123,9 +1122,10 @@
     box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
   // .blur-bg {
-  //   background-color: rgba(0, 0, 0, 0.8) !important;
+  //   backdrop-filter: grayscale(0.9) opacity(0.8) !important /* ...and on and on... */;
+  //   // background-color: rgba(0, 0, 0, 0.8) !important;
   //   height: 100vh !important;
-  //   z-index: 100 !important;
+  //   z-index: 100000 !important;
   // }
   .searchBar {
     margin-top: 24px;

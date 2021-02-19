@@ -133,9 +133,11 @@
                       <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                     </span>
                   </div>
-              </div>       
+              </div>     
+            <span @click.prevent="showLessToggle" >
           <el-collapse id="roll_up">
-            <el-collapse-item title="See More" name="1">
+
+            <el-collapse-item :title="showLess" name="1">
 
               <div v-if="filteredTasks.length" class="row mt-4 mb-1">
                  <div class="col font-weight-bold text-center">
@@ -161,6 +163,8 @@
               </div>  
             </el-collapse-item>
           </el-collapse>
+            </span>
+             
 
             </div>                    
              <div v-if="!contentLoaded" class="my-4">
@@ -387,6 +391,12 @@ export default {
   components: {
     Loader
   },
+   data() {
+      return {
+        showLess: 'Show More',
+        showMore: true
+      }
+   },
   computed: {
     ...mapGetters([
       'getTaskIssueUserFilter',
@@ -629,12 +639,17 @@ export default {
     }
   },
   methods: {
+     showLessToggle() {  
+          this.showLess = 'Show Less' 
+         
+    },  
     facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities('active'), 'id')
       let mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
       return Number(mean.toFixed(0))
     }
-  }
+  },
+  
 }
 </script>
 
