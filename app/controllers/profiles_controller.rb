@@ -6,22 +6,22 @@ class ProfilesController < AuthenticatedController
     # facility_groups = @active_projects.map(&:facility_groups).flatten.uniq
 
     active_projects = current_user.projects.active
-    active_project_ids = active_projects.map(&:id)
-    all_facility_projects = FacilityProject.where(project_id: active_project_ids)
+    active_project_ids = active_projects.map(&:id).compact.uniq
+    all_facility_projects = FacilityProject.where(project_id: active_project_ids).compact.uniq
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
-    all_facilities = Facility.where(id: all_facility_ids)
+    all_facilities = Facility.where(id: all_facility_ids).compact.uniq
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
-    all_facility_groups = FacilityGroup.where(id: all_facility_group_ids)
+    all_facility_groups = FacilityGroup.where(id: all_facility_group_ids).compact.uniq
 
     project_hash = []
 
     active_projects.each do |project|
-      facility_projects = all_facility_projects.select{|fp| fp.project_id == project.id }
+      facility_projects = all_facility_projects.select{|fp| fp.project_id == project.id }.compact.uniq
       facility_ids = facility_projects.map(&:facility_id).compact.uniq
-      facilities = all_facilities.select{|f| facility_ids.include?(f.id) }
+      facilities = all_facilities.select{|f| facility_ids.include?(f.id) }.compact.uniq
       facility_group_ids = facilities.map(&:facility_group_id).compact.uniq
-      facility_groups = all_facility_groups.select{|fg| facility_group_ids.include?(fg.id) }
+      facility_groups = all_facility_groups.select{|fg| facility_group_ids.include?(fg.id) }.compact.uniq
       
       next if !facilities.any?
       
