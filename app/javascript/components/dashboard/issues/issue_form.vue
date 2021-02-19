@@ -63,10 +63,10 @@
           Delete
         </button>
       </div>
-       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">          
-          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
+       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">          
+          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
       </div>
-      <div class="formTitle mx-3">
+      <div class="formTitle">
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -1290,6 +1290,9 @@ export default {
         this.exists(this.DV_issue.startDate)
       );
     },
+    isMapView() {
+        return this.$route.name === 'ProjectMapView'
+     },
     filteredChecks() {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },

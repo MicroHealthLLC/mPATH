@@ -56,14 +56,9 @@
       </div>
        
       <div class="d-flex form-group pt-1 mb-1 justify-content-start">         
-        <custom-tabs  v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
+        <custom-tabs  v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
       </div>
 
-       <!-- <div v-else class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">          
-        <custom-tabs v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />     
-      </div> -->
-
-     
     
  <div class='mx-0' >
         <div v-if="showErrors" class="text-danger mb-3">
