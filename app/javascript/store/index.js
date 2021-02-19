@@ -1443,7 +1443,12 @@ export default new Vuex.Store({
       return Vue.prototype.$permissions[view][req]
     },
     riskApproaches: () => {
-      return ['avoid', 'mitigate', 'transfer', 'accept']
+      return   ['avoid', 'mitigate', 'transfer', 'accept']
+    
+      // [ {id: 'avoid', value: 'avoid', name: 'Avoid'},
+        // {id: 'mitigate', value: 'mitigate', name: "Mitigate"},
+        // {id: 'transfer' , value: 'transfer', name: 'Transfer'},
+        // {id: 'accept', value: 'accept', name: 'Accept'},      ]
     },
     probabilityNames: () => {
       return [

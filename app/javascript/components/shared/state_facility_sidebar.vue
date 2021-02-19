@@ -74,78 +74,67 @@
 
       <!-- Sheets View starts here -->
 
-       <div class="col-md-10 facility-show-tab px-4" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView" v-loading="!contentLoaded" element-loading-text="Fetching your data. Please wait..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <div class="mt-3">
-          <facility-sheets 
-            v-if="C_showFacilityTab"
-            from="manager_view"
-            :facility="currentFacility"
-            :facility-group="currentFacilityGroup"
-          ></facility-sheets>
-          <facility-rollup v-else></facility-rollup>
-        </div>
-        <div v-if="isSheetsView">   
-          <sweet-modal
-            class="form_modal"
-            ref="formModals"
-            :hide-close-button="true"
-            :blocking="true"
-             v-if="viewPermit(currentTab, 'write')"
-            >           
-          <div v-if="managerView.task || managerView.issue || managerView.risk || managerView.note " class="w-100" >
-            <task-form
-              v-if="managerView.task"
+       <div class="col-md-10 facility-show-tab px-0"            
+            data-cy="sheets_view" style="background-color: solid #ededed 15px" 
+            v-if="isSheetsView" 
+            v-loading="!contentLoaded" 
+            element-loading-text="Fetching your data. Please wait..." 
+            element-loading-spinner="el-icon-loading" 
+            element-loading-background="rgba(0, 0, 0, 0.8)">
+              
+              
+          <div v-if="isSheetsView" class="mt-3 px-3"   :class="{'no-scroll': managerView.task }" >              
+            <facility-sheets 
+              v-if="C_showFacilityTab"
+              class="no-scroll"
+              from="manager_view"            
               :facility="currentFacility"
-              :task="managerView.task"
-              title="Edit Task"
-              @task-created="updateFacilityTask"
-              @task-updated="updateFacilityTask"
-               @on-close-form="onCloseForm"
-              class="form-inside-modal"
-            ></task-form>
-            <risk-form
-              v-if="managerView.risk"
-              :facility="currentFacility"
-              :risk="managerView.risk"          
-              @risk-created="updateFacilityRisk"
-              @risk-updated="updateFacilityRisk"
-               @on-close-form="onCloseForm"
-              class="form-inside-modal"
-            ></risk-form>
-            <issue-form
-              v-else-if="managerView.issue"
-              :facility="currentFacility"
-              :issue="managerView.issue"
-              @issue-updated="updateFacilityIssue"
-              @issue-created="updateFacilityIssue"
-               @on-close-form="onCloseForm"
-              class="form-inside-modal"
-            ></issue-form>
-              <notes-form
-              v-else-if="managerView.note"
-              from="manager_view"
-              :facility="currentFacility"
-              :note="managerView.note"
-              @close-note-input="newNote=false"
-              @note-created="createdFacilityNote"
-              @note-updated="updatedFacilityNote"
-            ></notes-form>
-
-             <!-- <notes-form
-              v-else-if="managerView.note"
-              from="manager_view"
-              :facility="currentFacility"
-              :note="managerView.note"
-              @close-note-input="newNote=false"
-              @note-created="createdFacilityNote"
-              @note-updated="updatedFacilityNote"
-            ></notes-form> -->
-            
-           </div>       
-          </sweet-modal>
-         </div>
+              :facility-group="currentFacilityGroup"             
+            ></facility-sheets>
+            <facility-rollup v-else></facility-rollup>
+          </div>
+        
+         <div v-if="isSheetsView && managerView.task || managerView.issue || managerView.risk || managerView.note"  >  
+             <div class="w-100 action-form-overlay" >
+              <task-form
+                v-if="managerView.task"
+                :facility="currentFacility"
+                :task="managerView.task"
+                title="Edit Task"
+                @task-created="updateFacilityTask"
+                @task-updated="updateFacilityTask"             
+                class="form-inside-modal"
+              ></task-form>
+              <risk-form
+                v-if="managerView.risk"
+                :facility="currentFacility"
+                :risk="managerView.risk"          
+                @risk-created="updateFacilityRisk"
+                @risk-updated="updateFacilityRisk"             
+                class="form-inside-modal"
+              ></risk-form>
+              <issue-form
+                v-else-if="managerView.issue"
+                :facility="currentFacility"
+                :issue="managerView.issue"
+                @issue-updated="updateFacilityIssue"
+                @issue-created="updateFacilityIssue"             
+                class="form-inside-modal"
+              ></issue-form>
+                <notes-form
+                v-else-if="managerView.note"
+                from="manager_view"
+                :facility="currentFacility"
+                :note="managerView.note"
+                @close-note-input="newNote=false"
+                @note-created="createdFacilityNote"
+                @note-updated="updatedFacilityNote"
+              ></notes-form>           
+            </div>                    
+          
+        </div>           
+     </div>
       
-      </div>
 
       <!-- Sheets View ends here -->
 
@@ -1107,6 +1096,10 @@
       border-radius: 4px;
       z-index: 1;
     }
+    .action-form-overlay {
+      position: absolute;
+      top:0;
+    }
     .center-section {
       position: absolute;
       box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
@@ -1129,6 +1122,11 @@
     padding-right:5px;
     box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
+  // .blur-bg {
+  //   background-color: rgba(0, 0, 0, 0.8) !important;
+  //   height: 100vh !important;
+  //   z-index: 100 !important;
+  // }
   .searchBar {
     margin-top: 24px;
   }
@@ -1170,4 +1168,7 @@
       }
     }
   } 
+  .no-scroll {
+    overflow-y: hidden !important;
+  }
 </style>

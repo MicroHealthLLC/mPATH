@@ -76,12 +76,12 @@
           </GmapMap>
         </div>
         <div id="rollup-sidebar" class="col-5 p-0" :style="rollupStyle">
-          <div style="margin-left: 20px">
+          <div style="margin-left: 5px">
             <div>
               <FacilityRollup v-show="!openSidebar"></FacilityRollup>
 
               <div class="knocker_side" :style="knockerStyle">
-                <button
+                <!-- <button
                   v-if="currentFacility && currentFacility.id"
                   class="knocker btn btn-sm text-light p-1"
                   @click="toggleOpenSideBar"
@@ -90,9 +90,9 @@
                     ><span class="pr-1"><i class="fas fa-building"></i></span
                     >FACILITY SUMMARY</small
                   >
-                </button>
+                </button> -->
                 <div class="knocker_side" :style="knockerStyle">
-                  <button
+                  <!-- <button
                     v-if="currentFacility && currentFacility.id"
                     class="knocker btn btn-sm text-light p-1"
                     @click="resetView"
@@ -101,9 +101,10 @@
                       ><span class="pr-1"><i class="fas fa-building"></i></span
                       >PROJECT SUMMARY</small
                     >
-                  </button>
+                  </button> -->
                   <div id="map-sidebar" class="shadow-sm mr-2">
                     <facility-show
+                     v-loading="!contentLoaded"
                       v-if="currentFacility && currentFacility.id"
                       :facility="currentFacility"
                       :facility-group="currentFacilityGroup"

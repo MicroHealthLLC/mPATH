@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-2 risks-index" data-cy="risk_list">
+  <div v-if="!loading" class="mt-2 risks-index px-3" data-cy="risk_list">
     <div v-if="newRisk && from != 'manager_view'">
       <risk-form
         :facility="facility"

@@ -3,11 +3,11 @@
     <form
       id="tasks-form"
       @submit.prevent="saveTask"
-      class="mx-auto"
+      class="mx-auto tasks-form"
       :class="{'_disabled': loading}"
       accept-charset="UTF-8"
       >
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-2 justify-content-start">
+       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 px-3 justify-content-start">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -59,13 +59,13 @@
           Delete
         </button>
       </div>
-      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">
           
-      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       
       </div>
     
-     <div class="formTitle pt-1">
+     <div class="formTitle pt-1 mx-3">
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -583,7 +583,7 @@
 
       
     
-     <h6 class="text-danger text-small pl-1 float-right">*Indicates required fields</h6>
+     <h6 class="text-danger text-small pl-1 float-right pr-3">*Indicates required fields</h6>
        <!-- <div ref="addUpdates" class="pt-0 mt-0"> </div> -->
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
@@ -1195,8 +1195,7 @@
   #tasks-form {
     z-index: 100;
     width: 100%;
-    position: absolute;
-    background-color: #ededed;
+    position: absolute;  
   }
   .form-control.error {
     border-color: #E84444;
@@ -1303,7 +1302,8 @@
   }
   .custom-tab {
     width: min-content;
-    background-color: #fafafa;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    background-color: #fff;
+    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10) !important;
+
   }
 </style>

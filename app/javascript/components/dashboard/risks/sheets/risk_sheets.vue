@@ -257,13 +257,13 @@
     height: 20px;
     font-weight: bold;
   }
-  .toolTip {
-    background-color: rgba(132, 133, 133, 1);
-    font-size: .75rem;
-    padding:1px;
-    color: #fff;
-    border-radius: 3px;
-  }
+  // .toolTip {
+  //   background-color: rgba(132, 133, 133, 1);
+  //   font-size: .75rem;
+  //   padding:1px;
+  //   color: #fff;
+  //   border-radius: 3px;
+  // }
   td {
     overflow-wrap: break-word;
   }

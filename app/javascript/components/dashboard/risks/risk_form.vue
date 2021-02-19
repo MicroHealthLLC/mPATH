@@ -4,11 +4,11 @@
       id="risks-form"
       @submit.prevent="validateThenSave"
       :class="{'_disabled': loading}"
-      class="mx-auto pb-4"
+      class="mx-auto pb-4 risks-form"
       accept-charset="UTF-8"
       >
       <div class="form-group mb-1">
-        <div v-if="_isallowed('read')" class="d-flex form-group sticky py-0 px-1 mb-1 justify-content-start">             
+        <div v-if="_isallowed('read')" class="d-flex form-group sticky py-0 px-3 mb-1 justify-content-start">             
          <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -47,20 +47,20 @@
         <button
           v-if="_isallowed('delete') && DV_risk.id"
           @click.prevent="deleteRisk"
-          class="btn btn-sm btn-danger sticky-btn ml-auto "
+          class="btn btn-sm btn-danger sticky-btn ml-auto"
           data-cy="risk_delete_btn"
           >
           <i class="fas fa-trash-alt mr-2"></i>
           Delete
         </button>
       </div>
-        <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">
+        <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start ml-3">
           
-        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />  
+        <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />  
       
       </div>
     
- <div >
+ <div class='mx-3' >
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -1021,7 +1021,7 @@
 
 
       <!-- TABBED OUT SECTION END HERE -->
-      <h6 class="text-danger text-small pr-1 mr-1 float-right" ref="riskMatrix">*Indicates required fields</h6>
+      <h6 class="text-danger text-small pr-1 mr-1 pr-3 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
       <div>
        
@@ -1808,8 +1808,7 @@
   #risks-form {
     z-index: 10;
     width: 100%;
-    position: absolute;
-    background-color: #ededed;
+    position: absolute; 
   }
   .form-control.error {
     border-color: #E84444;
@@ -2040,5 +2039,9 @@
     position: absolute;
     top: 5%;
     right: 1%;
+  }
+  .custom-tab {
+    background-color: #fff;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
 </style>

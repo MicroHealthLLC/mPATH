@@ -76,12 +76,12 @@
       </context-menu>
     </table>
 
-    <sweet-modal
+    <!-- <sweet-modal
       class="task_form_modal"
       ref="taskFormModal"
       :hide-close-button="true"
       :blocking="true"
-    >
+    > -->
       <div v-if="has_task" class="w-100">
         <task-form
           v-if="Object.entries(DV_edit_task).length"
@@ -102,7 +102,7 @@
           class="form-inside-modal"
         ></issue-form>
       </div>
-    </sweet-modal>
+    <!-- </sweet-modal> -->
   </div>
 </template>
 
@@ -200,17 +200,17 @@ export default {
       this.DV_edit_issue = {};
     },
     toggleWatched() {
-      if (this.DV_task.watched) {
-        var confirm = window.confirm(
-          `Are you sure, you want to remove this task from on-watch?`
-        );
-        if (!confirm) {
-          return;
+        if (this.DV_task.watched) {
+          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+          if (!confirm) {return}
         }
-      }
-      this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
-      this.updateWatchedTasks(this.DV_task);
-    },
+        this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
+        this.updateWatchedTasks(this.DV_task)
+      },
+      updateRelatedTaskIssue(task) {
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
+        this.onCloseForm()
+      },
     updateRelatedTaskIssue(task) {
       this.taskUpdated({
         facilityId: task.facilityId,
@@ -545,9 +545,9 @@ table {
 td {
   overflow-wrap: break-word;
 }
-.task_form_modal.sweet-modal-overlay {
-  z-index: 10000001;
-}
+// .task_form_modal.sweet-modal-overlay {
+//   z-index: 10000001;
+// }
 .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
   min-width: 30vw;
   max-height: 80vh;
@@ -561,9 +561,9 @@ td {
   td {
     overflow-wrap: break-word;
   }
-  .task_form_modal.sweet-modal-overlay {
-    z-index: 10000001;
-  }
+  // .task_form_modal.sweet-modal-overlay {
+  //   z-index: 10000001;
+  // }
   .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
     min-width: 30vw;
     max-height: 80vh;

@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <sweet-modal
+     <sweet-modal
       class="task_form_modal"
       ref="taskFormModal"
       :hide-close-button="true"
@@ -99,7 +99,7 @@
           class="form-inside-modal"
         ></issue-form>
       </div>
-    </sweet-modal>
+    </sweet-modal> 
     <!-- The context-menu appears only if table row is right-clicked -->
     <context-menu :display="showContextMenu" ref="menu">
       <el-menu collapse>
