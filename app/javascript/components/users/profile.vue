@@ -300,8 +300,8 @@
       },
       projectGroupSelectChange(value){
 
-        if(value){
-          this.projectOptions = _.filter( this.allProjects, (p) => p.facilityGroupId == value.id )
+        if(value){          
+          this.projectOptions = this.getProjects(this.selectedProgram, value)
         }
         this.selectedProject = null
 
@@ -324,31 +324,14 @@
             if(this.preferences.programId)
               this.selectedProgram = this.programOptions.find((t) => t.id === this.preferences.programId );
 
-            //this.projectGroupOptions = res.data.projectGroups
-            //this.selectedProjectGroup = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
-
             if(this.selectedProgram){
-              var program = this.selectedProgram;
-              var responseProjectGroups = this.allProjectGroups
-              var responseProjects = this.allProjects
-
-              var projectGroupOptions = []
-
-              _.forEach(program.projectGroupIds, function(pgId) {
-                var fg = responseProjectGroups.find((t) => t.id === pgId ); 
-                projectGroupOptions.push({id: fg.id, name: fg.name, value: fg.id }) 
-              });
-              this.projectGroupOptions = projectGroupOptions
+              this.projectGroupOptions = this.getProjectGroups(this.selectedProgram)
               this.selectedProjectGroup = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
 
               if(this.selectedProjectGroup){
-                var group = this.projectGroupOptions.find((t) => t.id === this.selectedProjectGroup.id );
-                var fc = _.filter(responseProjects, (f) => f.facilityGroupId == group.id )
-                this.projectOptions = []
-                _.forEach(fc, (f) => this.projectOptions.push({id: f.id, name: f.name, value: f.id }))
-                console.log(this.preferences.projectId)
+
+                this.projectOptions = this.getProjects(this.selectedProgram, this.selectedProjectGroup)
                 this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId );
-                console.log(fc)
               }
             }
             this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
@@ -424,12 +407,11 @@
         window.location.pathname = "/dashboard"
       },
       getProjectGroups(program){
-        var responseProjectGroups = this.allProjectGroups
-        return _.filter(responseProjectGroups, f => program.projectGroupIds.includes(f.id) )
+        return _.filter(this.allProjectGroups, f => program.projectGroupIds.includes(f.id) )
       },
-      getProjects(projectGroup){
-        var responseProjects = this.allProjects
-        return _.filter(responseProjects, p => p.facilityGroupId == projectGroup.id )
+      getProjects(program, projectGroup){
+        var projects = _.filter(this.allProjects, (p) => program.projectIds.includes(p.id) )
+        return _.filter(projects, p => p.facilityGroupId == projectGroup.id )
       }
     },
     computed: {
