@@ -647,7 +647,7 @@
           tasks.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return tasks
@@ -659,8 +659,8 @@
         let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent ) },
+          overdue: {count: overdue.length, percentage: Math.round(  overdue_percent ) },
         }
       },
       filteredIssues() {
@@ -696,7 +696,7 @@
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
@@ -708,7 +708,7 @@
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
@@ -720,8 +720,8 @@
         let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
       },
     filteredRisks() {
@@ -773,8 +773,8 @@
         let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
         let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
      },
      currentRiskTypes() {
@@ -787,7 +787,7 @@
               name: type.name,
               _display: risks.length > 0 && (names ? names.includes(type.name) : true),
               length: risks.length,
-              progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+              progress: Number(_.meanBy(risks, 'progress').toFixed(0))
             }
         )
       }
