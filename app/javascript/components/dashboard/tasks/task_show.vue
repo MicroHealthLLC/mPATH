@@ -104,9 +104,8 @@
     <context-menu :display="showContextMenu" ref="menu">
       <el-menu collapse>
         <el-menu-item @click="editTask">Open</el-menu-item>
-        <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
-        <el-menu-item @click="deleteTask">Delete</el-menu-item>
         <hr>
+        <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
         <el-submenu index="1">
           <template slot="title">
             <span slot="title">Duplicate to...</span>
@@ -131,6 +130,7 @@
             </div>
           </div>
         </el-submenu>
+        <hr>
         <el-submenu index="2">
           <template slot="title">
             <span slot="title">Move to...</span>
@@ -148,6 +148,8 @@
             </el-tree>
           </div>
         </el-submenu>
+        <hr>
+        <el-menu-item @click="deleteTask">Delete</el-menu-item>
       </el-menu>
     </context-menu>
   </div>
