@@ -310,7 +310,6 @@
             select-label="Select"
             deselect-label="Enter to remove"
             :close-on-select="false"
-    
             data-cy="risk_owner"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -348,23 +347,23 @@
 
 <div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
       
-      <div class="form-group pt-3 mx-4">
-        <label class="font-sm">Checklists:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
-          <i class="fas fa-plus-circle" ></i>
-        </span>
-        <div v-if="filteredChecks.length > 0">
-        <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
-          <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-            <div class="form-control h-100">
-              <div class="row">
-                <div class="col justify-content-start">
-                  <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-                  <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
-                </div>
+  <div class="form-group pt-3 mx-4">
+    <label class="font-sm">Checklists:</label>
+    <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
+      <i class="fas fa-plus-circle" ></i>
+    </span>
+    <div v-if="filteredChecks.length > 0">
+      <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card">
+        <div v-for="(check, index) in DV_task.checklists" :key="index" class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+          <div class="form-control h-100">
+            <div class="row">
+              <div class="col justify-content-start">
+                <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
+                <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
-              <div class="row justify-content-end">             
-               <div class="simple-select form-group col mb-0">
+            </div>
+            <div class="row justify-content-end">             
+              <div class="simple-select form-group col mb-0">
                 <label class="font-sm">Assigned To:</label>
                 <multiselect
                   v-model="check.user"
@@ -382,38 +381,64 @@
                       <span class='select__tag-name'>{{option.fullName}}</span>
                     </div>
                   </template>
-              </multiselect>
-             </div>
-               <div class="simple-select form-group col mb-0">
-                 <div class="float-right">
-                   <label class="font-sm dueDate">Due Date:</label>  
-                   <br/>                    
-                    <v2-date-picker                    
-                      v-model="check.dueDate"
-                      :value="check.dueDate" 
-                      :disabled="!_isallowed('write') || !check.text"
-                      @selected="updateCheckItem($event, 'dueDate', index)"
-                      :key="`dueDate_${index}`"
-                      value-type="YYYY-MM-DD"
-                      format="DD MMM YYYY"
-                      placeholder="DD MM YYYY"
-                      name="dueDate"
-                      class="w-100 vue2-datepicker d-flex ml-auto"
-                      :disabled-date="disabledDateRange"
-                      :class="{ disabled: disabled }"          
-                    />
-                 </div>
-                </div>       
-               </div>
-            </div>             
-            <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
-              <i class="fas fa-times"></i>
+                </multiselect>
+              </div>
+              <div class="simple-select form-group col mb-0">
+                <div class="float-right">
+                  <label class="font-sm dueDate">Due Date:</label>  
+                  <br/>                    
+                  <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Start Checkbox Progress List -->
+            <!-- Create component to manage progress list -->
+            <label class="font-sm">Progress List:</label>
+            <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
+              <i class="fas fa-plus-circle" ></i>
             </span>
-          </div>
-        </draggable>       
+
+            <div v-for="(progress, pindex) in check.progressLists" :key="pindex" class="d-flex w-100 mb-3 drag" :log="log(progress)"  v-if="!progress._destroy">
+              <div class="row">{{progressListTitleText(progress)}}</div>
+              <div class="form-control h-100">
+                <div class="row">
+                  <div class="col justify-content-start">
+                    <input :value="progress.body" name="text" @input="updateProgressListItem($event, 'text', progress)" :key="`ptext_${pindex}`" placeholder="Type Progress" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
+                  </div>
+                </div>
+              </div>             
+              <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)">
+                <i class="fas fa-times"></i>
+              </span>
+            </div>
+            <!-- End Checkbox Progress List -->
+
+
+          </div>             
+          <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
+            <i class="fas fa-times"></i>
+          </span>
+
         </div>
-        <p v-else class="text-danger font-sm">No checks..</p>
-      </div>
+
+      </draggable>       
+    </div>
+    <p v-else class="text-danger font-sm">No checks..</p>
+  </div>
  <!-- closing div for tab2 -->
 </div>
 
@@ -707,6 +732,7 @@
         }
       },
       log(e){
+        //console.log(e)
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -736,6 +762,12 @@
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
         this.cancelSave()
+      },
+      progressListTitleText(progressList){
+        if(!progressList.id) return;
+        var date = moment(progressList.createdAt).format("MM/DD/YYYY")
+        var time = moment(progressList.createdAt).format("hh:mm:ss a")
+        return `${progressList.user.fullName} at ${date} ${time} `
       },
          // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
@@ -814,12 +846,12 @@
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
 
-  // RACI USERS START HERE Awaiting backend work
-     
-     //Responsible USer Id
+          // RACI USERS START HERE Awaiting backend work
+       
+          //Responsible USer Id
 
 
-     if (this.DV_task.responsibleUserIds.length) {
+          if (this.DV_task.responsibleUserIds.length) {
             for (let u_id of this.DV_task.responsibleUserIds) {
               formData.append('responsible_user_ids[]', u_id)
             }
@@ -828,7 +860,7 @@
             formData.append('responsible_user_ids[]', [])
           }
 
-      // Accountable UserId
+          // Accountable UserId
 
          if (this.DV_task.accountableUserIds.length) {
             for (let u_id of this.DV_task.accountableUserIds) {
@@ -861,8 +893,8 @@
             formData.append('informed_user_ids[]', [])
           }
 
-  // RACI USERS ABOVE THIS LINE  Awaiting backend work
-  // More RACI Users in Computed section below
+          // RACI USERS ABOVE THIS LINE  Awaiting backend work
+          // More RACI Users in Computed section below
 
 
           if (this.DV_task.subTaskIds.length) {
@@ -895,8 +927,8 @@
           for (let i in this.DV_task.checklists) {
             let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
-            for (let key in check) {         
-              if (key === 'user') key = 'user_id'            
+            for (let key in check) {
+              if (key === 'user') key = 'user_id'
               let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
               // if (key === "dueDate"){
               //   key = "due_date"
@@ -904,9 +936,25 @@
               key = humps.decamelize(key)
               if(['created_at', 'updated_at'].includes(key)) continue
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-            }              
-          }          
 
+              for (let pi in check.progressLists) {
+                let progressList = check.progressLists[pi]
+                if (!progressList.body && !progressList._destroy) continue
+                for (let pkey in progressList) {
+                  if (key === 'user') key = 'user_id'
+                  let pvalue = progressList[pkey]
+                  // if (key === "dueDate"){
+                  //   key = "due_date"
+                  // }
+                  pkey = humps.decamelize(pkey)
+                  if(['created_at', 'updated_at'].includes(pkey)) continue
+                  formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
+
+                }
+              }
+
+            }
+          }          
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
             if (!note.body && !note._destroy) continue
@@ -956,9 +1004,13 @@
           })
         })
       },
+      addProgressList(check){
+        var postion = check.progressLists.length
+        check.progressLists.push({body: '', position: postion})
+      },
       addChecks() {
         var postion = this.DV_task.checklists.length
-        this.DV_task.checklists.push({text: '', checked: false, position: postion})
+        this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -975,6 +1027,13 @@
       downloadFile(file) {
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
+      },
+      destroyProgressList(check, progressList, index) {
+        let confirm = window.confirm(`Are you sure you want to delete this Progress List item?`)
+        if (!confirm) return;
+
+        let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
+        Vue.set(check.progressLists, i, {...progressList, _destroy: true})
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
@@ -1008,6 +1067,9 @@
         } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
           this.DV_task.checklists[index].dueDate = event.target.value
         }
+      },
+      updateProgressListItem(event, name, progressList) {
+        progressList.body = event.target.value
       },
       isMyCheck(check) {
         return this.C_myTasks && check.id ? (check.user && check.user.id == this.$currentUser.id) : true

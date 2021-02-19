@@ -120,7 +120,13 @@ class Task < ApplicationRecord
         :due_date,
         :listable_type,
         :listable_id,
-        :position
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
       ],
       notes_attributes: [
         :id,
@@ -208,10 +214,16 @@ class Task < ApplicationRecord
             end
           else
             value.delete("_destroy")
-            checklist_objs << Checklist.new(value.merge({listable_id: task.id, listable_type: "Task"}) )
+            #checklist_objs << Checklist.new(value.merge({listable_id: task.id, listable_type: "Task"}) )
+            c = Checklist.new(value.merge({listable_id: task.id, listable_type: "Task"}) )
+            c.progress_lists.each do |p|
+              p.user_id = user.id
+            end
+            c.save
           end
         end
-        Checklist.import(checklist_objs) if checklist_objs.any?
+        # NOTE: as currently we don't have solution for nested attributes
+        #Checklist.import(checklist_objs) if checklist_objs.any?
       end
 
       if notes_attributes.present?
