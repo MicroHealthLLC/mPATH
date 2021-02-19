@@ -159,28 +159,7 @@
           </template>
         </multiselect>
       </div>
-       <div class="simple-select form-group w-100">
-        <label class="font-sm">*Project:</label>
-        <multiselect
-          v-model="selectedFacilityProject"
-          v-validate="'required'"
-          track-by="id"
-          label="name"
-          placeholder="Select Project"
-          :options="getFacilityProjectOptions"
-          :searchable="false"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :disabled="!_isallowed('write')"
-          data-cy="facility_project_id"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.name}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div>
+
     </div>
     <!-- Row ends -->
     <div class="form-row mx-4">
@@ -685,7 +664,6 @@
         DV_task: this.INITIAL_TASK_STATE(),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
-        selectedFacilityProject: null,
         selectedTaskType: null,
         selectedTaskStage: null,
         responsibleUsers: [],
@@ -762,7 +740,6 @@
           text: '',
           startDate: '',
           dueDate: '',
-          facilityProjectId: '',
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',      
@@ -835,7 +812,6 @@
 
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
-        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (task.attachFiles) this.addFile(task.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
@@ -895,7 +871,6 @@
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
-          formData.append('task[facility_project_id]', this.DV_task.facilityProjectId)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
 
 
@@ -1163,7 +1138,6 @@
           this.exists(this.DV_task.text) &&
           this.exists(this.DV_task.taskTypeId) &&
           this.exists(this.DV_task.dueDate) &&
-          this.exists(this.DV_task.facilityProjectId) &&
           this.exists(this.DV_task.startDate)
         )
       },    
@@ -1199,13 +1173,7 @@
       }
     },
     watch: {
-      selectedFacilityProject: {
-        handler: function(value) {
-          if(value){
-            this.DV_task.facilityProjectId = value.id  
-          }
-        }, deep: true
-      },
+
       task: {
         handler: function(value) {
           if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()

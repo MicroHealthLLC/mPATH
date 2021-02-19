@@ -163,28 +163,6 @@
             </template>
           </multiselect>
         </div>  
-                <div class="simple-select w-100 form-group">
-          <label class="font-sm">*Project:</label>
-          <multiselect
-            v-model="selectedFacilityProject"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Select Project"
-            :options="getFacilityProjectOptions"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :disabled="!_isallowed('write')"
-            data-cy="facility_project_id"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
        </div>
 
 
@@ -1062,7 +1040,6 @@
         // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),          
         paginate: ['filteredNotes'],     
         now: new Date().toLocaleString(),       
-        selectedFacilityProject: null,
         destroyedFiles: [],      
         responsibleUsers: [],
         riskApprover: [],  
@@ -1136,7 +1113,6 @@
       ]),
       INITIAL_RISK_STATE() {
         return {
-          facilityProjectId: '',
           text: '',      
           riskDescription: '',
           impactDescription: '',   
@@ -1197,7 +1173,6 @@
       },    
       loadRisk(risk) {  
         this.DV_risk = {...this.DV_risk, ..._.cloneDeep(risk)}
-        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_risk.facilityProjectId)
         this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.responsibleUserIds.includes(u.id))
         this.accountableRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.accountableUserIds.includes(u.id))
         this.consultedRiskUsers = _.filter(this.activeProjectUsers, u => this.DV_risk.consultedUserIds.includes(u.id))
@@ -1303,7 +1278,6 @@
           }
           this.loading = true         
           let formData = new FormData()         
-          formData.append('risk[facility_project_id]', this.DV_risk.facilityProjectId)
           formData.append('risk[text]', this.DV_risk.text)
           formData.append('risk[risk_description]', this.DV_risk.riskDescription)
           formData.append('risk[impact_description]', this.DV_risk.impactDescription)
@@ -1538,7 +1512,6 @@
         return (
           this.DV_risk &&        
           this.exists(this.DV_risk.text) &&
-          this.exists(this.DV_risk.facilityProjectId) &&
           this.exists(this.DV_risk.riskDescription) &&
           this.exists(this.DV_risk.impactDescription) &&
           this.exists(this.DV_risk.probabilityDescription) &&
@@ -1704,13 +1677,6 @@
        },    
     },
     watch: {
-      selectedFacilityProject: {
-        handler: function(value) {
-          if(value){
-            this.DV_risk.facilityProjectId = value.id
-          }
-        }, deep: true
-      },
       risk: {
         handler: function(value) {
           if (!('id' in value)) this.DV_risk = this.INITIAL_RISK_STATE()
