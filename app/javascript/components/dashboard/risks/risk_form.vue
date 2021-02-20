@@ -748,7 +748,7 @@
             <button v-else 
                class="btn clearBtn py-0 mr-1 font-sm btn-sm btn-warning"   
                v-tooltip="`Clear Risk Approval`"             
-               @click.prevent="resetApprovalSection">
+               v-on:click.prevent="resetApprovalSection">
                <i class="fas fa-redo pr-1"></i>RISK APPROVAL SECTION
            </button>    
           </span>      
@@ -1234,7 +1234,8 @@
         //   this.DV_risk.approved = false
         // }               
       }, 
-     resetApprovalSection() {   
+     resetApprovalSection(e) {   
+       e.preventDefault()
         if (this.DV_risk.approved) {
           this.DV_risk.approved = !this.DV_risk.approved
         }          
@@ -1265,7 +1266,8 @@
         this.$emit('on-close-form')      
         this.setRiskForManager({key: 'risk', value: null})        
       },
-      validateThenSave() {
+      validateThenSave(e) {
+          e.preventDefault();
         this.$validator.validate().then((success) => {
           if (!success || this.loading) {
             this.showErrors = !success

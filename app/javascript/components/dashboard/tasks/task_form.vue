@@ -6,7 +6,6 @@
       class="mx-auto tasks-form"   
       accept-charset="UTF-8"
       :class="{'_disabled': loading}"
-
       >
        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 px-3 justify-content-start">
         <button
@@ -82,7 +81,7 @@
         
     <div class="form-group pt-3 mx-4">
         <label class="font-sm">*Task Name:</label>
-            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
+            <span v-if="_isallowed('write')" class="watch_action clickable float-right" v-on:click.prevent="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
               <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
               <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
@@ -848,7 +847,8 @@
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
         }
       },
-       toggleWatched() {
+       toggleWatched(e) {
+         e.preventDefault();
         if (this.DV_task.watched) {
           let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
           if (!confirm) {return}
@@ -860,7 +860,8 @@
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
       },
-      saveTask() {
+      saveTask(e) {
+        e.preventDefault();
         if (!this._isallowed('write')) return
         this.$validator.validate().then((success) =>
         {
@@ -1029,7 +1030,9 @@
           .then((response) => {
             // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            this.$emit(callback, humps.camelizeKeys(response.data.task))
+           
+            this.$emit( humps.camelizeKeys(response.data.task))
+        
           })
           .catch((err) => {
             // var errors = err.response.data.errors
