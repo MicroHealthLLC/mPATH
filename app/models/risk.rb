@@ -216,8 +216,10 @@ class Risk < ApplicationRecord
     sub_risk_ids = r_params.delete(:sub_risk_ids)
     checklists_attributes = r_params.delete(:checklists_attributes)
     notes_attributes = r_params.delete(:notes_attributes)
+    risk.user_id = user.id
 
     risk.attributes = r_params
+
     if !risk.facility_project_id.present?
       project = user.projects.active.find_by(id: params[:project_id])
       facility_project = project.facility_projects.find_by(facility_id: params[:facility_id])
@@ -245,7 +247,7 @@ class Risk < ApplicationRecord
           related_risk_objs << RelatedRisk.new(relatable_id: risk.id, relatable_type: "Risk", risk_id: sid)
           related_risk_objs2 << RelatedRisk.new(relatable_id: sid, relatable_type: "Risk", risk_id: risk.id)
         end
-        RelatedRisk.import(related_rik_objs) if related_risk_objs.any?
+        RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
         RelatedRisk.import(related_risk_objs2) if related_risk_objs2.any?
       end
 
