@@ -29,8 +29,8 @@
         <el-menu collapse>
           <el-menu-item @click="editTask">Open</el-menu-item>
           <hr>
-          <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
-          <el-submenu index="1">
+          <el-menu-item @click="createDuplicate" :disabled="!$permissions.tasks.write">Duplicate</el-menu-item>
+          <el-submenu index="1" :disabled="!$permissions.tasks.write">
             <template slot="title">
               <span slot="title">Duplicate to...</span>
             </template>
@@ -55,7 +55,7 @@
             </div>
           </el-submenu>
           <hr>
-          <el-submenu index="2">
+          <el-submenu index="2" :disabled="!$permissions.tasks.write">
             <template slot="title">
               <span slot="title">Move to...</span>
             </template>
