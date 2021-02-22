@@ -289,8 +289,6 @@
           let method = "PUT";
           let callback = "task-updated";
 
-          var beforeSaveTask = task;
-
           axios({
             method: method,
             url: url,
@@ -301,8 +299,6 @@
             },
           })
             .then((response) => {
-              if (beforeSaveTask.facilityId && beforeSaveTask.projectId)
-                this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
               this.$emit(callback, humps.camelizeKeys(response.data.task));
               this.updateFacilities(
                 humps.camelizeKeys(response.data.task),
