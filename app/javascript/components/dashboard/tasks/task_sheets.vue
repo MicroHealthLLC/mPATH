@@ -73,7 +73,7 @@
             </div>
           </el-submenu>
           <hr>
-          <el-menu-item @click="deleteTask">Delete</el-menu-item>
+          <el-menu-item @click="deleteTask" :disabled="!$permissions.tasks.delete">Delete</el-menu-item>
         </el-menu>
       </context-menu>
     </table>
