@@ -7,7 +7,7 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-cy=user_password]').type(password).should('have.value', password)
   cy.get('[data-cy=user_remember_me]').click()
   cy.get('[data-cy=submit]').click()
-  cy.contains('Welcome to MicroHealth Geographical Information System')
+  cy.contains('Welcome to MicroHealth Geographic Information System')
 })
 
 // Logout Command
@@ -35,7 +35,7 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
   cy.facilityUnderGroup()
-  cy.contains('Facility Summary')
+  cy.contains('Test Facility')
 })
 
 // Open Teams page of a project
@@ -53,7 +53,7 @@ Cypress.Commands.add("openKanban", () => {
 // Open Sheet view of a project
 Cypress.Commands.add("openSheet", () => {
   cy.openProject()
-  cy.get('[data-cy=sheets_tab]').contains('Sheets').should('be.visible').click()
+  cy.get('[data-cy=sheets_tab]').contains('Sheet').should('be.visible').click()
 })
 
 // Open sheet of a facility
