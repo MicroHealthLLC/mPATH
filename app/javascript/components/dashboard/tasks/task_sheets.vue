@@ -247,8 +247,6 @@ export default {
         let method = "PUT";
         let callback = "task-updated";
 
-        var beforeSaveTask = task;
-
         axios({
           method: method,
           url: url,
@@ -259,20 +257,17 @@ export default {
           },
         })
           .then((response) => {
-            if (beforeSaveTask.facilityId && beforeSaveTask.projectId) {
-              this.$emit(callback, humps.camelizeKeys(beforeSaveTask));
-              this.$emit(callback, humps.camelizeKeys(response.data.task));
-              this.updateFacilities(
-                humps.camelizeKeys(response.data.task),
-                facilityProjectId
-              );
-              if (response.status === 200) {
-                this.$message({
-                  message: `${task.text} was moved successfully.`,
-                  type: 'success',
-                  showClose: true
-                });
-              }
+            this.$emit(callback, humps.camelizeKeys(response.data.task));
+            this.updateFacilities(
+              humps.camelizeKeys(response.data.task),
+              facilityProjectId
+            );
+            if (response.status === 200) {
+              this.$message({
+                message: `${task.text} was moved successfully.`,
+                type: 'success',
+                showClose: true
+              });
             }
           })
           .catch((err) => {
@@ -441,7 +436,7 @@ export default {
       "currentIssues",
       "viewPermit",
       "currentProject",
-      "getUnfilteredFacilities",
+      "getUnfilteredFacilities"
     ]),
     _isallowed() {
       return (salut) =>

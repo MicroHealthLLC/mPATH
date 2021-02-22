@@ -1046,20 +1046,28 @@
           //   this.currentFacilityGroup = value[0]
           //   this.expanded.id = value[0].id
           // }
+          // We are adding this condition because when we use move to function
+          // it is changing the screen to user preference screen
+          // https://github.com/MicroHealthLLC/mGis/issues/1806
+          
+          if(this.currentFacilityGroup && !this.currentFacilityGroup.id){
+            if(Vue.prototype.$preferences.project_group_id && value){
+              var facilityGroup = value.find(f => f.id === Vue.prototype.$preferences.project_group_id )
+              if(facilityGroup){
+                this.currentFacilityGroup = facilityGroup
+                this.expanded.id = this.currentFacilityGroup.id
+              }
+            }
+          }
+          if(this.currentFacility && !this.currentFacility.id ){
+            if(Vue.prototype.$preferences.project_id){
+              var facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == Vue.prototype.$preferences.project_id)
+              if(facility){
+                this.currentFacility = facility
+              }
+            }
+          }
 
-          if(Vue.prototype.$preferences.project_group_id && value){
-            var facilityGroup = value.find(f => f.id === Vue.prototype.$preferences.project_group_id )
-            if(facilityGroup){
-              this.currentFacilityGroup = facilityGroup
-              this.expanded.id = this.currentFacilityGroup.id
-            }
-          }
-          if(Vue.prototype.$preferences.project_id){
-            var facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == Vue.prototype.$preferences.project_id)
-            if(facility){
-              this.currentFacility = facility
-            }
-          }
         }, deep: true
       }
     }
