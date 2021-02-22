@@ -124,7 +124,7 @@
           v-validate="'required'"
           track-by="id"
           label="name"
-          placeholder="Select Task Category"
+          placeholder="Select Category"
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
@@ -345,7 +345,7 @@
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
-            <el-collapse-item title="Show More" name="1" style="background-color:#fafafa">
+            <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
 
             <div class="row justify-content-end pt-4" style="background-color:#fafafa">             
               <div class="simple-select form-group col mb-0">
@@ -436,9 +436,9 @@
        
                     <td ><span v-if="progress.user">{{progress.user.fullName}}</span></td> 
                     <td>
-                       <!-- <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
+                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
-                      </span> -->
+                      </span>
                       <span v-tooltip="`Edit`" v-if="progress.user" class="px-2">
                         <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
                       </span>
@@ -1333,8 +1333,7 @@
     list-style-type: none;
     padding: 0;
   }
-  .paperLook {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  .paperLook {   
     padding-bottom: 20px;
     margin-bottom: 10px;
     position: relative;

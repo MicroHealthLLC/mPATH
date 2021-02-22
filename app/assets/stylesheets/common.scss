@@ -129,16 +129,25 @@ input[type=button]:focus {
 }
 // Tabbed out form inside modals
 .paperLookTab {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  // box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   padding-bottom: 20px;
   margin-bottom: 10px;
   position: relative;
   background-color: #fff;
 }
 
-.risks-form, .tasks-form, .issues-form {
-  height: 100vh;
-  background-color: rgba(255, 255, 255, 0.88);
+.action-form-overlay {
+  position: absolute;
+  top:0;
+ } 
+ .updateForm {
+  width: 102% !important;
+  margin-top: -15px;
+  margin-left: -34px;
+ } 
+ .risks-form, .tasks-form, .issues-form, #risks-form {
+  height: 175vh;
+  background-color: #fff;
 }
 .warning-icon {
   font-size: 16px;

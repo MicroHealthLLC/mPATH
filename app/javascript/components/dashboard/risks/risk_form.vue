@@ -118,7 +118,7 @@
             v-validate="'required'"
             track-by="id"
             label="name"
-            placeholder="Task Category"
+            placeholder="Select Category"
             :options="taskTypes"
             :searchable="false"
             select-label="Select"
@@ -748,7 +748,7 @@
             <button v-else 
                class="btn clearBtn py-0 mr-1 font-sm btn-sm btn-warning"   
                v-tooltip="`Clear Risk Approval`"             
-               @click.prevent="resetApprovalSection">
+               v-on:click.prevent="resetApprovalSection">
                <i class="fas fa-redo pr-1"></i>RISK APPROVAL SECTION
            </button>    
           </span>      
@@ -1235,6 +1235,7 @@
         // }               
       }, 
      resetApprovalSection() {   
+       
         if (this.DV_risk.approved) {
           this.DV_risk.approved = !this.DV_risk.approved
         }          
@@ -1252,10 +1253,7 @@
           this.DV_risk.riskApprover = []
           this.validateThenSave();
         }  
-      // if (riskApprover.length > 0) {
-      //     riskApprover = []
-      //     this.validateThenSave();
-      //   }  
+          // this.validateThenSave
       }, 
     notApprover() {             
        alert("Sorry.  Only Risk Approach Approver is authorized to check this box.")
@@ -1265,7 +1263,8 @@
         this.$emit('on-close-form')      
         this.setRiskForManager({key: 'risk', value: null})        
       },
-      validateThenSave() {
+      validateThenSave(e) {
+          e.preventDefault();
         this.$validator.validate().then((success) => {
           if (!success || this.loading) {
             this.showErrors = !success
@@ -1811,7 +1810,6 @@
     padding-top: 25px;
   }
   .paperLookTab {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     padding-bottom: 20px;
     margin-bottom: 10px;
     position: relative;

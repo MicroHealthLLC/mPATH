@@ -94,30 +94,33 @@
           </div>
         
          <div v-if="isSheetsView && managerView.task || managerView.issue || managerView.risk || managerView.note"  >  
-             <div class="w-100 action-form-overlay" >
+             <div class="w-100 action-form-overlay">
               <task-form
                 v-if="managerView.task"
                 :facility="currentFacility"
                 :task="managerView.task"
                 title="Edit Task"
-                @task-created="updateFacilityTask"
-                @task-updated="updateFacilityTask"             
+                @on-close-form="onCloseForm"
+                @task-created="handleNewTask"
+                @task-updated="handleNewTask"  
                 class="form-inside-modal"
               ></task-form>
               <risk-form
                 v-if="managerView.risk"
                 :facility="currentFacility"
-                :risk="managerView.risk"          
-                @risk-created="updateFacilityRisk"
-                @risk-updated="updateFacilityRisk"             
+                :risk="managerView.risk"       
+                @on-close-form="onCloseForm"   
+                @risk-created="handleNewRisk"
+                @risk-updated="handleNewRisk"             
                 class="form-inside-modal"
               ></risk-form>
               <issue-form
                 v-else-if="managerView.issue"
                 :facility="currentFacility"
                 :issue="managerView.issue"
-                @issue-updated="updateFacilityIssue"
-                @issue-created="updateFacilityIssue"             
+                 @on-close-form="onCloseForm"
+                @issue-updated="handleNewIssue"
+                @issue-created="handleNewIssue"             
                 class="form-inside-modal"
               ></issue-form>
                 <notes-form
@@ -159,7 +162,7 @@
                   </div>
 
                   <div class="simple-select w-25  d-inline mr-1" style="position:absolute">
-                     <label class="font-sm mb-0">Task Category</label>
+                     <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -212,7 +215,7 @@
                     />
                   </div>
                   <div class="simple-select w-25 mr-1 d-inline" style="position:absolute">
-                    <label class="font-sm mb-0">Task Category</label>
+                    <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -240,57 +243,8 @@
                       </template>
                     </multiselect>
                   </div>
-                     <!-- <div class="simple-select w-25 d-inline-block">
-                    <label class="font-sm mb-0">Issue Type</label>
-                    <multiselect
-                      v-model="C_issueTypeFilter"
-                      track-by="name"
-                      label="name"
-                      placeholder="Filter by Issue Type"
-                      :options="issueTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                   </div> -->
-
-                    <!-- <div class="simple-select w-25 d-inline-block">
-                   <label class="font-sm mb-0">Issue Severity</label>
-                    <multiselect
-                      v-model="C_issueSeverityFilter"
-                      track-by="name"
-                      label="name"
-                      placeholder="Filter by Issue Severity"
-                      :options="issueSeverities"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div> -->
-                   <!-- <div class="form-check my-4 pl-0" data-cy="search_issue_total">
-                    <label class="form-check-label text-primary">
-                      <h5>Total: {{filteredIssues.length}}</h5>
-                    </label>
-                  </div>              -->
+                 
                 </div>
-
-
-
-
               <div v-if="currentTab === 'risks'">              
                   <div class="searchBar input-group w-25 d-inline-flex mr-1">
                     <div class="input-group-prepend d-inline">
@@ -308,7 +262,7 @@
                   </div>
                            
                   <div class="simple-select w-25 d-inline" style="position:absolute">
-                    <label class="font-sm mb-0">Task Category</label>
+                    <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -446,6 +400,13 @@
      KanbanView
     
     },
+  //     props: {
+  //   fromView: {
+  //     type: String,
+  //     default: "map_view",
+  //   },
+  //   task: Object,
+  // },
     data() {
       return {
           tabs: [
@@ -922,7 +883,7 @@
       updateFacilityTask(task) {
         let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.setTaskForManager({key: 'task', value: null})
+        // this.setTaskForManager({key: 'task', value: null})
       },
       updateFacilityIssue(issue) {
         let cb = () => this.updateIssuesHash({issue: issue})
@@ -975,17 +936,17 @@
       handleNewTask(task) {
         let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleNewIssue(issue) {
         let cb = () => this.updateIssuesHash({issue: issue})
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleNewRisk(risk) {
         let cb = () => this.updateRisksHash({risk: risk})
         this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
@@ -1012,7 +973,8 @@
         handler(value) {
           if (value.task || value.issue || value.note || value.risk) {
             this.$refs.formModals && this.$refs.formModals.open()
-          } else {
+          } 
+          else {
             this.$refs.formModals && this.$refs.formModals.close()
           }
         }, deep: true      

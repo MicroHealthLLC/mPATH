@@ -409,11 +409,11 @@
         </div>
         <div v-if="currentTab == 'tasks'">
           <div>
-            <task-sheets-index
+            <detail-sheet
               :facility="DV_facility"
               :from="from"
               @refresh-facility="refreshFacility"
-            ></task-sheets-index>
+            ></detail-sheet>
           </div>
         </div>
         <div v-if="currentTab == 'issues'">
@@ -438,25 +438,27 @@
 <script>
   import http from './../../../common/http'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
-  import DetailShow from './detail_show'
+  import DetailSheet from './detail_sheet'
   import NotesSheetsIndex from './../notes/notes_sheets_index'
   import IssueSheetsIndex from './../issues/issue_sheets_index'
   import TaskSheetsIndex from './../tasks/task_sheets_index'
   import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
-import { counter } from '@fortawesome/fontawesome-svg-core'
+
+
 
   export default {
     name: 'FacilitySheets',
     components: {
-      DetailShow,
+      DetailSheet,
       NotesSheetsIndex,
       IssueSheetsIndex,
       TaskSheetsIndex,
       RiskSheetsIndex,
       CustomTabs,
       Loader
+    
     },
     props: {
       facility: {

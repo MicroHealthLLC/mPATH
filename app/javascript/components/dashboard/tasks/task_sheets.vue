@@ -1,7 +1,7 @@
 
 <template>
   <div id="task-sheets">
-    <table class="table table-sm table-bordered table-striped">
+    <table class="table table-sm table-bordered table-striped p-3">
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="sixteen">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
@@ -77,14 +77,7 @@
         </el-menu>
       </context-menu>
     </table>
-
-    <!-- <sweet-modal
-      class="task_form_modal"
-      ref="taskFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-    > -->
-      <div v-if="has_task" class="w-100">
+      <div v-if="has_task" class="w-100 action-form-overlay updateForm">
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
@@ -93,18 +86,9 @@
           @task-updated="updateRelatedTaskIssue"
           @on-close-form="onCloseForm"
           class="form-inside-modal"
-        ></task-form>
-
-        <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
+        ></task-form>     
       </div>
-    <!-- </sweet-modal> -->
+  
   </div>
 </template>
 
@@ -187,9 +171,10 @@ export default {
     editTask() {
       if (this.fromView == "map_view") {
         this.$emit("edit-task", this.DV_task);
-      } else if (this.fromView == "manager_view") {
-        this.setTaskForManager({ key: "task", value: this.DV_task });
-      } else {
+      // } else if (this.fromView == "manager_view") {
+      //   this.setTaskForManager({ key: "task", value: this.DV_task });
+      } 
+      else {
         this.has_task = Object.entries(this.DV_task).length > 0;
         this.DV_edit_task = this.DV_task;
         this.$refs.taskFormModal && this.$refs.taskFormModal.open();
@@ -208,17 +193,9 @@ export default {
         }
         this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
         this.updateWatchedTasks(this.DV_task)
-      },
-      updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
-        this.onCloseForm()
-      },
+    },
     updateRelatedTaskIssue(task) {
-      this.taskUpdated({
-        facilityId: task.facilityId,
-        projectId: task.projectId,
-        cb: () => this.onCloseForm(),
-      });
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})  
     },
     getTask(task) {
       return this.currentTasks.find((t) => t.id == task.id) || {};
@@ -544,6 +521,10 @@ table {
   height: 20px;
   font-weight: bold;
 }
+.action-form-overlay {
+  position: absolute;
+  top:0;
+ } 
 td {
   overflow-wrap: break-word;
 }

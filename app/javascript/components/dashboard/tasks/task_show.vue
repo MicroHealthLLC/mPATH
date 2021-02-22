@@ -28,16 +28,7 @@
               {{task.taskType}}
             </div>
           </div>
-          <div class="row">
-            <div class="font-sm col-md-6">
-              <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-              {{formatDate(task.startDate)}}
-            </div>
-            <div class="font-sm col-md-6">
-              <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-              {{formatDate(task.dueDate)}}
-            </div>
-          </div>
+          z
         </div>
         <div class="col-md-3 mt-2">
           <div class="t_actions my-3 float-left">
@@ -249,18 +240,9 @@
         this.has_task = false
         this.DV_edit_task = {}
         this.DV_edit_issue = {}
-      },
-      toggleWatched() {
-        if (this.DV_task.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
-          if (!confirm) {return}
-        }
-        this.DV_task = {...this.DV_task, watched: !this.DV_task.watched}
-        this.updateWatchedTasks(this.DV_task)
-      },
+      },  
       updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
-        this.onCloseForm()
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})      
       },
       getTask(task) {
         return this.currentTasks.find(t => t.id == task.id) || {}
