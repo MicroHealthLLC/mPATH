@@ -7,8 +7,10 @@ class RisksController < AuthenticatedController
   end
 
   def create
-    @risk = Risk.create(risk_params.merge(user_id: current_user.id))
-    @risk.assign_users(params)
+    # @risk = Risk.create(risk_params.merge(user_id: current_user.id))
+    # @risk.assign_users(params)
+    
+    @risk = Risk.new.create_or_update_risk(params, current_user)
     render json: {risk: @risk.reload.to_json}
   end
 
