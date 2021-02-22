@@ -136,7 +136,7 @@
             v-model="selectedTaskType"
             track-by="id"
             label="name"
-            placeholder="Task category"
+            placeholder="Select Category"
             :options="taskTypes"
             :searchable="false"
             select-label="Select"

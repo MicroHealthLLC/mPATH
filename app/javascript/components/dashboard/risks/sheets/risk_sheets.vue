@@ -1,6 +1,18 @@
 
 <template>
   <div id="risk-sheets">
+      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
+        <risk-form
+          v-if="Object.entries(DV_edit_risk).length"
+          :facility="facility"
+          :risk="DV_edit_risk"
+          title="Edit Risk"
+          @risk-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></risk-form>
+      </div>
+    
     <table class="table table-sm table-bordered">
     
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
@@ -35,40 +47,12 @@
     </table>
 <!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
 
-
-    <sweet-modal
-      class="risk_form_modal"
-      ref="riskFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_risk" class="w-100">
-        <risk-form
-          v-if="Object.entries(DV_edit_risk).length"
-          :facility="facility"
-          :risk="DV_edit_risk"
-          title="Edit Risk"
-          @risk-updated="updateRelatedRiskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></risk-form>
-
-        <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedRiskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
-      </div>
-    </sweet-modal>
+    
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
   import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
   import moment from 'moment'
@@ -77,8 +61,7 @@
   export default {
     name: 'RiskSheets',
     components: {
-      RiskForm,
-      SweetModal,
+      RiskForm 
     },
     props: {
       fromView: {
@@ -109,7 +92,7 @@
       ]),
       ...mapActions([
         'riskDeleted',
-        'riskUpdated',
+        'taskUpdated',
         'updateWatchedRisks'
       ]),
       deleteRisk() {
@@ -136,9 +119,9 @@
         if (this.fromView == 'map_view') {
           this.$emit('edit-risk', this.DV_risk)
         }
-        else if (this.fromView == 'manager_view') {
-          this.setRiskForManager({key: 'risk', value: this.DV_risk})
-        }
+        // else if (this.fromView == 'manager_view') {
+        //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
+        // }
         else {
           this.has_risk = Object.entries(this.DV_risk).length > 0
           this.DV_edit_risk = this.DV_risk
@@ -159,8 +142,11 @@
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
       },
-      updateRelatedRiskIssue(risk) {
-        this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
+      // updateRelatedRiskIssue(risk) {
+      //   this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
+      // },
+      updateRelatedTaskIssue(task) {     
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getRisk(risk) {
         return this.currentRisks.find(t => t.id == risk.id) || {}

@@ -26,35 +26,17 @@
         <td class="oneFive" v-else>No Updates</td>
       </tr>
     </table>
-
-    <sweet-modal
-      class="issue_form_modal"
-      ref="issueFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_issue" class="w-100">
-        <div class="modal_close_btn" @click="onCloseForm">
-          <i class="fa fa-times"></i>
-        </div>
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          class="form-inside-modal"
-        ></task-form>
-
+      <div v-if="has_issue" class="w-100 action-form-overlay  updateForm">
         <issue-form
           v-if="Object.entries(DV_edit_issue).length"
           :facility="facility"
           :issue="DV_edit_issue"
+          @on-close-form="onCloseForm"
           @issue-updated="updateRelatedTaskIssue"
           class="form-inside-modal"
         ></issue-form>
       </div>
-    </sweet-modal>
+
   </div>
 </template>
 
@@ -111,9 +93,9 @@
         if (this.fromView == 'map_view') {
           this.$emit('issue-edited', this.issue)
         }
-        else if (this.fromView == 'manager_view') {
-          this.setTaskForManager({key: 'issue', value: this.DV_issue})
-        }
+        // else if (this.fromView == 'manager_view') {
+        //   this.setTaskForManager({key: 'issue', value: this.DV_issue})
+        // }
         else {
           this.DV_edit_issue = this.DV_issue
           this.has_issue = Object.entries(this.DV_issue).length > 0
@@ -154,7 +136,7 @@
         this.updateWatchedIssues(this.DV_issue)
       },
       updateRelatedTaskIssue(task) {
-        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb: () => this.onCloseForm()})
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getTask(task) {
         return this.currentTasks.find(t => t.id == task.id) || {}

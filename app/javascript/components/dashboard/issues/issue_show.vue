@@ -208,8 +208,7 @@
         this.DV_issue = {...this.DV_issue, watched: !this.DV_issue.watched}
         this.updateWatchedIssues(this.DV_issue)
       },
-      updateRelatedTaskIssue(task) {
-        this.onCloseForm()
+      updateRelatedTaskIssue(task) {    
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getTask(task) {
