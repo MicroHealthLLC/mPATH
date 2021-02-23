@@ -471,9 +471,9 @@
                        </span>                                            
                     </td> 
                     <td>
-                       <!-- <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="editProgress">
+                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
-                      </span> -->
+                      </span>
                       <span v-tooltip="`Edit`" v-if="progress.user" class="px-2">
                         <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
                       </span>
@@ -803,7 +803,7 @@
         }
       },
       log(e){
-        console.log(e)
+        // console.log(e)
       },
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
@@ -830,7 +830,7 @@
       }, 
       editProgress() {
        this.editToggle = !this.editToggle
-       this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
+       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
      
       },       
       deleteTask() {
@@ -900,6 +900,7 @@
       },
       saveTask() {
         if (!this._isallowed('write')) return
+
         this.$validator.validate().then((success) =>
         {
           if (!success || this.loading) {
@@ -1008,18 +1009,16 @@
               //   key = "due_date"
               // }
               key = humps.decamelize(key)
-              if(['created_at', 'updated_at'].includes(key)) continue
+              if(['created_at', 'updated_at', 'progress_lists'].includes(key)) continue
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
 
               for (let pi in check.progressLists) {
                 let progressList = check.progressLists[pi]
                 if (!progressList.body && !progressList._destroy) continue
                 for (let pkey in progressList) {
-                  if (key === 'user') key = 'user_id'
-                  let pvalue = progressList[pkey]
-                  // if (key === "dueDate"){
-                  //   key = "due_date"
-                  // }
+                  if (pkey === 'user') pkey = 'user_id'
+                  let pvalue = pkey == 'user_id' ? progressList.user ? progressList.user.id : null : progressList[pkey]
+
                   pkey = humps.decamelize(pkey)
                   if(['created_at', 'updated_at'].includes(pkey)) continue
                   formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
@@ -1028,7 +1027,8 @@
               }
 
             }
-          }          
+          }
+
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
             if (!note.body && !note._destroy) continue
@@ -1067,7 +1067,10 @@
           .then((response) => {
             // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            this.$emit(callback, humps.camelizeKeys(response.data.task))
+            var responseTask = humps.camelizeKeys(response.data.task)
+            this.loadTask(responseTask)
+            this.$emit(callback, responseTask)
+            // console.log(responseTask)
           })
           .catch((err) => {
             // var errors = err.response.data.errors
