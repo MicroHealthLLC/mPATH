@@ -1127,9 +1127,12 @@ export default new Vuex.Store({
     // for gantt chart view
     ganttData: (state, getters) => {
       let hash = new Array
-
+      if(!getters.currentProject && !Vue.prototype.$preferences.projectId){
+        alert("At least one project must be selected for Gantt view")
+        return;
+      }
       // for project
-      let p_id = `p_${getters.currentProject.id}`
+      let p_id = getters.currentProject ? `p_${getters.currentProject.id}` : `p_${Vue.prototype.$preferences.projectId}`
       let _p_id = '1'
       let p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
       let p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'

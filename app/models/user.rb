@@ -21,8 +21,8 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
   PREFERENCES_HASH =  {
-      navigation_menu: 'sheet', 
-      sub_navigation_menu: 'overview',
+      navigation_menu: nil, 
+      sub_navigation_menu: nil,
       program_id: nil, 
       project_id: nil,
       project_group_id: nil
