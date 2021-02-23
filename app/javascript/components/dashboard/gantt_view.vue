@@ -232,6 +232,7 @@
     },
     mounted() {
       this.loading = false
+
       this.updateZoom(this.ganttData)
       // Display notification when leaving map view to another page and conditions met
       if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {

@@ -395,7 +395,8 @@
           }else{
             preferences.projectId = null
           }
-
+          delete(data["preferences"])
+          
           http
             .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
