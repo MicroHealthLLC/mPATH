@@ -200,7 +200,7 @@
                    </div>
                 </div>       
 
-              <div v-if="taskStats.length > 0" data-cy="task_categories" class="row mt-4 mb-1">
+              <div v-if="taskStats.length > 0" data-cy="task_categories" class="row mt-1 mb-1">
                  <div class="col font-weight-bold text-center">
                       <h6>Categories</h6> 
                   </div>                
@@ -256,7 +256,7 @@
               </div>
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-4 mb-1 text-center">
+               <div class="col font-weight-bold mt-1 mb-1 text-center">
                        <h6>ISSUE TYPES</h6> 
                </div>                  
             </div>
@@ -275,10 +275,10 @@
 
           <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
               <div v-if="contentLoaded">
                 <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-                  <div class="col font-weight-bold mt-4 mb-2 text-center">
+                  <div class="col font-weight-bold mt-1 mb-2 text-center">
                     <h6>Categories</h6>
                   </div>
                 </div>
@@ -342,7 +342,7 @@
 
 <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
       <el-collapse>           
-        <el-collapse-item title="See More" name="1">  
+        <el-collapse-item title="Details" name="1">  
             <div v-if="contentLoaded">    
              
               <div class="row">

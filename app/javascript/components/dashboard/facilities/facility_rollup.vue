@@ -137,9 +137,9 @@
             <span @click.prevent="showLessToggle" >
           <el-collapse id="roll_up">
 
-            <el-collapse-item :title="showLess" name="1">
+            <el-collapse-item title="Details" name="1">
 
-              <div v-if="filteredTasks.length" class="row mt-4 mb-1">
+              <div v-if="filteredTasks.length" class="row mt-2 mb-1">
                  <div class="col font-weight-bold text-center">
                      <span v-if="isMapView" class="font-sm">CATEGORIES</span>
                     <span v-else> CATEGORIES</span>
@@ -222,9 +222,9 @@
               </div>
 
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
              <div v-if="filteredIssues.length" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-4 mb-1 text-center">
+               <div class="col font-weight-bold mt-1 mb-1 text-center">
                        CATEGORIES
                </div>                  
             </div>
@@ -316,7 +316,7 @@
              
 
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
                <div class="row">
                     <div class="col">
                       <span>Complete</span>
