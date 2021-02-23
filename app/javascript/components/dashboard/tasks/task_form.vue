@@ -118,7 +118,7 @@
   <!-- Row begins -->
      <div  class="d-flex mb-0 mx-4 form-group">        
       <div class="simple-select form-group w-100">
-        <label class="font-sm">*Task Category:</label>
+        <label class="font-sm">*Category:</label>
         <multiselect
           v-model="selectedTaskType"
           v-validate="'required'"
@@ -336,11 +336,49 @@
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
         <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
           <div class="form-control h-100 check-items pb-3" style="background-color:#fafafa">
-            <div class="row" style="width:90%">
-              <div class="col justify-content-start" >
+            <div class="row" style="width:97%">
+              <div class="col-8 justify-content-start" >
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
+                 <div class="col-1 pl-0 pr-0">
+                   <span class="font-sm dueDate">Due Date:</span>  
+                    <!-- <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  /> -->
+                </div>
+                 <div class="col-3 pl-0" style="margin-left:-25px">                   
+                    <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  />
+                </div>
+                 <!-- </div>
+                <div class="col"> -->
+                
+                  <!-- <br/>                     -->
+                 
             </div>
 
             <!-- Collpase section begins here -->
@@ -368,38 +406,20 @@
                   </template>
                 </multiselect>
               </div>
-              <div class="simple-select form-group col mb-0">
-                <div class="float-right">
-                  <label class="font-sm dueDate">Due Date:</label>  
-                  <br/>                    
-                  <v2-date-picker                    
-                    v-model="check.dueDate"
-                    :value="check.dueDate" 
-                    :disabled="!_isallowed('write') || !check.text"
-                    @selected="updateCheckItem($event, 'dueDate', index)"
-                    :key="`dueDate_${index}`"
-                    value-type="YYYY-MM-DD"
-                    format="DD MMM YYYY"
-                    placeholder="DD MM YYYY"
-                    name="dueDate"
-                    class="w-100 vue2-datepicker d-flex ml-auto"
-                    :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"          
-                  />
-                </div>
-              </div>
+              <!-- <div class="simple-select form-group col mb-0">
+              
+              </div> -->
             </div>
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
             <div class="pt-4" style="background-color:#fafafa">
-              <button 
-                style="background-color:#ededed"
-                class="btn btn-sm font-md btn-block addCheckProgBtn mb-2"                
-                v-if="_isallowed('write')" 
-                @click.prevent="addProgressList(check)">
-                <font-awesome-icon icon="plus-circle" class="mr-1"/>Add Checklist Progress Update
-              </button>
+             
+                Progress Update
+               <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
+                 <font-awesome-icon icon="plus-circle" class="mr-1"/>
+               </span>
+          
               <table v-if="check.progressLists.length > 0" style="width:100%">
                   <thead>
                     <tr>
@@ -412,7 +432,7 @@
                   <tbody>
                     <tr 
                       v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
-                      :key="pindex" 
+                      :key="pindex"  :load="log(progress)"
                      
                       v-if="!progress._destroy">
                     <td>                     
@@ -421,6 +441,7 @@
                               name="text"  
                              :class="{'red-border':!progress.user}"                       
                               @input="updateProgressListItem($event, 'text', progress)" 
+                             
                               :key="`ptext_${pindex}`" 
                               placeholder="Type Progress update here"                              
                               type="text" 
@@ -432,13 +453,27 @@
                         {{progress.body}}
                        </span>                     
                     </td>
-                    <td>{{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}}</td>     
-       
-                    <td ><span v-if="progress.user">{{progress.user.fullName}}</span></td> 
                     <td>
-                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
+                      <!-- PROGRESS UPDATE COMMENTED-OUT FIELDS CAN BE DELETED ONCE SAVE FUNCTIONALITY IS FIXED -->
+                      <!-- <span v-if="!progress.user"></span>
+                       <span v-if="!progress.user && editProgress">{{editTimeLive}}</span>
+                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>   -->
+                        {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}}    
+                                          
+                    </td>      
+                    <td >
+                       <span v-if="progress.user">
+                         <span>
+                         {{progress.user.fullName}}</span>
+                       </span>
+                       <span v-else>
+                         {{ $currentUser.full_name }}
+                       </span>                                            
+                    </td> 
+                    <td>
+                       <!-- <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="editProgress">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
-                      </span>
+                      </span> -->
                       <span v-tooltip="`Edit`" v-if="progress.user" class="px-2">
                         <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
                       </span>
@@ -672,6 +707,7 @@
         DV_task: this.INITIAL_TASK_STATE(),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
+        editTimeLive:"",
         selectedTaskType: null,
         selectedTaskStage: null,
         responsibleUsers: [],
@@ -794,6 +830,8 @@
       }, 
       editProgress() {
        this.editToggle = !this.editToggle
+       this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
+     
       },       
       deleteTask() {
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
@@ -1391,7 +1429,7 @@
   }
   /deep/.el-collapse-item__header {
     float:right;
-    margin-top: -32px;
+    margin-top: -39px;
     font: small;
     color: #d9534f !important;
     border-bottom: none !important;
