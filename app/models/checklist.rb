@@ -11,7 +11,7 @@ class Checklist < ApplicationRecord
     json = super(options)
     json.merge(
       user: self.user.as_json(only: [:id, :full_name]),
-      progress_lists: self.progress_lists
+      progress_lists: ( self.progress_lists )
     ).as_json
   end
 end
