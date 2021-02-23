@@ -28,7 +28,6 @@
               {{task.taskType}}
             </div>
           </div>
-          z
         </div>
         <div class="col-md-3 mt-2">
           <div class="t_actions my-3 float-left">
@@ -96,8 +95,8 @@
       <el-menu collapse>
         <el-menu-item @click="editTask">Open</el-menu-item>
         <hr>
-        <el-menu-item @click="createDuplicate">Duplicate</el-menu-item>
-        <el-submenu index="1">
+        <el-menu-item @click="createDuplicate" :disabled="!$permissions.tasks.write">Duplicate</el-menu-item>
+        <el-submenu index="1" :disabled="!$permissions.tasks.write">
           <template slot="title">
             <span slot="title">Duplicate to...</span>
           </template>
@@ -122,7 +121,7 @@
           </div>
         </el-submenu>
         <hr>
-        <el-submenu index="2">
+        <el-submenu index="2" :disabled="!$permissions.tasks.write">
           <template slot="title">
             <span slot="title">Move to...</span>
           </template>
@@ -140,7 +139,7 @@
           </div>
         </el-submenu>
         <hr>
-        <el-menu-item @click="deleteTask">Delete</el-menu-item>
+        <el-menu-item @click="deleteTask" :disabled="!$permissions.tasks.delete">Delete</el-menu-item>
       </el-menu>
     </context-menu>
   </div>
