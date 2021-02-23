@@ -1159,7 +1159,11 @@ export default {
           .then((response) => {
             // if(beforeIssue.facilityId && beforeIssue.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
-            this.$emit(callback, humps.camelizeKeys(response.data.issue));
+            // this.$emit(callback, humps.camelizeKeys(response.data.issue));
+
+            var responseIssue = humps.camelizeKeys(response.data.issue)
+            this.loadIssue(responseIssue)
+            this.$emit(callback, responseIssue)
           })
           .catch((err) => {
             console.log(err);

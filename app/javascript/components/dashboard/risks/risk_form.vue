@@ -1405,7 +1405,10 @@
           .then((response) => {
             // if(beforeRisk.facilityId && beforeRisk.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeRisk));
-            this.$emit(callback, humps.camelizeKeys(response.data.risk))
+            // this.$emit(callback, humps.camelizeKeys(response.data.risk))
+                var responseRisk = humps.camelizeKeys(response.data.risk)
+            this.loadRisk(responseRisk)
+            this.$emit(callback, responseRisk)
           })
           .catch((err) => {
             console.log(err)
