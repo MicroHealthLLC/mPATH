@@ -825,7 +825,7 @@
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
-        this.saveTask()      
+        this.cancelSave()
       },
       progressListTitleText(progressList){
         if(!progressList.id) return;
