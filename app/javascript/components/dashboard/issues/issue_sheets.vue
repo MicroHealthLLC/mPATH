@@ -213,6 +213,9 @@
       font-size: 16px;
     }
   }
+  td {
+  overflow-wrap: break-word;
+  }
   .issue_form_modal.sweet-modal-overlay {
     z-index: 10000001;
   }
