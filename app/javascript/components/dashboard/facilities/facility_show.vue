@@ -314,7 +314,7 @@
             </div>
               <div class="row mb-2">
                   <div class="col text-center">
-                    RISK PRIORITY LEVELS
+                   Risk Priority Levels
                   </div>
               </div>            
             <div class="row font-sm">
