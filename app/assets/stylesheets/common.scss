@@ -546,6 +546,14 @@ th {
   display: inline-block;
 }
 
+.toolTip {
+  background-color: #6c757d !important;
+  font-size: .75rem;
+  padding:1px;
+  color: #fff;
+  border-radius: 3px;
+}
+
 .hide-to-edit {
   opacity: 0.1;
   pointer-events: none;

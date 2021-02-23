@@ -25,8 +25,9 @@ class TasksController < AuthenticatedController
     end
     @task.update(t_params)
     @task.assign_users(params)
+    @task.reload
     # @task.create_or_update_task(params, current_user)
-    render json: {task: @task.reload.to_json}
+    render json: {task: @task.to_json}
   end
 
   def create_duplicate
