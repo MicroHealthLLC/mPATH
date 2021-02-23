@@ -92,12 +92,14 @@
     justify-content: center;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02), 0 2px 5px 0 rgba(0,0,0,0.03);
     .badge {
+      border-radius: 0.15rem;
       cursor: pointer;
       padding: 5px;
       margin: 2px 10px;
       transition: auto;
       &.active {
         color: #fff;
+        font-weight: 200;
         padding: 5px;
         background-color: #17a2b8;
       }
