@@ -256,8 +256,8 @@
               </div>
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-1 mb-1 text-center">
-                       <h6>ISSUE TYPES</h6> 
+               <div class="col font-weight-bold mt-3 mb-1 text-center">
+                       <h6>Issue Types</h6> 
                </div>                  
             </div>
             
@@ -314,7 +314,7 @@
 <div v-for="(p, index) of filteredRisks" :load="log(p)" :key="index"></div>
               <div class="row mb-2">
                   <div class="col text-center">
-                    RISK PRIORITY LEVELS
+                    Risk Priority Levels
                   </div>
               </div>            
             <div class="row font-sm">

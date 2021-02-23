@@ -342,21 +342,7 @@
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
                  <div class="col-1 pl-0 pr-0">
-                   <span class="font-sm dueDate">Due Date:</span>  
-                    <!-- <v2-date-picker                    
-                    v-model="check.dueDate"
-                    :value="check.dueDate" 
-                    :disabled="!_isallowed('write') || !check.text"
-                    @selected="updateCheckItem($event, 'dueDate', index)"
-                    :key="`dueDate_${index}`"
-                    value-type="YYYY-MM-DD"
-                    format="DD MMM YYYY"
-                    placeholder="DD MM YYYY"
-                    name="dueDate"
-                    class="w-100 vue2-datepicker d-flex ml-auto"
-                    :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"          
-                  /> -->
+                   <span class="font-sm dueDate">Due Date:</span>                
                 </div>
                  <div class="col-3 pl-0" style="margin-left:-25px">                   
                     <v2-date-picker                    
@@ -416,8 +402,16 @@
             <div class="pt-4" style="background-color:#fafafa">
              
                 Progress Update
+             
+               <span v-if="editToggle">
+               <span class="ml-2 clickable">
+                 <font-awesome-icon icon="plus-circle" class="mr-1 text-danger"/>
+               </span>
+               </span>
+                <span v-else>
                <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
                  <font-awesome-icon icon="plus-circle" class="mr-1"/>
+               </span>
                </span>
           
               <table v-if="check.progressLists.length > 0" style="width:100%">
@@ -440,8 +434,7 @@
                        <input :value="progress.body" 
                               name="text"  
                              :class="{'red-border':!progress.user}"                       
-                              @input="updateProgressListItem($event, 'text', progress)" 
-                             
+                              @input="updateProgressListItem($event, 'text', progress)"                              
                               :key="`ptext_${pindex}`" 
                               placeholder="Type Progress update here"                              
                               type="text" 
@@ -453,13 +446,9 @@
                         {{progress.body}}
                        </span>                     
                     </td>
-                    <td>
-                      <!-- PROGRESS UPDATE COMMENTED-OUT FIELDS CAN BE DELETED ONCE SAVE FUNCTIONALITY IS FIXED -->
-                      <!-- <span v-if="!progress.user"></span>
-                       <span v-if="!progress.user && editProgress">{{editTimeLive}}</span>
-                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>   -->
-                        {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}}    
-                                          
+                    <td>                   
+                      <span v-if="!progress.user"></span>                   
+                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>                                          
                     </td>      
                     <td >
                        <span v-if="progress.user">
@@ -479,14 +468,13 @@
                       </span>
                       <span v-tooltip="`Delete`" class="pl-1" v-if="progress.user">
                         <font-awesome-icon icon="trash" class="text-danger clickable"  v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)"/>
-                      </span>
-                      
+                      </span>                      
                     </td>                    
                     </tr>
                     
                   </tbody>             
               </table>       
-              <div v-else class="text-danger">
+              <div v-else class="text-danger text-center">
                 No Checklist Progress Updates to Display
               </div>     
             <!-- End Checkbox Progress List -->
@@ -837,7 +825,7 @@
         let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_task)
-        this.cancelSave()
+        this.saveTask()      
       },
       progressListTitleText(progressList){
         if(!progressList.id) return;
@@ -907,7 +895,7 @@
             this.showErrors = !success
             return;
           }
-
+          this.editToggle = !this.editToggle
           this.loading = true
           let formData = new FormData()
           formData.append('task[text]', this.DV_task.text)
@@ -1113,6 +1101,7 @@
 
         let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
         Vue.set(check.progressLists, i, {...progressList, _destroy: true})
+        this.saveTask()
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
@@ -1120,6 +1109,7 @@
 
         let i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
+        this.saveTask()
       },   
       disabledDueDate(date) {
         date.setHours(0,0,0,0)

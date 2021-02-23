@@ -77,7 +77,7 @@
           <el-card class="box-card">
             <div class="row">
               <div class="col">
-                 <span> <h5 class="text-center">Project Groups</h5></span>    
+                 <span> <h5>Project Groups</h5></span>    
                 <hr>
               </div>             
             </div>
@@ -266,8 +266,8 @@
       
               <div class="row mb-2">
                   <div class="col text-center">
-                     <span v-if="isMapView" >RISK PRIORITY LEVELS</span>
-                      <span v-else>RISK PRIORITY LEVELS</span>
+                     <span v-if="isMapView" > Risk Priority Levels</span>
+                      <span v-else> Risk Priority Levels</span>
                   </div>
               </div>            
             <div v-if="isMapView" class="row font-sm">

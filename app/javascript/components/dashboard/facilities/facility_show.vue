@@ -255,8 +255,8 @@
               </div>
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-1 mb-1 text-center">
-                       <h6>ISSUE TYPES</h6> 
+               <div class="col font-weight-bold mt-3 mb-1 text-center">
+                       <h6>Issue Types</h6> 
                </div>                  
             </div>
             
