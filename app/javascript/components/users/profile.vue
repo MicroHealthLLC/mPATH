@@ -369,21 +369,31 @@
 
           if(this.selectedNavigation){
             preferences.navigationMenu = this.selectedNavigation.id
+          }else{
+            preferences.navigationMenu = null
           }
           if(this.selectedSubNavigation){
             preferences.subNavigationMenu = this.selectedSubNavigation.id
+          }else{
+            preferences.subNavigationMenu = null
           }
 
           if(this.selectedProgram){
             preferences.programId = this.selectedProgram.id
+          }else{
+            preferences.programId = null
           }
 
           if(this.selectedProjectGroup){
             preferences.projectGroupId = this.selectedProjectGroup.id
+          }else{
+            preferences.projectGroupId = null
           }
 
           if(this.selectedProject){
             preferences.projectId = this.selectedProject.id
+          }else{
+            preferences.projectId = null
           }
 
           http

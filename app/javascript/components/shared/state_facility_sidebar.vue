@@ -1011,7 +1011,6 @@
           // We are adding this condition because when we use move to function
           // it is changing the screen to user preference screen
           // https://github.com/MicroHealthLLC/mGis/issues/1806
-          
           if(this.currentFacilityGroup && !this.currentFacilityGroup.id){
             if(Vue.prototype.$preferences.project_group_id && value){
               var facilityGroup = value.find(f => f.id === Vue.prototype.$preferences.project_group_id )
