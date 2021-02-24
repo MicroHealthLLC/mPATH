@@ -2,7 +2,7 @@
 <template>
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped p-3">
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click="openContextMenu" data-cy="task_row">
         <td class="sixteen">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
@@ -169,6 +169,7 @@ export default {
       this.$refs.taskFormModal && this.$refs.taskFormModal.open();
     },
     editTask() {
+      this.$refs.menu.close()
       if (this.fromView == "map_view") {
         this.$emit("edit-task", this.DV_task);
       // } else if (this.fromView == "manager_view") {

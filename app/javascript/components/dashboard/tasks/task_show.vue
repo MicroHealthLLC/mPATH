@@ -1,11 +1,11 @@
 <template>
-  <div data-cy="tasks" @mouseup.right="openContextMenu" @contextmenu.prevent="">
+  <div data-cy="tasks" @click="openContextMenu">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center float-right mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="mx-3 mb-3 mt-1 py-1" @click.prevent="editTask">
+    <div v-if="!loading" class="mx-3 mb-3 mt-1 py-1">
       <div class="row">
         <div class="col-md-9">
           <div class="font-sm d-flex mb-1">
