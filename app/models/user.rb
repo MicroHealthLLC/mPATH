@@ -77,7 +77,6 @@ class User < ApplicationRecord
     json = super(options)
     json.merge(
       full_name: full_name,
-      preferences: self.settings(:preferences).value,
       organization: organization.try(:title)  || ""      
     ).as_json
   end

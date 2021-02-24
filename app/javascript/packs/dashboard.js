@@ -58,6 +58,8 @@ Vue.use(VueGoogleMaps, {
 })
 
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
+
 var permissions = {}
 for (var key in current_user.privilege) {
   if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
@@ -69,12 +71,10 @@ for (var key in current_user.privilege) {
   }
 }
 
-var preferences = current_user.preferences
-
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$permissions = permissions
 
-Vue.prototype.$preferences = preferences
+//Vue.prototype.$preferences = preferences
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
