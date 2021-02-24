@@ -33,17 +33,16 @@ class Task < ApplicationRecord
       end
     end
     fp = self.facility_project
-    users = self.users.active
+    users = self.users.active.uniq
     users_hash = {} 
     users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
  
 
     resource_users = self.task_users.where(user_id: users.map(&:id) )
-    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
-    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
-    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
-    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
-
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
  
 
     sub_tasks = self.sub_tasks
