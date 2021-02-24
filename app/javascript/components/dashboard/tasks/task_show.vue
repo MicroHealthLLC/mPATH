@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="tasks" @mouseup.right="openContextMenu" @contextmenu.prevent="">
+  <div data-cy="tasks" @contextmenu="openContextMenu($event)">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center float-right mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
@@ -249,9 +249,9 @@
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
       },
-      openContextMenu(e) {
-        e.preventDefault();
-        this.$refs.menu.open(e);
+      openContextMenu(event) {
+        event.preventDefault();
+        this.$refs.menu.open(event);
       },
       moveTask(task, facilityProjectId) {
         if (!this._isallowed("write")) return;

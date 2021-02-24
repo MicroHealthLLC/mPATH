@@ -2,7 +2,7 @@
 <template>
   <div id="task-sheets">
     <table class="table table-sm table-bordered table-striped p-3">
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @contextmenu="openContextMenu($event)">
         <td class="sixteen">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
         <td class="eight">{{formatDate(task.startDate)}}</td>
@@ -203,9 +203,9 @@ export default {
     getIssue(issue) {
       return this.currentIssues.find((t) => t.id == issue.id) || {};
     },
-    openContextMenu(e) {
-      e.preventDefault();
-      this.$refs.menu.open(e);
+    openContextMenu(event) {
+      event.preventDefault();
+      this.$refs.menu.open(event);
     },
     moveTask(task, facilityProjectId) {
       if (!this._isallowed("write")) return;
