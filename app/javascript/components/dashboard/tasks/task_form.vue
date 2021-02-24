@@ -337,7 +337,7 @@
     <div v-if="filteredChecks.length > 0">
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
         <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-          <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa">
+          <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa;position:relative">
             <div class="row" style="width:97%">
               <div class="col-8 justify-content-start" >
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -361,25 +361,20 @@
                     :disabled-date="disabledDateRange"
                     :class="{ disabled: disabledDateRange }"          
                   />
-                </div>
-                 <!-- </div>
-                <div class="col"> -->
-                
-                  <!-- <br/>                     -->
-                 
+                </div>         
             </div>
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
             <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa">             
-              <div class="simple-select d-flex form-group col mb-0">
-                <span class="font-sm pt-2 pr-2">Assigned To:</span>
+            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
+              <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
+               <div class="d-flex w-100" style="padding-left:4.5rem">
+                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
-                  label="fullName"
+                  label="fullName"                  
                   class="w-75"
                   placeholder="Search and select users"
                   :options="activeProjectUsers"
@@ -394,6 +389,7 @@
                     </div>
                   </template>
                 </multiselect>
+               </div>
               </div>
               <!-- <div class="simple-select form-group col mb-0">
               
@@ -402,10 +398,8 @@
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
-            <div class="pt-2 pb-3" style="background-color:#fafafa">
-             
-                Progress Update
-             
+            <div class="pt-5 pb-3" style="background-color:#fafafa">             
+                Progress Update             
                <span v-if="editToggle">
                <span class="ml-2 clickable">
                  <font-awesome-icon icon="plus-circle" class="mr-1 text-danger"/>
@@ -417,7 +411,7 @@
                </span>
                </span>
           
-              <table v-if="check.progressLists.length > 0" style="width:100%">
+              <table v-if="check.progressLists.length > 0" style="width:100%" class="mt-1">
                   <thead>
                     <tr>
                       <th style="width:60%">Progress</th>
@@ -1477,6 +1471,12 @@
   }
   .disabled {
     opacity: 0.6;
+  }
+   .simple-select /deep/ .multiselect {
+    .multiselect__placeholder {
+  
+      text-overflow: ellipsis;
+    }
   }
   .custom-tab { 
     background-color: #fff;
