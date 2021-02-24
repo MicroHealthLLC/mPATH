@@ -1,14 +1,16 @@
 <template>
-  <div>
+  <div >
     <form
       id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"   
+      @submit.prevent="saveTask"     
+      class="mx-auto tasks-form"      
       accept-charset="UTF-8"
-      :class="{'_disabled': loading}"
-
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
       >
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 px-3 justify-content-start">
+       <div v-if="_isallowed('read')" 
+            class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar"
+            :class="{'sticky-kanban':isKanbanView}"
+            >
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -62,11 +64,12 @@
       </div>
       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
           
-      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       
       </div>
-    
-     <div class="formTitle pt-1">
+ <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
+     <div class="formTitle fixed-form pt-1">
+      
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -1184,9 +1187,12 @@
           this.exists(this.DV_task.startDate)
         )
       },  
-       isMapView() {
+     isMapView() {
         return this.$route.name === 'ProjectMapView'
       },  
+      isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
+      },
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
       },
@@ -1323,10 +1329,9 @@
 </script>
 
 <style scoped lang="scss">
-  #tasks-form {
-    z-index: 100;
-    width: 100%;
-    position: absolute;  
+  .tasks-form {
+    z-index: 10;
+    width: 83.1%;   
   }
   td, th {
     border: solid 1px #ededed;
@@ -1440,10 +1445,10 @@
     padding-bottom: 0 !important;
   }
   .sticky {
-    position: sticky;
-    position: -webkit-sticky;
+    // position: sticky;
+    // position: -webkit-sticky;
     justify-content: center;
-    margin-bottom: -2.5rem;
+    // margin-bottom: -2.5rem;
     z-index: 1000;
     left: 15;
     top: 0;
@@ -1452,6 +1457,12 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
+  .sticky-kanban {
+    position: sticky;
+    position: -webkit-sticky;
+    margin-bottom: -2.5rem;    
+  }
+
   /deep/.el-collapse-item__header {
     background-color: #fafafa !important;
   }
@@ -1467,10 +1478,18 @@
   .disabled {
     opacity: 0.6;
   }
-  .custom-tab {
-    width: min-content;
+  .custom-tab { 
     background-color: #fff;
-    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10) !important;
-
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
+  .fixed-form {
+   overflow-y: auto;
+   height: 100vh;
+   padding-bottom: 20px;
+  }
+  .fixed-form-mapView {
+   width: 100%;
+   position: absolute;
+  }
+
 </style>
