@@ -407,7 +407,7 @@
 	border: none;
 }
 
-.micro-response .img.imgThumbnail200
+.micro-response .img.imgThumbnail400
 {
 	align: left;
 	display: block;
@@ -415,7 +415,7 @@
 	padding: 10px 0;
 }
 
-.micro-response .img.imgThumbnail400
+.micro-response .img.imgThumbnail200
 {
 	align: left;
 	display: block;
