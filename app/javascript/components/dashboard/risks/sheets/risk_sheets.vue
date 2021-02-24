@@ -1,17 +1,7 @@
 
 <template>
   <div id="risk-sheets">
-      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
-        <risk-form
-          v-if="Object.entries(DV_edit_risk).length"
-          :facility="facility"
-          :risk="DV_edit_risk"
-          title="Edit Risk"
-          @risk-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></risk-form>
-      </div>
+     
     
     <table class="table table-sm table-bordered">
     
@@ -46,7 +36,17 @@
       </tr>
     </table>
 <!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
-
+      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
+        <risk-form
+          v-if="Object.entries(DV_edit_risk).length"
+          :facility="facility"
+          :risk="DV_edit_risk"
+          title="Edit Risk"
+          @risk-updated="updateRelatedTaskIssue"
+          @on-close-form="onCloseForm"
+          class="form-inside-modal"
+        ></risk-form>
+      </div>
     
   </div>
 </template>

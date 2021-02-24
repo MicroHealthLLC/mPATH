@@ -2,13 +2,16 @@
   <div>
     <form
       id="risks-form"
-      @submit.prevent="validateThenSave"
-      :class="{'_disabled': loading}"
+      @submit.prevent="validateThenSave"     
       class="mx-auto pb-4 risks-form"
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
       accept-charset="UTF-8"
       >
       <div class="form-group mb-1">
-        <div v-if="_isallowed('read')" class="d-flex form-group sticky py-0 px-3 mb-1 justify-content-start">             
+        <div v-if="_isallowed('read')" 
+            class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"
+            :class="{'sticky-kanban':isKanbanView}"
+            >             
          <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -56,11 +59,12 @@
       </div>
        
       <div class="d-flex form-group pt-1 mb-1 justify-content-start">         
-        <custom-tabs  v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
+        <custom-tabs  v-if="_isallowed('read')" :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       </div>
 
-    
- <div class='mx-0' >
+    <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
+  <div class='fixed-form'>
+  <div class='mx-0' >
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -158,7 +162,7 @@
             </template>
           </multiselect>
         </div>  
-                <div class="simple-select w-100 form-group">
+                <!-- <div class="simple-select w-100 form-group">
           <label class="font-sm">*Project:</label>
           <multiselect
             v-model="selectedFacilityProject"
@@ -179,7 +183,7 @@
               </div>
             </template>
           </multiselect>
-        </div>
+        </div> -->
        </div>
          <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
@@ -1011,13 +1015,9 @@
     </div>
    <!-- END RISK DISPOSITION SECTION TAB -->
 
- </div>                     
+ </div>     
 
-
-
-
-
-
+</div>
       <!-- TABBED OUT SECTION END HERE -->
       <h6 class="text-danger text-small pr-1 mr-1 pr-3 float-right" ref="riskMatrix">*Indicates required fields</h6>
       <div ref="addUpdates" class="pt-0 mt-0 mb-4"> </div>
@@ -1547,9 +1547,12 @@
           this.exists(this.DV_risk.dueDate)
         )
       },
-      isMapView() {
+     isMapView() {
         return this.$route.name === 'ProjectMapView'
      },
+     isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
+      },
       filteredChecks() {
         return _.filter(this.DV_risk.checklists, c => !c._destroy)
       },
@@ -1797,10 +1800,9 @@
 </script>
 
 <style lang="scss" scoped>
-  #risks-form {
+  .risks-form {
     z-index: 10;
-    width: 100%;
-    position: absolute; 
+    width: 83.1%;   
   }
   .form-control.error {
     border-color: #E84444;
@@ -1849,10 +1851,7 @@
   }
   .rmBtn, .clearBtn { box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);}
   .sticky {
-    position: sticky;
-    position: -webkit-sticky;
     justify-content: center;
-    margin-bottom: -2.5rem;
     z-index: 1000;
     left: 15;
     top: 0;
@@ -1860,6 +1859,11 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+   .sticky-kanban {
+    position: sticky;
+    position: -webkit-sticky;
+    margin-bottom: -2.5rem;    
   }
   .check-due-date {
     text-align: end;
@@ -2038,4 +2042,14 @@
     background-color: #fff;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
+  .fixed-form {
+   overflow-y: auto;
+   height: 100vh;
+   padding-bottom: 20px;
+  }
+  .fixed-form-mapView {
+   width: 100%;
+   position: absolute !important;
+  }
+
 </style>
