@@ -1,7 +1,7 @@
 .body-wrapper
   .mt-4.container
     h1.text-center
-      | Welcome to MicroHealth Geographical Information System
+      | Welcome to MicroHealth Geographic Information System
     br
     ul.list-group
       -if @active_projects.size > 0
@@ -11,11 +11,11 @@
               .col-12
                 p
                   .d-flex.justify-content-between
-                    =link_to(sheet_project_path(project), data: { cy: "project_list_items" }) do
+                    =link_to("/projects/#{project.id}/#{@preferences.navigation_menu}", data: { cy: "project_list_items" }) do
                       span
                         ="#{project.name} "
                       span.font-weight-bold
-                        ="(#{project.facilities.size} Facilities)"
+                        ="(#{project.facilities.size} Projects)"
                 .mt-2.d-flex.align-items-center
                   - fp = project.facility_projects
                   -progs = fp.map(&:progress)

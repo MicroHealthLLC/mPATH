@@ -12,6 +12,8 @@ class FacilityProject < ApplicationRecord
 
   validates :facility, uniqueness: {scope: :project}
 
+  before_save :assign_default_status
+
   def as_json(options=nil)
     json = super(options)
     fac = self.facility
@@ -34,12 +36,19 @@ class FacilityProject < ApplicationRecord
     status.try(:name)
   end
 
+  def assign_default_status
+    if !status_id.present?
+      self.status_id = Status.not_started.id
+      self.save
+    end
+  end
+
   def color
     status.try(:color) || '#ff0000'
   end
 
   def progress
     t = tasks
-    t.map(&:progress).sum / t.size rescue 0
+    (t.map(&:progress).sum / t.size).round(0) rescue 0
   end
 end

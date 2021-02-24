@@ -1,6 +1,6 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
-  <div id="facility-show"  data-cy="facility_sheets">
+  <div id="facility-show"  data-cy="facility_sheets" class="px-3"  v-loading="!contentLoaded" >
     <div  class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
@@ -19,7 +19,7 @@
             </div> -->
 
           <div class="row row-1 mt-2">
-          <div class="col-md-8 pr-2">
+          <div class="col-md-8 pr-0">
             <div class="box-card my-el-card p-3" style="position:relative">               
 
              <div class="row">
@@ -94,7 +94,7 @@
                </div>     
              </div>  
 
-        <div class="col-md-3 px-0" data-cy="date_set_filter">         
+        <div class="col-md-4 pr-3" data-cy="date_set_filter">         
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -255,8 +255,8 @@
               </div>
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-4 mb-1 text-center">
-                       <h6>ISSUE TYPES</h6> 
+               <div class="col font-weight-bold mt-3 mb-1 text-center">
+                       <h6>Issue Types</h6> 
                </div>                  
             </div>
             
@@ -274,10 +274,10 @@
 
           <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
               <div v-if="contentLoaded">
                 <div v-if="issueTaskCategories.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-                  <div class="col font-weight-bold mt-4 mb-2 text-center">
+                  <div class="col font-weight-bold mt-1 mb-2 text-center">
                     <h6>Categories</h6>
                   </div>
                 </div>
@@ -314,7 +314,7 @@
             </div>
               <div class="row mb-2">
                   <div class="col text-center">
-                    RISK PRIORITY LEVELS
+                   Risk Priority Levels
                   </div>
               </div>            
             <div class="row font-sm">
@@ -342,7 +342,7 @@
 
 <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
       <el-collapse>           
-        <el-collapse-item title="See More" name="1">  
+        <el-collapse-item title="Details" name="1">  
             <div v-if="contentLoaded">    
              
               <div class="row">
@@ -647,7 +647,7 @@
           tasks.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return tasks
@@ -659,8 +659,8 @@
         let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent ) },
+          overdue: {count: overdue.length, percentage: Math.round(  overdue_percent ) },
         }
       },
       filteredIssues() {
@@ -696,7 +696,7 @@
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
@@ -708,7 +708,7 @@
           issues.push({
             name: type,
             count: group[type].length,
-            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(2))
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
           })
         }
         return issues
@@ -720,8 +720,8 @@
         let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
       },
     filteredRisks() {
@@ -773,8 +773,8 @@
         let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
         let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
         return {
-          completed: {count: completed.length, percentage: completed_percent},
-          overdue: {count: overdue.length, percentage: overdue_percent},
+          completed: {count: completed.length, percentage: Math.round( completed_percent )},
+          overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
         }
      },
      currentRiskTypes() {
@@ -787,7 +787,7 @@
               name: type.name,
               _display: risks.length > 0 && (names ? names.includes(type.name) : true),
               length: risks.length,
-              progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+              progress: Number(_.meanBy(risks, 'progress').toFixed(0))
             }
         )
       }

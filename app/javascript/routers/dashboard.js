@@ -14,6 +14,11 @@ export default new VueRouter({
       component: ProjectMapView
     },
     {
+      name: 'ProjectMapView',
+      path: '/projects/:projectId/map',
+      component: ProjectMapView
+    },
+    {
       name: 'ProjectGanttChart',
       path: '/projects/:projectId/gantt_chart',
       component: GanttChartView

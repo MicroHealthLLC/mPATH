@@ -20,6 +20,16 @@ class User < ApplicationRecord
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
+  PREFERENCES_HASH =  {
+      navigation_menu: nil, 
+      sub_navigation_menu: nil,
+      program_id: nil, 
+      project_id: nil,
+      project_group_id: nil
+    }
+  has_settings do |s|
+    s.key :preferences, defaults: PREFERENCES_HASH
+  end
 
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
@@ -67,8 +77,24 @@ class User < ApplicationRecord
     json = super(options)
     json.merge(
       full_name: full_name,
-      organization: organization.try(:title)  || ""
+      preferences: self.settings(:preferences).value,
+      organization: organization.try(:title)  || ""      
     ).as_json
+  end
+
+  def get_preferences
+    # if preferences.project_group_id.present?
+    #   preferences.project_group = FacilityGroup.find(preferences.project_group_id)
+    # end
+    # if preferences.project_id.present?
+    #   preferences.project = FacilityProject.where(facility_id: preferences.project_id).first
+    # end
+    p = self.settings(:preferences)
+    if p.new_record?
+      p.value =  PREFERENCES_HASH
+      p.save
+    end
+    p
   end
 
   def active_for_authentication?

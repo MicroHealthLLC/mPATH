@@ -106,7 +106,9 @@ export default new Vuex.Store({
       note: null,
       risk: null
     },
-    mapZoomFilter: new Array
+    mapZoomFilter: new Array,
+    unfilteredFacilities: new Array,
+    previousRoute: ''
   },
 
   mutations: {
@@ -150,6 +152,7 @@ export default new Vuex.Store({
     setSideLoading: (state, loading) => state.sideLoading = loading,
     setProjects: (state, projects) => state.projects = projects,
     setFacilities: (state, facilities) => state.facilities = facilities,
+    setUnfilteredFacilities: (state, facilities) => state.unfilteredFacilities = facilities,
     setFacilityGroups: (state, facilityGroups) => state.facilityGroups = facilityGroups,
     setStatuses: (state, statuses) => state.statuses = statuses,
 
@@ -298,7 +301,8 @@ export default new Vuex.Store({
         state.managerView[k] = k == key ? value : null
       }
     },
-    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds    
+    setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
+    setPreviousRoute: (state, route) => state.previousRoute = route    
   },
 
   getters: {
@@ -327,7 +331,7 @@ export default new Vuex.Store({
 
       return options;
     },
-  //  For Datatables items per page display only
+    //For Datatables items per page display only
     getMembersPerPageFilter: state => state.membersPerPageFilter,
     getMembersPerPageFilterOptions: (state, getters) => {
       var options = [      
@@ -1123,9 +1127,12 @@ export default new Vuex.Store({
     // for gantt chart view
     ganttData: (state, getters) => {
       let hash = new Array
-
+      if(!getters.currentProject && !Vue.prototype.$preferences.projectId){
+        alert("At least one project must be selected for Gantt view")
+        return;
+      }
       // for project
-      let p_id = `p_${getters.currentProject.id}`
+      let p_id = getters.currentProject ? `p_${getters.currentProject.id}` : `p_${Vue.prototype.$preferences.projectId}`
       let _p_id = '1'
       let p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
       let p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
@@ -1382,7 +1389,8 @@ export default new Vuex.Store({
 
         return valid
       })
-    },    filteredAllRisks: (state, getters) => {
+    },
+    filteredAllRisks: (state, getters) => {
       let taskTypeIds = getters.taskTypeFilter && getters.taskTypeFilter.length ? _.map(getters.taskTypeFilter, 'id') : []
       let approaches = getters.riskApproachFilter && getters.riskApproachFilter.length ? _.map(getters.riskApproachFilter, 'id') : []
       let stages = getters.riskStageFilter && getters.riskStageFilter .length ? _.map(getters.riskStageFilter, 'id') : []
@@ -1421,17 +1429,29 @@ export default new Vuex.Store({
     on_watched: (state, getters) => {
       let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
       let issues = _.filter(getters.filteredAllIssues, t => t.watched)
-      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId')]
+      let risks = _.filter(getters.filteredAllRisks, t => t.watched)
+      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId'), ..._.map(risks, 'facilityId')]   
       let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 
-      return {tasks, issues, facilities}
+      return {tasks, issues, risks, facilities}
+    },
+    approved_risks: (state, getters) => {    
+      let risks = _.filter(getters.filteredAllRisks, t => t.approved)
+      let ids = [..._.map(risks,'facilityId')]
+      let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
+      return {risks,  facilities}
     },
     viewPermit: () => (view, req) => {
       if (Vue.prototype.$currentUser.role === "superadmin") return true;
       return Vue.prototype.$permissions[view][req]
     },
     riskApproaches: () => {
-      return ['avoid', 'mitigate', 'transfer', 'accept']
+      return   ['avoid', 'mitigate', 'transfer', 'accept']
+    
+      // [ {id: 'avoid', value: 'avoid', name: 'Avoid'},
+        // {id: 'mitigate', value: 'mitigate', name: "Mitigate"},
+        // {id: 'transfer' , value: 'transfer', name: 'Transfer'},
+        // {id: 'accept', value: 'accept', name: 'Accept'},      ]
     },
     probabilityNames: () => {
       return [
@@ -1446,7 +1466,9 @@ export default new Vuex.Store({
     impactLevelNames: () => {
       return ["1 - Negligible", "2 - Minor", "3 - Moderate", "4 - Major", "5 - Catastrophic"]
     },
-    getMapZoomFilter: (state) => state.mapZoomFilter
+    getMapZoomFilter: (state) => state.mapZoomFilter,
+    getUnfilteredFacilities: (state) => state.unfilteredFacilities,
+    getPreviousRoute: (state) => state.previousRoute
   },
 
   actions: {
@@ -1597,7 +1619,19 @@ export default new Vuex.Store({
           })
       })
     },
-
+    updateApprovedRisks({commit}, risk) {
+      return new Promise((resolve, reject) => {
+        http.put(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`, {risk: risk})
+          .then((res) => {
+            commit('updateRisksHash', {risk: res.data.risk})
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
     // update_from_kanban_view
     updateKanbanTaskIssues({commit, getters}, {projectId, facilityId, data, type}) {
       return new Promise((resolve, reject) => {

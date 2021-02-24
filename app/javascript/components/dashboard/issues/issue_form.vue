@@ -4,13 +4,13 @@
       id="issues-form"
       @submit.prevent="saveIssue"
       :class="{ _disabled: loading }"
-      class="mx-auto"
+      class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
     >
       <div
         v-if="_isallowed('read')"
-        class="d-flex form-group sticky mb-2 justify-content-start"
+        class="d-flex form-group sticky mb-1 px-3 justify-content-start"
       >
         <button
           v-if="_isallowed('write')"
@@ -63,8 +63,8 @@
           Delete
         </button>
       </div>
-       <div v-if="_isallowed('read')" class="d-flex form-grouppt-1 mb-1 justify-content-start">          
-          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab" />       
+       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">          
+          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
       </div>
       <div class="formTitle">
         <div v-if="showErrors" class="text-danger mb-3">
@@ -136,7 +136,7 @@
             v-model="selectedTaskType"
             track-by="id"
             label="name"
-            placeholder="Task category"
+            placeholder="Select Category"
             :options="taskTypes"
             :searchable="false"
             select-label="Select"
@@ -189,28 +189,6 @@
           >
             {{ errors.first("Issue Type") }}
           </div>
-        </div>
-    <div class="simple-select form-group w-100">
-          <label class="font-sm">*Project:</label>
-          <multiselect
-            v-model="selectedFacilityProject"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Select Project"
-            :options="getFacilityProjectOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :disabled="!_isallowed('write')"
-            data-cy="facility_project_id"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
         </div>
      </div>
     <!-- Tab 1 Row ends here -->
@@ -657,6 +635,29 @@ Tab 1 Row Begins here -->
             </template>
           </multiselect>
         </div>
+
+        <div class="form-group user-select mx-4">
+        <label class="font-sm mb-0">Related Risks:</label>
+        <multiselect
+          v-model="relatedRisks"
+          track-by="id"
+          label="text"
+          placeholder="Search and select Related-risks"
+          :options="filteredRisks"
+          :searchable="true"
+          :multiple="true"
+          select-label="Select"
+          deselect-label="Enter to remove"
+          :close-on-select="false"
+          :disabled="!_isallowed('write')"
+          >
+          <template slot="singleLabel" slot-scope="{option}">
+            <div class="d-flex">
+              <span class='select__tag-name'>{{option.text}}</span>
+            </div>
+          </template>
+        </multiselect>
+      </div>
           <!-- closing div for tab4 -->
 </div>
 
@@ -710,7 +711,7 @@ Tab 1 Row Begins here -->
           >
             <div v-for="note in paginated('filteredNotes')" class="form-group">
               <span class="d-inline-block w-100"
-                ><label class="badge badge-secondary">Note by</label>
+                ><label class="badge badge-secondary">Update by</label>
                 <span class="font-sm text-muted">{{ noteBy(note) }}</span>
                 <span
                   v-if="allowDeleteNote(note)"
@@ -724,7 +725,7 @@ Tab 1 Row Begins here -->
                 class="form-control"
                 v-model="note.body"
                 rows="3"
-                placeholder="your note comes here."
+                placeholder="Enter your update here..."
                 :readonly="!allowEditNote(note)"
               ></textarea>
             </div>
@@ -737,7 +738,7 @@ Tab 1 Row Begins here -->
 
 
 
-      <h6 class="text-danger text-small pl-1 float-right">
+      <h6 class="text-danger text-small pl-1 float-right pr-3">
         *Indicates required fields
       </h6>
       <div ref="addUpdates" class="pt-0 mt-0"></div>
@@ -769,7 +770,6 @@ export default {
   data() {
     return {
       DV_issue: this.INITIAL_ISSUE_STATE(),
-      selectedFacilityProject: null,
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
@@ -783,6 +783,7 @@ export default {
       informedIssueUsers:[],
       relatedIssues: [],
       relatedTasks: [],
+       relatedRisks: [],
       showErrors: false,
       loading: true,
       movingSlot: "",
@@ -858,6 +859,7 @@ export default {
         consultedUserIds:[],
         informedUserIds:[],
         subTaskIds: [],
+        subRiskIds: [],
         subIssueIds: [],
         issueFiles: [],
         checklists: [],
@@ -898,7 +900,6 @@ export default {
     loadIssue(issue) {
 
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
-      this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_issue.facilityProjectId)
 
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id) );
       this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id) );
@@ -910,6 +911,9 @@ export default {
       );
       this.relatedTasks = _.filter(this.currentTasks, (u) =>
         this.DV_issue.subTaskIds.includes(u.id)
+      );
+      this.relatedRisks = _.filter(this.filteredRisks, u => 
+        this.DV_issue.subRiskIds.includes(u.id)
       );
       this.selectedIssueType = this.issueTypes.find(
         (t) => t.id === this.DV_issue.issueTypeId
@@ -998,7 +1002,6 @@ export default {
         formData.append("issue[start_date]", this.DV_issue.startDate);
         formData.append("issue[issue_type_id]", this.DV_issue.issueTypeId);
         formData.append("issue[task_type_id]", this.DV_issue.taskTypeId);
-        formData.append('issue[facility_project_id]', this.DV_issue.facilityProjectId)
         formData.append("issue[issue_severity_id]",this.DV_issue.issueSeverityId);
         formData.append("issue[issue_stage_id]", this.DV_issue.issueStageId);
         formData.append("issue[progress]", this.DV_issue.progress);
@@ -1076,6 +1079,16 @@ export default {
           formData.append("issue[sub_task_ids][]", []);
         }
 
+       if (this.DV_issue.subRiskIds.length) {
+            for (let u_id of this.DV_issue.subRiskIds) {
+              formData.append('issue[sub_risk_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('issue[sub_risk_ids][]', [])
+          }
+
+
         if (this.DV_issue.subIssueIds.length) {
           for (let u_id of this.DV_issue.subIssueIds) {
             formData.append("issue[sub_issue_ids][]", u_id);
@@ -1134,7 +1147,7 @@ export default {
           method = "PUT";
           callback = "issue-updated";
         }
-        var beforeIssue = this.issue
+        // var beforeIssue = this.issue
 
         axios({
           method: method,
@@ -1146,9 +1159,13 @@ export default {
           },
         })
           .then((response) => {
-            if(beforeIssue.facilityId && beforeIssue.projectId )
-              this.$emit(callback, humps.camelizeKeys(beforeIssue));
-            this.$emit(callback, humps.camelizeKeys(response.data.issue));
+            // if(beforeIssue.facilityId && beforeIssue.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforeIssue));
+            // this.$emit(callback, humps.camelizeKeys(response.data.issue));
+
+            var responseIssue = humps.camelizeKeys(response.data.issue)
+            this.loadIssue(responseIssue)
+            this.$emit(callback, responseIssue)
           })
           .catch((err) => {
             console.log(err);
@@ -1201,6 +1218,7 @@ export default {
         ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
         : index;
       Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
+      this.saveIssue();
     },
     calculateProgress(checks = null) {
       try {
@@ -1265,6 +1283,7 @@ export default {
       "issueStages",
       "issueSeverities",
       "currentTasks",
+      'currentRisks',
       "currentIssues",
       "managerView",
     ]),
@@ -1274,11 +1293,13 @@ export default {
         this.exists(this.DV_issue.title) &&
         this.exists(this.DV_issue.issueTypeId) &&
         this.exists(this.DV_issue.issueSeverityId) &&
-        this.exists(this.DV_issue.facilityProjectId) &&
         this.exists(this.DV_issue.dueDate) &&
         this.exists(this.DV_issue.startDate)
       );
     },
+    isMapView() {
+        return this.$route.name === 'ProjectMapView'
+     },
     filteredChecks() {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
@@ -1301,6 +1322,9 @@ export default {
     filteredIssues() {
       return _.filter(this.currentIssues, (t) => t.id !== this.DV_issue.id);
     },
+    filteredRisks() {
+        return _.filter(this.currentRisks, t => t.id !== this.DV_issue.id)
+    },
     filteredNotes() {
       return _.orderBy(
         _.filter(this.DV_issue.notes, (n) => !n._destroy),
@@ -1315,13 +1339,6 @@ export default {
     },
   },
   watch: {
-    selectedFacilityProject: {
-      handler: function(value) {
-        if(value){
-          this.DV_issue.facilityProjectId = value.id  
-        }
-      }, deep: true
-    },
     issue: {
       handler: function (value) {
         if (!("id" in value)) this.DV_issue = this.INITIAL_ISSUE_STATE();
@@ -1378,6 +1395,11 @@ export default {
       },
       deep: true,
     },
+    relatedRisks: {
+        handler: function(value) {
+          if (value) this.DV_issue.subRiskIds = _.uniq(_.map(value, 'id'))
+        }, deep: true
+    },
     selectedIssueType: {
       handler: function (value) {
         this.DV_issue.issueTypeId = value ? value.id : null;
@@ -1420,6 +1442,12 @@ export default {
       },
       deep: true,
     },
+    filteredRisks: {
+        handler(value) {
+          let ids = _.map(value, 'id')
+          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
+        }, deep: true
+      },
     "filteredNotes.length"(value, previous) {
       this.$nextTick(() => {
         if (this.$refs.paginator && (value === 1 || previous === 0)) {
@@ -1436,7 +1464,6 @@ export default {
   z-index: 10;
   width: 100%;
   position: absolute;
-  background-color: #fff;
 }
 .form-control.error {
   border-color: #e84444;
@@ -1512,7 +1539,7 @@ ul {
   }
 .custom-tab {
   width: min-content;
-  background-color: #fafafa;
+  background-color: #fff;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
 

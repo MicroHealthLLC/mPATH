@@ -98,6 +98,131 @@
           </div>
         </div>
       </div>
+
+      <h5 class="my-3">Preferences</h5>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Program</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedProgram"
+            track-by="id"
+            label="name"
+            placeholder="Select Program"
+            :options="programOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            @select="programSelectChange"
+            @remove="programSelectChange"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Project Group</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedProjectGroup"
+            track-by="id"
+            label="name"
+            placeholder="Select Project Group"
+            :options="projectGroupOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            @select="projectGroupSelectChange"
+            @remove="projectGroupSelectChange"
+            :disabled="!this.selectedProgram"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Project</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedProject"
+            track-by="id"
+            label="name"
+            placeholder="Select Project"
+            :options="projectOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!this.selectedProjectGroup"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+      <h5 class="my-3">Start On</h5>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Navigation</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedNavigation"
+            track-by="id"
+            label="name"
+            placeholder="Select Navigation"
+            :options="navigationOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            @select="navigationSelectChane"
+            :disabled="!(this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Select Sub Navigation</label>
+        <div class="col-sm-10">
+          <multiselect
+            v-model="selectedSubNavigation"
+            track-by="id"
+            label="name"
+            placeholder="Select Sub Navigation"
+            :options="selectedNavigation && selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!(this.selectedNavigation && this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
+      </div>
+
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
         <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
         <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
@@ -108,11 +233,36 @@
 
 <script>
   import http from './../../common/http'
+
   export default {
     data() {
       return {
         loading: true,
         editPass: false,
+        navigationOptions: [
+          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
+          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
+        ],
+        subNavigationOptions: [
+          {id: 'tasks', name: 'Tasks', value: 'tasks'},
+          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
+          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
+        ],
+        kanbanSubNavigationOptions: [
+          {id: 'tasks', name: 'Tasks', value: 'tasks'},
+          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
+        ],
+        programOptions: [],
+        projectGroupOptions: [],
+        projectOptions: [],
+        allPrograms: [],
+        allProjectGroups: [],
+        allProjects: [],
+        selectedNavigation: null,
+        selectedSubNavigation: null,
+        selectedProgram: null,
+        selectedProject: null,
+        selectedProjectGroup: null,
         profile: {
           email: '',
           firstName: '',
@@ -126,6 +276,14 @@
           passwordConfirmation: '',
           countryCode: ''
         },
+        // Do not change this property name.
+        preferences: {
+          navigationMenu: null,
+          subNavigationMenu: null,
+          programId: null,
+          projectId: null,
+          projectGroupId: null
+        },
         phoneData: {},
         gmap_address: {},
         center: {lat: 40.64, lng: -74.66}
@@ -135,10 +293,52 @@
       this.fetchProfile()
     },
     methods: {
+      programSelectChange(value){
+        this.projectGroupOptions = this.getProjectGroups(value)
+
+        this.selectedProgram = value
+        this.selectedProjectGroup = null
+        this.selectedProject = null
+      },
+      projectGroupSelectChange(value){
+
+        if(value){          
+          this.projectOptions = this.getProjects(this.selectedProgram, value)
+        }
+        this.selectedProject = null
+
+      },
+      navigationSelectChane(value){
+        this.selectedSubNavigation = null
+      },
       fetchProfile() {
         http.get('/current_user.json')
           .then((res) => {
-            this.profile = {...this.profile, ...res.data}
+
+            this.profile = {...this.profile, ...res.data.currentUser}
+            this.preferences = {...this.preferences, ...res.data.preferences}          
+
+            this.allPrograms  = res.data.programs
+            this.allProjectGroups = res.data.projectGroups
+            this.allProjects = res.data.projects
+
+            this.programOptions = this.allPrograms
+            if(this.preferences.programId)
+              this.selectedProgram = this.programOptions.find((t) => t.id === this.preferences.programId );
+
+            if(this.selectedProgram){
+              this.projectGroupOptions = this.getProjectGroups(this.selectedProgram)
+              this.selectedProjectGroup = this.projectGroupOptions.find((t) => t.id === this.preferences.projectGroupId );
+
+              if(this.selectedProjectGroup){
+
+                this.projectOptions = this.getProjects(this.selectedProgram, this.selectedProjectGroup)
+                this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId );
+              }
+            }
+            this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
+            this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
               this.center = {lat: this.profile.lat, lng: this.profile.lng}
@@ -161,17 +361,55 @@
         this.$validator.validate().then((success) => {
           if (!success || !this.enableEdit) return;
           let data = Object.assign({}, this.profile)
+          let preferences = Object.assign({}, this.preferences)
+
           if (!this.editPass) {
             delete data.password
             delete data.passwordConfirmation
           }
           delete data.email
 
+          if(this.selectedNavigation){
+            preferences.navigationMenu = this.selectedNavigation.id
+          }else{
+            preferences.navigationMenu = null
+          }
+          if(this.selectedSubNavigation){
+            preferences.subNavigationMenu = this.selectedSubNavigation.id
+          }else{
+            preferences.subNavigationMenu = null
+          }
+
+          if(this.selectedProgram){
+            preferences.programId = this.selectedProgram.id
+          }else{
+            preferences.programId = null
+          }
+
+          if(this.selectedProjectGroup){
+            preferences.projectGroupId = this.selectedProjectGroup.id
+          }else{
+            preferences.projectGroupId = null
+          }
+
+          if(this.selectedProject){
+            preferences.projectId = this.selectedProject.id
+          }else{
+            preferences.projectId = null
+          }
+          delete(data["preferences"])
+          
           http
-            .post('/profile.json', {profile: data})
+            .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
-              this.gotoDashboard()
+              var pref = res.data.preferences
+              if(pref.programId){
+                window.location.pathname = "/projects/"+pref.programId+"/"+pref.navigationMenu
+              }else{
+                this.gotoDashboard()
+              }
+              
             })
             .catch((err) => {
               console.log(err)
@@ -180,6 +418,13 @@
       },
       gotoDashboard() {
         window.location.pathname = "/dashboard"
+      },
+      getProjectGroups(program){
+        return _.filter(this.allProjectGroups, f => program.projectGroupIds.includes(f.id) )
+      },
+      getProjects(program, projectGroup){
+        var projects = _.filter(this.allProjects, (p) => program.projectIds.includes(p.id) )
+        return _.filter(projects, p => p.facilityGroupId == projectGroup.id )
       }
     },
     computed: {
@@ -245,7 +490,7 @@
         }, deep: true
       }
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>

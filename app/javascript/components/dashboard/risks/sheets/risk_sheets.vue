@@ -1,71 +1,58 @@
 
 <template>
   <div id="risk-sheets">
-    <table class="table table-sm table-bordered">
-    
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
-        <td class="oneFive">{{risk.text}}</td>
-        <td class="eight">{{risk.riskApproach}}</td>
-        <td class="eight pt-2 font-sm">
-            <span v-if="(risk.priorityLevelName) == 'Very Low'" class="gray2">{{risk.priorityLevelName}}</span> 
-            <span v-if="(risk.priorityLevelName) == 'Low'" class="green1">{{risk.priorityLevelName}}</span> 
-            <span v-if="(risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{risk.priorityLevelName}} </span> 
-            <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
-            <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
-        </td>
-        <td class="eight">{{formatDate(risk.startDate)}}</td>
-        <td class="seven">{{formatDate(risk.dueDate)}}</td>
-        <td class="nine" v-if="(risk.userNames.length) >= 0">{{ risk.userNames }}</td>
-        <td class="nine" v-else></td>
-        <td class="nine">{{risk.progress + "%"}}</td>
-        <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
-        <td class="eight" v-else></td>
-        <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
-        <td class="eight" v-else></td>
-         <td class="twenty" v-if="(risk.notes.length) > 0">
-         By:  {{risk.notes[0].user.fullName}} on 
-         {{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a') }}: 
-        {{risk.notes[0].body}}
-        </td>
-        <td v-else class="twenty">No Updates</td>
-      </tr>
-    </table>
-
-
-
-    <sweet-modal
-      class="risk_form_modal"
-      ref="riskFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_risk" class="w-100">
+      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
         <risk-form
           v-if="Object.entries(DV_edit_risk).length"
           :facility="facility"
           :risk="DV_edit_risk"
           title="Edit Risk"
-          @risk-updated="updateRelatedRiskIssue"
+          @risk-updated="updateRelatedTaskIssue"
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></risk-form>
-
-        <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedRiskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
       </div>
-    </sweet-modal>
+    
+    <table class="table table-sm table-bordered">
+    
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
+       <td class="oneFive">{{risk.text}}</td>
+       <td class="eight">{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1) }}</td>
+       <td class="eight pt-2 font-sm">
+            <span v-if="(risk.priorityLevelName) == 'Very Low'" class="gray2">{{risk.priorityLevelName}}</span> 
+            <span v-if="(risk.priorityLevelName) == 'Low'" class="green1">{{risk.priorityLevelName}}</span> 
+            <span v-if="(risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{risk.priorityLevelName}} </span> 
+            <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
+            <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
+       </td>
+       <td class="eight">{{formatDate(risk.startDate)}}</td>
+       <td class="seven">{{formatDate(risk.dueDate)}}</td>
+       <td class="ten" >
+          <span v-if="(risk.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{risk.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(risk.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{risk.accountableUsers[0].name}}<br></span>   
+          <!-- <span v-if="(risk.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{risk.consultedUsers[0].name}}<br></span> 
+          <span v-if="(risk.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{risk.informedUsers[0].name}}</span>        -->
+        </td>
+        <td class="eight">{{risk.progress + "%"}}</td>
+        <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-else></td>
+        <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
+        <td class="eight" v-else></td>
+        <td class="twenty" v-if="(risk.notes.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)"> 
+           {{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}</span><br> {{risk.notes[0].body}}
+        </td>
+        <td v-else class="twenty">No Updates</td>
+      </tr>
+    </table>
+<!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
+
+    
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
   import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
   import moment from 'moment'
@@ -74,8 +61,7 @@
   export default {
     name: 'RiskSheets',
     components: {
-      RiskForm,
-      SweetModal,
+      RiskForm 
     },
     props: {
       fromView: {
@@ -106,14 +92,14 @@
       ]),
       ...mapActions([
         'riskDeleted',
-        'riskUpdated',
+        'taskUpdated',
         'updateWatchedRisks'
       ]),
       deleteRisk() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
         this.riskDeleted(this.DV_risk)
-      },
+      },  
       openSubRisk(subRisk) {
         let risk = this.currentRisks.find(t => t.id == subRisk.id)
         if (!risk) return
@@ -133,9 +119,9 @@
         if (this.fromView == 'map_view') {
           this.$emit('edit-risk', this.DV_risk)
         }
-        else if (this.fromView == 'manager_view') {
-          this.setRiskForManager({key: 'risk', value: this.DV_risk})
-        }
+        // else if (this.fromView == 'manager_view') {
+        //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
+        // }
         else {
           this.has_risk = Object.entries(this.DV_risk).length > 0
           this.DV_edit_risk = this.DV_risk
@@ -156,8 +142,11 @@
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
       },
-      updateRelatedRiskIssue(risk) {
-        this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
+      // updateRelatedRiskIssue(risk) {
+      //   this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
+      // },
+      updateRelatedTaskIssue(task) {     
+        this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
       getRisk(risk) {
         return this.currentRisks.find(t => t.id == risk.id) || {}
@@ -221,6 +210,13 @@
     margin-bottom: 0 !important;
     overflow: auto;
   }
+  .toolTip {
+    background-color: #6c757d;
+    font-size: .75rem;
+    padding:1px;
+    color: #fff;
+    border-radius: 3px;
+  }
   .seven {
     width: 7%;
   }
@@ -247,13 +243,13 @@
     height: 20px;
     font-weight: bold;
   }
-  .toolTip {
-    background-color: rgba(132, 133, 133, 1);
-    font-size: .75rem;
-    padding:1px;
-    color: #fff;
-    border-radius: 3px;
-  }
+  // .toolTip {
+  //   background-color: rgba(132, 133, 133, 1);
+  //   font-size: .75rem;
+  //   padding:1px;
+  //   color: #fff;
+  //   border-radius: 3px;
+  // }
   td {
     overflow-wrap: break-word;
   }

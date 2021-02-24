@@ -7,8 +7,10 @@ class RisksController < AuthenticatedController
   end
 
   def create
-    @risk = Risk.create(risk_params.merge(user_id: current_user.id))
-    @risk.assign_users(params)
+    # @risk = Risk.create(risk_params.merge(user_id: current_user.id))
+    # @risk.assign_users(params)
+    
+    @risk = Risk.new.create_or_update_risk(params, current_user)
     render json: {risk: @risk.reload.to_json}
   end
 
@@ -38,14 +40,10 @@ class RisksController < AuthenticatedController
 
   private
   def set_resources
-    if params[:risk][:facility_project_id]
-      @facility_project = FacilityProject.find(params[:risk][:facility_project_id])
-    else
-      @project = current_user.projects.active.find_by(id: params[:project_id])
-      @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
-    end
-
+    @project = current_user.projects.active.find_by(id: params[:project_id])
+    @facility_project = @project.facility_projects.find_by(facility_id: params[:facility_id])
   end
+  
 
   def set_risk
     @risk = @facility_project.risks.find_by(id: params[:id])
@@ -53,6 +51,9 @@ class RisksController < AuthenticatedController
 
   def risk_params
     params.require(:risk).permit(
+      :approved,
+      :approved_at,
+      :approval_time,
       :facility_project_id,
       :risk_description,
       :impact_description,
@@ -65,7 +66,7 @@ class RisksController < AuthenticatedController
       :risk_approach_description,
       :task_type_id,
       :task_type,
-      :risk_stage, 
+      # :risk_stage, <-- :risk_stage created error when saving watched status
       :risk_stage_id,
       :progress,
       :start_date,

@@ -349,7 +349,7 @@ div.Tile li:hover
 
 div.Tile ul
 {
-	list-style-image: url('../Images/Bullet1.png');
+	list-style-image: url('../Images/Common/BlueBullet.png');
 	list-style-position: outside;
 	margin: 0;
 	padding-left: 2px;

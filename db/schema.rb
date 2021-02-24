@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_04_220816) do
+ActiveRecord::Schema.define(version: 2021_02_16_140650) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -208,6 +208,14 @@ ActiveRecord::Schema.define(version: 2021_02_04_220816) do
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
+  create_table "progress_lists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.text "body"
+    t.integer "user_id"
+    t.integer "checklist_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "project_issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "issue_severity_id"
     t.bigint "project_id"
@@ -299,6 +307,17 @@ ActiveRecord::Schema.define(version: 2021_02_04_220816) do
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
 
+  create_table "rails_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "var", null: false
+    t.text "value"
+    t.string "target_type", null: false
+    t.integer "target_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
+  end
+
   create_table "region_states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "facility_group_id"
     t.bigint "state_id"
@@ -377,6 +396,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_220816) do
     t.string "probability_name"
     t.string "impact_level_name"
     t.text "probability_description"
+    t.string "approval_time"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"

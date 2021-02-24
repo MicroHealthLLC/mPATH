@@ -119,8 +119,8 @@
               <col class="eight" />
               <col class="eight" />
               <col class="seven" />
-              <col class="nine" />
-              <col class="nine" />
+              <col class="ten" />
+              <col class="eight" />
               <col class="eight" />
               <col class="eight" />
               <col class="twenty" />
@@ -142,8 +142,8 @@
              <risk-sheets
               v-for="risk in sortedRisks"
               class="riskHover"
-              href="#"
-              :load="log(risk)"             
+              href="#"    
+              :load="log(risk)"           
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -206,7 +206,7 @@
         <tr  v-for="(risk, index) in filteredRisks" :key="index">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
-          <td>{{risk.riskApproach}}</td>
+          <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
           <td>{{risk.priorityLevel}}</td>         
           <td>{{formatDate(risk.startDate)}}</td>
           <td>{{formatDate(risk.dueDate)}}</td>
@@ -388,7 +388,7 @@
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
-          if (search_query) valid = valid && search_query.test(resource.riskName)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
 
           return valid;

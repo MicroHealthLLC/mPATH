@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading" class="mt-2 risks-index" data-cy="risk_list">
+  <div v-if="!loading" class="mt-2 risks-index px-0" data-cy="risk_list">
     <div v-if="newRisk && from != 'manager_view'">
       <risk-form
         :facility="facility"
@@ -104,7 +104,7 @@
             <hr/>
             <risk-show
               v-for="(risk, i) in filteredRisks"         
-              class="riskHover"
+              class="riskHover"        
               :class="{'b_border': !!filteredRisks[i+1]}"
               :key="risk.id"
               :risk="risk"
@@ -138,7 +138,7 @@
         <tr v-for="(risk, i) in filteredRisks">
           <td>{{risk.text}}</td>
           <td>{{risk.facilityName}}</td>
-          <td>{{risk.riskApproach}}</td>
+          <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
           <td>{{risk.priorityLevel}}</td>         
           <td>{{formatDate(risk.startDate)}}</td>
           <td>{{formatDate(risk.dueDate)}}</td>
@@ -212,9 +212,6 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-      log(r) {
-        console.log(r)
-      },
       riskCreated(risk) {
         this.facility.risks.unshift(risk)
         this.newRisk = false
@@ -322,7 +319,7 @@
 
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
-          if (search_query) valid = valid && search_query.test(resource.riskName)
+          if (search_query) valid = valid && search_query.test(resource.text)
 
 
           return valid;

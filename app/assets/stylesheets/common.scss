@@ -52,6 +52,50 @@ input[type=button]:focus {
     color: #383838
   }
 }
+
+.paginate-links.filteredNotes {
+  list-style: none !important;
+  user-select: none;
+  text-decoration-line: none !important;
+  margin-bottom: 18px;
+  a {
+    width: 20px;
+    height: 25px;
+    margin-right: 0;
+    border-radius: 2px;
+    background-color: white;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    color: #383838;
+    padding: 5px 12px;
+    cursor: pointer;
+    text-decoration-line: none !important;
+  }
+  a:hover {
+    background-color: #ededed;
+  }
+  li.active a {
+    font-weight: bold;
+    color: #383838;
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  a.active  {
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  li.next:before {
+    content: ' | ';
+    margin-right: 13px;
+    color: #ddd;
+  }
+  li.disabled a {
+    color: #ccc;
+    cursor: no-drop;
+  }
+  li {
+    display: inline !important;
+    margin: 1px;
+    color: #383838 !important;
+  }
+}
 .el-card__body {
   padding: 15px !important;
 }
@@ -129,10 +173,24 @@ input[type=button]:focus {
 }
 // Tabbed out form inside modals
 .paperLookTab {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  // box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   padding-bottom: 20px;
   margin-bottom: 10px;
   position: relative;
+  background-color: #fff;
+}
+
+.action-form-overlay {
+  position: absolute;
+  top:0;
+ } 
+ .updateForm {
+  width: 102% !important;
+  margin-top: -15px;
+  margin-left: -34px;
+ } 
+ .risks-form, .tasks-form, .issues-form, #risks-form {
+  height: 175vh;
   background-color: #fff;
 }
 .warning-icon {
@@ -467,7 +525,7 @@ body /deep/ .mx-input.disabled {
   background-color: #41b883;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
 }
-.total-table-btns {box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); }
+.total-table-btns, .addCheckProgBtn {box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); }
 .exportBtns:hover, #printBtn:hover { transform: scale(1.06); }
 th {
   -webkit-touch-callout: none;
@@ -507,6 +565,9 @@ th {
     color: #606266;
   }
 }
+.upperCase, .multiselect__option {
+  text-transform: capitalize !important;
+}
 // CSSS for datatable ends
 .badge-active {
   color: #fff;
@@ -527,6 +588,14 @@ th {
   background: #FF0000;
   width: max-content;
   display: inline-block;
+}
+
+.toolTip {
+  background-color: #6c757d !important;
+  font-size: .75rem;
+  padding:1px;
+  color: #fff;
+  border-radius: 3px;
 }
 
 .hide-to-edit {
@@ -594,4 +663,43 @@ th {
 }
 .el-loading-spinner {
   top: 45%
+}
+.el-notification {
+  background-color: #17a2b8;
+  h2, p, .__closeBtn {
+    color: white;
+  }
+}
+.el-notification__closeBtn {
+  color: white;
+}
+.el-notification .el-icon-info {
+  color: white;
+}
+.el-menu--collapse {
+  width: 200px;
+}
+.el-menu--collapse>.el-submenu>.el-submenu__title span {
+  visibility: visible;
+  height: unset;
+  width: unset;
+}
+.el-menu--collapse>.el-submenu>.el-submenu__title {
+  padding: 10px;
+  line-height: unset;
+  height: unset;
+  &:hover {
+    background-color: rgba(91, 192, 222, 0.3);
+  }
+}
+.el-submenu__title {
+  text-align: center;
+}
+.el-tree-node__content:hover {
+  background-color: rgba(91, 192, 222, 0.3);
+}
+.el-tree-node__label {
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

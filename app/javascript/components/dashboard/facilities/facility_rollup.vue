@@ -1,6 +1,6 @@
 <!--  NOTE: This File is used in Map view right side bard -->
 <template>
-  <div class="container m-2" data-cy="facility_rollup">
+  <div class="container-fluid m-2" data-cy="facility_rollup">
       <div class="row">
         <div class="col pl-0"> 
           <h3 class="d-inline mr-2"> <b>PROJECTS</b></h3>   
@@ -12,9 +12,9 @@
         </span>
       </p> -->
       </div>
-<!-- First Row -->
+
     <div class="row row-1 mt-1">
-       <div class="col-md-12 col-lg-12 pl-0 col-sm-12">
+       <div class="col-md-6 col-lg-6 px-0 col-sm-6">
          <el-card class="box-card">
             <div class="row">
               <div class="col">
@@ -26,18 +26,27 @@
              <div v-for="status in facilitiesByProjectStatus">
              
               <div class="row">
-                <div class="col">
-                  <span class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>
-                  <span> {{status.name}}</span>
-                  <span class="badge badge-secondary badge-pill">{{status.length}}</span>
+                <div class="col-6 mb-2 pl-2 pr-0">
+                  <span v-if="isMapView" class="badge badge-pill font-sm badge-color" :style="`background: ${status.color}`">&nbsp;</span>
+                    <span v-else class="badge badge-pill badge-color" :style="`background: ${status.color}`">&nbsp;</span>                 
+                 
+                  <span v-if="isMapView" class="font-sm"> {{status.name}}</span>
+                   <span v-else> {{status.name}}</span>
+
+                  <span v-if="isMapView"  class="badge badge-secondary font-sm badge-pill">{{status.length}}</span>
+                  <span v-else class="badge badge-secondary badge-pill font-sm">{{status.length}}</span>
                 </div>
                 <div class="col">     
                    <!-- <span :class="{'progress-0': status.progress <= 0}">                
                      <el-progress type="circle" :percentage="status.progress"></el-progress>
                     </span>        -->
-                  <span class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}" >
+                  <span v-if="isMapView"  class="w-100 progress pg-content font-sm" :class="{'progress-0': status.progress <= 0}" >
+                   <div class="progress-bar bg-info font-sm" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
+                  </span>  
+
+                     <span v-else class="w-100 progress pg-content" :class="{'progress-0': status.progress <= 0}" >
                    <div class="progress-bar bg-info" :style="`width: ${status.progress}%`">{{status.progress}} %</div>
-                  </span>         
+                  </span>       
                 </div>
               </div>
              
@@ -46,16 +55,8 @@
                <div v-if="!contentLoaded" class="my-4">
                   <loader type="code"></loader>
                </div>          
-         </el-card>     
-       </div>  
-       
-       
-    </div>  
-
-    <!-- This is the 2nd row for filters -->
-      <!-- <div class="row row-1 mt-3">
-     <div class="col-md-12 col-lg-12 col-sm-12" data-cy="date_set_filter">         
-          <el-card class="box-card" style="background-color:rgb(92,184,92);color:#fff">
+         </el-card>  
+         <el-card class="box-card my-2" style="background-color:#41b883;color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline">Filters</h5>               
@@ -69,18 +70,48 @@
                             <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
                 </div>
               </div>
-            </div>                    
-         </el-card>     
+            </div>
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                    
+         </el-card>    
+         <!-- <div class="col-md-6 col-lg-6 col-sm-6 pl-0" v-if="from !== 'manager_view'" data-cy="facility_group_summary">           -->
+          <el-card class="box-card">
+            <div class="row">
+              <div class="col">
+                 <span> <h5>Project Groups</h5></span>    
+                <hr>
+              </div>             
+            </div>
+            <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">     
+             
+              <div class="row">
+                <div class="col-7 mb-2 pl-2 pr-0">
+                    <span class="badge badge-pill font-sm" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
+                    {{facilityGroup.status}}
+                    </span>
+                    <span v-if="isMapView" class="font-sm">{{facilityGroup.name}}</span>
+                    <span v-else>{{facilityGroup.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
+                </div>
+                <div class="col">            
+                   <span v-if="isMapView" class="w-100 font-sm progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
+                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
+                  </span>
+
+                   <span v-else class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
+                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
+                  </span>
+                </div>
+              </div>             
+            
+              </div>           
+               <div v-if="!contentLoaded" class="my-4">
+                  <loader type="code"></loader>
+               </div>          
+         </el-card>    
+       <!-- </div>      -->
        </div>  
-      </div> -->
-
-
-
-<!-- This is the 3nd row, the task-issue-risk-row -->
-
-    <div class="row row-2 mt-2 task-issue-risk-row">
-      <div class="col-md-6 pl-0" data-cy="tasks_summary">
-         <el-card class="box-card" style="background-color:#fff">
+  <div class="col-md-6 col-lg-6 col-sm-6 pl-2" v-if="from !== 'manager_view'" data-cy="facility_group_summary">    
+         <el-card class="box-card mb-2" style="background-color:#fff">
 
             <div class="row">
               <div class="col"> 
@@ -90,10 +121,11 @@
               </div>             
             </div>
 
-          <div v-if="contentLoaded" class="font-sm"> 
+          <div v-if="contentLoaded"> 
               <div class="row">
                   <div class="col">
-                    <span>Complete</span>
+                    <span v-if="isMapView" class="font-sm">Complete</span>
+                    <span v-else>Complete</span>
                     <span class="badge badge-secondary badge-pill">{{taskVariation.completed.count}}</span>
                   </div>
                   <div class="col">
@@ -101,20 +133,25 @@
                       <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                     </span>
                   </div>
-              </div>       
+              </div>     
+            <span @click.prevent="showLessToggle" >
           <el-collapse id="roll_up">
-            <el-collapse-item title="See More" name="1">
 
-              <div v-if="filteredTasks.length" class="row mt-4 mb-1">
+            <el-collapse-item title="Details" name="1">
+
+              <div v-if="filteredTasks.length" class="row mt-2 mb-1">
                  <div class="col font-weight-bold text-center">
-                     CATEGORIES
+                     <span v-if="isMapView" class="font-sm">CATEGORIES</span>
+                    <span v-else> CATEGORIES</span>
                   </div>                
               </div>
               <div v-for="task in currentTaskTypes">
               <div class="row font-sm" v-if="task._display"> 
                     <div class="col">
-                      <span> {{task.name}}</span>
-                      <span class="badge badge-secondary badge-pill">{{task.length}}</span>
+                         <span v-if="isMapView" class="font-sm"> {{task.name}}</span>
+                         <span v-else class="font-sm"> {{task.name}}</span>
+                         <span v-if="isMapView" class="font-sm">{{task.length}}</span>
+                         <span v-else class="badge badge-secondary badge-pill">{{task.length}}</span>
                     </div>
 
                     <div class="col">
@@ -126,40 +163,18 @@
               </div>  
             </el-collapse-item>
           </el-collapse>
+            </span>
+             
 
             </div>                    
              <div v-if="!contentLoaded" class="my-4">
                   <loader type="code"></loader>
              </div>          
-         </el-card>
-   
-       </div>     
-        <div class="col-md-6 pl-0" data-cy="date_set_filter">         
-          <el-card class="box-card" style="background-color:#41b883;color:#fff">
-            <div class="row">
-              <div class="col">
-                 <h5 class="d-inline">Filters</h5>               
-                <hr>
-              </div>             
-            </div>
-
-            <div v-for="filterArray in getAllFilterNames">
-              <div class="row">
-                <div class="col" v-if="getFilterValue(filterArray[0])">                                         
-                            <b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}}                     
-                </div>
-              </div>
-            </div>                    
-         </el-card>     
-       </div>  
-
-    </div>
+         </el-card> 
 
 
-    <div class="row row-2 mt-2 task-issue-risk-row">
-          <div class="col-md-6 col-lg-6 col-sm-12 pl-0" data-cy="issues_summary">
-          
-         <el-card class="box-card" style="background-color:#fff">
+       <!-- Issues -->
+        <el-card class="box-card mb-2" style="background-color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline"> <b>ISSUES</b></h5>   
@@ -168,14 +183,21 @@
               </div>             
             </div>
 
-            <div v-if="contentLoaded" class="font-sm">     
+            <div v-if="contentLoaded">     
              
               <div class="row">
                     <div class="col">
-                      <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
+                      <span v-if="isMapView" class="font-sm">Complete</span>
+                      <span v-else>Complete</span>
+                      <span v-if="isMapView" class="badge font-sm badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
+                       <span v-else class="badge badge-secondary badge-pill">{{issueVariation.completed.count}}</span>
                     </div>
-                    <div class="col">
+                    <div v-if="isMapView" class="col font-sm">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
+                     </span>
+                    </div>
+                     <div v-else class="col">
                       <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.completed.percentage <= 0}">
                       <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                      </span>
@@ -183,20 +205,26 @@
               </div>     
               <div class="row mt-1">
                     <div class="col">
-                      <span>Overdue</span>
-                      <span class="badge badge-secondary badge-pill">{{issueVariation.overdue.count}}</span>
+                      <span v-if="isMapView" class="font-sm">Overdue</span>
+                      <span v-else>Overdue</span>
+                      <span v-if="isMapView" class="badge badge-secondary font-sm badge-pill">{{issueVariation.overdue.count}}</span>                     
+                      <span v-else class="badge badge-secondary font-sm badge-pill">{{issueVariation.overdue.count}}</span>
                     </div>
                     <div class="col">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
+                      <span v-if="isMapView" class="w-100 progress pg-content font-sm" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
+                      </span>
+
+                       <span v-else class="w-100 progress pg-content" :class="{'progress-0': issueVariation.overdue.percentage <= 0}">
                         <div class="progress-bar bg-info" :style="`width: ${issueVariation.overdue.percentage}%`">{{issueVariation.overdue.percentage}} %</div>
                       </span>
                     </div>
               </div>
 
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
              <div v-if="filteredIssues.length" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-4 mb-1 text-center">
+               <div class="col font-weight-bold mt-1 mb-1 text-center">
                        CATEGORIES
                </div>                  
             </div>
@@ -225,12 +253,7 @@
              </div>    
                    
          </el-card>     
-       </div>  
-
-
-       <div class="col-md-6 col-lg-6 col-sm-12 pl-0" data-cy="facility_group_summary">          
-            
-         <el-card class="box-card" style="background-color:#fff">
+          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
                  <h5 class="d-inline"> <b>RISKS</b></h5>   
@@ -238,15 +261,16 @@
                 <hr>
               </div>             
             </div>
-            <div v-if="contentLoaded" class="font-sm">  
+            <div v-if="contentLoaded">  
                         
       
               <div class="row mb-2">
                   <div class="col text-center">
-                    RISK PRIORITY LEVELS
+                     <span v-if="isMapView" > Risk Priority Levels</span>
+                      <span v-else> Risk Priority Levels</span>
                   </div>
               </div>            
-            <div class="row font-sm">
+            <div v-if="isMapView" class="row font-sm">
                 <div class="col text-center"> 
                   <p class="mb-2 grey2" v-tooltip="`Very Low`">VL</p>                
                   <p class="mb-2 green" v-tooltip="`Low`">L</p>               
@@ -267,11 +291,32 @@
                                        
                 </div>
             </div>           
+             <div v-else class="row">
+                <div class="col text-center"> 
+                  <p class="mb-2 grey2" v-tooltip="`Very Low`">Very Low</p>                
+                  <p class="mb-2 green" v-tooltip="`Low`">Low</p>               
+                  <p class="mb-2 yellow" v-tooltip="`Moderate`">Moderate</p>                         
+                </div>
+                <div class="col">  
+                  <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.grey}}</span>
+                  <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.green}}</span>
+                  <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>                 
+                </div>
+                 <div class="col text-center">                
+                  <p class="mb-2 orange" v-tooltip="`High`">High</p>
+                  <p class="mb-2 red" v-tooltip="`Extreme`">Extreme</p>                                        
+                </div>
+                <div class="col">                
+                 <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.orange}}</span>
+                 <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span> 
+                                       
+                </div>
+            </div>           
              
              
 
           <el-collapse>
-            <el-collapse-item title="See More" name="1">
+            <el-collapse-item title="Details" name="1">
                <div class="row">
                     <div class="col">
                       <span>Complete</span>
@@ -329,65 +374,11 @@
               <loader type="code"></loader>
              </div>          
          </el-card>     
-       </div>  
+      </div>      
+    </div>  
 
-    </div>
+    <!-- This is the 2nd row for filters -->
 
-<!-- Bottommost row for Filters -->
-
-    <div class="row row-3 mt-2">
-        <div class="col-md-12 pl-0 col-lg-12 mb-3 col-sm-12" v-if="from !== 'manager_view'" data-cy="facility_group_summary">          
-          <el-card class="box-card">
-            <div class="row">
-              <div class="col">
-                 <span> <h5 class="text-center">Project Groups</h5></span>    
-                <hr>
-              </div>             
-            </div>
-            <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">     
-             
-              <div class="row">
-                <div class="col">
-                    <span class="badge badge-pill" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-                    {{facilityGroup.status}}
-                    </span>
-                    <span>{{facilityGroup.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
-                </div>
-                <div class="col">            
-                   <span class="w-100 progress pg-content" :class="{'progress-0': facilityGroupProgress(facilityGroup) <= 0}">
-                   <div class="progress-bar bg-info" :style="`width: ${facilityGroupProgress(facilityGroup)}%`">{{facilityGroupProgress(facilityGroup)}} %</div>
-                  </span>
-                </div>
-              </div>             
-            
-              </div>           
-               <div v-if="!contentLoaded" class="my-4">
-                  <loader type="code"></loader>
-               </div>          
-         </el-card>    
-       </div>  
-    </div>
-    <!-- <div class="bg-info proj-type" ><b>Project Type:</b> <span v-if="currentProject">{{currentProject.projectType}}</span></div> -->
-    <!-- <br> -->
-    <!-- <div class="text-center mt-1">
-      <h2><span v-if="contentLoaded">{{C_facilityCount}}</span> Facilities</h2>
-      <p class="mt-2 d-flex align-items-center">
-        <span class="w-100 progress pg-content" :class="{'progress-0': C_facilityProgress <= 0}">
-          <div class="progress-bar bg-info" :style="`width: ${C_facilityProgress}%`">{{C_facilityProgress}} %</div>
-        </span>
-      </p>
-      <div v-if="C_facilityCount > 0" class="d-flex justify-content-around"> -->
-        <!-- <div>
-          <span> active</span>
-          <span class="badge badge-secondary badge-pill">{{activeFacilitiesByStatus}}</span>
-        </div>
-        <div>
-          <span> inactive</span>
-          <span class="badge badge-secondary badge-pill">{{inactiveFacilitiesByStatus}}</span>
-         </div>-->
-      <!-- </div>
-    </div> -->
   </div>
 </template>
 
@@ -400,6 +391,12 @@ export default {
   components: {
     Loader
   },
+   data() {
+      return {
+        showLess: 'Show More',
+        showMore: true
+      }
+   },
   computed: {
     ...mapGetters([
       'getTaskIssueUserFilter',
@@ -430,7 +427,8 @@ export default {
       'filteredAllIssues',
       'filteredAllRisks',
       'myActionsFilter',
-      'onWatchFilter'
+      'onWatchFilter',
+      'getUnfilteredFacilities'
     ]),
     C_taskTypeFilter: {
       get() {
@@ -464,8 +462,11 @@ export default {
       return this.facilityGroup ? this.facilityGroupFacilities(this.facilityGroup).length : this.facilityCount
     },
     C_facilityProgress() {
-      return this.facilityGroup ? Number(_.meanBy(this.facilityGroupFacilities(this.facilityGroup), 'progress') || 0).toFixed(2) : this.facilityProgress
+      return this.facilityGroup ? Number(_.meanBy(this.facilityGroupFacilities(this.facilityGroup), 'progress') || 0).toFixed(0) : this.facilityProgress
     },
+    isMapView() {
+        return this.$route.name === 'ProjectMapView'
+     },
     filteredTasks() {
       let typeIds = _.map(this.taskTypeFilter, 'id')
       let stageIds = _.map(this.taskStageFilter, 'id')
@@ -568,7 +569,7 @@ export default {
             name: type.name,
             _display: tasks.length > 0 && (names ? names.includes(type.name) : true),
             length: tasks.length,
-            progress: Number(_.meanBy(tasks, 'progress').toFixed(2))
+            progress: Number(_.meanBy(tasks, 'progress').toFixed(0))
           }
         )
       }
@@ -584,7 +585,7 @@ export default {
             name: type.name,
             _display: (names ? names.includes(type.name) : true) && issues.length > 0,
             length: issues.length,
-            progress: Number(_.meanBy(issues, 'progress').toFixed(2))
+            progress: Number(_.meanBy(issues, 'progress').toFixed(0))
           }
         )
       }
@@ -600,7 +601,7 @@ export default {
             name: type.name,
             _display: risks.length > 0 && (names ? names.includes(type.name) : true),
             length: risks.length,
-            progress: Number(_.meanBy(risks, 'progress').toFixed(2))
+            progress: Number(_.meanBy(risks, 'progress').toFixed(0))
           }
         )
       }
@@ -612,8 +613,8 @@ export default {
       let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     },
     issueVariation() {
@@ -622,8 +623,8 @@ export default {
       let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     },
      riskVariation() {
@@ -632,18 +633,23 @@ export default {
       let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
       let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
       return {
-        completed: {count: completed.length, percentage: completed_percent},
-        overdue: {count: overdue.length, percentage: overdue_percent},
+        completed: {count: completed.length, percentage: Math.round( completed_percent )},
+        overdue: {count: overdue.length, percentage: Math.round( overdue_percent )},
       }
     }
   },
   methods: {
+     showLessToggle() {  
+          this.showLess = 'Show Less' 
+         
+    },  
     facilityGroupProgress(f_group) {
       let ids = _.map(this.filteredFacilities('active'), 'id')
       let mean = _.meanBy(_.filter(f_group.facilities, (f => ids.includes(f.facilityId) && f.projectId == this.currentProject.id)), 'progress') || 0
-      return Number(mean.toFixed(2))
+      return Number(mean.toFixed(0))
     }
-  }
+  },
+  
 }
 </script>
 

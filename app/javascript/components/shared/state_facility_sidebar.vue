@@ -74,74 +74,69 @@
 
       <!-- Sheets View starts here -->
 
-       <div class="col-md-10 facility-show-tab px-4" data-cy="sheets_view" style="background-color: solid #ededed 15px" v-if="isSheetsView" v-loading="!contentLoaded" element-loading-text="Fetching your data. Please wait..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <div class="mt-3">
-          <facility-sheets 
-            v-if="C_showFacilityTab"
-            from="manager_view"
-            :facility="currentFacility"
-            :facility-group="currentFacilityGroup"
-          ></facility-sheets>
-          <!-- <facility-rollup v-else></facility-rollup> -->
-        </div>
-        <div v-if="isSheetsView">   
-          <sweet-modal
-            class="form_modal"
-            ref="formModals"
-            :hide-close-button="true"
-            :blocking="true"
-            >           
-          <div v-if="managerView.task || managerView.issue || managerView.risk || managerView.note " class="w-100" >
-            <task-form
-              v-if="managerView.task"
+       <div class="col-md-10 facility-show-tab px-0"          
+            data-cy="sheets_view" style="background-color: solid #ededed 15px" 
+            v-if="isSheetsView" 
+            v-loading="!contentLoaded" 
+            element-loading-text="Fetching your data. Please wait..." 
+            element-loading-spinner="el-icon-loading" 
+            element-loading-background="rgba(0, 0, 0, 0.8)">
+              
+              
+          <div v-if="isSheetsView" class="mt-3 px-3"  >              
+            <facility-sheets 
+              v-if="C_showFacilityTab"            
+              from="manager_view"                  
               :facility="currentFacility"
-              :task="managerView.task"
-              title="Edit Task"
-              @task-created="updateFacilityTask"
-              @task-updated="updateFacilityTask"
-              class="form-inside-modal"
-            ></task-form>
-            <risk-form
-              v-if="managerView.risk"
-              :facility="currentFacility"
-              :risk="managerView.risk"          
-              @risk-created="updateFacilityRisk"
-              @risk-updated="updateFacilityRisk"
-              class="form-inside-modal"
-            ></risk-form>
-            <issue-form
-              v-else-if="managerView.issue"
-              :facility="currentFacility"
-              :issue="managerView.issue"
-              @issue-updated="updateFacilityIssue"
-              @issue-created="updateFacilityIssue"
-              class="form-inside-modal"
-            ></issue-form>
-              <notes-form
-              v-else-if="managerView.note"
-              from="manager_view"
-              :facility="currentFacility"
-              :note="managerView.note"
-              @close-note-input="newNote=false"
-              @note-created="createdFacilityNote"
-              @note-updated="updatedFacilityNote"
-            ></notes-form>
-
-             <!-- <notes-form
-              v-else-if="managerView.note"
-              from="manager_view"
-              :facility="currentFacility"
-              :note="managerView.note"
-              @close-note-input="newNote=false"
-              @note-created="createdFacilityNote"
-              @note-updated="updatedFacilityNote"
-            ></notes-form> -->
-            
-           </div>       
-          </sweet-modal>
-         </div>
+              :facility-group="currentFacilityGroup"             
+            ></facility-sheets>
+            <facility-rollup v-else></facility-rollup>
+          </div>
+        
+         <div v-if="isSheetsView && managerView.task || managerView.issue || managerView.risk || managerView.note"  >  
+             <div class="w-100 action-form-overlay">
+              <task-form
+                v-if="managerView.task"
+                :facility="currentFacility"
+                :task="managerView.task"
+                title="Edit Task"
+                @on-close-form="onCloseForm"
+                @task-created="handleNewTask"
+                @task-updated="handleNewTask"  
+                class="form-inside-modal"
+              ></task-form>
+              <risk-form
+                v-if="managerView.risk"
+                :facility="currentFacility"
+                :risk="managerView.risk"       
+                @on-close-form="onCloseForm"   
+                @risk-created="handleNewRisk"
+                @risk-updated="handleNewRisk"             
+                class="form-inside-modal"
+              ></risk-form>
+              <issue-form
+                v-else-if="managerView.issue"
+                :facility="currentFacility"
+                :issue="managerView.issue"
+                 @on-close-form="onCloseForm"
+                @issue-updated="handleNewIssue"
+                @issue-created="handleNewIssue"             
+                class="form-inside-modal"
+              ></issue-form>
+                <notes-form
+                v-else-if="managerView.note"
+                from="manager_view"
+                :facility="currentFacility"
+                :note="managerView.note"
+                @close-note-input="newNote=false"
+                @note-created="createdFacilityNote"
+                @note-updated="updatedFacilityNote"
+              ></notes-form>           
+            </div>                    
+          
+        </div>           
+     </div>
       
-      </div>
 
       <!-- Sheets View ends here -->
 
@@ -167,7 +162,7 @@
                   </div>
 
                   <div class="simple-select w-25  d-inline mr-1" style="position:absolute">
-                     <label class="font-sm mb-0">Task Category</label>
+                     <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -220,7 +215,7 @@
                     />
                   </div>
                   <div class="simple-select w-25 mr-1 d-inline" style="position:absolute">
-                    <label class="font-sm mb-0">Task Category</label>
+                    <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -248,57 +243,8 @@
                       </template>
                     </multiselect>
                   </div>
-                     <!-- <div class="simple-select w-25 d-inline-block">
-                    <label class="font-sm mb-0">Issue Type</label>
-                    <multiselect
-                      v-model="C_issueTypeFilter"
-                      track-by="name"
-                      label="name"
-                      placeholder="Filter by Issue Type"
-                      :options="issueTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                   </div> -->
-
-                    <!-- <div class="simple-select w-25 d-inline-block">
-                   <label class="font-sm mb-0">Issue Severity</label>
-                    <multiselect
-                      v-model="C_issueSeverityFilter"
-                      track-by="name"
-                      label="name"
-                      placeholder="Filter by Issue Severity"
-                      :options="issueSeverities"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
-                  </div> -->
-                   <!-- <div class="form-check my-4 pl-0" data-cy="search_issue_total">
-                    <label class="form-check-label text-primary">
-                      <h5>Total: {{filteredIssues.length}}</h5>
-                    </label>
-                  </div>              -->
+                 
                 </div>
-
-
-
-
               <div v-if="currentTab === 'risks'">              
                   <div class="searchBar input-group w-25 d-inline-flex mr-1">
                     <div class="input-group-prepend d-inline">
@@ -316,7 +262,7 @@
                   </div>
                            
                   <div class="simple-select w-25 d-inline" style="position:absolute">
-                    <label class="font-sm mb-0">Task Category</label>
+                    <label class="font-sm mb-0">Category</label>
                     <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
@@ -454,6 +400,13 @@
      KanbanView
     
     },
+  //     props: {
+  //   fromView: {
+  //     type: String,
+  //     default: "map_view",
+  //   },
+  //   task: Object,
+  // },
     data() {
       return {
           tabs: [
@@ -473,7 +426,6 @@
             closable: false
           }
         ],
-        currentTab: 'tasks',
         expanded: {
           id: ''
         },
@@ -496,10 +448,26 @@
     },
     mounted() {
       // make the first facility_group expanded
-      if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      // if (this.filteredFacilityGroups.length) this.expandFacilityGroup(this.filteredFacilityGroups[0])
+      if(Vue.prototype.$preferences.sub_navigation_menu){
+        this.currentTab = Vue.prototype.$preferences.sub_navigation_menu
+      }
+      // Display notification when leaving map view to another page and conditions met
+      if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
+        this.$notify.info({
+          title: "Filter Set",
+          message:
+            "A filter was set based on the map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
+          offset: 150,
+          position: "bottom-left"
+        });
+
+        this.setPreviousRoute(this.$route.name)
+      }
     },
     computed: {
       ...mapGetters([ 
+        'facilityGroups',
         'managerView',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
@@ -530,7 +498,10 @@
         'facilityGroupFacilities',
         'taskTypes',
         'issueTypes',
-        'issueSeverities'
+        'issueSeverities',
+        'facilities',
+        'getUnfilteredFacilities',
+        'getPreviousRoute'
       ]),
        filteredTasks() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
@@ -791,7 +762,7 @@
           } else if(stageIds.length > 0) {
             valid = valid && stageIds.includes(resource.riskStageId)
           }
-          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title)
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.text)
 
           return valid
         }), 'kanbanOrder', 'asc')
@@ -879,7 +850,8 @@
         'setIssueSeverityFilter',
         'setIssueTypeFilter',
         'setTaskTypeFilter',
-        'updateTasksHash',               
+        'updateTasksHash',
+        'setPreviousRoute'              
       ]),
       ...mapActions([
         'taskUpdated'
@@ -911,7 +883,7 @@
       updateFacilityTask(task) {
         let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.setTaskForManager({key: 'task', value: null})
+        // this.setTaskForManager({key: 'task', value: null})
       },
       updateFacilityIssue(issue) {
         let cb = () => this.updateIssuesHash({issue: issue})
@@ -964,17 +936,17 @@
       handleNewTask(task) {
         let cb = () => this.updateTasksHash({task: task})
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleNewIssue(issue) {
         let cb = () => this.updateIssuesHash({issue: issue})
         this.taskUpdated({facilityId: issue.facilityId, projectId: issue.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleNewRisk(risk) {
         let cb = () => this.updateRisksHash({risk: risk})
         this.taskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb}).then((facility) => this.currentFacility = facility)
-        this.onCloseForm()
+        // this.onCloseForm()
       },
       handleSearchQueryChange(searchElement){
         this.searchStageId = $(searchElement).attr("data-stage-id")
@@ -997,11 +969,12 @@
           }
         }, deep: true
       },
-        managerView: {
+      managerView: {
         handler(value) {
           if (value.task || value.issue || value.note || value.risk) {
             this.$refs.formModals && this.$refs.formModals.open()
-          } else {
+          } 
+          else {
             this.$refs.formModals && this.$refs.formModals.close()
           }
         }, deep: true      
@@ -1030,11 +1003,32 @@
             }
           }
           // NOTE: https://github.com/MicroHealthLLC/mGis/issues/1037
-          if(!this.currentFacilityGroup.id && value[0]){
-            this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
-            this.currentFacilityGroup = value[0]
-            this.expanded.id = value[0].id
+          // if(!this.currentFacilityGroup.id && value[0]){
+          //   this.currentFacility = this.facilityGroupFacilities(value[0])[0] || {}
+          //   this.currentFacilityGroup = value[0]
+          //   this.expanded.id = value[0].id
+          // }
+          // We are adding this condition because when we use move to function
+          // it is changing the screen to user preference screen
+          // https://github.com/MicroHealthLLC/mGis/issues/1806
+          if(this.currentFacilityGroup && !this.currentFacilityGroup.id){
+            if(Vue.prototype.$preferences.project_group_id && value){
+              var facilityGroup = value.find(f => f.id === Vue.prototype.$preferences.project_group_id )
+              if(facilityGroup){
+                this.currentFacilityGroup = facilityGroup
+                this.expanded.id = this.currentFacilityGroup.id
+              }
+            }
           }
+          if(this.currentFacility && !this.currentFacility.id ){
+            if(Vue.prototype.$preferences.project_id){
+              var facility = this.facilityGroupFacilities(this.currentFacilityGroup).find(f => f.id == Vue.prototype.$preferences.project_id)
+              if(facility){
+                this.currentFacility = facility
+              }
+            }
+          }
+
         }, deep: true
       }
     }
@@ -1070,6 +1064,13 @@
       border-radius: 4px;
       z-index: 1;
     }
+    .action-form-overlay2 {
+      background-color: black;
+    }
+    .action-form-overlay {
+      position: absolute;
+      top:0;
+    }  
     .center-section {
       position: absolute;
       box-shadow: 0.5px 0.5px 5px 5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
@@ -1092,6 +1093,12 @@
     padding-right:5px;
     box-shadow: 0 2.5px 2.5px rgba(0,0,0,0.19), 0 3px 3px rgba(0,0,0,0.23);
   }
+  // .blur-bg {
+  //   backdrop-filter: grayscale(0.9) opacity(0.8) !important /* ...and on and on... */;
+  //   // background-color: rgba(0, 0, 0, 0.8) !important;
+  //   height: 100vh !important;
+  //   z-index: 100000 !important;
+  // }
   .searchBar {
     margin-top: 24px;
   }
@@ -1133,4 +1140,7 @@
       }
     }
   } 
+  .no-scroll {
+    overflow-y: hidden !important;
+  }
 </style>

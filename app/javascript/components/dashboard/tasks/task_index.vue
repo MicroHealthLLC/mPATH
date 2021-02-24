@@ -56,7 +56,7 @@
       </div>
       <div v-if="filteredTasks.length > 0">
         <hr />
-        <task-show v-for="(task, i) in filteredTasks" id="taskHover" :class="{'b_border': !!filteredTasks[i+1]}" :key="task.id" :task="task" :from-view="from" @edit-task="editTask"></task-show>
+        <task-show v-for="(task, i) in filteredTasks" id="taskHover" :load="log(task)" :class="{'b_border': !!filteredTasks[i+1]}" :key="task.id" :task="task" :from-view="from" @edit-task="editTask"></task-show>
       </div>
       <div v-else>
         <br />
@@ -150,6 +150,9 @@ export default {
       } else {
         this.$emit('show-hide')
       }
+    },
+    log(t){
+      console.log(t)
     },
     editTask(task) {
       this.$emit('show-hide', task)

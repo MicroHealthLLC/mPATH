@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     get :member_list, on: :member
     get :facility_manager, on: :member
     get :kanban, on: :member
+    get :map, on: :member
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do
@@ -44,6 +45,7 @@ Rails.application.routes.draw do
       resources :tasks do
         post :batch_update, on: :collection
         post :create_duplicate, on: :member
+        post :create_bulk_duplicate, on: :member
       end
     end
   end
@@ -58,6 +60,8 @@ Rails.application.routes.draw do
   get '/facility_groups', to: 'data#facility_groups'
   get '/task_types', to: 'data#task_types'
   get '/statuses', to: 'data#statuses'
+
+  post '/progress_lists', to: 'progress_lists#create'
 
   root 'landing#index'
   mount ActiveStorage::Engine, at: '/rails/active_storage'

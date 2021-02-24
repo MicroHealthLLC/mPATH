@@ -1,6 +1,6 @@
 class TasksController < AuthenticatedController
   before_action :set_resources
-  before_action :set_task, only: [:show, :update, :destroy, :create_duplicate]
+  before_action :set_task, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
     render json: {tasks: @facility_project.tasks.map(&:to_json)}
@@ -13,10 +13,21 @@ class TasksController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    @task.update(task_params)
+    t_params = task_params.dup
+    if t_params[:checklists_attributes].present?
+      t_params[:checklists_attributes].each do |key, hash|
+        if hash["progress_lists_attributes"].present?
+          hash["progress_lists_attributes"].each do |key2, hash2|
+            hash2[:user_id] = current_user.id if hash2[:user_id].nil?
+          end
+        end
+      end
+    end
+    @task.update(t_params)
     @task.assign_users(params)
+    @task.reload
     # @task.create_or_update_task(params, current_user)
-    render json: {task: @task.reload.to_json}
+    render json: {task: @task.to_json}
   end
 
   def create_duplicate
@@ -24,6 +35,21 @@ class TasksController < AuthenticatedController
     duplicate_task.save
     # @task.create_or_update_task(params, current_user)
     render json: {task: duplicate_task.reload.to_json}
+  end
+
+  def create_bulk_duplicate
+    all_objs = []
+    if params[:facility_project_ids].present?
+      params[:facility_project_ids].each do |fp_id|
+        duplicate_task = @task.amoeba_dup
+        duplicate_task.facility_project_id = fp_id
+        duplicate_task.save
+        all_objs << duplicate_task
+      end
+    end
+    # duplicate_task.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {tasks: all_objs.map(&:to_json)}
   end
 
   def show
@@ -80,7 +106,14 @@ class TasksController < AuthenticatedController
         :due_date,
         :listable_type,
         :listable_id,
-        :position
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id,
+          :user_id
+        ]
       ],
       notes_attributes: [
         :id,

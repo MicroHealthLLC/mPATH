@@ -89,3 +89,5 @@ gem 'omniauth-rails_csrf_protection', '~> 0.1'
 
 # Easy cloning of active_record objects including associations and several operations under associations and attributes.
 gem 'amoeba'
+
+gem 'ledermann-rails-settings'

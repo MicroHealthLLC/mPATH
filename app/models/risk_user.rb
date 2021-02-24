@@ -24,4 +24,10 @@ class RiskUser < ApplicationRecord
     user_type == "informed"
   end
 
+   # Risk Approver https://github.com/MicroHealthLLC/mGis/issues/1734
+
+  def approver?
+    user_type == "approver"
+  end
+
 end
