@@ -367,7 +367,7 @@ p.important
 {
 	background-color: #f2dede;
 	color: #a74f4d;
-	background-image: url('../Images/important.png');
+	background-image: url('../Images/Common/important.png');
 	padding: 6px 6px 6px 60px;
 }
 
@@ -383,7 +383,7 @@ p.note
 {
 	background-color: #d9edf7;
 	color: #335e72;
-	background-image: url('../Images/note.png');
+	background-image: url('../Images/Common/note.png');
 	padding: 6px 6px 6px 60px;
 }
 
@@ -399,7 +399,7 @@ p.tip
 {
 	background-color: #e2fdf5;
 	color: #366f75;
-	background-image: url('../Images/tip.png');
+	background-image: url('../Images/Common/tip.png');
 	padding: 6px 6px 6px 60px;
 }
 
@@ -415,7 +415,7 @@ p.moreInfo
 {
 	background-color: #efd9ff;
 	color: #6a3492;
-	background-image: url('../Images/moreInfo.png');
+	background-image: url('../Images/Common/moreInfo.png');
 	padding: 6px 6px 6px 60px;
 }
 
@@ -616,8 +616,8 @@ MadCap|dropDown
 {
 	mc-image-position: left;
 	mc-image-spacing: 10px;
-	mc-open-image: url('../Images/BlueMinus.png');
-	mc-closed-image: url('../Images/BluePlus.png');
+	mc-open-image: url('../Images/Common/BlueMinus.png');
+	mc-closed-image: url('../Images/Common/BluePlus.png');
 	margin: 5px 0px;
 }
 
@@ -658,8 +658,8 @@ MadCap|dropDownHotspot:hover
 
 MadCap|dropDown.SecondLevel
 {
-	mc-open-image: url('../Images/Minus.png');
-	mc-closed-image: url('../Images/Plus.png');
+	mc-open-image: url('../Images/Common/Minus.png');
+	mc-closed-image: url('../Images/Common/Plus.png');
 }
 
 /* Change header/link for second-level dropdown to gray */
@@ -709,7 +709,7 @@ MadCap|expandingHead
 
 ul
 {
-	list-style-image: url('../Images/Bullet1.png');
+	list-style-image: url('../Images/Common/BlueBullet.png');
 	list-style-position: outside;
 }
 
