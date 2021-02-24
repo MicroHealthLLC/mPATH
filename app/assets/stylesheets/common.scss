@@ -119,6 +119,7 @@ input[type=button]:focus {
     background: #f4f4f4;
   }
 }
+
 // This (el-collapse....) is the collapse/accordion component in the Risk Form
 .el-collapse-item__header {color:#0275d8 !important}
 .el-collapse {
@@ -190,8 +191,9 @@ input[type=button]:focus {
   margin-left: -34px;
  } 
  .risks-form, .tasks-form, .issues-form, #risks-form {
-  height: 175vh;
   background-color: #fff;
+  position:fixed;
+  height: 100vh;
 }
 .warning-icon {
   font-size: 16px;

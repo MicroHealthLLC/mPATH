@@ -1,14 +1,16 @@
 <template>
-  <div>
+  <div >
     <form
       id="tasks-form"
-      @submit.prevent="saveTask"
-      class="mx-auto tasks-form"   
+      @submit.prevent="saveTask"     
+      class="mx-auto tasks-form"      
       accept-charset="UTF-8"
-      :class="{'_disabled': loading}"
-
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
       >
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 px-3 justify-content-start">
+       <div v-if="_isallowed('read')" 
+            class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar"
+            :class="{'sticky-kanban':isKanbanView}"
+            >
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -62,11 +64,12 @@
       </div>
       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
           
-      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
+      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
       
       </div>
-    
-     <div class="formTitle pt-1">
+ <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
+     <div class="formTitle fixed-form pt-1">
+      
       <div
         v-if="showErrors"
         class="text-danger mb-3"
@@ -334,7 +337,7 @@
     <div v-if="filteredChecks.length > 0">
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
         <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-          <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa">
+          <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa;position:relative">
             <div class="row" style="width:97%">
               <div class="col-8 justify-content-start" >
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
@@ -358,25 +361,20 @@
                     :disabled-date="disabledDateRange"
                     :class="{ disabled: disabledDateRange }"          
                   />
-                </div>
-                 <!-- </div>
-                <div class="col"> -->
-                
-                  <!-- <br/>                     -->
-                 
+                </div>         
             </div>
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
             <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa">             
-              <div class="simple-select d-flex form-group col mb-0">
-                <span class="font-sm pt-2 pr-2">Assigned To:</span>
+            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
+              <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
+               <div class="d-flex w-100" style="padding-left:4.5rem">
+                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
-                  label="fullName"
+                  label="fullName"                  
                   class="w-75"
                   placeholder="Search and select users"
                   :options="activeProjectUsers"
@@ -391,6 +389,7 @@
                     </div>
                   </template>
                 </multiselect>
+               </div>
               </div>
               <!-- <div class="simple-select form-group col mb-0">
               
@@ -399,10 +398,8 @@
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
-            <div class="pt-2 pb-3" style="background-color:#fafafa">
-             
-                Progress Update
-             
+            <div class="pt-5 pb-3" style="background-color:#fafafa">             
+                Progress Update             
                <span v-if="editToggle">
                <span class="ml-2 clickable">
                  <font-awesome-icon icon="plus-circle" class="mr-1 text-danger"/>
@@ -414,7 +411,7 @@
                </span>
                </span>
           
-              <table v-if="check.progressLists.length > 0" style="width:100%">
+              <table v-if="check.progressLists.length > 0" style="width:100%" class="mt-1">
                   <thead>
                     <tr>
                       <th style="width:60%">Progress</th>
@@ -1184,9 +1181,12 @@
           this.exists(this.DV_task.startDate)
         )
       },  
-       isMapView() {
+     isMapView() {
         return this.$route.name === 'ProjectMapView'
       },  
+      isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
+      },
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
       },
@@ -1323,10 +1323,9 @@
 </script>
 
 <style scoped lang="scss">
-  #tasks-form {
-    z-index: 100;
-    width: 100%;
-    position: absolute;  
+  .tasks-form {
+    z-index: 10;
+    width: 83.1%;   
   }
   td, th {
     border: solid 1px #ededed;
@@ -1440,10 +1439,10 @@
     padding-bottom: 0 !important;
   }
   .sticky {
-    position: sticky;
-    position: -webkit-sticky;
+    // position: sticky;
+    // position: -webkit-sticky;
     justify-content: center;
-    margin-bottom: -2.5rem;
+    // margin-bottom: -2.5rem;
     z-index: 1000;
     left: 15;
     top: 0;
@@ -1452,6 +1451,12 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
+  .sticky-kanban {
+    position: sticky;
+    position: -webkit-sticky;
+    margin-bottom: -2.5rem;    
+  }
+
   /deep/.el-collapse-item__header {
     background-color: #fafafa !important;
   }
@@ -1467,10 +1472,24 @@
   .disabled {
     opacity: 0.6;
   }
-  .custom-tab {
-    width: min-content;
-    background-color: #fff;
-    // box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10) !important;
-
+   .simple-select /deep/ .multiselect {
+    .multiselect__placeholder {
+  
+      text-overflow: ellipsis;
+    }
   }
+  .custom-tab { 
+    background-color: #fff;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .fixed-form {
+   overflow-y: auto;
+   height: 100vh;
+   padding-bottom: 20px;
+  }
+  .fixed-form-mapView {
+   width: 100%;
+   position: absolute;
+  }
+
 </style>

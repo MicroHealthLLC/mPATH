@@ -2,15 +2,15 @@
   <div>
     <form
       id="issues-form"
-      @submit.prevent="saveIssue"
-      :class="{ _disabled: loading }"
+      @submit.prevent="saveIssue"    
       class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
+     :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
     >
       <div
         v-if="_isallowed('read')"
-        class="d-flex form-group sticky mb-1 px-3 justify-content-start"
+        class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar" :class="{'sticky-kanban':isKanbanView}"
       >
         <button
           v-if="_isallowed('write')"
@@ -66,7 +66,9 @@
        <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">          
           <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
       </div>
-      <div class="formTitle">
+
+<!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
+      <div class="formTitle fixed-form">
         <div v-if="showErrors" class="text-danger mb-3">
           Please fill the required fields before submitting
         </div>
@@ -1300,6 +1302,9 @@ export default {
     isMapView() {
         return this.$route.name === 'ProjectMapView'
      },
+    isKanbanView() {
+        return this.$route.name === 'ProjectKanbanView'
+    },
     filteredChecks() {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
@@ -1460,10 +1465,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#issues-form {
+.issues-form {
   z-index: 10;
-  width: 100%;
-  position: absolute;
+  width: 83.1%;
 }
 .form-control.error {
   border-color: #e84444;
@@ -1507,10 +1511,7 @@ ul {
     0 1px 1px rgba(56, 56, 56, 0.23);
 }
 .sticky {
-  position: sticky;
-  position: -webkit-sticky;
   justify-content: center;
-  margin-bottom: -2.5rem;
   z-index: 1000;
   left: 15;
   top: 0;
@@ -1520,6 +1521,11 @@ ul {
   box-shadow: 0 10px 20px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
+.sticky-kanban {
+    position: sticky;
+    position: -webkit-sticky;
+    margin-bottom: -2.5rem;    
+ }
 .scrollToChecklist {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
@@ -1542,9 +1548,18 @@ ul {
   background-color: #fff;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
-
-.tab2, .tab3, .tab4, .tab5 {
+  .tab2, .tab3, .tab4, .tab5 {
   min-height: 400px;
   background-color: #fff;
   }
+ .fixed-form {
+   overflow-y: auto;
+   height: 100vh;
+   padding-bottom: 20px;
+  }
+  .fixed-form-mapView {
+   width: 100%;
+   position: absolute;
+  }
+
 </style>
