@@ -24,6 +24,10 @@
     mounted() {
       let id = this.$route.params.projectId
       this.fetchDashboardData({id})
+      // Prevent right-click context-menu from appearing accross whole app
+      window.oncontextmenu = (e) => {
+        e.preventDefault()
+      }
     },
     methods: {
       ...mapActions([
