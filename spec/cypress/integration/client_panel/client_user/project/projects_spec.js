@@ -22,10 +22,7 @@ describe('Projects List', function() {
 
   it('Open a facility of a project', function() {
     cy.openFacility()
-    cy.contains('Project Group:').should('be.visible')
-    cy.contains('Completion Date:').should('be.visible')
-    cy.contains('Status:').should('be.visible')
-    cy.contains('Categories:').should('be.visible')
+    cy.facilityRollup()
     cy.logout()
   })
 })

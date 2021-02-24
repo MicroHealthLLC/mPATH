@@ -1,18 +1,18 @@
-describe('Gantt Page', function() {
-  beforeEach(() => {
-    cy.app('clean')
-    cy.appScenario('basic')
-    cy.login('client@test.com', 'T3$tClient')
-    cy.openGantt()
-  })
+// describe('Gantt Page', function() {
+//   beforeEach(() => {
+//     cy.app('clean')
+//     cy.appScenario('basic')
+//     cy.login('client@test.com', 'T3$tClient')
+//     cy.openGantt()
+//   })
 
-  it('Open Gantt overview to display the summary of a Project', function() {
-    cy.get('[data-cy=gantt_view]').within(() => {
-      cy.get('[data-cy=gantt_loading]').contains('Loading').should('be.visible')
-    })
-    cy.logout()
-  })
-})
+//   it('Open Gantt overview to display the summary of a Project', function() {
+//     cy.get('[data-cy=gantt_view]').within(() => {
+//       cy.get('[data-cy=gantt_loading]').contains('Loading').should('be.visible')
+//     })
+//     cy.logout()
+//   })
+// })
 
 describe('Client do not have permission of Gantt view', function() {
   beforeEach(() => {

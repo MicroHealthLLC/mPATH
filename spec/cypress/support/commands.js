@@ -19,11 +19,7 @@ Cypress.Commands.add("logout", () => {
 // Open first Project
 Cypress.Commands.add("openProject", () => {
   cy.get('[data-cy=project_list_items]').first().click()
-  // cy.get('#facility_view', { timeout: 60000 }).should('be.visible')
-  cy.get('[data-cy=facility_list]', { timeout: 60000 }).should('be.visible')
-  // cy.get('#facility_view').within(() => {
-    // cy.get('[data-cy=facility_list]').contains('Facility Manager')
-  // })
+  cy.get('[data-cy=main_tab]', { timeout: 60000 }).should('be.visible')
 })
 
 Cypress.Commands.add("facilityUnderGroup", () => {
@@ -34,7 +30,6 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 // Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
-  cy.facilityUnderGroup()
   cy.contains('Test Facility')
 })
 
