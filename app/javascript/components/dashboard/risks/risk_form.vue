@@ -158,9 +158,29 @@
             </template>
           </multiselect>
         </div>  
+                <div class="simple-select w-100 form-group">
+          <label class="font-sm">*Project:</label>
+          <multiselect
+            v-model="selectedFacilityProject"
+            v-validate="'required'"
+            track-by="id"
+            label="name"
+            placeholder="Select Project"
+            :options="getFacilityProjectOptions"
+            :searchable="true"
+            select-label="Select"
+            deselect-label="Enter to remove"
+            :disabled="!_isallowed('write')"
+            data-cy="facility_project_id"
+            >
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
+        </div>
        </div>
-
-
          <div class="form-row mx-4">
           <div class="form-group col-md-6 pl-0">
             <label class="font-sm">*Identified Date:</label>
@@ -1089,6 +1109,7 @@
         this.loadRisk(this.risk)
       } else {
         this.loading = false
+        this.loadRisk(this.DV_risk)
       }
       if (this.fixedStage) {
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.fixedStage)
@@ -1109,6 +1130,8 @@
       INITIAL_RISK_STATE() {
         return {
           text: '',      
+          facilityProjectId: this.facility.id,
+          text: '',
           riskDescription: '',
           impactDescription: '',   
           probabilityDescription: '',            

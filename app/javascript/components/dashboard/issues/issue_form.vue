@@ -830,6 +830,7 @@ export default {
       this.loadIssue(this.issue);
     } else {
       this.loading = false;
+       this.loadIssue(this.DV_issue);
     }
     if (this.fixedStage) {
       this.selectedIssueStage = this.issueStages.find(
@@ -845,6 +846,7 @@ export default {
         title: "",
         startDate: "",
         dueDate: "",
+        facilityProjectId: this.facility.id,
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,

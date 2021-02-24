@@ -160,7 +160,6 @@
           </template>
         </multiselect>
       </div>
-
     </div>
     <!-- Row ends -->
     <div class="form-row mx-4">
@@ -751,6 +750,8 @@
     mounted() {
       if (!_.isEmpty(this.task)) {
         this.loadTask(this.task)
+      }else{
+        this.loadTask(this.DV_task)
       }
       if (this.fixedStage) {
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.fixedStage)
@@ -773,6 +774,7 @@
           text: '',
           startDate: '',
           dueDate: '',
+          facilityProjectId: this.facility.id,
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',      
@@ -847,6 +849,7 @@
 
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
+        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (task.attachFiles) this.addFile(task.attachFiles)
         this.$nextTick(() => {
           this.errors.clear()
