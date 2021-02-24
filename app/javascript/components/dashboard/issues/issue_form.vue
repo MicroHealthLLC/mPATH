@@ -1216,6 +1216,7 @@ export default {
         ? this.DV_issue.checklists.findIndex((c) => c.id === check.id)
         : index;
       Vue.set(this.DV_issue.checklists, i, { ...check, _destroy: true });
+      this.saveIssue();
     },
     calculateProgress(checks = null) {
       try {

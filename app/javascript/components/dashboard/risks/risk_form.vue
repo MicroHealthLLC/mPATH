@@ -1406,7 +1406,7 @@
             // if(beforeRisk.facilityId && beforeRisk.projectId )
             //   this.$emit(callback, humps.camelizeKeys(beforeRisk));
             // this.$emit(callback, humps.camelizeKeys(response.data.risk))
-                var responseRisk = humps.camelizeKeys(response.data.risk)
+            var responseRisk = humps.camelizeKeys(response.data.risk)
             this.loadRisk(responseRisk)
             this.$emit(callback, responseRisk)
           })
@@ -1448,6 +1448,7 @@
         if (!confirm) return;
         let i = check.id ? this.DV_risk.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_risk.checklists, i, {...check, _destroy: true})
+        this.validateThenSave()
       },
       calculateProgress(checks=null) {
         try {
