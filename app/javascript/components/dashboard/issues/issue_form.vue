@@ -6,7 +6,7 @@
       class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
-     :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+     :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
     >
       <div
         v-if="_isallowed('read')"
@@ -1474,6 +1474,9 @@ export default {
 .issues-form {
   z-index: 10;
   width: 83.1%;
+}
+.kanban-form {   
+  width: 100%;   
 }
 .form-control.error {
   border-color: #e84444;

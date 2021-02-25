@@ -5,7 +5,7 @@
       @submit.prevent="saveTask"     
       class="mx-auto tasks-form"      
       accept-charset="UTF-8"
-      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       >
        <div v-if="_isallowed('read')" 
             class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar"
@@ -1332,6 +1332,9 @@
   .tasks-form {
     z-index: 10;
     width: 83.1%;   
+  } 
+  .kanban-form {   
+    width: 100%;   
   }
   td, th {
     border: solid 1px #ededed;
