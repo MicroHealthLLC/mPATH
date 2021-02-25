@@ -443,7 +443,13 @@ Tab 1 Row Begins here -->
             v-if="_isallowed('write')"
             @click.prevent="addChecks"
             ><i class="fas fa-plus-circle"></i
-          ></span>
+            ></span>
+            <!-- <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length > 1">
+            Displaying: <span class="mx-1">{{filteredChecks.length}}</span> items
+            </span>
+            <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length == 1">
+            Displaying: <span class="mx-1">{{filteredChecks.length}}</span> item
+            </span> -->
 
           <div v-if="filteredChecks.length > 0">
             <draggable
@@ -1554,12 +1560,16 @@ ul {
   }
  .fixed-form {
    overflow-y: auto;
-   height: 100vh;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
    position: absolute;
+  }
+ .display-length {
+   border-radius: 0.15rem;
+   margin-right: 12px;
   }
 
 </style>

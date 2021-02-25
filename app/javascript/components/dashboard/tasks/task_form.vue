@@ -334,6 +334,12 @@
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
+    <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length > 1">
+       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> items
+    </span>
+     <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length == 1">
+       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> item
+    </span>
     <div v-if="filteredChecks.length > 0">
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
         <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
@@ -1484,12 +1490,17 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 100vh;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
    position: absolute;
+  }
+
+  .display-length {
+   border-radius: 0.15rem;
+   margin-right: 12px;
   }
 
 </style>
