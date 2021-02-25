@@ -74,7 +74,7 @@ for (var key in current_user.privilege) {
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$permissions = permissions
 
-//Vue.prototype.$preferences = preferences
+Vue.prototype.$preferences = preferences
 
 // eslint-disable-next-line no-unused-vars
 const dashboardApp = new Vue({
