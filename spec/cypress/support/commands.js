@@ -84,10 +84,10 @@ Cypress.Commands.add("openOrganization", () => {
 })
 
 // Open project from admin panel
-Cypress.Commands.add("openProjectAP", () => {
+Cypress.Commands.add("openProgramAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#projects').contains('Projects').click()
+    cy.get('#projects').contains('Programs').click()
   })
 })
 
@@ -140,10 +140,10 @@ Cypress.Commands.add("openUserAP", () => {
 })
 
 // Open Project Type from Admin panel
-Cypress.Commands.add("openProjectTypeAP", () => {
+Cypress.Commands.add("openProgramTypeAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#project_types').contains('Project Types').click({force: true})
+    cy.get('#project_types').contains('Program Types').click({force: true})
   })
 })
 
