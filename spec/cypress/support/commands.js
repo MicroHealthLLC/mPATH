@@ -92,10 +92,10 @@ Cypress.Commands.add("openProjectAP", () => {
 })
 
 // Open facility from Admin panel
-Cypress.Commands.add("openFacilityAP", () => {
+Cypress.Commands.add("openProjectAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facilities').contains('Facilities').click()
+    cy.get('#facilities').contains('Projects').click()
   })
 })
 
@@ -148,10 +148,10 @@ Cypress.Commands.add("openProjectTypeAP", () => {
 })
 
 // Open Facility Group from Admin panel
-Cypress.Commands.add("openFacilityGroupAP", () => {
+Cypress.Commands.add("openProjectGroupAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facility_groups').contains('Facility Groups').click({force: true})
+    cy.get('#facility_groups').contains('Project Groups').click({force: true})
   })
 })
 
