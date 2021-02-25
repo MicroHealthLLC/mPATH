@@ -417,8 +417,34 @@ export default {
   },
   watch: {
     facilities: function () {
+
       if (!this.facilitiesSet) {
         this.centerMapToFacilities();
+
+        // if(Vue.prototype.$preferences.project_group_id){
+        //   var fgg = this.filteredFacilityGroups.find((fg) => fg.id == Vue.prototype.$preferences.project_group_id)
+        //   this.setCurrentFacilityGroup(fgg)
+        // }
+        if(Vue.prototype.$preferences.project_id){
+          var ff = this.facilities.find((f) => f.id == Vue.prototype.$preferences.project_id)
+          this.setCurrentFacility(ff)
+          this.showFacility(ff)
+          this.updateExpanded(ff)
+          var bounds = new google.maps.LatLngBounds();
+          var markerPosition = this.getLatLngForFacility(ff) 
+          var location = new google.maps.LatLng(
+            markerPosition.lat,
+            markerPosition.lng
+          );
+          bounds.extend(location);
+
+          // this.$refs.googlemap.fitBounds(bounds);
+          this.$refs.googlemap.panToBounds(bounds);
+          // this.$refs.googlemap.fitBounds(bounds);
+          this.zoom = 7
+          this.$refs.googlemap.panTo(location);
+          this.toggleTooltip(ff, "asdfafsdfawerasdf")
+        }
       }
       // This will fire off when Map Boundary Filter is reset due to facilities changing
       if (
