@@ -20,24 +20,24 @@
 
           <div class="row row-1 mt-2">
           <div class="col-md-5 col-lg-5 col-sm-12">
-            <div class="box-card my-el-card p-3" style="position:relative">               
+            <div class="box-card my-el-card p-3" style="position:relative">
 
              <div class="row">
-                <div class="col font-weight-bold">                
+                <div class="col font-weight-bold">
                   <p>Project Group:</p>
-                  <p>Completion Date: </p>               
+                  <p>Completion Date: </p>
                   <p>Status:
                     <span>
-                      <small v-if="!DV_facility.statusId && _isallowed('write')" 
+                      <small v-if="!DV_facility.statusId && _isallowed('write')"
                              class="ml-2 d-inline text-danger" style="position:absolute">
                              Must be updated before you can enter a Completion Date!
                       </small>
                    </span>
-                  </p>                    
-                  <p>Categories: </p>                 
+                  </p>
+                  <p>Categories: </p>
                 </div>
 
-                <div class="col">            
+                <div class="col">
                  <p class="badge badge-secondary badge-pill font-weight-light"> {{facilityGroup.name}}</p>
                  <div class="simple-select">
                   <v2-date-picker
@@ -50,13 +50,13 @@
                     :disabled="!_isallowed('write') || !DV_facility.statusId"
                   />
                  </div>
-                               
-                 <div class="simple-select mt-2">                
+
+                 <div class="simple-select mt-2">
                    <multiselect
                       v-model="selectedStatus"
                       track-by="id"
-                      label="name"                     
-                      :options="statuses"                    
+                      label="name"
+                      :options="statuses"
                       :searchable="false"
                       select-label="Select"
                       deselect-label="Remove"
@@ -68,13 +68,13 @@
                           <span class='select__tag-name'>{{option.name}}</span>
                         </div>
                       </template>
-                    </multiselect> 
-                  </div> 
-                  <div class="simple-select mt-1"> 
+                    </multiselect>
+                  </div>
+                  <div class="simple-select mt-1">
                       <multiselect
                       v-model="C_taskTypeFilter"
                       track-by="name"
-                      label="name"                                
+                      label="name"
                       :options="taskTypes"
                       :searchable="false"
                       :multiple="true"
@@ -86,67 +86,67 @@
                           <span class='select__tag-name'>{{option.name}}</span>
                         </div>
                      </template>
-                     </multiselect> 
-                    </div>                  
+                     </multiselect>
+                    </div>
                 </div>
               </div>
-               <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-1 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>             
-               </div>     
-             </div>  
+               <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-1 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>
+               </div>
+             </div>
 
-        <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">         
+        <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Progress</h5>               
+                 <h5 class="d-inline">Progress</h5>
                 <hr>
-                <p class="text-center">               
-                    <span :class="{'progress-0': DV_facility.progress <= 0}">                
+                <p class="text-center">
+                    <span :class="{'progress-0': DV_facility.progress <= 0}">
                      <el-progress type="circle" :percentage="DV_facility.progress"></el-progress>
                     </span>
                 </p>
-              </div>             
-            </div>                           
-         </el-card>     
-       </div> 
+              </div>
+            </div>
+         </el-card>
+       </div>
 
 
-         <div class="col-md-3 col-lg-3 col-sm-6" data-cy="date_set_filter">         
+         <div class="col-md-3 col-lg-3 col-sm-6" data-cy="date_set_filter">
           <el-card class="box-card" style="background-color: #41b883; color:#fff">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Filters</h5>               
+                 <h5 class="d-inline">Filters</h5>
                  <hr style="background-color: #fff; color:#fff">
-              </div>             
+              </div>
             </div>
 
-            <div v-for="(filterArray, index) in getAllFilterNames" :key="index">              
-                <span v-if="getFilterValue(filterArray[0])">                                         
-                            <span><b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}} </span>                    
-                </span>           
+            <div v-for="(filterArray, index) in getAllFilterNames" :key="index">
+                <span v-if="getFilterValue(filterArray[0])">
+                            <span><b class="mr-1">{{filterArray[1]}}:</b> {{getFilterValue(filterArray[0])}} </span>
+                </span>
             </div>
-            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>                 
-         </el-card>     
-       </div> 
+            <span v-show="facilities.length !== getUnfilteredFacilities.length">Map Boundary Filter: Active</span>
+         </el-card>
+       </div>
 
-       <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">         
+       <div class="col-md-2 col-lg-2 col-sm-6 pl-0" data-cy="date_set_filter">
           <el-card class="box-card" style="background-color: #fafafa">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline">Contact</h5>               
+                 <h5 class="d-inline">Contact</h5>
                  <hr class="mb-0 pb-0">
-              </div>             
+              </div>
             </div>
               <div class="row">
-                <div class="col font-sm">  
+                <div class="col font-sm">
               <p class="mt-1">
                 <span class="fbody-icon"><i class="far fa-id-badge"></i></span>
                 <span>{{DV_facility.pointOfContact || 'N/A'}}</span>
-              </p>      
+              </p>
               <p class="mt-0">
                 <span class="fbody-icon"><i class="fas fa-map-marker"></i></span>
                 <span>{{DV_facility.address || 'N/A'}}</span>
-              </p>           
+              </p>
               <p class="my-0">
                 <span class="fbody-icon"><i class="fas fa-phone"></i></span>
                 <span>{{DV_facility.phoneNumber || 'N/A'}}</span>
@@ -154,13 +154,13 @@
               <p class="my-0">
                 <span class="fbody-icon"><i class="far fa-envelope"></i></span>
                 <span>{{DV_facility.email || 'N/A'}}</span>
-              </p>                    
+              </p>
                 </div>
               </div>
-                       
-         </el-card>     
-       </div> 
-      </div> 
+
+         </el-card>
+       </div>
+      </div>
 <!-- SECOND ROW WITH TASKS ISSUES & RISKS -->
 
 <!-- Row 2, col-1 for Tasks Card -->
@@ -170,13 +170,13 @@
          <el-card class="box-card" style="background-color:#fff">
 
             <div class="row">
-              <div class="col"> 
-                 <h5 class="d-inline"> <b>TASKS</b></h5>   
-                 <h5 class="d-inline"> <b class="float-right badge badge-secondary badge-pill">{{filteredTasks.length}}</b></h5>                   
-                <hr> 
-              </div>             
+              <div class="col">
+                 <h5 class="d-inline"> <b>TASKS</b></h5>
+                 <h5 class="d-inline"> <b class="float-right badge badge-secondary badge-pill">{{filteredTasks.length}}</b></h5>
+                <hr>
+              </div>
             </div>
-         
+
               <div class="row">
                   <div class="col">
                     <span>Complete</span>
@@ -187,7 +187,7 @@
                       <div class="progress-bar bg-info" :style="`width: ${taskVariation.completed.percentage}%`">{{taskVariation.completed.percentage}} %</div>
                     </span>
                   </div>
-              </div>  
+              </div>
               <div class="row">
                    <div class="col">
                       <span>Overdue</span>
@@ -198,14 +198,14 @@
                         <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
                       </span>
                    </div>
-                </div>       
+                </div>
 
               <div v-if="taskStats.length > 0" data-cy="task_categories" class="row mt-1 mb-1">
                  <div class="col font-weight-bold text-center">
-                      <h6>Categories</h6> 
-                  </div>                
+                      <h6>Categories</h6>
+                  </div>
               </div>
-              <div class="row font-sm" v-for="(task, index) in taskStats" :key="index">           
+              <div class="row font-sm" v-for="(task, index) in taskStats" :key="index">
                     <div class="col">
                       <span> {{task.name}}</span>
                       <span class="badge badge-secondary badge-pill">{{task.count}}</span>
@@ -216,22 +216,22 @@
                         <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}} %</div>
                       </span>
                     </div>
-              </div>         
-        </el-card>  
-       </div>  
+              </div>
+        </el-card>
+       </div>
 
 <!-- Row 2, col-2 for Issues Card -->
 
-        <div class="col-md-4 col-lg-4 col-sm-12 mb-2" data-cy="issues_summary">          
+        <div class="col-md-4 col-lg-4 col-sm-12 mb-2" data-cy="facility_issues">
          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline"> <b>ISSUES</b></h5>   
-                 <h5 class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredIssues.length}}</b></h5>   
+                 <h5 class="d-inline"> <b>ISSUES</b></h5>
+                 <h5 class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredIssues.length}}</b></h5>
                 <hr>
-              </div>             
+              </div>
             </div>
-                  
+
               <div class="row">
                     <div class="col">
                       <span>Complete</span>
@@ -242,7 +242,7 @@
                       <div class="progress-bar bg-info" :style="`width: ${issueVariation.completed.percentage}%`">{{issueVariation.completed.percentage}} %</div>
                      </span>
                     </div>
-              </div>     
+              </div>
               <div class="row">
                     <div class="col">
                       <span>Overdue</span>
@@ -257,11 +257,11 @@
 
              <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
                <div class="col font-weight-bold mt-3 mb-1 text-center">
-                       <h6>Issue Types</h6> 
-               </div>                  
+                       <h6>Issue Types</h6>
+               </div>
             </div>
-            
-             <div class="row font-sm" v-for="(issue, index) in issueStats" :key="index">          
+
+             <div class="row font-sm" v-for="(issue, index) in issueStats" :key="index">
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -298,53 +298,52 @@
           </el-collapse>
 
 
-         </el-card>     
-       </div>  
+         </el-card>
+       </div>
 
 <!-- Row 2, col-3 for Risks Card -->
-    <div class="col-md-4 col-lg-4 col-sm-12 mb-3" data-cy="facility_group_summary">               
+    <div class="col-md-4 col-lg-4 col-sm-12 mb-3" data-cy="facility_risks">
          <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
-                 <h5 class="d-inline"> <b>RISKS</b></h5>   
-                 <h5 v-if="contentLoaded" class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredRisks.length}}</b></h5>   
+                 <h5 class="d-inline"> <b>RISKS</b></h5>
+                 <h5 v-if="contentLoaded" class="d-inline"> <b class="float-right badge badge-secondary badge-pill" >{{filteredRisks.length}}</b></h5>
                 <hr>
-              </div>             
+              </div>
             </div>
 <div v-for="(p, index) of filteredRisks" :load="log(p)" :key="index"></div>
               <div class="row mb-2">
                   <div class="col text-center">
                     Risk Priority Levels
                   </div>
-              </div>            
+              </div>
             <div class="row font-sm">
-                <div class="col text-center"> 
-                  <p class="mb-2 grey2">Very Low </p>                
-                  <p class="mb-2 green">Low </p>               
-                  <p class="mb-2 yellow">Moderate </p>                         
+                <div class="col text-center">
+                  <p class="mb-2 grey2">Very Low </p>
+                  <p class="mb-2 green">Low </p>
+                  <p class="mb-2 yellow">Moderate </p>
                 </div>
-                <div class="col">  
+                <div class="col">
                   <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.grey}}</span>
                   <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.green}}</span>
-                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>                 
+                  <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>
                 </div>
-                 <div class="col text-center">                
+                 <div class="col text-center">
                   <p class="mb-2 orange">High</p>
-                  <p class="mb-2 red">Extreme </p>                                        
+                  <p class="mb-2 red">Extreme </p>
                 </div>
-                <div class="col">                
+                <div class="col">
                   <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.orange}}</span>
-                 <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span> 
-                                       
+                 <span class="my-2 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span>
+
                 </div>
             </div>
-          
+
 
 <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
-      <el-collapse>           
-        <el-collapse-item title="Details" name="1">  
-            <div v-if="contentLoaded">    
-             
+      <el-collapse>
+        <el-collapse-item title="Details" name="1">
+            <div v-if="contentLoaded">
               <div class="row">
                     <div class="col">
                       <span class="risk-card-title">Complete</span>
@@ -355,7 +354,7 @@
                       <div class="progress-bar bg-info" :style="`width: ${riskVariation.completed.percentage}%`">{{riskVariation.completed.percentage}} %</div>
                      </span>
                     </div>
-              </div>     
+              </div>
               <div class="row">
                     <div class="col mt-neg-4">
                       <span class="risk-card-title">Overdue</span>
@@ -370,11 +369,11 @@
 
              <div v-if="filteredRisks.length" class="font-weight-bold text-center">
                <div class="col font-weight-bold mt-3 mb-1 text-center">
-                       <h6>Categories</h6> 
-               </div>                  
+                       <h6>Categories</h6>
+               </div>
             </div>
              <div v-for="(risk, index) in currentRiskTypes" :key="index">
-             <div class="row" v-if="risk._display">          
+             <div class="row" v-if="risk._display">
                   <div class="col">
                     <span> {{risk.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
@@ -385,19 +384,19 @@
                     </span>
                   </div>
             </div>
-            </div>  
+            </div>
 
-            </div>             
+            </div>
 
                 </el-collapse-item>
               </el-collapse>
-           </el-card>     
-          </div> 
-        </div>           
+           </el-card>
+          </div>
+        </div>
             </div>
               <div v-else class="text-danger mx-2 my-4">You don't have permission to read!</div>
           </div>
-        
+
         </div>
 
         <div v-if="currentTab == 'notes'">
@@ -458,7 +457,7 @@
       RiskSheetsIndex,
       CustomTabs,
       Loader
-    
+
     },
     props: {
       facility: {
@@ -505,13 +504,13 @@
            {
             label: 'Risks',
             key: 'risks',
-            closable: false,                
+            closable: false,
           },
           {
             label: 'Notes',
             key: 'notes',
             closable: false
-          },         
+          },
         ]
       }
     },
@@ -524,14 +523,14 @@
       if(Vue.prototype.$preferences.sub_navigation_menu){
         this.currentTab = Vue.prototype.$preferences.sub_navigation_menu
       }
-      
+
     },
     methods: {
       ...mapMutations([
         'setTaskTypeFilter',
         'updateFacilityHash',
         'nullifyTasksForManager',
-    
+
       ]),
       ...mapActions([
         'fetchFacility'
@@ -570,7 +569,7 @@
             console.error(err);
           })
       },
- 
+
       refreshFacility() {
         this.loading = true
         this.getFacility()
@@ -638,7 +637,7 @@
         get() {
           return _.map(this.onWatchFilter, 'value').includes('issues')
         }
-      },          
+      },
       filteredTasks() {
         let typeIds = _.map(this.taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
@@ -648,7 +647,7 @@
           let valid = true
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
@@ -696,7 +695,7 @@
           let valid = true
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
@@ -752,19 +751,19 @@
 
         let typeIds = _.map(this.taskTypeFilter, 'id')
         let riskPriorityLevelIds = _.map(this.getRiskPriorityLevelFilter, 'id')
-        let stageIds = _.map(this.riskStageFilter, 'id')    
+        let stageIds = _.map(this.riskStageFilter, 'id')
         let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
         let taskIssueUsers = this.getTaskIssueUserFilter
 
-        
-        if (riskPriorityLevelIds ){         
+
+        if (riskPriorityLevelIds ){
           console.log(riskPriorityLevelIds)
         }
         return _.filter(this.DV_facility.risks, (resource) => {
           let valid = true
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
 
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
@@ -773,7 +772,7 @@
           valid = valid && this.filterDataForAdvancedFilter([resource], 'facilityShowTasks')
 
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
-          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)        
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
           return valid
         })
