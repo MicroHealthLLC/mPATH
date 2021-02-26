@@ -281,15 +281,9 @@
     },
     mounted() {
       this.fetchProfile()
-      this.navigationOptions = [
-          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
-          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
-      ]
-      this.subNavigationOptions = [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
-          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
-        ]
+
+      this.navigationOptions = allowed_navigation_tabs
+      this.subNavigationOptions = allowed_sub_navigation_tabs
     },
     methods: {
       programSelectChange(value){
@@ -379,30 +373,30 @@
           if(this.selectedNavigation){
             preferences.navigationMenu = this.selectedNavigation.id
           }else{
-            preferences.navigationMenu = null
+            preferences.navigationMenu = ''
           }
           if(this.selectedSubNavigation){
             preferences.subNavigationMenu = this.selectedSubNavigation.id
           }else{
-            preferences.subNavigationMenu = null
+            preferences.subNavigationMenu = ''
           }
 
           if(this.selectedProgram){
             preferences.programId = this.selectedProgram.id
           }else{
-            preferences.programId = null
+            preferences.programId = ''
           }
 
           if(this.selectedProjectGroup){
             preferences.projectGroupId = this.selectedProjectGroup.id
           }else{
-            preferences.projectGroupId = null
+            preferences.projectGroupId = ''
           }
 
           if(this.selectedProject){
             preferences.projectId = this.selectedProject.id
           }else{
-            preferences.projectId = null
+            preferences.projectId = ''
           }
           delete(data["preferences"])
           
