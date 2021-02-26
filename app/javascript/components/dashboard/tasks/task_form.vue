@@ -326,10 +326,10 @@
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
-                 <div class="col-1 pl-0 pr-0">
+                 <div v-if="isSheetsView" class="col-1 pl-0 pr-0">
                    <span class="font-sm dueDate">Due Date:</span>                
                 </div>
-                 <div class="col-3 pl-0" style="margin-left:-25px">                   
+                 <div v-if="isSheetsView" class="col-3 pl-0" style="margin-left:-25px">                   
                     <v2-date-picker                    
                     v-model="check.dueDate"
                     :value="check.dueDate" 
@@ -344,16 +344,35 @@
                     :disabled-date="disabledDateRange"
                     :class="{ disabled: disabledDateRange }"          
                   />
-                </div>         
+                </div>                   
             </div>
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
-            <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
+       <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
+          <div v-if="isMapView" class="row justify-content-end pt-2 pb-5" style="background-color:#fafafa;position:relative">          
+            <div  class="d-flex col mb-0" style="position:absolute">
+              Due Date:
+                <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  />            
+              </div>
+          </div>
+            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">               
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
                <div class="d-flex w-100" style="padding-left:4.5rem">
-                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
+                <span class="font-sm pt-2 pr-2">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
@@ -1337,6 +1356,9 @@
     border: solid #ededed 1px;
     border-radius: 4px;  
   }
+  /deep/.mx-input-wrapper {
+    position: absolute;
+  }
   .drag {
     cursor: all-scroll;
   }
@@ -1411,7 +1433,7 @@
   }
   /deep/.el-collapse-item__header {
     float:right;
-    margin-top: -39px;
+    margin-top: -38px;
     font: small;
     color: #d9534f !important;
     border-bottom: none !important;
