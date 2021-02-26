@@ -4,7 +4,7 @@
       id="risks-form"
       @submit.prevent="validateThenSave"     
       class="mx-auto pb-4 risks-form"
-      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       accept-charset="UTF-8"
       >
       <div class="form-group mb-1">
@@ -1809,6 +1809,9 @@
   .risks-form {
     z-index: 10;
     width: 83.1%;   
+  }
+  .kanban-form {   
+  width: 100%;   
   }
   .form-control.error {
     border-color: #E84444;

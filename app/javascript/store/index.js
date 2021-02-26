@@ -18,6 +18,7 @@ export default new Vuex.Store({
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
+    toggleRACI: true,
     mapLoading: true,
     sideLoading: true,
     projects: new Array,
@@ -148,6 +149,7 @@ export default new Vuex.Store({
       // state.taskIssueProgressStatusFilter = _taskIssueProgressStatusFilter
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
+    setToggleRACI: (state, raci) => state.toggleRACI = raci,
     setMapLoading: (state, loading) => state.mapLoading = loading,
     setSideLoading: (state, loading) => state.sideLoading = loading,
     setProjects: (state, projects) => state.projects = projects,
@@ -187,6 +189,7 @@ export default new Vuex.Store({
     setAccountableUsers: (state, users) => state.accountableUsers = users,
     setConsultedUsers: (state, consulted) => state.consultedUsers = consulted,
     setInformedUsers: (state, informed) => state.informedUsers = informed,
+   
 
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
@@ -681,6 +684,8 @@ export default new Vuex.Store({
       }
     },
     contentLoaded: state => state.contentLoaded,
+    getToggleRACI: state => state.toggleRACI,
+
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,
     projects: state => state.projects,
@@ -1444,7 +1449,7 @@ export default new Vuex.Store({
     viewPermit: () => (view, req) => {
       if (Vue.prototype.$currentUser.role === "superadmin") return true;
       return Vue.prototype.$permissions[view][req]
-    },
+    }, 
     riskApproaches: () => {
       return   ['avoid', 'mitigate', 'transfer', 'accept']
     
@@ -1567,6 +1572,7 @@ export default new Vuex.Store({
       await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
       commit('setContentLoaded', true)
+      // commit('setToggleRACI', false)
       if (cb) return cb()
     },
 

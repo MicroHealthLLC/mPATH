@@ -113,9 +113,20 @@
          <button
           v-tooltip="`Export to Excel`"
           @click.prevent="exportToExcel('table', 'Issue Log')"
-          class="btn btn-md exportBtns text-light">
+          class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
+         <button
+          v-tooltip="`Show More/Show Less`"
+          @click.prevent="showAllToggle"
+          class="btn btn-md mr-1 showAll text-light"          >
+          <span v-if="getToggleRACI">
+          <font-awesome-icon icon="user" />      
+          </span>
+           <span v-else>
+          <font-awesome-icon icon="users"/>
+           </span>    
+         </button>
          <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
           Total: {{filteredIssues.length}}
          </button>
@@ -285,6 +296,7 @@
         'setIssueSeverityFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
+        'setToggleRACI',
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
@@ -317,6 +329,9 @@
           this.updateFacilityHash(this.facility)
         }
       },
+      showAllToggle() {
+         this.setToggleRACI(!this.getToggleRACI)  ;              
+      },
       toggleWatched(issue) {
         http
           .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
@@ -335,11 +350,7 @@
         if (!table.nodeType) table = this.$refs.table
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      },
-      // issueEdited(issue) {
-      //   this.currentIssue = issue
-      //   this.newIssue = true
-      // },
+      },    
       reportNew() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
@@ -377,7 +388,8 @@
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
-        'viewPermit'
+        'viewPermit', 
+        'getToggleRACI'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -597,15 +609,15 @@
     float: right !important;
     right: 0;
   }
-  .addIssueBtn, .exportBtns {
+  .addIssueBtn, .exportBtns, .showAll {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .exportBtns { 
+  .exportBtns, .showAll  { 
     transition: all .2s ease-in-out; 
     background-color: #41b883; 
   }
   .filter-second-row {
     width: 66.8%;
   }
-  .exportBtns:hover { transform: scale(1.06); }
+  .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 </style>
