@@ -9,7 +9,7 @@ describe('Admin Panel Issue', function() {
   it('Click on Issues on tabs open Issue information page', function() {
     cy.get('#page_title').contains('Issues').should('be.visible')
     cy.get('#index_table_issues').should('be.visible')
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 6)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 8)
     cy.get('#logout').click()
   })
 
@@ -19,7 +19,7 @@ describe('Admin Panel Issue', function() {
       cy.get('.col-actions').contains('Delete').click()
     })
     cy.get('.flashes').contains('Issue was successfully destroyed.').should('be.visible')
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 7)
     cy.get('#logout').click()
   })
 
