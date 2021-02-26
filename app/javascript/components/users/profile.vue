@@ -208,7 +208,7 @@
             track-by="id"
             label="name"
             placeholder="Select Sub Navigation"
-            :options="selectedNavigation && selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
+            :options="subNavigationOptions"
             :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
@@ -239,19 +239,8 @@
       return {
         loading: true,
         editPass: false,
-        navigationOptions: [
-          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
-          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
-        ],
-        subNavigationOptions: [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
-          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
-        ],
-        kanbanSubNavigationOptions: [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
-        ],
+        navigationOptions: [],
+        subNavigationOptions: [],
         programOptions: [],
         projectGroupOptions: [],
         projectOptions: [],
@@ -291,6 +280,15 @@
     },
     mounted() {
       this.fetchProfile()
+      this.navigationOptions = [
+          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
+          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
+      ]
+      this.subNavigationOptions = [
+          {id: 'tasks', name: 'Tasks', value: 'tasks'},
+          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
+          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
+        ]
     },
     methods: {
       programSelectChange(value){
@@ -310,6 +308,14 @@
       },
       navigationSelectChane(value){
         this.selectedSubNavigation = null
+        if(value.id == "kanban"){
+          this.subNavigationOptions = [
+            {id: 'tasks', name: 'Tasks', value: 'tasks'},
+            {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
+          ]
+        }else if(['gantt_chart', 'member_list'].includes(value.id) ){
+          this.subNavigationOptions = []
+        }
       },
       fetchProfile() {
         http.get('/current_user.json')

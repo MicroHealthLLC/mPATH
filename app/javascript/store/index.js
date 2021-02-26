@@ -109,7 +109,9 @@ export default new Vuex.Store({
     },
     mapZoomFilter: new Array,
     unfilteredFacilities: new Array,
-    previousRoute: ''
+    previousRoute: '',
+
+    newSession: true
   },
 
   mutations: {
@@ -305,7 +307,8 @@ export default new Vuex.Store({
       }
     },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
-    setPreviousRoute: (state, route) => state.previousRoute = route    
+    setPreviousRoute: (state, route) => state.previousRoute = route,
+    setNewSession: (state) => state.newSession = !state.newSession    
   },
 
   getters: {
@@ -1132,10 +1135,6 @@ export default new Vuex.Store({
     // for gantt chart view
     ganttData: (state, getters) => {
       let hash = new Array
-      if(!getters.currentProject && !Vue.prototype.$preferences.projectId){
-        alert("At least one project must be selected for Gantt view")
-        return;
-      }
       // for project
       let p_id = getters.currentProject ? `p_${getters.currentProject.id}` : `p_${Vue.prototype.$preferences.projectId}`
       let _p_id = '1'
@@ -1473,7 +1472,8 @@ export default new Vuex.Store({
     },
     getMapZoomFilter: (state) => state.mapZoomFilter,
     getUnfilteredFacilities: (state) => state.unfilteredFacilities,
-    getPreviousRoute: (state) => state.previousRoute
+    getPreviousRoute: (state) => state.previousRoute,
+    getNewSession: (state) => state.newSession
   },
 
   actions: {
