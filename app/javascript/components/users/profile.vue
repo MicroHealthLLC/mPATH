@@ -290,24 +290,22 @@
         this.projectGroupOptions = this.getProjectGroups(value)
 
         this.selectedProgram = value
-        this.selectedProjectGroup = null
-        this.selectedProject = null
+        this.selectedProjectGroup = ''
+        this.selectedProject = ''
       },
       projectGroupSelectChange(value){
 
         if(value){          
           this.projectOptions = this.getProjects(this.selectedProgram, value)
         }
-        this.selectedProject = null
+        this.selectedProject = ''
 
       },
       navigationSelectChane(value){
-        this.selectedSubNavigation = null
+        debugger;
+        this.selectedSubNavigation = ''
         if(value.id == "kanban"){
-          this.subNavigationOptions = [
-            {id: 'tasks', name: 'Tasks', value: 'tasks'},
-            {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
-          ]
+          this.subNavigationOptions = allowed_sub_navigation_tabs
         }else if(['gantt_chart', 'member_list'].includes(value.id) ){
           this.subNavigationOptions = []
         }
