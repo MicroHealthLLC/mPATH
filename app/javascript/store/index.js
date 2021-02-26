@@ -108,7 +108,9 @@ export default new Vuex.Store({
     },
     mapZoomFilter: new Array,
     unfilteredFacilities: new Array,
-    previousRoute: ''
+    previousRoute: '',
+
+    newSession: true
   },
 
   mutations: {
@@ -302,7 +304,8 @@ export default new Vuex.Store({
       }
     },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
-    setPreviousRoute: (state, route) => state.previousRoute = route    
+    setPreviousRoute: (state, route) => state.previousRoute = route,
+    setNewSession: (state) => state.newSession = !state.newSession    
   },
 
   getters: {
@@ -1464,7 +1467,8 @@ export default new Vuex.Store({
     },
     getMapZoomFilter: (state) => state.mapZoomFilter,
     getUnfilteredFacilities: (state) => state.unfilteredFacilities,
-    getPreviousRoute: (state) => state.previousRoute
+    getPreviousRoute: (state) => state.previousRoute,
+    getNewSession: (state) => state.newSession
   },
 
   actions: {

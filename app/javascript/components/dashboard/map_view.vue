@@ -22,6 +22,7 @@
             :options="{
               rotateControl: true,
               minZoom: 2,
+              maxZoom: 15,
               zoomControl: true,
               mapTypeControl: false,
               scaleControl: true,
@@ -104,7 +105,7 @@
                   </button> -->
                   <div id="map-sidebar" class="shadow-sm mr-2">
                     <facility-show
-                     v-loading="!contentLoaded"
+                      v-loading="!contentLoaded"
                       v-if="currentFacility && currentFacility.id"
                       :facility="currentFacility"
                       :facility-group="currentFacilityGroup"
@@ -250,6 +251,7 @@ export default {
       "facilityGroupFacilities",
       "getMapZoomFilter",
       "getUnfilteredFacilities",
+      "getNewSession",
     ]),
     knockerStyle() {
       return this.openSidebar
@@ -269,6 +271,7 @@ export default {
       "setFacilities",
       "setUnfilteredFacilities",
       "setPreviousRoute",
+      "setNewSession",
     ]),
     getLatLngForFacility(facility) {
       return { lat: Number(facility.lat), lng: Number(facility.lng) };
@@ -417,34 +420,8 @@ export default {
   },
   watch: {
     facilities: function () {
-
       if (!this.facilitiesSet) {
         this.centerMapToFacilities();
-
-        // if(Vue.prototype.$preferences.project_group_id){
-        //   var fgg = this.filteredFacilityGroups.find((fg) => fg.id == Vue.prototype.$preferences.project_group_id)
-        //   this.setCurrentFacilityGroup(fgg)
-        // }
-        if(Vue.prototype.$preferences.project_id){
-          var ff = this.facilities.find((f) => f.id == Vue.prototype.$preferences.project_id)
-          this.setCurrentFacility(ff)
-          this.showFacility(ff)
-          this.updateExpanded(ff)
-          var bounds = new google.maps.LatLngBounds();
-          var markerPosition = this.getLatLngForFacility(ff) 
-          var location = new google.maps.LatLng(
-            markerPosition.lat,
-            markerPosition.lng
-          );
-          bounds.extend(location);
-
-          // this.$refs.googlemap.fitBounds(bounds);
-          this.$refs.googlemap.panToBounds(bounds);
-          // this.$refs.googlemap.fitBounds(bounds);
-          this.zoom = 7
-          this.$refs.googlemap.panTo(location);
-          this.toggleTooltip(ff, "asdfafsdfawerasdf")
-        }
       }
       // This will fire off when Map Boundary Filter is reset due to facilities changing
       if (
@@ -457,6 +434,35 @@ export default {
     },
     initialFacilities: function () {
       this.centerMapToFacilities();
+    },
+    facilitiesSet: function () {
+      // Only runs once during session due to newSession from state
+      if (
+        Vue.prototype.$preferences.navigation_menu === "map" &&
+        this.facilitiesSet &&
+        Vue.prototype.$preferences.project_id &&
+        this.getNewSession
+      ) {
+        var ff = this.facilities.find(
+          (f) => f.id == Vue.prototype.$preferences.project_id
+        );
+        // Set the facilities based on preference facility (project). Only one project so
+        // map will automatically zoom on that facility due to watcher for facilities
+        // above.
+        this.setFacilities(
+          this.getUnfilteredFacilities.filter(
+            (facility) => facility.id === Vue.prototype.$preferences.project_id
+          )
+        );
+        // Highlight preferred facility in right panel
+        this.setCurrentFacility(ff);
+        this.showFacility(ff);
+        this.updateExpanded(ff);
+        this.centerMapToFacilities();
+        this.toggleTooltip(ff, "asdfafsdfawerasdf")
+        // Sets newSession in state to false so this conditional doesn't pass again
+        this.setNewSession();
+      }
     },
   },
 };
