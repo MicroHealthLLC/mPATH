@@ -1,9 +1,10 @@
 <template>
   <div id="users_wrapper" v-if="!loading">
-    <h5 class="my-3">Edit User Profile</h5>
+   
     <form @submit.prevent="handleSubmit" class="w-100" autocomplete="off">
+    <h5 class="my-3 bg-secondary text-light px-2">Edit User Profile</h5>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Title</label>
+        <label class="col-sm-2 col-form-label">Position</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" v-model="profile.title" placeholder="Mr.">
         </div>
@@ -99,7 +100,7 @@
         </div>
       </div>
 
-      <h5 class="my-3">Preferences</h5>
+      <h5 class="my-3 bg-secondary text-light px-2">Preferences</h5>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Select Program</label>
@@ -174,7 +175,7 @@
         </div>
       </div>
 
-      <h5 class="my-3">Start On</h5>
+      <h5 class="my-3 bg-secondary text-light px-2">Start On</h5>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Select Navigation</label>
@@ -224,8 +225,8 @@
       </div>
 
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
-        <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
-        <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
+        <button class="btn btn-sm btn-light mr-3 profile-btns" @click.prevent.stop="gotoDashboard">Cancel</button>
+        <button class="btn btn-sm btn-primary profile-btns" :disabled="!enableEdit">Update</button>
       </div>
     </form>
   </div>
@@ -521,4 +522,6 @@
   input.error {
     border-color: #dc3545;
   }
+  
+
 </style>

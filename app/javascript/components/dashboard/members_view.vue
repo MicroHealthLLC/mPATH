@@ -1,6 +1,6 @@
 <template>
   <div id="members" data-cy="members_view" class="mt-5">
-     <div class="container my-2 p-4 wrapper" style="border-radius:3px" >
+     <div class="container my-2 px-4 pb-4 pt-2 wrapper" style="border-radius:3px" >
         <h2 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h2>
            <div class="mb-0 p-b-0">
             <el-row>
