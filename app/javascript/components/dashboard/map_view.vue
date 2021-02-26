@@ -278,6 +278,11 @@ export default {
     },
     showFacility(facility) {
       this.openSidebar = true;
+      if(this.currentFacility && !this.currentFacilityGroup){
+        this.setCurrentFacilityGroup(
+          this.facilityGroups.find((fg) => fg.id == facility.facilityGroupId)
+        );
+      }
       if (this.currentFacility && facility.id == this.currentFacility.id)
         return;
       this.setCurrentFacilityGroup(
@@ -446,22 +451,31 @@ export default {
         var ff = this.facilities.find(
           (f) => f.id == Vue.prototype.$preferences.project_id
         );
-        // Set the facilities based on preference facility (project). Only one project so
-        // map will automatically zoom on that facility due to watcher for facilities
-        // above.
-        this.setFacilities(
-          this.getUnfilteredFacilities.filter(
-            (facility) => facility.id === Vue.prototype.$preferences.project_id
-          )
-        );
-        // Highlight preferred facility in right panel
-        this.setCurrentFacility(ff);
-        this.showFacility(ff);
-        this.updateExpanded(ff);
-        this.centerMapToFacilities();
-        this.toggleTooltip(ff, "asdfafsdfawerasdf")
-        // Sets newSession in state to false so this conditional doesn't pass again
-        this.setNewSession();
+        if(ff){
+          // Set the facilities based on preference facility (project). Only one project so
+          // map will automatically zoom on that facility due to watcher for facilities
+          // above.
+          this.setFacilities(
+            this.getUnfilteredFacilities.filter(
+              (facility) => facility.id === Vue.prototype.$preferences.project_id
+            )
+          );
+          // var fg = this.filteredFacilityGroups.find(
+          //   (f) => f.id == Vue.prototype.$preferences.project_group_id
+          // );
+          // this.setCurrentFacilityGroup(fg)
+          console.log("facilitiesSet")
+          console.log(this.filteredFacilityGroups)
+          // Highlight preferred facility in right panel
+          this.setCurrentFacility(ff);
+          this.showFacility(ff);
+          this.updateExpanded(ff);
+          this.centerMapToFacilities();
+          this.toggleTooltip(ff, "asdfafsdfawerasdf")
+          // Sets newSession in state to false so this conditional doesn't pass again
+          this.setNewSession();
+        }
+
       }
     },
   },
