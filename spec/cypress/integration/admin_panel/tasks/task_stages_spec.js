@@ -62,6 +62,25 @@ describe('Admin Panel Task Stages', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Task Stage according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_task_stages > tbody > tr').first().contains('Test Task Stage').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_task_stages > tbody > tr').first().contains('New Task Stage').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_task_stages > tbody > tr').first().contains('Test Task Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Task Stage according to Percentage', function() {
+    cy.get('#index_table_task_stages > tbody > tr').first().contains(40).should('be.visible')
+    cy.get('.sortable').contains('Percentage').click()
+    cy.get('#index_table_task_stages > tbody > tr').first().contains(60).should('be.visible')
+    cy.get('.sortable').contains('Percentage').click()
+    cy.get('#index_table_task_stages > tbody > tr').first().contains(40).should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Task Stage contains name', function() {
     cy.get('#q_name').type('Test Task Stage').should('have.value', 'Test Task Stage')
     cy.get('[type=submit]').first().contains('Filter').click()
