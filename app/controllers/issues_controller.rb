@@ -13,7 +13,17 @@ class IssuesController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    @issue.update(issue_params)
+    i_params = issue_params.dup
+    if i_params[:checklists_attributes].present?
+      i_params[:checklists_attributes].each do |key, hash|
+        if hash["progress_lists_attributes"].present?
+          hash["progress_lists_attributes"].each do |key2, hash2|
+            hash2[:user_id] = current_user.id if hash2[:user_id].nil?
+          end
+        end
+      end
+    end
+    @issue.update(i_params)
     @issue.assign_users(params)
 
     render json: {issue: @issue.reload.to_json}
@@ -72,7 +82,15 @@ class IssuesController < AuthenticatedController
         :user_id,
         :checked,
         :position,
-        :due_date
+        :due_date,
+        :position,
+         progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id,
+          :user_id
+        ]
       ],
       notes_attributes: [
         :id,

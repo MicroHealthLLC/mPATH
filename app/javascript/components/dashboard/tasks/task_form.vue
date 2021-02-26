@@ -78,12 +78,8 @@
       </div>
 
 
-<!-- Tabbed sections begin here -->
-
-  <!-- TASK INFO TAB #1 -->
-  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
-        
-    <div class="form-group pt-3 mx-4">
+ <!-- NAME persists throughout tab selection -->
+   <div class="form-group pt-3 mx-4">
         <label class="font-sm">*Task Name:</label>
             <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
@@ -105,6 +101,10 @@
           {{errors.first('Name')}}
         </div>
       </div>
+
+  <!-- TASK INFO TAB #1 -->
+  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">       
+  
 
         <div class="form-group mx-4">
         <label class="font-sm">Description:</label>
@@ -202,30 +202,7 @@
           </div>
         </div>
       </div>
-
-      <!-- <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Assign Users:</label>
-        <multiselect
-          v-model="taskUsers"
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          data-cy="task_user"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div> -->
+      
       <!-- closing div for tab1 -->
 </div>
 
@@ -342,7 +319,7 @@
     </span>
     <div v-if="filteredChecks.length > 0">
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
-        <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+        <div v-for="(check, index) in DV_task.checklists" :key="index"  class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
           <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa;position:relative">
             <div class="row" style="width:97%">
               <div class="col-8 justify-content-start" >
@@ -429,8 +406,7 @@
                   <tbody>
                     <tr 
                       v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
-                      :key="pindex"  :load="log(progress)"
-                     
+                      :key="pindex"                       
                       v-if="!progress._destroy">
                     <td>                     
                       <span v-if="editToggle">
@@ -1446,6 +1422,9 @@
   }
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
+  }  
+  /deep/.el-collapse-item__header {
+    background-color: #fafafa !important;
   }
   .sticky {
     // position: sticky;
@@ -1466,9 +1445,6 @@
     margin-bottom: -2.5rem;    
   }
 
-  /deep/.el-collapse-item__header {
-    background-color: #fafafa !important;
-  }
   .scrollToChecklist, .addCheckProgBtn, .check-items {    
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }

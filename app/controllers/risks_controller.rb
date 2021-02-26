@@ -16,7 +16,17 @@ class RisksController < AuthenticatedController
 
   def update
     destroy_files_first if destroy_file_ids.present?
-    @risk.update(risk_params)
+    r_params = risk_params.dup
+    if r_params[:checklists_attributes].present?
+      r_params[:checklists_attributes].each do |key, hash|
+        if hash["progress_lists_attributes"].present?
+          hash["progress_lists_attributes"].each do |key2, hash2|
+            hash2[:user_id] = current_user.id if hash2[:user_id].nil?
+          end
+        end
+      end
+    end
+    @risk.update(r_params)
     @risk.assign_users(params)
 
     render json: {risk: @risk.reload.to_json}
@@ -86,7 +96,14 @@ class RisksController < AuthenticatedController
         :user_id,
         :checked,
         :position,
-        :due_date
+        :due_date,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id,
+          :user_id
+        ]
       ],
       notes_attributes: [
         :id,

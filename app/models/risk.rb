@@ -206,7 +206,13 @@ class Risk < ApplicationRecord
         :due_date,
         :listable_type,
         :listable_id,
-        :position
+        :position, 
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
       ],
       notes_attributes: [
         :id,
@@ -296,7 +302,12 @@ class Risk < ApplicationRecord
             end
           else
             value.delete("_destroy")
-            checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            # checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            c = Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            c.progress_lists.each do |p|
+              p.user_id = user.id
+            end
+            c.save
           end
         end
         Checklist.import(checklist_objs) if checklist_objs.any?
