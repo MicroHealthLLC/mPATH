@@ -5,65 +5,71 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="issues_show mx-3 mb-3 mt-1 py-1" @click.prevent="editIssue">
-      <div v-if="show">
-        <div class="row">
-          <div class="col-md-9">
-            <div>
-              <div class="mb-1 d-flex font-sm">
-               <h6> {{issue.title}}</h6>
-              </div>
+    <div v-if="!loading" class="issues_show mx-3 mb-1 mt-1 py-1" @click.prevent="editIssue">
+      <div v-if="show">    
 
-              <div class="row mb-1 d-flex" v-if="fromView == 'watch_view'">
-                <div class="font-sm col">
-                  <span class="fbody-icon"><i class="fa fa-bookmark"></i></span>
-                  {{facility.facilityName}}
-                </div>
-                <div class="font-sm col">
-                  <span class="fbody-icon"><i class="fa fa-object-group"></i></span>
-                  {{facilityGroup.name}}
-                </div>
+           <!-- ROW 1 -->
+        <div class="row">            
+              <div class=" col-md-9 mb-1 font-lg text-dark d-flex mb-1 kanban-text">
+                {{issue.title}}
               </div>
+              <div class="col-md-3">
+                <div class="t_actions float-left">
+                    <span v-if="(issue.watched) == true">
+                    <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
+                    </span>
+                </div>
+                <div class="t_actions float-right">
+                  <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+                </div>
+             </div>        
+         </div>
 
-              <div class="row mb-1 d-flex">
-                <div class="font-sm col">
+         <!-- ROW 2 -->
+            <div class="row mb-0">
+                <div class="font-sm col-md-12" v-tooltip="`Category`">
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                   {{issue.issueType}}
                 </div>
-                <div class="font-sm col">
+               
+            </div>
+
+        <!-- ROW 3 -->
+
+            <div class="row mb-1 d-flex">              
+                <div class="font-sm col-md-12" v-tooltip="`Issue Severity`">
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                   {{issue.issueSeverity}}
                 </div>
-              </div>
-              <div class="row mb-1">
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(issue.startDate)}}
-                </div>
-                <div class="font-sm col-md-6">
-                  <span class="fbody-icon"><i class="fas fa-calendar-alt"></i></span>
+            </div>
+           
+
+ <!-- ROW 4 -->
+              <div class="row my-2">
+                <div class="font-sm col-md-12">
+                  <span class="mr-2">
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
+                  {{formatDate(issue.startDate)}}              
+                    </span>
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(issue.dueDate)}}
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div class="t_actions mb-2 mt-2 float-left">
-              <span v-if="(issue.watched) == true">
-                <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
-              </span>
-            </div>
-             <div class="t_actions mb-2 mt-2 float-right">
-              <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
-            </div>
 
-              <div class="font-sm col mt-3 p-0">
-                <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
-                  <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%</div>
-                </div>
-              </div>
+
+           <!-- LAST/BOTTOM ROW  -->
+
+          <div class="row d-flex mt-2">
+            <div class="font-sm col">
+                  <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                  <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%
+
+                  </div>
+                  </div>
+            </div>
           </div>
-        </div>
+          
+
 
         <div v-if="fromView == 'watch_view'" class="mt-3 font-sm row">
           <div class="col-6">
@@ -84,8 +90,8 @@
           </div>
         </div>
       </div>
-    </div>
-
+  
+      </div>
     <sweet-modal
       class="issue_form_modal"
       ref="issueFormModal"

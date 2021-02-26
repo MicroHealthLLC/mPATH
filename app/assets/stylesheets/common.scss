@@ -59,7 +59,9 @@ input[type=button]:focus {
   display: none;
  }
 
-
+ .kanban-text {
+   font-weight: bold;
+ }
 .paginate-links.filteredNotes {
   list-style: none !important;
   user-select: none;
