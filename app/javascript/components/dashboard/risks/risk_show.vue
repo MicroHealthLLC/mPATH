@@ -5,7 +5,7 @@
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="risk_show mx-3 mb-3 mt-1 py-1" @click.prevent="editRisk">
+    <div v-if="!loading" class="risk_show mx-3 mb-1 mt-1 py-1" @click.prevent="editRisk">
       <div v-if="show">
        
        <!-- ROW 1 -->
@@ -41,9 +41,11 @@
             </div>
 
               <div class="row mb-1 d-flex">
-                <div class="font-sm col" v-tooltip="`Category`">
+                <div class="font-sm col" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                 <span v-tooltip="`Category`">
                   {{DV_risk.taskType.name}}
+                 </span>
                 </div>               
               </div>
 

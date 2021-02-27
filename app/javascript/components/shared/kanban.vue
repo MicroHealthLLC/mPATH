@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pr-1 mt-4 mb-3 mr-4"
+          class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"
           data-cy="kanban_col"
           >
           <div>
@@ -21,15 +21,7 @@
               </div>
                
             </div>
-            <!-- <div class="col-2 px-0 mr-3" >
-             
-            </div> -->
-            <!-- <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-              </div>
-              <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
-            </div> -->
+           
           </div>
           <div class="kan-body">
             <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
@@ -42,7 +34,7 @@
                 :issue="task"
                 :risk="task"
                 fromView="kanban_view"
-                class="mr-2 mb-2 task-card"
+                class="mr-auto mb-3 task-card"
               ></div>
             </draggable> 
              <div :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-else>
@@ -55,7 +47,7 @@
                 :issue="task"
                 :risk="task"
                 fromView="kanban_view"
-                class="mr-2 mb-2 read-only-card"
+                class="mr-auto mb-3 read-only-card"
               ></div>
             </div>           
           </div>
@@ -175,6 +167,7 @@ export default {
 
   .kanban-draggable {
     min-height: calc(100vh - 230px);
+    overflow-wrap: break-word;
   }
   .ghost-card {
     opacity: 0.5;
@@ -194,12 +187,13 @@ export default {
     overflow: hidden;
     min-width: 18.5rem;
     padding-left: .76rem;
+    padding-right: .76rem;
     width: 18.5rem;
-    height: 76vh;
+    height: 73vh;
     border-radius: .15rem;
   }
   .kan-body {
-    max-height: 72vh;
+    max-height: 73vh;
     overflow-y: auto;
   }
   .badge {
@@ -210,6 +204,7 @@ export default {
     transition: auto;
     color: #ffffff;
     font-size: 1rem;
+    font-weight: 500;
     background-color: #17a2b8;
     justify-content: center;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
