@@ -60,7 +60,8 @@ input[type=button]:focus {
  }
 
  .kanban-text {
-   font-weight: bold;
+  //  font-weight: bold;
+  color: #0275d8;
  }
 .paginate-links.filteredNotes {
   list-style: none !important;

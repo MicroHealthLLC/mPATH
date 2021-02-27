@@ -7,108 +7,81 @@
     </div>
     <div v-if="!loading" class="risk_show mx-3 mb-3 mt-1 py-1" @click.prevent="editRisk">
       <div v-if="show">
-        <div class="row" >
-          <div class="col-md-9 px-1">
-            <div>
-              <div class="mb-1 d-flex">
-               <b>{{DV_risk.text}}</b>
+       
+       <!-- ROW 1 -->
+       <div class="row" >
+          <div class="col-md-9 font-lg d-flex mb-1 kanban-text">                       
+               <b>{{DV_risk.text}}</b>                      
+          </div>
+          <div class="col-md-3">
+             <div class="t_actions float-left">
+                <span v-if="(DV_risk.watched) == true">
+                  <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
+                </span>
               </div>
-              <!-- <div class="mb-1 d-flex font-sm">
-               {{DV_risk.riskDescription}}
-              </div> -->
+              <div class="t_actions float-right">
+                <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+              </div>
+           </div>
+         </div>
 
-              <div class="row mb-1 d-flex" v-if="fromView == 'watch_view'">
-                <div class="font-sm col">
-                  <span class="fbody-icon"><i class="fa fa-bookmark"></i></span>
-                  {{facility.facilityName}}
+
+         <!-- ROW 2 -->
+           <div class="row my-2">
+                <div class="font-sm col-md-12">
+                  <span class="mr-2">
+                  <span class="fbody-icon mr-0">
+                    <i class="fas fa-calendar-alt"></i>
+                  </span>
+                  {{formatDate(DV_risk.startDate)}}
+                  </span>              
+                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                  {{formatDate(DV_risk.dueDate)}}
                 </div>
-                <div class="font-sm col">
-                  <span class="fbody-icon"><i class="fa fa-object-group"></i></span>
-                  {{facilityGroup.name}}
-                </div>
-              </div>
+            </div>
 
               <div class="row mb-1 d-flex">
-                <div class="font-sm col">
-                  <span class="mr-1"><b>Task Category:</b></span>
+                <div class="font-sm col" v-tooltip="`Category`">
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                   {{DV_risk.taskType.name}}
-                </div>
-               
+                </div>               
               </div>
-                <div class="row mb-1 d-flex">           
+
+              <div class="row mb-2 d-flex">           
                 <div class="font-sm col">
                   <span class="mr-1"><b>Approach:</b></span>
                   <span class="upperCase">{{DV_risk.riskApproach}}</span>
                 </div>
               </div>
-              <div class="row mb-2 d-flex">
-                <!-- <div class="font-sm col">
-                  <span class="mr-1">Probablity:</span>
-                  {{DV_risk.probability}}
-                </div>
-                <div class="font-sm col">
-                  <span class="mr-1">Impact:</span>
-                  {{DV_risk.impactLevel}}
-                </div> -->
-                <div class="font-sm col" v-tooltip="(DV_risk.priorityLevel)">
-                  <span class="mr-1">Priority:</span>    
-                   <span v-if="(DV_risk.priorityLevelName) == 'Very Low'" class="gray2">{{DV_risk.priorityLevelName}}</span>              
-                  <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}}</span> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{DV_risk.priorityLevelName}} </span> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1"> {{DV_risk.priorityLevelName}} </span> 
-                  <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1"> {{DV_risk.priorityLevelName}}</span> 
-                </div>
-              </div>
-              <div class="row mb-0">
-                <div class="font-sm col-md-6 pl-3 pr-0">
-                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(DV_risk.startDate)}}
-                </div>
-                <div class="font-sm col-md-6 pr-0">
-                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(DV_risk.dueDate)}}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div class="t_actions my-3 float-left">
-              <span v-if="(DV_risk.watched) == true">
-                <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
-              </span>
-            </div>
-             <div class="t_actions my-3 float-right">
-              <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon ml-2"><i class="fa fa-exclamation-triangle"></i></span>
-            </div>
-
+   
+               <div class="row mb-2 d-flex">    
+                    <div class="font-sm col-md-12">   
+                       <span v-tooltip="`Priority`">             
+                      <span v-if="(DV_risk.priorityLevelName) == 'Very Low'" class="gray2">{{DV_risk.priorityLevelName}}</span>              
+                      <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}}</span> 
+                      <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{DV_risk.priorityLevelName}} </span> 
+                      <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1"> {{DV_risk.priorityLevelName}} </span> 
+                      <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1"> {{DV_risk.priorityLevelName}}</span> 
+                       </span>
+                    </div>
+                 </div>
+              
+            
+          
+        
+         
               <div class="font-sm col mt-3 p-0">
                 <div class="progress pg-content" :class="{'progress-0': DV_risk.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${DV_risk.progress}%`">{{DV_risk.progress}}%</div>
                 </div>
               </div>
-          </div>
-        </div>
-
-        <div v-if="fromView == 'watch_view'" class="mt-3 font-sm row">
-          <div class="col-6">
-            <div class="text-info">Related Tasks: </div>
-            <ol class="pl-4">
-              <li v-for="subTask in DV_risk.subTasks">
-                <span class="btn btn-link btn-sm p-0 clickable" @click="openSubTask(subTask)">{{getTask(subTask).text}}</span>
-              </li>
-            </ol>
-          </div>
-          <div class="col-6">
-            <div class="text-info">Related Issues: </div>
-            <ol class="pl-4">
-              <li v-for="subIssue in DV_risk.subIssues">
-                <span class="btn btn-link btn-sm p-0 clickable" @click="openSubIssue(subIssue)">{{getIssue(subIssue).title}}</span>
-              </li>
-            </ol>
-          </div>
-        </div>
+        
       </div>
+
+       
     </div>
+    
+  
 
     <sweet-modal
       class="risk_form_modal"
@@ -156,13 +129,14 @@
   import TaskForm from "./../tasks/task_form"
   import RiskForm from "./risk_form"
 
+
   export default {
     name: 'RiskShow',
     components: {
       IssueForm,
       TaskForm,
       RiskForm,
-      SweetModal,
+      SweetModal       
     },
     props: {
       fromView: {

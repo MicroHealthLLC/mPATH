@@ -10,7 +10,7 @@
 
            <!-- ROW 1 -->
         <div class="row">            
-              <div class=" col-md-9 mb-1 font-lg text-dark d-flex mb-1 kanban-text">
+              <div class=" col-md-9 mb-1 font-lg d-flex mb-1 kanban-text">
                 {{issue.title}}
               </div>
               <div class="col-md-3">
@@ -26,26 +26,10 @@
          </div>
 
          <!-- ROW 2 -->
-            <div class="row mb-0">
-                <div class="font-sm col-md-12" v-tooltip="`Category`">
-                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                  {{issue.issueType}}
-                </div>
-               
-            </div>
 
-        <!-- ROW 3 -->
 
-            <div class="row mb-1 d-flex">              
-                <div class="font-sm col-md-12" v-tooltip="`Issue Severity`">
-                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                  {{issue.issueSeverity}}
-                </div>
-            </div>
-           
 
- <!-- ROW 4 -->
-              <div class="row my-2">
+         <div class="row my-2">
                 <div class="font-sm col-md-12">
                   <span class="mr-2">
                   <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
@@ -55,6 +39,25 @@
                   {{formatDate(issue.dueDate)}}
                 </div>
               </div>
+   <!-- ROW 3 -->
+
+            <div class="row mb-0">
+                <div class="font-sm col-md-12" >
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                   <span v-tooltip="`Category`">{{issue.issueType}}</span>
+                </div>
+               
+            </div>
+
+     
+   <!-- ROW 4 -->
+            <div class="row mb-1 d-flex">              
+                <div class="font-sm col-md-12">
+                  <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
+                  <span v-tooltip="`Issue Severity`"> {{issue.issueSeverity}}</span>
+                </div>
+            </div>
+                       
 
 
            <!-- LAST/BOTTOM ROW  -->

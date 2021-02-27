@@ -9,7 +9,7 @@
      
      <!-- ROW 1 -->
      <div class="row">
-        <div class="col-md-9 font-lg text-dark d-flex mb-1 kanban-text">         
+        <div class="col-md-9 font-lg d-flex mb-1 kanban-text">         
            {{task.text}}       
         </div>
           <div class="col-md-3">
@@ -41,9 +41,9 @@
           </div>     
          
           <div class="row d-flex mb-1">
-            <div class="font-sm col" v-tooltip="`Category`">
+            <div class="font-sm col-md-12">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-              {{task.taskType}}
+              <span v-tooltip="`Category`">{{task.taskType}}</span>
             </div>
           </div>
 
@@ -175,6 +175,7 @@
       IssueForm,
       SweetModal,
       ContextMenu
+        
     },
     props: {
       fromView: {
