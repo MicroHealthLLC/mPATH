@@ -29,8 +29,13 @@
       </tr>
 
       <!-- The context-menu appears only if table row is right-clicked -->
-      <ContextMenu :facilities="facilities" :facilityGroups="facilityGroups" :task="task" :display="showContextMenu" ref="menu" @open-task="editTask">
-        
+      <ContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"
+        :task="task"
+        :display="showContextMenu"
+        ref="menu"
+        @open-task="editTask">  
       </ContextMenu>
 
     </table>
@@ -56,8 +61,6 @@ import TaskForm from "./task_form";
 import IssueForm from "./../issues/issue_form";
 import ContextMenu from "../../shared/ContextMenu";
 import moment from "moment";
-import axios from "axios";
-import humps from "humps";
 Vue.prototype.moment = moment;
 
 export default {
