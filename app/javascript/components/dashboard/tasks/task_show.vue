@@ -131,14 +131,7 @@
         DV_edit_task: {},
         DV_edit_issue: {},
         has_task: false,
-        showContextMenu: false,
-        defaultProps: {
-          children: "children",
-          label: "label",
-          disabled: "disabled"
-        },
-        filterTree: '',
-        submitted: true
+        showContextMenu: false
       }
     },
     mounted() {
