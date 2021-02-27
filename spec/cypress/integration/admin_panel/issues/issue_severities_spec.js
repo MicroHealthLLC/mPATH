@@ -62,6 +62,12 @@ describe('Admin Panel Issue Severities', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Issue Severity according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_issue_severities > tbody > tr').first().contains('Test Issue Severity').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Issue Severity contains name', function() {
     cy.get('#q_name').type('Test Issue Severity').should('have.value', 'Test Issue Severity')
     cy.get('[type=submit]').first().contains('Filter').click()
