@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pl-2 pr-1 mt-4 mb-3 mr-4"
+          class="rounded-lg kan-col py-3 pr-1 mt-4 mb-3 mr-4"
           data-cy="kanban_col"
           >
           <div>
@@ -15,13 +15,15 @@
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
-              </div>
-            </div>
-            <div class="col-2 px-0 mr-3" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
-              <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
+                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
+              </div>
+               
             </div>
+            <!-- <div class="col-2 px-0 mr-3" >
+             
+            </div> -->
             <!-- <div class="input-group">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
@@ -163,7 +165,8 @@ export default {
     border-radius: 3px;   
     background: #fff;
     border: none !important;
-    border-top: solid 8px #ffa500 !important;
+    // border-top: solid 8px #ffa500 !important;
+    overflow-wrap: break-word;
     padding: 6px;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;
   }
@@ -190,8 +193,10 @@ export default {
     position: relative;
     overflow: hidden;
     min-width: 18.5rem;
+    padding-left: .76rem;
     width: 18.5rem;
     height: 76vh;
+    border-radius: .15rem;
   }
   .kan-body {
     max-height: 72vh;
@@ -201,15 +206,16 @@ export default {
     display: flex;
     cursor: pointer;
     padding: 5px;
+    border-radius: .15rem;
     transition: auto;
     color: #ffffff;
     font-size: 1rem;
     background-color: #17a2b8;
     justify-content: center;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-    &.add {
-      background-color: #17a2b8;
-      width: 40px;
-    }
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
+  }
+  .add {
+    position: absolute;
+    right: 10%;
   }
 </style>
