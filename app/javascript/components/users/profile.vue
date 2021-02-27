@@ -281,39 +281,31 @@
     },
     mounted() {
       this.fetchProfile()
-      this.navigationOptions = [
-          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
-          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
-      ]
-      this.subNavigationOptions = [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
-          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
-        ]
+
+      this.navigationOptions = allowed_navigation_tabs
+      this.subNavigationOptions = allowed_sub_navigation_tabs
     },
     methods: {
       programSelectChange(value){
         this.projectGroupOptions = this.getProjectGroups(value)
 
         this.selectedProgram = value
-        this.selectedProjectGroup = null
-        this.selectedProject = null
+        this.selectedProjectGroup = ''
+        this.selectedProject = ''
       },
       projectGroupSelectChange(value){
 
         if(value){          
           this.projectOptions = this.getProjects(this.selectedProgram, value)
         }
-        this.selectedProject = null
+        this.selectedProject = ''
 
       },
       navigationSelectChane(value){
-        this.selectedSubNavigation = null
+        debugger;
+        this.selectedSubNavigation = ''
         if(value.id == "kanban"){
-          this.subNavigationOptions = [
-            {id: 'tasks', name: 'Tasks', value: 'tasks'},
-            {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
-          ]
+          this.subNavigationOptions = allowed_sub_navigation_tabs
         }else if(['gantt_chart', 'member_list'].includes(value.id) ){
           this.subNavigationOptions = []
         }
@@ -379,30 +371,30 @@
           if(this.selectedNavigation){
             preferences.navigationMenu = this.selectedNavigation.id
           }else{
-            preferences.navigationMenu = null
+            preferences.navigationMenu = ''
           }
           if(this.selectedSubNavigation){
             preferences.subNavigationMenu = this.selectedSubNavigation.id
           }else{
-            preferences.subNavigationMenu = null
+            preferences.subNavigationMenu = ''
           }
 
           if(this.selectedProgram){
             preferences.programId = this.selectedProgram.id
           }else{
-            preferences.programId = null
+            preferences.programId = ''
           }
 
           if(this.selectedProjectGroup){
             preferences.projectGroupId = this.selectedProjectGroup.id
           }else{
-            preferences.projectGroupId = null
+            preferences.projectGroupId = ''
           }
 
           if(this.selectedProject){
             preferences.projectId = this.selectedProject.id
           }else{
-            preferences.projectId = null
+            preferences.projectId = ''
           }
           delete(data["preferences"])
           

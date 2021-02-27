@@ -31,6 +31,45 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def allowed_navigation_tabs(right = 'R')
+    nagivation_tabs = ["map_view", "gantt_view", "sheets_view", "kanban_view"]
+    self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
+  end
+
+  def build_navigation_tabs_for_profile
+    n = []
+    allowed_navigation_tabs.each do |t|
+      name = "map" if t == "map_view"
+      name = "gantt_chart" if t == "gantt_view"
+      name = "kanban" if t == "kanban_view"
+      name = "sheet" if t == "sheets_view"
+
+      n << {id: name.downcase, name: name.humanize, value: name.downcase}
+    end
+    n << {id: 'member_list', name: 'Team', value: 'member_list'}
+  end
+
+  def allowed_sub_navigation_tabs(right = 'R')
+    sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview"]
+    self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
+  end
+
+  def build_sub_navigation_tabs_for_profile
+    allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
+  end
+
+  def preference_url
+    p = self.get_preferences
+    url = "/"
+    if p.program_id && p.navigation_menu
+
+      url = "/projects/#{p.program_id}/#{p.navigation_menu}"
+    elsif p.program_id
+      url = "/projects/#{p.program_id}"
+    end
+    url
+  end
+
   def self.from_omniauth(auth)
     if where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").present?
       where(email: auth.info.email || "#{auth.uid}@#{auth.provider}.com").first do |user|

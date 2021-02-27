@@ -16,13 +16,16 @@ Vue.component('loader', FadeLoader)
 Vue.component('multiselect', Multiselect)
 Vue.use(VeeValidate)
 
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: window.google_api_key,
-    libraries: 'places',
-  },
-  installComponents: true
-})
+if(!window.google){
+  Vue.use(VueGoogleMaps, {
+    load: {
+      key: window.google_api_key,
+      libraries: 'places',
+    },
+    installComponents: true
+  })
+}
+
 
 Vue.config.productionTip = false
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))

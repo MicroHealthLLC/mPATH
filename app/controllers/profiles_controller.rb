@@ -34,7 +34,7 @@ class ProfilesController < AuthenticatedController
       project_hash << h
     end
 
-    preferences = current_user.get_preferences.value
+    preferences = current_user.get_preferences.value.with_indifferent_access
     h = {
       current_user: current_user.as_json,
       preferences: preferences,
@@ -48,7 +48,7 @@ class ProfilesController < AuthenticatedController
   def update
     if current_user.update(profile_params)
       current_user.settings(:preferences).update(preferences_params)
-      render json: {current_user: current_user.as_json, preferences: current_user.get_preferences.value }, status: 200
+      render json: {current_user: current_user.as_json, preferences: current_user.get_preferences.value.with_indifferent_access }, status: 200
     else
       render json: current_user.errors, status: :unprocessable_entity
     end
