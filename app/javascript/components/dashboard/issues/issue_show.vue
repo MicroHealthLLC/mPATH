@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="issues">
+  <div data-cy="issues" @mouseup.right="openContextMenu" @contextmenu.prevent="">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
@@ -113,6 +113,15 @@
         ></issue-form>
       </div>
     </sweet-modal>
+    <!-- The context-menu appears only if table row is right-clicked -->
+      <IssueContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"
+        :issue="issue"
+        :display="showContextMenu"
+        ref="menu"
+        @open-issue="editIssue">  
+      </IssueContextMenu>
   </div>
 </template>
 
@@ -121,6 +130,7 @@
   import {SweetModal} from 'sweet-modal-vue'
   import IssueForm from "./issue_form"
   import TaskForm from "./../tasks/task_form"
+  import IssueContextMenu from "../../shared/IssueContextMenu"
 
   export default {
     name: 'IssueShow',
@@ -128,6 +138,7 @@
       IssueForm,
       TaskForm,
       SweetModal,
+      IssueContextMenu
     },
     props: {
       fromView: {
@@ -143,7 +154,8 @@
         DV_issue: {},
         DV_edit_task: {},
         DV_edit_issue: {},
-        has_issue: false
+        has_issue: false,
+        showContextMenu: false
       }
     },
     mounted() {
@@ -216,7 +228,11 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
-      }
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
     },
     computed: {
       ...mapGetters([

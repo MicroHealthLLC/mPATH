@@ -1,7 +1,7 @@
 <template>
   <div>
     <table class="table table-sm table-bordered table-striped">
-      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue" data-cy="issue_row">
+      <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue" data-cy="issue_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneFive">{{issue.title}}</td>
         <td class="ten">{{issue.issueType}}</td>
         <td class="nine">{{issue.issueSeverity}}</td>
@@ -28,6 +28,15 @@
         </td>
         <td class="oneFive" v-else>No Updates</td>
       </tr>
+      <!-- The context-menu appears only if table row is right-clicked -->
+      <IssueContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"
+        :issue="issue"
+        :display="showContextMenu"
+        ref="menu"
+        @open-issue="editIssue">  
+      </IssueContextMenu>
     </table>
       <div v-if="has_issue" class="w-100 action-form-overlay  updateForm">
         <issue-form
@@ -48,6 +57,7 @@
   import {SweetModal} from 'sweet-modal-vue'
   import IssueForm from "./issue_form"
   import TaskForm from "./../tasks/task_form"
+  import IssueContextMenu from "../../shared/IssueContextMenu"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
@@ -57,6 +67,7 @@
       IssueForm,
       TaskForm,
       SweetModal,
+      IssueContextMenu
     },
     props: {
       fromView: {
@@ -73,7 +84,8 @@
         DV_edit_task: {},
         DV_edit_issue: {},
         has_issue: false,
-        now: new Date().toISOString()
+        now: new Date().toISOString(),
+        showContextMenu: false
       }
     },
     mounted() {
@@ -147,7 +159,11 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
-      }
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
     },
     computed: {
       ...mapGetters([
