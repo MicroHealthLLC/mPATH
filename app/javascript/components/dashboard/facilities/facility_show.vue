@@ -693,7 +693,7 @@
       taskVariation() {
         let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-        let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
@@ -754,7 +754,7 @@
       issueVariation() {
         let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-        let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
@@ -808,7 +808,7 @@
        riskVariation() {
         let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
-        let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
         return {
           completed: {count: completed.length, percentage: Math.round( completed_percent )},

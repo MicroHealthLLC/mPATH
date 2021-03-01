@@ -18,7 +18,7 @@
          </span>        
         </td>
         <td class="eight">{{issue.progress + "%"}}</td>
-        <td class="nine" v-if="(issue.dueDate) <= now"><h5>x</h5></td>
+        <td class="nine" v-if="issue.isOverdue"><h5>x</h5></td>
         <td class="nine" v-else></td>
         <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
         <td class="nine" v-else></td>

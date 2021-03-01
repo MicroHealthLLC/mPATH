@@ -481,7 +481,7 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       is_overdue() {
-        return this.DV_task.progress !== 100 && new Date(this.DV_task.dueDate).getTime() < new Date().getTime()
+        return this.DV_task.isOverdue
       },
       facility() {
         return this.facilities.find(f => f.id == this.DV_task.facilityId)

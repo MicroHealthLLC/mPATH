@@ -240,7 +240,7 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       is_overdue() {
-        return this.DV_issue.progress !== 100 && new Date(this.DV_issue.dueDate).getTime() < new Date().getTime()
+        return this.DV_issue.isOverdue
       },
       facility() {
         return this.facilities.find(f => f.id == this.DV_issue.facilityId)
