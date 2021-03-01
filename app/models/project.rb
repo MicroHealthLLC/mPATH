@@ -148,7 +148,8 @@ class Project < SortableRecord
 
     all_user_ids = all_user_ids.compact.uniq
 
-    all_users = User.where(id: all_user_ids ).active
+    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
     all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
@@ -188,7 +189,7 @@ class Project < SortableRecord
 
       h[:tasks] = []
       tasks.each do |t| 
-        h[:tasks] << t.to_json( all_task_users[t.id], all_users )
+        h[:tasks] << t.to_json( all_task_users[t.id], all_users, {for: :project_build_response} )
       end
 
       # Building Issues
@@ -199,7 +200,7 @@ class Project < SortableRecord
 
       h[:issues] = []
       issues.each do |i| 
-        h[:issues] << i.to_json( all_issue_users[i.id], all_users )
+        h[:issues] << i.to_json( all_issue_users[i.id], all_users, {for: :project_build_response} )
       end
 
       # Building Risks
@@ -210,7 +211,7 @@ class Project < SortableRecord
 
       h[:risks] = []
       risks.each do |r| 
-        h[:risks] << r.to_json( all_risk_users[r.id], all_users )
+        h[:risks] << r.to_json( all_risk_users[r.id], all_users, {for: :project_build_response} )
       end
 
       # Building Notes
