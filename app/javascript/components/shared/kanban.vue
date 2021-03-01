@@ -6,8 +6,9 @@
           v-for="column in columns"
           :key="column.title"
           :log="log(column)"
-          class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"
-          :style="`${column.stage.id == null ? 'display:none;' : ''}`"
+          class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"        
+          :class="{'no-stage': column.stage.id == null}"
+          :style="`${ column.stage.id == null ? 'width:1rem' : 'min-width:18.5rem'  }`"
           data-cy="kanban_col"
           >
           <div>
@@ -34,7 +35,7 @@
                 :key="`${task.id}_${column.stage.id}`"
                 :task="task"
                 :issue="task"
-                :risk="task"
+                :risk="task"             
                 fromView="kanban_view"
                 class="mr-auto mb-3 task-card"
               ></div>
@@ -197,14 +198,15 @@ export default {
     background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
     position: relative;
-    overflow: hidden;
-    min-width: 18.5rem;
+    overflow: hidden; 
     padding-left: .76rem;
-    padding-right: .76rem;
-    width: 18.5rem;
+    padding-right: .76rem;  
     height: 73vh;
     border-radius: .15rem;
   }
+.kan-has-stage {
+     min-width: 18.5rem;
+}
   .kan-body {
     max-height: 73vh;
     overflow-y: auto;
@@ -226,4 +228,19 @@ export default {
     position: absolute;
     right: 10%;
   }
+  .no-stage {
+    background: #fff;
+    border-right: dotted 1px #ededed;
+    margin-top: 0 !important;
+    height: auto;
+    box-shadow: none;
+    width: .5rem !important;
+    div.badge {
+      display: none;
+    }
+  }
+  .no-stage:hover {
+     border-right: dotted 1px rgba(255, 0, 0, 0.5) !important;
+  }
+
 </style>
