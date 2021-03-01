@@ -186,7 +186,7 @@
             </div>       
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
     </div>
   </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>

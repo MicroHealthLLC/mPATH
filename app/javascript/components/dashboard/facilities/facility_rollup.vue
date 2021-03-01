@@ -134,13 +134,33 @@
                     </span>
                   </div>
               </div>
-            <span @click.prevent="showLessToggle" >
+              <div class="row mt-1">
+                    <div class="col">
+                      <span v-if="isMapView" class="font-sm">Overdue</span>
+                      <span v-else>Overdue</span>
+                      <span v-if="isMapView" class="badge badge-secondary font-sm badge-pill">{{taskVariation.overdue.count}}</span>
+                      <span v-else class="badge badge-secondary font-sm badge-pill">{{taskVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col mt-1">
+                      <span v-if="isMapView" class="w-100 progress pg-content font-sm" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
+                      </span>
+
+                       <span v-else class="w-100 progress pg-content" :class="{'progress-0': taskVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${taskVariation.overdue.percentage}%`">{{taskVariation.overdue.percentage}} %</div>
+                      </span>
+                    </div>
+              </div>
+           
+
+
+
+
+        <div v-if="filteredTasks.length" >
           <el-collapse id="roll_up">
-
             <el-collapse-item title="Details" name="1">
-
-              <div v-if="filteredTasks.length" class="row mt-2 mb-1">
-                 <div class="col font-weight-bold text-center">
+              <div class="row my-1">
+                 <div class="col text-center">
                      <span v-if="isMapView" class="font-sm">CATEGORIES</span>
                     <span v-else> CATEGORIES</span>
                   </div>
@@ -163,7 +183,7 @@
               </div>
             </el-collapse-item>
           </el-collapse>
-            </span>
+ </div>         
 
 
             </div>
@@ -221,13 +241,16 @@
                     </div>
               </div>
 
+
+<!-- If Issues? Place in collapsible container -->
+        <div v-if="filteredIssues.length">
           <el-collapse>
             <el-collapse-item title="Details" name="1">
-             <div v-if="filteredIssues.length" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-1 mb-1 text-center">
+           
+               <div class="col mt-1 mb-1 text-center">
                        CATEGORIES
                </div>
-            </div>
+           
              <div v-for="issue in currentIssueTypes">
              <div class="row font-sm" v-if="issue._display">
 
@@ -244,7 +267,7 @@
             </div>
               </el-collapse-item>
           </el-collapse>
-
+ </div>
             </div>
 
 
@@ -261,27 +284,80 @@
                 <hr>
               </div>
             </div>
-            <div v-if="contentLoaded">
 
 
-              <div class="row mb-2">
+
+               <div class="row">
+                    <div class="col">
+                      <span v-if="isMapView" class="font-sm">Complete</span>
+                      <span v-else>Complete</span>
+                      <span class="badge badge-secondary badge-pill">{{riskVariation.completed.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.completed.percentage <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${riskVariation.completed.percentage}%`">{{riskVariation.completed.percentage}} %</div>
+                     </span>
+                    </div>
+              </div>
+              <div class="row mt-1">
+                    <div class="col">
+                      <span v-if="isMapView" class="font-sm">Overdue</span>
+                      <span v-else>Overdue</span>
+                      <span class="badge badge-secondary badge-pill">{{riskVariation.overdue.count}}</span>
+                    </div>
+                    <div class="col">
+                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.overdue.percentage <= 0}">
+                        <div class="progress-bar bg-info" :style="`width: ${riskVariation.overdue.percentage}%`">{{riskVariation.overdue.percentage}} %</div>
+                      </span>
+                    </div>
+              </div>
+
+
+
+         <div v-if="filteredRisks.length > 0">
+          <el-collapse>
+            <el-collapse-item title="Details" name="1">
+               
+           <div class="row">
+               <div class="col my-1 text-center">
+                       CATEGORIES
+               </div>
+            </div>
+
+             <div v-for="risk in currentRiskTypes" :key="risk.id">
+             <div class="row" v-if="risk._display">
+
+                  <div class="col">
+                    <span> {{risk.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': risk.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${risk.progress}%`">{{risk.progress}} %</div>
+                    </span>
+                  </div>
+            </div>
+            </div>
+
+             <div v-if="contentLoaded">
+              <div class="row mt-3 mb-1">
                   <div class="col text-center">
-                     <span v-if="isMapView" > Risk Priority Levels</span>
-                      <span v-else> Risk Priority Levels</span>
+                     <span v-if="isMapView" class="font-sm"> RISK PRIORITY LEVELS</span>
+                      <span v-else> RISK PRIORITY LEVELS</span>
                   </div>
               </div>
-            <div v-if="isMapView" class="row font-sm">
-                <div class="col text-center">
+             <div v-if="isMapView" class="row">
+                <div class="col text-center font-sm">
                   <p class="mb-2 grey2" v-tooltip="`Very Low`">VL</p>
                   <p class="mb-2 green" v-tooltip="`Low`">L</p>
                   <p class="mb-2 yellow" v-tooltip="`Moderate`">M</p>
                 </div>
-                <div class="col">
+                <div class="col font-sm">
                   <span class="mt-1 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.grey}}</span>
                   <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.green}}</span>
                   <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.yellow}}</span>
                 </div>
-                 <div class="col text-center">
+                 <div class="col text-center font-sm">
                   <p class="mb-2 orange" v-tooltip="`High`">H</p>
                   <p class="mb-2 red" v-tooltip="`Extreme`">E</p>
                 </div>
@@ -311,64 +387,12 @@
                  <span class="my-2 p-1 badge w-50 badge-secondary badge-pill d-block">{{riskPriorityLevels.red}}</span>
 
                 </div>
-            </div>
-
-
-
-          <el-collapse>
-            <el-collapse-item title="Details" name="1">
-               <div class="row">
-                    <div class="col">
-                      <span>Complete</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.completed.count}}</span>
-                    </div>
-                    <div class="col">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.completed.percentage <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${riskVariation.completed.percentage}%`">{{riskVariation.completed.percentage}} %</div>
-                     </span>
-                    </div>
-              </div>
-              <div class="row mt-1">
-                    <div class="col">
-                      <span>Overdue</span>
-                      <span class="badge badge-secondary badge-pill">{{riskVariation.overdue.count}}</span>
-                    </div>
-                    <div class="col">
-                      <span class="w-100 progress pg-content" :class="{'progress-0': riskVariation.overdue.percentage <= 0}">
-                        <div class="progress-bar bg-info" :style="`width: ${riskVariation.overdue.percentage}%`">{{riskVariation.overdue.percentage}} %</div>
-                      </span>
-                    </div>
-              </div>
-             <div v-if="!filteredRisks.length" class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-3 mb-1 text-center">
-                       0 CATEGORIES
-               </div>
-            </div>
-             <div v-else class="font-weight-bold text-center">
-               <div class="col font-weight-bold mt-3 mb-1 text-center">
-                       CATEGORIES
-               </div>
-            </div>
-
-             <div v-for="risk in currentRiskTypes">
-             <div class="row" v-if="risk._display">
-
-                  <div class="col">
-                    <span> {{risk.name}}</span>
-                    <span class="badge badge-secondary badge-pill">{{risk.length}}</span>
-                  </div>
-                  <div class="col">
-                    <span class="w-100 progress pg-content" :class="{'progress-0': risk.progress <= 0}">
-                      <div class="progress-bar bg-info" :style="`width: ${risk.progress}%`">{{risk.progress}} %</div>
-                    </span>
-                  </div>
-            </div>
+             </div>
             </div>
              </el-collapse-item>
           </el-collapse>
-
-
-            </div>
+           
+         </div>
 
             <div v-if="!contentLoaded" class="my-4">
               <loader type="code"></loader>

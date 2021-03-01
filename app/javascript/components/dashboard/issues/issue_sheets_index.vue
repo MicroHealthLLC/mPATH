@@ -1,6 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-    <div v-if="newIssue && from != 'manager_view'">
+         <div v-if="_isallowed('read')">
+    <!-- <div v-if="newIssue && from != 'manager_view'">
       <issue-form
         :facility="facility"
         :issue="currentIssue"
@@ -9,8 +10,9 @@
         @issue-updated="issueUpdated"
         class="issue-form-modal"
       />
-    </div>
-     <div v-else>      
+    </div> -->
+
+         
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
@@ -131,7 +133,7 @@
           Total: {{filteredIssues.length}}
          </button>
       </div>
-        <div v-if="_isallowed('read')">
+     
           <div v-if="filteredIssues.length > 0">      
             <div style="margin-bottom:50px" data-cy="issues_table">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
@@ -189,16 +191,23 @@
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
                   <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
                   <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
-            </div>             
+         
+            </div>  
+                       
             </div>
+            
           </div>
-          <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText" data-cy="no_issue_found">No issues found..</h6>
+           <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
+         
         </div>
-        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-      </div>
-    </div>
+        
      </div>
-    <div>
+     
+      </div>
+        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+  
+ 
+ 
       <table
         class="table table-sm table-bordered table-striped"
         ref="table" id="issueSheetsList1"
@@ -580,6 +589,11 @@
   #altText {
     position: absolute;
     margin-top: 50px
+  }
+ .alt-text {
+    position: relative;
+    margin-top: 50px;
+    margin-left: 2px;
   }
   #issueHover:hover {
     cursor: pointer;
