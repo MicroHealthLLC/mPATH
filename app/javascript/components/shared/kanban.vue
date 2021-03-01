@@ -5,7 +5,9 @@
         <div
           v-for="column in columns"
           :key="column.title"
+          :log="log(column)"
           class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"
+          :style="`${column.stage.id == null ? 'display:none;' : ''}`"
           data-cy="kanban_col"
           >
           <div>
@@ -95,6 +97,11 @@ export default {
     },
     setupColumns(cards) {
       this.stageId = `${this.kanbanType.slice(0, -1)}StageId`
+      this.columns.push({
+        stage: {id: null},
+        title: "No stage",
+        tasks: []
+      })
       for (let stage of this.stages) {
         this.columns.push({
           stage: stage,
@@ -102,6 +109,7 @@ export default {
           tasks: _.filter(cards, c => c[this.stageId] == stage.id)
         })
       }
+
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key
@@ -116,7 +124,12 @@ export default {
           data[this.kanbanType][task.id] = {}
           data[this.kanbanType][task.id].kanbanOrder = tasks.indexOf(task)
           if ('added' in item) {
-            data[this.kanbanType][task.id][this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
+            var s = this.stages.find(s => s.name == this.movingSlot)
+            if(s){
+              data[this.kanbanType][task.id][this.stageId] = s.id
+            }else{
+              data[this.kanbanType][task.id][this.stageId] = null
+            }            
           }
         }
         this.updateKanbanTaskIssues({projectId, facilityId, data, type: this.kanbanType})
