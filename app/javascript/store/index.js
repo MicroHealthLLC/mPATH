@@ -61,7 +61,7 @@ export default new Vuex.Store({
     accountableUsers: new Array,
     consultedUsers: new Array,
     informedUsers: new Array,
-  
+
     currentFacility: null,
     currentFacilityGroup: null,
     mapFilters: new Array,
@@ -179,8 +179,8 @@ export default new Vuex.Store({
     setIssueTypeFilter: (state, filter) => state.issueTypeFilter = filter,
     setIssueStageFilter: (state, filter) => state.issueStageFilter = filter,
     setIssueSeverityFilter: (state, filter) => state.issueSeverityFilter = filter,
-    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,   
-    
+    setIssueProgressFilter: (state, filter) => state.issueProgressFilter = filter,
+
     setMembersPerPageFilter: (state, filter) => state.membersPerPageFilter = filter,
     setTasksPerPageFilter: (state, filter) => state.tasksPerPageFilter = filter,
     setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
@@ -191,7 +191,7 @@ export default new Vuex.Store({
     setAccountableUsers: (state, users) => state.accountableUsers = users,
     setConsultedUsers: (state, consulted) => state.consultedUsers = consulted,
     setInformedUsers: (state, informed) => state.informedUsers = informed,
-   
+
 
     setCurrentFacility: (state, facility) => state.currentFacility = facility,
     setCurrentFacilityGroup: (state, facilityGroup) => state.currentFacilityGroup = facilityGroup,
@@ -308,7 +308,7 @@ export default new Vuex.Store({
     },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
     setPreviousRoute: (state, route) => state.previousRoute = route,
-    setNewSession: (state) => state.newSession = !state.newSession    
+    setNewSession: (state) => state.newSession = !state.newSession
   },
 
   getters: {
@@ -318,7 +318,7 @@ export default new Vuex.Store({
         options.push({id: f.facilityProjectId, name: f.facilityName})
       }
       return options
-    }, 
+    },
     getTaskIssueUserFilter:(state, getters) =>{
       return state.taskIssueUserFilter
     },
@@ -340,45 +340,45 @@ export default new Vuex.Store({
     //For Datatables items per page display only
     getMembersPerPageFilter: state => state.membersPerPageFilter,
     getMembersPerPageFilterOptions: (state, getters) => {
-      var options = [      
+      var options = [
         {id: 5, name: '5', value: 5},
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},  
-        {id: 100, name: '100+', value: 100},      
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
       ]
       return options;
     },
     getTasksPerPageFilter: state => state.tasksPerPageFilter,
     getTasksPerPageFilterOptions: (state, getters) => {
-      var options = [       
+      var options = [
         {id: 5, name: '5', value: 5},
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},  
-        {id: 100, name: '100+', value: 100},      
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
       ]
       return options;
     },
     getIssuesPerPageFilter: state => state.issuesPerPageFilter,
     getIssuesPerPageFilterOptions: (state, getters) => {
-      var options = [      
+      var options = [
         {id: 5, name: '5', value: 5},
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},  
-        {id: 100, name: '100+', value: 100},      
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
       ]
       return options;
     },
     getRisksPerPageFilter: state => state.risksPerPageFilter,
     getRisksPerPageFilterOptions: (state, getters) => {
-      var options = [      
+      var options = [
         {id: 5, name: '5', value: 5},
         {id: 15, name: '15', value: 15},
         {id: 25, name: '25', value: 25},
-        {id: 50, name: '50', value: 50},  
-        {id: 100, name: '100+', value: 100},      
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
       ]
       return options;
     },
@@ -417,7 +417,7 @@ export default new Vuex.Store({
         // {id: 'accept', name: 'Accept', value: 'accept', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
         // {id: 'avoid', name: 'Avoid', value: 'avoid', filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
         // {id: 'mitigate', name: 'Mitigate', value: "mitigate", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'},
-        // {id: 'transfer', name: 'Transfer', value: "transfer", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'}  
+        // {id: 'transfer', name: 'Transfer', value: "transfer", filterCategoryId: 'riskApproachFilter', filterCategoryName: 'Risk Approach'}
       ]
       return options;
     },
@@ -428,14 +428,14 @@ export default new Vuex.Store({
         {id: 'accept', name: 'Accept', value: 'accept'},
         {id: 'avoid', name: 'Avoid', value: 'avoid'},
         {id: 'mitigate', name: 'Mitigate', value: "mitigate"},
-        {id: 'transfer', name: 'Transfer', value: "transfer"},      
+        {id: 'transfer', name: 'Transfer', value: "transfer"},
       ]
       return options;
     },
 
-    
 
-    getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,    
+
+    getRiskImpactLevelOptions: state => state.riskImpactLevelOptions,
     getRiskImpactLevelNames: (state, getters) => {
      var options = [
         {id: 1, value: 1, name: "1 - Negligible"},
@@ -447,7 +447,7 @@ export default new Vuex.Store({
       ]
       return options
     },
-    getRiskProbabilityOptions: state => state.riskProbabilityOptions,    
+    getRiskProbabilityOptions: state => state.riskProbabilityOptions,
     getRiskProbabilityNames: (state, getters) => {
      var options = [
         {id: 1, value: 1, name: "1 - Rare"},
@@ -466,7 +466,7 @@ export default new Vuex.Store({
         {id: 'low', name: 'Low', value: 'low'},
         {id: 'moderate', name: 'Moderate', value: 'moderate'},
         {id: 'high', name: 'High', value: 'high' },
-        {id: 'extreme', name: 'Extreme', value: 'extreme'}     
+        {id: 'extreme', name: 'Extreme', value: 'extreme'}
       ]
       return options;
     },
@@ -523,7 +523,7 @@ export default new Vuex.Store({
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
-       
+
         return user_names
 
       }else if(_filterValue == 'facilityNameFilter'){
@@ -668,7 +668,7 @@ export default new Vuex.Store({
           user_names = _.map(getter.getRiskPriorityLevelFilter, 'name').join(", ")
         }
         return user_names
-        
+
       }else if(_filterValue == 'riskStageFilter'){
         // console.log(getter.getTaskIssueUserFilter)
         var user_names = null
@@ -676,7 +676,7 @@ export default new Vuex.Store({
           user_names = _.map(getter.riskStageFilter, 'name').join(", ")
         }
         return user_names
-      
+
       }else if(_filterValue == 'riskApproachFilter'){
         // console.log(getter.getTaskIssueUserFilter)
         var user_names = null
@@ -695,7 +695,7 @@ export default new Vuex.Store({
     facilities: state => state.facilities,
     facilityGroups: state => state.facilityGroups,
     statuses: state => state.statuses,
-    
+
     taskTypes: state => state.taskTypes,
     taskStages: state => state.taskStages,
     taskTypeFilter: state => state.taskTypeFilter,
@@ -731,10 +731,10 @@ export default new Vuex.Store({
     consultedUsers: state => state.consultedUsers,
     informedUsers: state => state.informedUsers,
     activeProjectUsers: state => _.filter(state.projectUsers, u => u.status == "active"),
-    accountableProjectUsers: state => _.filter(state.accountableUsers, u => u.status == "active"),  
+    accountableProjectUsers: state => _.filter(state.accountableUsers, u => u.status == "active"),
     consultedProjectUsers: state => _.filter(state.consultedUsers, u => u.status == "active"),
     informedProjectUsers: state => _.filter(state.informedUsers, u => u.status == "active"),
-  
+
     currentFacility: state => state.currentFacility,
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
@@ -754,7 +754,7 @@ export default new Vuex.Store({
     progressFilter: state => state.progressFilter,
     managerView: state => state.managerView,
     // NOTE: This function will be used in many pages to filter data based on advanced filter
-    // selected by user. 
+    // selected by user.
     filterDataForAdvancedFilter: (state, getters) => (resources, page_name, facility=null) => {
 
       var aFilter = getters.getAdvancedFilter
@@ -767,7 +767,7 @@ export default new Vuex.Store({
 
       let taskIssueOverdue = _.map(aFilter, 'id').includes("overdue")
       let taskIssueNotOverdue = _.map(aFilter, 'id').includes("notOverdue")
-      
+
       let taskIssueActiveProgressStatus = _.map(aFilter, 'id').includes("active")
       let taskIssueCompletedProgressStatus = _.map(aFilter, 'id').includes("completed")
 
@@ -779,16 +779,16 @@ export default new Vuex.Store({
 
       let valid = true
 
-      if ( 
+      if (
         (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == true) ||
         (taskIssueMyAction == true && taksIssueNotMyAction == true) ||
         (taskIssueOnWatch == true && taksIssueNotOnWatch == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true)
-        )  {      
+        )  {
         valid = true
       }
 
-      let _isOverdues = [] 
+      let _isOverdues = []
       _isOverdues = _.map(resources, 'isOverdue')
 
       if(taskIssueOverdue == true && taskIssueNotOverdue == false){
@@ -796,7 +796,7 @@ export default new Vuex.Store({
       }
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
         valid = valid && _isOverdues.includes(false)
-      } 
+      }
 
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
@@ -808,7 +808,7 @@ export default new Vuex.Store({
       if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
         valid = valid && _progressStatuses.includes('completed')
       }
-      
+
       // var notes = _.flatten(_.map(resources, 'notes'))
       var userIds = [] //_.uniq(_.map(notes, 'userId'))
 
@@ -818,7 +818,7 @@ export default new Vuex.Store({
       //   userIds = userIds.concat(u)
       // }
       userIds = _.uniq(userIds.concat(uids))
-      
+
       if (taskIssueMyAction == true && taksIssueNotMyAction == false) {
         valid = valid && userIds.includes(Vue.prototype.$currentUser.id)
       }
@@ -830,7 +830,7 @@ export default new Vuex.Store({
             isValid = true
           }
           if(isValid) break
-          
+
         }
         valid = valid && isValid
       }
@@ -840,7 +840,7 @@ export default new Vuex.Store({
       if(taskIssueOnWatch == true && taksIssueNotOnWatch == false){
         valid = valid && watches.includes(true)
       }
-      
+
       if(taskIssueOnWatch == false && taksIssueNotOnWatch == true){
         valid = valid && watches.includes(false)
       }
@@ -863,7 +863,7 @@ export default new Vuex.Store({
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
-        
+
         var resources1 = []
         resources1 = resources1.concat(facility.tasks)
         resources1 = resources1.concat(facility.issues)
@@ -1135,8 +1135,12 @@ export default new Vuex.Store({
     // for gantt chart view
     ganttData: (state, getters) => {
       let hash = new Array
+      if (!getters.contentLoaded) return hash;
+
       // for project
       let p_id = getters.currentProject ? `p_${getters.currentProject.id}` : `p_${Vue.prototype.$preferences.projectId}`
+
+
       let _p_id = '1'
       let p_s_date = _.min(_.map(getters.currentTasks, 'startDate')) || 'N/A'
       let p_e_date = _.max(_.map(getters.currentTasks, 'dueDate')) || 'N/A'
@@ -1434,12 +1438,12 @@ export default new Vuex.Store({
       let tasks = _.filter(getters.filteredAllTasks, t => t.watched)
       let issues = _.filter(getters.filteredAllIssues, t => t.watched)
       let risks = _.filter(getters.filteredAllRisks, t => t.watched)
-      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId'), ..._.map(risks, 'facilityId')]   
+      let ids = [..._.map(issues, 'facilityId'), ..._.map(tasks, 'facilityId'), ..._.map(risks, 'facilityId')]
       let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
 
       return {tasks, issues, risks, facilities}
     },
-    approved_risks: (state, getters) => {    
+    approved_risks: (state, getters) => {
       let risks = _.filter(getters.filteredAllRisks, t => t.approved)
       let ids = [..._.map(risks,'facilityId')]
       let facilities = _.filter(getters.filteredFacilities('active'), t => ids.includes(t.id))
@@ -1448,10 +1452,10 @@ export default new Vuex.Store({
     viewPermit: () => (view, req) => {
       if (Vue.prototype.$currentUser.role === "superadmin") return true;
       return Vue.prototype.$permissions[view][req]
-    }, 
+    },
     riskApproaches: () => {
       return   ['avoid', 'mitigate', 'transfer', 'accept']
-    
+
       // [ {id: 'avoid', value: 'avoid', name: 'Avoid'},
         // {id: 'mitigate', value: 'mitigate', name: "Mitigate"},
         // {id: 'transfer' , value: 'transfer', name: 'Transfer'},
@@ -1508,9 +1512,9 @@ export default new Vuex.Store({
             commit('setProjectUsers', res.data.project.users)
             commit('setAccountableUsers', res.data.project.accountableUsers)
             commit('setConsultedUsers', res.data.project.consulted)
-            commit('setInformedUsers', res.data.project.informed)            
+            commit('setInformedUsers', res.data.project.informed)
             commit('setStatuses', res.data.project.statuses)
-            commit('setTaskTypes', res.data.project.taskTypes)            
+            commit('setTaskTypes', res.data.project.taskTypes)
             commit('setTaskStages', res.data.project.taskStages)
             commit('setRiskStages', res.data.project.riskStages)
             commit('setIssueStages', res.data.project.issueStages)
@@ -1744,7 +1748,7 @@ export default new Vuex.Store({
         'tasksPerPageFilter',
         'issuesPerPageFilter',
         'risksPerPageFilter',
-        
+
         'riskStageFilter',
         'riskApproachFilter',
         'riskPriorityLevelFilter',

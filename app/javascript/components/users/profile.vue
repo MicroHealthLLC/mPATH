@@ -1,6 +1,6 @@
 <template>
   <div id="users_wrapper" v-if="!loading">
-   
+
     <form @submit.prevent="handleSubmit" class="w-100" autocomplete="off">
     <h5 class="my-3 bg-secondary text-light px-2">Edit User Profile</h5>
       <div class="form-group row">
@@ -295,14 +295,13 @@
       },
       projectGroupSelectChange(value){
 
-        if(value){          
+        if(value){
           this.projectOptions = this.getProjects(this.selectedProgram, value)
         }
         this.selectedProject = ''
 
       },
       navigationSelectChane(value){
-        debugger;
         this.selectedSubNavigation = ''
         if(value.id == "kanban"){
           this.subNavigationOptions = allowed_sub_navigation_tabs
@@ -315,7 +314,7 @@
           .then((res) => {
 
             this.profile = {...this.profile, ...res.data.currentUser}
-            this.preferences = {...this.preferences, ...res.data.preferences}          
+            this.preferences = {...this.preferences, ...res.data.preferences}
 
             this.allPrograms  = res.data.programs
             this.allProjectGroups = res.data.projectGroups
@@ -397,7 +396,7 @@
             preferences.projectId = ''
           }
           delete(data["preferences"])
-          
+
           http
             .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
@@ -408,7 +407,7 @@
               }else{
                 this.gotoDashboard()
               }
-              
+
             })
             .catch((err) => {
               console.log(err)
@@ -514,6 +513,6 @@
   input.error {
     border-color: #dc3545;
   }
-  
+
 
 </style>
