@@ -62,6 +62,15 @@ describe('Admin Panel Statuses', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Status according to Name', function() {
+    cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_statuses > tbody > tr').first().contains('InActive').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Status contains name', function() {
     cy.get('#q_name').type('InActive').should('have.value', 'InActive')
     cy.get('[type=submit]').first().contains('Filter').click()

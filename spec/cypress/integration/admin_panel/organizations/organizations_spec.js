@@ -40,6 +40,12 @@ describe('Admin Panel Organization', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Organization according to Title', function() {
+    cy.get('.sortable').contains('Title').click()
+    cy.get('#index_table_organizations > tbody > tr').first().contains('Test Organization').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Organization contains name', function() {
     cy.get('#q_title').type('Test Organization').should('have.value', 'Test Organization')
     cy.get('[type=submit]').first().contains('Filter').click()

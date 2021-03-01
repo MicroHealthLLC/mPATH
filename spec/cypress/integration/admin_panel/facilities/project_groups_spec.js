@@ -1,4 +1,4 @@
-describe('Admin Panel Facility Group', function() {
+describe('Admin Panel Project Group', function() {
   beforeEach(() => {
     cy.app('clean')
     cy.appScenario('basic')
@@ -64,7 +64,27 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#logout').click()
   })
 
-  it('Search project group contains name', function() {
+  it('Sort Project Groups according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 1').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('Test Facility Group 2').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Project Groups according to Code', function() {
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG1').should('be.visible')
+    cy.get('.sortable').contains('Code').click()
+    cy.get('#index_table_facility_groups > tbody > tr').first().contains('TFG2').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Search Project group contains name', function() {
     cy.get('#q_name').type('Test Facility Group 1').should('have.value', 'Test Facility Group 1')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#search_status_sidebar_section').should('be.visible')
@@ -76,7 +96,7 @@ describe('Admin Panel Facility Group', function() {
     cy.get('#logout').click()
   })
 
-  it('Search project group contains code', function() {
+  it('Search Project group contains code', function() {
     cy.get('#q_code').type('TFG1').should('have.value', 'TFG1')
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#search_status_sidebar_section').should('be.visible')
