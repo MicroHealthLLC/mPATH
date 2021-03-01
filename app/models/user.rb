@@ -61,10 +61,10 @@ class User < ApplicationRecord
   def preference_url
     p = self.get_preferences
     url = "/"
-    if p.program_id && p.navigation_menu
+    if p.program_id.present? && p.navigation_menu.present?
 
       url = "/projects/#{p.program_id}/#{p.navigation_menu}"
-    elsif p.program_id
+    elsif p.program_id.present?
       url = "/projects/#{p.program_id}"
     end
     url
