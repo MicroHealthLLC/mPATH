@@ -1,8 +1,8 @@
 <template>
   <div>
     <tabsbar></tabsbar>
-    <filter-sidebar v-if="contentLoaded"></filter-sidebar>   
-    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>    
+    <filter-sidebar v-if="contentLoaded"></filter-sidebar>
+    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -22,6 +22,7 @@
       StateFacilitySidebar
     },
     mounted() {
+      debugger
       let id = this.$route.params.projectId
       this.fetchDashboardData({id})
       // Prevent right-click context-menu from appearing accross whole app
@@ -57,7 +58,6 @@
       if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
         this.setUnfilteredFacilities(this.facilities)
       }
-      
     }
   }
 </script>
