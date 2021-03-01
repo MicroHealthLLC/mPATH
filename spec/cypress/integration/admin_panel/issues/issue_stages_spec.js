@@ -62,6 +62,25 @@ describe('Admin Panel Issue Stages', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Issue Stage according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains('Test Issue Stage').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains('New Issue Stage').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains('Test Issue Stage').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Issue Stage according to Percentage', function() {
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains(40).should('be.visible')
+    cy.get('.sortable').contains('Percentage').click()
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains(60).should('be.visible')
+    cy.get('.sortable').contains('Percentage').click()
+    cy.get('#index_table_issue_stages > tbody > tr').first().contains(40).should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Issue Stage contains name', function() {
     cy.get('#q_name').type('Test Issue Stage').should('have.value', 'Test Issue Stage')
     cy.get('[type=submit]').first().contains('Filter').click()

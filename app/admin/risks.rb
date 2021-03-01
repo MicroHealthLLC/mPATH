@@ -129,8 +129,8 @@ ActiveAdmin.register Risk do
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
       f.input :due_date, label: 'Risk Approach Due Date', as: :datepicker
-      f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false      
-      f.input :risk_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true      
+      f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false
+      f.input :risk_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :probability, include_blank: false, include_hidden: false, min: 1, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }
       div id: 'risk_probability_text'
       f.input :impact_level, include_blank: false, include_hidden: false, min: 1, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }
