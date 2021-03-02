@@ -1,7 +1,7 @@
 #NOTE: Project is now program in front end
 
 class Project < SortableRecord
-  default_scope {order(Project.order_humanize)}
+  # default_scope {order(Project.order_humanize)}
   has_many :tasks, through: :facilities
   has_many :project_users, dependent: :destroy
   has_many :users, through: :project_users
@@ -127,13 +127,29 @@ class Project < SortableRecord
   end
 
   def build_json_response
-    all_facility_projects = FacilityProject.includes(:tasks).where(project_id: self.id)
+    all_facility_projects = FacilityProject.includes(:tasks, :status).where(project_id: self.id)
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
-    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, :checklists, :notes, :related_tasks, :related_issues, :sub_tasks, :sub_issues, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :risk_users, {user: :organization}, :checklists, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_users = []
+    all_user_ids = []
+
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
+    all_user_ids += all_task_users.values.flatten.map(&:user_id)
+
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+    all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
+    all_user_ids += all_issue_users.values.flatten.map(&:user_id)
+
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
+    all_user_ids += all_risk_users.values.flatten.map(&:user_id)
+
+    all_user_ids = all_user_ids.compact.uniq
+
+    all_users = User.where(id: all_user_ids ).active
+
     all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     all_facilities = Facility.where(id: all_facility_ids)
     all_facility_group_ids = all_facilities.map(&:facility_group_id).compact.uniq
@@ -164,15 +180,40 @@ class Project < SortableRecord
         facility_group_status: g&.status,
       })
 
-      tasks = all_tasks.select{|t| t.facility_project_id == fp.id}
-      h[:tasks] = tasks.map(&:to_json)
+      # Building Tasks
+      # tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+      # h[:tasks] = tasks.map(&:to_json)
+      tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+      tids = tasks.map(&:id)
 
-      issues = all_issues.select{|i| i.facility_project_id == fp.id}
-      h[:issues] = issues.map(&:to_json)
+      h[:tasks] = []
+      tasks.each do |t| 
+        h[:tasks] << t.to_json( all_task_users[t.id], all_users )
+      end
 
-      risks = all_risks.select{|r| r.facility_project_id == fp.id}
-      h[:risks] = risks.map(&:to_json)
+      # Building Issues
+      # issues = all_issues.select{|i| i.facility_project_id == fp.id}
+      # h[:issues] = issues.map(&:to_json)
+      issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
+      iids = issues.map(&:id)
 
+      h[:issues] = []
+      issues.each do |i| 
+        h[:issues] << i.to_json( all_issue_users[i.id], all_users )
+      end
+
+      # Building Risks
+      # risks = all_risks.select{|r| r.facility_project_id == fp.id}
+      # h[:risks] = risks.map(&:to_json)
+      risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+      rids = risks.map(&:id)
+
+      h[:risks] = []
+      risks.each do |r| 
+        h[:risks] << r.to_json( all_risk_users[r.id], all_users )
+      end
+
+      # Building Notes
       notes = all_notes.select{|r| r.noteable_id == fp.id}
       h[:notes] = notes.map(&:to_json)
 

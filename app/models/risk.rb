@@ -70,7 +70,7 @@ class Risk < ApplicationRecord
     probability_name_hash[probability] || probability_name_hash[1]
   end
 
-  def to_json
+  def to_json(t_users = [], all_users = [])
     attach_files = []
     rf = self.risk_files
     if rf.attached?
@@ -83,19 +83,28 @@ class Risk < ApplicationRecord
       end
     end
     fp = self.facility_project
-    users = self.users.active
+
+    resource_users = t_users && t_users.any? ? t_users : self.risk_users.where(user_id: users.map(&:id) )
+    resource_user_ids = resource_users.map(&:user_id).compact.uniq
+
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
+
+    risk_approver_user_ids = resource_users.map{|ru| ru.user_id if ru.approver? }.compact.uniq
+    
+    resource_user_ids += risk_approver_user_ids
+
+    users = [] 
+    if all_users && all_users.any?
+      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    else
+      users = self.users.active.uniq
+    end
+    
     users_hash = {} 
     users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
-    
-
-    resource_users = self.risk_users.where(user_id: users.map(&:id) )
-    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
-    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
-    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
-    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
-
-    risk_approver_user_ids = resource_users.map{|ru| ru.user_id if ru.approver? }.compact
-
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -197,7 +206,13 @@ class Risk < ApplicationRecord
         :due_date,
         :listable_type,
         :listable_id,
-        :position
+        :position, 
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
       ],
       notes_attributes: [
         :id,
@@ -287,7 +302,12 @@ class Risk < ApplicationRecord
             end
           else
             value.delete("_destroy")
-            checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            # checklist_objs << Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            c = Checklist.new(value.merge({listable_id: risk.id, listable_type: "Risk"}) )
+            c.progress_lists.each do |p|
+              p.user_id = user.id
+            end
+            c.save
           end
         end
         Checklist.import(checklist_objs) if checklist_objs.any?

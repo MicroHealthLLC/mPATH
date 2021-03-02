@@ -1,6 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-    <div v-if="newIssue && from != 'manager_view'">
+         <div v-if="_isallowed('read')">
+    <!-- <div v-if="newIssue && from != 'manager_view'">
       <issue-form
         :facility="facility"
         :issue="currentIssue"
@@ -9,8 +10,9 @@
         @issue-updated="issueUpdated"
         class="issue-form-modal"
       />
-    </div>
-     <div v-else>      
+    </div> -->
+
+         
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
@@ -113,14 +115,25 @@
          <button
           v-tooltip="`Export to Excel`"
           @click.prevent="exportToExcel('table', 'Issue Log')"
-          class="btn btn-md exportBtns text-light">
+          class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
+         <button
+          v-tooltip="`Show More/Show Less`"
+          @click.prevent="showAllToggle"
+          class="btn btn-md mr-1 showAll text-light"          >
+          <span v-if="getToggleRACI">
+          <font-awesome-icon icon="user" />      
+          </span>
+           <span v-else>
+          <font-awesome-icon icon="users"/>
+           </span>    
+         </button>
          <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
           Total: {{filteredIssues.length}}
          </button>
       </div>
-        <div v-if="_isallowed('read')">
+     
           <div v-if="filteredIssues.length > 0">      
             <div style="margin-bottom:50px" data-cy="issues_table">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
@@ -178,16 +191,23 @@
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
                   <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
                   <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
-            </div>             
+         
+            </div>  
+                       
             </div>
+            
           </div>
-          <h6 v-if="filteredIssues.length == 0" class="text-danger" id="altText" data-cy="no_issue_found">No issues found..</h6>
+           <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
+         
         </div>
-        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-      </div>
-    </div>
+        
      </div>
-    <div>
+     
+      </div>
+        <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+  
+ 
+ 
       <table
         class="table table-sm table-bordered table-striped"
         ref="table" id="issueSheetsList1"
@@ -285,6 +305,7 @@
         'setIssueSeverityFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
+        'setToggleRACI',
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
@@ -317,6 +338,9 @@
           this.updateFacilityHash(this.facility)
         }
       },
+      showAllToggle() {
+         this.setToggleRACI(!this.getToggleRACI)  ;              
+      },
       toggleWatched(issue) {
         http
           .put(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues/${issue.id}.json`, {issue: issue})
@@ -335,11 +359,7 @@
         if (!table.nodeType) table = this.$refs.table
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      },
-      // issueEdited(issue) {
-      //   this.currentIssue = issue
-      //   this.newIssue = true
-      // },
+      },    
       reportNew() {
         if (this.from == "manager_view") {
           this.setTaskForManager({key: 'issue', value: {}})
@@ -377,7 +397,8 @@
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
-        'viewPermit'
+        'viewPermit', 
+        'getToggleRACI'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
@@ -569,6 +590,11 @@
     position: absolute;
     margin-top: 50px
   }
+ .alt-text {
+    position: relative;
+    margin-top: 50px;
+    margin-left: 2px;
+  }
   #issueHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
@@ -597,15 +623,15 @@
     float: right !important;
     right: 0;
   }
-  .addIssueBtn, .exportBtns {
+  .addIssueBtn, .exportBtns, .showAll {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .exportBtns { 
+  .exportBtns, .showAll  { 
     transition: all .2s ease-in-out; 
     background-color: #41b883; 
   }
   .filter-second-row {
     width: 66.8%;
   }
-  .exportBtns:hover { transform: scale(1.06); }
+  .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 </style>

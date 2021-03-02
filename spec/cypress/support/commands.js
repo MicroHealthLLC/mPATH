@@ -7,7 +7,7 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-cy=user_password]').type(password).should('have.value', password)
   cy.get('[data-cy=user_remember_me]').click()
   cy.get('[data-cy=submit]').click()
-  cy.contains('Welcome to MicroHealth Geographical Information System')
+  cy.contains('Welcome to MicroHealth Geographic Information System')
 })
 
 // Logout Command
@@ -19,11 +19,7 @@ Cypress.Commands.add("logout", () => {
 // Open first Project
 Cypress.Commands.add("openProject", () => {
   cy.get('[data-cy=project_list_items]').first().click()
-  // cy.get('#facility_view', { timeout: 60000 }).should('be.visible')
-  cy.get('[data-cy=facility_list]', { timeout: 60000 }).should('be.visible')
-  // cy.get('#facility_view').within(() => {
-    // cy.get('[data-cy=facility_list]').contains('Facility Manager')
-  // })
+  cy.get('[data-cy=main_tab]', { timeout: 60000 }).should('be.visible')
 })
 
 Cypress.Commands.add("facilityUnderGroup", () => {
@@ -34,8 +30,7 @@ Cypress.Commands.add("facilityUnderGroup", () => {
 // Open Facility Manager of a project
 Cypress.Commands.add("openFacility", () => {
   cy.openProject()
-  cy.facilityUnderGroup()
-  cy.contains('Facility Summary')
+  cy.contains('Test Facility')
 })
 
 // Open Teams page of a project
@@ -53,7 +48,7 @@ Cypress.Commands.add("openKanban", () => {
 // Open Sheet view of a project
 Cypress.Commands.add("openSheet", () => {
   cy.openProject()
-  cy.get('[data-cy=sheets_tab]').contains('Sheets').should('be.visible').click()
+  cy.get('[data-cy=sheets_tab]').contains('Sheet').should('be.visible').click()
 })
 
 // Open sheet of a facility
@@ -89,18 +84,18 @@ Cypress.Commands.add("openOrganization", () => {
 })
 
 // Open project from admin panel
-Cypress.Commands.add("openProjectAP", () => {
+Cypress.Commands.add("openProgramAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#projects').contains('Projects').click()
+    cy.get('#projects').contains('Programs').click()
   })
 })
 
 // Open facility from Admin panel
-Cypress.Commands.add("openFacilityAP", () => {
+Cypress.Commands.add("openProjectAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facilities').contains('Facilities').click()
+    cy.get('#facilities').contains('Projects').click()
   })
 })
 
@@ -145,18 +140,18 @@ Cypress.Commands.add("openUserAP", () => {
 })
 
 // Open Project Type from Admin panel
-Cypress.Commands.add("openProjectTypeAP", () => {
+Cypress.Commands.add("openProgramTypeAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#project_types').contains('Project Types').click({force: true})
+    cy.get('#project_types').contains('Program Types').click({force: true})
   })
 })
 
 // Open Facility Group from Admin panel
-Cypress.Commands.add("openFacilityGroupAP", () => {
+Cypress.Commands.add("openProjectGroupAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#tabs').within(() => {
-    cy.get('#facility_groups').contains('Facility Groups').click({force: true})
+    cy.get('#facility_groups').contains('Project Groups').click({force: true})
   })
 })
 

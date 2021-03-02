@@ -45,6 +45,14 @@ export default {
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
       this.top = evt.pageY || evt.clientY;
+      //Prevents menu from getting clipped below window
+      if (evt.clientY > window.innerHeight / 2) {
+        this.top -= 200;
+      }
+      //Prevents menu from getting clipped on right side of window
+      if (evt.clientX > window.innerWidth / 2) {
+        this.left -= 195;
+      }
       // make element focused
       // @ts-ignore
       Vue.nextTick(() => this.$el.focus());

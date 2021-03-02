@@ -103,9 +103,20 @@
         <button
           v-tooltip="`Export to Excel`"
           @click.prevent="exportToExcel('table', 'Risk Register')"
-          class="btn btn-md exportBtns text-light">
+          class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
-        </button>     
+        </button> 
+         <button
+          v-tooltip="`Show More/Show Less`"
+          @click.prevent="showAllToggle"
+          class="btn btn-md mr-1 showAll text-light"          >
+          <span v-if="getToggleRACI">
+          <font-awesome-icon icon="user" />      
+          </span>
+           <span v-else>
+          <font-awesome-icon icon="users"/>
+           </span>    
+         </button>    
         <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
           Total: {{filteredRisks.length}}
         </button>
@@ -175,7 +186,7 @@
             </div>       
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No risks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
     </div>
   </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
@@ -272,13 +283,14 @@
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setToggleRACI',
         'setMyActionsFilter',
         'setOnWatchFilter',
         'setRiskApproachFilter',
         'setRiskForManager',
       ]),
       log(t){
-        console.log(t)
+        // console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -299,6 +311,9 @@
         } else {
           this.$emit('show-hide')
         }
+      },
+      showAllToggle() {
+         this.setToggleRACI(!this.getToggleRACI)  ;              
       },
       editRisk(risk) {
         this.$emit('show-hide', risk)
@@ -344,7 +359,8 @@
         'onWatchFilter',
         'riskUserFilter',
         'taskTypes',
-        'viewPermit'
+        'viewPermit',
+        'getToggleRACI'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
@@ -464,18 +480,6 @@
           this.setRisksPerPageFilter(value)
         }
      },
-    // C_risksPerPage: {
-    //   get() {       
-    //         return this.getRisksPerPageFilter
-    //      },
-    //    set(value) {
-    //     if (!value) {
-    //       this.setRisksPerPageFilter([{id:5, name:5}])
-    //     } else {
-    //       this.setRisksPerPageFilter(value)
-    //     }
-    //        }
-    //    },
       sortedRisks:function() {
           return this.filteredRisks.sort((a,b) => {
           let modifier = 1;
@@ -591,15 +595,15 @@
   .pagination {
     margin-bottom: 50px !important;
   }
-  .addRiskBtn, .exportBtns {
+  .addRiskBtn, .exportBtns, .showAll {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
- .exportBtns { 
+ .exportBtns, .showAll { 
     transition: all .2s ease-in-out; 
     background-color: #41b883; 
  }
  .total-label {
    margin-top: 20px;
  }
- .exportBtns:hover { transform: scale(1.06); }
+ .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 </style>

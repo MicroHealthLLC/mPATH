@@ -49,15 +49,19 @@ Vue.config.productionTip = false
 ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: window.google_api_key,
-    libraries: 'places',
-  },
-  installComponents: true
-})
+if(!window.google){
+  Vue.use(VueGoogleMaps, {
+    load: {
+      key: window.google_api_key,
+      libraries: 'places',
+    },
+    installComponents: true
+  })
+}
 
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
+
 var permissions = {}
 for (var key in current_user.privilege) {
   if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
@@ -68,8 +72,6 @@ for (var key in current_user.privilege) {
     delete: value.includes('D')
   }
 }
-
-var preferences = current_user.preferences
 
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$permissions = permissions

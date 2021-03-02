@@ -5,7 +5,7 @@
       @submit.prevent="saveTask"     
       class="mx-auto tasks-form"      
       accept-charset="UTF-8"
-      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       >
        <div v-if="_isallowed('read')" 
             class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar"
@@ -78,12 +78,8 @@
       </div>
 
 
-<!-- Tabbed sections begin here -->
-
-  <!-- TASK INFO TAB #1 -->
-  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
-        
-    <div class="form-group pt-3 mx-4">
+ <!-- NAME persists throughout tab selection -->
+   <div class="form-group pt-3 mx-4">
         <label class="font-sm">*Task Name:</label>
             <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
               <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
@@ -105,6 +101,10 @@
           {{errors.first('Name')}}
         </div>
       </div>
+
+  <!-- TASK INFO TAB #1 -->
+  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">       
+  
 
         <div class="form-group mx-4">
         <label class="font-sm">Description:</label>
@@ -202,30 +202,7 @@
           </div>
         </div>
       </div>
-
-      <!-- <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Assign Users:</label>
-        <multiselect
-          v-model="taskUsers"
-          track-by="id"
-          label="fullName"
-          placeholder="Search and select users"
-          :options="activeProjectUsers"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          data-cy="task_user"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.fullName}}</span>
-            </div>
-          </template>
-        </multiselect>
-      </div> -->
+      
       <!-- closing div for tab1 -->
 </div>
 
@@ -334,19 +311,25 @@
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
+    <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length > 1">
+       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> items
+    </span>
+     <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length == 1">
+       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> item
+    </span>
     <div v-if="filteredChecks.length > 0">
       <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
-        <div v-for="(check, index) in DV_task.checklists" :key="index"  :log="log(check)"   class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
+        <div v-for="(check, index) in DV_task.checklists" :key="index"  class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
           <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa;position:relative">
             <div class="row" style="width:97%">
               <div class="col-8 justify-content-start" >
                 <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
-                 <div class="col-1 pl-0 pr-0">
+                 <div v-if="isSheetsView || isKanbanView" class="col-1 pl-0 pr-0">
                    <span class="font-sm dueDate">Due Date:</span>                
                 </div>
-                 <div class="col-3 pl-0" style="margin-left:-25px">                   
+                 <div v-if="isSheetsView || isKanbanView" class="col-3 pl-0" style="margin-left:-25px">                   
                     <v2-date-picker                    
                     v-model="check.dueDate"
                     :value="check.dueDate" 
@@ -361,16 +344,35 @@
                     :disabled-date="disabledDateRange"
                     :class="{ disabled: disabledDateRange }"          
                   />
-                </div>         
+                </div>                   
             </div>
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
-            <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
+       <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
+          <div v-if="isMapView" class="row justify-content-end pt-2 pb-5" style="background-color:#fafafa;position:relative">          
+            <div  class="d-flex col mb-0" style="position:absolute">
+              Due Date:
+                <v2-date-picker                    
+                    v-model="check.dueDate"
+                    :value="check.dueDate" 
+                    :disabled="!_isallowed('write') || !check.text"
+                    @selected="updateCheckItem($event, 'dueDate', index)"
+                    :key="`dueDate_${index}`"
+                    value-type="YYYY-MM-DD"
+                    format="DD MMM YYYY"
+                    placeholder="DD MM YYYY"
+                    name="dueDate"
+                    class="w-100 vue2-datepicker d-flex ml-auto"
+                    :disabled-date="disabledDateRange"
+                    :class="{ disabled: disabledDateRange }"          
+                  />            
+              </div>
+          </div>
+            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">               
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
                <div class="d-flex w-100" style="padding-left:4.5rem">
-                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
+                <span class="font-sm pt-2 pr-2">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
@@ -423,8 +425,7 @@
                   <tbody>
                     <tr 
                       v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
-                      :key="pindex"  :load="log(progress)"
-                     
+                      :key="pindex"                       
                       v-if="!progress._destroy">
                     <td>                     
                       <span v-if="editToggle">
@@ -1326,6 +1327,9 @@
   .tasks-form {
     z-index: 10;
     width: 83.1%;   
+  } 
+  .kanban-form {   
+    width: 100%;   
   }
   td, th {
     border: solid 1px #ededed;
@@ -1351,6 +1355,9 @@
     outline: none;
     border: solid #ededed 1px;
     border-radius: 4px;  
+  }
+  /deep/.mx-input-wrapper {
+    position: absolute;
   }
   .drag {
     cursor: all-scroll;
@@ -1426,7 +1433,7 @@
   }
   /deep/.el-collapse-item__header {
     float:right;
-    margin-top: -39px;
+    margin-top: -38px;
     font: small;
     color: #d9534f !important;
     border-bottom: none !important;
@@ -1437,6 +1444,9 @@
   }
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
+  }  
+  /deep/.el-collapse-item__header {
+    background-color: #fafafa !important;
   }
   .sticky {
     // position: sticky;
@@ -1457,9 +1467,6 @@
     margin-bottom: -2.5rem;    
   }
 
-  /deep/.el-collapse-item__header {
-    background-color: #fafafa !important;
-  }
   .scrollToChecklist, .addCheckProgBtn, .check-items {    
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
@@ -1484,12 +1491,17 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 100vh;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
    position: absolute;
+  }
+
+  .display-length {
+   border-radius: 0.15rem;
+   margin-right: 12px;
   }
 
 </style>

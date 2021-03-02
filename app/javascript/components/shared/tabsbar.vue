@@ -1,5 +1,5 @@
 <template>
-  <div id="tabbar"> 
+  <div id="tabbar" data-cy="main_tab">
     <!-- <router-link v-if="permitted('facility_manager_view')" :to="facilityManagerView" tag="div">
       <div class="badge" :class="{'active': isFacilityManagerView}" data-cy="facility_manager_tab">Project Manager</div>
     </router-link> -->
@@ -18,7 +18,7 @@
     <!-- <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}" data-cy="on_watch_tab">On Watch</div>
     </router-link> -->
- 
+
     <div v-if="permitted('issues')" class="badge disabled">Mindmap (Coming Soon)</div>
     <div v-if="permitted('documents')" class="badge disabled">Documents (Coming Soon)</div>
     <router-link v-if="permitted('members')" :to="membersView" tag="div">

@@ -17,7 +17,7 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
-  def to_json
+  def to_json(t_users = [], all_users = [])
     attach_files = []
     i_files = self.issue_files
     if i_files.attached?
@@ -31,17 +31,24 @@ class Issue < ApplicationRecord
     end
 
     fp = self.facility_project
-    users = self.users.active
+
+    resource_users = t_users && t_users.any? ? t_users : self.issue_users.where(user_id: users.map(&:id) )
+    resource_user_ids = resource_users.map(&:user_id).compact.uniq
+
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
+
+    users = [] 
+    if all_users && all_users.any?
+      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    else
+      users = self.users.active.uniq
+    end
+
     users_hash = {} 
     users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
-
-
-
-    resource_users = self.issue_users.where(user_id: users.map(&:id) )
-    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
-    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
-    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
-    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -128,7 +135,14 @@ class Issue < ApplicationRecord
         :text,
         :user_id,
         :checked,
-        :due_date
+        :due_date,
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
       ],
       notes_attributes: [
         :id,
@@ -195,7 +209,12 @@ class Issue < ApplicationRecord
         checklist_objs = []
         checklists_attributes.each do |key, value|
           value.delete("_destroy")
-          checklist_objs << Checklist.new(value.merge({listable_id: issue.id, listable_type: issue.class.name}) )
+          # checklist_objs << Checklist.new(value.merge({listable_id: issue.id, listable_type: issue.class.name}) )
+          c = Checklist.new(value.merge({listable_id: issue.id, listable_type: "Issue"}) )
+          c.progress_lists.each do |p|
+            p.user_id = user.id
+          end
+          c.save       
         end
         Checklist.import(checklist_objs) if checklist_objs.any?
       end

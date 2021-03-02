@@ -1,9 +1,10 @@
 <template>
   <div id="users_wrapper" v-if="!loading">
-    <h5 class="my-3">Edit User Profile</h5>
+
     <form @submit.prevent="handleSubmit" class="w-100" autocomplete="off">
+    <h5 class="my-3 bg-secondary text-light px-2">Edit User Profile</h5>
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Title</label>
+        <label class="col-sm-2 col-form-label">Position</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" v-model="profile.title" placeholder="Mr.">
         </div>
@@ -99,7 +100,7 @@
         </div>
       </div>
 
-      <h5 class="my-3">Preferences</h5>
+      <h5 class="my-3 bg-secondary text-light px-2">Preferences</h5>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Select Program</label>
@@ -174,7 +175,7 @@
         </div>
       </div>
 
-      <h5 class="my-3">Start On</h5>
+      <h5 class="my-3 bg-secondary text-light px-2">Start On</h5>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Select Navigation</label>
@@ -208,7 +209,7 @@
             track-by="id"
             label="name"
             placeholder="Select Sub Navigation"
-            :options="selectedNavigation && selectedNavigation.id == 'kanban' ? kanbanSubNavigationOptions : subNavigationOptions"
+            :options="subNavigationOptions"
             :searchable="true"
             select-label="Select"
             deselect-label="Enter to remove"
@@ -224,8 +225,8 @@
       </div>
 
       <div class="form-group row d-flex justify-content-end mx-1 my-4">
-        <button class="btn btn-sm btn-light mr-3" @click.prevent.stop="gotoDashboard">Cancel</button>
-        <button class="btn btn-sm btn-primary" :disabled="!enableEdit">Update</button>
+        <button class="btn btn-sm btn-light mr-3 profile-btns" @click.prevent.stop="gotoDashboard">Cancel</button>
+        <button class="btn btn-sm btn-primary profile-btns" :disabled="!enableEdit">Update</button>
       </div>
     </form>
   </div>
@@ -239,19 +240,8 @@
       return {
         loading: true,
         editPass: false,
-        navigationOptions: [
-          {id: 'sheet', name: 'Sheet', value: 'sheet'}, {id: 'kanban', name: 'Kanban', value: 'kanban'},
-          {id: 'map', name: 'Map', value: 'map'}, {id: 'gantt_chart', name: 'Gantt', value: 'gantt_chart'}, {id: 'member_list', name: 'Team', value: 'member_list'}
-        ],
-        subNavigationOptions: [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'notes', name: 'Notes', value: 'notes'}, 
-          {id: 'risks', name: 'Risks', value: 'risk'},{id: 'overview', name: 'Overview', value: 'overview'}
-        ],
-        kanbanSubNavigationOptions: [
-          {id: 'tasks', name: 'Tasks', value: 'tasks'},
-          {id: 'issues', name: 'Issues', value: 'issues'}, {id: 'risks', name: 'Risks', value: 'risk'}
-        ],
+        navigationOptions: [],
+        subNavigationOptions: [],
         programOptions: [],
         projectGroupOptions: [],
         projectOptions: [],
@@ -291,32 +281,40 @@
     },
     mounted() {
       this.fetchProfile()
+
+      this.navigationOptions = allowed_navigation_tabs
+      this.subNavigationOptions = allowed_sub_navigation_tabs
     },
     methods: {
       programSelectChange(value){
         this.projectGroupOptions = this.getProjectGroups(value)
 
         this.selectedProgram = value
-        this.selectedProjectGroup = null
-        this.selectedProject = null
+        this.selectedProjectGroup = ''
+        this.selectedProject = ''
       },
       projectGroupSelectChange(value){
 
-        if(value){          
+        if(value){
           this.projectOptions = this.getProjects(this.selectedProgram, value)
         }
-        this.selectedProject = null
+        this.selectedProject = ''
 
       },
       navigationSelectChane(value){
-        this.selectedSubNavigation = null
+        this.selectedSubNavigation = ''
+        if(value.id == "kanban"){
+          this.subNavigationOptions = allowed_sub_navigation_tabs
+        }else if(['gantt_chart', 'member_list'].includes(value.id) ){
+          this.subNavigationOptions = []
+        }
       },
       fetchProfile() {
         http.get('/current_user.json')
           .then((res) => {
 
             this.profile = {...this.profile, ...res.data.currentUser}
-            this.preferences = {...this.preferences, ...res.data.preferences}          
+            this.preferences = {...this.preferences, ...res.data.preferences}
 
             this.allPrograms  = res.data.programs
             this.allProjectGroups = res.data.projectGroups
@@ -372,33 +370,33 @@
           if(this.selectedNavigation){
             preferences.navigationMenu = this.selectedNavigation.id
           }else{
-            preferences.navigationMenu = null
+            preferences.navigationMenu = ''
           }
           if(this.selectedSubNavigation){
             preferences.subNavigationMenu = this.selectedSubNavigation.id
           }else{
-            preferences.subNavigationMenu = null
+            preferences.subNavigationMenu = ''
           }
 
           if(this.selectedProgram){
             preferences.programId = this.selectedProgram.id
           }else{
-            preferences.programId = null
+            preferences.programId = ''
           }
 
           if(this.selectedProjectGroup){
             preferences.projectGroupId = this.selectedProjectGroup.id
           }else{
-            preferences.projectGroupId = null
+            preferences.projectGroupId = ''
           }
 
           if(this.selectedProject){
             preferences.projectId = this.selectedProject.id
           }else{
-            preferences.projectId = null
+            preferences.projectId = ''
           }
           delete(data["preferences"])
-          
+
           http
             .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
@@ -409,7 +407,7 @@
               }else{
                 this.gotoDashboard()
               }
-              
+
             })
             .catch((err) => {
               console.log(err)
@@ -515,4 +513,6 @@
   input.error {
     border-color: #dc3545;
   }
+
+
 </style>

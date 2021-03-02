@@ -18,12 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource_or_scope)
-    p = current_user.get_preferences
-    if p.program_id
-      "/projects/#{p.program_id}/#{p.navigation_menu}"
-    else
-      root_url
-    end
+    current_user.preference_url
   end
 
   def render_404(options={})

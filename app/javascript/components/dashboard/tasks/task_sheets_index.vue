@@ -63,9 +63,21 @@
         <button
           v-tooltip="`Export to Excel`"
           @click.prevent="exportToExcel('table', 'Task List')"
-          class="btn btn-md exportBtns text-light">
+          class="btn btn-md mr-1 exportBtns text-light">
           <font-awesome-icon icon="file-excel"/>         
         </button>
+         <button
+          v-tooltip="`Show More/Show Less`"
+          @click.prevent="showAllToggle"
+          class="btn btn-md mr-1 showAll text-light"          >
+          <span v-if="getToggleRACI">
+          <font-awesome-icon icon="user" />      
+          </span>
+           <span v-else>
+          <font-awesome-icon icon="users"/>
+           </span>    
+         </button>
+        
       <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="task_total">
         Total: {{filteredTasks.length}}
       </button>
@@ -78,9 +90,9 @@
               <col class="ten" />
               <col class="eight" />
               <col class="eight" />
-              <col class="twelve" />
+              <col class="fort" />
               <col class="eight" />
-              <col class="ten" />
+              <col class="eight" />
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
@@ -99,12 +111,11 @@
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
-              href="#"           
+              href="#"       
+              :load="log(task)"    
               :key="task.id"
               :task="task"
-              :from-view="from"
-              @edit-task="editTask"
-             
+              :from-view="from"                       
             />
      
           <div class="float-right mb-4 mt-2 font-sm">
@@ -131,7 +142,7 @@
         </div>       
         </div>
       </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No tasks found..</h6>
+      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No Tasks found...</h6>
     </div>
       </div>
     <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
@@ -201,13 +212,14 @@
     name: 'TasksSheetsIndex',
     components: {
       TaskSheets
+     
     },
     props: ['facility', 'from'],
     data() {
       return {
         tasks: Object,
-        now: new Date().toISOString(),
-        tasksQuery: '',      
+        now: new Date().toISOString(),       
+        tasksQuery: '',         
         currentPage:1,
         currentSort:'text',
         currentSortDir:'asc',
@@ -226,10 +238,11 @@
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
+        'setToggleRACI',
         'setTaskForManager'
       ]),
       log(t){
-        //console.log(t)
+        console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -251,12 +264,9 @@
           this.$emit('show-hide')
         }
       },
-      editTask(task) {
-        this.$emit('show-hide', task)
+      showAllToggle() {
+         this.setToggleRACI(!this.getToggleRACI)  ;              
       },
-      // toggleWatched(task) {
-      //   this.$emit('toggle-watch-task', task)
-      // },
       exportToPdf() {
         const doc = new jsPDF("l")
         const html =  this.$refs.table.innerHTML
@@ -291,7 +301,8 @@
         'onWatchFilter',
         'taskUserFilter',
         'taskTypes',
-        'viewPermit'
+        'viewPermit',
+        'getToggleRACI'
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
@@ -394,7 +405,7 @@
         set(value) {
           this.setTaskTypeFilter(value)
         }
-      },
+      }, 
       C_tasksPerPage: {
       get() {
         return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
@@ -481,6 +492,9 @@
     margin-right: 18px;
     line-height: 3 !important;
   }
+  .show-all {
+   color: red !important;
+  }
   .filter {
     color: #ced4da !important;
     border: solid #ced4da .8px !important;
@@ -515,8 +529,8 @@
   .ten {
     width: 10%;
   }
-  .twelve {
-    width: 12%;
+  .fort {
+    width: 14%;
   }
   .sixteen {
     width: 16%;
@@ -531,15 +545,15 @@
   .pagination {
     margin-bottom: 50px !important;
   }
-  .addTaskBtn, .exportBtns {
+  .addTaskBtn, .exportBtns, .showAll {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
- .exportBtns { 
-    transition: all .2s ease-in-out; 
-    background-color: #41b883; 
- }
  .total-label {
-   margin-top: 20px;
+    margin-top: 20px;
  }
- .exportBtns:hover { transform: scale(1.06); }
+.exportBtns, .showAll { 
+    background-color: #41b883; 
+    transition: all .2s ease-in-out;  
+ }
+ .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
 </style>

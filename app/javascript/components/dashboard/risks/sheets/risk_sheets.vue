@@ -20,8 +20,11 @@
        <td class="ten" >
           <span v-if="(risk.responsibleUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{risk.responsibleUsers[0].name}} <br></span> 
           <span v-if="(risk.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{risk.accountableUsers[0].name}}<br></span>   
-          <!-- <span v-if="(risk.consultedUsers.length) > 0">  <span class="badge font-sm badge-secondary mr-1 badge-pill">C</span>{{risk.consultedUsers[0].name}}<br></span> 
-          <span v-if="(risk.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{risk.informedUsers[0].name}}</span>        -->
+           <!-- Consulted Users and Informed Users are toggle values         -->
+          <span :class="{'show-all': getToggleRACI }" >             
+             <span v-if="(risk.consultedUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">C</span>{{JSON.stringify(risk.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, '')}}<br></span> 
+             <span v-if="(risk.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, '')}}</span>      
+         </span>        
         </td>
         <td class="eight">{{risk.progress + "%"}}</td>
         <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
@@ -88,7 +91,8 @@
     methods: {
       ...mapMutations([
         'updateRisksHash',
-        'setRiskForManager'
+        'setRiskForManager',
+        'setToggleRACI'
       ]),
       ...mapActions([
         'riskDeleted',
@@ -141,10 +145,7 @@
         }
         this.DV_risk = {...this.DV_risk, watched: !this.DV_risk.watched}
         this.updateWatchedRisks(this.DV_risk)
-      },
-      // updateRelatedRiskIssue(risk) {
-      //   this.riskUpdated({facilityId: risk.facilityId, projectId: risk.projectId, cb: () => this.onCloseForm()})
-      // },
+      },    
       updateRelatedTaskIssue(task) {     
         this.taskUpdated({facilityId: task.facilityId, projectId: task.projectId})
       },
@@ -162,7 +163,8 @@
         'managerView',
         'currentRisks',
         'currentIssues',
-        'viewPermit'
+        'viewPermit',
+        'getToggleRACI',
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]

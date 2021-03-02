@@ -1,8 +1,8 @@
 <template>
   <div>
     <tabsbar></tabsbar>
-    <filter-sidebar v-if="contentLoaded"></filter-sidebar>   
-    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>    
+    <filter-sidebar v-if="contentLoaded"></filter-sidebar>
+    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -57,7 +57,6 @@
       if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
         this.setUnfilteredFacilities(this.facilities)
       }
-      
     }
   }
 </script>
