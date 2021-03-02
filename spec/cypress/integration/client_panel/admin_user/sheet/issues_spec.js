@@ -60,7 +60,7 @@ describe('Sheets Issues View', function() {
     cy.get('[data-cy=issue_delete_btn]').should('be.exist').click({force: true})
     cy.wait(1000)
     cy.get('[data-cy=issues_table]').should('not.exist')
-    cy.get('[data-cy=no_issue_found]').contains('No issues found..')
+    cy.get('[data-cy=no_issue_found]').contains('No Issues found...')
     cy.logout()
   })
 
@@ -69,7 +69,7 @@ describe('Sheets Issues View', function() {
       cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
     })
     cy.get('[data-cy=search_issues]').clear().type('Issue is not in the list').should('have.value', 'Issue is not in the list')
-    cy.contains('No issues found..').should('be.visible')
+    cy.contains('No Issues found...').should('be.visible')
 
     cy.get('[data-cy=search_issues]').clear().type('Test Issue').should('have.value', 'Test Issue')
     cy.get('[data-cy=issues_table]').within(() => {
@@ -81,23 +81,4 @@ describe('Sheets Issues View', function() {
     })
     cy.logout()
   })
-
-  // it('Select issue status from list to display related issues', function() {
-  //   cy.get('[data-cy=issues_table]').within(() => {
-  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.get('[data-cy=issue_status_list]').as('list')
-  //   cy.get('@list').click()
-  //   cy.get('@list').within(() => {
-  //     cy.contains('complete').click()
-  //   })
-  //   cy.contains('No issues found..').should('be.visible')
-  //   cy.get('@list').within(() => {
-  //     cy.contains('all').click()
-  //   })
-  //   cy.get('[data-cy=issues_table]').within(() => {
-  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.logout()
-  // })
 })
