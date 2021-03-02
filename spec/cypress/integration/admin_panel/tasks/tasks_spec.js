@@ -151,7 +151,7 @@ describe('Admin Panel Task', function() {
     const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 6)
     cy.get('#logout').click()
   })
 
@@ -159,7 +159,7 @@ describe('Admin Panel Task', function() {
     const start_date = Cypress.moment().format('YYYY-MM-DD')
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
 
@@ -167,7 +167,7 @@ describe('Admin Panel Task', function() {
     const completion_date = Cypress.moment().add(6, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_gteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 6)
     cy.get('#logout').click()
   })
 
@@ -175,7 +175,7 @@ describe('Admin Panel Task', function() {
     const completion_date = Cypress.moment().add(5, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_lteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
 
