@@ -14,6 +14,7 @@ development:
   password: <%= ENV['MGIS_DATABASE_PASSWORD'] %>
   encoding: utf8
   pool: 25
+  socket: <%= ENV['MGIS_DATABASE_SOCKET'] %>
 
 test:
   adapter: mysql2
