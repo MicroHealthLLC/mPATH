@@ -69,45 +69,6 @@ project = Project.find_or_create_by(
   description: 'Test project description',
   project_type_id: project_type.id
 )
-# admin_role = Role.find_or_create_by(name: 'superadmin')
-# admin_role.privilege = Privilege.new(
-#   overview: "RWD",
-#   tasks: "RWD",
-#   notes: "RWD",
-#   issues: "RWD",
-#   admin: "RWD",
-#   map_view: "RWD",
-#   gantt_view: "RWD",
-#   watch_view: "RWD",
-#   documents: "RWD",
-#   members: "RWD",
-#   facility_manager_view: "RWD",
-#   sheets_view: "RWD",
-#   kanban_view: "RWD",
-#   risks: "RWD"
-# )
-# admin_role.save(validate: false)
-
-# client_role = Role.find_or_create_by(name: 'client')
-# client_role.privilege = Privilege.new(
-#   overview: "R",
-#   tasks: "R",
-#   notes: "R",
-#   issues: "R",
-#   admin: "R",
-#   map_view: "R",
-#   gantt_view: "R",
-#   watch_view: "R",
-#   documents: "R",
-#   members: "R",
-#   facility_manager_view: "R",
-#   sheets_view: "R",
-#   kanban_view: "R",
-#   risks: "R"
-# )
-# client_role.save(validate: false)
-# project_admin_role = ProjectRole.find_or_create_by(role_id: admin_role.id, project_id: project.id)
-# project_client_role = ProjectRole.find_or_create_by(role_id: client_role.id, project_id: project.id)
 
 ProjectUser.find_or_create_by(project_id: project.id, user_id: admin.id)
 ProjectUser.find_or_create_by(project_id: project.id, user_id: client.id)
@@ -182,21 +143,20 @@ test_task_1 = Task.find_or_create_by(
 )
 
 TaskUser.find_or_create_by(task_id: test_task_1.id, user_id: admin.id)
-TaskUser.find_or_create_by(task_id: test_task_1.id, user_id: client.id)
 
 new_task_1 = Task.find_or_create_by(
   text: 'New Task 1',
   description: 'New task 1 description',
-  start_date: Date.today,
-  due_date: Date.today + 5.days,
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_1.id,
-  watched: true,
+  watched: false,
   progress: 70
 )
 
-TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: new_task_1.id, user_id: client.id)
 
 test_issue_1 = Issue.find_or_create_by(
   title: 'Test Issue 1',
@@ -217,14 +177,14 @@ IssueUser.find_or_create_by(issue_id: test_issue_1.id, user_id: admin.id)
 new_issue_1 = Issue.find_or_create_by(
   title: 'New Issue 1',
   description: 'New issue 1 description',
-  start_date: Date.today,
-  due_date: Date.today + 5.days,
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
   issue_type_id: issue_type.id,
   task_type_id: task_type.id,
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_1.id,
-  watched: true,
+  watched: false,
   progress: 70
 )
 
@@ -251,14 +211,14 @@ new_risk_1 = Risk.find_or_create_by(
   text: 'New Risk 1',
   risk_description: 'New Risk 1 description',
   impact_description: 'New Risk 1 impact description',
-  start_date: Date.today,
+  start_date: Date.today + 1.day,
   due_date: Date.today + 5.days,
   risk_approach_description: 'New Risk 1 approach description',
   user_id: client.id,
   facility_project_id: facility_project_1.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true,
+  watched: false,
   progress: 70
 )
 
@@ -305,7 +265,6 @@ test_task_2 = Task.find_or_create_by(
 )
 
 TaskUser.find_or_create_by(task_id: test_task_2.id, user_id: admin.id)
-TaskUser.find_or_create_by(task_id: test_task_2.id, user_id: client.id)
 
 new_task_2 = Task.find_or_create_by(
   text: 'New Task 2',
@@ -315,11 +274,11 @@ new_task_2 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_2.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
-TaskUser.find_or_create_by(task_id: new_task_2.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: new_task_2.id, user_id: client.id)
 
 test_issue_2 = Issue.find_or_create_by(
   title: 'Test Issue 2',
@@ -347,7 +306,7 @@ new_issue_2 = Issue.find_or_create_by(
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_2.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
@@ -381,7 +340,7 @@ new_risk_2 = Risk.find_or_create_by(
   facility_project_id: facility_project_2.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
@@ -433,21 +392,20 @@ test_task_3 = Task.find_or_create_by(
 )
 
 TaskUser.find_or_create_by(task_id: test_task_3.id, user_id: admin.id)
-TaskUser.find_or_create_by(task_id: test_task_3.id, user_id: client.id)
 
 new_task_3 = Task.find_or_create_by(
   text: 'New Task 3',
   description: 'New task 3 description',
-  start_date: Date.today,
-  due_date: Date.today + 5.days,
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_3.id,
-  watched: true,
+  watched: false,
   progress: 70
 )
 
-TaskUser.find_or_create_by(task_id: new_task_3.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: new_task_3.id, user_id: client.id)
 
 test_issue_3 = Issue.find_or_create_by(
   title: 'Test Issue 3',
@@ -475,7 +433,7 @@ new_issue_3 = Issue.find_or_create_by(
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_3.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
@@ -509,7 +467,7 @@ new_risk_3 = Risk.find_or_create_by(
   facility_project_id: facility_project_3.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
@@ -551,25 +509,25 @@ test_task_4 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_4.id,
+  watched: true,
   progress: 100
 )
 
 TaskUser.find_or_create_by(task_id: test_task_4.id, user_id: admin.id)
-TaskUser.find_or_create_by(task_id: test_task_4.id, user_id: client.id)
 
 new_task_4 = Task.find_or_create_by(
   text: 'New Task 4',
   description: 'New task 4 description',
-  start_date: Date.today,
-  due_date: Date.today + 5.days,
+  start_date: Date.today + 1.day,
+  due_date: Date.today + 6.days,
   task_type_id: task_type.id,
   task_stage_id: new_task_stage.id,
   facility_project_id: facility_project_4.id,
-  watched: true,
+  watched: false,
   progress: 70
 )
 
-TaskUser.find_or_create_by(task_id: new_task_4.id, user_id: admin.id)
+TaskUser.find_or_create_by(task_id: new_task_4.id, user_id: client.id)
 test_issue_4 = Issue.find_or_create_by(
   title: 'Test Issue 4',
   description: 'Test issue description',
@@ -580,6 +538,7 @@ test_issue_4 = Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_4.id,
+  watched: true,
   progress: 100
 )
 
@@ -595,7 +554,7 @@ new_issue_4 = Issue.find_or_create_by(
   issue_stage_id: new_issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_4.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
@@ -629,7 +588,7 @@ new_risk_4 = Risk.find_or_create_by(
   facility_project_id: facility_project_4.id,
   task_type_id: task_type.id,
   risk_stage_id: new_risk_stage.id,
-  watched: true,
+  watched: false,
   progress: 40
 )
 
