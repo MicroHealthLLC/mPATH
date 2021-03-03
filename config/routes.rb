@@ -38,9 +38,13 @@ Rails.application.routes.draw do
       resources :notes, module: :facilities
       resources :issues do
         post :batch_update, on: :collection
+        post :create_duplicate, on: :member
+        post :create_bulk_duplicate, on: :member
       end
       resources :risks do
         post :batch_update, on: :collection
+        post :create_duplicate, on: :member
+        post :create_bulk_duplicate, on: :member
       end
       resources :tasks do
         post :batch_update, on: :collection
