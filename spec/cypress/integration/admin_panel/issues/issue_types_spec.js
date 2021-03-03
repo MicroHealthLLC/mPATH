@@ -62,6 +62,12 @@ describe('Admin Panel Issue Types', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Issue Type according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_issue_types > tbody > tr').first().contains('Test Issue Type').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Issue Type contains name', function() {
     cy.get('#q_name').type('Test Issue Type').should('have.value', 'Test Issue Type')
     cy.get('[type=submit]').first().contains('Filter').click()

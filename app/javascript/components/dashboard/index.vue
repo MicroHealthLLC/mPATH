@@ -1,8 +1,8 @@
 <template>
   <div>
     <tabsbar></tabsbar>
-    <filter-sidebar v-if="contentLoaded"></filter-sidebar>   
-    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>    
+    <filter-sidebar v-if="contentLoaded"></filter-sidebar>
+    <state-facility-sidebar v-if="isFacilityManagerView || isSheetsView || isKanbanView" ></state-facility-sidebar>
     <router-view></router-view>
   </div>
 </template>
@@ -26,7 +26,9 @@
       this.fetchDashboardData({id})
       // Prevent right-click context-menu from appearing accross whole app
       window.oncontextmenu = (e) => {
-        e.preventDefault()
+        if (e.target.nodeName !== "INPUT" && e.target.nodeName !== "TEXTAREA") {
+          e.preventDefault()
+        }   
       }
     },
     methods: {
@@ -57,7 +59,6 @@
       if (this.contentLoaded && this.getUnfilteredFacilities.length === 0) {
         this.setUnfilteredFacilities(this.facilities)
       }
-      
     }
   }
 </script>

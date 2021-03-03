@@ -1,7 +1,7 @@
 <template>
   <div data-cy="gantt_view">
     <div class="gantt_board">
-      <div v-if="!loading">
+      <div v-if="!loading && contentLoaded">
         <gantt-elastic
           class="gantt_chart_view"
           :class="{'gantt_disabled': taskLoading}"
@@ -232,8 +232,7 @@
     },
     mounted() {
       this.loading = false
-
-      this.updateZoom(this.ganttData)
+      if (this.contentLoaded) this.updateZoom(this.ganttData)
       // Display notification when leaving map view to another page and conditions met
       if (this.getPreviousRoute === 'ProjectMapView' && this.facilities.length !== this.getUnfilteredFacilities.length) {
         this.$notify.info({
@@ -243,12 +242,12 @@
           offset: 150,
           position: "bottom-left"
         });
-
         this.setPreviousRoute(this.$route.name)
       }
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'ganttData',
         'facilities',
         'getUnfilteredFacilities',
@@ -319,7 +318,7 @@
     watch: {
       ganttData: {
         handler(value) {
-          this.updateZoom(value)
+          if (this.contentLoaded) this.updateZoom(value)
         }, deep: true
       }
     }

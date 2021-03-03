@@ -40,6 +40,24 @@ describe('Admin Panel Program', function() {
     cy.get('#logout').click()
   })
 
+  it('Sort Program according to Name', function() {
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_projects > tbody > tr').first().contains('Test Project').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Program according to Description', function() {
+    cy.get('.sortable').contains('Description').click()
+    cy.get('#index_table_projects > tbody > tr').first().contains('Test project description').should('be.visible')
+    cy.get('#logout').click()
+  })
+
+  it('Sort Program according to Project Type', function() {
+    cy.get('.sortable').contains('Program Type').click()
+    cy.get('#index_table_projects > tbody > tr').first().contains('Test Project Type').should('be.visible')
+    cy.get('#logout').click()
+  })
+
   it('Search Program contains name', function() {
     cy.get('#q_name').type('Test Project').should('have.value', 'Test Project')
     cy.get('[type=submit]').first().contains('Filter').click()

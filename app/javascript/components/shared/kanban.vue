@@ -5,7 +5,10 @@
         <div
           v-for="column in columns"
           :key="column.title"
-          class="rounded-lg kan-col py-3 pl-2 pr-1 mt-4 mb-3 mr-4"
+          :log="log(column)"
+          class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"        
+          :class="{'no-stage': column.stage.id == null}"
+          :style="`${ column.stage.id == null ? 'width:1rem' : 'min-width:18.5rem'  }`"
           data-cy="kanban_col"
           >
           <div>
@@ -15,19 +18,13 @@
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
-              </div>
-            </div>
-            <div class="col-2 px-0 mr-3" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
-              <span class="badge add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)">
+                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
-            </div>
-            <!-- <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
               </div>
-              <input type="text" class="form-control form-control-sm" placeholder="Search tasks.." aria-label="Search" aria-describedby="search-addon"v-on:input="handleSearchQueryChange" :data-stage-id="`${column.stage.id}`" :data-kanban-type="`${kanbanType}`">
-            </div> -->
+               
+            </div>
+           
           </div>
           <div class="kan-body">
             <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)" :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
@@ -38,9 +35,9 @@
                 :key="`${task.id}_${column.stage.id}`"
                 :task="task"
                 :issue="task"
-                :risk="task"
+                :risk="task"             
                 fromView="kanban_view"
-                class="mr-2 mb-2 task-card"
+                class="mr-auto mb-3 task-card"
               ></div>
             </draggable> 
              <div :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-else>
@@ -53,7 +50,7 @@
                 :issue="task"
                 :risk="task"
                 fromView="kanban_view"
-                class="mr-2 mb-2 read-only-card"
+                class="mr-auto mb-3 read-only-card"
               ></div>
             </div>           
           </div>
@@ -101,6 +98,11 @@ export default {
     },
     setupColumns(cards) {
       this.stageId = `${this.kanbanType.slice(0, -1)}StageId`
+      this.columns.push({
+        stage: {id: null},
+        title: "No stage",
+        tasks: []
+      })
       for (let stage of this.stages) {
         this.columns.push({
           stage: stage,
@@ -108,6 +110,7 @@ export default {
           tasks: _.filter(cards, c => c[this.stageId] == stage.id)
         })
       }
+
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key
@@ -122,7 +125,12 @@ export default {
           data[this.kanbanType][task.id] = {}
           data[this.kanbanType][task.id].kanbanOrder = tasks.indexOf(task)
           if ('added' in item) {
-            data[this.kanbanType][task.id][this.stageId] = this.stages.find(s => s.name == this.movingSlot).id
+            var s = this.stages.find(s => s.name == this.movingSlot)
+            if(s){
+              data[this.kanbanType][task.id][this.stageId] = s.id
+            }else{
+              data[this.kanbanType][task.id][this.stageId] = null
+            }            
           }
         }
         this.updateKanbanTaskIssues({projectId, facilityId, data, type: this.kanbanType})
@@ -163,7 +171,8 @@ export default {
     border-radius: 3px;   
     background: #fff;
     border: none !important;
-    border-top: solid 8px #ffa500 !important;
+    // border-top: solid 8px #ffa500 !important;
+    overflow-wrap: break-word;
     padding: 6px;
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23) !important;
   }
@@ -172,6 +181,7 @@ export default {
 
   .kanban-draggable {
     min-height: calc(100vh - 230px);
+    overflow-wrap: break-word;
   }
   .ghost-card {
     opacity: 0.5;
@@ -188,28 +198,49 @@ export default {
     background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
     position: relative;
-    overflow: hidden;
-    min-width: 18.5rem;
-    width: 18.5rem;
-    height: 76vh;
+    overflow: hidden; 
+    padding-left: .76rem;
+    padding-right: .76rem;  
+    height: 73vh;
+    border-radius: .15rem;
   }
+.kan-has-stage {
+     min-width: 18.5rem;
+}
   .kan-body {
-    max-height: 72vh;
+    max-height: 73vh;
     overflow-y: auto;
   }
   .badge {
     display: flex;
     cursor: pointer;
     padding: 5px;
+    border-radius: .15rem;
     transition: auto;
     color: #ffffff;
     font-size: 1rem;
+    font-weight: 500;
     background-color: #17a2b8;
     justify-content: center;
-    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-    &.add {
-      background-color: #17a2b8;
-      width: 40px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);   
+  }
+  .add {
+    position: absolute;
+    right: 10%;
+  }
+  .no-stage {
+    background: #fff;
+    border-right: dotted 1px #ededed;
+    margin-top: 0 !important;
+    height: auto;
+    box-shadow: none;
+    width: .5rem !important;
+    div.badge {
+      display: none;
     }
   }
+  .no-stage:hover {
+     border-right: dotted 1px rgba(255, 0, 0, 0.5) !important;
+  }
+
 </style>

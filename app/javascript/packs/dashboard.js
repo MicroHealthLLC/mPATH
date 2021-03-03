@@ -49,13 +49,15 @@ Vue.config.productionTip = false
 ELEMENT.locale(ELEMENT.lang.en)
 Vue.use(VeeValidate,  { fieldsBagName: 'veeFields' })
 
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: window.google_api_key,
-    libraries: 'places',
-  },
-  installComponents: true
-})
+if(!window.google){
+  Vue.use(VueGoogleMaps, {
+    load: {
+      key: window.google_api_key,
+      libraries: 'places',
+    },
+    installComponents: true
+  })
+}
 
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
