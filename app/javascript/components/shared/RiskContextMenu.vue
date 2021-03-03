@@ -291,7 +291,7 @@ export default {
           );
           if (response.status === 200) {
             this.$message({
-              message: `${this.risk.title} was duplicated successfully.`,
+              message: `${this.risk.text} was duplicated successfully.`,
               type: "success",
               showClose: true,
             });
@@ -299,7 +299,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.risk.title}. Please try again.`,
+            message: `Unable to duplicate ${this.risk.text}. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -366,7 +366,7 @@ export default {
           });
           if (response.status === 200) {
             this.$message({
-              message: `${this.risk.title} was duplicated successfully to selected projects.`,
+              message: `${this.risk.text} was duplicated successfully to selected projects.`,
               type: "success",
               showClose: true,
             });
@@ -374,7 +374,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.risk.title} to selected projects. Please try again.`,
+            message: `Unable to duplicate ${this.risk.text} to selected projects. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -391,7 +391,7 @@ export default {
     },
     deleteRisk() {
       let confirm = window.confirm(
-        `Are you sure you want to delete "${this.risk.title}"?`
+        `Are you sure you want to delete "${this.risk.text}"?`
       );
       if (!confirm) {
         return;

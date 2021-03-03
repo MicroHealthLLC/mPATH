@@ -148,12 +148,8 @@
       IssueForm,
       TaskForm,
       RiskForm,
-<<<<<<< HEAD
       SweetModal,
       RiskContextMenu
-=======
-      SweetModal       
->>>>>>> a4ef60b1ee0008a002f67f8906c6fc2fb86ce68e
     },
     props: {
       fromView: {
