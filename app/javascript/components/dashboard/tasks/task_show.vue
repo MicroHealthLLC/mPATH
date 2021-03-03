@@ -248,6 +248,7 @@
           this.DV_edit_task = this.DV_task
           this.$refs.taskFormModal && this.$refs.taskFormModal.open()
         }
+        this.closeContextMenu();
       },
       onCloseForm() {
         this.$refs.taskFormModal && this.$refs.taskFormModal.close()
@@ -267,6 +268,9 @@
       openContextMenu(e) {
         e.preventDefault();
         this.$refs.menu.open(e);
+      },
+      closeContextMenu() {
+        this.$refs.menu.close();
       },
       moveTask(task, facilityProjectId) {
         if (!this._isallowed("write")) return;
@@ -380,6 +384,7 @@
           console.log(err)
         })
         .finally(() => {
+          this.closeContextMenu();
           // this.loading = false
         })
       },
