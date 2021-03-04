@@ -509,7 +509,6 @@ test_task_4 = Task.find_or_create_by(
   task_type_id: task_type.id,
   task_stage_id: task_stage.id,
   facility_project_id: facility_project_4.id,
-  watched: true,
   progress: 100
 )
 
@@ -538,7 +537,6 @@ test_issue_4 = Issue.find_or_create_by(
   issue_stage_id: issue_stage.id,
   issue_severity_id: issue_severity.id,
   facility_project_id: facility_project_4.id,
-  watched: true,
   progress: 100
 )
 
@@ -571,7 +569,6 @@ test_risk_4 = Risk.find_or_create_by(
   facility_project_id: facility_project_4.id,
   task_type_id: task_type.id,
   risk_stage_id: risk_stage.id,
-  watched: true,
   progress: 100
 )
 

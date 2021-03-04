@@ -8,7 +8,7 @@ describe('Kanban Tasks View', function() {
 
   it('Open kanban tasks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_col_title]').contains('Test Task Stage').should('be.visible')
       })
     })
@@ -17,7 +17,7 @@ describe('Kanban Tasks View', function() {
 
   it('Open and close Kanban task new form', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
       })
     })
@@ -27,7 +27,7 @@ describe('Kanban Tasks View', function() {
   })
 
   it('Update on watch state of a task', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=tasks]').first().within(() => {
           cy.get('[data-cy=on_watch_icon]').should('be.visible')
@@ -37,7 +37,7 @@ describe('Kanban Tasks View', function() {
     })
     cy.get('[data-cy=task_on_watch]').click({force: true})
     cy.get('[data-cy=task_save_btn]').click({force: true})
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=tasks]').first().within(() => {
           cy.get('[data-cy=on_watch_icon]').should('not.exist')
@@ -49,7 +49,7 @@ describe('Kanban Tasks View', function() {
   })
 
   it('Drag a task from first stage and drop it to next stage', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=tasks]').first().as('origin')
     })
 
@@ -59,7 +59,7 @@ describe('Kanban Tasks View', function() {
 
     cy.get('@origin').drag('@destination', {force: true})
 
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=tasks]').should('not.exist')
     })
 
@@ -89,7 +89,7 @@ describe('Kanban Tasks View', function() {
 
   describe('Kanban Tasks Actions', function() {
     beforeEach(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=tasks]').first().click()
         })
@@ -98,7 +98,7 @@ describe('Kanban Tasks View', function() {
 
     it('Delete the task from kanban', function() {
       cy.get('[data-cy=task_delete_btn]').click({force: true})
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=tasks]').should('not.exist')
         })
@@ -109,7 +109,7 @@ describe('Kanban Tasks View', function() {
     it('Update task from kanban', function() {
       cy.get('[data-cy=task_name]').clear({force: true}).type('Updated new test task').should('have.value', 'Updated new test task')
       cy.get('[data-cy=task_save_btn]').click({force: true})
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=tasks]').first().contains('Updated new test task').should('be.visible')
         })
