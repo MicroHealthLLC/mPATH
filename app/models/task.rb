@@ -16,7 +16,20 @@ class Task < ApplicationRecord
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
   amoeba do
-    enable
+    include_association :task_type
+    include_association :task_stage
+    include_association :task_users
+    include_association :users
+    
+    include_association :facility_project
+    include_association :checklists
+    include_association :related_tasks
+    include_association :related_issues
+    include_association :related_risks
+    include_association :sub_tasks
+    include_association :sub_issues
+    include_association :sub_risks
+
     append :text => " - Copy"
   end
 
