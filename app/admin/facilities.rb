@@ -3,7 +3,7 @@ ActiveAdmin.register Facility do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Facilities', admin_facilities_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path)]
     if %(show edit).include?(params['action'])
       links << link_to(facility.facility_name, edit_admin_facility_path)
     end
@@ -36,7 +36,7 @@ ActiveAdmin.register Facility do
     ]
   end
 
-  index title: 'Project' do
+  index title: 'Projects' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
