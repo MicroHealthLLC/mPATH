@@ -31,7 +31,7 @@ ActiveAdmin.register FacilityGroup do
     f.actions
   end
 
-  index title: 'Project Group' do
+  index title: 'Project Groups' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :id
