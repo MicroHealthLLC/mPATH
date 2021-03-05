@@ -179,8 +179,8 @@
           <span v-if="(task.accountableUsers.length) > 0"> (A) {{task.accountableUsers[0].name}}<br></span>   
           <!-- Consulted Users and Informed Users are toggle values         -->
           <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(task.consultedUsers.length) > 0"> (C) {{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, '')}}<br></span> 
-             <span v-if="(task.informedUsers.length) > 0"> (I) {{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, '')}}</span>      
+             <span v-if="(task.consultedUsers.length) > 0"> (C) {{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(task.informedUsers.length) > 0"> (I) {{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
           </span>        
           </td>
           <td>{{task.progress + "%"}}</td>

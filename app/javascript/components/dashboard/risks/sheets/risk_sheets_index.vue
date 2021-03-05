@@ -226,8 +226,8 @@
           <span v-if="(risk.accountableUsers.length) > 0"> (A) {{risk.accountableUsers[0].name}}<br></span>   
            <!-- Consulted Users and Informed Users are toggle values         -->
           <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(risk.consultedUsers.length) > 0"> (C) {{JSON.stringify(risk.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, '')}}<br></span> 
-             <span v-if="(risk.informedUsers.length) > 0"> (I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, '')}}</span>      
+             <span v-if="(risk.consultedUsers.length) > 0"> (C) {{JSON.stringify(risk.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(risk.informedUsers.length) > 0"> (I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
           </span>        
           </td>
           <td>{{risk.progress + "%"}}</td>
