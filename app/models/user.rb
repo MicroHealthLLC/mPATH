@@ -112,23 +112,23 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  # def as_json(options=nil)
-  #   json = super(options)
-  #   json.merge(
-  #     full_name: full_name,
-  #     organization: organization&.title  || ""
-  #   ).as_json
-  # end
-
-  def to_json(options={})
+  def as_json(options=nil)
     json = super(options)
-    all_organisations = options[:all_organisations]
-    o = all_organisations.detect{|oo| oo.id == self.organisation_id}
     json.merge(
       full_name: full_name,
-      organization: o&.title  || ""
-    )
+      organization: organization&.title  || ""
+    ).as_json
   end
+
+  # def to_json(options={})
+  #   json = super(options)
+  #   all_organisations = options[:all_organisations]
+  #   o = all_organisations.detect{|oo| oo.id == self.organisation_id}
+  #   json.merge(
+  #     full_name: full_name,
+  #     organization: o&.title  || ""
+  #   )
+  # end
 
   def get_preferences
     # if preferences.project_group_id.present?

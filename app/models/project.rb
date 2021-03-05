@@ -239,7 +239,7 @@ class Project < SortableRecord
 
     hash.merge!({
       #users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
-      users: users.to_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
+      users: users.as_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
       facilities: facility_projects_hash,
       facility_groups: facility_groups_hash,
       statuses: statuses.as_json,
