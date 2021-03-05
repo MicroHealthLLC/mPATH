@@ -110,17 +110,17 @@ ActiveAdmin.register Facility do
     f.actions
   end
 
-  batch_action :"Assign/Unassign Facility Group", if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :"Assign/Unassign Project Group", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Facility Group": FacilityGroup.pluck(:name, :id)
+    "Project Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Facility group is updated"
+    notice = "Project Group is updated"
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-      notice = "Facility group is assigned"
+      notice = "Project Group is assigned"
     elsif inputs['assign'] === 'unassign'
       Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
-      notice = "Facility group is unassigned"
+      notice = "Project Group is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end
@@ -132,20 +132,20 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Project", if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Project": Project.pluck(:name, :id)
+    "Program": Project.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Project is assigned"
+    notice = "Program is assigned"
     project = Project.find_by_id(inputs["Project"])
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).each do |facility|
         facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
       end
-      notice = "Project is assigned"
+      notice = "Program is assigned"
     elsif inputs['assign'] === 'unassign'
       FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
-      notice = "Project is unassigned"
+      notice = "Program is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end
@@ -178,7 +178,7 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :"Assign Project, Duedate and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
+  batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
     "Project": Project.pluck(:name, :id),
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
@@ -189,14 +189,14 @@ ActiveAdmin.register Facility do
       facility_project.due_date = inputs['Due Date']
       facility_project.save
     end
-    redirect_to collection_path, notice: "Due Date, Status and Assign project is updated"
+    redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
   rescue => e
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Facilities" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects" do |ids|
     deleted = Facility.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Facilities"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"
   end
 
   controller do
