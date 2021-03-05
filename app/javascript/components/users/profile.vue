@@ -113,7 +113,7 @@
             :options="programOptions"
             :searchable="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             @select="programSelectChange"
             @remove="programSelectChange"
             >
@@ -138,7 +138,7 @@
             :options="projectGroupOptions"
             :searchable="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             @select="projectGroupSelectChange"
             @remove="projectGroupSelectChange"
             :disabled="!this.selectedProgram"
@@ -163,7 +163,7 @@
             :options="projectOptions"
             :searchable="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!this.selectedProjectGroup"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -188,7 +188,7 @@
             :options="navigationOptions"
             :searchable="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             @select="navigationSelectChane"
             :disabled="!(this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
             >
@@ -212,7 +212,7 @@
             :options="subNavigationOptions"
             :searchable="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!(this.selectedNavigation && this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
             >
             <template slot="singleLabel" slot-scope="{option}">
