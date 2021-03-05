@@ -20,7 +20,7 @@ class Task < ApplicationRecord
     append :text => " - Copy"
   end
 
-  def to_json(t_users = [], all_users = [], options = {})
+  def to_json(options = {})
     attach_files = []
     tf = self.task_files
     if tf.attached?
@@ -34,6 +34,8 @@ class Task < ApplicationRecord
     end
     fp = self.facility_project
 
+    t_users = options[:all_task_users]
+    all_users = options[:all_users]
     if options[:for].present? && options[:for] == :project_build_response
       resource_users = t_users && t_users.any? ? t_users : []
     else

@@ -92,3 +92,5 @@ gem 'omniauth-rails_csrf_protection', '~> 0.1'
 gem 'amoeba'
 
 gem 'ledermann-rails-settings'
+
+gem 'oj'

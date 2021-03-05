@@ -17,7 +17,7 @@ class Issue < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|issue| issue.issue_stage_id_was.nil?}
 
-  def to_json(t_users = [], all_users = [], options = {})
+  def to_json(options = {})
     attach_files = []
     i_files = self.issue_files
     if i_files.attached?
@@ -31,7 +31,9 @@ class Issue < ApplicationRecord
     end
 
     fp = self.facility_project
-
+    
+    t_users = options[:all_issue_users]
+    all_users = options[:all_users]
     if options[:for].present? && options[:for] == :project_build_response
       resource_users = t_users && t_users.any? ? t_users : []
     else

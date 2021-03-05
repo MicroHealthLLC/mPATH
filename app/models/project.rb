@@ -189,7 +189,7 @@ class Project < SortableRecord
 
       h[:tasks] = []
       tasks.each do |t| 
-        h[:tasks] << t.to_json( all_task_users[t.id], all_users, {for: :project_build_response} )
+        h[:tasks] << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
       end
 
       # Building Issues
@@ -200,7 +200,7 @@ class Project < SortableRecord
 
       h[:issues] = []
       issues.each do |i| 
-        h[:issues] << i.to_json( all_issue_users[i.id], all_users, {for: :project_build_response} )
+        h[:issues] << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
       end
 
       # Building Risks
@@ -211,7 +211,7 @@ class Project < SortableRecord
 
       h[:risks] = []
       risks.each do |r| 
-        h[:risks] << r.to_json( all_risk_users[r.id], all_users, {for: :project_build_response} )
+        h[:risks] << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
       end
 
       # Building Notes
@@ -238,7 +238,8 @@ class Project < SortableRecord
     hash = self.attributes.merge({project_type: project_type_name})
 
     hash.merge!({
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
+      #users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ]),
+      users: users.to_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
       facilities: facility_projects_hash,
       facility_groups: facility_groups_hash,
       statuses: statuses.as_json,

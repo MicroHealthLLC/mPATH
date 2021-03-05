@@ -70,7 +70,7 @@ class Risk < ApplicationRecord
     probability_name_hash[probability] || probability_name_hash[1]
   end
 
-  def to_json(t_users = [], all_users = [], options = {})
+  def to_json(options = {})
     attach_files = []
     rf = self.risk_files
     if rf.attached?
@@ -84,6 +84,8 @@ class Risk < ApplicationRecord
     end
     fp = self.facility_project
     
+    t_users = options[:all_risk_users]
+    all_users = options[:all_users]
     if options[:for].present? && options[:for] == :project_build_response
       resource_users = t_users && t_users.any? ? t_users : []
     else
