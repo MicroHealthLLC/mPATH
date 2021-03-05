@@ -179,7 +179,7 @@ ActiveAdmin.register Facility do
   end
 
   batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
-    "Project": Project.pluck(:name, :id),
+    "Program": Project.pluck(:name, :id),
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
   }} do |ids, inputs|
