@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:show, :destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet]
+  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet]
 
   def index
     respond_to do |format|
@@ -9,6 +9,7 @@ class ProjectsController < AuthenticatedController
   end
 
   def show
+    @project = current_user.projects.active.find_by(id: params[:id])
     check_permit("map_view")
     unless @project.nil?
       respond_to do |format|
