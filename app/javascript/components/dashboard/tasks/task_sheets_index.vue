@@ -174,13 +174,13 @@
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
           <td>{{formatDate(task.dueDate)}}</td>
-          <td class="fort" >
-          <span v-if="(task.responsibleUsers.length) > 0 && (task.responsibleUsers !== null)"> (R) {{task.responsibleUsers[0].name}} <br></span> 
-          <span v-if="(task.accountableUsers.length) > 0&& (task.accountableUsers !== null)"> (A) {{task.accountableUsers[0].name}}<br></span>   
+          <td>
+          <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> (R) {{task.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(task.accountableUsers.length > 0) && (task.accountableUsers[0] !== null)"> (A) {{task.accountableUsers[0].name}}<br></span>   
           <!-- Consulted Users and Informed Users are toggle values         -->
           <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(task.consultedUsers.length) > 0 && (task.consultedUsers !== null)"> (C) {{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
-             <span v-if="(task.informedUsers.length) > 0 && (task.informedUsers !== null)"> (I) {{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
+             <span v-if="(task.consultedUsers.length > 0) && (task.consultedUsers[0] !== null)"> (C) {{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> (I) {{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
           </span>        
           </td>
           <td>{{task.progress + "%"}}</td>
