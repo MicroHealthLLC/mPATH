@@ -8,10 +8,7 @@
       data-cy="issue_form"
      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
     >
-      <div
-        v-if="_isallowed('read')"
-        class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar" :class="{'sticky-kanban':isKanbanView}"
-      >
+      <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -1616,7 +1613,9 @@ export default {
   width: 83.1%;
 }
 .kanban-form {   
-  width: 100%;   
+  left: 16.4%;
+  width: 83.33%;  
+  z-index: 100;   
 }
 .form-control.error {
   border-color: #e84444;

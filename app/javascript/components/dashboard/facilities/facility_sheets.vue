@@ -289,11 +289,11 @@
                 </div>
               </div>
 
-               <div v-if="issueStats.length > 0" data-cy="issue_types" class="font-weight-bold text-center">
-               <div class="col mt-3 mb-1 text-center">
-                      ISSUE TYPES
-               </div>
-            </div>
+              <div v-if="issueStats.length > 0" data-cy="issue_types">
+                <div class="col mt-1 mb-2 text-center">
+                  ISSUE TYPES
+                </div>
+              </div>
 
              <div class="row font-sm" v-for="issue in issueStats" :key="issue.id">
                   <div class="col">

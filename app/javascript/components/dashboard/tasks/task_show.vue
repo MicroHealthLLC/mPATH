@@ -77,13 +77,7 @@
       </div>
     </div>
 
-     <sweet-modal
-      class="task_form_modal"
-      ref="taskFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_task" class="w-100">
+      <div v-if="has_task" class="w-100 action-form-overlay">
         <task-form
           v-if="Object.entries(DV_edit_task).length"
           :facility="facility"
@@ -91,7 +85,7 @@
           title="Edit Task"
           @task-updated="updateRelatedTaskIssue"
           @on-close-form="onCloseForm"
-          class="form-inside-modal"
+          class="form-inside-modal action-form-overlay"
         ></task-form>
 
         <issue-form
@@ -102,8 +96,7 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></issue-form>
-      </div>
-    </sweet-modal> 
+      </div>   
     <!-- The context-menu appears only if table row is right-clicked -->
     <context-menu :display="showContextMenu" ref="menu">
       <el-menu collapse>
@@ -607,6 +600,13 @@
     max-height: 300px;
     overflow-y: auto;
   }
+ .action-form-overlay {
+    position: absolute;
+    top:0;   
+    form {
+        position: inherit !important;
+      }
+  } 
   .menu-subwindow-title {
     font-size: 14px;
     text-align: center;

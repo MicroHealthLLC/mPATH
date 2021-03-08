@@ -299,14 +299,8 @@
                 </div>         -->
               </div>
               </div>
-         <sweet-modal
-          class="form_modal"
-          ref="newFormModal"
-          :hide-close-button="true"
-          :blocking="true"
-          v-if="viewPermit(currentTab, 'write')"
-         >
-      <div v-if="currentFacility && ('id' in currentFacility) && fixedStageId" class="w-100">
+      
+      <div v-if="currentFacility && ('id' in currentFacility) && fixedStageId && viewPermit(currentTab, 'write')" class="w-100">
         <task-form
           v-if="currentTab === 'tasks'"
           :facility="currentFacility"
@@ -335,7 +329,7 @@
           class="form-inside-modal"
         ></risk-form>
       </div>
-    </sweet-modal>
+   
     
       <div class="kanban-tab">
         <!-- <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">         

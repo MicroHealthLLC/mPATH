@@ -1,12 +1,12 @@
 <template>
   <div id="kanban" data-cy="kanban">
     <div class="overflow-x-auto">
-      <div class="d-flex py-2" v-if="!loading">
+      <div class="d-flex" v-if="!loading">
         <div
           v-for="column in columns"
           :key="column.title"
           :log="log(column)"
-          class="rounded-lg kan-col py-2 mt-4 mb-2 mr-4"        
+          class="rounded-lg kan-col py-2 unset mb-2 mr-4"        
           :class="{'no-stage': column.stage.id == null}"
           :style="`${ column.stage.id == null ? 'width:1rem' : 'min-width:18.5rem'  }`"
           data-cy="kanban_col"
@@ -66,7 +66,6 @@ import {mapActions, mapGetters} from 'vuex'
 import TaskShow from './../dashboard/tasks/task_show'
 import IssueShow from './../dashboard/issues/issue_show'
 import RiskShow from './../dashboard/risks/risk_show'
-
 export default {
   name: "Kanban",
   components: {
@@ -75,7 +74,6 @@ export default {
     RiskShow,
     Draggable
   },
-
   props: ['stages', 'cards', 'kanbanType'],
   data() {
     return {
@@ -110,7 +108,6 @@ export default {
           tasks: _.filter(cards, c => c[this.stageId] == stage.id)
         })
       }
-
     },
     handleMove(item) {
       this.movingSlot = item.relatedContext.component.$vnode.key
@@ -178,7 +175,6 @@ export default {
   }
   .task-card { cursor: move;}
   .read-only-card { cursor: pointer;}
-
   .kanban-draggable {
     min-height: calc(100vh - 230px);
     overflow-wrap: break-word;
@@ -189,10 +185,13 @@ export default {
     border: 1px solid #4299e1;
   }
   .overflow-x-auto {
-    overflow-x: auto;
-    margin-top: 55px;
-    margin-right: -10px;
+    overflow-x: hidden; 
+    margin-right: -100px;
     overflow-y: hidden !important;
+  }
+  .unset {
+    position: unset !important;
+    margin-top:6rem;
   }
   .kan-col {
     background-color: #ededed;
@@ -201,14 +200,16 @@ export default {
     overflow: hidden; 
     padding-left: .76rem;
     padding-right: .76rem;  
-    height: 73vh;
+    height: 71vh;
+    max-width: 296px;
+ 
     border-radius: .15rem;
   }
-.kan-has-stage {
-     min-width: 18.5rem;
-}
+  .kan-has-stage {
+     max-width: 18.5rem;
+  }
   .kan-body {
-    max-height: 73vh;
+    max-height: 71vh;
     overflow-y: auto;
   }
   .badge {
@@ -242,5 +243,4 @@ export default {
   .no-stage:hover {
      border-right: dotted 1px rgba(255, 0, 0, 0.5) !important;
   }
-
 </style>

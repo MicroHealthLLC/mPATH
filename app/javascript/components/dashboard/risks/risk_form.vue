@@ -9,8 +9,7 @@
       >
       <div class="form-group mb-1">
         <div v-if="_isallowed('read')"
-          class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"
-          :class="{'sticky-kanban':isKanbanView}"
+          class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"          
         >
          <button
           v-if="_isallowed('write')"
@@ -1970,8 +1969,10 @@
     z-index: 10;
     width: 83.1%;
   }
-  .kanban-form {
-    width: 100%;
+   .kanban-form {   
+    left: 16.4%;
+    width: 83.33%;  
+    z-index: 100;   
   }
   .form-control.error {
     border-color: #E84444;
@@ -2041,11 +2042,6 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-   .sticky-kanban {
-    position: sticky;
-    position: -webkit-sticky;
-    margin-bottom: -2.5rem;
   }
   .check-due-date {
     text-align: end;
