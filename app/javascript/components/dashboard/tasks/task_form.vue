@@ -845,14 +845,14 @@
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
-        if (task.attachFiles) this.addFile(task.attachFiles)
+        if (task.attachFiles) this.addFile(task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
         })
       },
-      addFile(files) {
-        let _files = [...this.DV_task.taskFiles]
+      addFile(files, append = true) {
+        let _files = append ? [...this.DV_task.taskFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
