@@ -95,24 +95,9 @@
       </div>
   
       </div>
-    <sweet-modal
-      class="issue_form_modal"
-      ref="issueFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_issue" class="w-100">
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></task-form>
 
-        <issue-form
+      <div v-if="has_issue" class="w-100 action-form-overlay">
+          <issue-form
           v-if="Object.entries(DV_edit_issue).length"
           :facility="facility"
           :issue="DV_edit_issue"
@@ -121,7 +106,7 @@
           class="form-inside-modal"
         ></issue-form>
       </div>
-    </sweet-modal>
+
   </div>
 </template>
 
@@ -298,6 +283,12 @@
       font-size: 20px;
       cursor: pointer;
     }
+
+    .action-form-overlay {
+      position: absolute;
+      top:0; 
+    }  
+
     .form-inside-modal {
       form {
         position: inherit !important;

@@ -82,35 +82,7 @@
 
        
     </div>
-    
-  
-
-    <sweet-modal
-      class="risk_form_modal"
-      ref="riskFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_risk" class="w-100">
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></task-form>
-
-        <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
-
+      <div v-if="has_risk" class="w-100 action-form-overlay">
         <risk-form
           v-if="Object.entries(DV_edit_risk).length"
           :facility="facility"
@@ -120,7 +92,7 @@
           class="form-inside-modal"
         ></risk-form>
       </div>
-    </sweet-modal>
+ 
   </div>
 </template>
 
