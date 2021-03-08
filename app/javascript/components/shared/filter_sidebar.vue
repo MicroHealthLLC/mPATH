@@ -24,8 +24,8 @@
         <div class="row justify-content-between">
           <div class="col-md-6">
             <div>
-              <label class="font-sm mb-0">Project Group</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
+              <label class="font-sm mb-0">Project Groups</label>
+              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Search and select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -33,8 +33,8 @@
                 </template>
               </multiselect>
             </div>
-           <label class="font-sm mb-0">Project Name</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+           <label class="font-sm mb-0">Project Names</label>
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Search and select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
@@ -59,7 +59,7 @@
 
           </div>
           <div class="col-md-6">
-             <label class="font-sm mb-0">Project Status</label>
+             <label class="font-sm mb-0">Project Statuses</label>
               <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -88,7 +88,7 @@
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
-              <label class="font-sm mb-1">Task Category</label>
+              <label class="font-sm mb-1">Task Categories</label>
               <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -136,7 +136,7 @@
                 </template>
               </multiselect>
 
-              <label class="font-sm mb-0">Risk Priority Level</label>
+              <label class="font-sm mb-0">Risk Priority Levels</label>
               <multiselect
                 v-model="C_riskPriorityLevelFilter"
                 track-by="name"
@@ -161,7 +161,7 @@
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
-              <label class="font-sm mb-0">Issue Type</label>
+              <label class="font-sm mb-0">Issue Types</label>
               <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -181,7 +181,7 @@
               </multiselect>
             </div>
             <div>
-              <label class="font-sm mb-0">Issue Severity</label>
+              <label class="font-sm mb-0">Issue Severities</label>
               <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
@@ -196,7 +196,7 @@
               <h5 class="mb-0">Combined</h5>
                <div>
                 <label class="font-sm mb-0">Action Users</label>
-                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_user">
+                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Search and select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name'>{{option.fullName}}</span>
@@ -207,7 +207,7 @@
 
               <div>
                 <label class="font-sm mb-0">Flags</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="true" select-label="Select">
+                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="true" select-label="Select" deselect-label="Remove">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name selected-opt'>{{option.name}}</span>
