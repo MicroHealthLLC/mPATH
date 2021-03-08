@@ -153,7 +153,7 @@ ActiveAdmin.register Facility do
   batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
     "Name": :text,
     "Description": :textarea,
-    "Project": Project.pluck(:name, :id),
+    "Program": Project.pluck(:name, :id),
     "Task Category": TaskType.pluck(:name, :id),
     "Stage": TaskStage.pluck(:name, :id),
     "Start Date": :datepicker,
