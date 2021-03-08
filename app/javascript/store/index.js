@@ -4,6 +4,7 @@ import {extendMoment} from 'moment-range'
 const moment = extendMoment(Moment)
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
+import exampleModule from './modules/example-module-store'
 
 // utility function
 const getSimpleDate = (date) => {
@@ -15,6 +16,9 @@ const getSimpleDate = (date) => {
 }
 
 export default new Vuex.Store({
+  modules: {
+    exampleModule
+  },
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
