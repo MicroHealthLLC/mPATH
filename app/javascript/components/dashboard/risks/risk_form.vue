@@ -1892,22 +1892,38 @@
       },
    responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value) {
+            this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_risk.responsibleUserIds = []
+          }
         }, deep: true
       },
     accountableRiskUsers: {
           handler: function(value) {
-            if (value) this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+            if (value) {
+              this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+            }else{
+              this.DV_risk.accountableUserIds = []
+            }
           }, deep: true
         },
     consultedRiskUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_risk.consultedUserIds = []
+          }
         }, deep: true
       },
     informedRiskUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_risk.informedUserIds = []
+          }
         }, deep: true
       },
      relatedIssues: {

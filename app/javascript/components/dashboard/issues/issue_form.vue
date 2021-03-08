@@ -1512,13 +1512,21 @@ export default {
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
-        if (value) this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        if (value) {
+          this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }else{
+          this.DV_issue.responsibleUserIds = []
+        }
       },
       deep: true,
     },
   accountableIssueUsers: {
      handler: function(value) {
-      if (value) this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      if (value) {
+        this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      }else{
+        this.DV_issue.accountableUserIds = []
+      }
           }, deep: true
         },
   consultedIssueUsers: {
