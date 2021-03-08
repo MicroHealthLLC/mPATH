@@ -1570,10 +1570,7 @@
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
             }
           })
-          .then((response) => {
-            // if(beforeRisk.facilityId && beforeRisk.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeRisk));
-            // this.$emit(callback, humps.camelizeKeys(response.data.risk))
+          .then((response) => {       
             var responseRisk = humps.camelizeKeys(response.data.risk)
             this.loadRisk(responseRisk)
             this.$emit(callback, responseRisk)
