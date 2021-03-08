@@ -2222,7 +2222,6 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
@@ -2255,9 +2254,4 @@
   /deep/.el-collapse-item__header {
     background-color: #fafafa !important;
   }
- /deep/.mx-input-wrapper {
-    position: absolute;
-  }
-
-
 </style>
