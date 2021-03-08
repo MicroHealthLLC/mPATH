@@ -1248,22 +1248,38 @@
   // RACI USERS HERE awaiting backend work
     responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value) {
+            this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.responsibleUserIds = []
+          }
         }, deep: true
       },
     accountableTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value){
+            this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.accountableUserIds = []
+          }
         }, deep: true
       },
         consultedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          if (value) {
+            this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.consultedUserIds = []
+          }
         }, deep: true
       },
       informedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.informedUserIds = []
+          }
         }, deep: true
       },
       relatedIssues: {
