@@ -1321,15 +1321,15 @@
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.DV_risk.riskStageId)
         this.selectedRiskPossibility = this.getRiskProbabilityNames.find(t => t.id === this.DV_risk.probability)
         this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(t => t.id === this.DV_risk.impactLevel)
-        if (risk.attachFiles) this.addFile(risk.attachFiles)
+        if (risk.attachFiles) this.addFile(risk.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
           this.loading = false
         })
       },
-      addFile(files=[]) {
-        let _files = [...this.DV_risk.riskFiles]
+      addFile(files=[], append = true) {
+        let _files = append ? [...this.DV_risk.riskFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
