@@ -265,7 +265,7 @@ ActiveAdmin.register Facility do
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
   filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Category'
-  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Program Status'
+  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   filter :projects, label: "Programs"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :creator
