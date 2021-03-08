@@ -236,13 +236,13 @@
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
             <td >    
-              <span v-if="(issue.responsibleUsers.length) > 0"> (R) {{issue.responsibleUsers[0].name}} <br></span> 
-              <span v-if="(issue.accountableUsers.length) > 0"> (A) {{issue.accountableUsers[0].name}}<br></span>   
-             <!-- Consulted Users and Informed Users are toggle values         -->
+             <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> (R) {{issue.responsibleUsers[0].name}} <br></span> 
+              <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> (A) {{issue.accountableUsers[0].name}}<br></span>   
+          <!-- Consulted Users and Informed Users are toggle values         -->
               <span :class="{'show-all': getToggleRACI }" >             
-              <span v-if="(issue.consultedUsers.length) > 0"> (C) {{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
-              <span v-if="(issue.informedUsers.length) > 0"> (I) {{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
-              </span>        
+             <span v-if="(issue.consultedUsers.length > 0) &&  (issue.consultedUsers[0] !== null)"> (C) {{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> (I) {{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
+         </span>        
             </td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
