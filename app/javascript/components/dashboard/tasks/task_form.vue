@@ -845,14 +845,14 @@
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
-        if (task.attachFiles) this.addFile(task.attachFiles)
+        if (task.attachFiles) this.addFile(task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
         })
       },
-      addFile(files) {
-        let _files = [...this.DV_task.taskFiles]
+      addFile(files, append = true) {
+        let _files = append ? [...this.DV_task.taskFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
@@ -1248,22 +1248,38 @@
   // RACI USERS HERE awaiting backend work
     responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value) {
+            this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.responsibleUserIds = []
+          }
         }, deep: true
       },
     accountableTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value){
+            this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.accountableUserIds = []
+          }
         }, deep: true
       },
         consultedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          if (value) {
+            this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.consultedUserIds = []
+          }
         }, deep: true
       },
       informedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.informedUserIds = []
+          }
         }, deep: true
       },
       relatedIssues: {

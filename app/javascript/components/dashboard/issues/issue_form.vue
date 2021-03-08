@@ -1032,15 +1032,15 @@ export default {
       this.selectedIssueStage = this.issueStages.find(
         (t) => t.id === this.DV_issue.issueStageId
       );
-      if (issue.attachFiles) this.addFile(issue.attachFiles);
+      if (issue.attachFiles) this.addFile(issue.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
         this.loading = false;
       });
     },
-    addFile(files = []) {
-      let _files = [...this.DV_issue.issueFiles];
+    addFile(files = [], append = true) {
+      let _files = append ?  [...this.DV_issue.issueFiles] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
@@ -1512,13 +1512,21 @@ export default {
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
-        if (value) this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        if (value) {
+          this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }else{
+          this.DV_issue.responsibleUserIds = []
+        }
       },
       deep: true,
     },
   accountableIssueUsers: {
      handler: function(value) {
-      if (value) this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      if (value) {
+        this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      }else{
+        this.DV_issue.accountableUserIds = []
+      }
           }, deep: true
         },
   consultedIssueUsers: {
