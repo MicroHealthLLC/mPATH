@@ -126,7 +126,7 @@
                 :options="taskTypes"
                 :searchable="false"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write')"
                 :class="{'error': errors.has('Task Category')}"
                 data-cy="risk_milestone"
@@ -152,7 +152,7 @@
                 :options="riskStages"
                 :searchable="false"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write') || !!fixedStage"
                 data-cy="risk_stage"
                 >
@@ -175,7 +175,7 @@
                 :options="getFacilityProjectOptions"
                 :searchable="true"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write')"
                 data-cy="facility_project_id"
                 >
@@ -316,7 +316,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -878,7 +878,7 @@
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
-                  deselect-label="Enter to remove"
+                  deselect-label="Remove"
                   >
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -1038,7 +1038,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >
@@ -1061,7 +1061,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >
@@ -1084,7 +1084,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >

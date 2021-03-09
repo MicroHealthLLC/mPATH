@@ -476,7 +476,7 @@ export default new Vuex.Store({
 
         ['facilityGroupFilter', 'Project Group'],
         ['facilityNameFilter', 'Project Name'],
-        ['projectStatusFilter', 'Program Status'],
+        ['projectStatusFilter', 'Project Status'],
         ['facilityProgressFilter', 'Project Progress'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
         ['taskTypeFilter', 'Task Category'],

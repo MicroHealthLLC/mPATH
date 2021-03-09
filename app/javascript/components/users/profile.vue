@@ -112,8 +112,8 @@
             placeholder="Select Program"
             :options="programOptions"
             :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
+            select-label="Search and select"
+            deselect-label="Remove"
             @select="programSelectChange"
             @remove="programSelectChange"
             >
@@ -137,8 +137,8 @@
             placeholder="Select Project Group"
             :options="projectGroupOptions"
             :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
+            select-label="Search and select"
+            deselect-label="Remove"
             @select="projectGroupSelectChange"
             @remove="projectGroupSelectChange"
             :disabled="!this.selectedProgram"
@@ -162,8 +162,8 @@
             placeholder="Select Project"
             :options="projectOptions"
             :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
+            select-label="Search and select"
+            deselect-label="Remove"
             :disabled="!this.selectedProjectGroup"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -187,8 +187,8 @@
             placeholder="Select Navigation"
             :options="navigationOptions"
             :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
+            select-label="Search and select"
+            deselect-label="Remove"
             @select="navigationSelectChane"
             :disabled="!(this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
             >
@@ -211,8 +211,8 @@
             placeholder="Select Sub Navigation"
             :options="subNavigationOptions"
             :searchable="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
+            select-label="Search and select"
+            deselect-label="Remove"
             :disabled="!(this.selectedNavigation && this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
             >
             <template slot="singleLabel" slot-scope="{option}">

@@ -91,9 +91,9 @@ ActiveAdmin.register User do
         div id: 'user-password__tab'
       end
 
-      tab 'Projects' do
-        f.inputs 'Projects Details' do
-          f.input :projects, label: 'Projects', as: :select, include_blank: false
+      tab 'Programs' do
+        f.inputs 'Programs Details' do
+          f.input :projects, label: 'Programs', as: :select, include_blank: false
         end
       end
     end
@@ -118,7 +118,7 @@ ActiveAdmin.register User do
     tag_column "State", :status
     column :phone_number
     column :address
-    column :projects do |user|
+    column "Programs", :projects do |user|
       if current_user.admin_write?
         user.projects.active
       else
@@ -138,20 +138,20 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Project", if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Project": Project.pluck(:name, :id)
+    "Program": Project.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Project is assigned"
+    notice = "Program is assigned"
     project = Project.find_by_id(inputs["Project"])
     if inputs['assign'] === 'assign'
       User.where(id: ids).each do |user|
         user.projects << project unless user.projects.pluck(:id).include?(project.id)
       end
-      notice = "Project is assigned"
+      notice = "Program is assigned"
     elsif inputs['assign'] === 'unassign'
       ProjectUser.where(project_id: project.id, user_id: ids).destroy_all
-      notice = "Project is unassigned"
+      notice = "Program is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end
@@ -198,7 +198,7 @@ ActiveAdmin.register User do
   end
 
   filter :email
-  filter :projects, as: :select, collection: -> {Project.active}
+  filter :projects, as: :select, collection: -> {Project.active}, label: "Program"
   filter :title, label: "Position"
   filter :organization
   filter :first_name
