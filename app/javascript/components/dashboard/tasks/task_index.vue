@@ -11,7 +11,7 @@
             type="search"
             style="height:30px"
             class="form-control form-control-sm" 
-            placeholder="Search Tasks.." 
+            placeholder="Search by Task Name, Category or Assigned User" 
             aria-label="Search" 
             aria-describedby="search-addon" 
             v-model="tasksQuery" 
@@ -22,7 +22,7 @@
 
         <div class="w-100 font-sm d-flex my-2">
           <div class="simple-select w-50 font-sm mr-1">            
-          <multiselect v-model="C_taskTypeFilter" style="min-height:30px" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+          <multiselect v-model="C_taskTypeFilter" style="min-height:30px" track-by="name" label="name" placeholder="Filter by Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -252,7 +252,9 @@ computed: {
         valid = valid && (resource.progress >= min && resource.progress <= max)
       }
 
-      if (search_query) valid = valid && search_query.test(resource.text)
+      if (search_query) valid = valid && search_query.test(resource.text) || 
+      search_query.test(resource.taskType) || 
+      search_query.test(resource.userNames)
 
       return valid
     }), ['dueDate'])
