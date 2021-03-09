@@ -44,7 +44,7 @@
             <div class="row mb-0">
                 <div class="font-sm col-md-12" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                   <span v-tooltip="`Category`">{{issue.issueType}}</span>
+                   <span v-tooltip="`Issue Type`">{{issue.issueType}}</span>
                 </div>
                
             </div>

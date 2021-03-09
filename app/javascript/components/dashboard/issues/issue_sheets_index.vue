@@ -20,7 +20,7 @@
           </div>
           <input type="search" 
             class="form-control form-control-sm" 
-            placeholder="Search Issues" 
+            placeholder="Search by Issue Name, Type, Severity or Assigned User" 
             aria-label="Search" 
             aria-describedby="search-addon" 
             v-model="issuesQuery"
@@ -32,7 +32,7 @@
               v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
-              placeholder="Filter by Task Category"
+              placeholder="Filter by Category"
               :options="taskTypes"
               :searchable="false"
               :multiple="true"
@@ -164,7 +164,7 @@
               </table>            
                 <issue-sheets
                   v-for="issue in sortedIssues"      
-                  id="issueHover"               
+                  id="issueHover"                     
                   :key="issue.id"
                   :issue="issue"
                   :from-view="from"                
@@ -316,7 +316,7 @@
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
-      ]),
+      ]), 
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -472,7 +472,9 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.title)
+          
+          if (search_query) valid = valid && search_query.test(resource.title) || search_query.test(resource.issueType)
+          || search_query.test(resource.issueSeverity)  || search_query.test(resource.userNames)
 
           return valid;
         })), ['dueDate'])

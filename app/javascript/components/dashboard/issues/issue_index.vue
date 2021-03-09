@@ -9,13 +9,13 @@
           <div class="input-group-prepend d-inline">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search Issues" aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery" data-cy="search_issues">
+          <input type="search" style="height:30px" class="form-control form-control-sm" placeholder="Search by Issue Name, Type, Severity or Assigned User" aria-label="Search" aria-describedby="search-addon" v-model="issuesQuery" data-cy="search_issues">
         </div>        
       </div>
 
       <div class="d-flex align-item-center font-sm justify-content-between mt-2 w-100">
        <div class="simple-select w-50 mr-1 font-sm">
-          <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Task Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+          <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -315,7 +315,11 @@ computed: {
         valid = valid && (resource.progress >= min && resource.progress <= max)
       }
 
-      if (search_query) valid = valid && search_query.test(resource.title)
+      if (search_query) valid = valid && search_query.test(resource.title) || 
+      search_query.test(resource.issueType) || 
+      search_query.test(resource.issueSeverity)  || 
+      search_query.test(resource.userNames)
+
 
       return valid;
     })), ['dueDate'])

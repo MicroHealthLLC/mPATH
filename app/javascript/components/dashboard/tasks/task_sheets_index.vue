@@ -8,7 +8,7 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search by Task Name, Category, or Assigned Users"
+            placeholder="Search by Task Name, Category, or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="tasksQuery"
@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -373,7 +373,9 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.text) || search_query.test(resource.taskType) || search_query.test(resource.userNames)
+          if (search_query) valid = valid && search_query.test(resource.text) || 
+            search_query.test(resource.taskType) || 
+            search_query.test(resource.userNames)
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
 
           return valid
