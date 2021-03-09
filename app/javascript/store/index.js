@@ -1130,6 +1130,8 @@ export default new Vuex.Store({
     },
     facilityGroupFacilities: (state, getters) => (group, status='active') => {
       return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
+        // Alphabetize facilities (programs)
+        .sort((a, b) => a.facilityName.localeCompare(b.facilityName))    
     },
 
     // for gantt chart view

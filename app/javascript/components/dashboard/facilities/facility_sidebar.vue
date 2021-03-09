@@ -3,7 +3,7 @@
     <h4 class="mt-4 text-info text-center" v-if="title">{{title}}</h4>
     <div class="my-3 ml-2">
       <div v-if="contentLoaded">
-        <div v-for="group in filteredFacilityGroups" class="my-2">
+        <div v-for="(group, index) in sortedGroups" :key="index" class="my-2">
           <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}" data-cy="facility_groups">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
@@ -14,7 +14,7 @@
             <h5 class="clickable">{{group.name}}</h5>
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
-            <div v-for="item in facilityGroupFacilities(group)">
+            <div v-for="(item, index) in facilityGroupFacilities(group)" :key="index">
               <div class="d-flex align-items-center expandable fac-name" @click="showFacility(item)" :class="{'active': item.id == currentFacility.id}">
               <p class="facility-header" data-cy="facilities">{{item.facility.facilityName}}</p>
               </div>
@@ -47,6 +47,10 @@
         'filteredFacilityGroups',
         'facilityGroupFacilities'
       ]),
+      sortedGroups() {
+        // Sort groups by name
+        return this.filteredFacilityGroups.sort((a, b) => a.name.localeCompare(b.name))  
+      },
     },
     mounted() {
       // make the first facility_group expanded
