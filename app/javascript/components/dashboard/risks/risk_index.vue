@@ -321,10 +321,10 @@
 
         
           if (search_query) valid = valid && search_query.test(resource.text) ||
-          search_query.test(resource.text) ||
-          search_query.test(resource.riskApproach) ||
-          search_query.test(resource.priorityLevelName) ||   
-          search_query.test(resource.userNames)
+          valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.riskApproach) ||
+          valid && search_query.test(resource.priorityLevelName) ||   
+          valid && search_query.test(resource.userNames)
 
 
           return valid;
