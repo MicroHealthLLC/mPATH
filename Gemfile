@@ -94,3 +94,5 @@ gem 'amoeba'
 gem 'ledermann-rails-settings'
 
 gem 'oj'
+
+gem 'will_paginate', '~> 3.1.0'
