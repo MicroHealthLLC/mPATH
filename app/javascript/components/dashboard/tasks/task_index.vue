@@ -11,7 +11,7 @@
             type="search"
             style="height:30px"
             class="form-control form-control-sm" 
-            placeholder="Search Tasks.." 
+            placeholder="Search by Task Name, Category or Assigned Users" 
             aria-label="Search" 
             aria-describedby="search-addon" 
             v-model="tasksQuery" 
@@ -252,7 +252,7 @@ computed: {
         valid = valid && (resource.progress >= min && resource.progress <= max)
       }
 
-      if (search_query) valid = valid && search_query.test(resource.text)
+      if (search_query) valid = valid && search_query.test(resource.text) || search_query.test(resource.taskType) || search_query.test(resource.userNames)
 
       return valid
     }), ['dueDate'])
