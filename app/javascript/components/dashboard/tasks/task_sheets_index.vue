@@ -53,7 +53,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
-       <div class="float-right">
+       <div class="float-right mb-2">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
