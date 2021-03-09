@@ -2235,7 +2235,6 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
@@ -2274,12 +2273,7 @@
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
   }
-  // /deep/.el-collapse-item__header {
-  //   background-color: #fafafa !important;
-  // }
- /deep/.mx-input-wrapper {
-    position: absolute;
+  /deep/.el-collapse-item__header {
+    background-color: #fafafa !important;
   }
-
-
 </style>

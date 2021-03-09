@@ -1371,9 +1371,6 @@
     border: solid #ededed 1px;
     border-radius: 4px;  
   }
-  /deep/.mx-input-wrapper {
-    position: absolute;
-  }
   .drag {
     cursor: all-scroll;
   }
@@ -1500,17 +1497,14 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
    position: absolute;
   }
-
   .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
   }
-
 </style>

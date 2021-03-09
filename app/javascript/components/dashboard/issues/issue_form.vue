@@ -1674,9 +1674,6 @@ ul {
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
   }
-  /deep/.mx-input-wrapper {
-    position: absolute;
-  }
 .paperLook {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); 
   position: relative;
@@ -1744,7 +1741,6 @@ ul {
   }
  .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
