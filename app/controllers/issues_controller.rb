@@ -1,6 +1,6 @@
 class IssuesController < AuthenticatedController
   before_action :set_resources
-  before_action :set_issue, only: [:show, :update, :destroy]
+  before_action :set_issue, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
 
@@ -48,6 +48,28 @@ class IssuesController < AuthenticatedController
     @issue.assign_users(params)
 
     render json: {issue: @issue.reload.to_json}
+  end
+
+  def create_duplicate
+    duplicate_issue = @issue.amoeba_dup
+    duplicate_issue.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {issue: duplicate_issue.reload.to_json}
+  end
+
+  def create_bulk_duplicate
+    all_objs = []
+    if params[:facility_project_ids].present?
+      params[:facility_project_ids].each do |fp_id|
+        duplicate_issue = @issue.amoeba_dup
+        duplicate_issue.facility_project_id = fp_id
+        duplicate_issue.save
+        all_objs << duplicate_issue
+      end
+    end
+    # duplicate_task.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {issues: all_objs.map(&:to_json)}
   end
 
   def show

@@ -1,6 +1,6 @@
 class RisksController < AuthenticatedController
   before_action :set_resources
-  before_action :set_risk, only: [:show, :update, :destroy]
+  before_action :set_risk, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
 
@@ -51,6 +51,28 @@ class RisksController < AuthenticatedController
     @risk.assign_users(params)
 
     render json: {risk: @risk.reload.to_json}
+  end
+
+  def create_duplicate
+    duplicate_risk = @risk.amoeba_dup
+    duplicate_risk.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {risk: duplicate_risk.reload.to_json}
+  end
+
+  def create_bulk_duplicate
+    all_objs = []
+    if params[:facility_project_ids].present?
+      params[:facility_project_ids].each do |fp_id|
+        duplicate_risk = @risk.amoeba_dup
+        duplicate_risk.facility_project_id = fp_id
+        duplicate_risk.save
+        all_objs << duplicate_risk
+      end
+    end
+    # duplicate_task.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {risks: all_objs.map(&:to_json)}
   end
 
   def show

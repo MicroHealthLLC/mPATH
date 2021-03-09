@@ -8,14 +8,14 @@
     @mouseleave="close"
   >
     <el-menu collapse>
-      <el-menu-item @click="openTask">Open</el-menu-item>
+      <el-menu-item @click="openIssue">Open</el-menu-item>
       <hr />
       <el-menu-item
         @click="createDuplicate"
-        :disabled="!$permissions.tasks.write"
+        :disabled="!$permissions.issues.write"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!$permissions.tasks.write">
+      <el-submenu index="1" :disabled="!$permissions.issues.write">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -39,7 +39,7 @@
           <div class="context-menu-btns">
             <button
               class="btn btn-sm btn-success ml-2"
-              @click="duplicateSelectedTasks"
+              @click="duplicateSelectedIssues"
               :disabled="submitDisabled"
             >
               Submit
@@ -57,7 +57,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!$permissions.tasks.write">
+      <el-submenu index="2" :disabled="!$permissions.issues.write">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -79,7 +79,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-menu-item @click="deleteTask" :disabled="!$permissions.tasks.delete"
+      <el-menu-item @click="deleteIssue" :disabled="!$permissions.issues.delete"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -98,7 +98,7 @@ export default {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
     facilityGroups: Array,
-    task: Object,
+    issue: Object,
   },
   data() {
     return {
@@ -133,7 +133,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
+                (facility) => facility.facility.id !== this.issue.facilityId
               )
               .map((facility) => {
                 return {
@@ -160,12 +160,12 @@ export default {
     isAllowed() {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
+        this.$permissions.issues[salut];
     },
   },
   methods: {
-    ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash"]),
+    ...mapActions(["issueDeleted"]),
+    ...mapMutations(["updateIssuesHash"]),
     // closes context menu
     close() {
       this.show = false;
@@ -189,11 +189,11 @@ export default {
       Vue.nextTick(() => this.$el.focus());
       this.show = true;
     },
-    openTask() {
-      this.$emit("open-task", this.task);
+    openIssue() {
+      this.$emit("open-issue", this.issue);
       this.close();
     },
-    moveTask(task, facilityProjectId) {
+    moveIssue(issue, facilityProjectId) {
       if (!this.isAllowed("write")) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
@@ -204,11 +204,11 @@ export default {
         this.loading = true;
         let formData = new FormData();
 
-        formData.append("task[facility_project_id]", facilityProjectId);
+        formData.append("issue[facility_project_id]", facilityProjectId);
 
-        let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+        let url = `/projects/${this.currentProject.id}/facilities/${issue.facilityId}/issues/${issue.id}.json`;
         let method = "PUT";
-        let callback = "task-updated";
+        let callback = "issue-updated";
 
         axios({
           method: method,
@@ -220,14 +220,14 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
+            this.$emit(callback, humps.camelizeKeys(response.data.issue));
             this.updateFacilities(
-              humps.camelizeKeys(response.data.task),
+              humps.camelizeKeys(response.data.issue),
               facilityProjectId
             );
             if (response.status === 200) {
               this.$message({
-                message: `${task.text} was moved successfully.`,
+                message: `${issue.title} was moved successfully.`,
                 type: "success",
                 showClose: true,
               });
@@ -235,7 +235,7 @@ export default {
           })
           .catch((err) => {
             this.$message({
-              message: `Unable to move ${task.text}. Please try again.`,
+              message: `Unable to move ${issue.title}. Please try again.`,
               type: "error",
               showClose: true,
             });
@@ -244,35 +244,35 @@ export default {
           })
           .finally(() => {
             this.loading = false;
-            this.updateTasksHash({ task: task, action: "delete" });
+            this.updateIssuesHash({ issue: issue, action: "delete" });
           });
       });
     },
-    updateFacilities(updatedTask, id) {
+    updateFacilities(updatedIssue, id) {
       var facilities = this.getUnfilteredFacilities;
 
       facilities.forEach((facility) => {
         if (facility.facilityProjectId === id) {
-          facility.tasks.push(updatedTask);
+          facility.issues.push(updatedIssue);
         }
       });
     },
-    updateFacilityTask(task) {
+    updateFacilityIssue(issue) {
       var facilities = this.getUnfilteredFacilities;
 
       var facilityIndex = facilities.findIndex(
-        (item) => item.facilityProjectId === task.facilityProjectId
+        (item) => item.facilityProjectId === issue.facilityProjectId
       );
 
-      facilities[facilityIndex].tasks.push(task);
+      facilities[facilityIndex].issues.push(issue);
     },
     createDuplicate() {
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      let url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}/create_duplicate.json`;
       let method = "POST";
-      let callback = "task-created";
+      let callback = "issue-created";
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
+      formData.append("id", this.issue.id);
 
       axios({
         method: method,
@@ -284,14 +284,14 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
-          this.updateFacilityTask(
-            humps.camelizeKeys(response.data.task),
-            this.task.facilityProjectId
+          this.$emit(callback, humps.camelizeKeys(response.data.issue));
+          this.updateFacilityIssue(
+            humps.camelizeKeys(response.data.issue),
+            this.issue.facilityProjectId
           );
           if (response.status === 200) {
             this.$message({
-              message: `${this.task.text} was duplicated successfully.`,
+              message: `${this.issue.title} was duplicated successfully.`,
               type: "success",
               showClose: true,
             });
@@ -299,7 +299,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.task.text}. Please try again.`,
+            message: `Unable to duplicate ${this.issue.title}. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -318,10 +318,10 @@ export default {
     },
     move(node) {
       if (!node.hasOwnProperty("children")) {
-        this.moveTask(this.task, node.id);
+        this.moveIssue(this.issue, node.id);
       }
     },
-    duplicateSelectedTasks() {
+    duplicateSelectedIssues() {
       this.submitted = true;
 
       var facilityNodes = this.$refs.duplicatetree
@@ -330,9 +330,9 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      let url = `/projects/${this.currentProject.id}/facilities/${this.issue.facilityId}/issues/${this.issue.id}/create_bulk_duplicate?`;
       let method = "POST";
-      let callback = "task-created";
+      let callback = "issue-created";
 
       ids.forEach((id, index) => {
         if (index === 0) {
@@ -343,7 +343,7 @@ export default {
       });
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
+      formData.append("id", this.issue.id);
       formData.append("facility_project_ids", ids);
 
       axios({
@@ -356,17 +356,17 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
+          this.$emit(callback, humps.camelizeKeys(response.data.issue));
 
-          response.data.tasks.forEach((task) => {
-            this.updateFacilityTask(
-              humps.camelizeKeys(task),
-              task.facilityProjectId
+          response.data.issues.forEach((issue) => {
+            this.updateFacilityIssue(
+              humps.camelizeKeys(issue),
+              issue.facilityProjectId
             );
           });
           if (response.status === 200) {
             this.$message({
-              message: `${this.task.text} was duplicated successfully to selected projects.`,
+              message: `${this.issue.title} was duplicated successfully to selected projects.`,
               type: "success",
               showClose: true,
             });
@@ -374,7 +374,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.task.text} to selected projects. Please try again.`,
+            message: `Unable to duplicate ${this.issue.title} to selected projects. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -389,14 +389,14 @@ export default {
       if (!value) return true;
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
-    deleteTask() {
+    deleteIssue() {
       let confirm = window.confirm(
-        `Are you sure you want to delete "${this.task.text}"?`
+        `Are you sure you want to delete "${this.issue.title}"?`
       );
       if (!confirm) {
         return;
       }
-      this.taskDeleted(this.task);
+      this.issueDeleted(this.issue);
     },
     toggleSubmitBtn() {
       this.submitted = false;
