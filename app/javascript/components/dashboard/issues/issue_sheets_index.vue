@@ -1,18 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-         <div v-if="_isallowed('read')">
-    <!-- <div v-if="newIssue && from != 'manager_view'">
-      <issue-form
-        :facility="facility"
-        :issue="currentIssue"
-        @on-close-form="newIssue=false"
-        @issue-created="issueCreated"
-        @issue-updated="issueUpdated"
-        class="issue-form-modal"
-      />
-    </div> -->
-
-         
+    <div v-if="_isallowed('read')">         
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
@@ -97,15 +85,14 @@
           </multiselect>
         </div>  
     </div>  
-     <div class="wrapper mt-2 p-3">
-      <div class="mt-2">
+     <div class="wrapper p-3">    
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-      <div class="float-right">
+      <div class="float-right mb-2">
           <button
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
@@ -198,9 +185,7 @@
             
           </div>
            <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
-         
-        </div>
-        
+                         
      </div>
      
       </div>
