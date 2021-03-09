@@ -8,7 +8,7 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Risks"
+            placeholder="Search by Risk Name, Risk Approach, Priority Level or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="risksQuery"
@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -297,7 +297,7 @@
         'setRiskForManager',
       ]),
       log(t){
-        // console.log(t)
+        console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -411,7 +411,11 @@
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          search_query.test(resource.text) ||
+          search_query.test(resource.riskApproach) ||
+          search_query.test(resource.priorityLevelName) ||   
+          search_query.test(resource.userNames)
 
 
           return valid;

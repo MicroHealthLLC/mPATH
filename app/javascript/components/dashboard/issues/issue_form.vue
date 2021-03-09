@@ -140,7 +140,7 @@
             :options="taskTypes"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
             :class="{ error: errors.has('Task Category') }"
             data-cy="task_type"
@@ -171,7 +171,7 @@
             :options="issueTypes"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
             :class="{ error: errors.has('Issue Type') }"
             data-cy="issue_type"
@@ -205,7 +205,7 @@
             :options="issueSeverities"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
             :class="{ error: errors.has('Issue Severity') }"
             data-cy="issue_severity"
@@ -234,7 +234,7 @@
             :options="issueStages"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write') || !!fixedStage"
             data-cy="issue_stage"
           >
@@ -346,7 +346,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="true"
             :disabled="!_isallowed('write')"
             data-cy="issue_user"
@@ -369,7 +369,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="true"
               
             >
@@ -393,7 +393,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
     
             data-cy="risk_owner"
@@ -416,7 +416,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false" 
             data-cy="risk_owner"
             >
@@ -517,7 +517,7 @@ Tab 1 Row Begins here -->
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
-                  deselect-label="Enter to remove"
+                  deselect-label="Remove"
                   >
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -694,7 +694,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
           >
@@ -717,7 +717,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
           >
@@ -740,7 +740,7 @@ Tab 1 Row Begins here -->
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
           >
@@ -1032,15 +1032,15 @@ export default {
       this.selectedIssueStage = this.issueStages.find(
         (t) => t.id === this.DV_issue.issueStageId
       );
-      if (issue.attachFiles) this.addFile(issue.attachFiles);
+      if (issue.attachFiles) this.addFile(issue.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
         this.loading = false;
       });
     },
-    addFile(files = []) {
-      let _files = [...this.DV_issue.issueFiles];
+    addFile(files = [], append = true) {
+      let _files = append ?  [...this.DV_issue.issueFiles] : [];
       for (let file of files) {
         file.guid = this.guid();
         _files.push(file);
@@ -1512,13 +1512,21 @@ export default {
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
-        if (value) this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        if (value) {
+          this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+        }else{
+          this.DV_issue.responsibleUserIds = []
+        }
       },
       deep: true,
     },
   accountableIssueUsers: {
      handler: function(value) {
-      if (value) this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      if (value) {
+        this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+      }else{
+        this.DV_issue.accountableUserIds = []
+      }
           }, deep: true
         },
   consultedIssueUsers: {
@@ -1666,9 +1674,6 @@ ul {
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
   }
-  /deep/.mx-input-wrapper {
-    position: absolute;
-  }
 .paperLook {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); 
   position: relative;
@@ -1736,7 +1741,6 @@ ul {
   }
  .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {

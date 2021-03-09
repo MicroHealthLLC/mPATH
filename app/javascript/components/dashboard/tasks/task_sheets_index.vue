@@ -8,7 +8,7 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Tasks"
+            placeholder="Search by Task Name, Category, or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="tasksQuery"
@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -53,7 +53,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
-       <div class="float-right">
+       <div class="float-right mb-2">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -318,6 +318,7 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         
@@ -372,7 +373,10 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (search_query) valid = valid && search_query.test(resource.text) || 
+            search_query.test(resource.taskType) || 
+            search_query.test(resource.userNames)
+          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
 
           return valid
         }), ['dueDate'])

@@ -130,11 +130,10 @@ input[type=button]:focus {
   }
 }
 
-// This (el-collapse....) is the collapse/accordion component in the Risk Form
 .el-collapse-item__header {color:#0275d8 !important}
 .el-collapse {
   border-top: none !important;
-  border-bottom: 1px solid #EBEEF5 !important;
+  border-bottom: 1px solid #EBEEF5;
 }
 .brand-sidebar {
   background-image: url('map-image.png');

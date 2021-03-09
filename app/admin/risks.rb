@@ -85,14 +85,14 @@ ActiveAdmin.register Risk do
         end
       end
     end
-    column :project, nil, sortable: 'projects.name' do |risk|
+    column "Program", :project, nil, sortable: 'projects.name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.project.name}", "#{edit_admin_project_path(risk.project)}" if risk.project.present?
       else
         "<span>#{risk.project&.name}</span>".html_safe
       end
     end
-    column :facility, nil, sortable: 'facilities.facility_name' do |risk|
+    column "Project", :facility, nil, sortable: 'facilities.facility_name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.facility.facility_name}", "#{edit_admin_facility_path(risk.facility)}" if risk.facility.present?
       else
@@ -123,8 +123,8 @@ ActiveAdmin.register Risk do
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
@@ -209,8 +209,8 @@ ActiveAdmin.register Risk do
   filter :task_type
   filter :start_date
   filter :due_date
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
+  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :user, label: "Owned by"
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false

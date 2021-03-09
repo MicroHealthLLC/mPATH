@@ -74,6 +74,7 @@ class Issue < ApplicationRecord
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
       responsible_user_names: users.map(&:full_name).compact.join(", "),
+      user_names: users.map(&:full_name).compact.join(", "),
       user_ids: users.map(&:id).compact.uniq,
       users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       

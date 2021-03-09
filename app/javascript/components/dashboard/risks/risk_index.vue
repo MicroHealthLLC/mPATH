@@ -22,7 +22,7 @@
             type="search"
             style="height:30px"
             class="form-control form-control-sm"
-            placeholder="Search Risks"
+            placeholder="Search by Risk Name, Risk Approach, Priority Level or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="risksQuery"
@@ -319,7 +319,12 @@
 
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+        
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          search_query.test(resource.text) ||
+          search_query.test(resource.riskApproach) ||
+          search_query.test(resource.priorityLevelName) ||   
+          search_query.test(resource.userNames)
 
 
           return valid;
