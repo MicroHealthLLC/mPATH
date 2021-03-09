@@ -15,7 +15,6 @@ class TasksController < AuthenticatedController
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
     tasks = all_tasks.compact.uniq
-    tids = tasks.map(&:id)
 
     h = []
     tasks.each do |t| 
