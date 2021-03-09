@@ -9,8 +9,7 @@
       >
       <div class="form-group mb-1">
         <div v-if="_isallowed('read')"
-          class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"
-          :class="{'sticky-kanban':isKanbanView}"
+          class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"          
         >
          <button
           v-if="_isallowed('write')"
@@ -127,7 +126,7 @@
                 :options="taskTypes"
                 :searchable="false"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write')"
                 :class="{'error': errors.has('Task Category')}"
                 data-cy="risk_milestone"
@@ -153,7 +152,7 @@
                 :options="riskStages"
                 :searchable="false"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write') || !!fixedStage"
                 data-cy="risk_stage"
                 >
@@ -176,7 +175,7 @@
                 :options="getFacilityProjectOptions"
                 :searchable="true"
                 select-label="Select"
-                deselect-label="Enter to remove"
+                deselect-label="Remove"
                 :disabled="!_isallowed('write')"
                 data-cy="facility_project_id"
                 >
@@ -317,7 +316,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -460,7 +459,7 @@
     </div>
 
     <div class="container mx-2 my-0 justify-content-center text-center">
-      <el-collapse accordion>
+      <el-collapse accordion class="risk_matrix">
         <el-collapse-item title="Click to see Priority Level Risk Matrix" name="1">
           <div>
             <!-- Risk Matrix begins here -->
@@ -802,7 +801,7 @@
           ></vue-slide-bar>
         </div>
 
-    <div class="form-group mx-4">
+    <div class="form-group mt-2 mx-4">
           <label class="font-sm">Checklists:</label>
           <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
             <i class="fas fa-plus-circle"></i>
@@ -867,7 +866,7 @@
             </div>
             <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
-               <div class="d-flex w-100" style="padding-left:4.5rem">
+               <div class="d-flex w-100" style="padding-left:6.1rem">
                 <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
@@ -879,7 +878,7 @@
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
-                  deselect-label="Enter to remove"
+                  deselect-label="Remove"
                   >
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -1039,7 +1038,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >
@@ -1062,7 +1061,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >
@@ -1085,7 +1084,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
             >
@@ -1322,15 +1321,15 @@
         this.selectedRiskStage = this.riskStages.find(t => t.id === this.DV_risk.riskStageId)
         this.selectedRiskPossibility = this.getRiskProbabilityNames.find(t => t.id === this.DV_risk.probability)
         this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(t => t.id === this.DV_risk.impactLevel)
-        if (risk.attachFiles) this.addFile(risk.attachFiles)
+        if (risk.attachFiles) this.addFile(risk.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
           this.loading = false
         })
       },
-      addFile(files=[]) {
-        let _files = [...this.DV_risk.riskFiles]
+      addFile(files=[], append = true) {
+        let _files = append ? [...this.DV_risk.riskFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
@@ -1571,10 +1570,7 @@
               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
             }
           })
-          .then((response) => {
-            // if(beforeRisk.facilityId && beforeRisk.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeRisk));
-            // this.$emit(callback, humps.camelizeKeys(response.data.risk))
+          .then((response) => {       
             var responseRisk = humps.camelizeKeys(response.data.risk)
             this.loadRisk(responseRisk)
             this.$emit(callback, responseRisk)
@@ -1893,22 +1889,38 @@
       },
    responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value) {
+            this.DV_risk.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_risk.responsibleUserIds = []
+          }
         }, deep: true
       },
     accountableRiskUsers: {
           handler: function(value) {
-            if (value) this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+            if (value) {
+              this.DV_risk.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+            }else{
+              this.DV_risk.accountableUserIds = []
+            }
           }, deep: true
         },
     consultedRiskUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_risk.consultedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_risk.consultedUserIds = []
+          }
         }, deep: true
       },
     informedRiskUsers: {
         handler: function(value) {
-          if (value) this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_risk.informedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_risk.informedUserIds = []
+          }
         }, deep: true
       },
      relatedIssues: {
@@ -1970,8 +1982,10 @@
     z-index: 10;
     width: 83.1%;
   }
-  .kanban-form {
-    width: 100%;
+   .kanban-form {   
+    left: 16.4%;
+    width: 83.33%;  
+    z-index: 100;   
   }
   .form-control.error {
     border-color: #E84444;
@@ -2041,11 +2055,6 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
-   .sticky-kanban {
-    position: sticky;
-    position: -webkit-sticky;
-    margin-bottom: -2.5rem;
   }
   .check-due-date {
     text-align: end;
@@ -2226,7 +2235,6 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
@@ -2241,13 +2249,22 @@
   .red-border {
     border: solid .5px red;
   }
-  /deep/.el-collapse-item__header {
-    width: max-content;
-    margin-left: auto;
+
+  #roll_up {
+  /deep/.el-collapse-item__header {   
+   float:right;
     padding: 1em;
-    font-size: small;
+    margin-top: -32px;
     color: #d9534f !important;
     border-bottom: none !important;
+    background-color: #fafafa !important;
+      }
+  }
+
+  .risk_matrix {
+  /deep/.el-collapse-item__header {  
+    border-bottom: none !important; 
+    }
   }
    /deep/ .el-collapse {
     border-top: none !important;
@@ -2259,9 +2276,4 @@
   /deep/.el-collapse-item__header {
     background-color: #fafafa !important;
   }
- /deep/.mx-input-wrapper {
-    position: absolute;
-  }
-
-
 </style>

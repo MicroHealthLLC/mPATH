@@ -84,10 +84,7 @@
             <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">
 
               <div class="row">
-                <div class="col-7 mb-2 pl-2 pr-0">
-                    <span class="badge badge-pill font-sm" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-                    {{facilityGroup.status}}
-                    </span>
+                <div class="col-7 mb-2 pl-2 pr-0">                   
                     <span v-if="isMapView" class="font-sm">{{facilityGroup.name}}</span>
                     <span v-else>{{facilityGroup.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>

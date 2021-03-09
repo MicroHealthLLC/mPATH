@@ -7,10 +7,7 @@
       accept-charset="UTF-8"
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       >
-       <div v-if="_isallowed('read')" 
-            class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar"
-            :class="{'sticky-kanban':isKanbanView}"
-            >
+       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
           :disabled="!readyToSave"
@@ -131,7 +128,7 @@
           :options="taskTypes"
           :searchable="false"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :disabled="!_isallowed('write')"
           data-cy="task_type"
           >
@@ -152,7 +149,7 @@
           :options="taskStages"
           :searchable="false"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :disabled="!_isallowed('write') || !!fixedStage"
           data-cy="task_stage"
           >
@@ -244,7 +241,7 @@
             :searchable="true"
             :multiple="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="true"              
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -267,7 +264,7 @@
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             data-cy="risk_owner"
             >
@@ -383,7 +380,7 @@
                   :searchable="true"
                   :disabled="!_isallowed('write') || !check.text"
                   select-label="Select"
-                  deselect-label="Enter to remove"
+                  deselect-label="Remove"
                   >
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
@@ -550,7 +547,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
           >
@@ -573,7 +570,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
           >
@@ -595,7 +592,7 @@
           :searchable="true"
           :multiple="true"
           select-label="Select"
-          deselect-label="Enter to remove"
+          deselect-label="Remove"
           :close-on-select="false"
           :disabled="!_isallowed('write')"
           >
@@ -848,14 +845,14 @@
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
-        if (task.attachFiles) this.addFile(task.attachFiles)
+        if (task.attachFiles) this.addFile(task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
         })
       },
-      addFile(files) {
-        let _files = [...this.DV_task.taskFiles]
+      addFile(files, append = true) {
+        let _files = append ? [...this.DV_task.taskFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
@@ -1251,22 +1248,38 @@
   // RACI USERS HERE awaiting backend work
     responsibleUsers: {
         handler: function(value) {
-          if (value) this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value) {
+            this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.responsibleUserIds = []
+          }
         }, deep: true
       },
     accountableTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          if (value){
+            this.DV_task.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_task.accountableUserIds = []
+          }
         }, deep: true
       },
         consultedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          if (value) {
+            this.DV_task.consultedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.consultedUserIds = []
+          }
         }, deep: true
       },
       informedTaskUsers: {
         handler: function(value) {
-          if (value) this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          if (value){
+            this.DV_task.informedUserIds = _.uniq(_.map(value, 'id'))
+          }else{
+            this.DV_task.informedUserIds = []
+          }
         }, deep: true
       },
       relatedIssues: {
@@ -1329,7 +1342,9 @@
     width: 83.1%;   
   } 
   .kanban-form {   
-    width: 100%;   
+    left: 16.4%;
+    width: 83.33%;  
+    z-index: 100;   
   }
   td, th {
     border: solid 1px #ededed;
@@ -1355,9 +1370,6 @@
     outline: none;
     border: solid #ededed 1px;
     border-radius: 4px;  
-  }
-  /deep/.mx-input-wrapper {
-    position: absolute;
   }
   .drag {
     cursor: all-scroll;
@@ -1461,12 +1473,6 @@
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .sticky-kanban {
-    position: sticky;
-    position: -webkit-sticky;
-    margin-bottom: -2.5rem;    
-  }
-
   .scrollToChecklist, .addCheckProgBtn, .check-items {    
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
@@ -1491,17 +1497,14 @@
   }
   .fixed-form {
    overflow-y: auto;
-   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
    position: absolute;
   }
-
   .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
   }
-
 </style>

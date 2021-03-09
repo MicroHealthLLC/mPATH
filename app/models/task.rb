@@ -33,7 +33,7 @@ class Task < ApplicationRecord
     append :text => " - Copy"
   end
 
-  def to_json(t_users = [], all_users = [])
+  def to_json(options = {})
     attach_files = []
     tf = self.task_files
     if tf.attached?
@@ -47,18 +47,25 @@ class Task < ApplicationRecord
     end
     fp = self.facility_project
 
-    resource_users = t_users && t_users.any? ? t_users : self.task_users.where(user_id: users.map(&:id) )
-    resource_user_ids = resource_users.map(&:user_id).compact.uniq
+    t_users = options[:all_task_users]
+    all_users = options[:all_users]
+    if options[:for].present? && options[:for] == :project_build_response
+      resource_users = t_users && t_users.any? ? t_users : []
+    else
+      resource_users = self.task_users #.where(user_id: self.users.active.uniq.map(&:id) )
+    end
+    
+    resource_user_ids = resource_users.to_a.map(&:user_id).compact.uniq
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
  
-    users = [] 
+    users = []
     if all_users && all_users.any?
       users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = self.users.active.uniq
+      users = User.where(id: resource_user_ids).active
     end
 
     users_hash = {} 

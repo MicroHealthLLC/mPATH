@@ -1,18 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-         <div v-if="_isallowed('read')">
-    <!-- <div v-if="newIssue && from != 'manager_view'">
-      <issue-form
-        :facility="facility"
-        :issue="currentIssue"
-        @on-close-form="newIssue=false"
-        @issue-created="issueCreated"
-        @issue-updated="issueUpdated"
-        class="issue-form-modal"
-      />
-    </div> -->
-
-         
+    <div v-if="_isallowed('read')">         
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
@@ -20,7 +8,7 @@
           </div>
           <input type="search" 
             class="form-control form-control-sm" 
-            placeholder="Search Issues" 
+            placeholder="Search by Issue Name, Type, Severity or Assigned User" 
             aria-label="Search" 
             aria-describedby="search-addon" 
             v-model="issuesQuery"
@@ -32,7 +20,7 @@
               v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
-              placeholder="Filter by Task Category"
+              placeholder="Filter by Category"
               :options="taskTypes"
               :searchable="false"
               :multiple="true"
@@ -97,15 +85,14 @@
           </multiselect>
         </div>  
     </div>  
-     <div class="wrapper mt-2 p-3">
-      <div class="mt-2">
+     <div class="wrapper p-3">    
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-      <div class="float-right">
+      <div class="float-right mb-2">
           <button
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
@@ -164,7 +151,7 @@
               </table>            
                 <issue-sheets
                   v-for="issue in sortedIssues"      
-                  id="issueHover"               
+                  id="issueHover"                     
                   :key="issue.id"
                   :issue="issue"
                   :from-view="from"                
@@ -198,9 +185,7 @@
             
           </div>
            <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
-         
-        </div>
-        
+                         
      </div>
      
       </div>
@@ -235,8 +220,15 @@
             <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
-            <td v-if="(issue.responsibleUserNames.length) > 0">{{ issue.responsibleUserNames }}</td>
-            <td v-else></td>
+            <td >    
+             <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> (R) {{issue.responsibleUsers[0].name}} <br></span> 
+              <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> (A) {{issue.accountableUsers[0].name}}<br></span>   
+          <!-- Consulted Users and Informed Users are toggle values         -->
+              <span :class="{'show-all': getToggleRACI }" >             
+             <span v-if="(issue.consultedUsers.length > 0) &&  (issue.consultedUsers[0] !== null)"> (C) {{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> (I) {{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
+         </span>        
+            </td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
             <td v-else></td>
@@ -309,7 +301,7 @@
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
-      ]),
+      ]), 
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -465,7 +457,9 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.title)
+          
+          if (search_query) valid = valid && search_query.test(resource.title) || search_query.test(resource.issueType)
+          || search_query.test(resource.issueSeverity)  || search_query.test(resource.userNames)
 
           return valid;
         })), ['dueDate'])

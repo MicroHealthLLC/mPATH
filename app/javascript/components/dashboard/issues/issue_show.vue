@@ -44,7 +44,7 @@
             <div class="row mb-0">
                 <div class="font-sm col-md-12" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
-                   <span v-tooltip="`Category`">{{issue.issueType}}</span>
+                   <span v-tooltip="`Issue Type`">{{issue.issueType}}</span>
                 </div>
                
             </div>
@@ -95,24 +95,9 @@
       </div>
   
       </div>
-    <sweet-modal
-      class="issue_form_modal"
-      ref="issueFormModal"
-      :hide-close-button="true"
-      :blocking="true"
-      >
-      <div v-if="has_issue" class="w-100">
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></task-form>
 
-        <issue-form
+      <div v-if="has_issue" class="w-100 action-form-overlay">
+          <issue-form
           v-if="Object.entries(DV_edit_issue).length"
           :facility="facility"
           :issue="DV_edit_issue"
@@ -121,7 +106,7 @@
           class="form-inside-modal"
         ></issue-form>
       </div>
-    </sweet-modal>
+
     <!-- The context-menu appears only if table row is right-clicked -->
       <IssueContextMenu
         :facilities="facilities"
@@ -131,6 +116,7 @@
         ref="menu"
         @open-issue="editIssue">  
       </IssueContextMenu>
+
   </div>
 </template>
 
@@ -314,6 +300,12 @@
       font-size: 20px;
       cursor: pointer;
     }
+
+    .action-form-overlay {
+      position: absolute;
+      top:0; 
+    }  
+
     .form-inside-modal {
       form {
         position: inherit !important;

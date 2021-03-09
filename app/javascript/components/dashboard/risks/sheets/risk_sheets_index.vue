@@ -8,7 +8,7 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Risks"
+            placeholder="Search by Risk Name, Risk Approach, Priority Level or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="risksQuery"
@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Category"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -221,8 +221,15 @@
           <td>{{risk.priorityLevel}}</td>         
           <td>{{formatDate(risk.startDate)}}</td>
           <td>{{formatDate(risk.dueDate)}}</td>
-          <td v-if="(risk.userNames.length) > 0">{{ risk.userNames }}</td>
-          <td v-else></td>
+          <td>
+           <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)">(R) {{risk.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)">(A) {{risk.accountableUsers[0].name}}<br></span>   
+           <!-- Consulted Users and Informed Users are toggle values         -->
+          <span :class="{'show-all': getToggleRACI }" >             
+             <span v-if="(risk.consultedUsers.length > 0) && (risk.consultedUsers[0] !== null)">(C) {{JSON.stringify(risk.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(risk.informedUsers.length > 0) && (risk.informedUsers[0] !== null)">(I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
+         </span>     
+          </td>
           <td>{{risk.progress + "%"}}</td>
           <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
           <td v-else></td>
@@ -290,7 +297,7 @@
         'setRiskForManager',
       ]),
       log(t){
-        // console.log(t)
+        console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -404,7 +411,11 @@
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          search_query.test(resource.text) ||
+          search_query.test(resource.riskApproach) ||
+          search_query.test(resource.priorityLevelName) ||   
+          search_query.test(resource.userNames)
 
 
           return valid;

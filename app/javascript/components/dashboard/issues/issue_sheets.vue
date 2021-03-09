@@ -7,14 +7,13 @@
         <td class="nine">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
         <td class="eight">{{formatDate(issue.dueDate)}}</td>       
-         <td class="elev" >
-  
-          <span v-if="(issue.responsibleUsers.length) > 0"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
-          <span v-if="(issue.accountableUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
+         <td class="elev" >  
+          <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
       <!-- Consulted Users and Informed Users are toggle values         -->
           <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(issue.consultedUsers.length) > 0"> <span class="badge mr-1 font-sm badge-secondary badge-pill">C</span>{{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, '')}}<br></span> 
-             <span v-if="(issue.informedUsers.length) > 0"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, '')}}</span>      
+             <span v-if="(issue.consultedUsers.length > 0) &&  (issue.consultedUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">C</span>{{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
          </span>        
         </td>
         <td class="eight">{{issue.progress + "%"}}</td>

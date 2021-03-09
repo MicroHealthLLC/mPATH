@@ -71,14 +71,14 @@ ActiveAdmin.register Task do
         end
       end
     end
-    column :project, nil, sortable: 'projects.name' do |task|
+    column "Program", :project, nil, sortable: 'projects.name' do |task|
       if current_user.admin_write?
         link_to "#{task.project.name}", "#{edit_admin_project_path(task.project)}" if task.project.present?
       else
         "<span>#{task.project&.name}</span>".html_safe
       end
     end
-    column :facility, nil, sortable: 'facilities.facility_name' do |task|
+    column "Project", :facility, nil, sortable: 'facilities.facility_name' do |task|
       if current_user.admin_write?
         link_to "#{task.facility.facility_name}", "#{edit_admin_facility_path(task.facility)}" if task.facility.present?
       else
@@ -107,8 +107,8 @@ ActiveAdmin.register Task do
       f.input :description
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
       f.input :task_type, label: 'Task Category', include_blank: false
@@ -156,8 +156,8 @@ ActiveAdmin.register Task do
   filter :task_stage, label: 'Stage'
   filter :start_date
   filter :due_date
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
+  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
