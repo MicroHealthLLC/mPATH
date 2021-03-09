@@ -97,7 +97,7 @@
                 </template>
               </multiselect>
             </div>
-            <div v-if="viewPermit('kanban_view', 'read')">
+            <div>
               <label class="font-sm mb-0">Task Stages</label>
               <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
@@ -108,7 +108,7 @@
               </multiselect>
             </div>
              <h5 class="mb-0 pt-1">Risks</h5>
-            <div v-if="viewPermit('kanban_view', 'read')">
+            <div>
               <label class="font-sm mb-0">Risk Stages</label>
               <multiselect v-model="C_riskStageFilter" track-by="name" label="name" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
                 <template slot="singleLabel" slot-scope="{option}">
