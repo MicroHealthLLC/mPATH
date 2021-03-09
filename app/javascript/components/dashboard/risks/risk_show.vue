@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="risks">
+  <div data-cy="risks" @mouseup.right="openContextMenu" @contextmenu.prevent="">
     <div v-if="C_editForManager" class="float-right blur_show">
       <div class="text-primary align-items-center mb-3">
         <i class="fas fa-long-arrow-alt-right"></i>
@@ -92,7 +92,18 @@
           class="form-inside-modal"
         ></risk-form>
       </div>
+
+    <!-- The context-menu appears only if table row is right-clicked -->
+    <RiskContextMenu
+      :facilities="facilities"
+      :facilityGroups="facilityGroups"
+      :risk="risk"
+      :display="showContextMenu"
+      ref="menu"
+      @open-risk="editRisk">  
+    </RiskContextMenu>
  
+
   </div>
 </template>
 
@@ -102,6 +113,7 @@
   import IssueForm from "./../issues/issue_form"
   import TaskForm from "./../tasks/task_form"
   import RiskForm from "./risk_form"
+  import RiskContextMenu from "../../shared/RiskContextMenu"
 
 
   export default {
@@ -110,7 +122,8 @@
       IssueForm,
       TaskForm,
       RiskForm,
-      SweetModal       
+      SweetModal,
+      RiskContextMenu
     },
     props: {
       fromView: {
@@ -127,7 +140,8 @@
         DV_edit_task: {},
         DV_edit_issue: {},
         DV_edit_risk: {},
-        has_risk: false
+        has_risk: false,
+        showContextMenu: false
       }
     },
     mounted() {
@@ -196,7 +210,11 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
-      }
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
     },
     computed: {
       ...mapGetters([

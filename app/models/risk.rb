@@ -22,6 +22,26 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  amoeba do
+    include_association :risk_stage
+    include_association :user
+
+    include_association :task_type
+    include_association :risk_users
+    include_association :users
+
+    include_association :facility_project
+    include_association :checklists
+    include_association :related_tasks
+    include_association :related_issues
+    include_association :related_risks
+    include_association :sub_tasks
+    include_association :sub_issues
+    include_association :sub_risks
+
+    append :text => " - Copy"
+  end
+
   def files_as_json
     risk_files.map do |file|
       {

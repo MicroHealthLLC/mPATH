@@ -8,14 +8,14 @@
     @mouseleave="close"
   >
     <el-menu collapse>
-      <el-menu-item @click="openTask">Open</el-menu-item>
+      <el-menu-item @click="openRisk">Open</el-menu-item>
       <hr />
       <el-menu-item
         @click="createDuplicate"
-        :disabled="!$permissions.tasks.write"
+        :disabled="!$permissions.risks.write"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!$permissions.tasks.write">
+      <el-submenu index="1" :disabled="!$permissions.risks.write">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -39,7 +39,7 @@
           <div class="context-menu-btns">
             <button
               class="btn btn-sm btn-success ml-2"
-              @click="duplicateSelectedTasks"
+              @click="duplicateSelectedRisks"
               :disabled="submitDisabled"
             >
               Submit
@@ -57,7 +57,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!$permissions.tasks.write">
+      <el-submenu index="2" :disabled="!$permissions.risks.write">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -79,7 +79,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-menu-item @click="deleteTask" :disabled="!$permissions.tasks.delete"
+      <el-menu-item @click="deleteRisk" :disabled="!$permissions.risks.delete"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -98,7 +98,7 @@ export default {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
     facilityGroups: Array,
-    task: Object,
+    risk: Object,
   },
   data() {
     return {
@@ -133,7 +133,7 @@ export default {
           children: [
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
+                (facility) => facility.facility.id !== this.risk.facilityId
               )
               .map((facility) => {
                 return {
@@ -160,12 +160,12 @@ export default {
     isAllowed() {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
+        this.$permissions.risks[salut];
     },
   },
   methods: {
-    ...mapActions(["taskDeleted"]),
-    ...mapMutations(["updateTasksHash"]),
+    ...mapActions(["riskDeleted"]),
+    ...mapMutations(["updateRisksHash"]),
     // closes context menu
     close() {
       this.show = false;
@@ -189,11 +189,11 @@ export default {
       Vue.nextTick(() => this.$el.focus());
       this.show = true;
     },
-    openTask() {
-      this.$emit("open-task", this.task);
+    openRisk() {
+      this.$emit("open-risk", this.risk);
       this.close();
     },
-    moveTask(task, facilityProjectId) {
+    moveRisk(risk, facilityProjectId) {
       if (!this.isAllowed("write")) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
@@ -204,11 +204,11 @@ export default {
         this.loading = true;
         let formData = new FormData();
 
-        formData.append("task[facility_project_id]", facilityProjectId);
+        formData.append("risk[facility_project_id]", facilityProjectId);
 
-        let url = `/projects/${this.currentProject.id}/facilities/${task.facilityId}/tasks/${task.id}.json`;
+        let url = `/projects/${this.currentProject.id}/facilities/${risk.facilityId}/risks/${risk.id}.json`;
         let method = "PUT";
-        let callback = "task-updated";
+        let callback = "risk-updated";
 
         axios({
           method: method,
@@ -220,14 +220,14 @@ export default {
           },
         })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data.task));
+            this.$emit(callback, humps.camelizeKeys(response.data.risk));
             this.updateFacilities(
-              humps.camelizeKeys(response.data.task),
+              humps.camelizeKeys(response.data.risk),
               facilityProjectId
             );
             if (response.status === 200) {
               this.$message({
-                message: `${task.text} was moved successfully.`,
+                message: `${risk.title} was moved successfully.`,
                 type: "success",
                 showClose: true,
               });
@@ -235,7 +235,7 @@ export default {
           })
           .catch((err) => {
             this.$message({
-              message: `Unable to move ${task.text}. Please try again.`,
+              message: `Unable to move ${risk.title}. Please try again.`,
               type: "error",
               showClose: true,
             });
@@ -244,35 +244,35 @@ export default {
           })
           .finally(() => {
             this.loading = false;
-            this.updateTasksHash({ task: task, action: "delete" });
+            this.updateRisksHash({ risk: risk, action: "delete" });
           });
       });
     },
-    updateFacilities(updatedTask, id) {
+    updateFacilities(updatedRisk, id) {
       var facilities = this.getUnfilteredFacilities;
 
       facilities.forEach((facility) => {
         if (facility.facilityProjectId === id) {
-          facility.tasks.push(updatedTask);
+          facility.risks.push(updatedRisk);
         }
       });
     },
-    updateFacilityTask(task) {
+    updateFacilityRisk(risk) {
       var facilities = this.getUnfilteredFacilities;
 
       var facilityIndex = facilities.findIndex(
-        (item) => item.facilityProjectId === task.facilityProjectId
+        (item) => item.facilityProjectId === risk.facilityProjectId
       );
 
-      facilities[facilityIndex].tasks.push(task);
+      facilities[facilityIndex].risks.push(risk);
     },
     createDuplicate() {
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_duplicate.json`;
+      let url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}/create_duplicate.json`;
       let method = "POST";
-      let callback = "task-created";
+      let callback = "risk-created";
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
+      formData.append("id", this.risk.id);
 
       axios({
         method: method,
@@ -284,14 +284,14 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
-          this.updateFacilityTask(
-            humps.camelizeKeys(response.data.task),
-            this.task.facilityProjectId
+          this.$emit(callback, humps.camelizeKeys(response.data.risk));
+          this.updateFacilityRisk(
+            humps.camelizeKeys(response.data.risk),
+            this.risk.facilityProjectId
           );
           if (response.status === 200) {
             this.$message({
-              message: `${this.task.text} was duplicated successfully.`,
+              message: `${this.risk.text} was duplicated successfully.`,
               type: "success",
               showClose: true,
             });
@@ -299,7 +299,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.task.text}. Please try again.`,
+            message: `Unable to duplicate ${this.risk.text}. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -318,10 +318,10 @@ export default {
     },
     move(node) {
       if (!node.hasOwnProperty("children")) {
-        this.moveTask(this.task, node.id);
+        this.moveRisk(this.risk, node.id);
       }
     },
-    duplicateSelectedTasks() {
+    duplicateSelectedRisks() {
       this.submitted = true;
 
       var facilityNodes = this.$refs.duplicatetree
@@ -330,9 +330,9 @@ export default {
 
       var ids = facilityNodes.map((facility) => facility.id);
 
-      let url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}/create_bulk_duplicate?`;
+      let url = `/projects/${this.currentProject.id}/facilities/${this.risk.facilityId}/risks/${this.risk.id}/create_bulk_duplicate?`;
       let method = "POST";
-      let callback = "task-created";
+      let callback = "risk-created";
 
       ids.forEach((id, index) => {
         if (index === 0) {
@@ -343,7 +343,7 @@ export default {
       });
 
       let formData = new FormData();
-      formData.append("id", this.task.id);
+      formData.append("id", this.risk.id);
       formData.append("facility_project_ids", ids);
 
       axios({
@@ -356,17 +356,17 @@ export default {
         },
       })
         .then((response) => {
-          this.$emit(callback, humps.camelizeKeys(response.data.task));
+          this.$emit(callback, humps.camelizeKeys(response.data.risk));
 
-          response.data.tasks.forEach((task) => {
-            this.updateFacilityTask(
-              humps.camelizeKeys(task),
-              task.facilityProjectId
+          response.data.risks.forEach((risk) => {
+            this.updateFacilityRisk(
+              humps.camelizeKeys(risk),
+              risk.facilityProjectId
             );
           });
           if (response.status === 200) {
             this.$message({
-              message: `${this.task.text} was duplicated successfully to selected projects.`,
+              message: `${this.risk.text} was duplicated successfully to selected projects.`,
               type: "success",
               showClose: true,
             });
@@ -374,7 +374,7 @@ export default {
         })
         .catch((err) => {
           this.$message({
-            message: `Unable to duplicate ${this.task.text} to selected projects. Please try again.`,
+            message: `Unable to duplicate ${this.risk.text} to selected projects. Please try again.`,
             type: "error",
             showClose: true,
           });
@@ -389,14 +389,14 @@ export default {
       if (!value) return true;
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
-    deleteTask() {
+    deleteRisk() {
       let confirm = window.confirm(
-        `Are you sure you want to delete "${this.task.text}"?`
+        `Are you sure you want to delete "${this.risk.text}"?`
       );
       if (!confirm) {
         return;
       }
-      this.taskDeleted(this.task);
+      this.riskDeleted(this.risk);
     },
     toggleSubmitBtn() {
       this.submitted = false;

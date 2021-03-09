@@ -1,8 +1,8 @@
 
 <template>
-  <div id="risk-sheets">   
+  <div id="risk-sheets">    
     <table class="table table-sm table-bordered">    
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
        <td class="oneFive">{{risk.text}}</td>
        <td class="eight">{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1) }}</td>
        <td class="eight pt-2 font-sm">
@@ -34,6 +34,15 @@
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
+      <!-- The context-menu appears only if table row is right-clicked -->
+      <RiskContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"
+        :risk="risk"
+        :display="showContextMenu"
+        ref="menu"
+        @open-risk="editRisk">  
+      </RiskContextMenu>
     </table>
 <!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
       <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
@@ -55,13 +64,15 @@
   import {mapGetters, mapMutations, mapActions} from "vuex"
   import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
+  import RiskContextMenu from "../../../shared/RiskContextMenu"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
   export default {
     name: 'RiskSheets',
     components: {
-      RiskForm 
+      RiskForm,
+      RiskContextMenu 
     },
     props: {
       fromView: {
@@ -76,7 +87,8 @@
         now: new Date().toISOString(),
         DV_risk: {},
         DV_edit_risk: {},
-        has_risk: false
+        has_risk: false,
+        showContextMenu: false
       }
     },
     mounted() {
@@ -151,7 +163,11 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
-      }
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
     },
     computed: {
       ...mapGetters([
