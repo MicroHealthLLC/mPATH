@@ -3,7 +3,28 @@ class IssuesController < AuthenticatedController
   before_action :set_issue, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
-    render json: {issues: @facility_project.issues.map(&:to_json)}
+
+    all_users = []
+    all_user_ids = []
+
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
+    all_user_ids += all_issue_users.values.flatten.map(&:user_id)
+    all_user_ids = all_user_ids.compact.uniq
+
+    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
+
+    issues = all_issues.compact.uniq
+
+    h = []
+    issues.each do |i| 
+      h << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :issue_index} )
+    end
+
+    render json: {issues: h, total_pages: all_issues.total_pages, current_page: all_issues.current_page, next_page: all_issues.next_page}
+
+    # render json: {issues: @facility_project.issues.map(&:to_json)}
   end
 
   def create

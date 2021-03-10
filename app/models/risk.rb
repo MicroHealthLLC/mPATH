@@ -106,7 +106,7 @@ class Risk < ApplicationRecord
     
     t_users = options[:all_risk_users]
     all_users = options[:all_users]
-    if options[:for].present? && options[:for] == :project_build_response
+    if options[:for].present? && [:project_build_response, :risk_index].include?(options[:for])
       resource_users = t_users && t_users.any? ? t_users : []
     else
       resource_users = self.risk_users #.where(user_id: self.users.active.uniq.map(&:id) )
