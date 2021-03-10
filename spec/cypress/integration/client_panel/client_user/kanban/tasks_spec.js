@@ -8,7 +8,7 @@ describe('Kanban Tasks View', function() {
 
   it('Open kanban tasks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_col_title]').contains('Test Task Stage').should('be.visible')
       })
     })
@@ -17,7 +17,7 @@ describe('Kanban Tasks View', function() {
 
   it('Open and close tasks from kanban view', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=tasks]').first().click()
       })
       cy.get('[data-cy=task_read_only_btn]').should('be.disabled')
@@ -29,7 +29,7 @@ describe('Kanban Tasks View', function() {
   it('Cannot open new Task form and edit/delete existing task', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=tasks]').first().click()
       })
     })

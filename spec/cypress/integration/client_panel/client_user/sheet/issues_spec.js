@@ -28,9 +28,9 @@ describe('Sheets Issues View', function() {
       cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
     })
     cy.get('[data-cy=search_issues]').clear().type('Issue is not in the list').should('have.value', 'Issue is not in the list')
-    cy.contains('No issues found..').should('be.visible')
+    cy.contains('No Issues found...').should('be.visible')
 
-    cy.get('[data-cy=search_issues]').clear().type('Test Issue').should('have.value', 'Test Issue')
+    cy.get('[data-cy=search_issues]').clear().type('New Issue').should('have.value', 'New Issue')
     cy.get('[data-cy=issues_table]').within(() => {
       cy.get('[data-cy=issue_row]').its('length').should('be.eq', 1)
     })
@@ -41,22 +41,80 @@ describe('Sheets Issues View', function() {
     cy.logout()
   })
 
-  // it('Select issue status from list to display related issues', function() {
-  //   cy.get('[data-cy=issues_table]').within(() => {
-  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.get('[data-cy=issue_status_list]').as('list')
-  //   cy.get('@list').click()
-  //   cy.get('@list').within(() => {
-  //     cy.contains('complete').click()
-  //   })
-  //   cy.contains('No issues found..').should('be.visible')
-  //   cy.get('@list').within(() => {
-  //     cy.contains('all').click()
-  //   })
-  //   cy.get('[data-cy=issues_table]').within(() => {
-  //     cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.logout()
-  // })
+  it('Sort Issue according to Issue name', function() {
+    cy.get('[data-cy=issue_row]').first().contains('New Issue').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test Issue').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=issue_row]').first().contains('New Issue').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Issue type', function() {
+    cy.get('.mt-3 > tr > :nth-child(2)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test Issue Type').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Issue Severity', function() {
+    cy.get('.mt-3 > tr > :nth-child(3)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test Issue Severity').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Start Date', function() {
+    const new_start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+    const test_start_date = Cypress.moment().format('DD MMM YYYY')
+    cy.get('[data-cy=issue_row]').first().contains(new_start_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(4)').click()
+    cy.get('[data-cy=issue_row]').first().contains(test_start_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(4)').click()
+    cy.get('[data-cy=issue_row]').first().contains(new_start_date).should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Due Date', function() {
+    const new_due_date = Cypress.moment().add(6, 'day').format('DD MMM YYYY')
+    const test_due_date = Cypress.moment().add(5, 'day').format('DD MMM YYYY')
+    cy.get('[data-cy=issue_row]').first().contains(new_due_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=issue_row]').first().contains(test_due_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=issue_row]').first().contains(new_due_date).should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Assigned User', function() {
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test2 Client').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Progress', function() {
+    cy.get('.mt-3 > tr > :nth-child(7)').click()
+    cy.get('[data-cy=issue_row]').first().contains('10%').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(7)').click()
+    cy.get('[data-cy=issue_row]').first().contains('70%').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(7)').click()
+    cy.get('[data-cy=issue_row]').first().contains('10%').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to On Watch', function() {
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
+    cy.get('[data-cy=issue_row]').first().should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
+    cy.get('[data-cy=issue_row]').first().contains('x').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Issue according to Last Update', function() {
+    cy.get('.mt-3 > tr > :nth-child(10)').click()
+    cy.get('[data-cy=issue_row]').first().contains('No Updates').should('be.visible')
+    cy.logout()
+  })
 })

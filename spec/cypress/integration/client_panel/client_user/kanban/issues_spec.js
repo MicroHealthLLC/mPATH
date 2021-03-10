@@ -15,7 +15,7 @@ describe('Kanban Issues View', function() {
 
   it('Open and close issues from kanban view', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=issues]').first().click()
       })
       cy.get('[data-cy=issue_read_only_btn]').should('be.disabled')
@@ -27,7 +27,7 @@ describe('Kanban Issues View', function() {
   it('Cannot open new Issue form and edit/delete existing issue', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=issues]').first().click()
       })
     })

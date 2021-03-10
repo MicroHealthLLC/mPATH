@@ -2305,6 +2305,7 @@
   .risk_matrix {
   /deep/.el-collapse-item__header {  
     border-bottom: none !important; 
+    background-color: #fff !important;
     }
   }
    /deep/ .el-collapse {
@@ -2315,6 +2316,6 @@
     padding-bottom: 0 !important;
   }
   /deep/.el-collapse-item__header {
-    background-color: #fafafa !important;
+    background-color: #fafafa;
   }
 </style>

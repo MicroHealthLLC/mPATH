@@ -427,7 +427,7 @@ jQuery(function($) {
           <table border="0" cellspacing="0" cellpadding="0" class="index_table index" paginator="true">
             <thead>
               <tr>
-                <th class="col col-project">Project</th>
+                <th class="col col-project">Program</th>
                 <th class="col col-due_date">Due Date</th>
                 <th class="col col-status">Status</th>
                 <th class="col col-actions"></th>

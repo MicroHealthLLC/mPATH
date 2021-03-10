@@ -25,7 +25,7 @@
           <div class="col-md-6">
             <div>
               <label class="font-sm mb-0">Project Groups</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" select-label="Search and select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
+              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
@@ -34,7 +34,7 @@
               </multiselect>
             </div>
            <label class="font-sm mb-0">Project Names</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" select-label="Search and select" deselect-label="Remove" @search-change="findFacility">
+              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
@@ -196,7 +196,7 @@
               <h5 class="mb-0">Combined</h5>
                <div>
                 <label class="font-sm mb-0">Action Users</label>
-                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" select-label="Search and select" deselect-label="Remove" data-cy="issue_user">
+                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name'>{{option.fullName}}</span>

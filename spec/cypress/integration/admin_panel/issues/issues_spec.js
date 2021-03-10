@@ -95,14 +95,14 @@ describe('Admin Panel Issue', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Issue according to Facility', function() {
-    cy.get('.sortable').contains('Facility').click()
+  it('Sort Issue according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Facility 4').should('be.visible')
     cy.get('#logout').click()
@@ -189,7 +189,7 @@ describe('Admin Panel Issue', function() {
     const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 6)
     cy.get('#logout').click()
   })
 
@@ -197,7 +197,7 @@ describe('Admin Panel Issue', function() {
     const start_date = Cypress.moment().format('YYYY-MM-DD')
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
 
@@ -205,7 +205,7 @@ describe('Admin Panel Issue', function() {
     const completion_date = Cypress.moment().add(6, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_gteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 5)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 6)
     cy.get('#logout').click()
   })
 
@@ -213,7 +213,7 @@ describe('Admin Panel Issue', function() {
     const completion_date = Cypress.moment().add(5, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_lteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 3)
+    cy.get('#index_table_issues > tbody > tr').its('length').should('be.eq', 2)
     cy.get('#logout').click()
   })
 
