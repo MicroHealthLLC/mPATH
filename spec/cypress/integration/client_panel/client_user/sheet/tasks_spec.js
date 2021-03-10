@@ -30,7 +30,7 @@ describe('Sheets Tasks View', function() {
     cy.get('[data-cy=search_tasks]').clear().type('task is not in the list').should('have.value', 'task is not in the list')
     cy.contains('No Tasks found...').should('be.visible')
 
-    cy.get('[data-cy=search_tasks]').clear().type('Test task').should('have.value', 'Test task')
+    cy.get('[data-cy=search_tasks]').clear().type('New task').should('have.value', 'New task')
     cy.get('[data-cy=tasks_table]').within(() => {
       cy.get('[data-cy=task_row]').its('length').should('be.eq', 1)
     })

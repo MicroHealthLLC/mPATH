@@ -30,7 +30,7 @@ describe('Sheets Issues View', function() {
     cy.get('[data-cy=search_issues]').clear().type('Issue is not in the list').should('have.value', 'Issue is not in the list')
     cy.contains('No Issues found...').should('be.visible')
 
-    cy.get('[data-cy=search_issues]').clear().type('Test Issue').should('have.value', 'Test Issue')
+    cy.get('[data-cy=search_issues]').clear().type('New Issue').should('have.value', 'New Issue')
     cy.get('[data-cy=issues_table]').within(() => {
       cy.get('[data-cy=issue_row]').its('length').should('be.eq', 1)
     })

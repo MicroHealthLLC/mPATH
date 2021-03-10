@@ -146,14 +146,14 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Risk according to Facility', function() {
-    cy.get('.sortable').contains('Facility').click()
+  it('Sort Risk according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
     cy.get('#logout').click()
