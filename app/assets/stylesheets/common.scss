@@ -130,6 +130,66 @@ input[type=button]:focus {
   }
 }
 
+.grid-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(auto-fill,auto);
+  grid-row-gap: 1em;
+  grid-column-gap: 1em;
+}
+
+
+// Portfolio page is on _landing.html.slim file
+.portfolio-page {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+  transition: all .2s ease-in
+}
+.portfolio-page:hover { 
+  transform: scale(1.015); 
+}
+
+.program-name a {
+ text-decoration: none !important;
+ text-decoration-color: none !important;
+}
+
+.program-name a:active {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+ .program-name a:visited {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+
+ .program-name a:hover {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+ .program-name a:link {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+
+.lt-green {
+  background-color: #90EE90
+}
+.lt-yellow {
+  background-color: #FFFACD
+}
+.lt-red {
+  background-color: #FFA07A
+}
+ .fafa {
+  //  background-color: #fafafa;
+   background-color:#e9ecef
+ }
+
+ .light-gray {
+   color: rgb(24, 19, 19);
+ }
+
 .el-collapse-item__header {color:#0275d8 !important}
 .el-collapse {
   border-top: none !important;

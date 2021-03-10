@@ -15,7 +15,7 @@ describe('Kanban Issues View', function() {
 
   it('Open and close Kanban Issue new form', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
       })
     })
@@ -25,7 +25,7 @@ describe('Kanban Issues View', function() {
   })
 
   it('Update on watch state of a issue', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=issues]').first().within(() => {
           cy.get('[data-cy=on_watch_icon]').should('be.visible')
@@ -45,7 +45,7 @@ describe('Kanban Issues View', function() {
   })
 
   it('Drag an issue from first stage and drop it to next stage', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=issues]').first().as('origin')
     })
 
@@ -55,7 +55,7 @@ describe('Kanban Issues View', function() {
 
     cy.get('@origin').drag('@destination', {force: true})
 
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=issues]').should('not.exist')
     })
 

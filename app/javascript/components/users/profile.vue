@@ -190,7 +190,6 @@
             select-label="Search and select"
             deselect-label="Remove"
             @select="navigationSelectChane"
-            :disabled="!(this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
@@ -213,7 +212,7 @@
             :searchable="true"
             select-label="Search and select"
             deselect-label="Remove"
-            :disabled="!(this.selectedNavigation && this.selectedProgram && this.selectedProjectGroup && this.selectedProject)"
+            :disabled="!(this.selectedNavigation)"
             >
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">

@@ -44,6 +44,52 @@ describe('Teams List', function() {
     cy.get('[data-cy=user_data]').its('length').should('be.eq', 2)
     cy.logout()
   })
+
+  it('Sort Team according to Name', function() {
+    cy.get('.thead > :nth-child(2)').contains('Name').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').first().contains('Test1').should('be.visible')
+    cy.get('.thead > :nth-child(2)').contains('Name').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').first().contains('Test2').should('be.visible')
+    cy.get('.thead > :nth-child(2)').contains('Name').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').first().contains('Test1').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Position', function() {
+    cy.get('.thead > :nth-child(3)').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').first().contains('Manager').should('be.visible')
+    cy.get('.thead > :nth-child(3)').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').first().contains('Mr.').should('be.visible')
+    cy.get('.thead > :nth-child(3)').contains('Position').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').first().contains('Manager').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Organization', function() {
+    cy.get('.thead > :nth-child(4)').contains('Organization').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(4)').first().contains('Test Organization').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Phone Number', function() {
+    cy.get('.thead > :nth-child(5)').contains('Phone Number').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(5)').first().contains('+447400123440').should('be.visible')
+    cy.get('.thead > :nth-child(5)').contains('Phone Number').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(5)').first().contains('+447400123450').should('be.visible')
+    cy.get('.thead > :nth-child(5)').contains('Phone Number').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(5)').first().contains('+447400123440').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Team according to Email', function() {
+    cy.get('.thead > :nth-child(6)').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(6)').first().contains('admin@test.com').should('be.visible')
+    cy.get('.thead > :nth-child(6)').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(6)').first().contains('client@test.com').should('be.visible')
+    cy.get('.thead > :nth-child(6)').contains('Email').click()
+    cy.get('tbody > :nth-child(1) > :nth-child(6)').first().contains('admin@test.com').should('be.visible')
+    cy.logout()
+  })
 })
 
 describe('Client do not have permission of members view', function() {

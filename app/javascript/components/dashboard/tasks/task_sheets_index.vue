@@ -374,8 +374,8 @@
           }
 
           if (search_query) valid = valid && search_query.test(resource.text) || 
-            search_query.test(resource.taskType) || 
-            search_query.test(resource.userNames)
+            valid && search_query.test(resource.taskType) || 
+            valid && search_query.test(resource.userNames)
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
 
           return valid

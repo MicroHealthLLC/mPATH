@@ -10,6 +10,7 @@ describe('Admin Panel Users', function() {
     cy.get('#page_title').contains('Users').should('be.visible')
     cy.get('#index_table_users').should('be.visible')
     cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('.pagination_information').contains('Displaying all 2 Users')
     cy.get('#logout').click()
   })
 
@@ -105,6 +106,16 @@ describe('Admin Panel Users', function() {
   //   cy.get('#index_table_users > tbody > tr').its('length').should('be.eq', 2)
   //   cy.get('#logout').click()
   // })
+
+  it('Sort User according to Position', function() {
+    cy.get('.sortable').contains('Position').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Mr.').should('be.visible')
+    cy.get('.sortable').contains('Position').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Manager').should('be.visible')
+    cy.get('.sortable').contains('Position').click()
+    cy.get('#index_table_users > tbody > tr').first().contains('Mr.').should('be.visible')
+    cy.get('#logout').click()
+  })
 
   it('Sort User according to First Name', function() {
     cy.get('.sortable').contains('First Name').click()

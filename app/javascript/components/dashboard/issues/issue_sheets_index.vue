@@ -458,8 +458,10 @@
           }
 
           
-          if (search_query) valid = valid && search_query.test(resource.title) || search_query.test(resource.issueType)
-          || search_query.test(resource.issueSeverity)  || search_query.test(resource.userNames)
+          if (search_query) valid = valid && search_query.test(resource.title) || 
+            valid && search_query.test(resource.issueType) || 
+            valid && search_query.test(resource.issueSeverity) || 
+            valid && search_query.test(resource.userNames)
 
           return valid;
         })), ['dueDate'])

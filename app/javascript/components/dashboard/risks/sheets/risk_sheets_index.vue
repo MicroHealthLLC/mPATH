@@ -8,7 +8,7 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search by Risk Name, Risk Approach, Priority Level or Assigned User"
+            placeholder="Search by Risk Name, Approach, Priority Level or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="risksQuery"
@@ -412,10 +412,10 @@
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
           if (search_query) valid = valid && search_query.test(resource.text) ||
-          search_query.test(resource.text) ||
-          search_query.test(resource.riskApproach) ||
-          search_query.test(resource.priorityLevelName) ||   
-          search_query.test(resource.userNames)
+          valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.riskApproach) ||
+          valid && search_query.test(resource.priorityLevelName) ||   
+          valid && search_query.test(resource.userNames)
 
 
           return valid;
