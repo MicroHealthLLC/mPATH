@@ -639,7 +639,7 @@ Tab 1 Row Begins here -->
 <div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
 <div class="mx-4 pt-3">
           <div class="input-group mb-2">
-            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="file.id">
               <div class="input-group-prepend">
                 <div
                   class="input-group-text clickable"
@@ -653,8 +653,11 @@ Tab 1 Row Begins here -->
                 readonly
                 type="text"
                 class="form-control form-control-sm mw-95"
-                :value="file.name || file.uri"
+                v-if="!file.link"
               />
+              <a :href="file.uri" target="_blank" v-if="file.link">
+                {{file.uri}}
+              </a>
               <div
                 :class="{ _disabled: loading || !_isallowed('write') }"
                 class="del-check clickable"
@@ -668,6 +671,34 @@ Tab 1 Row Begins here -->
         <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
         <div v-if="_isallowed('write')" class="form-group mx-4">
           <label class="font-sm">Files:</label>
+          <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFilesInput">
+            <i class="fas fa-plus-circle" ></i>
+          </span>
+
+          <div class="mx-4">
+            <div class="input-group pt-3 mb-2">
+              <div v-for="(file, index) in DV_issue.issueFiles" :key="index" class="d-flex mb-2 w-100"   v-if="!file.id && file.link">
+                  <div class="input-group-prepend" >
+                    <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                      <i class="fas fa-file-image"></i>
+                    </div>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm mw-95"
+                    @input="updateFileLinkItem($event, 'text', file)"
+                  />
+                  <div
+                    :class="{'_disabled': loading || !_isallowed('write') }"
+                    class="del-check clickable"
+                    @click.prevent="deleteFile(file)"
+                    >
+                    <i class="fas fa-times"></i>
+                  </div>
+              </div>
+            </div>
+          </div>
+
           <attachment-input
             @input="addFile"
             :show-label="true"
@@ -1039,6 +1070,9 @@ export default {
         this.loading = false;
       });
     },
+    addFilesInput(){
+      this.DV_issue.issueFiles.push({name: "", uri: '', link: true})
+    },
     addFile(files = [], append = true) {
       let _files = append ?  [...this.DV_issue.issueFiles] : [];
       for (let file of files) {
@@ -1258,8 +1292,11 @@ export default {
         }
 
         for (let file of this.DV_issue.issueFiles) {
-          if (!file.id) {
-            formData.append("issue[issue_files][]", file);
+          if(file.id) continue
+          if (!file.link) {
+          formData.append("issue[issue_files][]", file);
+          }else if(file.link){
+            formData.append('file_links[]', file.name)
           }
         }
 
@@ -1385,6 +1422,9 @@ export default {
       } else if (name === "dueDate" && this.DV_issue.checklists[index].text) {
         this.DV_issue.checklists[index].dueDate = event.target.value;
       }
+    },
+    updateFileLinkItem(event, name, input) {
+      input.name = event.target.value
     },
     updateProgressListItem(event, name, progressList) {
         progressList.body = event.target.value

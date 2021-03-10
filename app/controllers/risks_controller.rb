@@ -28,6 +28,7 @@ class RisksController < AuthenticatedController
     end
     @risk.update(r_params)
     @risk.assign_users(params)
+    @risk.add_link_attachment(params)
 
     render json: {risk: @risk.reload.to_json}
   end

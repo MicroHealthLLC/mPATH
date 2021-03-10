@@ -25,6 +25,7 @@ class TasksController < AuthenticatedController
     end
     @task.update(t_params)
     @task.assign_users(params)
+    @task.add_link_attachment(params)
     @task.reload
     # @task.create_or_update_task(params, current_user)
     render json: {task: @task.to_json}

@@ -116,7 +116,7 @@
         this.invalidFiles = []
       }
     }
-  }
+  };
 </script>
 
 <style scoped lang="scss">
