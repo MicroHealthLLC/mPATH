@@ -1497,6 +1497,7 @@
   }
   .fixed-form {
    overflow-y: auto;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
