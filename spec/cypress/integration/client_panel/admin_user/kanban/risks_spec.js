@@ -8,7 +8,7 @@ describe('Kanban Risks View', function() {
 
   it('Open kanban risks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_col_title]').contains('Test Risk Stage').should('be.visible')
       })
     })
@@ -17,7 +17,7 @@ describe('Kanban Risks View', function() {
 
   it('Open and close Kanban risk new form', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
       })
     })
@@ -27,7 +27,7 @@ describe('Kanban Risks View', function() {
   })
 
   it('Update on watch state of a risk', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=risks]').first().within(() => {
           cy.get('[data-cy=on_watch_icon]').should('be.visible')
@@ -37,7 +37,7 @@ describe('Kanban Risks View', function() {
     })
     cy.get('[data-cy=risk_on_watch]').click({force: true})
     cy.get('[data-cy=risk_save_btn]').click({force: true})
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=risks]').first().within(() => {
           cy.get('[data-cy=on_watch_icon]').should('not.exist')
@@ -49,7 +49,7 @@ describe('Kanban Risks View', function() {
   })
 
   it('Drag a risk from first stage and drop it to next stage', function() {
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=risks]').first().as('origin')
     })
 
@@ -59,7 +59,7 @@ describe('Kanban Risks View', function() {
 
     cy.get('@origin').drag('@destination', {force: true})
 
-    cy.get('[data-cy=kanban_col]').first().within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=risks]').should('not.exist')
     })
 
@@ -89,7 +89,7 @@ describe('Kanban Risks View', function() {
 
   describe('Kanban Risks Actions', function() {
     beforeEach(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=risks]').first().click()
         })
@@ -98,7 +98,7 @@ describe('Kanban Risks View', function() {
 
     it('Delete the risk from kanban', function() {
       cy.get('[data-cy=risk_delete_btn]').click({force: true})
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=risks]').should('not.exist')
         })

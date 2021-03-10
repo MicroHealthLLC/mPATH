@@ -8,7 +8,7 @@ describe('Kanban Risks View', function() {
 
   it('Open kanban risks in a facility', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_col_title]').contains('Test Risk Stage').should('be.visible')
       })
     })
@@ -17,7 +17,7 @@ describe('Kanban Risks View', function() {
 
   it('Open and close risks from kanban view', function() {
     cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=risks]').first().click()
       })
       cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
@@ -29,7 +29,7 @@ describe('Kanban Risks View', function() {
   it('Cannot open new Risk form and edit/delete existing risk', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')
-      cy.get('[data-cy=kanban_col]').first().within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=risks]').first().click()
       })
     })
