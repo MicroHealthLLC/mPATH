@@ -104,10 +104,10 @@ class Risk < ApplicationRecord
     end
     fp = self.facility_project
     
-    t_users = options[:all_risk_users]
-    all_users = options[:all_users]
+    t_users = options[:all_risk_users] || []
+    all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :risk_index].include?(options[:for])
-      resource_users = t_users && t_users.any? ? t_users : []
+      resource_users = t_users
     else
       resource_users = self.risk_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
@@ -123,15 +123,15 @@ class Risk < ApplicationRecord
     
     resource_user_ids += risk_approver_user_ids
 
-    users = [] 
-    if all_users && all_users.any?
-      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    p_users = [] 
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = User.where(id: resource_user_ids).active
+      p_users = User.where(id: resource_user_ids).active
     end
     
     users_hash = {} 
-    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -155,10 +155,10 @@ class Risk < ApplicationRecord
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       # Remove this
-      user_ids: users.map(&:id).compact.uniq,
-      risk_owners: users.map(&:full_name).compact.join(", "),
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      user_names: users.map(&:full_name).compact.join(", "),
+      user_ids: p_users.map(&:id).compact.uniq,
+      risk_owners: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      user_names: p_users.map(&:full_name).compact.join(", "),
 
 
      # Add RACI user name

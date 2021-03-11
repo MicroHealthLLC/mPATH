@@ -54,10 +54,10 @@ class Issue < ApplicationRecord
 
     fp = self.facility_project
     
-    t_users = options[:all_issue_users]
-    all_users = options[:all_users]
+    t_users = options[:all_issue_users] || []
+    all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :issue_index].include?(options[:for])
-      resource_users = t_users && t_users.any? ? t_users : []
+      resource_users = t_users
     else
       resource_users = self.issue_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
@@ -69,15 +69,15 @@ class Issue < ApplicationRecord
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
 
-    users = [] 
-    if all_users && all_users.any?
-      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    p_users = [] 
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = User.where(id: resource_user_ids).active
+      p_users = users.select{|u| u.active? } #User.where(id: resource_user_ids).active
     end
 
     users_hash = {} 
-    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -95,10 +95,10 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
-      responsible_user_names: users.map(&:full_name).compact.join(", "),
-      user_names: users.map(&:full_name).compact.join(", "),
-      user_ids: users.map(&:id).compact.uniq,
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      responsible_user_names: p_users.map(&:full_name).compact.join(", "),
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      user_ids: p_users.map(&:id).compact.uniq,
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       
 
     # Add RACI user names

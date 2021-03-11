@@ -245,6 +245,7 @@ ActiveAdmin.register Facility do
     end
 
     def index
+
       super do |format|
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
