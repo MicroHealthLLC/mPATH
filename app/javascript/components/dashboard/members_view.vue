@@ -75,6 +75,7 @@
               v-model="C_membersPerPage"
               track-by="value"
               label="name"
+              select-label="Select" 
               deselect-label=""
               :allow-empty="false"
               :options="getMembersPerPageFilterOptions">
