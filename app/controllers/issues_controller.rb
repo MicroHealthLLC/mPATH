@@ -44,6 +44,7 @@ class IssuesController < AuthenticatedController
     end
     @issue.update(i_params)
     @issue.assign_users(params)
+    @issue.add_link_attachment(params)
 
     render json: {issue: @issue.reload.to_json}
   end

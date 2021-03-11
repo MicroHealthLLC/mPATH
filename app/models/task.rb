@@ -38,11 +38,22 @@ class Task < ApplicationRecord
     tf = self.task_files
     if tf.attached?
       attach_files = tf.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
+        #.blob.filename.instance_variable_get("@filename")
+        if file.blob.content_type == "text/plain"
+          {
+            id: file.id,
+            name: file.blob.filename.instance_variable_get("@filename"),
+            uri: file.blob.filename.instance_variable_get("@filename"),
+            link: true
+          }
+        else
+          {
+            id: file.id,
+            name: file.blob.filename,
+            uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+            link: false
+          }
+        end
       end
     end
     fp = self.facility_project
@@ -184,6 +195,9 @@ class Task < ApplicationRecord
 
     task.transaction do
       task.save
+      
+      task.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|
@@ -266,6 +280,15 @@ class Task < ApplicationRecord
     end
 
     task.reload
+  end
+
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
   end
 
   def assign_users(params)

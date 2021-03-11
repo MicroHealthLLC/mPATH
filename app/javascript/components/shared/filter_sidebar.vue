@@ -99,7 +99,7 @@
             </div>
             <div>
               <label class="font-sm mb-0">Task Stages</label>
-              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" placeholder="Filter by task stages" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
+              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>

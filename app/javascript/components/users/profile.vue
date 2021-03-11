@@ -103,16 +103,16 @@
       <h5 class="my-3 bg-secondary text-light px-2">Preferences</h5>
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select Program</label>
+        <label class="col-sm-2 col-form-label">Program</label>
         <div class="col-sm-10">
           <multiselect
             v-model="selectedProgram"
             track-by="id"
             label="name"
-            placeholder="Select Program"
+            placeholder="Search and select Program"
             :options="programOptions"
             :searchable="true"
-            select-label="Search and select"
+            select-label="Select"
             deselect-label="Remove"
             @select="programSelectChange"
             @remove="programSelectChange"
@@ -128,16 +128,16 @@
 
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select Project Group</label>
+        <label class="col-sm-2 col-form-label">Project Group</label>
         <div class="col-sm-10">
           <multiselect
             v-model="selectedProjectGroup"
             track-by="id"
             label="name"
-            placeholder="Select Project Group"
+            placeholder="Search and select Project Group"
             :options="projectGroupOptions"
             :searchable="true"
-            select-label="Search and select"
+            select-label="Select"
             deselect-label="Remove"
             @select="projectGroupSelectChange"
             @remove="projectGroupSelectChange"
@@ -153,16 +153,16 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select Project</label>
+        <label class="col-sm-2 col-form-label">Project</label>
         <div class="col-sm-10">
           <multiselect
             v-model="selectedProject"
             track-by="id"
             label="name"
-            placeholder="Select Project"
+            placeholder="Search and select Project"
             :options="projectOptions"
             :searchable="true"
-            select-label="Search and select"
+            select-label="Select"
             deselect-label="Remove"
             :disabled="!this.selectedProjectGroup"
             >
@@ -178,16 +178,16 @@
       <h5 class="my-3 bg-secondary text-light px-2">Start On</h5>
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select Navigation</label>
+        <label class="col-sm-2 col-form-label">Navigation</label>
         <div class="col-sm-10">
           <multiselect
             v-model="selectedNavigation"
             track-by="id"
             label="name"
-            placeholder="Select Navigation"
+            placeholder="Search and select Navigation"
             :options="navigationOptions"
             :searchable="true"
-            select-label="Search and select"
+            select-label="Select"
             deselect-label="Remove"
             @select="navigationSelectChane"
             >
@@ -201,16 +201,16 @@
       </div>
 
       <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Select Sub Navigation</label>
+        <label class="col-sm-2 col-form-label">Sub Navigation</label>
         <div class="col-sm-10">
           <multiselect
             v-model="selectedSubNavigation"
             track-by="id"
             label="name"
-            placeholder="Select Sub Navigation"
+            placeholder="Search and select Sub Navigation"
             :options="subNavigationOptions"
             :searchable="true"
-            select-label="Search and select"
+            select-label="Select"
             deselect-label="Remove"
             :disabled="!(this.selectedNavigation)"
             >
