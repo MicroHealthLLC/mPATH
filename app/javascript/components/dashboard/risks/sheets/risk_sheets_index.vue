@@ -560,7 +560,6 @@
   .riskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
   }
   table {
     table-layout: fixed;

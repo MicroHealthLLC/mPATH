@@ -133,7 +133,7 @@ input[type=button]:focus {
 .grid-container {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(auto-fill,auto);
   grid-row-gap: 1em;
   grid-column-gap: 1em;
@@ -259,7 +259,7 @@ input[type=button]:focus {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .risks-form, .tasks-form, .issues-form, #risks-form {
+ .risks-form, .tasks-form, .issues-form, #risks-form, .notes-form {
   background-color: #fff;
   position:fixed;
   height: 100vh;

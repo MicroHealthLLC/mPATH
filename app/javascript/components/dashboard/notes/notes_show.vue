@@ -1,12 +1,21 @@
 
 <template>
-  <div data-cy="notes">
+  <div id="notes-show" data-cy="notes">
+      <div v-if="permitted('write') && show == false">
+        <notes-form          
+          title="Edit Note"
+          :note="DV_note"
+          :facility="facility"
+          @close-note-input="show=true"
+          @note-updated="noteUpdated"
+        />
+      </div>
     <div v-if="C_editForManager" class="blur_show float-right">
       <div class="text-danger d-flex align-items-center">
         <i class="fas fa-long-arrow-alt-right"></i>
       </div>
     </div>
-    <div v-if="!loading" class="notes_show mb-5 mx-2">
+    <div v-if="!loading" class="notes_show mb-3 p-2 mx-0">
       <div v-if="show">
         <div class="crud-actions mx-3 float-right">
           <span v-if="permitted('write')" class="mr-2 font-sm edit-action" @click.stop="editNoteMode" data-cy="note_edit_icon">
@@ -32,16 +41,7 @@
           {{DV_note.body}}
         </div>
       </div>
-      <div v-else>
-        <notes-form
-          v-if="permitted('write')"
-          title="Edit Note"
-          :note="DV_note"
-          :facility="facility"
-          @close-note-input="show=true"
-          @note-updated="noteUpdated"
-        />
-      </div>
+    
     </div>
 
   </div>
