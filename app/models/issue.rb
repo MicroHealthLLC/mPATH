@@ -44,11 +44,21 @@ class Issue < ApplicationRecord
     i_files = self.issue_files
     if i_files.attached?
       attach_files = i_files.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
+        if file.blob.content_type == "text/plain"
+          {
+            id: file.id,
+            name: file.blob.filename.instance_variable_get("@filename"),
+            uri: file.blob.filename.instance_variable_get("@filename"),
+            link: true
+          }
+        else
+          {
+            id: file.id,
+            name: file.blob.filename,
+            uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+            link: false
+          }
+        end
       end
     end
 
@@ -204,6 +214,8 @@ class Issue < ApplicationRecord
 
       issue.save
 
+      issue.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         issue_users_obj = []
         user_ids.each do |uid|
@@ -263,6 +275,15 @@ class Issue < ApplicationRecord
     end
 
     issue
+  end
+
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        self.issue_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
   end
 
   def assign_users(params)

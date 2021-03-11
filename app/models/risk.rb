@@ -95,11 +95,21 @@ class Risk < ApplicationRecord
     rf = self.risk_files
     if rf.attached?
       attach_files = rf.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
+        if file.blob.content_type == "text/plain"
+          {
+            id: file.id,
+            name: file.blob.filename.instance_variable_get("@filename"),
+            uri: file.blob.filename.instance_variable_get("@filename"),
+            link: true
+          }
+        else
+          {
+            id: file.id,
+            name: file.blob.filename,
+            uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+            link: false
+          }
+        end
       end
     end
     fp = self.facility_project
@@ -191,8 +201,6 @@ class Risk < ApplicationRecord
     ).as_json
   end
 
-
-
   # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
   def create_or_update_risk(params, user)
     risk_params = params.require(:risk).permit(
@@ -273,6 +281,9 @@ class Risk < ApplicationRecord
 
     risk.transaction do
       risk.save
+      
+      risk.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         risk_users_obj = []
         user_ids.each do |uid|
@@ -356,6 +367,15 @@ class Risk < ApplicationRecord
     risk.reload
   end
 
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        self.risk_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
+  end
+  
   # Above this line Added by JR to fix Watched and add Approved values
 
   def assign_users(params)
