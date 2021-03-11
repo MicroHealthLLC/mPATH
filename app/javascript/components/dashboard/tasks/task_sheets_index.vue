@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Category"
+            placeholder="Filter by Categories"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -124,8 +124,9 @@
             <multiselect 
               v-model="C_tasksPerPage" 
               track-by="value"
-              label="name"      
-              deselect-label=""                     
+              label="name"
+              select-label="Select"
+              deselect-label=""
               :allow-empty="false"
               :options="getTasksPerPageFilterOptions">
                 <template slot="singleLabel" slot-scope="{option}">
