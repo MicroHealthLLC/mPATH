@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <form
       id="issues-form"
       @submit.prevent="saveIssue"    
@@ -8,6 +9,10 @@
       data-cy="issue_form"
      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
     >
+      <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+      </div>
       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
@@ -894,6 +899,7 @@ export default {
   data() {
     return {
       DV_issue: this.INITIAL_ISSUE_STATE(),
+      DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
@@ -1547,8 +1553,7 @@ export default {
     },
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
-    },
-
+    },  
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
@@ -1786,6 +1791,7 @@ ul {
   }
   .fixed-form-mapView {
    width: 100%;
+   top:0;
    position: absolute;
   }
  .display-length {
@@ -1804,5 +1810,8 @@ ul {
     border: solid #ededed 1px;
     border-radius: 4px;  
   }
-
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
+  }
 </style>

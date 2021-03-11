@@ -7,6 +7,10 @@
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       accept-charset="UTF-8"
       >
+      <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+      </div>
       <div class="form-group mb-1">
         <div v-if="_isallowed('read')"
           class="d-flex form-group sticky py-0 pl-3 pr-4  mb-1 justify-content-start action-bar"          
@@ -1201,7 +1205,7 @@
     data() {
       return {
         DV_risk: this.INITIAL_RISK_STATE(),
-        // C_riskImpactLevelOptions: this.INITIAL_RISK_STATE(),
+        DV_facility: Object.assign({}, this.facility),
         paginate: ['filteredNotes'],
         now: new Date().toLocaleString(),
         destroyedFiles: [],
@@ -2028,6 +2032,11 @@
     width: 83.33%;  
     z-index: 100;   
   }
+  .fixed-form-mapView {
+    width: 100%;
+    top:0;
+    position: absolute !important;
+  }
   .form-control.error {
     border-color: #E84444;
   }
@@ -2279,10 +2288,7 @@
    height: 80vh;
    padding-bottom: 20px;
   }
-  .fixed-form-mapView {
-   width: 100%;
-   position: absolute !important;
-  }
+
  .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
@@ -2291,7 +2297,6 @@
   .red-border {
     border: solid .5px red;
   }
-
   #roll_up {
   /deep/.el-collapse-item__header {   
    float:right;
@@ -2302,7 +2307,6 @@
     background-color: #fafafa !important;
       }
   }
-
   .risk_matrix {
   /deep/.el-collapse-item__header {  
     border-bottom: none !important; 
@@ -2318,5 +2322,9 @@
   }
   /deep/.el-collapse-item__header {
     background-color: #fafafa;
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
   }
 </style>

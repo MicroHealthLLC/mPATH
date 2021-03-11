@@ -34,7 +34,7 @@
                       </small>
                    </span>
                   </p>
-                  <p>CATEGORIES: </p>
+                  <p>Categories: </p>
                 </div>
 
                 <div class="col">

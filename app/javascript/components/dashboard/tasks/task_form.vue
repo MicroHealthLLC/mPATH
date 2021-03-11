@@ -7,6 +7,10 @@
       accept-charset="UTF-8"
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       >
+       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+       </div>
        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
@@ -720,6 +724,7 @@
     data() {
       return {
         DV_task: this.INITIAL_TASK_STATE(),
+        DV_facility: Object.assign({}, this.facility),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         editTimeLive:"",
@@ -1389,6 +1394,11 @@
     width: 83.33%;  
     z-index: 100;   
   }
+  .fixed-form-mapView {
+    width: 100%;
+    top:0;
+    position: absolute;
+  }
   td, th {
     border: solid 1px #ededed;
     padding: 1px 3px;
@@ -1550,5 +1560,9 @@
   .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
   }
 </style>

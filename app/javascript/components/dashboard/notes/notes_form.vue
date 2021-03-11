@@ -1,5 +1,9 @@
 <template>
-  <div class="notes-form">
+  <div class="notes-form" :class="{'fixed-form-mapView':isMapView}">
+      <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+      </div>
        <div class="d-flex form-group sticky mb-2">
         <button
           :disabled="!readyToSave || loading"
@@ -106,6 +110,7 @@
     data() {
       return {
         DV_note: this.INITIAL_NOTE_STATE(),
+        DV_facility: Object.assign({}, this.facility),
         selectedFacilityProject: null,
         loading: true,
         destroyedFiles: []
@@ -241,6 +246,9 @@
           // this.exists(this.DV_note.facilityProjectId)
         )
       },
+      isMapView() {
+        return this.$route.name === 'ProjectMapView'
+      },
       titleText() {
         return _.isEmpty(this.note) ? "Add Note" : "Edit Note"
       },
@@ -281,6 +289,11 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 15px;
+  }
+  .fixed-form-mapView {
+    width: 100%;
+    top:0;
+    position: absolute !important;
   }
   .close-icon {
     float: right;
@@ -323,5 +336,9 @@
     padding: 6px;
     background-color: rgba(237, 237, 237, 0.85);
     box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
   }
 </style>
