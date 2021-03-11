@@ -20,7 +20,7 @@
               v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
-              placeholder="Filter by Category"
+              placeholder="Filter by Categories"
               :options="taskTypes"
               :searchable="false"
               :multiple="true"
@@ -35,7 +35,7 @@
             </multiselect>
           </div>
         <div class="simple-select mr-1 w-100">
-          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -51,7 +51,7 @@
             track-by="name"        
             label="name"
             class="issueTypeMs"
-            placeholder="Filter by Issue Type"
+            placeholder="Filter by Issue Types"
             :options="issueTypes"
             :searchable="false"
             :multiple="true"
@@ -70,7 +70,7 @@
             v-model="C_issueSeverityFilter"
             track-by="name"          
             label="name"
-            placeholder="Filter by Issue Severity"
+            placeholder="Filter by Issue Severities"
             :options="issueSeverities"
             :searchable="false"
             :multiple="true"
@@ -163,7 +163,8 @@
                   <multiselect 
                     v-model="C_issuesPerPage" 
                     track-by="value"
-                    label="name"      
+                    label="name"
+                    select-label="Select"
                     deselect-label=""                     
                     :allow-empty="false"
                     :options="getIssuesPerPageFilterOptions">
