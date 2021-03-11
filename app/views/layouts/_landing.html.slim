@@ -3,39 +3,38 @@
     h1.text-center
       | Welcome to MicroHealth Geographic Information System
     br
-    .grid-container.program-name    
+    .grid-container.program-name
       -if @active_projects.size > 0
         - @active_projects.each do |project|
-         =link_to("/projects/#{project.id}/#{@preferences.navigation_menu}", data: { cy: "project_list_items" }) do   
-          li.list-group-item.pb-0.portfolio-page     
+         =link_to("/projects/#{project.id}/#{@preferences.navigation_menu}", data: { cy: "project_list_items" }) do
+          li.list-group-item.pb-0.portfolio-page
                 h4
-                  .d-inline-block.justify-content-between                                   
+                  .d-inline-block.justify-content-between data-cy="project_name"
                       span.font-lg
                         ="#{project.name} "
                 hr
-                 .row.justify-content-between
+                 .row.justify-content-between data-cy="project_count"
                       .col-6.bg-dark.text-light
-                        ="PROJECTS: #{project.facilities.size}"    
-                
-                      .col-6.text-right.text-dark
-                       ="USERS: #{project.users.size}"          
+                        ="PROJECTS: #{project.facilities.size}"
+
+                      .col-6.text-right.text-dark data-cy="user_count"
+                       ="USERS: #{project.users.size}"
                 br
-                    
                     .row.mb-2.justify-content-between
-                     .col-4.text-dark.font-sm
-                        ="Actions"   
+                     .col-4.text-dark.font-sm data-cy="actions"
+                        ="Actions"
                      .col-2.text-dark.font-sm.pl-1
-                        ="#"                   
-                     .col-6.text-dark.font-sm.text-center
-                        ="Progress"             
+                        ="#"
+                     .col-6.text-dark.font-sm.text-center data-cy="progress"
+                        ="Progress"
 
                     .row.font-md
-                     .col-4                      
+                     .col-4
                       span.text-dark.mr-1
-                       ="TASKS"                      
-                     .col-2.pl-0                
+                       ="TASKS"
+                     .col-2.pl-0
                       span.badge.lt-green.text-dark.badge-pill.font-weight-light.text-left
-                       ="#{project.tasks.size}" 
+                       ="#{project.tasks.size}"
                      .col-6
                       span
                         -ft = project.tasks
@@ -43,15 +42,15 @@
                         -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0
                         span.w-100.progress.pg-content.text-light class=('progress-0' if percentage.to_f <= 0)
                           .progress-bar.bg-info.font-weight-light.text-dark style="width: #{percentage}%"
-                            ="#{percentage} %"   
+                            ="#{percentage} %"
 
-                    .row.font-md
+                    .row.font-md data-cy="issues"
                       .col-4
                        span.text-dark.mr-1
-                        ="ISSUES" 
-                      .col-2.pl-0                   
-                       span.badge.lt-yellow.text-dark.badge-secondary.badge-pill.font-weight-light.text-left 
-                        ="#{project.issues.size}"   
+                        ="ISSUES"
+                      .col-2.pl-0
+                       span.badge.lt-yellow.text-dark.badge-secondary.badge-pill.font-weight-light.text-left
+                        ="#{project.issues.size}"
                       .col-6
                        span
                         - fi = project.issues
@@ -59,16 +58,16 @@
                         -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0
                         span.w-100.progress.pg-content class=('progress-0' if percentage.to_f <= 0)
                           .progress-bar.bg-info.text-dark.font-weight-light style="width: #{percentage}%"
-                            ="#{percentage} %"   
+                            ="#{percentage} %"
 
 
-                    .row.font-md.mb-4
+                    .row.font-md.mb-4 data-cy="risks"
                      .col-4
                       span.text-dark.mr-1
-                       ="RISKS" 
+                       ="RISKS"
                      .col-2.pl-0
-                      span.badge.lt-red.text-dark.badge-secondary.badge-pill.font-weight-light.text-left  
-                       ="#{project.risks.size}"                     
+                      span.badge.lt-red.text-dark.badge-secondary.badge-pill.font-weight-light.text-left
+                       ="#{project.risks.size}"
                      .col-6
                       span
                       - fr = project.risks
@@ -76,34 +75,34 @@
                       -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0
                       span.w-100.progress.pg-content class=('progress-0' if percentage.to_f <= 0)
                         .progress-bar.bg-info.text-dark.font-weight-light style="width: #{percentage}%"
-                          ="#{percentage} %"     
+                          ="#{percentage} %"
 
                     /This block is to display Project Statuses
                     / .row.mb-2.justify-content-between
                     /  .col-6.text-dark.font-sm.fafa
-                    /     ="Statuses"                                  
+                    /     ="Statuses"
                     / .row.mb-3
                     /  .col.font-sm.text-dark
-                    /   -fp = project.facility_projects            
+                    /   -fp = project.facility_projects
                     /   -fp.group_by(&:status).each do |s, f|
                     /    div
                     /      ="#{s.try(:name) || 'No Status'} "
                     /      span.badge.badge-secondary.badge-pill
                     /        ="#{f.size}"
 
-                    .row.mb-0.pb-0.text-center
+                    .row.mb-0.pb-0.text-center data-cy="overall_progress"
                      .col-12.text-dark.font-sm.mb-0.pb-0
-                        ="Overall Program Progress"          
-                    .row.mt-0.pt-0            
-                     .col-12    
-                      -fp = project.facility_projects                     
+                        ="Overall Program Progress"
+                    .row.mt-0.pt-0
+                     .col-12
+                      -fp = project.facility_projects
                       -progs = fp.map(&:progress)
                       -percentage = progs.size > 0 ? number_with_precision(progs.sum(0.0) / progs.size, precision: 2) : 0
                       span.w-100.progress.pg-content class=('progress-0' if percentage.to_f <= 0)
                         .progress-bar.bg-info.font-weight-light.text-dark style="width: #{percentage}%"
                           ="#{percentage} %"
-                          
-                          
+
+
       -else
         li.list-group-item.text-center data-cy="not_access_projects"
           | Currently you dont have permissions to access projects
@@ -112,5 +111,5 @@
 
 / Front end data info:
 
-/ Total # Tasks in Portfolio:   
-                   ="(#{Task.count} Projects)"  
+/ Total # Tasks in Portfolio:
+                   ="(#{Task.count} Projects)"
