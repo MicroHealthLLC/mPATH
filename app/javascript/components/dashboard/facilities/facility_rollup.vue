@@ -244,11 +244,30 @@
           <el-collapse>
             <el-collapse-item title="Details" name="1">
            
-               <div class="col mt-1 mb-1 text-center">
-                       CATEGORIES
-               </div>
-           
-             <div v-for="issue in currentIssueTypes">
+              <div v-if="contentLoaded">
+                <div class="row">
+                  <div class="col mt-1 mb-2 text-center">
+                   CATEGORIES
+                  </div>
+                </div>
+                <div class="row"  v-for="(issue, index) in issueTaskCATEGORIES" :key="index">
+                  <div class="col">
+                    <span> {{issue.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>   
+              
+              
+             <div class="col mt-1 mb-1 text-center">
+                       ISSUE TYPES
+             </div>          
+             <div v-for="issue in currentIssueTypes" :key="issue.id">
              <div class="row font-sm" v-if="issue._display">
 
                   <div class="col">
@@ -527,6 +546,19 @@ export default {
         return valid
       })
     },
+    issueTaskCATEGORIES() {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'taskTypeName')
+        for (let type in group) {
+          if(!type || type == "null") continue;
+          issues.push({
+            name: type,
+            count: group[type].length,
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
+          })
+        }
+        return issues
+      },
     filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, 'id')
       let stageIds = _.map(this.riskStageFilter, 'id')

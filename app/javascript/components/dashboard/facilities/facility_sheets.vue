@@ -267,7 +267,7 @@
 
                    <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
          
-          <div v-if="issueTaskCATEGORIES.length > 0" data-cy="issue_types">
+          <div v-if="filteredIssues.length" data-cy="issue_types">
           <el-collapse>
             <el-collapse-item title="Details" name="1">
               <div v-if="contentLoaded">
@@ -289,7 +289,7 @@
                 </div>
               </div>
 
-              <div v-if="issueStats.length > 0" data-cy="issue_types">
+              <div data-cy="issue_types">
                 <div class="col mt-1 mb-2 text-center">
                   ISSUE TYPES
                 </div>
