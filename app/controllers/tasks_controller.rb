@@ -6,7 +6,7 @@ class TasksController < AuthenticatedController
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, {task_users: :user}, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
     all_user_ids = all_user_ids.compact.uniq
@@ -14,10 +14,8 @@ class TasksController < AuthenticatedController
     all_users = User.includes(:organization).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
-    tasks = all_tasks.compact.uniq
-
     h = []
-    tasks.each do |t| 
+    all_tasks.each do |t| 
       h << t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :task_index} )
     end
 
@@ -44,6 +42,7 @@ class TasksController < AuthenticatedController
     end
     @task.update(t_params)
     @task.assign_users(params)
+    @task.add_link_attachment(params)
     @task.reload
     # @task.create_or_update_task(params, current_user)
     render json: {task: @task.to_json}

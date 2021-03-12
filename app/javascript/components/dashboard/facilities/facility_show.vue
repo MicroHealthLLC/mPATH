@@ -34,7 +34,7 @@
                       </small>
                    </span>
                   </p>                    
-                  <p>CATEGORIES: </p>                 
+                  <p>Categories: </p>                 
                 </div>
 
                 <div class="col">            
@@ -262,20 +262,16 @@
                     </div>
               </div>
 
- <div v-if="issueStats.length > 0" data-cy="issue_types" >
+ <div v-if="filteredIssues.length" data-cy="issue_types" >
     <el-collapse>
-            <el-collapse-item title="Details" name="1">
-
-  <div v-if="issueTaskCATEGORIES.length > 0" data-cy="issue_types"> 
-         
-         
+      <el-collapse-item title="Details" name="1">          
               <div v-if="contentLoaded">
                 <div class="row">
                   <div class="col mt-1 mb-2 text-center">
                    CATEGORIES
                   </div>
                 </div>
-                <div class="row" v-for="issue in issueTaskCATEGORIES">
+                <div class="row"  v-for="(issue, index) in issueTaskCATEGORIES" :key="index">
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -286,12 +282,7 @@
                     </span>
                   </div>
                 </div>
-              </div>
-          
-           </div>
-
-
-              
+              </div>             
 
              <div class="row">
                <div class="col mt-3 mb-1 text-center">
@@ -299,7 +290,7 @@
                </div>                  
             </div>
             
-             <div class="row mb-1 font-sm" v-for="issue in issueStats">          
+             <div class="row mb-1 font-sm" v-for="issue in issueStats" :key="issue.id">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -311,8 +302,8 @@
                   </div>
             </div>
 
-              </el-collapse-item>
-          </el-collapse>
+      </el-collapse-item>
+    </el-collapse>
  </div>
           <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
          
@@ -731,6 +722,7 @@
         let issues = new Array
         let group = _.groupBy(this.filteredIssues, 'taskTypeName')
         for (let type in group) {
+          if(!type || type == "null") continue;
           issues.push({
             name: type,
             count: group[type].length,
@@ -931,9 +923,18 @@
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
     .multiselect__placeholder {
-      color: #dc3545;
+    padding-top:0;
+    }
+  }
+  .simple-select /deep/ .multiselect {
+    .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
   }

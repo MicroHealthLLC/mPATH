@@ -7,6 +7,10 @@
       accept-charset="UTF-8"
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
       >
+       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+       </div>
        <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
@@ -499,7 +503,7 @@
 
       <div class="mx-4">
         <div class="input-group pt-3 mb-2">
-          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100"  v-if="file.id">
             <div class="input-group-prepend">
               <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
                 <i class="fas fa-file-image"></i>
@@ -510,7 +514,11 @@
               type="text"
               class="form-control form-control-sm mw-95"
               :value="file.name || file.uri"
+              v-if="!file.link"
             />
+            <a :href="file.uri" target="_blank" v-if="file.link">
+              {{file.uri}}
+            </a>
             <div
               :class="{'_disabled': loading || !_isallowed('write') }"
               class="del-check clickable"
@@ -524,6 +532,34 @@
 
       <div v-if="_isallowed('write')" class="form-group mx-4" >
         <label class="font-sm">Files:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFilesInput">
+          <i class="fas fa-plus-circle" ></i>
+        </span>
+
+        <div class="mx-4">
+          <div class="input-group pt-3 mb-2">
+            <div v-for="(file, index) in DV_task.taskFiles" :key="index" class="d-flex mb-2 w-100"   v-if="!file.id && file.link">
+                <div class="input-group-prepend" >
+                  <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                    <i class="fas fa-file-image"></i>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  class="form-control form-control-sm mw-95"
+                  @input="updateFileLinkItem($event, 'text', file)"
+                />
+                <div
+                  :class="{'_disabled': loading || !_isallowed('write') }"
+                  class="del-check clickable"
+                  @click.prevent="deleteFile(file)"
+                  >
+                  <i class="fas fa-times"></i>
+                </div>
+            </div>
+          </div>
+        </div>
+
         <attachment-input
           @input="addFile"
           :show-label="true"
@@ -688,6 +724,7 @@
     data() {
       return {
         DV_task: this.INITIAL_TASK_STATE(),
+        DV_facility: Object.assign({}, this.facility),
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         editTimeLive:"",
@@ -791,6 +828,7 @@
       log(e){
         // console.log(e)
       },
+
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         this.DV_task.checklists.push({text: '', checked: false})
@@ -863,8 +901,8 @@
         if (!file) return;
         let confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
-
-        if (file.uri) {
+        
+        if (file.uri || file.link) {
           let index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
           Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
           this.destroyedFiles.push(file)
@@ -1026,9 +1064,13 @@
           }
 
           for (let file of this.DV_task.taskFiles) {
-            if (!file.id) {
+            if(file.id) continue
+            if (!file.link) {
               formData.append('task[task_files][]', file)
+            }else if(file.link){
+              formData.append('file_links[]', file.name)
             }
+
           }
 
           let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
@@ -1076,6 +1118,9 @@
       addChecks() {
         var postion = this.DV_task.checklists.length
         this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
+      },
+      addFilesInput(){
+        this.DV_task.taskFiles.push({name: "", uri: '', link: true})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -1134,6 +1179,13 @@
           this.DV_task.checklists[index].checked = event.target.checked
         } else if (name === 'dueDate' && this.DV_task.checklists[index].text) {
           this.DV_task.checklists[index].dueDate = event.target.value
+        }
+      },
+      updateFileLinkItem(event, name, input) {
+        //var v = event.target.value
+        //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
+        if(event.target.value){
+          input.name = event.target.value  
         }
       },
       updateProgressListItem(event, name, progressList) {
@@ -1346,6 +1398,11 @@
     width: 83.33%;  
     z-index: 100;   
   }
+  .fixed-form-mapView {
+    width: 100%;
+    top:0;
+    position: absolute;
+  }
   td, th {
     border: solid 1px #ededed;
     padding: 1px 3px;
@@ -1497,6 +1554,7 @@
   }
   .fixed-form {
    overflow-y: auto;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
@@ -1506,5 +1564,9 @@
   .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
   }
 </style>

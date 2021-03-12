@@ -44,20 +44,30 @@ class Issue < ApplicationRecord
     i_files = self.issue_files
     if i_files.attached?
       attach_files = i_files.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
+        if file.blob.content_type == "text/plain"
+          {
+            id: file.id,
+            name: file.blob.filename.instance_variable_get("@filename"),
+            uri: file.blob.filename.instance_variable_get("@filename"),
+            link: true
+          }
+        else
+          {
+            id: file.id,
+            name: file.blob.filename,
+            uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+            link: false
+          }
+        end
       end
     end
 
     fp = self.facility_project
     
-    t_users = options[:all_issue_users]
-    all_users = options[:all_users]
+    t_users = options[:all_issue_users] || []
+    all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :issue_index].include?(options[:for])
-      resource_users = t_users && t_users.any? ? t_users : []
+      resource_users = t_users
     else
       resource_users = self.issue_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
@@ -69,15 +79,15 @@ class Issue < ApplicationRecord
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
 
-    users = [] 
-    if all_users && all_users.any?
-      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    p_users = [] 
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = User.where(id: resource_user_ids).active
+      p_users = users.select{|u| u.active? } #User.where(id: resource_user_ids).active
     end
 
     users_hash = {} 
-    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -95,10 +105,10 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
-      responsible_user_names: users.map(&:full_name).compact.join(", "),
-      user_names: users.map(&:full_name).compact.join(", "),
-      user_ids: users.map(&:id).compact.uniq,
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      responsible_user_names: p_users.map(&:full_name).compact.join(", "),
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      user_ids: p_users.map(&:id).compact.uniq,
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       
 
     # Add RACI user names
@@ -204,6 +214,8 @@ class Issue < ApplicationRecord
 
       issue.save
 
+      issue.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         issue_users_obj = []
         user_ids.each do |uid|
@@ -263,6 +275,16 @@ class Issue < ApplicationRecord
     end
 
     issue
+  end
+
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        next if !f.present? || f.nil? || (f =~ /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/).nil?
+        self.issue_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
   end
 
   def assign_users(params)

@@ -1,5 +1,6 @@
 <template>
   <div>
+    
     <form
       id="issues-form"
       @submit.prevent="saveIssue"    
@@ -8,6 +9,10 @@
       data-cy="issue_form"
      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
     >
+      <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
+      </div>
       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar">
         <button
           v-if="_isallowed('write')"
@@ -639,7 +644,7 @@ Tab 1 Row Begins here -->
 <div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
 <div class="mx-4 pt-3">
           <div class="input-group mb-2">
-            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
+            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="file.id">
               <div class="input-group-prepend">
                 <div
                   class="input-group-text clickable"
@@ -653,8 +658,11 @@ Tab 1 Row Begins here -->
                 readonly
                 type="text"
                 class="form-control form-control-sm mw-95"
-                :value="file.name || file.uri"
+                v-if="!file.link"
               />
+              <a :href="file.uri" target="_blank" v-if="file.link">
+                {{file.uri}}
+              </a>
               <div
                 :class="{ _disabled: loading || !_isallowed('write') }"
                 class="del-check clickable"
@@ -668,6 +676,34 @@ Tab 1 Row Begins here -->
         <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
         <div v-if="_isallowed('write')" class="form-group mx-4">
           <label class="font-sm">Files:</label>
+          <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFilesInput">
+            <i class="fas fa-plus-circle" ></i>
+          </span>
+
+          <div class="mx-4">
+            <div class="input-group pt-3 mb-2">
+              <div v-for="(file, index) in DV_issue.issueFiles" :key="index" class="d-flex mb-2 w-100"   v-if="!file.id && file.link">
+                  <div class="input-group-prepend" >
+                    <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
+                      <i class="fas fa-file-image"></i>
+                    </div>
+                  </div>
+                  <input
+                    type="text"
+                    class="form-control form-control-sm mw-95"
+                    @input="updateFileLinkItem($event, 'text', file)"
+                  />
+                  <div
+                    :class="{'_disabled': loading || !_isallowed('write') }"
+                    class="del-check clickable"
+                    @click.prevent="deleteFile(file)"
+                    >
+                    <i class="fas fa-times"></i>
+                  </div>
+              </div>
+            </div>
+          </div>
+
           <attachment-input
             @input="addFile"
             :show-label="true"
@@ -863,6 +899,7 @@ export default {
   data() {
     return {
       DV_issue: this.INITIAL_ISSUE_STATE(),
+      DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
@@ -1039,6 +1076,9 @@ export default {
         this.loading = false;
       });
     },
+    addFilesInput(){
+      this.DV_issue.issueFiles.push({name: "", uri: '', link: true})
+    },
     addFile(files = [], append = true) {
       let _files = append ?  [...this.DV_issue.issueFiles] : [];
       for (let file of files) {
@@ -1064,7 +1104,7 @@ export default {
       );
       if (!confirm) return;
 
-      if (file.uri) {
+      if (file.uri || file.link) {
         let index = this.DV_issue.issueFiles.findIndex(
           (f) => f.guid === file.guid
         );
@@ -1258,8 +1298,11 @@ export default {
         }
 
         for (let file of this.DV_issue.issueFiles) {
-          if (!file.id) {
-            formData.append("issue[issue_files][]", file);
+          if(file.id) continue
+          if (!file.link) {
+          formData.append("issue[issue_files][]", file);
+          }else if(file.link){
+            formData.append('file_links[]', file.name)
           }
         }
 
@@ -1386,6 +1429,13 @@ export default {
         this.DV_issue.checklists[index].dueDate = event.target.value;
       }
     },
+    updateFileLinkItem(event, name, input) {
+      //var v = event.target.value
+      //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
+      if(event.target.value){
+        input.name = event.target.value  
+      }
+    },
     updateProgressListItem(event, name, progressList) {
         progressList.body = event.target.value
     },
@@ -1507,8 +1557,7 @@ export default {
     },
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
-    },
-
+    },  
     //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
@@ -1741,10 +1790,12 @@ ul {
   }
  .fixed-form {
    overflow-y: auto;
+   height: 80vh;
    padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
+   top:0;
    position: absolute;
   }
  .display-length {
@@ -1763,5 +1814,8 @@ ul {
     border: solid #ededed 1px;
     border-radius: 4px;  
   }
-
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
+  }
 </style>

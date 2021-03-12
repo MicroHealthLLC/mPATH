@@ -15,10 +15,8 @@ class RisksController < AuthenticatedController
     all_users = User.includes(:organization).where(id: all_user_ids ).active
     all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
 
-    risks = all_risks.compact.uniq
-
     h = []
-    risks.each do |r|
+    all_risks.each do |r|
       h << r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :risk_index} )
     end
 
@@ -49,6 +47,7 @@ class RisksController < AuthenticatedController
     end
     @risk.update(r_params)
     @risk.assign_users(params)
+    @risk.add_link_attachment(params)
 
     render json: {risk: @risk.reload.to_json}
   end

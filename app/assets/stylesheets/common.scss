@@ -133,8 +133,7 @@ input[type=button]:focus {
 .grid-container {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(auto-fill,auto);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-row-gap: 1em;
   grid-column-gap: 1em;
 }
@@ -259,7 +258,7 @@ input[type=button]:focus {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .risks-form, .tasks-form, .issues-form, #risks-form {
+ .risks-form, .tasks-form, .issues-form, #risks-form, .notes-form {
   background-color: #fff;
   position:fixed;
   height: 100vh;
@@ -493,6 +492,14 @@ input[type=button]:focus {
     font-weight: bold;
   }
 }
+
+/deep/.multiselect__tags {
+  max-height: 32px !important;
+  padding: 4px 40px 0 8px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  font-size: 13px;
+}
 .__loading {
   margin-top: 125px;
   margin-left: -20px;
@@ -503,7 +510,7 @@ input[type=button]:focus {
 .simple-select /deep/ .multiselect,
 .user-select /deep/ .multiselect {
   .multiselect__tags {
-    min-height: 25px;
+    max-height: 32px;
     padding: 5px 40px 0 8px;
     border-radius: 5px;
     border: 1px solid #ced4da;

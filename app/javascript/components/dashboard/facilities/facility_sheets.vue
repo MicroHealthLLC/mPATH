@@ -34,7 +34,7 @@
                       </small>
                    </span>
                   </p>
-                  <p>CATEGORIES: </p>
+                  <p>Categories: </p>
                 </div>
 
                 <div class="col">
@@ -267,7 +267,7 @@
 
                    <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
          
-          <div v-if="issueTaskCATEGORIES.length > 0" data-cy="issue_types">
+          <div v-if="filteredIssues.length" data-cy="issue_types">
           <el-collapse>
             <el-collapse-item title="Details" name="1">
               <div v-if="contentLoaded">
@@ -289,7 +289,7 @@
                 </div>
               </div>
 
-              <div v-if="issueStats.length > 0" data-cy="issue_types">
+              <div data-cy="issue_types">
                 <div class="col mt-1 mb-2 text-center">
                   ISSUE TYPES
                 </div>
@@ -941,9 +941,18 @@
     background-color: #fff;
   }
   .simple-select /deep/ .multiselect {
-    .multiselect__placeholder {
-      color: #dc3545;
+    .multiselect__placeholder {   
       text-overflow: ellipsis;
+    }
+  }
+ /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
     }
   }
  .fac-sum {

@@ -33,20 +33,11 @@
 
       <div class="d-flex font-sm w-100 mt-2">
         <div class="simple-select w-50 mr-1">
-          <multiselect v-model="C_facilityManagerRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div> 
-        <div class="simple-select w-50">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Task Category"
+            placeholder="Filter by Categories"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -59,16 +50,25 @@
               </div>
             </template>
           </multiselect>
+        </div> 
+        <div class="simple-select w-50">
+          <multiselect v-model="C_facilityManagerRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect>
         </div>
       </div>
 
-       <div class="d-flex font-sm w-100 mt-1">
+       <div class="d-flex font-sm w-100">
         <div class="simple-select w-50 mr-1">
           <multiselect
             v-model="C_riskApproachFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Approach"
+            placeholder="Filter by Risk Approaches"
             :options="getRiskApproachFilterOptions"
             :searchable="false"
             :multiple="true"
@@ -410,6 +410,13 @@
  .alt-text {
     position: relative;
     padding-top: 80px !important;
+  }
+ /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 8px 40px 8px 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
   }
   .exportBtns {
     transition: all .2s ease-in-out;

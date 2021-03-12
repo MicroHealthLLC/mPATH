@@ -20,7 +20,7 @@
               v-model="C_taskTypeFilter"                
               track-by="name"
               label="name"
-              placeholder="Filter by Category"
+              placeholder="Filter by Categories"
               :options="taskTypes"
               :searchable="false"
               :multiple="true"
@@ -35,7 +35,7 @@
             </multiselect>
           </div>
         <div class="simple-select mr-1 w-100">
-          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -51,7 +51,7 @@
             track-by="name"        
             label="name"
             class="issueTypeMs"
-            placeholder="Filter by Issue Type"
+            placeholder="Filter by Issue Types"
             :options="issueTypes"
             :searchable="false"
             :multiple="true"
@@ -70,7 +70,7 @@
             v-model="C_issueSeverityFilter"
             track-by="name"          
             label="name"
-            placeholder="Filter by Issue Severity"
+            placeholder="Filter by Issue Severities"
             :options="issueSeverities"
             :searchable="false"
             :multiple="true"
@@ -163,7 +163,8 @@
                   <multiselect 
                     v-model="C_issuesPerPage" 
                     track-by="value"
-                    label="name"      
+                    label="name"
+                    select-label="Select"
                     deselect-label=""                     
                     :allow-empty="false"
                     :options="getIssuesPerPageFilterOptions">
@@ -560,6 +561,21 @@
     width: 100% ;
     margin-bottom: 0 !important;
   }
+  .task-search-bar {
+    height: 31px;
+    width: 310px;
+    border-radius: 5px;
+  }
+  /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+  }
   .eight {
     width: 8%;
   }
@@ -593,8 +609,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
+    background-color: rgba(91, 192, 222, 0.3);   
   }
   .floatRight {
     text-align: right;

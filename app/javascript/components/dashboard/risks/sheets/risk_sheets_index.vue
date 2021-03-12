@@ -19,7 +19,7 @@
             v-model="C_taskTypeFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Category"
+            placeholder="Filter by Categories"
             :options="taskTypes"
             :searchable="false"
             :multiple="true"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -50,7 +50,7 @@
             v-model="C_riskApproachFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Approach"
+            placeholder="Filter by Risk Approaches"
             :options="getRiskApproachFilterOptions"
             :searchable="false"
             :multiple="true"
@@ -69,7 +69,7 @@
             v-model="C_riskPriorityLevelFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Priority Level"
+            placeholder="Filter by Risk Priority Levels"
             :options="getRiskPriorityLevelFilterOptions"
             :searchable="false"
             :multiple="true"
@@ -168,8 +168,9 @@
               <multiselect 
                 v-model="C_risksPerPage" 
                 track-by="value"
-                label="name"      
-                deselect-label=""                     
+                label="name"
+                select-label="Select"
+                deselect-label=""
                 :allow-empty="false"
                 :options="getRisksPerPageFilterOptions">
                   <template slot="singleLabel" slot-scope="{option}">
@@ -516,6 +517,13 @@
     z-index: 100;
     height: 500px
   }
+   /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 8px 40px 8px 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    }
   .risk-search-bar {
     height: 31px;
     width: 310px;
@@ -560,7 +568,6 @@
   .riskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
   }
   table {
     table-layout: fixed;

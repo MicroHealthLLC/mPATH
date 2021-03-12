@@ -1,5 +1,5 @@
 ActiveAdmin.register TaskType do
-  menu parent: "Tasks"
+  menu priority: 7, label: "Categories"
   actions :all, except: [:show]
 
   permit_params do
@@ -8,14 +8,14 @@ ActiveAdmin.register TaskType do
   end
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Task Categories', admin_task_types_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Categories', admin_task_types_path)]
     if %(show edit).include?(params['action'])
       links << link_to(task_type.name, edit_admin_task_type_path)
     end
     links
   end
 
-  index do
+  index title: 'Categories' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column :id
