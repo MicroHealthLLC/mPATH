@@ -1,5 +1,5 @@
 ActiveAdmin.register TaskStage do
-  menu parent: "Tasks", priority: 2
+  menu parent: "Tasks"
   actions :all, except: [:show]
 
   permit_params do
