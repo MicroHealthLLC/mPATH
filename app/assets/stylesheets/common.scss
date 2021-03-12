@@ -133,8 +133,7 @@ input[type=button]:focus {
 .grid-container {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(auto-fill,auto);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-row-gap: 1em;
   grid-column-gap: 1em;
 }
