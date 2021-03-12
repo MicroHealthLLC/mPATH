@@ -324,7 +324,16 @@ computed: {
   margin-right: 0;
   text-align: right;
 }
-
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+  }
 .multiselect {
   border: #1d2124 !important;
 }

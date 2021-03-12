@@ -62,7 +62,7 @@
         </div>
       </div>
 
-       <div class="d-flex font-sm w-100 mt-1">
+       <div class="d-flex font-sm w-100">
         <div class="simple-select w-50 mr-1">
           <multiselect
             v-model="C_riskApproachFilter"
@@ -410,6 +410,13 @@
  .alt-text {
     position: relative;
     padding-top: 80px !important;
+  }
+ /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 8px 40px 8px 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
   }
   .exportBtns {
     transition: all .2s ease-in-out;

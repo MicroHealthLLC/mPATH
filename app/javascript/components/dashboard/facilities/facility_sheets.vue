@@ -941,9 +941,18 @@
     background-color: #fff;
   }
   .simple-select /deep/ .multiselect {
-    .multiselect__placeholder {
-      color: #dc3545;
+    .multiselect__placeholder {   
       text-overflow: ellipsis;
+    }
+  }
+ /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
     }
   }
  .fac-sum {

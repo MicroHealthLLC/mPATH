@@ -393,7 +393,16 @@ computed: {
 .issues-index {
   height: 465px;
 }
-
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+ }
 .addIssueBtn,
 .exportBtns {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);

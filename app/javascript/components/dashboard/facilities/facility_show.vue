@@ -923,9 +923,18 @@
     color: #555;
     background-color: #fff;
   }
-  .simple-select /deep/ .multiselect {
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
     .multiselect__placeholder {
-      color: #dc3545;
+    padding-top:0;
+    }
+  }
+  .simple-select /deep/ .multiselect {
+    .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
   }
