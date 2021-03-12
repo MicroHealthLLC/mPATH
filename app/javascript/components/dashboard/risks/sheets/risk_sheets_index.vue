@@ -517,6 +517,13 @@
     z-index: 100;
     height: 500px
   }
+   /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 8px 40px 8px 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    }
   .risk-search-bar {
     height: 31px;
     width: 310px;

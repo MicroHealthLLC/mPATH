@@ -561,6 +561,21 @@
     width: 100% ;
     margin-bottom: 0 !important;
   }
+  .task-search-bar {
+    height: 31px;
+    width: 310px;
+    border-radius: 5px;
+  }
+  /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+  }
   .eight {
     width: 8%;
   }

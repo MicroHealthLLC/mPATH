@@ -1,9 +1,12 @@
 <template>
-  <div id="facility_sidebar" data-cy="facility_list">
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+    <!-- <div class="programName text-light bg-info text-center" v-tooltip="`Program`">
+      <span><small class="p-0 d-block" v-if="currentProject !== null">{{currentProject.name}}</small></span>
+    </div>    -->
     <h4 class="mt-4 text-info text-center" v-if="title">{{title}}</h4>
-    <div class="my-3 ml-2">
+    <div class="mb-3 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
-        <div v-for="(group, index) in sortedGroups" :key="index" class="my-2">
+        <div v-for="(group, index) in sortedGroups" :key="index" class="my-2 pl-2" >
           <div class="d-flex expandable" @click="expandFacilityGroup(group)" :class="{'active': group.id == currentFacilityGroup.id}" data-cy="facility_groups">
             <span v-show="expanded.id != group.id">
               <i class="fa fa-angle-right font-sm mr-2 clickable"></i>
@@ -44,6 +47,7 @@
     computed: {
       ...mapGetters([
         'contentLoaded',
+        'currentProject',
         'filteredFacilityGroups',
         'facilityGroupFacilities'
       ]),
@@ -58,6 +62,9 @@
     methods: {
       expandFacilityGroup(group) {
         this.$emit('on-expand-facility-group', group)
+      },
+      log(t){
+        console.log("this is the group object: " + t)
       },
       showFacility(facility) {
         this.$emit('on-expand-facility', facility)
@@ -80,6 +87,11 @@
       border-radius: 2px;
       margin: 1px;
       cursor: pointer;
+    }
+    .programName {
+      position: absolute;
+      top:0;  
+      width: 100%;      
     }
     .fac-name:hover {
       background-color: rgba(91, 192, 222, 0.3);

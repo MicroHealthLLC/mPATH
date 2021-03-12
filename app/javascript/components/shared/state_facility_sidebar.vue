@@ -1,7 +1,7 @@
 <template>
   <div id="facility_sidebar">
     <div class="row">
-      <div class="col-md-2 facility-groups-tab">
+      <div class="col-md-2 facility-groups-tab pl-0">
         <facility-sidebar
           :current-facility-group="currentFacilityGroup"
           :expanded="expanded"
@@ -1137,4 +1137,15 @@
   .no-scroll {
     overflow-y: hidden !important;
   }
+
+  /deep/.multiselect__tags {
+  max-height: 32px !important;
+  padding: 4px 40px 0 8px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  font-size: 13px;
+  .multiselect__placeholder {
+    padding-top:0;
+  }
+}
 </style>

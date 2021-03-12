@@ -1080,4 +1080,14 @@ input[type=number] {
 .clear-btn {
   text-decoration-line: none !important;
 }
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+  }
 </style>
