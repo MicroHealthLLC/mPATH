@@ -88,16 +88,6 @@
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
-              <label class="font-sm mb-1">Task Categories</label>
-              <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-            <div>
               <label class="font-sm mb-0">Task Stages</label>
               <multiselect v-model="C_taskStageFilter" track-by="name" label="name" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
                 <template slot="singleLabel" slot-scope="{option}">
@@ -194,6 +184,16 @@
 
           <div class="col-md-4">
               <h5 class="mb-0">Combined</h5>
+              <div>
+                <label class="font-sm mb-1">Categories</label>
+                <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
+                  <template slot="singleLabel" slot-scope="{option}">
+                    <div class="d-flex">
+                      <span class='select__tag-name'>{{option.name}}</span>
+                    </div>
+                  </template>
+                </multiselect>
+               </div>
                <div>
                 <label class="font-sm mb-0">Action Users</label>
                 <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" data-cy="issue_user">
