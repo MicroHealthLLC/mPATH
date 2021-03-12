@@ -202,3 +202,10 @@ Cypress.Commands.add("openTaskStageAP", () => {
     cy.get('#task_stages').contains('Task Stages').click({force: true})
   })
 })
+
+// Open Settings from Admin panel
+Cypress.Commands.add("openSettingAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#settings').click()
+  cy.get('#page_title').contains('App configurations').should('be.visible')
+})
