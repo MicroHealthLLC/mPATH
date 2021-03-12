@@ -15,7 +15,7 @@
 
       <div class="d-flex align-item-center font-sm justify-content-between mt-2 w-100">
        <div class="simple-select w-50 mr-1 font-sm">
-          <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+          <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Categories" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -25,7 +25,7 @@
         </div>
        
         <div class="simple-select w-50">
-          <multiselect v-model="C_facilityManagerIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+          <multiselect v-model="C_facilityManagerIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -37,7 +37,7 @@
 
       <div class="d-flex align-item-center justify-content-between w-100">
         <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" placeholder="Filter by Issue Type" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+          <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" placeholder="Filter by Issue Types" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -46,7 +46,7 @@
           </multiselect>
         </div>
         <div class="simple-select w-100">
-          <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" placeholder="Filter by Issue Severity" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
+          <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" placeholder="Filter by Issue Severities" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -393,7 +393,16 @@ computed: {
 .issues-index {
   height: 465px;
 }
-
+/deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
+ }
 .addIssueBtn,
 .exportBtns {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);

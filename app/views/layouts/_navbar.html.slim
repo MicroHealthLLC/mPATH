@@ -1,9 +1,10 @@
 nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
-  button.navbar-toggler aria-controls="navbartoggler" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbartoggler" data-toggle="collapse" type="button"
+  a.navbar-brand.pt-0 href="/"
+      =image_tag "microhealthllc.png"
+  button.navbar-toggler.ml-auto aria-controls="navbartoggler" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbartoggler" data-toggle="collapse" type="button"
     span.navbar-toggler-icon
   #navbartoggler.collapse.navbar-collapse
-    a.navbar-brand href="/"
-      =image_tag "microhealthllc.png"
+    
 
     -unless @project.present?
       ul.navbar-nav.mr-auto.mt-2.mt-lg-0
@@ -38,7 +39,7 @@ nav#nav-wrap.navbar.navbar-expand-lg.blue-gradient.navbar-light
 
 css:
   #nav-wrap {
-    padding: 7px 70px;
+    padding: 15px 25px 7px 25px;
     z-index: 1030;
     font-weight: 300;
     background: #fff;
