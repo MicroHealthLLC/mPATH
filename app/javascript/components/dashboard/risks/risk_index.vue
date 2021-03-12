@@ -68,7 +68,7 @@
             v-model="C_riskApproachFilter"
             track-by="name"
             label="name"
-            placeholder="Filter by Risk Approach"
+            placeholder="Filter by Risk Approaches"
             :options="getRiskApproachFilterOptions"
             :searchable="false"
             :multiple="true"
