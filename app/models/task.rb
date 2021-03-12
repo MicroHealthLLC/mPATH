@@ -286,6 +286,7 @@ class Task < ApplicationRecord
     link_files = params[:file_links]
     if link_files && link_files.any?
       link_files.each do |f|
+        next if !f.present? || f.nil? || (f =~ /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/).nil?
         self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
       end
     end
