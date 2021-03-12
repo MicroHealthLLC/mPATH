@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_08_155824) do
+ActiveRecord::Schema.define(version: 2021_03_12_214237) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -117,6 +117,8 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.datetime "updated_at", null: false
     t.date "due_date"
     t.bigint "status_id"
+    t.integer "progress", default: 0
+    t.string "color", default: "#ff0000"
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"

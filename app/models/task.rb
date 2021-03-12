@@ -15,6 +15,9 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
+  after_save :update_facility_project
+  after_destroy :update_facility_project
+
   amoeba do
     include_association :task_type
     include_association :task_stage
@@ -31,6 +34,10 @@ class Task < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
+  end
+
+  def update_facility_project
+    facility_project.update_progress
   end
 
   def to_json(options = {})

@@ -56,7 +56,7 @@ Rails.application.routes.draw do
   resources :facilities, only: [] do
     resources :facility_projects, only: [:index, :update, :show]
   end
-
+  resources :facility_projects, only: [:index, :update, :show]
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'
