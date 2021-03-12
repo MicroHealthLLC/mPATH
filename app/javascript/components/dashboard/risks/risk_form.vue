@@ -1382,7 +1382,7 @@
         if (!file) return;
         let confirm = window.confirm(`Are you sure you want to delete attachment?`)
         if (!confirm) return;
-        if (file.uri) {
+        if (file.uri || file.link) {
           let index = this.DV_risk.riskFiles.findIndex(f => f.guid === file.guid)
           Vue.set(this.DV_risk.riskFiles, index, {...file, _destroy: true})
           this.destroyedFiles.push(file)
@@ -1692,7 +1692,11 @@
         }
       },
       updateFileLinkItem(event, name, input) {
-        input.name = event.target.value
+        //var v = event.target.value
+        //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
+        if(event.target.value){
+          input.name = event.target.value  
+        }
       },
       updateProgressListItem(event, name, progressList) {
         progressList.body = event.target.value

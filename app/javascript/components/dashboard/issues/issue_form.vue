@@ -1104,7 +1104,7 @@ export default {
       );
       if (!confirm) return;
 
-      if (file.uri) {
+      if (file.uri || file.link) {
         let index = this.DV_issue.issueFiles.findIndex(
           (f) => f.guid === file.guid
         );
@@ -1430,7 +1430,11 @@ export default {
       }
     },
     updateFileLinkItem(event, name, input) {
-      input.name = event.target.value
+      //var v = event.target.value
+      //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
+      if(event.target.value){
+        input.name = event.target.value  
+      }
     },
     updateProgressListItem(event, name, progressList) {
         progressList.body = event.target.value
