@@ -1,114 +1,119 @@
 <template>
-  <div >
+  <div>
     <form
       id="tasks-form"
       @submit.prevent="saveTask"     
       class="mx-auto tasks-form"      
       accept-charset="UTF-8"
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
-      >
-       <div v-if="isMapView" class="d-flex align-items-center mt-0 mb-2">
-        <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
-       </div>
-       <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4 justify-content-start action-bar">
-        <button
-          v-if="_isallowed('write')"
-          :disabled="!readyToSave"
-          class="btn btn-sm sticky-btn btn-success"
-          data-cy="task_save_btn"
+    >  
+      <div class="mt-2 mx-4 d-flex align-items-center">
+        <div>
+          <h5 class="mb-0">
+            <span style="font-size: 16px; margin-right: 10px"
+              ><i class="fas fa-building"></i
+            ></span>
+            {{ facility.facilityName }}
+            <el-icon
+              class="el-icon-arrow-right"
+              style="font-size: 12px"
+            ></el-icon>
+            Tasks
+            <el-icon
+              class="el-icon-arrow-right"
+              style="font-size: 12px"
+            ></el-icon>
+            <span v-if="DV_task.text.length > 0">{{ DV_task.text }}</span>
+            <span v-else style="color: gray">(Task Name)</span>
+          </h5>
+        </div>
+        <div class="ml-auto d-flex" v-if="_isallowed('read')">
+          <button
+            v-if="_isallowed('write')"
+            class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+            data-cy="task_save_btn"
           >
-          Save
-        </button>
-        <button
-          v-else
-          disabled
-          class="btn btn-sm sticky-btn btn-light"
-          data-cy="task_read_only_btn"
+            Save Task
+          </button>
+          <button
+            v-else
+            disabled
+            class="btn btn-sm sticky-btn btn-primary mr-2"
+            data-cy="task_read_only_btn"
           >
-          Read Only
-        </button>
-        <button
-          class="btn btn-sm sticky-btn btn-warning ml-2"
-          @click.prevent="cancelSave"
-          data-cy="task_close_btn"
+            Read Only
+          </button>
+          <button
+            class="btn btn-sm sticky-btn btn-outline-secondary"
+            @click.prevent="cancelSave"
+            data-cy="task_close_btn"
           >
-          Close
-        </button>
-        <!-- <div class="btn-group">
-           <button  
-          v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"    
-          @click.prevent="scrollToChecklist"            
-          >
-          <font-awesome-icon icon="plus-circle" />
-          Checklists
-        </button>
-         <button  
-          v-if="_isallowed('write')"       
-          class="btn btn-sm sticky-btn btn-light scrollToChecklist"    
-          @click.prevent="scrollToUpdates"            
-          >
-          <font-awesome-icon icon="plus-circle" />
-          Updates
-        </button>
-        </div>         -->
-        <button
-          v-if="_isallowed('delete') && DV_task.id"
-          @click.prevent="deleteTask"
-          class="btn btn-sm btn-danger sticky-btn ml-auto"
-          data-cy="task_delete_btn"
-          >
-          <i class="fas fa-trash-alt mr-2"></i>
-          Delete
-        </button>
+            Close
+          </button>
+        </div>
       </div>
+
+      <hr class="mx-4 mb-6 mt-2" />
+
       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
           
-      <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" />       
-      
+        <FormTabs 
+          :current-tab="currentTab" 
+          :tabs="tabs"
+          :allErrors="errors"
+          @on-change-tab="onChangeTab"      
+        />          
       </div>
- <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
-     <div class="formTitle fixed-form pt-1">
-      
-      <div
-        v-if="showErrors"
-        class="text-danger mb-3"
-        >
+      <h6 class="mx-4 mt-4 mb-0" style="color: gray; font-size: 13px">
+        <span style="color: #dc3545; font-size: 15px">*</span> Indicates
+        required fields
+      </h6>
+      <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
+      <div class="formTitle fixed-form pt-1">
+        
+      <div v-if="errors.items.length > 0" class="text-danger mx-4">
         Please fill the required fields before submitting
-      </div>
-
-
- <!-- NAME persists throughout tab selection -->
-   <div class="form-group pt-3 mx-4">
-        <label class="font-sm">*Task Name:</label>
-            <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
-              <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
-              <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
-              <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
-            </span>
-            <input
-              name="Name"
-              v-validate="'required'"
-              type="text"
-              class="form-control form-control-sm"
-              v-model="DV_task.text"
-              placeholder="Task Name"
-              :readonly="!_isallowed('write')"
-              :class="{'form-control': true, 'error': errors.has('Name') }"
-              data-cy="task_name"
-            />
-        <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
-          {{errors.first('Name')}}
-        </div>
+        <ul class="error-list mx-4">
+          <li
+            v-for="(error, index) in errors.all()"
+            :key="index"
+            v-tooltip="{
+              content: 'Field is located on Task Info',
+              placement: 'left',
+            }"
+          >
+            {{ error }}
+          </li>
+        </ul>
       </div>
 
   <!-- TASK INFO TAB #1 -->
   <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">       
-  
+    <div class="form-group pt-3 mx-4">
+      <label class="font-md">Task Name <span style="color: #dc3545">*</span></label>
+          <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
+            <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
+            <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
+            <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
+          </span>
+          <input
+            name="Name"
+            v-validate="'required'"
+            type="text"
+            class="form-control form-control-sm"
+            v-model="DV_task.text"
+            placeholder="Task Name"
+            :readonly="!_isallowed('write')"
+            :class="{'form-control': true, 'error': errors.has('Name') }"
+            data-cy="task_name"
+          />
+      <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
+        {{errors.first('Name')}}
+      </div>
+    </div>
 
         <div class="form-group mx-4">
-        <label class="font-sm">Description:</label>
+        <label class="font-md">Description</label>
         <textarea
           class="form-control"
           placeholder="Task brief description"
@@ -122,7 +127,7 @@
   <!-- Row begins -->
      <div  class="d-flex mb-0 mx-4 form-group">        
       <div class="simple-select form-group w-100">
-        <label class="font-sm">*Category:</label>
+        <label class="font-md" >Category <span style="color: #dc3545">*</span></label >
         <multiselect
           v-model="selectedTaskType"
           v-validate="'required'"
@@ -135,6 +140,8 @@
           deselect-label="Remove"
           :disabled="!_isallowed('write')"
           data-cy="task_type"
+          name="Category"
+          :class="{ 'error-border': errors.has('Category') }"
           >
           <template slot="singleLabel" slot-scope="{option}">
             <div class="d-flex">
@@ -142,9 +149,16 @@
             </div>
           </template>
         </multiselect>
+        <div
+          v-show="errors.has('Category')"
+          class="text-danger"
+          data-cy="task_start_date_error"
+        >
+          {{ errors.first("Category") }}
+        </div>
       </div>
       <div class="simple-select w-100 form-group mx-1">
-        <label class="font-sm">Stage:</label>
+        <label class="font-md">Stage</label>
         <multiselect
           v-model="selectedTaskStage"
           track-by="id"
@@ -168,36 +182,40 @@
     <!-- Row ends -->
     <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
-          <label class="font-sm">*Start Date:</label>
-          <v2-date-picker
-            v-validate="'required'"
-            v-model="DV_task.startDate"
-            value-type="YYYY-MM-DD"
-            format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
-            name="Start Date"
-            class="w-100 vue2-datepicker"
-            :disabled="!_isallowed('write')"
-            data-cy="task_start_date"
-          />
+          <label class="font-md" >Start Date <span style="color: #dc3545">*</span></label>
+          <div :class="{ 'error-border': errors.has('Start Date') }">
+            <v2-date-picker
+              v-validate="'required'"
+              v-model="DV_task.startDate"
+              value-type="YYYY-MM-DD"
+              format="DD MMM YYYY"
+              placeholder="DD MM YYYY"
+              name="Start Date"
+              class="w-100 vue2-datepicker"
+              :disabled="!_isallowed('write')"
+              data-cy="task_start_date"
+            />
+          </div>
           <div v-show="errors.has('Start Date')" class="text-danger" data-cy="task_start_date_error">
             {{errors.first('Start Date')}}
           </div>
         </div>
         <div class="form-group col-md-6 pr-0">
-          <label class="font-sm">*Due Date:</label>
-          <v2-date-picker
-            v-validate="'required'"
-            v-model="DV_task.dueDate"
-            value-type="YYYY-MM-DD"
-            format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
-            name="Due Date"
-            class="w-100 vue2-datepicker"
-            :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
-            :disabled-date="disabledDueDate"
-            data-cy="task_due_date"
-          />
+          <label class="font-md" >Due Date <span style="color: #dc3545">*</span></label>
+          <div :class="{ 'error-border': errors.has('Due Date') }">
+            <v2-date-picker
+              v-validate="'required'"
+              v-model="DV_task.dueDate"
+              value-type="YYYY-MM-DD"
+              format="DD MMM YYYY"
+              placeholder="DD MM YYYY"
+              name="Due Date"
+              class="w-100 vue2-datepicker"
+              :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
+              :disabled-date="disabledDueDate"
+              data-cy="task_due_date"
+            />
+          </div>
           <div v-show="errors.has('Due Date')" class="text-danger" data-cy="task_due_date_error">
             {{errors.first('Due Date')}}
           </div>
@@ -212,7 +230,7 @@
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-sm mb-0">Responsible:</label>
+          <label class="font-md mb-0">Responsible</label>
           <multiselect
             v-model="responsibleUsers"      
             track-by="id"
@@ -235,7 +253,7 @@
           </multiselect>
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Accountable:</label>
+          <label class="font-md mb-0">Accountable</label>
           <multiselect
             v-model="accountableTaskUsers"              
             track-by="id"
@@ -258,7 +276,7 @@
   </div> 
   <div class="form-group  mt-0 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
-          <label class="font-sm mb-0">Consulted:</label>
+          <label class="font-md mb-0">Consulted</label>
           <multiselect
             v-model="consultedTaskUsers"         
             track-by="id"
@@ -280,7 +298,7 @@
           </multiselect>
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Informed:</label>
+          <label class="font-md mb-0">Informed</label>
           <multiselect
             v-model="informedTaskUsers"        
             track-by="id"
@@ -308,7 +326,7 @@
 <div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
       
   <div class="form-group pt-3 mx-4" >
-    <label class="font-sm">Checklists:</label>
+    <label class="font-md">Checklists</label>
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
@@ -531,7 +549,7 @@
       </div>
 
       <div v-if="_isallowed('write')" class="form-group mx-4" >
-        <label class="font-sm">Files:</label>
+        <label class="font-md">Files</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFilesInput">
           <i class="fas fa-plus-circle" ></i>
         </span>
@@ -573,7 +591,7 @@
 <div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
            
       <div class="form-group user-select pt-3 mx-4">
-        <label class="font-sm mb-0">Related Tasks:</label>
+        <label class="font-md mb-0">Related Tasks</label>
         <multiselect
           v-model="relatedTasks"
           track-by="id"
@@ -596,7 +614,7 @@
       </div>
 
       <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Issues:</label>
+        <label class="font-md mb-0">Related Issues</label>
         <multiselect
           v-model="relatedIssues"
           track-by="id"
@@ -618,7 +636,7 @@
         </multiselect>
       </div>
         <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Risks:</label>
+        <label class="font-md mb-0">Related Risks</label>
         <multiselect
           v-model="relatedRisks"
           track-by="id"
@@ -649,7 +667,7 @@
   <div v-if="currentTab == 'tab6'" class="paperLookTab tab5">       
      
       <div class="form-group pt-3 mx-4">
-        <label class="font-sm mb-0">Progress: (in %)</label>
+        <label class="font-md mb-0">Progress (in %)</label>
         <span class="ml-3">
           <label class="font-sm mb-0 d-inline-flex align-items-center">
             <input type="checkbox" 
@@ -689,14 +707,6 @@
 
   <!-- TABBED OUT SECTION END HERE -->
 
-
-     <!-- <div ref="addCheckItem" class="pt-0 mt-0 mb-4"> </div> -->
-      
-
-      
-    
-     <h6 class="text-danger text-small pl-1 float-right pr-3">*Indicates required fields</h6>
-       <!-- <div ref="addUpdates" class="pt-0 mt-0"> </div> -->
     </form>
     <div v-if="loading" class="load-spinner spinner-border text-dark" role="status"></div>    
   </div>
@@ -705,7 +715,7 @@
 <script>
   import axios from 'axios'
   import Draggable from "vuedraggable"
-  import CustomTabs from './../../shared/custom-tabs'
+  import FormTabs from './../../shared/FormTabs'
   import humps from 'humps'
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import AttachmentInput from './../../shared/attachment_input'
@@ -718,7 +728,7 @@
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
-      AttachmentInput, Draggable, CustomTabs
+      AttachmentInput, Draggable, FormTabs
        
     },
     data() {
@@ -745,38 +755,50 @@
         currentTab: 'tab1',
         tabs: [
           {
-            label: 'TASK INFO',
-            key: 'tab1',
-            closable: false
+            label: "Task Info",
+            key: "tab1",
+            closable: false,
+            form_fields: [
+              "Task Name",
+              "Description",
+              "Start Date",
+              "Category",
+              "Stage",
+              "Start Date",
+              "Due Date",
+            ],
           },
-           {
-            label: 'ASSIGNMENTS',
-            key: 'tab2',
-            closable: false,                       
-          },      
           {
-            label: 'CHECKLIST',
-            key: 'tab3',
-            closable: false
+            label: "Assignments",
+            key: "tab2",
+            closable: false,
+            form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
           },
           {
-            label: 'FILES',
-            key: 'tab4',
-            closable: false
+            label: "Checklist",
+            key: "tab3",
+            closable: false,
+            form_fields: ["Checklists"],
           },
-           {
-            label: 'RELATED',
-            key: 'tab5',
-            closable: false,     
-                      
-          },          
-           {
-            label: 'UPDATES',
-            key: 'tab6',
-            closable: false,     
-                      
-          },                      
-        ]
+          {
+            label: "Files",
+            key: "tab4",
+            closable: false,
+            form_fields: ["Files"],
+          },
+          {
+            label: "Related",
+            key: "tab5",
+            closable: false,
+            form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
+          },
+          {
+            label: "Updates",
+            key: "tab6",
+            closable: false,
+            form_fields: ["Progress", "Updates"],
+          },
+        ],
       }
     },
     mounted() {
@@ -1402,6 +1424,7 @@
     width: 100%;
     top:0;
     position: absolute;
+    transform: scale(1.03);
   }
   td, th {
     border: solid 1px #ededed;
@@ -1500,36 +1523,7 @@
     margin-bottom: 5px;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
-  /deep/.el-collapse-item__header {
-    float:right;
-    margin-top: -38px;
-    font: small;
-    color: #d9534f !important;
-    border-bottom: none !important;
-  }
-   /deep/ .el-collapse {
-    border-top: none !important;
-    border-bottom: none !important;
-  }
-  /deep/.el-collapse-item__content {
-    padding-bottom: 0 !important;
-  }  
-  /deep/.el-collapse-item__header {
-    background-color: #fafafa !important;
-  }
-  .sticky {
-    // position: sticky;
-    // position: -webkit-sticky;
-    justify-content: center;
-    // margin-bottom: -2.5rem;
-    z-index: 1000;
-    left: 15;
-    top: 0;
-    width: 100%;
-    padding: 6px;
-    background-color: rgba(237, 237, 237, 0.85);
-    box-shadow: 0 10px 20px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-  }
+  
   .scrollToChecklist, .addCheckProgBtn, .check-items {    
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
@@ -1553,9 +1547,9 @@
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .fixed-form {
+   padding-bottom: 20px;
    overflow-y: auto;
    height: 80vh;
-   padding-bottom: 20px;
   }
   .fixed-form-mapView {
    width: 100%;
@@ -1569,4 +1563,22 @@
     font-size: large !important;
     color: #383838 !important;
   }
+  .error-list {
+  list-style-type: circle;
+  li {
+    width: max-content;
+  }
+}
+.text-danger {
+  font-size: 13px;
+}
+.error-border {
+  border: 1px solid red;
+  border-radius: 4px;
+}
+.overflow-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
 </style>

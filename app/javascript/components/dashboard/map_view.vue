@@ -507,7 +507,7 @@ export default {
 #map-sidebar {
   z-index: 1000;
   height: calc(100vh - 94px);
-  overflow: auto;
+  // overflow: auto;
   background: white;
   padding: 5px;
 }
