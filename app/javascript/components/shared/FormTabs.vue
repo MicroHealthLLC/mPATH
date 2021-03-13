@@ -34,9 +34,6 @@ export default {
       }
     },
   },
-  mounted() {
-    console.log(this.$route.name);
-  },
 };
 </script>
 
@@ -63,7 +60,7 @@ export default {
 }
 
 .map-width {
-  transform: scale(0.70);
+  transform: scale(0.7);
   transform-origin: left;
 }
 

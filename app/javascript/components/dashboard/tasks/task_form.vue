@@ -88,7 +88,7 @@
       </div>
 
   <!-- TASK INFO TAB #1 -->
-  <div v-if="currentTab == 'tab1'" class="paperLookTab tab1">       
+  <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">       
     <div class="form-group pt-3 mx-4">
       <label class="font-md">Task Name <span style="color: #dc3545">*</span></label>
           <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
@@ -225,7 +225,7 @@
       <!-- closing div for tab1 -->
 </div>
 
-  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+  <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
    
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
@@ -323,7 +323,7 @@
 
 <!-- CHECKLIST TAB #3-->
 
-<div v-if="currentTab == 'tab3'" class="paperLookTab tab3">
+<div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
       
   <div class="form-group pt-3 mx-4" >
     <label class="font-md">Checklists</label>
@@ -517,7 +517,7 @@
 
 
    <!-- FILES TAB # 4-->
-<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
+<div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
 
       <div class="mx-4">
         <div class="input-group pt-3 mb-2">
@@ -588,7 +588,7 @@
 
 
  <!-- RELATED TAB #5 -->  
-<div v-if="currentTab == 'tab5'" class="paperLookTab tab5">
+<div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
            
       <div class="form-group user-select pt-3 mx-4">
         <label class="font-md mb-0">Related Tasks</label>
@@ -664,7 +664,7 @@
 
 
   <!-- UPDATE TAB 6 -->
-  <div v-if="currentTab == 'tab6'" class="paperLookTab tab5">       
+  <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">       
      
       <div class="form-group pt-3 mx-4">
         <label class="font-md mb-0">Progress (in %)</label>
@@ -1121,7 +1121,13 @@
             var responseTask = humps.camelizeKeys(response.data.task)
             this.loadTask(responseTask)
             this.$emit(callback, responseTask)
-            // console.log(responseTask)
+            if (response.status === 200) {
+              this.$message({
+                message: `${response.data.task.text} was saved successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
           })
           .catch((err) => {
             // var errors = err.response.data.errors
