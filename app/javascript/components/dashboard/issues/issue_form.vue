@@ -89,7 +89,7 @@
     <!-- ISSUE INFO TAB #1 -->
     <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
       <div class="form-group pt-3 mx-4">
-        <label class="font-sm">*Issue Name:</label>
+        <label class="font-md">Issue Name <span style="color: #dc3545">*</span></label>
         <span
           v-if="_isallowed('write')"
           class="watch_action clickable float-right"
@@ -127,7 +127,7 @@
 
 
         <div class="form-group mx-4">
-          <label class="font-sm">Description:</label>
+          <label class="font-md">Description</label>
           <textarea
             class="form-control"
             placeholder="Issue brief description"
@@ -141,7 +141,7 @@
  <!-- Row begins -->
      <div  class="d-flex mb-0 mx-4 form-group">
        <div class="simple-select w-100 form-group">
-          <label class="font-sm">Category:</label>
+          <label class="font-md">Category</label>
           <multiselect
             v-model="selectedTaskType"
             track-by="id"
@@ -171,7 +171,7 @@
         </div>        
 
         <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">*Issue Type:</label>
+          <label class="font-md">Issue Type <span style="color: #dc3545">*</span></label>
           <multiselect
             v-model="selectedIssueType"
             v-validate="'required'"
@@ -206,7 +206,7 @@
     <!-- Tab 1 Row begins here -->
      <div class="d-flex mx-4">
        <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">*Issue Severity:</label>
+          <label class="font-md">Issue Severity <span style="color: #dc3545">*</span></label>
           <multiselect
             v-model="selectedIssueSeverity"
             v-validate="'required'"
@@ -237,7 +237,7 @@
           </div>
         </div>
         <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">Stage:</label>
+          <label class="font-md">Stage</label>
           <multiselect
             v-model="selectedIssueStage"
             track-by="id"
@@ -264,7 +264,7 @@
 Tab 1 Row Begins here -->
 <div  class="d-flex mb-0 mx-4 form-group">
       <div class="form-group mx-1 w-75">
-            <label class="font-sm">*Start Date:</label>
+            <label class="font-md">Start Date <span style="color: #dc3545">*</span></label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_issue.startDate"
@@ -286,7 +286,7 @@ Tab 1 Row Begins here -->
             </div>
           </div>
           <div class="form-group w-75 ml-1">
-            <label class="font-sm">*Estimated Completion Date:</label>
+            <label class="font-md">Estimated Completion Date <span style="color: #dc3545">*</span></label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_issue.dueDate"
@@ -350,7 +350,7 @@ Tab 1 Row Begins here -->
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-sm mb-0">Responsible:</label>
+          <label class="font-md mb-0">Responsible</label>
           <multiselect
             v-model="responsibleUsers"        
             track-by="id"
@@ -373,7 +373,7 @@ Tab 1 Row Begins here -->
           </multiselect>
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Accountable:</label>
+          <label class="font-md mb-0">Accountable</label>
           <multiselect
             v-model="accountableIssueUsers"              
             track-by="id"
@@ -397,7 +397,7 @@ Tab 1 Row Begins here -->
   </div> 
   <div class="form-group  mt-0 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
-          <label class="font-sm mb-0">Consulted:</label>
+          <label class="font-md mb-0">Consulted</label>
           <multiselect
             v-model="consultedIssueUsers"         
             track-by="id"
@@ -420,7 +420,7 @@ Tab 1 Row Begins here -->
           </multiselect>
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Informed:</label>
+          <label class="font-md mb-0">Informed</label>
           <multiselect
             v-model="informedIssueUsers"        
             track-by="id"
@@ -449,7 +449,7 @@ Tab 1 Row Begins here -->
   <!-- CHECKLIST TAB #3 -->
 <div v-show="currentTab == 'tab3'" class="paperLookTab tab2">
 <div class="form-group pt-3 mx-4" >
-    <label class="font-sm">Checklists:</label>
+    <label class="font-md">Checklists</label>
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
@@ -520,7 +520,7 @@ Tab 1 Row Begins here -->
             <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
                <div class="d-flex w-100" style="padding-left:4.5rem">
-                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
+                <span class="font-md pt-2 pr-2 m">Assigned To:</span>
                 <multiselect
                   v-model="check.user"
                   track-by="id"
@@ -684,7 +684,7 @@ Tab 1 Row Begins here -->
         </div>
         <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
         <div v-if="_isallowed('write')" class="form-group mx-4">
-          <label class="font-sm">Files:</label>
+          <label class="font-md">Files</label>
           <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFilesInput">
             <i class="fas fa-plus-circle" ></i>
           </span>
@@ -729,7 +729,7 @@ Tab 1 Row Begins here -->
 
 
         <div class="form-group user-select pt-3 mx-4">
-          <label class="font-sm mb-0">Related Issues:</label>
+          <label class="font-md mb-0">Related Issues</label>
           <multiselect
             v-model="relatedIssues"
             track-by="id"
@@ -752,7 +752,7 @@ Tab 1 Row Begins here -->
         </div>
 
         <div class="form-group user-select mx-4">
-          <label class="font-sm mb-0">Related Tasks:</label>
+          <label class="font-md mb-0">Related Tasks</label>
           <multiselect
             v-model="relatedTasks"
             track-by="id"
@@ -775,7 +775,7 @@ Tab 1 Row Begins here -->
         </div>
 
         <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Risks:</label>
+        <label class="font-md mb-0">Related Risks</label>
         <multiselect
           v-model="relatedRisks"
           track-by="id"
@@ -805,7 +805,7 @@ Tab 1 Row Begins here -->
 <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
 
    <div class="form-group pt-3 mx-4">
-          <label class="font-sm mb-0">Progress: (in %)</label>
+          <label class="font-md mb-0">Progress (in %)</label>
           <span class="ml-3">
             <label class="font-sm mb-0 d-inline-flex align-items-center"
               ><input
@@ -825,7 +825,7 @@ Tab 1 Row Begins here -->
         </div>
 
         <div class="form-group mx-4 paginated-updates">
-          <label class="font-sm">Updates:</label>
+          <label class="font-md">Updates</label>
           <span
             class="ml-2 clickable"
             v-if="_isallowed('write')"
