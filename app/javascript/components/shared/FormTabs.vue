@@ -58,25 +58,13 @@ export default {
     color: #007bff;
   }
 }
-
 .map-width {
   transform: scale(0.7);
   transform-origin: left;
 }
-
 .label::after {
   content: "*";
   display: inline-block;
-  // width: 5px;
-  // height: 5px;
-  // -moz-border-radius: 50%;
-  // -webkit-border-radius: 50%;
-  // border-radius: 50%;
-  // background-color: #dc3545;
-  // position: relative;
-  // top: -5px;
-  // right: -2px;
-  // padding: 0;
   color: #dc3545;
   font-weight: 600;
 }
