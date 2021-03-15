@@ -113,7 +113,9 @@
                   <span><i class="fas fa-eye mr-1"></i></span>
                   <small style="vertical-align: text-top">On Watch</small>
                 </span>
-                <label class="font-sm mt-3">*Risk Name:</label>
+                <label class="font-sm mt-3"
+                  >Risk Name <span style="color: #dc3545">*</span></label
+                >
                 <textarea
                   v-validate="'required'"
                   class="form-control"
@@ -138,7 +140,9 @@
               </div>
 
               <div class="form-group mx-4">
-                <label class="font-sm">*Risk Description:</label>
+                <label class="font-sm"
+                  >Risk Description <span style="color: #dc3545">*</span></label
+                >
                 <textarea
                   v-validate="'required'"
                   class="form-control"
@@ -164,7 +168,9 @@
 
               <div class="d-flex mb-0 form-group mx-4">
                 <div class="simple-select form-group w-100">
-                  <label class="font-sm">*Category:</label>
+                  <label class="font-sm"
+                    >Category <span style="color: #dc3545">*</span></label
+                  >
                   <multiselect
                     v-model="selectedTaskType"
                     v-validate="'required'"
@@ -196,7 +202,7 @@
                 </div>
 
                 <div class="simple-select form-group w-100 mx-1">
-                  <label class="font-sm">Stage:</label>
+                  <label class="font-sm">Stage</label>
                   <multiselect
                     v-model="selectedRiskStage"
                     track-by="id"
@@ -243,7 +249,10 @@
 
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
-                  <label class="font-sm">*Identified Date:</label>
+                  <label class="font-sm"
+                    >Identified Date
+                    <span style="color: #dc3545">*</span></label
+                  >
                   <v2-date-picker
                     v-validate="'required'"
                     v-model="DV_risk.startDate"
@@ -266,7 +275,10 @@
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
-                  <label class="font-sm">*Risk Approach Due Date:</label>
+                  <label class="font-sm"
+                    >Risk Approach Due Date
+                    <span style="color: #dc3545">*</span></label
+                  >
                   <v2-date-picker
                     v-validate="'required'"
                     v-model="DV_risk.dueDate"
@@ -304,7 +316,7 @@
             <div class="form-group mb-0 pt-3 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-                <label class="font-sm mb-0">Responsible:</label>
+                <label class="font-sm mb-0">Responsible</label>
                 <multiselect
                   v-model="responsibleUsers"
                   track-by="id"
@@ -329,7 +341,7 @@
                 </multiselect>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
-                <label class="font-sm mb-0">Accountable:</label>
+                <label class="font-sm mb-0">Accountable</label>
                 <multiselect
                   v-model="accountableRiskUsers"
                   track-by="id"
@@ -355,7 +367,7 @@
 
             <div class="form-group mt-0 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
-                <label class="font-sm mb-0">Consulted:</label>
+                <label class="font-sm mb-0">Consulted</label>
                 <multiselect
                   v-model="consultedRiskUsers"
                   track-by="id"
@@ -379,7 +391,7 @@
                 </multiselect>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
-                <label class="font-sm mb-0">Informed:</label>
+                <label class="font-sm mb-0">Informed</label>
                 <multiselect
                   v-model="informedRiskUsers"
                   track-by="id"
@@ -526,7 +538,9 @@
 
                 <div class="col-md-3 p-0">
                   <div class="simple-select form-group mb-4">
-                    <label class="font-sm">*Probability: </label>
+                    <label class="font-sm"
+                      >Probability <span style="color: #dc3545">*</span></label
+                    >
                     <multiselect
                       v-model="selectedRiskPossibility"
                       v-validate="'required'"
@@ -560,7 +574,9 @@
 
                   <!-- COLUMN ROW 2 -->
                   <div class="simple-select form-group">
-                    <label class="font-sm mb-0">*Impact Level:</label>
+                    <label class="font-sm mb-0"
+                      >Impact Level <span style="color: #dc3545">*</span></label
+                    >
                     <multiselect
                       v-model="selectedRiskImpactLevel"
                       v-validate="'required'"
@@ -597,7 +613,10 @@
 
                 <div class="col-md-6 pl-1 pr-3">
                   <div class="form-group mx-1 mb-0">
-                    <label class="font-sm">*Probability Description:</label>
+                    <label class="font-sm"
+                      >Probability Description
+                      <span style="color: #dc3545">*</span></label
+                    >
                     <textarea
                       v-validate="'required'"
                       class="form-control"
@@ -621,7 +640,10 @@
                     </div>
                   </div>
                   <div class="form-group mx-1">
-                    <label class="font-sm mb-0">*Impact Description:</label>
+                    <label class="font-sm mb-0"
+                      >Impact Description
+                      <span style="color: #dc3545">*</span></label
+                    >
                     <textarea
                       v-validate="'required'"
                       class="form-control"
@@ -955,7 +977,9 @@
 
             <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
-                <label class="font-sm">**Risk Approach:</label>
+                <label class="font-sm"
+                  >Risk Approach <span style="color: #dc3545">*</span></label
+                >
                 <multiselect
                   v-model="DV_risk.riskApproach"
                   v-validate="'required'"
@@ -988,7 +1012,10 @@
 
             <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
-                <label class="font-sm">**Risk Approach Description:</label>
+                <label class="font-sm"
+                  >Risk Approach Description
+                  <span style="color: #dc3545">*</span></label
+                >
                 <textarea
                   v-validate="'required'"
                   class="form-control"
@@ -1015,8 +1042,9 @@
 
             <div class="row mx-4 mb-0">
               <div class="col-md-12 font-sm pt-3 pl-0">
-                **Note: Risk Approach and Risk Approach Description must be
-                populated before the Risk Approach can be approved.
+                <span style="font-weight: 600">Note:</span> Risk Approach and
+                Risk Approach Description must be populated before the Risk
+                Approach can be approved.
               </div>
             </div>
 
@@ -1025,7 +1053,7 @@
               style="background-color: #fafafa; border: solid 1px #ededed"
             >
               <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
-                <label class="font-sm mb-0">Risk Approach Approver:</label>
+                <label class="font-sm mb-0">Risk Approach Approver</label>
                 <multiselect
                   v-model="riskApprover"
                   track-by="id"
@@ -1055,7 +1083,7 @@
                 class="col-md-4 pl-0 py-2 mb-0 text-center"
               >
                 <div v-if="this.DV_risk.riskApprover.length > 0">
-                  <label class="font-sm mb-0">Risk Approach Approved:</label>
+                  <label class="font-sm mb-0">Risk Approach Approved</label>
                   <span
                     v-if="
                       this.$currentUser.full_name ==
@@ -1079,7 +1107,7 @@
                 </div>
               </div>
               <div v-else class="col-md-4 pl-0 py-2 mb-0 text-center">
-                <label class="font-sm mb-0">Risk Approach Approved:</label>
+                <label class="font-sm mb-0">Risk Approach Approved</label>
                 <span class="d-block approver-pointer">
                   <span class="empty_box mr-1 approver-pointer"
                     ><i class="far fa-square"></i
@@ -1151,7 +1179,7 @@
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
             <div class="form-group pt-2 mx-4">
-              <label class="font-sm mb-0 mr-3">Progress: (in %)</label>
+              <label class="font-sm mb-0 mr-3">Progress (in %)</label>
               <!-- <span class="ml-3"> -->
               <div class="float-right">
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -1174,7 +1202,7 @@
             </div>
 
             <div class="form-group mt-2 mx-4">
-              <label class="font-sm">Checklists:</label>
+              <label class="font-sm">Checklists</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
@@ -1555,7 +1583,7 @@
             <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
 
             <div v-if="_isallowed('write')" class="form-group mx-4">
-              <label class="font-sm">Files:</label>
+              <label class="font-sm">Files</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
@@ -1605,7 +1633,7 @@
 
             <div class="w-100 d-flex mb-0 form-group">
               <div class="form-group user-select w-100 mb-0 ml-4">
-                <label class="font-sm mb-0">Related Issues:</label>
+                <label class="font-sm mb-0">Related Issues</label>
                 <multiselect
                   v-model="relatedIssues"
                   track-by="id"
@@ -1628,7 +1656,7 @@
               </div>
 
               <div class="form-group user-select w-100 mb-0 mx-2">
-                <label class="font-sm mb-0">Related Tasks:</label>
+                <label class="font-sm mb-0">Related Tasks</label>
                 <multiselect
                   v-model="relatedTasks"
                   track-by="id"
@@ -1651,7 +1679,7 @@
               </div>
 
               <div class="form-group user-select w-100 mb-0 mr-4">
-                <label class="font-sm mb-0">Related Risks:</label>
+                <label class="font-sm mb-0">Related Risks</label>
                 <multiselect
                   v-model="relatedRisks"
                   track-by="id"
@@ -1676,7 +1704,7 @@
 
             <div class="form-group mx-4 paginated-updates">
               <hr class="my-4" />
-              <label class="font-sm mb-2">Updates:</label>
+              <label class="font-sm mb-2">Updates</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
