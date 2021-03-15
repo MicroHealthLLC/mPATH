@@ -1553,9 +1553,10 @@
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .fixed-form {
-   padding-bottom: 20px;
-   overflow-y: auto;
-   height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: fit-content;
+    max-height: calc(100vh - 275px);
   }
   .fixed-form-mapView {
    width: 100%;

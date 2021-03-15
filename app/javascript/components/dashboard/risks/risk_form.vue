@@ -2281,6 +2281,13 @@ export default {
             var responseRisk = humps.camelizeKeys(response.data.risk);
             this.loadRisk(responseRisk);
             this.$emit(callback, responseRisk);
+            if (response.status === 200) {
+              this.$message({
+                message: `${response.data.risk.text} was saved successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -3151,8 +3158,9 @@ ul {
 }
 .fixed-form {
   overflow-y: auto;
-  height: 80vh;
-  padding-bottom: 20px;
+  overflow-x: hidden;
+  height: fit-content;
+  max-height: calc(100vh - 275px);
 }
 
 .display-length {
