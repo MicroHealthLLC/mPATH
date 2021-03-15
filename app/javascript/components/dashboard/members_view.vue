@@ -153,7 +153,7 @@ import 'jspdf-autotable'
        },
      C_membersPerPage: {
       get() {
-        return this.getMembersPerPageFilter || {id: 10, name: '10', value: 10}
+        return this.getMembersPerPageFilter || {id: 15, name: '15', value: 15}
       },
       set(value) {
         this.setMembersPerPageFilter(value)
