@@ -488,17 +488,17 @@ export default new Vuex.Store({
     getAllFilterNames: (state, getters) => {
       return [
 
-        ['facilityGroupFilter', 'Project Group'],
-        ['facilityNameFilter', 'Project Name'],
-        ['projectStatusFilter', 'Project Status'],
-        ['facilityProgressFilter', 'Project Progress'],
+        ['facilityGroupFilter', 'Project Groups'],
+        ['facilityNameFilter', 'Project Names'],
+        ['projectStatusFilter', 'Project Statuses'],
+        ['facilityProgressFilter', 'Project Progress Range'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
-        ['taskTypeFilter', 'Task Category'],
+        ['taskTypeFilter', 'Categories'],
         ['noteDateFilter', 'Updates Date Range'],
         ['taskIssueDueDateFilter', 'Action Due Date Range'],
-        ['taskIssueProgressFilter', 'Action Progress'],
+        ['taskIssueProgressFilter', 'Action Progress Range'],
         ['taskUserFilter', 'Task Users'],
-        ['issueTypeFilter', 'Issue Type'],
+        ['issueTypeFilter', 'Issue Types'],
         ['issueSeverityFilter', 'Issue Severities'],
         ['issueUserFilter', 'Issue Users'],
         ['taskStageFilter', 'Task Stages'],
@@ -508,7 +508,7 @@ export default new Vuex.Store({
         ['issuesPerPageFilter', 'Issues Per Page'],
         ['risksPerPageFilter', 'Risks Per Page'],
         ['taskIssueUserFilter', 'Action Users'],
-        ['riskApproachFilter', 'Risk Approach'],
+        ['riskApproachFilter', 'Risk Approaches'],
         ['riskStageFilter', 'Risk Stages'],
         ['riskPriorityLevelFilter', 'Risk Priority Levels'],
 
