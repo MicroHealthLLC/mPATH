@@ -390,13 +390,19 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteTask() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.task.text}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.taskDeleted(this.task);
+      this.$confirm(`Are you sure you want to delete ${this.task.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.taskDeleted(this.task);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
     },
     toggleSubmitBtn() {
       this.submitted = false;
