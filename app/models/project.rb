@@ -257,10 +257,19 @@ class Project < SortableRecord
   def reject_comment(comment)
     comment['body'].blank?
   end
-
-  def progress
-    self.tasks.map(&:progress).sum / self.tasks.count rescue 0
+  
+  def update_progress
+    t = self.tasks
+    p = 0
+    if t.any?
+      p = (t.map(&:progress).sum / t.size).round(0)
+    end
+    self.update(progress: p)
   end
+
+  # def progress
+  #   self.tasks.map(&:progress).sum / self.tasks.count rescue 0
+  # end
 
   def delete_nested_facilities ids
     ids = ids.reject(&:blank?)

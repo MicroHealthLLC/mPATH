@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_12_214237) do
+ActiveRecord::Schema.define(version: 2021_03_15_132430) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_214237) do
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_id"], name: "index_active_storage_attachments_on_record_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
@@ -107,6 +108,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_214237) do
     t.integer "region_type", default: 0
     t.string "center", default: "[]"
     t.bigint "project_id"
+    t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -313,6 +315,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_214237) do
     t.string "uuid"
     t.bigint "project_type_id"
     t.integer "status", default: 1
+    t.integer "progress", default: 0
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
@@ -415,6 +418,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_214237) do
     t.text "probability_description"
     t.string "approval_time"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
+    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
@@ -468,6 +472,7 @@ ActiveRecord::Schema.define(version: 2021_03_12_214237) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "progress", default: 0
   end
 
   create_table "task_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

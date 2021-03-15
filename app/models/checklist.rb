@@ -1,7 +1,7 @@
 class Checklist < ApplicationRecord
   include Normalizer
 
-  default_scope {order(position: :asc)}
+  # default_scope {order(position: :asc)}
   belongs_to :listable, polymorphic: true
   belongs_to :user, optional: true
   has_many :progress_lists, dependent: :destroy

@@ -37,7 +37,14 @@ class Task < ApplicationRecord
   end
 
   def update_facility_project
-    facility_project.update_progress
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
+    end
   end
 
   def to_json(options = {})
@@ -84,7 +91,7 @@ class Task < ApplicationRecord
     if all_users.any?
       p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      p_users = users.select{|u| u.active? }
+      p_users = users.select(&:active?)
     end
 
     users_hash = {} 
