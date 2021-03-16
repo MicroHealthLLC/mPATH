@@ -395,7 +395,15 @@ export default {
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.issueDeleted(this.issue);
+          this.issueDeleted(this.issue).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.issue.title} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',

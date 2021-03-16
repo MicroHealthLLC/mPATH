@@ -1681,7 +1681,7 @@ export default new Vuex.Store({
           .delete(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
           .then((res) => {
             commit('updateTasksHash', {task: task, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)
@@ -1710,7 +1710,7 @@ export default new Vuex.Store({
           .delete(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
           .then((res) => {
             commit('updateIssuesHash', {issue: issue, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)
@@ -1724,7 +1724,7 @@ export default new Vuex.Store({
           .delete(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
           .then((res) => {
             commit('updateRisksHash', {risk: risk, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)

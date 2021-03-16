@@ -395,7 +395,15 @@ export default {
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.taskDeleted(this.task);
+          this.taskDeleted(this.task).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.task.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
         }).catch(() => {
           this.$message({
             type: 'info',

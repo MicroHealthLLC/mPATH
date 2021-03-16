@@ -395,7 +395,15 @@ export default {
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.riskDeleted(this.risk);
+          this.riskDeleted(this.risk).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.risk.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
