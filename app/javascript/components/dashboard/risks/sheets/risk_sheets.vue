@@ -24,7 +24,7 @@
          </span>        
         </td>
         <td class="eight">{{risk.progress + "%"}}</td>
-        <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-if="risk.isOverdue"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>

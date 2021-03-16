@@ -663,7 +663,7 @@ export default {
     taskVariation() {
       let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -673,7 +673,7 @@ export default {
     issueVariation() {
       let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -683,7 +683,7 @@ export default {
      riskVariation() {
       let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -761,16 +761,6 @@ export default {
   }
   .grey2 {
     border-radius: 3px;
-  }
-/deep/.multiselect__tags {
-    max-height: 32px !important;
-    padding: 4px 40px 0 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    font-size: 13px;
-    .multiselect__placeholder {
-    padding-top:0;
-    }
   }
   // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {
   //  background-color: #fff;

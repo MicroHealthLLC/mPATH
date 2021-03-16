@@ -1,7 +1,7 @@
 
 <template>
   <div id="task-sheets">
-    <table class="table table-sm table-bordered table-striped p-3">
+    <table v-if="!has_task" class="table table-sm table-bordered table-striped p-3">
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="sixteen">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
@@ -17,7 +17,7 @@
          </span>        
         </td>
         <td class="eight">{{task.progress + "%"}}</td>
-        <td class="eight" v-if="(task.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-if="task.isOverdue"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="eight" v-if="task.watched == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
@@ -37,26 +37,23 @@
         ref="menu"
         @open-task="editTask">  
       </ContextMenu>
-
     </table>
-      <div v-if="has_task" class="w-100 action-form-overlay updateForm">
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></task-form>     
-      </div>
-  
+    <div v-else class="w-100 action-form-overlay updateForm">
+      <task-form
+        v-if="Object.entries(DV_edit_task).length"
+        :facility="facility"
+        :task="DV_edit_task"
+        title="Edit Task"
+        @task-updated="updateRelatedTaskIssue"
+        @on-close-form="onCloseForm"
+        class="form-inside-modal"
+      ></task-form>     
+    </div>  
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import { SweetModal } from "sweet-modal-vue";
 import TaskForm from "./task_form";
 import IssueForm from "./../issues/issue_form";
 import ContextMenu from "../../shared/ContextMenu";
@@ -68,7 +65,6 @@ export default {
   components: {
     TaskForm,
     IssueForm,
-    SweetModal,
     ContextMenu,
   },
   props:     
@@ -176,12 +172,6 @@ export default {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
         this.$permissions.tasks[salut];
-    },
-    is_overdue() {
-      return (
-        this.DV_task.progress !== 100 &&
-        new Date(this.DV_task.dueDate).getTime() < new Date().getTime()
-      );
     },
     facility() {
       return this.facilities.find((f) => f.id == this.DV_task.facilityId);

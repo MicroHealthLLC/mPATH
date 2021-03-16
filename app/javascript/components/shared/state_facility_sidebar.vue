@@ -162,33 +162,44 @@
                   </div>
 
                   <div class="simple-select w-25  d-inline mr-1" style="position:absolute">
-                    <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      placeholder="Filter by Categories"
+                    <label class="font-sm mb-0">Category</label>
+                    <el-select 
+                      v-model="C_taskTypeFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Select Category"
                       >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+                      <el-option 
+                      v-for="item in taskTypes"                                                     
+                      :value="item"   
+                      :key="item.id"
+                      :label="item.name"
+                      >
+                    </el-option>
+                    </el-select>      
                   </div>
 
-                  <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
-                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+
+                   <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
+                    <label class="font-sm mb-0">Flags</label>
+                    <el-select 
+                      v-model="C_kanbanTaskFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Filter by Flags"
+                      >
+                      <el-option 
+                        v-for="item in getAdvancedFilterOptions"                                                     
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                      </el-option> 
+                    </el-select>                    
                   </div>
                    <!-- <div class="form-check my-4 pl-0" data-cy="search_task_total">
                     <label class="form-check-label text-primary">
@@ -214,32 +225,44 @@
                     />
                   </div>
                   <div class="simple-select w-25 mr-1 d-inline" style="position:absolute">
-                    <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      placeholder="Filter by Categories"
-                     >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+
+                    <label class="font-sm mb-0">Category</label>
+                    <el-select 
+                      v-model="C_taskTypeFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Select Category"
+                      >
+                      <el-option 
+                      v-for="item in taskTypes"                                                     
+                      :value="item"   
+                      :key="item.id"
+                      :label="item.name"                                                  
+                      >
+                    </el-option>
+                    </el-select>      
                   </div>
-                  <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
-                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+                     <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
+                    <label class="font-sm mb-0">Flags</label>
+                     <el-select 
+                      v-model="C_kanbanTaskFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Filter by Flags"
+                      >
+                      <el-option 
+                        v-for="item in getAdvancedFilterOptions"                                                     
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                      </el-option> 
+                    </el-select>                  
+
                   </div>
                  
                 </div>
@@ -260,32 +283,43 @@
                   </div>
                            
                   <div class="simple-select w-25 d-inline" style="position:absolute">
-                    <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      placeholder="Filter by Categories"
+
+                    <label class="font-sm mb-0">Category</label>
+                    <el-select 
+                      v-model="C_taskTypeFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Select Category"
                       >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+                      <el-option 
+                      v-for="item in taskTypes"                                                     
+                      :value="item"   
+                      :key="item.id"
+                      :label="item.name"                                                  
+                      >
+                    </el-option>
+                    </el-select>      
                   </div>
                   <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
-                    <multiselect v-model="C_kanbanTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+                    <label class="font-sm mb-0">Flags</label>
+                    <el-select 
+                      v-model="C_kanbanTaskFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                                                                                                                                               
+                      placeholder="Filter by Flags"
+                      >
+                      <el-option 
+                        v-for="item in getAdvancedFilterOptions"                                                     
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                      </el-option> 
+                    </el-select>                  
                   </div>
                 <!-- <div class="mx-2 mb-3 font-sm">
                   <div class="form-check my-4 pl-0" data-cy="search_risk_total">
@@ -325,9 +359,7 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></risk-form>
-      </div>
-   
-    
+      </div>   
       <div class="kanban-tab">
         <!-- <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">         
         </div> -->
