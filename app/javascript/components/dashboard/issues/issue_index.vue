@@ -13,49 +13,87 @@
         </div>        
       </div>
 
-      <div class="d-flex align-item-center font-sm justify-content-between mt-2 w-100">
+      <div class="d-flex align-item-center font-sm justify-content-between my-2 w-100">
        <div class="simple-select w-50 mr-1 font-sm">
-          <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" placeholder="Filter by Category" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-       
-        <div class="simple-select w-50">
-          <multiselect v-model="C_facilityManagerIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+         <el-select 
+           v-model="C_taskTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Select Category"
+           >
+          <el-option 
+            v-for="item in taskTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>
+       </div>
+      
+        <div class="w-50">
+          <el-select 
+           v-model="C_facilityManagerIssueFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Flags"
+           >
+          <el-option 
+            v-for="item in getAdvancedFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
         </div>
       </div>
 
       <div class="d-flex align-item-center justify-content-between w-100">
-        <div class="simple-select w-100 mr-1">
-          <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" placeholder="Filter by Issue Type" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="w-100 mr-1">
+           <el-select 
+           v-model="C_issueTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Types"
+           >
+          <el-option 
+            v-for="item in issueTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>       
+          
         </div>
-        <div class="simple-select w-100">
-          <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" placeholder="Filter by Issue Severity" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="w-100">
+          <el-select 
+           v-model="C_issueSeverityFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Severities"
+           >
+          <el-option 
+            v-for="item in issueSeverities"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>        
+          
         </div>
       </div>
-      <div class="mt-1">
+      <div class="mt-2">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary addIssueBtn mr-3" @click.prevent="addNewIssue">
           <font-awesome-icon icon="plus-circle" data-cy="new_issue" />
           Add Issue
@@ -393,16 +431,7 @@ computed: {
 .issues-index {
   height: 465px;
 }
-/deep/.multiselect__tags {
-    max-height: 32px !important;
-    padding: 4px 40px 0 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    font-size: 13px;
-    .multiselect__placeholder {
-    padding-top:0;
-    }
- }
+
 .addIssueBtn,
 .exportBtns {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);

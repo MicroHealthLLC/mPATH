@@ -15,77 +15,82 @@
             data-cy="search_issues"
             >
         </div>
-        <div class="simple-select mr-1 w-100 justify-content-start">
-            <multiselect
-              v-model="C_taskTypeFilter"                
-              track-by="name"
-              label="name"
-              placeholder="Filter by Categories"
-              :options="taskTypes"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-          </div>
-        <div class="simple-select mr-1 w-100">
-          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="mr-1 font-sm w-100">
+          <el-select 
+           v-model="C_taskTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Select Category"
+           >
+          <el-option 
+            v-for="item in taskTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
+         </div>
+        <div class="mr-1 w-100">
+          <el-select 
+           v-model="C_sheetsIssueFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Flags"
+           >
+          <el-option 
+            v-for="item in getAdvancedFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
         </div>  
        </div>
       <div class="d-flex align-item-center justify-content-start filter-second-row">          
-       <div class="simple-select mr-1 d-inline w-100">        
-          <multiselect
-            v-model="C_issueTypeFilter"
-            track-by="name"        
-            label="name"
-            class="issueTypeMs"
-            placeholder="Filter by Issue Types"
-            :options="issueTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-          >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select mr-1 d-flex w-100">
-          <multiselect
-            v-model="C_issueSeverityFilter"
-            track-by="name"          
-            label="name"
-            placeholder="Filter by Issue Severities"
-            :options="issueSeverities"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+       <div class="simple-select mr-1 d-inline w-100">    
+         <el-select 
+           v-model="C_issueTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Types"
+           >
+          <el-option 
+            v-for="item in issueTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>       
+        </div>
+        <div class="mr-1 d-flex w-100">
+          <el-select 
+           v-model="C_issueSeverityFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Severities"
+           >
+          <el-option 
+            v-for="item in issueSeverities"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>        
         </div>  
     </div>  
-     <div class="wrapper p-3">    
+     <div class="wrapper mt-2 p-3">    
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
@@ -565,16 +570,6 @@
     height: 31px;
     width: 310px;
     border-radius: 5px;
-  }
-  /deep/.multiselect__tags {
-    max-height: 32px !important;
-    padding: 4px 40px 0 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    font-size: 13px;
-    .multiselect__placeholder {
-    padding-top:0;
-    }
   }
   .eight {
     width: 8%;

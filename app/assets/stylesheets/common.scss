@@ -492,14 +492,6 @@ input[type=button]:focus {
     font-weight: bold;
   }
 }
-
-/deep/.multiselect__tags {
-  max-height: 32px !important;
-  padding: 4px 40px 0 8px;
-  border-radius: 5px;
-  border: 1px solid #ced4da;
-  font-size: 13px;
-}
 .__loading {
   margin-top: 125px;
   margin-left: -20px;
@@ -507,15 +499,18 @@ input[type=button]:focus {
 .mx-datepicker-main.mx-datepicker-popup {
   z-index: 10000001 !important;
 }
+
 .simple-select /deep/ .multiselect,
 .user-select /deep/ .multiselect {
+
   .multiselect__tags {
-    max-height: 32px;
+    min-height: 25px;
     padding: 5px 40px 0 8px;
     border-radius: 5px;
     border: 1px solid #ced4da;
     font-size: 13px;
   }
+ 
   .multiselect__single {
     font-size: 13px;
     position: relative;
@@ -787,4 +782,9 @@ th {
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+// This defines height of all Element UI dropdown menus
+.el-input__inner {
+  height: 32px;
 }
