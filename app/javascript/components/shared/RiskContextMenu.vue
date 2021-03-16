@@ -390,13 +390,27 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteRisk() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.risk.text}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.riskDeleted(this.risk);
+      this.$confirm(`Are you sure you want to delete ${this.risk.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.riskDeleted(this.risk).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.risk.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
     },
     toggleSubmitBtn() {
       this.submitted = false;
