@@ -154,7 +154,7 @@ ActiveAdmin.register Facility do
     "Name": :text,
     "Description": :textarea,
     "Program": Project.pluck(:name, :id),
-    "Task Category": TaskType.pluck(:name, :id),
+    "Category": TaskType.pluck(:name, :id),
     "Stage": TaskStage.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
@@ -169,7 +169,7 @@ ActiveAdmin.register Facility do
     checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
         task.task_files.create(file_blobs) if file_blobs.present?
       end
     end
@@ -265,7 +265,7 @@ ActiveAdmin.register Facility do
   filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
-  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Category'
+  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Category'
   filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   filter :projects, label: "Programs"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false

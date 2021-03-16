@@ -84,7 +84,7 @@
             v-for="item in getRiskApproachFilterOptions"                                                     
             :value="item"   
             :key="item.id"
-            :label="item.name"                                                  
+            :label="item.name"
             >
           </el-option>
           </el-select>          

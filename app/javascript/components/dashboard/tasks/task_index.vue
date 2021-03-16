@@ -19,7 +19,6 @@
         </div>
        </div>
 
-
         <div class="w-100 font-sm d-flex my-2">            
         <div class="mr-1 font-sm w-50">
           <el-select 
@@ -58,6 +57,7 @@
           </el-option>
           </el-select> 
          </div>
+
         </div>   
 
       <div class="mb-3 d-flex">

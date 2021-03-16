@@ -390,13 +390,27 @@ export default {
       return data.label.toLowerCase().indexOf(value.toLowerCase()) !== -1;
     },
     deleteIssue() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.issue.title}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.issueDeleted(this.issue);
+      this.$confirm(`Are you sure you want to delete ${this.issue.title}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.issue).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.issue.title} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
     },
     toggleSubmitBtn() {
       this.submitted = false;

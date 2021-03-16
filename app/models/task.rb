@@ -286,6 +286,7 @@ class Task < ApplicationRecord
     link_files = params[:file_links]
     if link_files && link_files.any?
       link_files.each do |f|
+        next if !f.present? || f.nil? || (f =~ /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/).nil?
         self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
       end
     end
@@ -359,11 +360,21 @@ class Task < ApplicationRecord
 
   def files_as_json
     task_files.map do |file|
-      {
-        id: file.id,
-        name: file.blob.filename,
-        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-      }
+      if file.blob.content_type == "text/plain"
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      else
+        {
+          id: file.id,
+          name: file.blob.filename,
+          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+          link: false
+        }
+      end
     end.as_json
   end
 

@@ -35,6 +35,7 @@ ActiveAdmin.register Task do
         :_destroy,
         :text,
         :user_id,
+        :due_date,
         :checked
       ]
     ]
@@ -44,7 +45,7 @@ ActiveAdmin.register Task do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column "Name", :text
-    column "Task Category", :task_type, nil, sortable: 'task_types.name' do |task|
+    column "Category", :task_type, nil, sortable: 'task_types.name' do |task|
       if current_user.admin_write?
         link_to "#{task.task_type.name}", "#{edit_admin_task_type_path(task.task_type)}" if task.task_type.present?
       else
@@ -64,8 +65,13 @@ ActiveAdmin.register Task do
     column :description, sortable: false
     column "Files" do |task|
       task.task_files.map do |file|
+        next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          if file.blob.content_type == "text/plain"
+            link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
+          else
+            link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          end
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
@@ -111,7 +117,7 @@ ActiveAdmin.register Task do
             fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
-      f.input :task_type, label: 'Task Category', include_blank: false
+      f.input :task_type, label: 'Category', include_blank: false
       f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :start_date, as: :datepicker
       f.input :due_date, as: :datepicker
@@ -124,6 +130,7 @@ ActiveAdmin.register Task do
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :due_date, as: :datepicker
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :task_files
@@ -143,16 +150,17 @@ ActiveAdmin.register Task do
   batch_action :add_checklist_to_tasks, if: proc {current_user.admin_write?}, form: -> {{
     "Title": :text,
     "Checked": :checkbox,
-    "User Assigned": User.active.map{|u| [u.full_name, u.id]}
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
   }} do |ids, inputs|
     Task.where(id: ids).each do |task|
-      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'])
+      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned']), due_date: inputs['Due Date']
     end
     redirect_to collection_path, notice: "Successfully created Task checklists"
   end
 
   filter :text, label: 'Name'
-  filter :task_type, label: 'Task Category'
+  filter :task_type, label: 'Category'
   filter :task_stage, label: 'Stage'
   filter :start_date
   filter :due_date

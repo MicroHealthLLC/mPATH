@@ -175,11 +175,12 @@
                       v-for="item in taskTypes"                                                     
                       :value="item"   
                       :key="item.id"
-                      :label="item.name"                                                  
+                      :label="item.name"
                       >
                     </el-option>
                     </el-select>      
                   </div>
+
 
                    <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
                     <label class="font-sm mb-0">Flags</label>
@@ -224,6 +225,7 @@
                     />
                   </div>
                   <div class="simple-select w-25 mr-1 d-inline" style="position:absolute">
+
                     <label class="font-sm mb-0">Category</label>
                     <el-select 
                       v-model="C_taskTypeFilter"                    
@@ -260,6 +262,7 @@
                         >
                       </el-option> 
                     </el-select>                  
+
                   </div>
                  
                 </div>
@@ -280,6 +283,7 @@
                   </div>
                            
                   <div class="simple-select w-25 d-inline" style="position:absolute">
+
                     <label class="font-sm mb-0">Category</label>
                     <el-select 
                       v-model="C_taskTypeFilter"                    
@@ -355,9 +359,7 @@
           @on-close-form="onCloseForm"
           class="form-inside-modal"
         ></risk-form>
-      </div>
-   
-    
+      </div>   
       <div class="kanban-tab">
         <!-- <div v-if="currentFacilityGroup && ('id' in currentFacilityGroup)">         
         </div> -->
@@ -1121,7 +1123,7 @@
   //   z-index: 100000 !important;
   // }
   .searchBar {
-    margin-top: 24px;
+    margin-top: 0px;
   }
   .searchB {
     height:32px;
@@ -1129,7 +1131,8 @@
   .kanban-filters-bar {
     background-color: #fff;
     border-top:solid .3px #ededed;
-    padding-bottom: 9px;
+    padding-top: 16px;
+    padding-bottom: 16px;
     margin-left:200px;
     position: absolute;
     z-index: 10; 
