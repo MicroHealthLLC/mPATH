@@ -97,18 +97,18 @@
             <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
           </span>
           <input
-            name="Name"
+            name="Task Name"
             v-validate="'required'"
             type="text"
             class="form-control form-control-sm"
             v-model="DV_task.text"
             placeholder="Task Name"
             :readonly="!_isallowed('write')"
-            :class="{'form-control': true, 'error': errors.has('Name') }"
+            :class="{'form-control': true, 'error': errors.has('Task Name') }"
             data-cy="task_name"
           />
-      <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
-        {{errors.first('Name')}}
+      <div v-show="errors.has('Task Name')" class="text-danger" data-cy="task_name_error">
+        {{errors.first('Task Name')}}
       </div>
     </div>
 

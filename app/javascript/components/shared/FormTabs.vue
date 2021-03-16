@@ -46,12 +46,11 @@ export default {
     border-bottom: 5px solid #007bff;
     color: #007bff;
   }
-  &.disabled {
-    pointer-events: none;
+  &.disabled .inner-label-text {
     opacity: 0.5;
+  }
+  &.disabled:hover {
     cursor: not-allowed;
-    border: 0 !important;
-    padding: 7px 10px !important;
   }
   &:hover {
     color: #007bff;
