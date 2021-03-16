@@ -14,7 +14,7 @@
             v-model="tasksQuery"
             data-cy="search_tasks">
           </div>
-        <div class="simple-select w-100 mx-1 d-flex">
+        <div class="w-100 mx-1 d-flex">
           <multiselect
             v-model="C_taskTypeFilter"
             track-by="name"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
+          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" class="your_custom_class" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
@@ -124,6 +124,7 @@
             <multiselect 
               v-model="C_tasksPerPage" 
               track-by="value"
+              class="your_custom_class"
               label="name"
               select-label="Select"
               deselect-label=""
@@ -205,13 +206,10 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  // import moment from 'moment'
   import TaskSheets from "./task_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
-  library.add(faFilePdf)
-  // Vue.prototype.moment = moment
-
+  library.add(faFilePdf)  
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -219,8 +217,7 @@
   export default {
     name: 'TasksSheetsIndex',
     components: {
-      TaskSheets
-     
+      TaskSheets   
     },
     props: ['facility', 'from'],
     data() {
@@ -453,6 +450,8 @@
     };
 </script>
 
+
+
 <style scoped lang="scss">
 // Most datatable css located in app/assets/stylesheets/common.scss file
   #tasks-index {
@@ -464,6 +463,16 @@
     height: 31px;
     width: 310px;
     border-radius: 5px;
+  }
+ /deep/.multiselect__tags {
+    max-height: 32px !important;
+    padding: 4px 40px 0 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 13px;
+    .multiselect__placeholder {
+    padding-top:0;
+    }
   }
   input[type=search] {
     color: #383838;
