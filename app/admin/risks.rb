@@ -42,6 +42,7 @@ ActiveAdmin.register Risk do
         :_destroy,
         :text,
         :user_id,
+        :due_date,
         :checked
       ]
     ]
@@ -150,6 +151,7 @@ ActiveAdmin.register Risk do
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :due_date, as: :datepicker
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :risk_files, label: 'Risk Files'
@@ -161,6 +163,23 @@ ActiveAdmin.register Risk do
     f.actions
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Risks?" do |ids|
+    deleted = Risk.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Risks"
+  end
+
+  batch_action :add_checklist_to_risks, if: proc {current_user.admin_write?}, form: -> {{
+    "Title": :text,
+    "Checked": :checkbox,
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
+  }} do |ids, inputs|
+    Risk.where(id: ids).each do |risk|
+      risk.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned']), due_date: inputs['Due Date']
+    end
+    redirect_to collection_path, notice: "Successfully created Risk checklists"
+  end
+    
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
