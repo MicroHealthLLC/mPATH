@@ -154,7 +154,7 @@ ActiveAdmin.register Task do
     "Due Date": :datepicker
   }} do |ids, inputs|
     Task.where(id: ids).each do |task|
-      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned']), due_date: inputs['Due Date']
+      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
     end
     redirect_to collection_path, notice: "Successfully created Task checklists"
   end

@@ -172,7 +172,7 @@ ActiveAdmin.register Issue do
     "User Assigned": User.active.map{|u| [u.full_name, u.id]}
   }} do |ids, inputs|
     Issue.where(id: ids).each do |issue|
-      issue.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'])
+      issue.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
     end
     redirect_to collection_path, notice: "Successfully created Issue checklists"
   end

@@ -175,7 +175,7 @@ ActiveAdmin.register Risk do
     "Due Date": :datepicker
   }} do |ids, inputs|
     Risk.where(id: ids).each do |risk|
-      risk.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned']), due_date: inputs['Due Date']
+      risk.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
     end
     redirect_to collection_path, notice: "Successfully created Risk checklists"
   end
