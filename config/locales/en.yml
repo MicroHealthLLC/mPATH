@@ -29,6 +29,8 @@
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
 
+# For activeadmin locales: https://github.com/activeadmin/activeadmin/blob/master/config/locales/en.yml
+
 en:
   activerecord:
     models:
@@ -53,6 +55,8 @@ en:
     attributes:
       task:
         text: ""
+      facility:
+          facility_name: "Project Name"
     errors:
       models:
         task:
