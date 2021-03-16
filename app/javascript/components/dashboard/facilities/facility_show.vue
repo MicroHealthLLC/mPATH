@@ -23,7 +23,7 @@
             <div class="box-card my-el-card p-3" style="position:relative">               
 
              <div class="row">
-                <div class="col font-weight-bold">                
+                <div class="col-5 font-weight-bold">                
                   <p>Project Group:</p>
                   <p>Completion Date: </p>               
                   <p>Status:
@@ -37,7 +37,7 @@
                   <p>Categories: </p>                 
                 </div>
 
-                <div class="col">            
+                <div class="col-7">            
                  <p class="badge badge-secondary badge-pill font-weight-light"> {{facilityGroup.name}}</p>
                  <div class="simple-select">
                   <v2-date-picker
@@ -51,42 +51,41 @@
                   />
                  </div>
                                
-                 <div class="simple-select mt-2">                
-                   <multiselect
-                      v-model="selectedStatus"
-                      track-by="id"
-                      label="name"                     
-                      :options="statuses"                    
-                      :searchable="false"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      @select="onChange"
-                      :disabled="!_isallowed('write')"
+                   <div class="mt-2">                
+                     <el-select 
+                      v-model="selectedStatus"  
+                      track-by="id" 
+                      class="w-100"                     
+                      :disabled="!_isallowed('write')"                                                                       
+                      placeholder="Select Project Status"
+                       >
+                     <el-option 
+                      v-for="item in statuses"
+                      :label="item.name"
+                      :key="item.id"
+                      :value="item.id"                                                    
                       >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect> 
+                     </el-option>
+                   </el-select> 
                   </div> 
-                  <div class="simple-select mt-1"> 
-                      <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"                                
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                     </template>
-                     </multiselect> 
+                  <div class="mt-1"> 
+                    <el-select 
+                      v-model="C_taskTypeFilter"                    
+                      class="w-100" 
+                      track-by="name" 
+                      value-key="id"
+                      multiple                    
+                      @select="onChange"                                                                                                                                           
+                      placeholder="Select Category"
+                       >
+                      <el-option 
+                       v-for="item in taskTypes"                                                     
+                       :value="item"   
+                       :key="item.id"
+                       :label="item.name"                                                  
+                       >
+                      </el-option>
+                     </el-select>           
                     </div>                  
                 </div>
               </div>
@@ -501,7 +500,7 @@
         DV_updated: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
-        selectedStatus: null,
+        _selected: null,
         currentTab: 'overview',
         tabs: [
           {
@@ -558,7 +557,7 @@
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
-        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
         this.loading = false
       },
       getFacility() {
@@ -619,6 +618,21 @@
         'myActionsFilter',
         'onWatchFilter'
       ]),
+    selectedStatus: {
+      get () {
+        return this.$data._selected
+      },
+      set (value) {       
+        this.$data._selected = value
+        // console.log(value)
+        if (value) {
+         this.$nextTick(() => {
+         this.DV_updated = true
+          })
+          this.DV_facility.statusId = value
+          }        
+        }
+      },
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -831,7 +845,7 @@
       facility: {
         handler(value) {
           this.DV_facility = Object.assign({}, value)
-          this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+          this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
           this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
@@ -842,12 +856,7 @@
       },
       "DV_facility.statusId"(value) {
         if (!value) this.DV_facility.dueDate = null
-      },
-      selectedStatus: {
-        handler(value) {
-          this.DV_facility.statusId = value ? value.id : null
-        }, deep: true
-      },
+      },   
       currentTab(value) {
         this.nullifyTasksForManager()
       }
@@ -923,16 +932,7 @@
     color: #555;
     background-color: #fff;
   }
-/deep/.multiselect__tags {
-    max-height: 32px !important;
-    padding: 4px 40px 0 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    font-size: 13px;
-    .multiselect__placeholder {
-    padding-top:0;
-    }
-  }
+
   .simple-select /deep/ .multiselect {
     .multiselect__placeholder {    
       text-overflow: ellipsis;

@@ -12,11 +12,6 @@
       <div>
         <div v-if="currentTab == 'overview'">
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-0">
-            <!-- <div v-if="extras"><h3>Project Overview</h3></div> -->
-        <!-- <div v-if="isMapView" class="container-fluid px-0 mx-0">
-        <h1> LOOK AT ME</h1>
-
-        </div> -->
 
           <div class="row row-1 mt-2">
           <div class="col-md-5 col-lg-5 col-sm-12">
@@ -51,46 +46,46 @@
                   />
                  </div>
 
-                 <div class="simple-select mt-2">
-                   <multiselect
-                      v-model="selectedStatus"
-                      track-by="id"
-                      label="name"
-                      :options="statuses"
-                      :searchable="false"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      @select="onChange"
-                      :disabled="!_isallowed('write')"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect>
+                 <div class="el-dropdown-wrapper my-2">                    
+                   <el-select 
+                      v-model="selectedStatus"  
+                      track-by="id" 
+                      class="w-100"                     
+                      :disabled="!_isallowed('write')"                                                                       
+                      placeholder="Select Project Status"
+                       >
+                       <el-option 
+                        v-for="item in statuses"
+                        :label="item.name"
+                        :key="item.id"
+                        :value="item.id"                                                    
+                          >
+                       </el-option>
+                   </el-select> 
                   </div>
-                  <div class="simple-select mt-1">
-                      <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                     </template>
-                     </multiselect>
+
+                  <div class="el-dropdown-wrapper">
+                     <el-select 
+                       v-model="C_taskTypeFilter"                    
+                       class="w-100" 
+                       track-by="name" 
+                       value-key="id"
+                       multiple                    
+                       @select="onChange"                                                                                                                                           
+                       placeholder="Select Category"
+                       >
+                        <el-option 
+                        v-for="item in taskTypes"                                                     
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                        </el-option>
+                     </el-select>                    
                     </div>
                 </div>
               </div>
-               <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-1 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>
+               <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-2 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>
                </div>
              </div>
 
@@ -501,7 +496,8 @@
         DV_updated: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
-        selectedStatus: null,
+        _selected: null,
+        _categories: null,
         currentTab: 'overview',
         tabs: [
           {
@@ -554,14 +550,14 @@
         'fetchFacility'
       ]),
       log(p) {
-        console.log(p)
+        // console.log(p)
       },
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'overview'
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
-        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
         this.loading = false
       },
       getFacility() {
@@ -586,8 +582,7 @@
           .catch((err) => {
             console.error(err);
           })
-      },
-
+      },   
       refreshFacility() {
         this.loading = true
         this.getFacility()
@@ -597,9 +592,9 @@
       },
       onChange() {
         this.$nextTick(() => {
-          this.DV_updated = true
-        })
-      }
+            this.DV_updated = true
+            })        
+       }
     },
     computed: {
       ...mapGetters([
@@ -628,11 +623,27 @@
         'facilities',
         'getUnfilteredFacilities'
       ]),
+      selectedStatus: {
+        get () {
+          return this.$data._selected
+        },
+        set (value) {       
+          this.$data._selected = value
+          // console.log(value)
+          if (value) {
+            this.$nextTick(() => {
+            this.DV_updated = true
+          })
+          this.DV_facility.statusId = value
+          }        
+        }
+      },
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
         },
         set(value) {
+          //  console.log(" C_taskTypeFilter set value: " + value)
           this.setTaskTypeFilter(value)
         }
       },
@@ -847,7 +858,7 @@
       facility: {
         handler(value) {
           this.DV_facility = Object.assign({}, value)
-          this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+          this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
           this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
@@ -858,12 +869,7 @@
       },
       "DV_facility.statusId"(value) {
         if (!value) this.DV_facility.dueDate = null
-      },
-      selectedStatus: {
-        handler(value) {
-          this.DV_facility.statusId = value ? value.id : null
-        }, deep: true
-      },
+      }, 
       currentTab(value) {
         this.nullifyTasksForManager()
       }
@@ -945,16 +951,7 @@
       text-overflow: ellipsis;
     }
   }
- /deep/.multiselect__tags {
-    max-height: 32px !important;
-    padding: 4px 40px 0 8px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    font-size: 13px;
-    .multiselect__placeholder {
-    padding-top:0;
-    }
-  }
+
  .fac-sum {
    border-radius: 2px;
    padding:8px;
