@@ -35,6 +35,7 @@ ActiveAdmin.register Task do
         :_destroy,
         :text,
         :user_id,
+        :due_date,
         :checked
       ]
     ]
@@ -129,6 +130,7 @@ ActiveAdmin.register Task do
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :due_date, as: :datepicker
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :task_files
@@ -148,10 +150,11 @@ ActiveAdmin.register Task do
   batch_action :add_checklist_to_tasks, if: proc {current_user.admin_write?}, form: -> {{
     "Title": :text,
     "Checked": :checkbox,
-    "User Assigned": User.active.map{|u| [u.full_name, u.id]}
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
   }} do |ids, inputs|
     Task.where(id: ids).each do |task|
-      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'])
+      task.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned']), due_date: inputs['Due Date']
     end
     redirect_to collection_path, notice: "Successfully created Task checklists"
   end
