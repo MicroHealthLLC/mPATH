@@ -17,7 +17,7 @@
          </span>        
         </td>
         <td class="eight">{{task.progress + "%"}}</td>
-        <td class="eight" v-if="(task.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-if="task.isOverdue"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="eight" v-if="task.watched == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
@@ -172,12 +172,6 @@ export default {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
         this.$permissions.tasks[salut];
-    },
-    is_overdue() {
-      return (
-        this.DV_task.progress !== 100 &&
-        new Date(this.DV_task.dueDate).getTime() < new Date().getTime()
-      );
     },
     facility() {
       return this.facilities.find((f) => f.id == this.DV_task.facilityId);
