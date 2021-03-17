@@ -282,7 +282,7 @@
                     />
                   </div>
                            
-                  <div class="simple-select w-25 d-inline" style="position:absolute">
+                  <div class="simple-select w-25 d-inline" style="position:absolute;">
 
                     <label class="font-sm mb-0">Category</label>
                     <el-select 
@@ -302,7 +302,7 @@
                     </el-option>
                     </el-select>      
                   </div>
-                  <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%">
+                  <div class="simple-select w-25 d-inline" style="position:absolute;right: 23.8%;">
                     <label class="font-sm mb-0">Flags</label>
                     <el-select 
                       v-model="C_kanbanTaskFilter"                    
@@ -1123,7 +1123,7 @@
   //   z-index: 100000 !important;
   // }
   .searchBar {
-    margin-top: 0px;
+    margin-top: 24px;
   }
   .searchB {
     height:32px;
@@ -1131,8 +1131,7 @@
   .kanban-filters-bar {
     background-color: #fff;
     border-top:solid .3px #ededed;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 9px;
     margin-left:200px;
     position: absolute;
     z-index: 10; 

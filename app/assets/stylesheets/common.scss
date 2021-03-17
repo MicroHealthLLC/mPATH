@@ -788,6 +788,23 @@ th {
 .el-input__inner {
   height: 32px;
 }
+// For the badges inside the el dropdown menus
+.el-tag.el-tag--info {
+  background-color: #41b883;
+  color: white;
+  border: none;
+}
+
+i.el-tag__close.el-icon-close {
+  background-color: #41b883 !important;
+  color: #383838;
+}
+
+
+.el-tag.el-tag--info .el-tag__close {
+ 
+  color: #383838 !important;
+}
 
 #tabbar {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);

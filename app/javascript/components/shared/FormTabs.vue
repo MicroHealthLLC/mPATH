@@ -10,7 +10,7 @@
         @click.prevent="changeTab(tab)"
         data-cy="facility_tabs"
       >
-        <div :class="{ label: tabHasErrors(tab) }">{{ tab.label }}</div>
+        <div :class="{ label: tabHasErrors(tab) }"><span class="inner-label-text">{{ tab.label }}</span></div>
       </div>
     </div>
   </div>
@@ -41,31 +41,34 @@ export default {
 .form-tabs {
   cursor: pointer;
   border-bottom: 5px solid rgba(0, 0, 0, 0.1);
-  width: 100px;
   text-align: center;
   &.active {
     border-bottom: 5px solid #007bff;
     color: #007bff;
   }
-  &.disabled {
-    pointer-events: none;
+  &.disabled .inner-label-text {
     opacity: 0.5;
+  }
+  &.disabled:hover {
     cursor: not-allowed;
-    border: 0 !important;
-    padding: 7px 10px !important;
   }
   &:hover {
     color: #007bff;
   }
 }
 .map-width {
-  transform: scale(0.7);
+  transform: scale(0.85);
   transform-origin: left;
 }
 .label::after {
   content: "*";
-  display: inline-block;
   color: #dc3545;
   font-weight: 600;
+  margin-left: -8px;
+}
+.inner-label-text {
+  margin-left: 10px;
+  margin-right: 10px;
+  white-space: nowrap;
 }
 </style>

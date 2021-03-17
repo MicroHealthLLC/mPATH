@@ -21,27 +21,56 @@
         </div>
 
         <!-- Next row for two columns that will contain Facilities-related menus -->
-        <div class="row justify-content-between">
+        <div class="row justify-content-between pb-2">
           <div class="col-md-6">
             <div>
               <label class="font-sm mb-0">Project Groups</label>
-              <multiselect v-model="C_facilityGroupFilter" track-by="name" label="name" :options="C_activeFacilityGroups" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" :searchable="true" data-cy="facility_group">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
+               <el-select 
+                  v-model="C_facilityGroupFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"
+                  multiple                                                                                                                                               
+                  placeholder="Select Project Group"
+                >
+                <el-option 
+                  v-for="item in C_activeFacilityGroups"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+                </el-select> 
             </div>
-           <label class="font-sm mb-0">Project Names</label>
-              <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" @search-change="findFacility">
+            <label class="font-sm mb-0">Project Names</label>
+                <el-select 
+                  v-model="C_facilityNameFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"
+                  data-cy="facility_name" 
+                  :loading="isLoading"
+                  multiple   
+                  filterable
+                  @search-change="findFacility"                                                                                                                                           
+                  placeholder="Select Project Name"
+                  >
+                <el-option 
+                  v-for="item in facilities"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.facilityName"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              <!-- <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.facilityName}}</span>
                   </div>
                 </template>
                 <span slot="noOptions">...</span>
-              </multiselect>
+              </multiselect> -->
             <div>
                <label class="font-sm mb-0">Project % Progress Range</label>
               <div class="form-row">
@@ -60,13 +89,30 @@
           </div>
           <div class="col-md-6">
              <label class="font-sm mb-0">Project Statuses</label>
-              <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
+              <el-select 
+                  v-model="C_projectStatusFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"
+                  data-cy="project_status"                
+                  multiple                                                                                                                                                         
+                  placeholder="Select Project Status"
+                  >
+                <el-option 
+                  v-for="item in statuses"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              <!-- <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
-              </multiselect>
+              </multiselect> -->
             <div>
               <!-- Available row for filter -->
             </div>
@@ -77,145 +123,270 @@
             <!-- To Do: Convert to multiselect to match other filter toggles -->
             <div class="d-flex flex-column">
               <label class="font-sm mb-0">Map Boundary Filter</label>
-              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
+              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
             </div>
           </div>
         </div>
       </div>
       <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border px-3 py-1 my-1">
+      <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
             <div>
               <label class="font-sm mb-0">Task Stages</label>
-              <multiselect v-model="C_taskStageFilter" track-by="name" label="name" :options="taskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_stage">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div>
-             <h5 class="mb-0 pt-1">Risks</h5>
-            <div>
-              <label class="font-sm mb-0">Risk Stages</label>
-              <multiselect v-model="C_riskStageFilter" track-by="name" label="name" :options="riskStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="risk_stage">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-
-              <label class="font-sm mb-0">Risk Approaches</label>
-              <multiselect
-                v-model="C_riskApproachFilter"
-                track-by="name"
-                label="name"
-                :options="getRiskApproachFilterOptions"
-                :searchable="false"
-                :multiple="true"
-                select-label="Select"
-                deselect-label="Remove"
-                >
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-
-              <label class="font-sm mb-0">Risk Priority Levels</label>
-              <multiselect
-                v-model="C_riskPriorityLevelFilter"
-                track-by="name"
-                label="name"
-                :options="getRiskPriorityLevelFilterOptions"
-                :searchable="false"
-                :multiple="true"
-                select-label="Select"
-                deselect-label="Remove"
-                >
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-
-
+               <el-select 
+                  v-model="C_taskStageFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="task_stage"             
+                  multiple                                                                                                                                                         
+                  placeholder="Select Task Stage"
+                  >
+                <el-option 
+                  v-for="item in taskStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
             </div>
           </div>
+ 
 
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
               <label class="font-sm mb-0">Issue Types</label>
-              <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
+              <el-select 
+                  v-model="C_issueTypeFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_type"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Type"
+                  >
+                <el-option 
+                  v-for="item in issueTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              <!-- <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
                 <template slot="singleLabel" slot-scope="{option}">
                   <div class="d-flex">
                     <span class='select__tag-name'>{{option.name}}</span>
                   </div>
                 </template>
-              </multiselect>
+              </multiselect> -->
             </div>
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
-              <multiselect v-model="C_issueStageFilter" track-by="name" label="name" :options="issueStages" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_stage">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
+              <el-select 
+                  v-model="C_issueStageFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_stage"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Stage"
+                  >
+                <el-option 
+                  v-for="item in issueStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+          
             </div>
             <div>
               <label class="font-sm mb-0">Issue Severities</label>
-              <multiselect v-model="C_issueSeverityFilter" track-by="name" label="name" :options="issueSeverities" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
+              <el-select 
+                  v-model="C_issueSeverityFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_stage"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Severity"
+                  >
+                <el-option 
+                  v-for="item in issueSeverities"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>             
             </div>
           </div>
 
           <div class="col-md-4">
-              <h5 class="mb-0">Combined</h5>
-              <div>
+            <h5 class="mb-0 pt-1">Risks</h5>
+            <div>
+              <label class="font-sm mb-0">Risk Stages</label>
+               <el-select 
+                  v-model="C_riskStageFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Stage"
+                  >
+                <el-option 
+                  v-for="item in riskStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>               
+              <label class="font-sm mb-0">Risk Approaches</label>
+              <el-select 
+                  v-model="C_riskApproachFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Approach"
+                  >
+                <el-option 
+                  v-for="item in getRiskApproachFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              <label class="font-sm mb-0">Risk Priority Levels</label>
+               <el-select 
+                  v-model="C_riskPriorityLevelFilter"          
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Priority Level"
+                  >
+                <el-option 
+                  v-for="item in getRiskPriorityLevelFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+            </div>             
+          </div>
+        </div>
+            
+        
+      </div>
+      <div class="filter-border filter-sections px-3 pb-1 mt-3 pt-0">
+            <div class="row">
+              <div class="col-md-12">
+                <h5 class="mb-0">Combined</h5>
+              </div>
+            </div>
+            <div class="row pb-2">
+              <div class="col-md-4" style="border-right:solid lightgray .8px">
+                <div>
                 <label class="font-sm mb-1">Categories</label>
-                <multiselect v-model="C_taskTypeFilter" track-by="name" label="name" :options="taskTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="task_category">
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.name}}</span>
-                    </div>
-                  </template>
-                </multiselect>
-               </div>
+                <el-select 
+                  v-model="C_taskTypeFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Select Category"
+                  >
+                <el-option 
+                  v-for="item in taskTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+                </el-select>                
+               </div>              
                <div>
                 <label class="font-sm mb-0">Action Users</label>
-                <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" data-cy="issue_user">
+                <el-select 
+                  v-model="C_taskIssueUserFilter"                    
+                  class="w-100" 
+                  track-by="id" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Search and select names"
+                  >
+                <el-option 
+                  v-for="item in activeProjectUsers"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.fullName"                                                  
+                  >
+                </el-option>
+              </el-select> 
+
+
+                <!-- <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" data-cy="issue_user">
                   <template slot="singleLabel" slot-scope="{option}">
                     <div class="d-flex">
                       <span class='select__tag-name'>{{option.fullName}}</span>
                     </div>
                   </template>
-                </multiselect>
+                </multiselect> -->
               </div>
-
-              <div>
+              </div>
+              <div class="col-md-4" style="border-right:solid lightgray .8px">
+                <div>
                 <label class="font-sm mb-0">Flags</label>
-                <multiselect v-model="C_advancedFilter" track-by="name" label="name" :options="getAdvancedFilterOptions" :searchable="false"  :multiple="true"  :allow-empty="true" select-label="Select" deselect-label="Remove">
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                 <el-select 
+                  v-model="C_advancedFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Filter by Flags"
+                  >
+                <el-option 
+                  v-for="item in getAdvancedFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
               </div>
-            <div>
+              <div>
+                <label class="font-sm mb-0">Action % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
+                  </div>
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
+                  </div>
+                </div>
+                  <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
+              </div> 
+             </div>
+              <div class="col-md-4">
+                <div>
               <label class="font-sm mb-0">Action Due Date Range</label>
               <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
@@ -223,22 +394,10 @@
               <label class="font-sm mb-0">Updates Date Range</label>
               <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
-
-            <div>
-              <label class="font-sm mb-0">Action % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
-                </div>
               </div>
-              <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
             </div>
-          </div>
-        </div>
       </div>
+   
     </div>
     <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
         <button class="btn btn-sm ml-0 knocker-btn text-light p-1"><small><span class="pr-1"><i class="fas fa-sliders-h"></i></span>ADVANCED  FILTERS</small></button>
