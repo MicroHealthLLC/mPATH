@@ -1,9 +1,8 @@
 <template>
   <div>
     <form
-      id="risks-form"
       @submit.prevent="validateThenSave"
-      class="mx-auto pb-4 risks-form"
+      class="risks-form mx-auto pb-4"
       :class="{
         'fixed-form-mapView': isMapView,
         _disabled: loading,
