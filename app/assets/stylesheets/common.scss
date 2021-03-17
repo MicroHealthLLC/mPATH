@@ -806,3 +806,14 @@ i.el-tag__close.el-icon-close {
 #tabbar {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.risks-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 100px);
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
