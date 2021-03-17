@@ -2899,10 +2899,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.risks-form {
-  z-index: 10;
-  width: 83.1%;
-}
+// .risks-form {
+//   z-index: 10;
+//   width: 83.1%;
+// }
 .kanban-form {
   left: 16.4%;
   width: 83.33%;

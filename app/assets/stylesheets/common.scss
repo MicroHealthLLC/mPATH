@@ -263,9 +263,11 @@ input[type=button]:focus {
   position:fixed;
   height: 100vh;
 }
-// .kanban-form {   
-//   width: 100%;   
-// }
+.risks-form {
+  z-index: 10;
+  width: 83.1%;
+ }
+
 .warning-icon {
   font-size: 16px;
   color: #dc3545;
