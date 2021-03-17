@@ -258,14 +258,11 @@ input[type=button]:focus {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .risks-form, .tasks-form, .issues-form, #risks-form, .notes-form {
+ .tasks-form, .issues-form, .notes-form {
   background-color: #fff;
   position:fixed;
   height: 100vh;
 }
-// .kanban-form {   
-//   width: 100%;   
-// }
 .warning-icon {
   font-size: 16px;
   color: #dc3545;
