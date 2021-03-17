@@ -1,7 +1,6 @@
 <template>
   <div>
     <form
-      id="risk-form"
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto pb-4"
       :class="{
@@ -2899,6 +2898,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.risks-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 100px);
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
+.kanban-form {
+  left: -82px;
+}
+.fixed-form-mapView {
+  transform: scale(1.03);
+  height: calc(100vh - 130px);
+}
 .form-control.error {
   border-color: #e84444;
 }
@@ -3036,7 +3052,115 @@ ul {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
 }
-
+.risk-priorityLevel {
+  border-radius: 5px;
+  min-height: 33px;
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+  background-color: rgba(255, 255, 255, 1);
+  font-weight: bold;
+}
+.risk-pL {
+  // margin-right: 50px;
+  font-size: large;
+}
+// Risk Matrix styling (Hexcodes are Bootstrap colors)
+.risk-matrix {
+  font-size: 0.85rem;
+  border-radius: 4px;
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
+    0 1px 1px rgba(56, 56, 56, 0.23);
+}
+.risk-matrix-header {
+  color: #5e6469;
+  font-weight: bold;
+  background-color: #efefef;
+  background-image: linear-gradient(180deg, #efefef, #dfe1e2);
+}
+.vertical-head {
+  transform: rotate(-90deg);
+  position: absolute;
+  top: 64%;
+  left: 34%;
+  width: 30%;
+  font-weight: 500;
+}
+.gray {
+  background-color: #f7f7f7;
+}
+.red {
+  background-color: #d9534f;
+}
+.yellow {
+  background-color: yellow;
+}
+.orange {
+  background-color: #f0ad4e;
+}
+.green {
+  background-color: rgb(92, 184, 92);
+}
+.red1 {
+  background-color: #d9534f;
+}
+.gray2 {
+  background-color: #ededed;
+}
+.yellow1 {
+  background-color: yellow;
+  color: #383838;
+  display: block;
+}
+.orange1 {
+  background-color: #f0ad4e;
+}
+.green1 {
+  background-color: rgb(92, 184, 92);
+}
+.green1,
+.orange1,
+.red1 {
+  display: block;
+  color: #fff;
+}
+.red,
+.yellow,
+.orange,
+.green,
+.gray3 {
+  opacity: 0.44;
+  min-height: 76px;
+}
+.gray2 {
+  display: block;
+  color: #383838;
+}
+.red:hover,
+.yellow:hover,
+.orange:hover,
+.green:hover,
+.gray2:hover,
+.gray3:hover {
+  opacity: 1;
+  cursor: pointer;
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+}
+.reg-opacity {
+  opacity: 1 !important;
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
+    0 1px 1px rgba(56, 56, 56, 0.23);
+}
+#riskName {
+  padding: 4px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+  border: 1px solid transparent;
+}
+.disabled {
+  opacity: 0.6;
+}
 .error {
   font-size: 0.8rem;
 }
@@ -3098,5 +3222,23 @@ ul {
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
+}
+.error-list {
+  list-style-type: circle;
+  li {
+    width: max-content;
+  }
+}
+.text-danger {
+  font-size: 13px;
+}
+.error-border {
+  border: 1px solid red;
+  border-radius: 4px;
+}
+.overflow-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
 }
 </style>
