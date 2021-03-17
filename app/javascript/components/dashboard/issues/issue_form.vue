@@ -1800,8 +1800,7 @@ ul {
  .fixed-form {
     overflow-y: auto;
     overflow-x: hidden;
-    height: fit-content;
-    max-height: calc(100vh - 275px);
+    height: calc(100vh - 275px);
   }
   .fixed-form-mapView {
    width: 100%;
