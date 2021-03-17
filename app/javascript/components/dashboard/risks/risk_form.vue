@@ -2899,20 +2899,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .risks-form {
-//   z-index: 10;
-//   width: 83.1%;
-// }
-.kanban-form {
-  left: 16.4%;
-  width: 83.33%;
-  z-index: 100;
-}
-.fixed-form-mapView {
+.risks-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 100px);
+  background-color: #fff;
+  position: absolute;
   width: 100%;
   top: 0;
-  position: absolute !important;
+  z-index: 100;
+}
+.kanban-form {
+  left: -82px;
+}
+.fixed-form-mapView {
   transform: scale(1.03);
+  height: calc(100vh - 130px);
 }
 .form-control.error {
   border-color: #e84444;
@@ -3184,12 +3186,6 @@ ul {
   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
     0 3px 3px rgba(56, 56, 56, 0.23);
 }
-.fixed-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 275px);
-}
-
 .display-length {
   border-radius: 0.15rem;
   margin-right: 12px;
