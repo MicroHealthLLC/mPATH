@@ -38,8 +38,8 @@ en:
         one: Facility Group
         other: Facility Groups
       task_type:
-        one: Task Category
-        other: Task Categories
+        one: Category
+        other: Categories
       project:
         one: Program
         other: Programs
