@@ -21,7 +21,7 @@ describe('Kanban Risks View', function() {
         cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
       })
     })
-    cy.get('[data-cy=risk_save_btn]').should('be.disabled')
+    cy.get('[data-cy=risk_save_btn]').should('be.exist')
     cy.get('[data-cy=risk_close_btn]').click({force: true})
     cy.logout()
   })
@@ -85,36 +85,5 @@ describe('Kanban Risks View', function() {
       cy.get('[data-cy=risks]').its('length').should('be.eq', 2)
     })
     cy.logout()
-  })
-
-  describe('Kanban Risks Actions', function() {
-    beforeEach(() => {
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=kanban_draggable]').within(() => {
-          cy.get('[data-cy=risks]').first().click()
-        })
-      })
-    })
-
-    it('Delete the risk from kanban', function() {
-      cy.get('[data-cy=risk_delete_btn]').click({force: true})
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=kanban_draggable]').within(() => {
-          cy.get('[data-cy=risks]').should('not.exist')
-        })
-      })
-      cy.logout()
-    })
-
-    // it('Update risk from kanban', function() {
-    //   cy.get('[data-cy=risk_name]').clear({force: true}).type('Updated new test risk').should('have.value', 'Updated new test risk')
-    //   cy.get('[data-cy=risk_save_btn]').click({force: true})
-    //   cy.get('[data-cy=kanban_col]').first().within(() => {
-    //     cy.get('[data-cy=kanban_draggable]').within(() => {
-    //       cy.get('[data-cy=risks]').first().contains('Updated new test risk').should('be.visible')
-    //     })
-    //   })
-    //   cy.logout()
-    // })
   })
 })
