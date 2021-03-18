@@ -1891,6 +1891,7 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
+      'updateRisksHash'
     ]),
     ...mapActions([
       "riskDeleted",
@@ -2307,7 +2308,8 @@ export default {
           .then((response) => {
             var responseRisk = humps.camelizeKeys(response.data.risk);
             this.loadRisk(responseRisk);
-            this.$emit(callback, responseRisk);
+            //this.$emit(callback, responseRisk);
+            this.updateRisksHash({risk: responseRisk})
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,

@@ -972,7 +972,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setTaskForManager"]),
+    ...mapMutations(["setTaskForManager", 'updateIssuesHash']),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues"]),
     INITIAL_ISSUE_STATE() {
       return {
@@ -1335,7 +1335,8 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue)
             this.loadIssue(responseIssue)
-            this.$emit(callback, responseIssue)
+            //this.$emit(callback, responseIssue)
+            this.updateIssuesHash({issue: responseIssue})
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.issue.title} was saved successfully.`,
