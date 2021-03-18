@@ -19,7 +19,7 @@ describe('Kanban Issues View', function() {
         cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
       })
     })
-    cy.get('[data-cy=issue_save_btn]').should('be.disabled')
+    cy.get('[data-cy=issue_save_btn]').should('be.exist')
     cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.logout()
   })
@@ -88,16 +88,6 @@ describe('Kanban Issues View', function() {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=issues]').first().click()
       })
-    })
-
-    it('Delete the issue from kanban', function() {
-      cy.get('[data-cy=issue_delete_btn]').click({force: true})
-      cy.get('[data-cy=kanban_col]').first().within(() => {
-        cy.get('[data-cy=kanban_draggable]').within(() => {
-          cy.get('[data-cy=issues]').should('not.exist')
-        })
-      })
-      cy.logout()
     })
 
     it('Update issue from kanban', function() {

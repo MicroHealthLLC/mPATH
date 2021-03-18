@@ -89,8 +89,9 @@ describe('Admin Panel Issue', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Issue according to Project', function() {
-    cy.get('.sortable').contains('Project').click()
+  it('Sort Issue according to Program', function() {
+    cy.get('.sortable').contains('Program').click()
+    cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_issues > tbody > tr').first().contains('Test Project').should('be.visible')
     cy.get('#logout').click()
   })
