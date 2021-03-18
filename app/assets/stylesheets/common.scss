@@ -263,6 +263,17 @@ input[type=button]:focus {
   position:fixed;
   height: 100vh;
 }
+.risks-form {
+  z-index: 10;
+  width: 83.1%;
+ }
+
+// This prevents the text overflow in all tables
+ td {
+  overflow-wrap: break-word !important;
+ }
+
+
 .warning-icon {
   font-size: 16px;
   color: #dc3545;
