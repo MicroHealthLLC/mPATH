@@ -236,8 +236,12 @@ export default new Vuex.Store({
             _.remove(t.subTaskIds, id => id == t.id)
           }
           Vue.delete(facility.tasks, task_i)
+        
+        }else if (task_i > -1){
+         Vue.set(facility.tasks, task_i, task)
+        }else if (task_i == -1){
+          facility.tasks.push(task)
         }
-        else if (task_i > -1) Vue.set(facility.tasks, task_i, task)
         Vue.set(state.facilities, facility_i, facility)
       }
     },

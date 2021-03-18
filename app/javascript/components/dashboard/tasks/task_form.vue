@@ -1120,7 +1120,8 @@
             //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
             var responseTask = humps.camelizeKeys(response.data.task)
             this.loadTask(responseTask)
-            this.$emit(callback, responseTask)
+            //this.$emit(callback, responseTask)
+            this.updateTasksHash({task: responseTask})
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.task.text} was saved successfully.`,
