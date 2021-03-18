@@ -170,7 +170,27 @@
                   <label class="font-sm"
                     >Category <span style="color: #dc3545">*</span></label
                   >
-                  <multiselect
+                  <el-select 
+                    v-model="selectedTaskType"  
+                    v-validate="'required'"                  
+                    class="w-100" 
+                    track-by="id" 
+                    value-key="id"
+                    :disabled="!_isallowed('write')"
+                    data-cy="task_type"
+                    name="Category"
+                    :class="{ 'error-border': errors.has('Category') }"                                                                                                                                                     
+                    placeholder="Select Category"
+                    >
+                  <el-option 
+                    v-for="item in taskTypes"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                  </el-select>
+                  <!-- <multiselect
                     v-model="selectedTaskType"
                     v-validate="'required'"
                     track-by="id"
@@ -190,7 +210,7 @@
                         <span class="select__tag-name">{{ option.name }}</span>
                       </div>
                     </template>
-                  </multiselect>
+                  </multiselect> -->
                   <div
                     v-show="errors.has('Category')"
                     class="text-danger"
@@ -202,24 +222,23 @@
 
                 <div class="simple-select form-group w-100 mx-1">
                   <label class="font-sm">Stage</label>
-                  <multiselect
-                    v-model="selectedRiskStage"
-                    track-by="id"
-                    label="name"
-                    placeholder="Select Stage"
-                    :options="riskStages"
-                    :searchable="false"
-                    select-label="Select"
-                    deselect-label="Remove"
-                    :disabled="!_isallowed('write') || !!fixedStage"
-                    data-cy="risk_stage"
+                <el-select 
+                  v-model="selectedRiskStage"                    
+                  class="w-100" 
+                  track-by="id" 
+                  value-key="id"    
+                  :disabled="!_isallowed('write') || !!fixedStage"
+                  data-cy="risk_stage"                                                                                                                                              
+                  placeholder="Select Stage"
                   >
-                    <template slot="singleLabel" slot-scope="{ option }">
-                      <div class="d-flex">
-                        <span class="select__tag-name">{{ option.name }}</span>
-                      </div>
-                    </template>
-                  </multiselect>
+                  <el-option 
+                    v-for="item in riskStages"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                  </el-select>                
                 </div>
 
                 <!-- <div class="simple-select w-100 form-group">
@@ -316,7 +335,7 @@
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
                 <label class="font-sm mb-0">Responsible</label>
-                <multiselect
+                 <multiselect
                   v-model="responsibleUsers"
                   track-by="id"
                   label="fullName"
@@ -338,10 +357,27 @@
                     </div>
                   </template>
                 </multiselect>
+                  <!-- <el-select 
+                  v-model="responsibleUsers" 
+                  class="w-100"                
+                  track-by="id"    
+                  value-key="id"                                                                                                                                                          
+                  placeholder="Select Responsible User"
+                  :disabled="!_isallowed('write')"
+                  data-cy="risk_owner"
+                  >
+                  <el-option 
+                    v-for="item in activeProjectUsers"                                                            
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.fullName"                                                  
+                    >
+                  </el-option>
+                  </el-select>  -->
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Accountable</label>
-                <multiselect
+                 <multiselect
                   v-model="accountableRiskUsers"
                   track-by="id"
                   label="fullName"
@@ -361,56 +397,65 @@
                     </div>
                   </template>
                 </multiselect>
+                 <!-- <el-select 
+                  v-model="accountableRiskUsers" 
+                  class="w-100"           
+                  track-by="id"    
+                  value-key="id"                                                                                                                                                          
+                  placeholder="Select Accountable User"
+                  filterable       
+                  >
+                  <el-option 
+                    v-for="item in activeProjectUsers"                                                            
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.fullName"                                                  
+                    >
+                  </el-option>
+                  </el-select>              -->
               </div>
             </div>
 
             <div class="form-group mt-0 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <label class="font-sm mb-0">Consulted</label>
-                <multiselect
-                  v-model="consultedRiskUsers"
-                  track-by="id"
-                  label="fullName"
+                 <el-select 
+                  v-model="consultedRiskUsers" 
+                  class="w-100"           
+                  track-by="id"    
+                  value-key="id"   
+                  :multiple="true"                                                                                                                                                       
                   placeholder="Select Consulted Users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :multiple="true"
-                  select-label="Select"
-                  deselect-label=""
-                  :close-on-select="false"
-                  data-cy="risk_owner"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{
-                        option.fullName
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                  filterable
+                  >
+                  <el-option 
+                    v-for="item in activeProjectUsers"                                                            
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.fullName"                                                  
+                    >
+                  </el-option>
+                  </el-select>          
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Informed</label>
-                <multiselect
-                  v-model="informedRiskUsers"
-                  track-by="id"
-                  label="fullName"
-                  placeholder="Select Informed Users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :multiple="true"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  :close-on-select="false"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{
-                        option.fullName
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                 <el-select 
+                  v-model="informedRiskUsers" 
+                  class="w-100"           
+                  track-by="id"    
+                  value-key="id"   
+                  multiple  
+                  filterable                                                                                                                                                     
+                  placeholder="Select Informed Users"           
+                  >
+                  <el-option 
+                    v-for="item in activeProjectUsers"                                                            
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.fullName"                                                  
+                    >
+                  </el-option>
+                  </el-select>      
               </div>
             </div>
           </div>
@@ -540,7 +585,26 @@
                     <label class="font-sm"
                       >Probability <span style="color: #dc3545">*</span></label
                     >
-                    <multiselect
+                     <el-select 
+                      v-model="selectedRiskPossibility" 
+                      class="w-100"           
+                      v-validate="'required'"
+                      track-by="value"
+                      value-key="id"                                                                                                                                                                  
+                      placeholder="Risk Probablity" 
+                      :disabled="!_isallowed('write')"
+                      :class="{ error: errors.has('Risk Probability') }"
+                      data-cy="risk_probability"          
+                      >
+                      <el-option 
+                        v-for="item in getRiskProbabilityNames"                                                            
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                     </el-option>
+                     </el-select>      
+                    <!-- <multiselect
                       v-model="selectedRiskPossibility"
                       v-validate="'required'"
                       track-by="value"
@@ -561,7 +625,7 @@
                           }}</span>
                         </div>
                       </template>
-                    </multiselect>
+                    </multiselect> -->
                     <div
                       v-show="errors.has('Risk Probability')"
                       class="text-danger"
@@ -576,7 +640,26 @@
                     <label class="font-sm mb-0"
                       >Impact Level <span style="color: #dc3545">*</span></label
                     >
-                    <multiselect
+                      <el-select 
+                      v-model="selectedRiskImpactLevel" 
+                      class="w-100"           
+                      v-validate="'required'"
+                      track-by="value"
+                      value-key="id"                                                                                                                                                                  
+                      placeholder="Impact Level" 
+                      :disabled="!_isallowed('write')"
+                      :class="{ error: errors.has('Impact Level') }"
+                      data-cy="impact_level"  
+                      >
+                      <el-option 
+                        v-for="item in getRiskImpactLevelNames"                                                      
+                        :value="item"   
+                        :key="item.id"
+                        :label="item.name"                                                  
+                        >
+                     </el-option>
+                     </el-select>      
+                    <!-- <multiselect
                       v-model="selectedRiskImpactLevel"
                       v-validate="'required'"
                       placeholder="Impact Level"
@@ -597,7 +680,7 @@
                           }}</span>
                         </div>
                       </template>
-                    </multiselect>
+                    </multiselect> -->
                     <div
                       v-show="errors.has('Impact Level')"
                       class="text-danger"
@@ -979,7 +1062,26 @@
                 <label class="font-sm"
                   >Risk Approach <span style="color: #dc3545">*</span></label
                 >
-                <multiselect
+                <el-select 
+                  v-model="DV_risk.riskApproach" 
+                  class="w-100 upperCase" 
+                  track-by="name"          
+                  v-validate="'required'"                                                                                                                                                                        
+                  placeholder="Risk Approach" 
+                    :disabled="!_isallowed('write') || this.DV_risk.approved"
+                  :class="{ error: errors.has('Risk Approach') }"
+                  data-cy="risk_approach"
+                  >
+                 <el-option 
+                  v-for="item in riskApproaches"                                                      
+                  :value="item"   
+                  :key="item.id"
+                  class="upperCase"
+                  :label="item"                                                  
+                  >
+                  </el-option>
+                  </el-select>                  
+                <!-- <multiselect
                   v-model="DV_risk.riskApproach"
                   v-validate="'required'"
                   :allow-empty="false"
@@ -998,7 +1100,7 @@
                       }}</span>
                     </div>
                   </template>
-                </multiselect>
+                </multiselect> -->
                 <div
                   v-show="errors.has('Risk Approach')"
                   class="text-danger"
@@ -1053,6 +1155,23 @@
             >
               <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
                 <label class="font-sm mb-0">Risk Approach Approver</label>
+                 <!-- <el-select 
+                  v-model="riskApprover" 
+                  class="w-100"           
+                  track-by="id"    
+                  value-key="id"               
+                  filterable                                                                                                                                                     
+                  placeholder="Select Risk Approver"  
+                  :disabled="this.DV_risk.approved"         
+                  >
+                  <el-option 
+                    v-for="item in activeProjectUsers"                                                            
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.fullName"                                                  
+                    >
+                  </el-option>
+                  </el-select>       -->
                 <multiselect
                   v-model="riskApprover"
                   track-by="id"
@@ -1351,31 +1470,24 @@
                                 <span class="font-sm pt-2 pr-2 m"
                                   >Assigned To:</span
                                 >
-                                <multiselect
-                                  v-model="check.user"
-                                  track-by="id"
-                                  label="fullName"
-                                  class="w-75"
-                                  placeholder="Search and select users"
-                                  :options="activeProjectUsers"
-                                  :searchable="true"
-                                  :disabled="
-                                    !_isallowed('write') || !check.text
-                                  "
-                                  select-label="Select"
-                                  deselect-label="Remove"
-                                >
-                                  <template
-                                    slot="singleLabel"
-                                    slot-scope="{ option }"
+                                 <el-select 
+                                  v-model="check.user" 
+                                  class="w-75"           
+                                  track-by="id"    
+                                  value-key="id"                
+                                  filterable  
+                                  :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
+                                  placeholder="Search and select user"
+                                  
                                   >
-                                    <div class="d-flex">
-                                      <span class="select__tag-name">{{
-                                        option.fullName
-                                      }}</span>
-                                    </div>
-                                  </template>
-                                </multiselect>
+                                <el-option 
+                                  v-for="item in activeProjectUsers"                                                            
+                                  :value="item"   
+                                  :key="item.id"
+                                  :label="item.fullName"                                                  
+                                  >
+                                </el-option>
+                                </el-select>                              
                               </div>
                             </div>
                             <!-- <div class="simple-select form-group col mb-0">
@@ -1633,71 +1745,73 @@
             <div class="w-100 d-flex mb-0 form-group">
               <div class="form-group user-select w-100 mb-0 ml-4">
                 <label class="font-sm mb-0">Related Issues</label>
-                <multiselect
-                  v-model="relatedIssues"
-                  track-by="id"
-                  label="title"
-                  placeholder="Search and select Related-issues"
-                  :options="filteredIssues"
-                  :searchable="true"
-                  :multiple="true"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  :close-on-select="false"
-                  :disabled="!_isallowed('write')"
+
+               <el-select 
+                v-model="relatedIssues" 
+                class="w-100"           
+                track-by="id"    
+                value-key="id"                
+                filterable 
+                multiple 
+                :disabled="!_isallowed('write')"                                                                                                                                                
+                placeholder="Search and select Related-issues"
+                      
                 >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{ option.title }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                <el-option 
+                v-for="item in filteredIssues"                                                            
+                :value="item"   
+                :key="item.id"
+                :label="item.title"                                                  
+                >
+                </el-option>
+                </el-select>                
+              
               </div>
 
               <div class="form-group user-select w-100 mb-0 mx-2">
                 <label class="font-sm mb-0">Related Tasks</label>
-                <multiselect
-                  v-model="relatedTasks"
-                  track-by="id"
-                  label="text"
-                  placeholder="Search and select Related-tasks"
-                  :options="filteredTasks"
-                  :searchable="true"
-                  :multiple="true"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  :close-on-select="false"
-                  :disabled="!_isallowed('write')"
+                <el-select 
+                v-model="relatedTasks" 
+                class="w-100"           
+                track-by="id"    
+                value-key="id"                
+                filterable 
+                multiple 
+                :disabled="!_isallowed('write')"                                                                                                                                                
+                placeholder="Search and select Related-tasks"
+                      
                 >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{ option.text }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+               <el-option 
+                v-for="item in filteredTasks"                                                            
+                :value="item"   
+                :key="item.id"
+                :label="item.text"                                                  
+                >
+                </el-option>
+                </el-select>                
               </div>
 
               <div class="form-group user-select w-100 mb-0 mr-4">
                 <label class="font-sm mb-0">Related Risks</label>
-                <multiselect
-                  v-model="relatedRisks"
-                  track-by="id"
-                  label="text"
+                 <el-select 
+                  v-model="relatedRisks" 
+                  class="w-100"           
+                  track-by="id"    
+                  value-key="id"                
+                  filterable 
+                  multiple 
+                :disabled="!_isallowed('write')"                                                                                                                                                
                   placeholder="Search and select Related-risks"
-                  :options="filteredRisks"
-                  :searchable="true"
-                  :multiple="true"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  :close-on-select="false"
-                  :disabled="!_isallowed('write')"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{ option.text }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                        
+                  >
+                <el-option 
+                  v-for="item in filteredRisks"                                                            
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.text"                                                  
+                  >
+                  </el-option>
+                  </el-select>                
               </div>
             </div>
 

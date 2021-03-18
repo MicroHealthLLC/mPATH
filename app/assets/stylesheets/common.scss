@@ -809,8 +809,7 @@ i.el-tag__close.el-icon-close {
 }
 
 
-.el-tag.el-tag--info .el-tag__close {
- 
+.el-tag.el-tag--info .el-tag__close { 
   color: #383838 !important;
 }
 
@@ -818,6 +817,10 @@ i.el-tag__close.el-icon-close {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
+.w-33 {
+  width:33%;
+=======
 .risks-form {
   overflow-y: auto;
   overflow-x: hidden;
@@ -827,4 +830,5 @@ i.el-tag__close.el-icon-close {
   width: 100%;
   top: 0;
   z-index: 100;
+>>>>>>> dd22fc073fe588196272afa63daa28b6723b8e8e
 }

@@ -49,8 +49,8 @@
             :label="item.name"                                                  
             >
           </el-option>
-          </el-select> 
-         </div>
+          </el-select>      
+        </div>
       </div>
 
       <div class="d-flex align-item-center justify-content-between w-100">
@@ -88,10 +88,10 @@
             :label="item.name"                                                  
             >
           </el-option>
-          </el-select>    
-         </div>
+          </el-select>        
+          
+        </div>
       </div>
-      
       <div class="mt-2">
         <button v-if="_isallowed('write')" class="btn btn-md btn-primary addIssueBtn mr-3" @click.prevent="addNewIssue">
           <font-awesome-icon icon="plus-circle" data-cy="new_issue" />

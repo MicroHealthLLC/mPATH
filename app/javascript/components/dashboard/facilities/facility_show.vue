@@ -777,7 +777,7 @@
 
         
         if (riskPriorityLevelIds ){         
-          console.log(riskPriorityLevelIds)
+          // console.log(riskPriorityLevelIds)
         }
         return _.filter(this.DV_facility.risks, (resource) => {
           let valid = true
@@ -1023,3 +1023,5 @@
   }
 
 </style>
+
+
