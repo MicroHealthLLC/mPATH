@@ -1,14 +1,16 @@
 class FacilityProjectsController < AuthenticatedController
   before_action :require_admin
-  before_action :set_facility
-  before_action :set_facility_project, only: [:show, :update]
+  before_action :set_facility, except: [:show]
+  before_action :set_facility_project, only: [ :update]
 
   def index
     render json: @facility.facility_projects.as_json(include: {project: {only: :name}}, methods: [:status_name])
   end
 
   def show
-    render json: @facility_project.as_json(include: {project: {only: :name}}, methods: [:status_name])
+    @facility_project = FacilityProject.where(project_id: params[:project_id], facility_id: params[:id]).limit(1)[0]
+    render json: @facility_project.build_json_response
+    # render json: @facility_project.as_json(include: {project: {only: :name}}, methods: [:status_name])
   end
 
   def update

@@ -1,6 +1,6 @@
 class IssuesController < AuthenticatedController
-  before_action :set_resources
-  before_action :set_issue, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_resources, except: [:show]
+  before_action :set_issue, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
 
@@ -72,6 +72,8 @@ class IssuesController < AuthenticatedController
   end
 
   def show
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    @issue = @facility_project.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
     render json: {issue: @issue.to_json}
   end
 

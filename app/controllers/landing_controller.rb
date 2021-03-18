@@ -2,6 +2,6 @@ class LandingController < AuthenticatedController
   def index
     # there is no need of eager loading here..
     @preferences = current_user.get_preferences
-    @active_projects = current_user.projects.active.includes([:facilities, facility_projects: [:tasks, :status , :facility ]])
+    @active_projects = current_user.projects.includes([:facilities, :users, :tasks, :issues, :risks, :facility_projects ]).active
   end
 end
