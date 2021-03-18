@@ -282,7 +282,7 @@
 <style scoped lang="scss">
   .notes-form {
     z-index: 10;
-    width: 100%;
+    width: 83.3%;
     background-color: #fff;
   }
   .notes_input {
