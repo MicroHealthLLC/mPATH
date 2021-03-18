@@ -117,7 +117,7 @@
           data-cy="issue_title"
         />
         <div
-          v-show="errors.has('title')"
+          v-show="errors.has('Issue Name')"
           class="text-danger"
           data-cy="issue_title_error"
         >

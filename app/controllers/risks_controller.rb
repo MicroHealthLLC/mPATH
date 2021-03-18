@@ -1,6 +1,6 @@
 class RisksController < AuthenticatedController
-  before_action :set_resources
-  before_action :set_risk, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_resources, except: [:show]
+  before_action :set_risk, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
 
@@ -75,6 +75,8 @@ class RisksController < AuthenticatedController
   end
 
   def show
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    @risk = @facility_project.risks.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
     render json: {risk: @risk.to_json}
   end
 

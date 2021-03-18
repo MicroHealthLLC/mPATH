@@ -56,7 +56,23 @@ Rails.application.routes.draw do
   resources :facilities, only: [] do
     resources :facility_projects, only: [:index, :update, :show]
   end
-
+  resources :facility_projects, only: [:index, :update, :show] do
+    resources :issues do
+      post :batch_update, on: :collection
+      post :create_duplicate, on: :member
+      post :create_bulk_duplicate, on: :member
+    end
+    resources :risks do
+      post :batch_update, on: :collection
+      post :create_duplicate, on: :member
+      post :create_bulk_duplicate, on: :member
+    end
+    resources :tasks do
+      post :batch_update, on: :collection
+      post :create_duplicate, on: :member
+      post :create_bulk_duplicate, on: :member
+    end
+  end
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'

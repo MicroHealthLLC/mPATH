@@ -41,7 +41,7 @@ describe('Admin Panel Task', function() {
   })
 
   it('Sort Task according to Task Category', function() {
-    cy.get('.sortable').contains('Task Category').click()
+    cy.get('.sortable').contains('Category').click()
     cy.get('#index_table_tasks > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
     cy.get('#logout').click()
   })

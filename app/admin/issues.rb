@@ -127,7 +127,7 @@ ActiveAdmin.register Issue do
     f.inputs 'Basic Details' do
       f.input :id, input_html: { value: f.object.id }, as: :hidden
       f.input :title
-      f.input :task_type, label: 'Category', include_blank: false
+      f.input :task_type, label: 'Category', include_blank: true
       f.input :description
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
@@ -166,10 +166,11 @@ ActiveAdmin.register Issue do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Issues"
   end
 
-  batch_action :add_checklist_to_issuess, if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :add_checklist_to_issues, if: proc {current_user.admin_write?}, form: -> {{
     "Title": :text,
     "Checked": :checkbox,
-    "User Assigned": User.active.map{|u| [u.full_name, u.id]}
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
   }} do |ids, inputs|
     Issue.where(id: ids).each do |issue|
       issue.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
@@ -178,7 +179,7 @@ ActiveAdmin.register Issue do
   end
 
   filter :title
-  filter :task_type
+  filter :task_type, label: 'Category'
   filter :issue_type
   filter :issue_severity
   filter :issue_stage
