@@ -163,22 +163,22 @@
                   @toggle-watch-issue="toggleWatched"
                 />
                <div class="float-right mb-4 mt-2 font-sm">
-                <span>Displaying </span>
-                <div class="simple-select d-inline-block font-sm">          
-                  <multiselect 
-                    v-model="C_issuesPerPage" 
-                    track-by="value"
-                    label="name"
-                    select-label="Select"
-                    deselect-label=""                     
-                    :allow-empty="false"
-                    :options="getIssuesPerPageFilterOptions">
-                      <template slot="singleLabel" slot-scope="{option}">
-                            <div class="d-flex">
-                              <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                            </div>
-                      </template>
-                  </multiselect>            
+               <div class="simple-select d-inline-block text-right font-sm"> 
+                <span>Displaying </span>                      
+                   <el-select 
+                    v-model="C_issuesPerPage"                   
+                    class="w-33" 
+                    track-by="value" 
+                    value-key="id"                                                                                                                               
+                    >
+                    <el-option 
+                    v-for="item in getIssuesPerPageFilterOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                    </el-option>                
+                    </el-select>    
                 </div>
                 <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>

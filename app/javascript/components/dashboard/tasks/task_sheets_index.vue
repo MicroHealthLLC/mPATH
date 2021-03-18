@@ -127,23 +127,22 @@
             />
      
           <div class="float-right mb-4 mt-2 font-sm">
-           <span>Displaying </span>
-           <div class="simple-select d-inline-block font-sm">          
-            <multiselect 
-              v-model="C_tasksPerPage" 
-              track-by="value"
-              class="your_custom_class"
-              label="name"
-              select-label="Select"
-              deselect-label=""
-              :allow-empty="false"
-              :options="getTasksPerPageFilterOptions">
-                <template slot="singleLabel" slot-scope="{option}">
-                      <div class="d-flex">
-                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                      </div>
-                </template>
-            </multiselect>            
+           <div class="simple-select d-inline-block text-right font-sm"> 
+           <span class="mr-1">Displaying </span>                   
+            <el-select 
+            v-model="C_tasksPerPage"                    
+            class="w-33" 
+            track-by="value" 
+            value-key="id"                                                                                                                               
+            >
+            <el-option 
+              v-for="item in getTasksPerPageFilterOptions"                                                     
+              :value="item"   
+              :key="item.id"
+              :label="item.name"                                                  
+              >
+            </el-option>                
+            </el-select>          
            </div>
           <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
             <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
@@ -523,6 +522,7 @@
     border-radius: 4px;
     padding: 4px;
   }
+ 
   .taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);

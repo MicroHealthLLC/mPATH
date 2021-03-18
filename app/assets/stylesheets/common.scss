@@ -808,11 +808,14 @@ i.el-tag__close.el-icon-close {
 }
 
 
-.el-tag.el-tag--info .el-tag__close {
- 
+.el-tag.el-tag--info .el-tag__close { 
   color: #383838 !important;
 }
 
 #tabbar {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.w-33 {
+  width:33%;
 }
