@@ -537,7 +537,6 @@
     position: sticky;
     position: -webkit-sticky;
     justify-content: center;
-    z-index: 10;
     left: 15;
     top: 0;
     width: 100%;

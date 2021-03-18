@@ -19,7 +19,7 @@ describe('Sheets Issues View', function() {
     cy.get('[data-cy=issue_sheet_index]').within(() => {
       cy.get('[data-cy=add_issue]').should('be.exist').click({force: true})
     })
-    cy.get('[data-cy=issue_save_btn]').should('be.disabled')
+    cy.get('[data-cy=issue_save_btn]').should('be.exist')
     cy.get('[data-cy=issue_close_btn]').should('be.exist').click({force: true})
     cy.logout()
   })
@@ -41,26 +41,6 @@ describe('Sheets Issues View', function() {
     cy.get('[data-cy=issues_table]').within(() => {
       cy.get('[data-cy=issue_row]').contains('Updated new test issue').should('be.exist')
     })
-    cy.logout()
-  })
-
-  it('Delete issue from sheet issue table', function() {
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 2)
-      cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=issue_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=issues_table]').within(() => {
-      cy.get('[data-cy=issue_row]').its('length').should('be.eq', 1)
-      cy.get('[data-cy=issue_row]').first().should('be.exist').click({force: true})
-    })
-
-    cy.get('[data-cy=issue_delete_btn]').should('be.exist').click({force: true})
-    cy.wait(1000)
-    cy.get('[data-cy=issues_table]').should('not.exist')
-    cy.get('[data-cy=no_issue_found]').contains('No Issues found...')
     cy.logout()
   })
 

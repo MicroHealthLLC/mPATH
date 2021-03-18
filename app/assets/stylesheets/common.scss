@@ -258,7 +258,7 @@ input[type=button]:focus {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .risks-form, .tasks-form, .issues-form, #risks-form, .notes-form {
+ .tasks-form, .issues-form, .notes-form {
   background-color: #fff;
   position:fixed;
   height: 100vh;
@@ -272,6 +272,7 @@ input[type=button]:focus {
  td {
   overflow-wrap: break-word !important;
  }
+
 
 .warning-icon {
   font-size: 16px;
@@ -816,6 +817,18 @@ i.el-tag__close.el-icon-close {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
 .w-33 {
   width:33%;
+=======
+.risks-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 100px);
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+>>>>>>> dd22fc073fe588196272afa63daa28b6723b8e8e
 }

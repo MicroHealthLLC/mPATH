@@ -46,7 +46,7 @@ describe('Admin Panel Project', function() {
     cy.get('#phone-number__input_phone_number').type('07400 123456')
     cy.get('#facility_email').type('testfacility@mail.com').should('have.value', 'testfacility@mail.com')
     cy.get('#facility_submit_action').contains('Create Project').click()
-    cy.get('.errors').contains("Facility name can't be blank")
+    cy.get('.errors').contains("Project Name can't be blank")
     cy.get('.inline-errors').contains("can't be blank")
     cy.get('#page_title').contains('New Project').should('be.visible')
     cy.get('#logout').click()

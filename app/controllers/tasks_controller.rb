@@ -1,6 +1,6 @@
 class TasksController < AuthenticatedController
-  before_action :set_resources
-  before_action :set_task, only: [:show, :update, :destroy, :create_duplicate, :create_bulk_duplicate]
+  before_action :set_resources, except: [:show]
+  before_action :set_task, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
     all_users = []
@@ -71,6 +71,8 @@ class TasksController < AuthenticatedController
   end
 
   def show
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    @task = @facility_project.tasks.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).find(params[:id])
     render json: {task: @task.to_json}
   end
 

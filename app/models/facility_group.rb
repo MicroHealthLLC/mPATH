@@ -16,9 +16,18 @@ class FacilityGroup < SortableRecord
     ).as_json
   end
 
-  def progress
-    self.facility_projects.map(&:progress).sum / self.facility_projects.count rescue 0
+  def update_progress
+    t = self.facility_projects
+    p = 0
+    if t.any?
+      p = (t.map(&:progress).sum / t.size).round(0)
+    end
+    self.update(progress: p)
   end
+
+  # def progress
+  #   self.facility_projects.map(&:progress).sum / self.facility_projects.count rescue 0
+  # end
 
   def destroy
     facilities.present? ? (raise ActiveRecord::StatementInvalid.new("Can't destroy") ) : super

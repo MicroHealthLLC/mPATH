@@ -12,7 +12,7 @@ describe('Sheet Overview Page', function() {
       cy.contains('Project Group:').should('be.visible')
       cy.contains('Completion Date:').should('be.visible')
       cy.contains('Status:').should('be.visible')
-      cy.contains('CATEGORIES:').should('be.visible')
+      cy.contains('Categories:').should('be.visible')
 
       // In overview display task summary
       cy.get('[data-cy=facility_tasks]').scrollIntoView()

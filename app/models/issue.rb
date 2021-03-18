@@ -83,7 +83,7 @@ class Issue < ApplicationRecord
     if all_users.any?
       p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      p_users = users.select{|u| u.active? } #User.where(id: resource_user_ids).active
+      p_users = users.select(&:active?) #User.where(id: resource_user_ids).active
     end
 
     users_hash = {} 
