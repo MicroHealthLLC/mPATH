@@ -119,26 +119,6 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Risk according to Task Category', function() {
-    cy.get('.sortable').contains('Task Category').click()
-    cy.get('.sortable').last().scrollIntoView()
-    cy.get('#index_table_risks > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
-    cy.get('#logout').click()
-  })
-
-  // it('Sort Risk according to Risk Stage', function() {
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('New Risk Stage').should('be.visible')
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
-  //   cy.get('#logout').click()
-  // })
-
   it('Sort Risk according to Project', function() {
     cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
