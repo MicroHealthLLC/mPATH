@@ -335,29 +335,7 @@
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
                 <label class="font-sm mb-0">Responsible</label>
-                 <multiselect
-                  v-model="responsibleUsers"
-                  track-by="id"
-                  label="fullName"
-                  placeholder="Select Responsible User"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :multiple="false"
-                  select-label="Select"
-                  deselect-label=""
-                  :close-on-select="true"
-                  :disabled="!_isallowed('write')"
-                  data-cy="risk_owner"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{
-                        option.fullName
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect>
-                  <!-- <el-select 
+                 <el-select 
                   v-model="responsibleUsers" 
                   class="w-100"                
                   track-by="id"    
@@ -373,31 +351,11 @@
                     :label="item.fullName"                                                  
                     >
                   </el-option>
-                  </el-select>  -->
+                  </el-select> 
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Accountable</label>
-                 <multiselect
-                  v-model="accountableRiskUsers"
-                  track-by="id"
-                  label="fullName"
-                  placeholder="Select Accountable User"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :multiple="false"
-                  select-label="Select"
-                  deselect-label=""
-                  :close-on-select="true"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{
-                        option.fullName
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect>
-                 <!-- <el-select 
+                <el-select 
                   v-model="accountableRiskUsers" 
                   class="w-100"           
                   track-by="id"    
@@ -412,7 +370,7 @@
                     :label="item.fullName"                                                  
                     >
                   </el-option>
-                  </el-select>              -->
+                  </el-select>              
               </div>
             </div>
 
@@ -1155,7 +1113,7 @@
             >
               <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
                 <label class="font-sm mb-0">Risk Approach Approver</label>
-                 <!-- <el-select 
+                 <el-select 
                   v-model="riskApprover" 
                   class="w-100"           
                   track-by="id"    
@@ -1171,36 +1129,16 @@
                     :label="item.fullName"                                                  
                     >
                   </el-option>
-                  </el-select>       -->
-                <multiselect
-                  v-model="riskApprover"
-                  track-by="id"
-                  label="fullName"
-                  placeholder="Select Risk Approver"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :multiple="false"
-                  select-label="Select"
-                  deselect-label=""
-                  :close-on-select="true"
-                  :disabled="this.DV_risk.approved"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name">{{
-                        option.fullName
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                  </el-select>      
+               
               </div>
 
               <!-- <div v-if="this.DV_risk.text"> -->
               <div
-                v-if="riskApprover.length > 0"
+                v-if="riskApprover && riskApprover !== null"
                 class="col-md-4 pl-0 py-2 mb-0 text-center"
               >
-                <div v-if="this.DV_risk.riskApprover.length > 0">
+                <div v-if="(this.DV_risk.riskApprover) || (this.DV_risk.riskApprover !== null)">
                   <label class="font-sm mb-0">Risk Approach Approved</label>
                   <span
                     v-if="
@@ -1923,9 +1861,9 @@ export default {
       paginate: ["filteredNotes"],
       now: new Date().toLocaleString(),
       destroyedFiles: [],
-      responsibleUsers: [],
-      riskApprover: [],
-      accountableRiskUsers: [],
+      responsibleUsers: null,
+      riskApprover: null,
+      accountableRiskUsers: null,
       consultedRiskUsers: [],
       informedRiskUsers: [],
       probability: [],
@@ -2091,10 +2029,10 @@ export default {
       this.DV_risk = { ...this.DV_risk, ..._.cloneDeep(risk) };
       this.responsibleUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_risk.responsibleUserIds.includes(u.id)
-      );
+      )[0];
       this.accountableRiskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_risk.accountableUserIds.includes(u.id)
-      );
+      )[0];
       this.consultedRiskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_risk.consultedUserIds.includes(u.id)
       );
@@ -2103,7 +2041,7 @@ export default {
       );
       this.riskApprover = _.filter(this.activeProjectUsers, (u) =>
         this.DV_risk.riskApproverUserIds.includes(u.id)
-      );
+      )[0];
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_risk.subIssueIds.includes(u.id)
       );
@@ -2894,10 +2832,13 @@ export default {
     },
     riskApprover: {
       handler: function (value) {
-        if (value)
+        if (value) {
           this.DV_risk.riskApproverUserIds = _.uniq(
             _.map(_.flatten([value]), "id")
           );
+       } else {
+          this.DV_risk.riskApproverUserIds = null;
+        }
       },
       deep: true,
     },
@@ -2908,7 +2849,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_risk.responsibleUserIds = [];
+          this.DV_risk.responsibleUserIds = null;
         }
       },
       deep: true,
@@ -2920,7 +2861,7 @@ export default {
             _.map(_.flatten([value]), "id")
           );
         } else {
-          this.DV_risk.accountableUserIds = [];
+          this.DV_risk.accountableUserIds = null;
         }
       },
       deep: true,
