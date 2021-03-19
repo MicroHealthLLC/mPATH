@@ -143,15 +143,13 @@
        <div class="simple-select w-100 form-group">
           <label class="font-md">Category</label>
             <el-select 
-              v-model="selectedTaskType"  
-              v-validate="'required'"                  
+              v-model="selectedTaskType"                 
               class="w-100" 
               track-by="id" 
               value-key="id"
               :disabled="!_isallowed('write')"
-              :class="{ error: errors.has('Task Category') }"
               data-cy="task_type"
-              name="Category"                                                                                                                                                                 
+              name="Category"                                                   
               placeholder="Select Category"
               >
               <el-option 
@@ -182,13 +180,6 @@
               </div>
             </template>
           </multiselect> -->
-          <div
-            v-show="errors.has('Task Type')"
-            class="text-danger"
-            data-cy="task_type_error"
-          >
-            {{ errors.first("Task Type") }}
-          </div>
         </div>        
 
         <div class="simple-select form-group w-100 mx-1">
