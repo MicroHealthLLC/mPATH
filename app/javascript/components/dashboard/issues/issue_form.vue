@@ -428,27 +428,8 @@ Tab 1 Row Begins here -->
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
           <label class="font-md mb-0">Responsible</label>
-           <multiselect
-            v-model="responsibleUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Responsible User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :close-on-select="true"
-            :disabled="!_isallowed('write')"
-            data-cy="issue_user"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-          <!-- <el-select 
+          
+          <el-select 
            v-model="responsibleUsers" 
            class="w-100" 
            filterable
@@ -465,31 +446,12 @@ Tab 1 Row Begins here -->
             :label="item.fullName"                                                  
             >
           </el-option>
-          </el-select>       -->
+          </el-select>      
          
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-md mb-0">Accountable</label>
-            <multiselect
-            v-model="accountableIssueUsers"              
-            track-by="id"
-            label="fullName"
-            placeholder="Select Accountable User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :close-on-select="true"
-              
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
-           <!-- <el-select 
+          <label class="font-md mb-0">Accountable</label>            
+           <el-select 
             v-model="accountableIssueUsers"          
             class="w-100"           
             track-by="id"    
@@ -504,7 +466,7 @@ Tab 1 Row Begins here -->
               :label="item.fullName"                                                  
               >
             </el-option>
-          </el-select>         -->
+          </el-select>        
         </div>             
   </div> 
   <div class="form-group  mt-0 d-flex w-100">
@@ -1050,8 +1012,8 @@ export default {
       editToggle: false,
       selectedIssueStage: null,
       issueUsers: [],
-      responsibleUsers: [],
-      accountableIssueUsers:[],
+      responsibleUsers: null,
+      accountableIssueUsers:null,
       consultedIssueUsers:[],
       informedIssueUsers:[],
       relatedIssues: [],
@@ -1185,8 +1147,8 @@ export default {
 
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
 
-      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id) );
-      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id) );
+      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id))[0];
+      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id))[0];
       this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.consultedUserIds.includes(u.id) );
       this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.informedUserIds.includes(u.id) );
 
@@ -1704,13 +1666,12 @@ export default {
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
     },  
-    //RACI USERS HERE awaiting backend work
   responsibleUsers: {
       handler: function (value) {
         if (value) {
           this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }else{
-          this.DV_issue.responsibleUserIds = []
+          this.DV_issue.responsibleUserIds = null
         }
       },
       deep: true,
@@ -1720,7 +1681,7 @@ export default {
       if (value) {
         this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
       }else{
-        this.DV_issue.accountableUserIds = []
+        this.DV_issue.accountableUserIds = null
       }
           }, deep: true
         },
