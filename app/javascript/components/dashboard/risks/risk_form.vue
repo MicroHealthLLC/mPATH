@@ -1234,10 +1234,10 @@
 
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
-            <div class="form-group pt-2 mx-4">
+            <div class="form-group pt-2 mb-3 ml-4 mr-5">
               <label class="font-sm mb-0 mr-3">Progress (in %)</label>
-              <!-- <span class="ml-3"> -->
-              <div class="float-right">
+              <span class="ml-3">
+              
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
                   <input
                     type="checkbox"
@@ -1246,9 +1246,8 @@
                     :readonly="!_isallowed('write')"
                   />
                   <span>&nbsp;&nbsp;Auto Calculate Progress</span>
-                </label>
-              </div>
-              <!-- </span> -->
+                </label>          
+              </span>
               <vue-slide-bar
                 v-model="DV_risk.progress"
                 :line-height="8"
@@ -1258,6 +1257,8 @@
             </div>
 
             <div class="form-group mt-2 mx-4">
+
+              
               <label class="font-sm">Checklists</label>
               <span
                 class="ml-2 clickable"
