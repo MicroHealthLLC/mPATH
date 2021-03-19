@@ -1630,9 +1630,11 @@
                 </div>
               </div>
             </div>
-            <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
+            <div ref="addCheckItem" class="pt-0 mt-0"></div>
+            
 
             <div v-if="_isallowed('write')" class="form-group mx-4">
+               <hr class="my-4" />
               <label class="font-sm">Files</label>
               <span
                 class="ml-2 clickable"
