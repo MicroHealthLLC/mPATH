@@ -236,8 +236,12 @@ export default new Vuex.Store({
             _.remove(t.subTaskIds, id => id == t.id)
           }
           Vue.delete(facility.tasks, task_i)
+        
+        }else if (task_i > -1){
+         Vue.set(facility.tasks, task_i, task)
+        }else if (task_i == -1){
+          facility.tasks.push(task)
         }
-        else if (task_i > -1) Vue.set(facility.tasks, task_i, task)
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -252,7 +256,11 @@ export default new Vuex.Store({
           }
           Vue.delete(facility.issues, issue_i)
         }
-        else if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
+        else if (issue_i > -1){
+          Vue.set(facility.issues, issue_i, issue)
+        }else if(issue_i == -1){
+          facility.issues.push(issue)
+        }
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -267,7 +275,11 @@ export default new Vuex.Store({
           }
           Vue.delete(facility.risks, risk_i)
         }
-        else if (risk_i > -1) Vue.set(facility.risks, risk_i, risk)
+        else if (risk_i > -1){ 
+          Vue.set(facility.risks, risk_i, risk)
+        }else if (risk_i == -1){
+          facility.risks.push(risk)
+        }
         Vue.set(state.facilities, facility_i, facility)
       }
     },
