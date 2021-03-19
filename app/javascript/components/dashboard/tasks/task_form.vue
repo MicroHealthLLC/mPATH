@@ -281,7 +281,7 @@
            class="w-100" 
            filterable          
            track-by="id"    
-           value-key="id"                                                                                                                                  
+           value-key="id"
            placeholder="Select Responsible User"
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
@@ -914,7 +914,7 @@
         selectedTaskType: null,
         selectedTaskStage: null,      
         // _responsibleUsers: [], 
-        responsibleUsers: [], 
+        responsibleUsers: null, 
         accountableTaskUsers:[],
         consultedTaskUsers:[],
         informedTaskUsers:[],
@@ -1067,8 +1067,8 @@
       },
          // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
-        this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}       
-        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_task.responsibleUserIds.includes(u.id))
+        this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}     
+        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_task.responsibleUserIds.includes(u.id))[0]
         this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.accountableUserIds.includes(u.id))
         this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.consultedUserIds.includes(u.id))
         console.log("this is the loadTask responsibleUser: " + this._responsibleUsers)
@@ -1080,6 +1080,7 @@
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
         //  this.responsibleUsers = this.activeProjectUsers.find(u => u.id === this.DV_task.responsibleUserIds)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
+
         if (task.attachFiles) this.addFile(task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
@@ -1148,18 +1149,18 @@
           //Responsible USer Id
             //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
 
-          if (this.DV_task.responsibleUserIds.length) {
+          if (this.DV_task.responsibleUserIds && this.DV_task.responsibleUserIds.length) {
             for (let u_id of this.DV_task.responsibleUserIds) {
-              formData.append('responsible_user_ids', u_id)
+              formData.append('responsible_user_ids[]', u_id)
             }
           }
           else {
-            formData.append('responsible_user_ids', [])
+            formData.append('responsible_user_ids[]', [])
           }
 
           // Accountable UserId
 
-         if (this.DV_task.accountableUserIds.length) {
+         if (this.DV_task.accountableUserIds && this.DV_task.accountableUserIds.length) {
             for (let u_id of this.DV_task.accountableUserIds) {
               formData.append('accountable_user_ids[]', u_id)
             }
@@ -1479,7 +1480,7 @@
           if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()        
           this.DV_task.taskFiles = []
           this.destroyedFiles = []
-          this.loadTask(value)      
+          //this.loadTask(value)      
         }, deep: true
       },
       "DV_task.startDate"(value) {
@@ -1506,9 +1507,9 @@
         handler: function(value) {
           if (value){
             console.log("Responsible Task User in Watch: " + value)           
-              this.DV_task.responsibleUserIds = 5 //_.uniq(_.map( _.flatten([value]) , 'id')) 
+              this.DV_task.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id')) 
           }else{
-            this.DV_task.responsibleUserIds = 5
+            this.DV_task.responsibleUserIds = null
           }
         }, deep: true
       }, 
