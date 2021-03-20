@@ -1944,7 +1944,8 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      'updateRisksHash'
+      'updateRisksHash',
+      "SET_RISK_FORM_OPEN"
     ]),
     ...mapActions([
       "riskDeleted",
@@ -2166,6 +2167,7 @@ export default {
     cancelRiskSave() {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
+      this.SET_RISK_FORM_OPEN();
     },
     validateThenSave(e) {
       e.preventDefault();
@@ -2222,6 +2224,7 @@ export default {
           formData.append("responsible_user_ids[]", []);
         }
         // Accountable UserId
+        console.log(this.DV_risk.accountableUserIds)
         if (this.DV_risk.accountableUserIds.length) {
           for (let u_id of this.DV_risk.accountableUserIds) {
             formData.append("accountable_user_ids[]", u_id);
@@ -2951,6 +2954,11 @@ export default {
         }
       });
     },
+    facility: {
+      handler(value) {
+        this.SET_RISK_FORM_OPEN()
+      }
+    }
   },
 };
 </script>
@@ -2967,7 +2975,7 @@ export default {
   z-index: 100;
 }
 .kanban-form {
-  left: -82px;
+  width: 97%;
 }
 .fixed-form-mapView {
   transform: scale(1.03);
