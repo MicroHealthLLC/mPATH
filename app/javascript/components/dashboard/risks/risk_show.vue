@@ -170,7 +170,7 @@
           this.setTaskForManager({key: 'risk', value: this.DV_risk})
         }
         else if (this.$route.name === 'ProjectKanbanView') {
-          this.SET_RISK_FORM_OPEN();
+          this.SET_RISK_FORM_OPEN(true);
           this.SET_SELECTED_RISK(this.DV_risk);
         }
         else {

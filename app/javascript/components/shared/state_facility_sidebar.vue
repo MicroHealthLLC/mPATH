@@ -1026,6 +1026,8 @@ export default {
       "setTaskTypeFilter",
       "updateTasksHash",
       "setPreviousRoute",
+      "SET_RISK_FORM_OPEN",
+      "SET_SELECTED_RISK"
     ]),
     ...mapActions(["taskUpdated"]),
     onChangeTab(tab) {
@@ -1045,7 +1047,9 @@ export default {
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
       this.fixedStageId = stage.id;
-      this.$refs.newFormModal && this.$refs.newFormModal.open();
+      // this.$refs.newFormModal && this.$refs.newFormModal.open();
+      this.SET_RISK_FORM_OPEN(true);
+      this.SET_SELECTED_RISK({});
     },
     showFacility(facility) {
       this.currentFacility = facility;
