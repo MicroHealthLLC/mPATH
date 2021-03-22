@@ -192,6 +192,7 @@
           v-model="selectedTaskStage"                         
           class="w-100" 
           track-by="id" 
+          clearable
           value-key="id"    
           :disabled="!_isallowed('write') || !!fixedStage"
           data-cy="task_stage"                                                                                                                                                
@@ -279,7 +280,8 @@
           <el-select 
            v-model="responsibleUsers" 
            class="w-100" 
-           filterable          
+           filterable      
+           clearable    
            track-by="id"    
            value-key="id"
            placeholder="Select Responsible User"
@@ -300,7 +302,8 @@
           <label class="font-md mb-0">Accountable</label>         
           <el-select 
            v-model="accountableTaskUsers" 
-           class="w-100"           
+           class="w-100"
+           clearable               
            track-by="id"           
            value-key="id"                                                                                                                                                          
            placeholder="Select Accountable User"

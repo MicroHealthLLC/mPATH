@@ -146,6 +146,7 @@
               v-model="selectedTaskType"  
               v-validate="'required'"                  
               class="w-100" 
+              clearable    
               track-by="id" 
               value-key="id"
               :disabled="!_isallowed('write')"
@@ -302,6 +303,7 @@
             v-model="selectedIssueStage"                    
             class="w-100" 
             track-by="id" 
+            clearable    
             value-key="id"    
             :disabled="!_isallowed('write') || !!fixedStage"
             data-cy="task_stage"                                                                                                                                                
@@ -427,12 +429,12 @@ Tab 1 Row Begins here -->
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-md mb-0">Responsible</label>
-          
+          <label class="font-md mb-0">Responsible</label>          
           <el-select 
            v-model="responsibleUsers" 
            class="w-100" 
            filterable
+           clearable    
            track-by="id"    
            value-key="id"                                                                                                                                                          
            placeholder="Select Responsible User"
@@ -453,7 +455,8 @@ Tab 1 Row Begins here -->
           <label class="font-md mb-0">Accountable</label>            
            <el-select 
             v-model="accountableIssueUsers"          
-            class="w-100"           
+            class="w-100"    
+            clearable           
             track-by="id"    
             value-key="id"                                                                                                                                                          
             placeholder="Select Accountable User"

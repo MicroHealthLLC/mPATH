@@ -225,6 +225,7 @@
                 <el-select 
                   v-model="selectedRiskStage"                    
                   class="w-100" 
+                  clearable
                   track-by="id" 
                   value-key="id"    
                   :disabled="!_isallowed('write') || !!fixedStage"
@@ -338,7 +339,8 @@
                  <el-select 
                   v-model="responsibleUsers" 
                   class="w-100"                
-                  track-by="id"    
+                  track-by="id"   
+                  clearable     
                   value-key="id"                                                                                                                                                          
                   placeholder="Select Responsible User"
                   :disabled="!_isallowed('write')"
@@ -358,7 +360,8 @@
                 <el-select 
                   v-model="accountableRiskUsers" 
                   class="w-100"           
-                  track-by="id"    
+                  track-by="id"
+                  clearable        
                   value-key="id"                                                                                                                                                          
                   placeholder="Select Accountable User"
                   filterable       
