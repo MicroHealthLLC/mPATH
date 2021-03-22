@@ -340,7 +340,8 @@
                   v-model="responsibleUsers" 
                   class="w-100"                
                   track-by="id"   
-                  clearable     
+                  clearable   
+                  filterable  
                   value-key="id"                                                                                                                                                          
                   placeholder="Select Responsible User"
                   :disabled="!_isallowed('write')"
