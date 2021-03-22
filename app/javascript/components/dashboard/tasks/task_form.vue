@@ -111,7 +111,6 @@
         {{errors.first('Task Name')}}
       </div>
     </div>
-
         <div class="form-group mx-4">
         <label class="font-md">Description</label>
         <textarea
@@ -192,6 +191,7 @@
           v-model="selectedTaskStage"                         
           class="w-100" 
           track-by="id" 
+          clearable
           value-key="id"    
           :disabled="!_isallowed('write') || !!fixedStage"
           data-cy="task_stage"                                                                                                                                                
@@ -279,7 +279,8 @@
           <el-select 
            v-model="responsibleUsers" 
            class="w-100" 
-           filterable          
+           filterable      
+           clearable    
            track-by="id"    
            value-key="id"
            placeholder="Select Responsible User"
@@ -300,7 +301,8 @@
           <label class="font-md mb-0">Accountable</label>         
           <el-select 
            v-model="accountableTaskUsers" 
-           class="w-100"           
+           class="w-100"
+           clearable               
            track-by="id"           
            value-key="id"                                                                                                                                                          
            placeholder="Select Accountable User"
@@ -451,7 +453,8 @@
                 <el-select 
                   v-model="check.user" 
                   class="w-75"           
-                  track-by="id"    
+                  track-by="id" 
+                  clearable   
                   value-key="id"                
                   filterable  
                   :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
@@ -596,7 +599,7 @@
 
       <div class="mx-4">
         <div class="input-group pt-3 mb-2">
-          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100"  v-if="file.id">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100"  v-if="!file.link || (file.link && file.id) ">
             <div class="input-group-prepend">
               <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
                 <i class="fas fa-file-image"></i>
@@ -836,9 +839,7 @@
   import AttachmentInput from './../../shared/attachment_input'
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
-
   const moment = extendMoment(Moment)
-
   export default {
     name: 'TaskForm',
     props: ['facility', 'task', 'title', 'fixedStage'],
@@ -965,7 +966,6 @@
       log(e){
         console.log("item in activeProjectUsers: " + e)
       },
-
       scrollToChecklist(){
         this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         this.DV_task.checklists.push({text: '', checked: false})
@@ -1019,8 +1019,7 @@
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)     
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
-
-        if (task.attachFiles) this.addFile(task.attachFiles, false)
+        if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
@@ -1041,8 +1040,11 @@
         
         if (file.uri || file.link) {
           let index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
-          Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
-          this.destroyedFiles.push(file)
+          if(file.id){
+            Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
+            this.destroyedFiles.push(file)            
+          }
+          this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
         }
         else if (file.name) {
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
@@ -1062,7 +1064,6 @@
       },
       saveTask() {
         if (!this._isallowed('write')) return
-
         this.$validator.validate().then((success) =>
         {
           if (!success || this.loading) {
@@ -1081,13 +1082,10 @@
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
-
-
           // RACI USERS START HERE Awaiting backend work
        
           //Responsible USer Id
             //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
-
           if (this.DV_task.responsibleUserIds && this.DV_task.responsibleUserIds.length) {
             for (let u_id of this.DV_task.responsibleUserIds) {
               formData.append('responsible_user_ids[]', u_id)
@@ -1096,9 +1094,7 @@
           else {
             formData.append('responsible_user_ids[]', [])
           }
-
           // Accountable UserId
-
          if (this.DV_task.accountableUserIds && this.DV_task.accountableUserIds.length) {
             for (let u_id of this.DV_task.accountableUserIds) {
               formData.append('accountable_user_ids[]', u_id)
@@ -1107,7 +1103,6 @@
           else {
             formData.append('accountable_user_ids[]', [])
           }
-
           // Consulted UserId
           
           if (this.DV_task.consultedUserIds.length) {
@@ -1118,7 +1113,6 @@
           else {
             formData.append('consulted_user_ids[]', [])
           }
-
           // Informed UserId
           
           if (this.DV_task.informedUserIds.length) {
@@ -1129,11 +1123,8 @@
           else {
             formData.append('informed_user_ids[]', [])
           }
-
           // RACI USERS ABOVE THIS LINE  Awaiting backend work
           // More RACI Users in Computed section below
-
-
           if (this.DV_task.subTaskIds.length) {
             for (let u_id of this.DV_task.subTaskIds) {
               formData.append('task[sub_task_ids][]', u_id)
@@ -1142,7 +1133,6 @@
           else {
             formData.append('task[sub_task_ids][]', [])
           }
-
           if (this.DV_task.subIssueIds.length) {
             for (let u_id of this.DV_task.subIssueIds) {
               formData.append('task[sub_issue_ids][]', u_id)
@@ -1151,7 +1141,6 @@
           else {
             formData.append('task[sub_issue_ids][]', [])
           }
-
           if (this.DV_task.subRiskIds.length) {
             for (let u_id of this.DV_task.subRiskIds) {
               formData.append('task[sub_risk_ids][]', u_id)
@@ -1160,7 +1149,6 @@
           else {
             formData.append('task[sub_risk_ids][]', [])
           }
-
           for (let i in this.DV_task.checklists) {
             let check = this.DV_task.checklists[i]
             if (!check.text && !check._destroy) continue
@@ -1173,24 +1161,19 @@
               key = humps.decamelize(key)
               if(['created_at', 'updated_at', 'progress_lists'].includes(key)) continue
               formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-
               for (let pi in check.progressLists) {
                 let progressList = check.progressLists[pi]
                 if (!progressList.body && !progressList._destroy) continue
                 for (let pkey in progressList) {
                   if (pkey === 'user') pkey = 'user_id'
                   let pvalue = pkey == 'user_id' ? progressList.user ? progressList.user.id : null : progressList[pkey]
-
                   pkey = humps.decamelize(pkey)
                   if(['created_at', 'updated_at'].includes(pkey)) continue
                   formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
-
                 }
               }
-
             }
           }
-
           for (let i in this.DV_task.notes) {
             let note = this.DV_task.notes[i]
             if (!note.body && !note._destroy) continue
@@ -1199,7 +1182,6 @@
               formData.append(`task[notes_attributes][${i}][${key}]`, value)
             }
           }
-
           for (let file of this.DV_task.taskFiles) {
             if(file.id) continue
             if (!file.link) {
@@ -1207,21 +1189,16 @@
             }else if(file.link){
               formData.append('file_links[]', file.name)
             }
-
           }
-
           let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
           let method = "POST"
           let callback = "task-created"
-
           if (this.task && this.task.id) {
             url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
             method = "PUT"
             callback = "task-updated"
           }
-
           // var beforeSaveTask = this.task
-
           axios({
             method: method,
             url: url,
@@ -1264,7 +1241,7 @@
         this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addFilesInput(){
-        this.DV_task.taskFiles.push({name: "", uri: '', link: true})
+        this.DV_task.taskFiles.push({name: "", uri: '', link: true,guid: this.guid()})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -1286,7 +1263,6 @@
       destroyProgressList(check, progressList, index) {
         let confirm = window.confirm(`Are you sure you want to delete this Progress List item?`)
         if (!confirm) return;
-
         let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
         Vue.set(check.progressLists, i, {...progressList, _destroy: true})
         this.saveTask()
@@ -1294,7 +1270,6 @@
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
         if (!confirm) return;
-
         let i = check.id ? this.DV_task.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_task.checklists, i, {...check, _destroy: true})
         this.saveTask()
@@ -1347,7 +1322,6 @@
       disabledDateRange(date) {
         var dueDate = new Date(this.DV_task.dueDate)
         dueDate.setDate(dueDate.getDate() + 1)
-
         return date < new Date(this.DV_task.startDate) || date > dueDate;
       },
     },
@@ -1413,7 +1387,6 @@
       }
     },
     watch: {
-
       task: {
         handler: function(value) {        
           if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()        
@@ -1440,7 +1413,6 @@
       "DV_task.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-
   // RACI USERS HERE awaiting backend work
    responsibleUsers: {
         handler: function(value) {
@@ -1732,5 +1704,4 @@
   height: 32px;
 }
 </style>
-
 

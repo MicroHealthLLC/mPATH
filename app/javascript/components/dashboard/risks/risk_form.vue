@@ -56,9 +56,7 @@
             </button>
           </div>
         </div>
-
         <hr class="mx-4 mb-6 mt-2" />
-
         <div
           v-if="_isallowed('read')"
           class="d-flex form-group pt-1 mb-1 justify-content-start"
@@ -170,25 +168,25 @@
                   <label class="font-sm"
                     >Category <span style="color: #dc3545">*</span></label
                   >
-                  <el-select 
-                    v-model="selectedTaskType"  
-                    v-validate="'required'"                  
-                    class="w-100" 
-                    track-by="id" 
+                  <el-select
+                    v-model="selectedTaskType"
+                    v-validate="'required'"
+                    class="w-100"
+                    track-by="id"
                     value-key="id"
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"
                     name="Category"
-                    :class="{ 'error-border': errors.has('Category') }"                                                                                                                                                     
+                    :class="{ 'error-border': errors.has('Category') }"
                     placeholder="Select Category"
+                  >
+                    <el-option
+                      v-for="item in taskTypes"
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
                     >
-                  <el-option 
-                    v-for="item in taskTypes"                                                     
-                    :value="item"   
-                    :key="item.id"
-                    :label="item.name"                                                  
-                    >
-                  </el-option>
+                    </el-option>
                   </el-select>
                   <!-- <multiselect
                     v-model="selectedTaskType"
@@ -225,20 +223,22 @@
                 <el-select 
                   v-model="selectedRiskStage"                    
                   class="w-100" 
+                  clearable
                   track-by="id" 
                   value-key="id"    
                   :disabled="!_isallowed('write') || !!fixedStage"
                   data-cy="risk_stage"                                                                                                                                              
                   placeholder="Select Stage"
+
                   >
-                  <el-option 
-                    v-for="item in riskStages"                                                     
-                    :value="item"   
-                    :key="item.id"
-                    :label="item.name"                                                  
+                    <el-option
+                      v-for="item in riskStages"
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
                     >
-                  </el-option>
-                  </el-select>                
+                    </el-option>
+                  </el-select>
                 </div>
 
                 <!-- <div class="simple-select w-100 form-group">
@@ -310,8 +310,8 @@
                     }"
                     :disabled="
                       !_isallowed('write') ||
-                      DV_risk.startDate === '' ||
-                      DV_risk.startDate === null
+                        DV_risk.startDate === '' ||
+                        DV_risk.startDate === null
                     "
                     :disabled-date="disabledDueDate"
                     data-cy="risk_due_date"
@@ -335,85 +335,90 @@
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
                 <label class="font-sm mb-0">Responsible</label>
+
                  <el-select 
                   v-model="responsibleUsers" 
                   class="w-100"                
-                  track-by="id"    
+                  track-by="id"   
+                  clearable   
+                  filterable  
                   value-key="id"                                                                                                                                                          
                   placeholder="Select Responsible User"
                   :disabled="!_isallowed('write')"
                   data-cy="risk_owner"
-                  >
-                  <el-option 
-                    v-for="item in activeProjectUsers"                                                            
-                    :value="item"   
+                >
+                  <el-option
+                    v-for="item in activeProjectUsers"
+                    :value="item"
                     :key="item.id"
-                    :label="item.fullName"                                                  
-                    >
+                    :label="item.fullName"
+                  >
                   </el-option>
-                  </el-select> 
+                </el-select>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Accountable</label>
+
                 <el-select 
                   v-model="accountableRiskUsers" 
                   class="w-100"           
-                  track-by="id"    
+                  track-by="id"
+                  clearable        
                   value-key="id"                                                                                                                                                          
                   placeholder="Select Accountable User"
-                  filterable       
-                  >
-                  <el-option 
-                    v-for="item in activeProjectUsers"                                                            
-                    :value="item"   
+                  filterable
+                >
+                  <el-option
+                    v-for="item in activeProjectUsers"
+                    :value="item"
                     :key="item.id"
-                    :label="item.fullName"                                                  
-                    >
+                    :label="item.fullName"
+                  >
                   </el-option>
-                  </el-select>              
+                </el-select>
               </div>
             </div>
 
             <div class="form-group mt-0 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <label class="font-sm mb-0">Consulted</label>
-                 <el-select 
-                  v-model="consultedRiskUsers" 
-                  class="w-100"           
-                  track-by="id"    
-                  value-key="id"   
-                  :multiple="true"                                                                                                                                                       
+                <el-select
+                  v-model="consultedRiskUsers"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  :multiple="true"
                   placeholder="Select Consulted Users"
                   filterable
-                  >
-                  <el-option 
-                    v-for="item in activeProjectUsers"                                                            
-                    :value="item"   
+                >
+                  <el-option
+                    v-for="item in activeProjectUsers"
+                    :value="item"
                     :key="item.id"
-                    :label="item.fullName"                                                  
-                    >
+                    :label="item.fullName"
+                  >
                   </el-option>
-                  </el-select>          
+                </el-select>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Informed</label>
-                 <el-select 
-                  v-model="informedRiskUsers" 
-                  class="w-100"           
-                  track-by="id"    
-                  value-key="id"   
-                  multiple  
-                  filterable                                                                                                                                                     
-                  placeholder="Select Informed Users"           
-                  >
-                  <el-option 
-                    v-for="item in activeProjectUsers"                                                            
-                    :value="item"   
+                <el-select
+                  v-model="informedRiskUsers"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  multiple
+                  filterable
+                  placeholder="Select Informed Users"
+                >
+                  <el-option
+                    v-for="item in activeProjectUsers"
+                    :value="item"
                     :key="item.id"
-                    :label="item.fullName"                                                  
-                    >
+                    :label="item.fullName"
+                  >
                   </el-option>
-                  </el-select>      
+                </el-select>
               </div>
             </div>
           </div>
@@ -436,7 +441,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        1
+                          1
                       "
                       class="gray2"
                       >Very Low</span
@@ -445,7 +450,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        2
+                          2
                       "
                       class="green1"
                       >Low</span
@@ -454,7 +459,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        3
+                          3
                       "
                       class="green1"
                       >Low</span
@@ -463,7 +468,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        4
+                          4
                       "
                       class="yellow1"
                       >Moderate
@@ -472,7 +477,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        5
+                          5
                       "
                       class="yellow1"
                       >Moderate
@@ -481,7 +486,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        6
+                          6
                       "
                       class="yellow1"
                       >Moderate
@@ -490,7 +495,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        8
+                          8
                       "
                       class="orange1"
                       >High
@@ -499,7 +504,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        9
+                          9
                       "
                       class="orange1"
                       >High
@@ -508,7 +513,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        10
+                          10
                       "
                       class="orange1"
                       >High
@@ -517,7 +522,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id ==
-                        12
+                          12
                       "
                       class="orange1"
                       >High
@@ -526,7 +531,7 @@
                       v-if="
                         this.selectedRiskPossibility.id *
                           this.selectedRiskImpactLevel.id >=
-                        15
+                          15
                       "
                       class="red1"
                       >Extreme
@@ -543,25 +548,25 @@
                     <label class="font-sm"
                       >Probability <span style="color: #dc3545">*</span></label
                     >
-                     <el-select 
-                      v-model="selectedRiskPossibility" 
-                      class="w-100"           
+                    <el-select
+                      v-model="selectedRiskPossibility"
+                      class="w-100"
                       v-validate="'required'"
                       track-by="value"
-                      value-key="id"                                                                                                                                                                  
-                      placeholder="Risk Probablity" 
+                      value-key="id"
+                      placeholder="Risk Probablity"
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Risk Probability') }"
-                      data-cy="risk_probability"          
-                      >
-                      <el-option 
-                        v-for="item in getRiskProbabilityNames"                                                            
-                        :value="item"   
+                      data-cy="risk_probability"
+                    >
+                      <el-option
+                        v-for="item in getRiskProbabilityNames"
+                        :value="item"
                         :key="item.id"
-                        :label="item.name"                                                  
-                        >
-                     </el-option>
-                     </el-select>      
+                        :label="item.name"
+                      >
+                      </el-option>
+                    </el-select>
                     <!-- <multiselect
                       v-model="selectedRiskPossibility"
                       v-validate="'required'"
@@ -598,25 +603,25 @@
                     <label class="font-sm mb-0"
                       >Impact Level <span style="color: #dc3545">*</span></label
                     >
-                      <el-select 
-                      v-model="selectedRiskImpactLevel" 
-                      class="w-100"           
+                    <el-select
+                      v-model="selectedRiskImpactLevel"
+                      class="w-100"
                       v-validate="'required'"
                       track-by="value"
-                      value-key="id"                                                                                                                                                                  
-                      placeholder="Impact Level" 
+                      value-key="id"
+                      placeholder="Impact Level"
                       :disabled="!_isallowed('write')"
                       :class="{ error: errors.has('Impact Level') }"
-                      data-cy="impact_level"  
-                      >
-                      <el-option 
-                        v-for="item in getRiskImpactLevelNames"                                                      
-                        :value="item"   
+                      data-cy="impact_level"
+                    >
+                      <el-option
+                        v-for="item in getRiskImpactLevelNames"
+                        :value="item"
                         :key="item.id"
-                        :label="item.name"                                                  
-                        >
-                     </el-option>
-                     </el-select>      
+                        :label="item.name"
+                      >
+                      </el-option>
+                    </el-select>
                     <!-- <multiselect
                       v-model="selectedRiskImpactLevel"
                       v-validate="'required'"
@@ -1020,25 +1025,25 @@
                 <label class="font-sm"
                   >Risk Approach <span style="color: #dc3545">*</span></label
                 >
-                <el-select 
-                  v-model="DV_risk.riskApproach" 
-                  class="w-100 upperCase" 
-                  track-by="name"          
-                  v-validate="'required'"                                                                                                                                                                        
-                  placeholder="Risk Approach" 
-                    :disabled="!_isallowed('write') || this.DV_risk.approved"
+                <el-select
+                  v-model="DV_risk.riskApproach"
+                  class="w-100 upperCase"
+                  track-by="name"
+                  v-validate="'required'"
+                  placeholder="Risk Approach"
+                  :disabled="!_isallowed('write') || this.DV_risk.approved"
                   :class="{ error: errors.has('Risk Approach') }"
                   data-cy="risk_approach"
-                  >
-                 <el-option 
-                  v-for="item in riskApproaches"                                                      
-                  :value="item"   
-                  :key="item.id"
-                  class="upperCase"
-                  :label="item"                                                  
+                >
+                  <el-option
+                    v-for="item in riskApproaches"
+                    :value="item"
+                    :key="item.id"
+                    class="upperCase"
+                    :label="item"
                   >
                   </el-option>
-                  </el-select>                  
+                </el-select>
                 <!-- <multiselect
                   v-model="DV_risk.riskApproach"
                   v-validate="'required'"
@@ -1113,24 +1118,23 @@
             >
               <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
                 <label class="font-sm mb-0">Risk Approach Approver</label>
-                 <el-select 
-                  v-model="riskApprover" 
-                  class="w-100"           
-                  track-by="id"    
-                  value-key="id"               
-                  filterable                                                                                                                                                     
-                  placeholder="Select Risk Approver"  
-                  :disabled="this.DV_risk.approved"         
-                  >
-                  <el-option 
-                    v-for="item in activeProjectUsers"                                                            
-                    :value="item"   
+                <el-select
+                  v-model="riskApprover"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  filterable
+                  placeholder="Select Risk Approver"
+                  :disabled="this.DV_risk.approved"
+                >
+                  <el-option
+                    v-for="item in activeProjectUsers"
+                    :value="item"
                     :key="item.id"
-                    :label="item.fullName"                                                  
-                    >
+                    :label="item.fullName"
+                  >
                   </el-option>
-                  </el-select>      
-               
+                </el-select>
               </div>
 
               <!-- <div v-if="this.DV_risk.text"> -->
@@ -1138,12 +1142,17 @@
                 v-if="riskApprover && riskApprover !== null"
                 class="col-md-4 pl-0 py-2 mb-0 text-center"
               >
-                <div v-if="(this.DV_risk.riskApprover) || (this.DV_risk.riskApprover !== null)">
+                <div
+                  v-if="
+                    this.DV_risk.riskApprover ||
+                      this.DV_risk.riskApprover !== null
+                  "
+                >
                   <label class="font-sm mb-0">Risk Approach Approved</label>
                   <span
                     v-if="
-                      this.$currentUser.full_name ==
-                      this.DV_risk.riskApprover[0].name
+                      this.DV_risk.riskApprover[0] && this.$currentUser.full_name ==
+                        this.DV_risk.riskApprover[0].name
                     "
                     class="d-block approver-pointer"
                     @click.prevent="toggleApproved"
@@ -1237,7 +1246,6 @@
             <div class="form-group pt-2 mb-3 ml-4 mr-5">
               <label class="font-sm mb-0 mr-3">Progress (in %)</label>
               <span class="ml-3">
-              
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
                   <input
                     type="checkbox"
@@ -1246,7 +1254,7 @@
                     :readonly="!_isallowed('write')"
                   />
                   <span>&nbsp;&nbsp;Auto Calculate Progress</span>
-                </label>          
+                </label>
               </span>
               <vue-slide-bar
                 v-model="DV_risk.progress"
@@ -1257,8 +1265,6 @@
             </div>
 
             <div class="form-group mt-2 mx-4">
-
-              
               <label class="font-sm">Checklists</label>
               <span
                 class="ml-2 clickable"
@@ -1411,22 +1417,23 @@
                                 >
                                  <el-select 
                                   v-model="check.user" 
-                                  class="w-75"           
+                                  class="w-75"   
+                                  clearable        
                                   track-by="id"    
                                   value-key="id"                
                                   filterable  
                                   :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
+
                                   placeholder="Search and select user"
-                                  
+                                >
+                                  <el-option
+                                    v-for="item in activeProjectUsers"
+                                    :value="item"
+                                    :key="item.id"
+                                    :label="item.fullName"
                                   >
-                                <el-option 
-                                  v-for="item in activeProjectUsers"                                                            
-                                  :value="item"   
-                                  :key="item.id"
-                                  :label="item.fullName"                                                  
-                                  >
-                                </el-option>
-                                </el-select>                              
+                                  </el-option>
+                                </el-select>
                               </div>
                             </div>
                             <!-- <div class="simple-select form-group col mb-0">
@@ -1477,9 +1484,10 @@
                               </thead>
                               <tbody>
                                 <tr
-                                  v-for="(
-                                    progress, pindex
-                                  ) in check.progressLists.slice().reverse()"
+                                  v-for="(progress,
+                                  pindex) in check.progressLists
+                                    .slice()
+                                    .reverse()"
                                   :key="pindex"
                                   v-if="!progress._destroy"
                                 >
@@ -1592,14 +1600,22 @@
                 </draggable>
               </div>
               <p v-else class="text-danger font-sm">No checks..</p>
-            </div>
-
-            <div class="mx-4">
+            </div>        
+            <div class="mx-4">  
+            <hr class="my-4 mr-1" />            
+             <label class="font-sm">Files</label>
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click.prevent="addFilesInput"
+              >
+                <i class="fas fa-plus-circle"></i>
+              </span>
               <div class="input-group mb-2">
                 <div
                   v-for="file in filteredFiles"
                   class="d-flex mb-2 w-100"
-                  v-if="file.id"
+                  v-if="!file.link || (file.link && file.id)"
                 >
                   <div class="input-group-prepend">
                     <div
@@ -1631,18 +1647,11 @@
               </div>
             </div>
             <div ref="addCheckItem" class="pt-0 mt-0"></div>
-            
+           
 
             <div v-if="_isallowed('write')" class="form-group mx-4">
-               <hr class="my-4" />
-              <label class="font-sm">Files</label>
-              <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
-                @click.prevent="addFilesInput"
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
+              
+             
 
               <div class="mx-4">
                 <div class="input-group pt-3 mb-2">
@@ -1687,72 +1696,68 @@
               <div class="form-group user-select w-100 mb-0 ml-4">
                 <label class="font-sm mb-0">Related Issues</label>
 
-               <el-select 
-                v-model="relatedIssues" 
-                class="w-100"           
-                track-by="id"    
-                value-key="id"                
-                filterable 
-                multiple 
-                :disabled="!_isallowed('write')"                                                                                                                                                
-                placeholder="Search and select Related-issues"
-                      
+                <el-select
+                  v-model="relatedIssues"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  filterable
+                  multiple
+                  :disabled="!_isallowed('write')"
+                  placeholder="Search and select Related-issues"
                 >
-                <el-option 
-                v-for="item in filteredIssues"                                                            
-                :value="item"   
-                :key="item.id"
-                :label="item.title"                                                  
-                >
-                </el-option>
-                </el-select>                
-              
+                  <el-option
+                    v-for="item in filteredIssues"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.title"
+                  >
+                  </el-option>
+                </el-select>
               </div>
 
               <div class="form-group user-select w-100 mb-0 mx-2">
                 <label class="font-sm mb-0">Related Tasks</label>
-                <el-select 
-                v-model="relatedTasks" 
-                class="w-100"           
-                track-by="id"    
-                value-key="id"                
-                filterable 
-                multiple 
-                :disabled="!_isallowed('write')"                                                                                                                                                
-                placeholder="Search and select Related-tasks"
-                      
+                <el-select
+                  v-model="relatedTasks"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  filterable
+                  multiple
+                  :disabled="!_isallowed('write')"
+                  placeholder="Search and select Related-tasks"
                 >
-               <el-option 
-                v-for="item in filteredTasks"                                                            
-                :value="item"   
-                :key="item.id"
-                :label="item.text"                                                  
-                >
-                </el-option>
-                </el-select>                
+                  <el-option
+                    v-for="item in filteredTasks"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.text"
+                  >
+                  </el-option>
+                </el-select>
               </div>
 
               <div class="form-group user-select w-100 mb-0 mr-4">
                 <label class="font-sm mb-0">Related Risks</label>
-                 <el-select 
-                  v-model="relatedRisks" 
-                  class="w-100"           
-                  track-by="id"    
-                  value-key="id"                
-                  filterable 
-                  multiple 
-                :disabled="!_isallowed('write')"                                                                                                                                                
+                <el-select
+                  v-model="relatedRisks"
+                  class="w-100"
+                  track-by="id"
+                  value-key="id"
+                  filterable
+                  multiple
+                  :disabled="!_isallowed('write')"
                   placeholder="Search and select Related-risks"
-                        
-                  >
-                <el-option 
-                  v-for="item in filteredRisks"                                                            
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.text"                                                  
+                >
+                  <el-option
+                    v-for="item in filteredRisks"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.text"
                   >
                   </el-option>
-                  </el-select>                
+                </el-select>
               </div>
             </div>
 
@@ -1941,12 +1946,18 @@ export default {
       );
     }
   },
+  beforeDestroy() {
+    this.SET_RISK_FORM_OPEN(false)
+    this.SET_SELECTED_RISK({})
+  },
   methods: {
     ...mapMutations([
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      'updateRisksHash'
+      "updateRisksHash",
+      "SET_RISK_FORM_OPEN",
+      "SET_SELECTED_RISK"
     ]),
     ...mapActions([
       "riskDeleted",
@@ -1966,6 +1977,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
+        riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
@@ -2066,7 +2078,7 @@ export default {
       this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(
         (t) => t.id === this.DV_risk.impactLevel
       );
-      if (risk.attachFiles) this.addFile(risk.attachFiles, false);
+      if (this.DV_risk.attachFiles) this.addFile(this.DV_risk.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -2101,8 +2113,12 @@ export default {
         let index = this.DV_risk.riskFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
-        this.destroyedFiles.push(file);
+        if(file.id){
+          Vue.set(this.DV_risk.riskFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)            
+        }
+        this.DV_risk.riskFiles.splice(this.DV_risk.riskFiles.findIndex(f => f.guid === file.guid), 1)
+
       } else if (file.name) {
         this.DV_risk.riskFiles.splice(
           this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
@@ -2168,6 +2184,7 @@ export default {
     cancelRiskSave() {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
+      this.SET_RISK_FORM_OPEN(false);
     },
     validateThenSave(e) {
       e.preventDefault();
@@ -2216,7 +2233,7 @@ export default {
           _.map(this.destroyedFiles, "id")
         );
         // Responsible User id
-        if (this.DV_risk.responsibleUserIds.length) {
+        if (this.DV_risk.responsibleUserIds && this.DV_risk.responsibleUserIds.length) {
           for (let u_id of this.DV_risk.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
@@ -2224,7 +2241,7 @@ export default {
           formData.append("responsible_user_ids[]", []);
         }
         // Accountable UserId
-        if (this.DV_risk.accountableUserIds.length) {
+        if (this.DV_risk.accountableUserIds && this.DV_risk.accountableUserIds.length) {
           for (let u_id of this.DV_risk.accountableUserIds) {
             formData.append("accountable_user_ids[]", u_id);
           }
@@ -2233,7 +2250,7 @@ export default {
         }
         // Consulted UserId
 
-        if (this.DV_risk.consultedUserIds.length) {
+        if (this.DV_risk.consultedUserIds && this.DV_risk.consultedUserIds.length) {
           for (let u_id of this.DV_risk.consultedUserIds) {
             formData.append("consulted_user_ids[]", u_id);
           }
@@ -2242,7 +2259,7 @@ export default {
         }
         // Informed UserId
 
-        if (this.DV_risk.informedUserIds.length) {
+        if (this.DV_risk.informedUserIds && this.DV_risk.informedUserIds.length) {
           for (let u_id of this.DV_risk.informedUserIds) {
             formData.append("informed_user_ids[]", u_id);
           }
@@ -2250,7 +2267,7 @@ export default {
           formData.append("informed_user_ids[]", []);
         }
         // Risk Approver User id
-        if (this.DV_risk.riskApproverUserIds.length) {
+        if (this.DV_risk.riskApproverUserIds && this.DV_risk.riskApproverUserIds.length) {
           for (let u_id of this.DV_risk.riskApproverUserIds) {
             formData.append("risk_approver_user_ids[]", u_id);
           }
@@ -2364,7 +2381,7 @@ export default {
             var responseRisk = humps.camelizeKeys(response.data.risk);
             this.loadRisk(responseRisk);
             //this.$emit(callback, responseRisk);
-            this.updateRisksHash({risk: responseRisk})
+            this.updateRisksHash({ risk: responseRisk });
             if (response.status === 200) {
               this.$message({
                 message: `${response.data.risk.text} was saved successfully.`,
@@ -2382,7 +2399,7 @@ export default {
       });
     },
     addFilesInput() {
-      this.DV_risk.riskFiles.push({ name: "", uri: "", link: true });
+      this.DV_risk.riskFiles.push({ name: "", uri: "", link: true, guid: this.guid() });
     },
     addProgressList(check) {
       var postion = check.progressLists.length;
@@ -2813,7 +2830,7 @@ export default {
   },
   watch: {
     risk: {
-      handler: function (value) {
+      handler: function(value) {
         if (!("id" in value)) this.DV_risk = this.INITIAL_RISK_STATE();
         this.DV_risk.riskFiles = [];
         this.destroyedFiles = [];
@@ -2825,7 +2842,7 @@ export default {
       if (!value) this.DV_risk.dueDate = "";
     },
     "DV_risk.checklists": {
-      handler: function (value) {
+      handler: function(value) {
         if (this.DV_risk.autoCalculate) this.calculateProgress(value);
       },
       deep: true,
@@ -2834,19 +2851,19 @@ export default {
       if (value) this.calculateProgress();
     },
     riskApprover: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.DV_risk.riskApproverUserIds = _.uniq(
             _.map(_.flatten([value]), "id")
           );
-       } else {
+        } else {
           this.DV_risk.riskApproverUserIds = null;
         }
       },
       deep: true,
     },
     responsibleUsers: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.DV_risk.responsibleUserIds = _.uniq(
             _.map(_.flatten([value]), "id")
@@ -2858,7 +2875,7 @@ export default {
       deep: true,
     },
     accountableRiskUsers: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.DV_risk.accountableUserIds = _.uniq(
             _.map(_.flatten([value]), "id")
@@ -2870,7 +2887,7 @@ export default {
       deep: true,
     },
     consultedRiskUsers: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.DV_risk.consultedUserIds = _.uniq(_.map(value, "id"));
         } else {
@@ -2880,7 +2897,7 @@ export default {
       deep: true,
     },
     informedRiskUsers: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.DV_risk.informedUserIds = _.uniq(_.map(value, "id"));
         } else {
@@ -2890,31 +2907,31 @@ export default {
       deep: true,
     },
     relatedIssues: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) this.DV_risk.subIssueIds = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedTasks: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) this.DV_risk.subTaskIds = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     relatedRisks: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) this.DV_risk.subRiskIds = _.uniq(_.map(value, "id"));
       },
       deep: true,
     },
     selectedTaskType: {
-      handler: function (value) {
+      handler: function(value) {
         this.DV_risk.taskTypeId = value ? value.id : null;
       },
       deep: true,
     },
     selectedRiskStage: {
-      handler: function (value) {
+      handler: function(value) {
         this.DV_risk.riskStageId = value ? value.id : null;
       },
       deep: true,
@@ -2953,6 +2970,12 @@ export default {
         }
       });
     },
+    facility: {
+      handler(value) {
+        this.SET_RISK_FORM_OPEN(false);
+        this.SET_SELECTED_RISK({});
+      },
+    },
   },
 };
 </script>
@@ -2969,7 +2992,7 @@ export default {
   z-index: 100;
 }
 .kanban-form {
-  left: -82px;
+  width: 97%;
 }
 .fixed-form-mapView {
   transform: scale(1.03);

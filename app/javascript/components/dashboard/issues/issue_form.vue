@@ -143,15 +143,14 @@
        <div class="simple-select w-100 form-group">
           <label class="font-md">Category</label>
             <el-select 
-              v-model="selectedTaskType"  
-              v-validate="'required'"                  
+              v-model="selectedTaskType"                 
               class="w-100" 
+              clearable    
               track-by="id" 
               value-key="id"
               :disabled="!_isallowed('write')"
-              :class="{ error: errors.has('Task Category') }"
               data-cy="task_type"
-              name="Category"                                                                                                                                                                 
+              name="Category"                                                   
               placeholder="Select Category"
               >
               <el-option 
@@ -182,13 +181,6 @@
               </div>
             </template>
           </multiselect> -->
-          <div
-            v-show="errors.has('Task Type')"
-            class="text-danger"
-            data-cy="task_type_error"
-          >
-            {{ errors.first("Task Type") }}
-          </div>
         </div>        
 
         <div class="simple-select form-group w-100 mx-1">
@@ -302,6 +294,7 @@
             v-model="selectedIssueStage"                    
             class="w-100" 
             track-by="id" 
+            clearable    
             value-key="id"    
             :disabled="!_isallowed('write') || !!fixedStage"
             data-cy="task_stage"                                                                                                                                                
@@ -427,12 +420,12 @@ Tab 1 Row Begins here -->
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-md mb-0">Responsible</label>
-          
+          <label class="font-md mb-0">Responsible</label>          
           <el-select 
            v-model="responsibleUsers" 
            class="w-100" 
            filterable
+           clearable    
            track-by="id"    
            value-key="id"                                                                                                                                                          
            placeholder="Select Responsible User"
@@ -453,7 +446,8 @@ Tab 1 Row Begins here -->
           <label class="font-md mb-0">Accountable</label>            
            <el-select 
             v-model="accountableIssueUsers"          
-            class="w-100"           
+            class="w-100"    
+            clearable           
             track-by="id"    
             value-key="id"                                                                                                                                                          
             placeholder="Select Accountable User"
@@ -631,7 +625,8 @@ Tab 1 Row Begins here -->
                   v-model="check.user" 
                   class="w-75"           
                   track-by="id"    
-                  value-key="id"                
+                  value-key="id"  
+                  clearable         
                   filterable  
                   :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
                   placeholder="Search and select user"                  
@@ -755,7 +750,7 @@ Tab 1 Row Begins here -->
 <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
 <div class="mx-4 pt-3">
           <div class="input-group mb-2">
-            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="file.id">
+            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="!file.link || (file.link && file.id)">
               <div class="input-group-prepend">
                 <div
                   class="input-group-text clickable"
@@ -769,6 +764,7 @@ Tab 1 Row Begins here -->
                 readonly
                 type="text"
                 class="form-control form-control-sm mw-95"
+                :value="file.name || file.uri"
                 v-if="!file.link"
               />
               <a :href="file.uri" target="_blank" v-if="file.link">
@@ -1172,7 +1168,7 @@ export default {
       this.selectedIssueStage = this.issueStages.find(
         (t) => t.id === this.DV_issue.issueStageId
       );
-      if (issue.attachFiles) this.addFile(issue.attachFiles, false);
+      if (this.DV_issue.attachFiles) this.addFile(this.DV_issue.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -1180,7 +1176,7 @@ export default {
       });
     },
     addFilesInput(){
-      this.DV_issue.issueFiles.push({name: "", uri: '', link: true})
+      this.DV_issue.issueFiles.push({name: "", uri: '', link: true, guid: this.guid()})
     },
     addFile(files = [], append = true) {
       let _files = append ?  [...this.DV_issue.issueFiles] : [];
@@ -1211,8 +1207,13 @@ export default {
         let index = this.DV_issue.issueFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        Vue.set(this.DV_issue.issueFiles, index, { ...file, _destroy: true });
-        this.destroyedFiles.push(file);
+
+        if(file.id){
+          Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)            
+        }
+        this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
+
       } else if (file.name) {
         this.DV_issue.issueFiles.splice(
           this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
@@ -1261,7 +1262,7 @@ export default {
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
-        if (this.DV_issue.responsibleUserIds.length) {
+        if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.responsibleUserIds.length)
           // console.log(this.DV_issue.responsibleUserIds)
@@ -1275,7 +1276,7 @@ export default {
 
           // Accountable UserId
 
-         if (this.DV_issue.accountableUserIds.length) {
+         if (this.DV_issue.accountableUserIds && this.DV_issue.accountableUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.accountableUserIds.length)
           // console.log(this.DV_issue.accountableUserIds)
