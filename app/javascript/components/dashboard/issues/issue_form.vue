@@ -615,7 +615,8 @@ Tab 1 Row Begins here -->
                   v-model="check.user" 
                   class="w-75"           
                   track-by="id"    
-                  value-key="id"                
+                  value-key="id"  
+                  clearable         
                   filterable  
                   :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
                   placeholder="Search and select user"                  

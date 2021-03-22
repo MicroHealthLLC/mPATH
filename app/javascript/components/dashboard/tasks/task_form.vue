@@ -437,7 +437,8 @@
                 <el-select 
                   v-model="check.user" 
                   class="w-75"           
-                  track-by="id"    
+                  track-by="id" 
+                  clearable   
                   value-key="id"                
                   filterable  
                   :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    

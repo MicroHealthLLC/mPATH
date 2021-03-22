@@ -1413,7 +1413,8 @@
                                 >
                                  <el-select 
                                   v-model="check.user" 
-                                  class="w-75"           
+                                  class="w-75"   
+                                  clearable        
                                   track-by="id"    
                                   value-key="id"                
                                   filterable  
