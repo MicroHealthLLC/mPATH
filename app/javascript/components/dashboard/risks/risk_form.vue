@@ -56,9 +56,7 @@
             </button>
           </div>
         </div>
-
         <hr class="mx-4 mb-6 mt-2" />
-
         <div
           v-if="_isallowed('read')"
           class="d-flex form-group pt-1 mb-1 justify-content-start"
@@ -1602,9 +1600,7 @@
                 </draggable>
               </div>
               <p v-else class="text-danger font-sm">No checks..</p>
-            </div>
-
-        
+            </div>        
             <div class="mx-4">  
             <hr class="my-4 mr-1" />            
              <label class="font-sm">Files</label>
