@@ -302,6 +302,7 @@ export default new Vuex.Store({
 
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
+    setFacilityProjectOptions: (state, filter) => state.facilityProjectOptions = filter,   
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
     setFacilityDueDateFilter: (state, filter) => state.facilityDueDateFilter = filter,
     setNoteDateFilter: (state, filter) => state.noteDateFilter = filter,
@@ -556,7 +557,7 @@ export default new Vuex.Store({
         // console.log(getter.facilityNameFilter)
         var user_names = null
         if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
-          user_names = _.map(getter.facilityNameFilter, 'facilityName').join(", ")
+          user_names = _.map(getter.facilityNameFilter, 'name').join(", ")
         }
         return user_names
       }else if(_filterValue == 'projectStatusFilter'){

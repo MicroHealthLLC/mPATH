@@ -29,13 +29,13 @@
                   v-model="C_facilityGroupFilter"                    
                   class="w-100" 
                   track-by="name" 
-                  filterable
                   value-key="id"
                   multiple                                                                                                                                               
                   placeholder="Select Project Group"
                 >
                 <el-option 
-                  v-for="item in C_activeFacilityGroups"                                                     
+                  v-for="item in C_activeFacilityGroups"     
+                                                      
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -54,15 +54,25 @@
                   multiple   
                   filterable
                   @search-change="findFacility"                                                                                                                                           
-                  placeholder="Select Project Name"
+                  placeholder="Search and select option" 
                   >
-                <el-option 
-                  v-for="item in facilities"                                                     
+                  
+                  <el-option 
+                   v-for="item in  C_activeFacilityNames"     
+                  :load="log(item.name)"                                                               
                   :value="item"   
                   :key="item.id"
-                  :label="item.facilityName"                                                  
+                  :label="item.name"                                                  
                   >
-                </el-option>
+                  </el-option>
+                <!-- <el-option 
+                   v-for="item in C_activeFacilityNames"     
+                  :load="log(item.name)"                                                               
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option> -->
               </el-select> 
               <!-- <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" @search-change="findFacility">
                 <template slot="singleLabel" slot-scope="{option}">
@@ -449,11 +459,16 @@ export default {
       'getRiskApproachFilterOptions',
       'getRiskApproachFilter',
       'getRiskPriorityLevelFilter',
+      
       'getRiskPriorityLevelFilterOptions',
 
       'issueSeverities',
       'issueTypes',
+
       'issueStages',
+      'getFacilityProjectOptions',
+
+
       'issueStageFilter',
       'issueUserFilter',
       'issueTypeFilter',
@@ -463,6 +478,7 @@ export default {
       'facilityNameFilter',
       'facilityProgressFilter',
       'facilityDueDateFilter',
+      'facilityGroupFacilities',
       'noteDateFilter',
       'taskIssueDueDateFilter',
       'taskIssueProgressFilter',
@@ -533,6 +549,12 @@ export default {
       let id = Number(this.$route.params.projectId)
       return this.activeFacilityGroups(id)
     },
+      C_activeFacilityNames() {
+    
+      return this.getFacilityProjectOptions
+    },
+
+
     C_projectStatusFilter: {
       get() {
         return this.projectStatusFilter
@@ -584,14 +606,16 @@ export default {
         this.setFacilityGroupFilter(value)
       }
     },
-    C_facilityNameFilter: {
+   C_facilityNameFilter: {
       get() {
         return this.facilityNameFilter
       },
       set(value) {
+        console.log("this is the value of the project name filter: " + value)
         this.setFacilityNameFilter(value)
       }
     },
+
     C_facilityDueDateFilter: {
       get() {
         if (!this.facilityDueDateFilter) return this.facilityDueDateFilter
@@ -704,7 +728,7 @@ export default {
       'setProjectStatusFilter',
       'setTaskTypeFilter',
       'setFacilityGroupFilter',
-      'setFacilityNameFilter',
+      'setFacilityNameFilter',    
       'setFacilityProgressFilter',
       'setFacilityDueDateFilter',
       'setNoteDateFilter',
@@ -730,6 +754,9 @@ export default {
       'setFacilities',
       'setMapZoomFilter'
     ]),
+    log(e) {
+      console.log("This is the item in Project Names with the same filer as activeGroups: " + e)
+    },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
     },
@@ -759,11 +786,11 @@ export default {
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
       this.setFacilityGroupFilter(null)
+      this.setFacilityNameFilter(null)
       this.setFacilityProgressFilter(null)
       this.setFacilityDueDateFilter([null])
       this.setNoteDateFilter([null])
       this.setTaskIssueDueDateFilter([null])
-      this.setFacilityNameFilter(null)
       this.setIssueTypeFilter(null)
       this.setIssueSeverityFilter(null)
       this.setIssueStageFilter(null)
@@ -794,7 +821,7 @@ export default {
       try {
         let filters = [`Map Filters: ${this.currentProject.name} \n
             Project Group: ${this.facilityGroupFilter ? _.map(this.facilityGroupFilter, 'name').join() : 'all'}\n
-            Project Name: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'facilityName').join() : 'all'}\n
+            Project Names: ${this.facilityNameFilter ? _.map(this.facilityNameFilter, 'name').join() : 'all'}\n
             Project Status: ${this.projectStatusFilter ? _.map(this.projectStatusFilter, 'name').join() : 'all'}\n
             Facility % Progress Range: ${this.facilityProgressFilter ? _.map(this.facilityProgressFilter, 'name').join() : 'all'}\n
             Facility Due Date: ${this.facilityDueDateFilter && this.facilityDueDateFilter[0] ? this.formatDate(this.facilityDueDateFilter[0]) + ' to ' + this.formatDate(this.facilityDueDateFilter[1]) : 'all'}\n
@@ -808,7 +835,7 @@ export default {
         let ex_data = []
         for (let facility of this.filterFacilitiesWithActiveFacilityGroups) {
           ex_data.push({
-            "Project Name": facility.facilityName || 'N/A',
+            "Project Names": facility.name || 'N/A',
             "Project Group": facility.facilityGroupName || 'N/A',
             "Project Status": facility.projectStatus || 'N/A',
             "Due Date": facility.dueDate || 'N/A',
@@ -913,6 +940,9 @@ export default {
       this.updateMapFilters({ key: 'facilityGroupIds', filter: value })
     },
     facilityNameFilter(value) {
+      this.updateMapFilters({ key: 'ids', filter: value })
+    },
+    getFacilityProjectOptions(value){
       this.updateMapFilters({ key: 'ids', filter: value })
     },
     projectStatusFilter(value) {
