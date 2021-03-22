@@ -222,14 +222,16 @@
 
                 <div class="simple-select form-group w-100 mx-1">
                   <label class="font-sm">Stage</label>
-                  <el-select
-                    v-model="selectedRiskStage"
-                    class="w-100"
-                    track-by="id"
-                    value-key="id"
-                    :disabled="!_isallowed('write') || !!fixedStage"
-                    data-cy="risk_stage"
-                    placeholder="Select Stage"
+                <el-select 
+                  v-model="selectedRiskStage"                    
+                  class="w-100" 
+                  clearable
+                  track-by="id" 
+                  value-key="id"    
+                  :disabled="!_isallowed('write') || !!fixedStage"
+                  data-cy="risk_stage"                                                                                                                                              
+                  placeholder="Select Stage"
+
                   >
                     <el-option
                       v-for="item in riskStages"
@@ -335,11 +337,14 @@
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
                 <label class="font-sm mb-0">Responsible</label>
-                <el-select
-                  v-model="responsibleUsers"
-                  class="w-100"
-                  track-by="id"
-                  value-key="id"
+
+                 <el-select 
+                  v-model="responsibleUsers" 
+                  class="w-100"                
+                  track-by="id"   
+                  clearable   
+                  filterable  
+                  value-key="id"                                                                                                                                                          
                   placeholder="Select Responsible User"
                   :disabled="!_isallowed('write')"
                   data-cy="risk_owner"
@@ -355,11 +360,13 @@
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Accountable</label>
-                <el-select
-                  v-model="accountableRiskUsers"
-                  class="w-100"
+
+                <el-select 
+                  v-model="accountableRiskUsers" 
+                  class="w-100"           
                   track-by="id"
-                  value-key="id"
+                  clearable        
+                  value-key="id"                                                                                                                                                          
                   placeholder="Select Accountable User"
                   filterable
                 >
@@ -1410,15 +1417,15 @@
                                 <span class="font-sm pt-2 pr-2 m"
                                   >Assigned To:</span
                                 >
-                                <el-select
-                                  v-model="check.user"
-                                  class="w-75"
-                                  track-by="id"
-                                  value-key="id"
-                                  filterable
-                                  :disabled="
-                                    !_isallowed('write') || !check.text
-                                  "
+                                 <el-select 
+                                  v-model="check.user" 
+                                  class="w-75"   
+                                  clearable        
+                                  track-by="id"    
+                                  value-key="id"                
+                                  filterable  
+                                  :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
+
                                   placeholder="Search and select user"
                                 >
                                   <el-option
