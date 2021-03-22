@@ -1153,7 +1153,7 @@
                   <label class="font-sm mb-0">Risk Approach Approved</label>
                   <span
                     v-if="
-                      this.$currentUser.full_name ==
+                      this.DV_risk.riskApprover[0] && this.$currentUser.full_name ==
                         this.DV_risk.riskApprover[0].name
                     "
                     class="d-block approver-pointer"
@@ -2250,7 +2250,7 @@ export default {
         }
         // Consulted UserId
 
-        if (this.DV_risk.consultedUserIds.length) {
+        if (this.DV_risk.consultedUserIds && this.DV_risk.consultedUserIds.length) {
           for (let u_id of this.DV_risk.consultedUserIds) {
             formData.append("consulted_user_ids[]", u_id);
           }
@@ -2259,7 +2259,7 @@ export default {
         }
         // Informed UserId
 
-        if (this.DV_risk.informedUserIds.length) {
+        if (this.DV_risk.informedUserIds && this.DV_risk.informedUserIds.length) {
           for (let u_id of this.DV_risk.informedUserIds) {
             formData.append("informed_user_ids[]", u_id);
           }
@@ -2267,7 +2267,7 @@ export default {
           formData.append("informed_user_ids[]", []);
         }
         // Risk Approver User id
-        if (this.DV_risk.riskApproverUserIds.length) {
+        if (this.DV_risk.riskApproverUserIds && this.DV_risk.riskApproverUserIds.length) {
           for (let u_id of this.DV_risk.riskApproverUserIds) {
             formData.append("risk_approver_user_ids[]", u_id);
           }
