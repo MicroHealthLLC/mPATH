@@ -2066,7 +2066,7 @@ export default {
       this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(
         (t) => t.id === this.DV_risk.impactLevel
       );
-      if (risk.attachFiles) this.addFile(risk.attachFiles, false);
+      if (this.DV_risk.attachFiles) this.addFile(this.DV_risk.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -2101,8 +2101,12 @@ export default {
         let index = this.DV_risk.riskFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
-        this.destroyedFiles.push(file);
+        if(file.id){
+          Vue.set(this.DV_risk.riskFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)            
+        }
+        this.DV_risk.riskFiles.splice(this.DV_risk.riskFiles.findIndex(f => f.guid === file.guid), 1)
+
       } else if (file.name) {
         this.DV_risk.riskFiles.splice(
           this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
@@ -2216,7 +2220,7 @@ export default {
           _.map(this.destroyedFiles, "id")
         );
         // Responsible User id
-        if (this.DV_risk.responsibleUserIds.length) {
+        if (this.DV_risk.responsibleUserIds && this.DV_risk.responsibleUserIds.length) {
           for (let u_id of this.DV_risk.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
@@ -2224,7 +2228,7 @@ export default {
           formData.append("responsible_user_ids[]", []);
         }
         // Accountable UserId
-        if (this.DV_risk.accountableUserIds.length) {
+        if (this.DV_risk.accountableUserIds && this.DV_risk.accountableUserIds.length) {
           for (let u_id of this.DV_risk.accountableUserIds) {
             formData.append("accountable_user_ids[]", u_id);
           }
@@ -2382,7 +2386,7 @@ export default {
       });
     },
     addFilesInput() {
-      this.DV_risk.riskFiles.push({ name: "", uri: "", link: true });
+      this.DV_risk.riskFiles.push({ name: "", uri: "", link: true, guid: this.guid() });
     },
     addProgressList(check) {
       var postion = check.progressLists.length;
