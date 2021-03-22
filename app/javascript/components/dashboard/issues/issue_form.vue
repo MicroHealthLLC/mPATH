@@ -1167,7 +1167,7 @@ export default {
       this.selectedIssueStage = this.issueStages.find(
         (t) => t.id === this.DV_issue.issueStageId
       );
-      if (issue.attachFiles) this.addFile(issue.attachFiles, false);
+      if (this.DV_issue.attachFiles) this.addFile(this.DV_issue.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -1175,7 +1175,7 @@ export default {
       });
     },
     addFilesInput(){
-      this.DV_issue.issueFiles.push({name: "", uri: '', link: true})
+      this.DV_issue.issueFiles.push({name: "", uri: '', link: true, guid: this.guid()})
     },
     addFile(files = [], append = true) {
       let _files = append ?  [...this.DV_issue.issueFiles] : [];
@@ -1206,8 +1206,13 @@ export default {
         let index = this.DV_issue.issueFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        Vue.set(this.DV_issue.issueFiles, index, { ...file, _destroy: true });
-        this.destroyedFiles.push(file);
+
+        if(file.id){
+          Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)            
+        }
+        this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
+
       } else if (file.name) {
         this.DV_issue.issueFiles.splice(
           this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
@@ -1256,7 +1261,7 @@ export default {
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
-        if (this.DV_issue.responsibleUserIds.length) {
+        if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.responsibleUserIds.length)
           // console.log(this.DV_issue.responsibleUserIds)
@@ -1270,7 +1275,7 @@ export default {
 
           // Accountable UserId
 
-         if (this.DV_issue.accountableUserIds.length) {
+         if (this.DV_issue.accountableUserIds && this.DV_issue.accountableUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.accountableUserIds.length)
           // console.log(this.DV_issue.accountableUserIds)

@@ -1024,7 +1024,7 @@
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)     
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
 
-        if (task.attachFiles) this.addFile(task.attachFiles, false)
+        if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
@@ -1045,8 +1045,11 @@
         
         if (file.uri || file.link) {
           let index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
-          Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
-          this.destroyedFiles.push(file)
+          if(file.id){
+            Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
+            this.destroyedFiles.push(file)            
+          }
+          this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
         }
         else if (file.name) {
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
@@ -1268,7 +1271,7 @@
         this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addFilesInput(){
-        this.DV_task.taskFiles.push({name: "", uri: '', link: true})
+        this.DV_task.taskFiles.push({name: "", uri: '', link: true,guid: this.guid()})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
