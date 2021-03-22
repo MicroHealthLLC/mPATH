@@ -366,6 +366,23 @@
 <!-- CHECKLIST TAB #3-->
 
 <div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
+   <div class="form-group pt-3 ml-4 mr-5">
+        <label class="font-md mb-0">Progress (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"      
+          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
+          :draggable="_isallowed('write') && !DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>      
       
   <div class="form-group pt-3 mx-4" >
     <label class="font-md">Checklists</label>
@@ -785,23 +802,6 @@
   <!-- UPDATE TAB 6 -->
   <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">       
      
-      <div class="form-group pt-3 mx-4">
-        <label class="font-md mb-0">Progress (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center">
-            <input type="checkbox" 
-            v-model="DV_task.autoCalculate" 
-            :disabled="!_isallowed('write')" 
-            :readonly="!_isallowed('write')">
-            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <vue-slide-bar
-          v-model="DV_task.progress"
-          :line-height="8"      
-          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :draggable="_isallowed('write') && !DV_task.autoCalculate"
-        ></vue-slide-bar>
-      </div>      
     
      <div class="form-group mx-4 paginated-updates">
         <label class="font-sm">Updates:</label>

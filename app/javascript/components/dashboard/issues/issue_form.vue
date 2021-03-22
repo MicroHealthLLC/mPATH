@@ -143,16 +143,14 @@
        <div class="simple-select w-100 form-group">
           <label class="font-md">Category</label>
             <el-select 
-              v-model="selectedTaskType"  
-              v-validate="'required'"                  
+              v-model="selectedTaskType"                 
               class="w-100" 
               clearable    
               track-by="id" 
               value-key="id"
               :disabled="!_isallowed('write')"
-              :class="{ error: errors.has('Task Category') }"
               data-cy="task_type"
-              name="Category"                                                                                                                                                                 
+              name="Category"                                                   
               placeholder="Select Category"
               >
               <el-option 
@@ -183,13 +181,6 @@
               </div>
             </template>
           </multiselect> -->
-          <div
-            v-show="errors.has('Task Type')"
-            class="text-danger"
-            data-cy="task_type_error"
-          >
-            {{ errors.first("Task Type") }}
-          </div>
         </div>        
 
         <div class="simple-select form-group w-100 mx-1">
@@ -540,7 +531,26 @@ Tab 1 Row Begins here -->
 
   <!-- CHECKLIST TAB #3 -->
 <div v-show="currentTab == 'tab3'" class="paperLookTab tab2">
-<div class="form-group pt-3 mx-4" >
+      <div class="form-group pt-3 ml-4 mr-5">
+          <label class="font-md mb-0">Progress (in %)</label>
+          <span class="ml-3">
+            <label class="font-sm mb-0 d-inline-flex align-items-center"
+              ><input
+                type="checkbox"
+                v-model="DV_issue.autoCalculate"
+                :disabled="!_isallowed('write')"
+                :readonly="!_isallowed('write')"
+              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
+            >
+          </span>
+          <vue-slide-bar
+            v-model="DV_issue.progress"
+            :line-height="8"
+            :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
+            :draggable="_isallowed('write') && !DV_issue.autoCalculate"
+          ></vue-slide-bar>
+        </div>
+    <div class="form-group pt-3 mx-4" >
     <label class="font-md">Checklists</label>
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
@@ -908,27 +918,7 @@ Tab 1 Row Begins here -->
 
 
  <!-- UPDATE TAB 6 -->
-<div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
-
-   <div class="form-group pt-3 mx-4">
-          <label class="font-md mb-0">Progress (in %)</label>
-          <span class="ml-3">
-            <label class="font-sm mb-0 d-inline-flex align-items-center"
-              ><input
-                type="checkbox"
-                v-model="DV_issue.autoCalculate"
-                :disabled="!_isallowed('write')"
-                :readonly="!_isallowed('write')"
-              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
-            >
-          </span>
-          <vue-slide-bar
-            v-model="DV_issue.progress"
-            :line-height="8"
-            :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
-            :draggable="_isallowed('write') && !DV_issue.autoCalculate"
-          ></vue-slide-bar>
-        </div>
+<div v-show="currentTab == 'tab6'" class="paperLookTab tab5">    
 
         <div class="form-group mx-4 paginated-updates">
           <label class="font-md">Updates</label>
