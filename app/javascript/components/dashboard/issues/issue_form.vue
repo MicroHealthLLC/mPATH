@@ -1252,24 +1252,16 @@ export default {
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
-        if (this.DV_issue.responsibleUserIds.length) {
-          // console.log("this.DV_issue.responsibleUserIds.length")
-          // console.log(this.DV_issue.responsibleUserIds.length)
-          // console.log(this.DV_issue.responsibleUserIds)
+        if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           for (let u_id of this.DV_issue.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
         } else {
           formData.append("responsible_user_ids[]", []);
         }
-
-
           // Accountable UserId
 
-         if (this.DV_issue.accountableUserIds.length) {
-          // console.log("this.DV_issue.responsibleUserIds.length")
-          // console.log(this.DV_issue.accountableUserIds.length)
-          // console.log(this.DV_issue.accountableUserIds)
+         if (this.DV_issue.accountableUserIds && this.DV_issue.accountableUserIds.length) {
             for (let u_id of this.DV_issue.accountableUserIds) {
               formData.append('accountable_user_ids[]', u_id)
             }
@@ -1277,13 +1269,8 @@ export default {
           else {
             formData.append('accountable_user_ids[]', [])
           }
-
           // Consulted UserId
-          
           if (this.DV_issue.consultedUserIds.length) {
-            // console.log("this.DV_issue.responsibleUserIds.length")
-            // console.log(this.DV_issue.consultedUserIds.length)
-            // console.log(this.DV_issue.consultedUserIds)
             for (let u_id of this.DV_issue.consultedUserIds) {
               formData.append('consulted_user_ids[]', u_id)
             }
@@ -1291,13 +1278,8 @@ export default {
           else {
             formData.append('consulted_user_ids[]', [])
           }
-
           // Informed UserId
-          
           if (this.DV_issue.informedUserIds.length) {
-            // console.log("this.DV_issue.responsibleUserIds.length")
-            // console.log(this.DV_issue.informedUserIds.length)
-            // console.log(this.DV_issue.informedUserIds)
             for (let u_id of this.DV_issue.informedUserIds) {
               formData.append('informed_user_ids[]', u_id)
             }
