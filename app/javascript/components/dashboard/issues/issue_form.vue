@@ -750,7 +750,7 @@ Tab 1 Row Begins here -->
 <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
 <div class="mx-4 pt-3">
           <div class="input-group mb-2">
-            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="file.id">
+            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100" v-if="!file.link || (file.link && file.id)">
               <div class="input-group-prepend">
                 <div
                   class="input-group-text clickable"
@@ -764,6 +764,7 @@ Tab 1 Row Begins here -->
                 readonly
                 type="text"
                 class="form-control form-control-sm mw-95"
+                :value="file.name || file.uri"
                 v-if="!file.link"
               />
               <a :href="file.uri" target="_blank" v-if="file.link">

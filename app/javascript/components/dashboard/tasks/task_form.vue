@@ -600,7 +600,7 @@
 
       <div class="mx-4">
         <div class="input-group pt-3 mb-2">
-          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100"  v-if="file.id">
+          <div v-for="file in filteredFiles" class="d-flex mb-2 w-100"  v-if="!file.link || (file.link && file.id) ">
             <div class="input-group-prepend">
               <div class="input-group-text clickable" :class="{'btn-disabled': !file.uri}" @click.prevent="downloadFile(file)">
                 <i class="fas fa-file-image"></i>

@@ -1609,7 +1609,7 @@
                 <div
                   v-for="file in filteredFiles"
                   class="d-flex mb-2 w-100"
-                  v-if="file.id"
+                  v-if="!file.link || (file.link && file.id)"
                 >
                   <div class="input-group-prepend">
                     <div
@@ -1978,6 +1978,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
+        riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
