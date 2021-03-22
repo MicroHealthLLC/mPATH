@@ -366,23 +366,6 @@
 <!-- CHECKLIST TAB #3-->
 
 <div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
-   <div class="form-group pt-3 ml-4 mr-5">
-        <label class="font-md mb-0">Progress (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center">
-            <input type="checkbox" 
-            v-model="DV_task.autoCalculate" 
-            :disabled="!_isallowed('write')" 
-            :readonly="!_isallowed('write')">
-            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <vue-slide-bar
-          v-model="DV_task.progress"
-          :line-height="8"      
-          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :draggable="_isallowed('write') && !DV_task.autoCalculate"
-        ></vue-slide-bar>
-      </div>      
       
   <div class="form-group pt-3 mx-4" >
     <label class="font-md">Checklists</label>
@@ -466,7 +449,7 @@
                   v-for="item in activeProjectUsers"                                                            
                   :value="item"   
                   :key="item.id"
-                  :label="item.fullName"                                                  
+                  :label="item.fullName"                                                 
                   >
                 </el-option>
                 </el-select>                 
@@ -802,6 +785,23 @@
   <!-- UPDATE TAB 6 -->
   <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">       
      
+      <div class="form-group pt-3 mx-4">
+        <label class="font-md mb-0">Progress (in %)</label>
+        <span class="ml-3">
+          <label class="font-sm mb-0 d-inline-flex align-items-center">
+            <input type="checkbox" 
+            v-model="DV_task.autoCalculate" 
+            :disabled="!_isallowed('write')" 
+            :readonly="!_isallowed('write')">
+            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
+        </span>
+        <vue-slide-bar
+          v-model="DV_task.progress"
+          :line-height="8"      
+          :is-disabled="!_isallowed('write') || DV_task.autoCalculate"
+          :draggable="_isallowed('write') && !DV_task.autoCalculate"
+        ></vue-slide-bar>
+      </div>      
     
      <div class="form-group mx-4 paginated-updates">
         <label class="font-sm">Updates:</label>
@@ -1024,7 +1024,7 @@
         this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)     
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
 
-        if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
+        if (task.attachFiles) this.addFile(task.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
@@ -1045,11 +1045,8 @@
         
         if (file.uri || file.link) {
           let index = this.DV_task.taskFiles.findIndex(f => f.guid === file.guid)
-          if(file.id){
-            Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
-            this.destroyedFiles.push(file)            
-          }
-          this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
+          Vue.set(this.DV_task.taskFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)
         }
         else if (file.name) {
           this.DV_task.taskFiles.splice(this.DV_task.taskFiles.findIndex(f => f.guid === file.guid), 1)
@@ -1271,7 +1268,7 @@
         this.DV_task.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addFilesInput(){
-        this.DV_task.taskFiles.push({name: "", uri: '', link: true,guid: this.guid()})
+        this.DV_task.taskFiles.push({name: "", uri: '', link: true})
       },
       addNote() {
         this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})

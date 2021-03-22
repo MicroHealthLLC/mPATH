@@ -1604,7 +1604,17 @@
               <p v-else class="text-danger font-sm">No checks..</p>
             </div>
 
-            <div class="mx-4">
+        
+            <div class="mx-4">  
+            <hr class="my-4 mr-1" />            
+             <label class="font-sm">Files</label>
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click.prevent="addFilesInput"
+              >
+                <i class="fas fa-plus-circle"></i>
+              </span>
               <div class="input-group mb-2">
                 <div
                   v-for="file in filteredFiles"
@@ -1641,18 +1651,11 @@
               </div>
             </div>
             <div ref="addCheckItem" class="pt-0 mt-0"></div>
-            
+           
 
             <div v-if="_isallowed('write')" class="form-group mx-4">
-               <hr class="my-4" />
-              <label class="font-sm">Files</label>
-              <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
-                @click.prevent="addFilesInput"
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
+              
+             
 
               <div class="mx-4">
                 <div class="input-group pt-3 mb-2">
