@@ -831,3 +831,8 @@ i.el-tag__close.el-icon-close {
   top: 0;
   z-index: 100;
 }
+
+i.el-icon-circle-close {
+  // For el-select dropdown clear icon
+  color: #dc3545 !important;
+}
