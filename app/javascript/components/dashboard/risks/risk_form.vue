@@ -1978,6 +1978,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
+        riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
