@@ -347,6 +347,33 @@
             </div>
           </div>
         </div>
+        <div
+          v-if="
+            currentFacility &&
+              'id' in currentFacility &&
+              fixedStageId &&
+              viewPermit(currentTab, 'write')
+          "
+          class="w-100"
+        >
+          <task-form
+            v-if="currentTab === 'tasks'"
+            :facility="currentFacility"
+            :fixed-stage="fixedStageId"
+            @on-close-form="onCloseForm"
+            @task-created="handleNewTask"
+            class="form-inside-modal"
+          ></task-form>
+
+          <issue-form
+            v-if="currentTab === 'issues'"
+            :facility="currentFacility"
+            :fixed-stage="fixedStageId"
+            @issue-created="handleNewIssue"
+            @on-close-form="onCloseForm"
+            class="form-inside-modal"
+          ></issue-form>
+        </div>
         <div class="kanban-tab">
           <div>
             <div v-if="currentFacility && 'id' in currentFacility">
@@ -369,10 +396,7 @@
         </div>
       </div>
       <div v-if="isKanbanView && getRiskFormOpen" class="col-md-10">
-        <risk-form
-          :facility="currentFacility"
-          :risk="getSelectedRisk"
-        />
+        <risk-form :facility="currentFacility" :risk="getSelectedRisk" />
       </div>
     </div>
   </div>
@@ -514,7 +538,7 @@ export default {
       "getUnfilteredFacilities",
       "getPreviousRoute",
       "getRiskFormOpen",
-      "getSelectedRisk"
+      "getSelectedRisk",
     ]),
     filteredTasks() {
       let typeIds = _.map(this.C_taskTypeFilter, "id");
@@ -1027,7 +1051,7 @@ export default {
       "updateTasksHash",
       "setPreviousRoute",
       "SET_RISK_FORM_OPEN",
-      "SET_SELECTED_RISK"
+      "SET_SELECTED_RISK",
     ]),
     ...mapActions(["taskUpdated"]),
     onChangeTab(tab) {
@@ -1047,9 +1071,12 @@ export default {
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
       this.fixedStageId = stage.id;
-      // this.$refs.newFormModal && this.$refs.newFormModal.open();
-      this.SET_RISK_FORM_OPEN(true);
-      this.SET_SELECTED_RISK({});
+      if (this.currentTab === 'tasks' || this.currentTab === 'issues') {
+        this.$refs.newFormModal && this.$refs.newFormModal.open();
+      } else {
+        this.SET_RISK_FORM_OPEN(true);
+        this.SET_SELECTED_RISK({});
+      }      
     },
     showFacility(facility) {
       this.currentFacility = facility;
