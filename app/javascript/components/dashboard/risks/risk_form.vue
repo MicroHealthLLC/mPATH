@@ -2971,9 +2971,12 @@ export default {
       });
     },
     facility: {
-      handler(value) {
-        this.SET_RISK_FORM_OPEN(false);
-        this.SET_SELECTED_RISK({});
+      handler({facilityName: newValue}, {facilityName: oldValue}) {
+        // Checks to see if user navigates to another project(facility)
+        if (newValue !== oldValue) {
+          this.SET_RISK_FORM_OPEN(false);
+          this.SET_SELECTED_RISK({});
+        }       
       },
     },
   },
