@@ -396,7 +396,11 @@
         </div>
       </div>
       <div v-if="isKanbanView && getRiskFormOpen" class="col-md-10">
-        <risk-form :facility="currentFacility" :risk="getSelectedRisk" />
+        <risk-form 
+          :facility="currentFacility"
+          :risk="getSelectedRisk"
+          @on-close-form="onCloseForm"
+        />
       </div>
     </div>
   </div>
