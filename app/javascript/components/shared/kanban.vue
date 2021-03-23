@@ -170,7 +170,7 @@ export default {
   .task-card { cursor: move;}
   .read-only-card { cursor: pointer;}
   .kanban-draggable {
-    min-height: calc(100vh - 230px);
+    height: 71vh;
     overflow-wrap: break-word;
   }
   .ghost-card {
@@ -194,9 +194,7 @@ export default {
     overflow: hidden; 
     padding-left: .76rem;
     padding-right: .76rem;  
-    height: 71vh;
     max-width: 296px;
- 
     border-radius: .15rem;
   }
   .kan-has-stage {
