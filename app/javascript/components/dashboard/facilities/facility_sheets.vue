@@ -557,7 +557,8 @@
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
-        this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this._selected = this.DV_facility.statusId //this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this.selectedStatus = this.DV_facility.statusId //this.statuses.find(s => s.id == this.DV_facility.statusId)
         this.loading = false
       },
       getFacility() {
@@ -627,13 +628,13 @@
         get () {
           return this.$data._selected
         },
-        set (value) {       
-          this.$data._selected = value
+        set (value) {
+          this.$data._selected = this.facility.statusId
           // console.log(value)
           if (value) {
             this.$nextTick(() => {
-            this.DV_updated = true
-          })
+              this.DV_updated = true
+            })
           this.DV_facility.statusId = value
           }        
         }
