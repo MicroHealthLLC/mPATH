@@ -342,7 +342,7 @@ export default new Vuex.Store({
     getFacilityProjectOptions:(state, getters) =>{
       var options = []
       for(let f of getters.facilities){
-        options.push({id: f.facilityProjectId, name: f.facilityName})
+        options.push({id: f.id, name: f.facilityName})
       }
       return options
     },
