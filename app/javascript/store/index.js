@@ -543,6 +543,7 @@ export default new Vuex.Store({
         var user_names = null
         if(getter.facilityGroupFilter && getter.facilityGroupFilter[0]){
           user_names = _.map(getter.facilityGroupFilter, 'name').join(", ")
+          console.log("this is the getter in the facGROUPFilter: " + user_names)
         }
         return user_names
       // Advanced filters
@@ -554,10 +555,11 @@ export default new Vuex.Store({
         return user_names
 
       }else if(_filterValue == 'facilityNameFilter'){
-        // console.log(getter.facilityNameFilter)
+      
         var user_names = null
         if(getter.facilityNameFilter && getter.facilityNameFilter[0]){
           user_names = _.map(getter.facilityNameFilter, 'name').join(", ")
+          console.log("this is the getter in the index file: " + user_names)
         }
         return user_names
       }else if(_filterValue == 'projectStatusFilter'){
@@ -1141,6 +1143,13 @@ export default new Vuex.Store({
     },
     activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
       return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
+    },
+    getFacilityProjectOptions:(state, getters) =>{
+      var options = []
+      for(let f of getters.facilities){
+        options.push({id: f.facilityProjectId, name: f.facilityName})
+      }
+      return options
     },
     getTaskIssueOverdueOptions: (state, getters) => {
       return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "notOverdue",name: "not overdue", value: "not overdue"}]

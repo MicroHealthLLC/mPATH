@@ -34,8 +34,7 @@
                   placeholder="Select Project Group"
                 >
                 <el-option 
-                  v-for="item in C_activeFacilityGroups"     
-                                                      
+                  v-for="item in C_activeFacilityGroups"                                              
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
@@ -43,7 +42,7 @@
                 </el-option>
                 </el-select> 
             </div>
-            <label class="font-sm mb-0">Project Names</label>
+            <label class="font-sm mb-0">Project Name</label>
                 <el-select 
                   v-model="C_facilityNameFilter"                    
                   class="w-100" 
@@ -480,6 +479,7 @@ export default {
       'facilityDueDateFilter',
       'facilityGroupFacilities',
       'noteDateFilter',
+      'filteredFacilities',
       'taskIssueDueDateFilter',
       'taskIssueProgressFilter',
       'projects',
@@ -489,7 +489,7 @@ export default {
       'getTaskIssueOverdueOptions',
       'taskIssueOverdueFilter',
       'activeFacilityGroups',
-      'unFilterFacilities',
+      'unfilterFacilities',
       'filterFacilitiesWithActiveFacilityGroups',
       'ganttData',
       'myActionsFilter',
@@ -549,12 +549,9 @@ export default {
       let id = Number(this.$route.params.projectId)
       return this.activeFacilityGroups(id)
     },
-      C_activeFacilityNames() {
-    
+      C_activeFacilityNames() {            
       return this.getFacilityProjectOptions
     },
-
-
     C_projectStatusFilter: {
       get() {
         return this.projectStatusFilter
@@ -771,10 +768,10 @@ export default {
       if (query) {
         const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
         const isMatch = (result) => resp.test(result.facilityName)
-        this.facilities = _.filter(this.unFilterFacilities, isMatch)
+        this.facilities = _.filter(this.unfilteredFacilities, isMatch)
         this.isLoading = false
       } else {
-        this.facilities = this.unFilterFacilities
+        this.facilities = this.unFilteredFacilities
         this.isLoading = false
       }
     },
@@ -831,7 +828,7 @@ export default {
             Issue % Progress Range: ${this.taskIssueProgressFilter ?  _.map(this.taskIssueProgressFilter, 'name').join() : 'all'}\n
             Issue severity: ${this.issueSeverityFilter ?  _.map(this.issueSeverityFilter, 'name').join() : 'all'}\n
           `]
-        let header = ["Project Name", "Project Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
+        let header = ["Project Names", "Project Group", "Project Status", "Due Date", "Percentage Complete", "Point of Contact Name", "Point of Contact Phone", "Point of Contact Email"]
         let ex_data = []
         for (let facility of this.filterFacilitiesWithActiveFacilityGroups) {
           ex_data.push({
