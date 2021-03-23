@@ -44,7 +44,6 @@ describe('Kanban Risks View', function() {
         })
       })
     })
-    cy.get('[data-cy=risk_close_btn]').click({force: true})
     cy.logout()
   })
 
