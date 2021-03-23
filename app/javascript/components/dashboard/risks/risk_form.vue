@@ -1256,12 +1256,13 @@
                   <span>&nbsp;&nbsp;Auto Calculate Progress</span>
                 </label>
               </span>
-              <vue-slide-bar
-                v-model="DV_risk.progress"
-                :line-height="8"
-                :is-disabled="!_isallowed('write') || DV_risk.autoCalculate"
-                :draggable="_isallowed('write') && !DV_risk.autoCalculate"
-              ></vue-slide-bar>
+              <el-slider
+                v-model="DV_risk.progress"   
+                :disabled="!_isallowed('write') || DV_risk.autoCalculate"
+                :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
+                :format-tooltip="(value) => value + '%'"
+                class="mx-2"
+              ></el-slider>
             </div>
 
             <div class="form-group mt-2 mx-4">
