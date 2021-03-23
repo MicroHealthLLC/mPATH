@@ -626,10 +626,11 @@
       ]),
       selectedStatus: {
         get () {
-          return this.$data._selected
+          return this.DV_facility.statusId //this.$data._selected
         },
         set (value) {
-          this.$data._selected = this.facility.statusId
+          this.$data._selected = value
+          this.facility.statusId = value
           // console.log(value)
           if (value) {
             this.$nextTick(() => {
