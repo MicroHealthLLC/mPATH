@@ -37,6 +37,7 @@ describe('Kanban Risks View', function() {
     })
     cy.get('[data-cy=risk_on_watch]').click({force: true})
     cy.get('[data-cy=risk_save_btn]').click({force: true})
+    cy.get('[data-cy=risk_close_btn]').click({force: true})
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=risks]').first().within(() => {
