@@ -1610,99 +1610,16 @@
            <div v-show="currentTab == 'tab5'" class="paperLookTab">
               
           <div class="container mx-4 mt-2">  
-            <div class="row">
-               <div class="col text center">
-                <label class="font-sm">Files</label>
-              <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
-                @click.prevent="addFilesInput"
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
-               </div>
-            </div>
+        
            <div class="row">           
-               <div class="col-7 links-col">
-                <div class="input-group pt-1 mb-2">
-                  <div
-                    v-for="(file, index) in DV_risk.riskFiles.slice().reverse()"
-                    :key="index"
-                    class="d-flex mb-1 w-75"
-                    v-if="!file.id && file.link"
-                  >
-                    <div class="input-group-append" >
-                      <div
-                        class="input-group-text clickable"
-                        :class="{ 'btn-disabled': !file.uri }"
-                        @click.prevent="downloadFile(file)"
-                      >
-                        <i class="fas fa-link"></i>
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Input hyperlink to file"
-                      class="form-control form-control-sm mw-95"
-                      @input="updateFileLinkItem($event, 'text', file)"
-                    />
-                    <div
-                      :class="{ _disabled: loading || !_isallowed('write') }"
-                      class="del-check clickable"
-                      @click.prevent="deleteFile(file)"
-                    >
-                      <i class="fas fa-times"></i>
-                    </div>
-                  </div>
-
-<!-- Links go here -->
-
-                  <div
-                  v-for="(file, index) in filteredFiles.slice().reverse()"
-                  :key="index"
-               
-                  class="d-flex mb-2 w-100"
-                   v-if="file.link && file.id"
-                >
-                  <div class="input-group-prepend">
-                    <div
-                      class="input-group-text clickable"
-                      :class="{ 'btn-disabled': !file.uri }"
-                      @click.prevent="downloadFile(file)"
-                    >
-                    <span v-if="file.link"> <i class="fas fa-link"></i></span>
-                       <span v-else><i class="fas fa-file-image"></i></span>
-                   
-                    </div>
-                  </div>
-                  <input
-                    readonly
-                    type="text"
-                    class="form-control form-control-sm mw-95"
-                    :value="file.name || file.uri"
-                    v-if="!file.link"
-                  />
-                  <a :href="file.uri" target="_blank" v-if="file.link">
-                    {{ file.uri }}
-                  </a>
-                  <div
-                    :class="{ _disabled: loading || !_isallowed('write') }"
-                    class="del-check clickable"
-                    @click.prevent="deleteFile(file)"
-                  >
-                    <i class="fas fa-times"></i>
-                  </div>
+               <div class="col-5 pr-4 links-col">
+                  <div v-if="_isallowed('write')" class="form-group">
+                  <attachment-input
+                    @input="addFile"
+                    :show-label="true"
+                  ></attachment-input>
                 </div>
-                </div>
-              </div>
-              <div class="col-5 input-group mb-2">
-                <!-- <div
-                  v-for="file in filteredFiles"
-                  class="d-flex mb-2 w-100"
-                  v-if="file.id && !file.link"
-                  
-                > -->
-                  <div
+             <div
                   v-for="file in filteredFiles.slice().reverse()"
                   :load="log(file.link)"
                   class="d-flex mb-2 w-100"
@@ -1715,7 +1632,7 @@
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                  <i class="fas fa-file-image"></i>
+                     <i class="fas fa-file-image"></i>
                    
                     </div>
                   </div>
@@ -1738,26 +1655,97 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- <div ref="addCheckItem" class="pt-0 mt-0"></div>          -->
-
-            <div class="row">
-              <div class="col text-center">
-                <div v-if="_isallowed('write')" class="form-group">
-                  <attachment-input
-                    @input="addFile"
-                    :show-label="true"
-                  ></attachment-input>
+              <div class="col-7 mb-2 pl-4 links-col">                   
+               
+                 <div class="input-group mb-1">
+                    <div class="d-block mt-1">
+                    <label class="font-md">Add link to a file</label>
+                    <span
+                      class="ml-2 clickable"
+                      v-if="_isallowed('write')"
+                      @click.prevent="addFilesInput"
+                    >
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                   </div>
+        
+                  <div
+                    v-for="(file, index) in DV_risk.riskFiles.slice().reverse()"
+                    :key="index"
+                    class="d-flex mb-2 w-75"
+                    v-if="!file.id && file.link"
+                  >
+                    <div class="input-group-append" >
+                      <div
+                        class="input-group-text clickable"
+                        :class="{ 'btn-disabled': !file.uri }"
+                        @click.prevent="downloadFile(file)"
+                      >
+                        <!-- <i class="fas fa-link"></i> -->
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Enter link to a file"
+                      class="form-control form-control-sm mw-95"
+                      @input="updateFileLinkItem($event, 'text', file)"
+                    />
+                    <div
+                      :class="{ _disabled: loading || !_isallowed('write') }"
+                      class="del-check clickable"
+                      @click.prevent="deleteFile(file)"
+                    >
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </div>
+                  <div
+                    v-for="(file, index) in filteredFiles.slice().reverse()"
+                    :key="index"               
+                    class="d-flex mb-0 w-100"
+                    style="height:min-content"
+                    v-if="file.link && file.id"
+                  >
+                  
+                  <div class="d-inline-block">
+                    <div
+                      class="input-group-text clickable"
+                      :class="{ 'btn-disabled': !file.uri }"
+                      @click.prevent="downloadFile(file)"
+                    >
+                    <span v-if="file.link"> <i class="fas fa-link"></i></span>
+                       <span v-else><i class="fas fa-file-image"></i></span>
+                   
+                    </div>
+                  </div>
+               
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control form-control-sm mw-95"
+                    :value="file.name || file.uri"
+                    v-if="!file.link"
+                  />
+                  <a :href="file.uri" target="_blank" v-if="file.link">
+                    {{ file.uri }}
+                  </a>
+                  <div
+                    :class="{ _disabled: loading || !_isallowed('write') }"
+                    class="del-check clickable"
+                    @click.prevent="deleteFile(file)"
+                  >
+                    <i class="fas fa-times"></i>
+                  </div>
                 </div>
+                </div>
+                  
               </div>
-            </div>
-
-</div>
-           </div> 
+            </div>          
+           </div>
+          </div> 
           <!-- END RISK CONTROL TAB SECTION -->
            
            
-            <!-- BEGIN RISK RELATED TAB SECTION -->
+          <!-- BEGIN RISK RELATED TAB SECTION -->
            <div v-show="currentTab == 'tab6'" class="paperLookTab">
             
               <div class="form-group user-select mx-4 mt-2">
@@ -3121,9 +3109,10 @@ th {
   top: -5px;
   display: flex;
   right: 1px;
+  font-weight: 500;
   background: #fff;
   height: fit-content;
-  color: red;
+  color: #dc3545;
 }
 ul {
   list-style-type: none;
