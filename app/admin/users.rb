@@ -93,7 +93,9 @@ ActiveAdmin.register User do
 
       tab 'Programs' do
         f.inputs 'Programs Details' do
-          f.input :projects, label: 'Programs', as: :select, include_blank: false
+          # f.input :projects, label: 'Programs', as: :select, include_blank: false
+          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+
         end
       end
     end
