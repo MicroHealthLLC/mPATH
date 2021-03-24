@@ -1123,6 +1123,7 @@
                   class="w-100"
                   track-by="id"
                   value-key="id"
+                  clearable
                   filterable
                   placeholder="Select Risk Approver"
                   :disabled="this.DV_risk.approved"
@@ -1601,32 +1602,123 @@
                 </draggable>
               </div>
               <p v-else class="text-danger font-sm">No checks..</p>
-            </div>        
-            <div class="mx-4">  
-            <hr class="my-4 mr-1" />            
-             <label class="font-sm">Files</label>
-              <span
-                class="ml-2 clickable"
-                v-if="_isallowed('write')"
-                @click.prevent="addFilesInput"
-              >
-                <i class="fas fa-plus-circle"></i>
-              </span>
-              <div class="input-group mb-2">
-                <div
-                  v-for="file in filteredFiles"
+            </div>          
+          </div>
+
+          <!-- END RISK CONTROL SECTION TAB -->
+  
+          <!-- BEGIN RISK FILES TAB SECTION -->
+           <div v-show="currentTab == 'tab5'" class="paperLookTab">
+              
+          <div class="container mx-4 mt-2">  
+        
+           <div class="row">           
+               <div class="col-5 pr-4 links-col">
+                  <div v-if="_isallowed('write')" class="form-group">
+                  <attachment-input
+                    @input="addFile"
+                    :show-label="true"
+                  ></attachment-input>
+                </div>
+             <div
+                  v-for="file in filteredFiles.slice().reverse()"
+                  :load="log(file.link)"
                   class="d-flex mb-2 w-100"
-                  v-if="!file.link || (file.link && file.id)"
+                   v-if="!file.link"
+                  
                 >
-                  <div class="input-group-prepend">
+                  <div class="input-group-prepend d-inline-block">
                     <div
                       class="input-group-text clickable"
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                      <i class="fas fa-file-image"></i>
+                     <i class="fas fa-file-image"></i>
+                   
                     </div>
                   </div>
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control form-control-sm mw-95"               
+                    :value="file.name || file.uri"                  
+                  />
+                    <!-- <a :href="file.uri" target="_blank" v-if="file.link">
+                    {{ file.uri }}
+                  </a> -->
+               
+                  <div
+                    :class="{ _disabled: loading || !_isallowed('write') }"
+                    class="del-check clickable"
+                    @click.prevent="deleteFile(file)"
+                  >
+                    <i class="fas fa-times"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-7 mb-2 pl-4 links-col">                   
+               
+                 <div class="input-group mb-1">
+                    <div class="d-block mt-1">
+                    <label class="font-md">Add link to a file</label>
+                    <span
+                      class="ml-2 clickable"
+                      v-if="_isallowed('write')"
+                      @click.prevent="addFilesInput"
+                    >
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                   </div>
+        
+                  <div
+                    v-for="(file, index) in DV_risk.riskFiles.slice().reverse()"
+                    :key="index"
+                    class="d-flex mb-2 w-75"
+                    v-if="!file.id && file.link"
+                  >
+                    <div class="input-group-append" >
+                      <div
+                        class="input-group-text clickable"
+                        :class="{ 'btn-disabled': !file.uri }"
+                        @click.prevent="downloadFile(file)"
+                      >
+                        <!-- <i class="fas fa-link"></i> -->
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Enter link to a file"
+                      class="form-control form-control-sm mw-95"
+                      @input="updateFileLinkItem($event, 'text', file)"
+                    />
+                    <div
+                      :class="{ _disabled: loading || !_isallowed('write') }"
+                      class="del-check clickable"
+                      @click.prevent="deleteFile(file)"
+                    >
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </div>
+                  <div
+                    v-for="(file, index) in filteredFiles.slice().reverse()"
+                    :key="index"               
+                    class="d-flex mb-0 w-100"
+                    style="height:min-content"
+                    v-if="file.link && file.id"
+                  >
+                  
+                  <div class="d-inline-block">
+                    <div
+                      class="input-group-text clickable"
+                      :class="{ 'btn-disabled': !file.uri }"
+                      @click.prevent="downloadFile(file)"
+                    >
+                    <span v-if="file.link"> <i class="fas fa-link"></i></span>
+                       <span v-else><i class="fas fa-file-image"></i></span>
+                   
+                    </div>
+                  </div>
+               
                   <input
                     readonly
                     type="text"
@@ -1645,56 +1737,19 @@
                     <i class="fas fa-times"></i>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div ref="addCheckItem" class="pt-0 mt-0"></div>
-           
-
-            <div v-if="_isallowed('write')" class="form-group mx-4">
-              
-             
-
-              <div class="mx-4">
-                <div class="input-group pt-3 mb-2">
-                  <div
-                    v-for="(file, index) in DV_risk.riskFiles"
-                    :key="index"
-                    class="d-flex mb-2 w-100"
-                    v-if="!file.id && file.link"
-                  >
-                    <div class="input-group-prepend">
-                      <div
-                        class="input-group-text clickable"
-                        :class="{ 'btn-disabled': !file.uri }"
-                        @click.prevent="downloadFile(file)"
-                      >
-                        <i class="fas fa-file-image"></i>
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      class="form-control form-control-sm mw-95"
-                      @input="updateFileLinkItem($event, 'text', file)"
-                    />
-                    <div
-                      :class="{ _disabled: loading || !_isallowed('write') }"
-                      class="del-check clickable"
-                      @click.prevent="deleteFile(file)"
-                    >
-                      <i class="fas fa-times"></i>
-                    </div>
-                  </div>
                 </div>
+                  
               </div>
-
-              <attachment-input
-                @input="addFile"
-                :show-label="true"
-              ></attachment-input>
-            </div>
-
-            <div class="w-100 d-flex mb-0 form-group">
-              <div class="form-group user-select w-100 mb-0 ml-4">
+            </div>          
+           </div>
+          </div> 
+          <!-- END RISK CONTROL TAB SECTION -->
+           
+           
+          <!-- BEGIN RISK RELATED TAB SECTION -->
+           <div v-show="currentTab == 'tab6'" class="paperLookTab">
+            
+              <div class="form-group user-select mx-4 mt-2">
                 <label class="font-sm mb-0">Related Issues</label>
 
                 <el-select
@@ -1717,7 +1772,7 @@
                 </el-select>
               </div>
 
-              <div class="form-group user-select w-100 mb-0 mx-2">
+              <div class="form-group user-select mx-4">
                 <label class="font-sm mb-0">Related Tasks</label>
                 <el-select
                   v-model="relatedTasks"
@@ -1739,7 +1794,7 @@
                 </el-select>
               </div>
 
-              <div class="form-group user-select w-100 mb-0 mr-4">
+              <div class="form-group user-select mx-4">
                 <label class="font-sm mb-0">Related Risks</label>
                 <el-select
                   v-model="relatedRisks"
@@ -1760,11 +1815,35 @@
                   </el-option>
                 </el-select>
               </div>
-            </div>
+        
+           </div> 
+          <!-- END RISK RELATED TAB SECTION -->
 
-            <div class="form-group mx-4 paginated-updates">
-              <hr class="my-4" />
-              <label class="font-sm mb-2">Updates</label>
+
+
+          <!-- BEGIN RISK DISPOSITION SECTION TAB -->
+          <div
+            v-show="currentTab == 'tab7'"
+            style="min-height: 300px"
+            class="paperLookTab"
+          >
+            <div class="form-group mx-4">
+              <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
+              <textarea
+                class="form-control"
+                placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
+                rows="4"
+              >
+              </textarea>
+            </div>
+          </div>
+          <!-- END RISK DISPOSITION SECTION TAB -->
+
+            <!-- BEGIN RISK UPDATES TAB SECTION -->
+           <div v-show="currentTab == 'tab8'" class="paperLookTab">
+               <div class="form-group mt-2 mx-4 paginated-updates">
+            
+              <label class="font-sm my-2">Updates</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
@@ -1811,27 +1890,8 @@
                 </div>
               </paginate>
             </div>
-          </div>
-
-          <!-- END RISK CONTROL SECTION TAB -->
-
-          <!-- BEGIN RISK DISPOSITION SECTION TAB -->
-          <div
-            v-show="currentTab == 'tab5'"
-            style="min-height: 300px"
-            class="paperLookTab"
-          >
-            <div class="form-group mx-4">
-              <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
-              <textarea
-                class="form-control"
-                placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
-                rows="4"
-              >
-              </textarea>
-            </div>
-          </div>
-          <!-- END RISK DISPOSITION SECTION TAB -->
+           </div> 
+          <!-- END RISK UPDATES TAB SECTION -->
         </div>
       </div>
       <!-- TABBED OUT SECTION END HERE -->
@@ -1924,12 +1984,26 @@ export default {
           key: "tab4",
           closable: false,
         },
-
-        {
-          label: "Disposition",
+          {
+          label: "Files",
           key: "tab5",
           closable: false,
+        },
+          {
+          label: "Related",
+          key: "tab6",
+          closable: false,
+        },
+         {
+          label: "Disposition",
+          key: "tab7",
+          closable: false,
           disabled: true,
+        },
+         {
+          label: "Updates",
+          key: "tab8",
+          closable: false,        
         },
       ],
     };
@@ -2002,6 +2076,9 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    log(e) {
+      console.log("this is the file data: " + e)
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -3035,10 +3112,11 @@ th {
   position: relative;
   top: -5px;
   display: flex;
-  right: 10px;
+  right: 1px;
+  font-weight: 500;
   background: #fff;
   height: fit-content;
-  color: red;
+  color: #dc3545;
 }
 ul {
   list-style-type: none;
@@ -3327,5 +3405,29 @@ ul {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow-x: hidden;
+}
+
+// .links-col {
+//   border-right: double 2px lightgray;
+//   padding-bottom: 5px;
+// }
+.links-col {
+
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+
 }
 </style>
