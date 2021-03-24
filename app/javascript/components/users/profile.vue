@@ -105,24 +105,25 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Program</label>
         <div class="col-sm-10">
-          <multiselect
-            v-model="selectedProgram"
-            track-by="id"
-            label="name"
-            placeholder="Search and select Program"
-            :options="programOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Remove"
-            @select="programSelectChange"
-            @remove="programSelectChange"
+             <el-select
+              v-model="selectedProgram"
+           
+              class="w-100"
+              track-by="id"
+              value-key="id"
+              clearable
+              filterable
+              placeholder="Search and select Program"
+                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option
+              v-for="item in programOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"         
+            >
+            </el-option>
+          </el-select>       
         </div>
       </div>
 
@@ -130,48 +131,48 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Project Group</label>
         <div class="col-sm-10">
-          <multiselect
-            v-model="selectedProjectGroup"
-            track-by="id"
-            label="name"
-            placeholder="Search and select Project Group"
-            :options="projectGroupOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Remove"
-            @select="projectGroupSelectChange"
-            @remove="projectGroupSelectChange"
-            :disabled="!this.selectedProgram"
+            <el-select
+              v-model="selectedProjectGroup"
+              class="w-100"
+              track-by="id"
+              value-key="id"
+              clearable
+              filterable                 
+              placeholder="Search and select Project Group"
+              :disabled="!this.selectedProgram"
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option
+              v-for="item in projectGroupOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"            
+            >
+            </el-option>
+          </el-select>          
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Project</label>
         <div class="col-sm-10">
-          <multiselect
-            v-model="selectedProject"
-            track-by="id"
-            label="name"
-            placeholder="Search and select Project"
-            :options="projectOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!this.selectedProjectGroup"
+           <el-select
+              v-model="selectedProject"
+              class="w-100" 
+              track-by="id"
+              value-key="id"
+              clearable
+              filterable
+              placeholder="Search and select Project"
+              :disabled="!this.selectedProjectGroup"
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option
+              v-for="item in projectOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+            >
+            </el-option>
+          </el-select>        
         </div>
       </div>
 
@@ -180,46 +181,50 @@
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Navigation</label>
         <div class="col-sm-10">
-          <multiselect
-            v-model="selectedNavigation"
-            track-by="id"
-            label="name"
-            placeholder="Search and select Navigation"
-            :options="navigationOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Remove"
-            @select="navigationSelectChane"
+            <el-select
+              v-model="selectedNavigation"
+              class="w-100"
+              track-by="id"
+              value-key="id"
+              clearable
+              filterable
+              placeholder="Search and select Navigation"
+              :disabled="!this.selectedProjectGroup"
+               @select="navigationSelectChane"
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option
+              v-for="item in navigationOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+            >
+            </el-option>
+          </el-select>        
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Sub Navigation</label>
         <div class="col-sm-10">
-          <multiselect
-            v-model="selectedSubNavigation"
-            track-by="id"
-            label="name"
-            placeholder="Search and select Sub Navigation"
-            :options="subNavigationOptions"
-            :searchable="true"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!(this.selectedNavigation)"
+            <el-select
+              v-model="selectedSubNavigation"
+              class="w-100"
+              track-by="id"
+              value-key="id"
+              clearable
+              filterable
+              placeholder="Search and select Sub Navigation"
+              :disabled="!(this.selectedNavigation)"
+            
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option
+              v-for="item in subNavigationOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+            >
+            </el-option>
+          </el-select>         
         </div>
       </div>
 
@@ -280,26 +285,10 @@
     },
     mounted() {
       this.fetchProfile()
-
       this.navigationOptions = allowed_navigation_tabs
       this.subNavigationOptions = allowed_sub_navigation_tabs
     },
     methods: {
-      programSelectChange(value){
-        this.projectGroupOptions = this.getProjectGroups(value)
-
-        this.selectedProgram = value
-        this.selectedProjectGroup = ''
-        this.selectedProject = ''
-      },
-      projectGroupSelectChange(value){
-
-        if(value){
-          this.projectOptions = this.getProjects(this.selectedProgram, value)
-        }
-        this.selectedProject = ''
-
-      },
       navigationSelectChane(value){
         this.selectedSubNavigation = ''
         if(value.id == "kanban"){
@@ -485,7 +474,29 @@
             this.profile.lng = value.geometry.location.lng()
           }
         }, deep: true
-      }
+      },
+      selectedProgram: {
+        handler: function(value) {
+          if (value){           
+              this.projectGroupOptions = this.getProjectGroups(value)
+              this.selectedProgram = value           
+              this.selectedProject = '' 
+          }else{
+              this.selectedProgram = null
+          }
+        }, deep: true
+      }, 
+      selectedProjectGroup: {
+        handler: function(value) {
+          if (value){           
+              this.projectOptions = this.getProjects(this.selectedProgram, value)    
+               this.selectedProjectGroup = value 
+              this.selectedProject = this.projectOptions.find((t) => t.id === this.preferences.projectId )
+               
+          }      
+         }
+      },
+
     }
   };
 </script>
