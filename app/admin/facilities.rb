@@ -90,7 +90,9 @@ ActiveAdmin.register Facility do
 
       tab 'Advanced' do
         f.inputs 'Assign Programs' do
-          f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+          # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+
         end
         div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
