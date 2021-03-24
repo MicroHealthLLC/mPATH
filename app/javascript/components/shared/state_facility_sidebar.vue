@@ -82,7 +82,7 @@
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
       >
-        <div v-if="isSheetsView" class="mt-3 px-3">
+        <div v-show="isSheetsView && !getRiskFormOpen" class="mt-3 px-3">
           <facility-sheets
             v-if="C_showFacilityTab"
             from="manager_view"
@@ -94,7 +94,8 @@
 
         <div
           v-if="
-            (isSheetsView && managerView.task) ||
+            (isSheetsView && getRiskFormOpen) ||
+              managerView.task ||
               managerView.issue ||
               managerView.risk ||
               managerView.note
@@ -112,9 +113,9 @@
               class="form-inside-modal"
             ></task-form>
             <risk-form
-              v-if="managerView.risk"
+              v-if="getRiskFormOpen"
               :facility="currentFacility"
-              :risk="managerView.risk"
+              :risk="getSelectedRisk"
               @on-close-form="onCloseForm"
               @risk-created="handleNewRisk"
               @risk-updated="handleNewRisk"

@@ -44,24 +44,11 @@
         @open-risk="editRisk">  
       </RiskContextMenu>
     </table>
-<!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
-      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
-        <risk-form
-          v-if="Object.entries(DV_edit_risk).length"
-          :facility="facility"
-          :risk="DV_edit_risk"     
-          @risk-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></risk-form>
-      </div>
-    
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
   import RiskContextMenu from "../../../shared/RiskContextMenu"
   import moment from 'moment'
@@ -70,7 +57,6 @@
   export default {
     name: 'RiskSheets',
     components: {
-      RiskForm,
       RiskContextMenu 
     },
     props: {
@@ -100,7 +86,9 @@
       ...mapMutations([
         'updateRisksHash',
         'setRiskForManager',
-        'setToggleRACI'
+        'setToggleRACI',
+        'SET_RISK_FORM_OPEN',
+        'SET_SELECTED_RISK'
       ]),
       ...mapActions([
         'riskDeleted',
@@ -134,6 +122,10 @@
         // else if (this.fromView == 'manager_view') {
         //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
         // }
+        else if (this.$route.name === 'ProjectSheets') {
+          this.SET_RISK_FORM_OPEN(true);
+          this.SET_SELECTED_RISK(this.DV_risk);
+        }
         else {
           this.has_risk = Object.entries(this.DV_risk).length > 0
           this.DV_edit_risk = this.DV_risk
