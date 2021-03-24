@@ -103,25 +103,32 @@ class Risk < ApplicationRecord
   def to_json(options = {})
     attach_files = []
     rf = self.risk_files
+
     if rf.attached?
       attach_files = rf.map do |file|
-        if file.blob.content_type == "text/plain"
-          {
-            id: file.id,
-            name: file.blob.filename.instance_variable_get("@filename"),
-            uri: file.blob.filename.instance_variable_get("@filename"),
-            link: true
-          }
-        else
-          {
-            id: file.id,
-            name: file.blob.filename,
-            uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
-            link: false
-          }
+        next if !file.blob.filename.instance_variable_get("@filename").present?
+        begin
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+            {
+              id: file.id,
+              name: file.blob.filename.instance_variable_get("@filename"),
+              uri: file.blob.filename.instance_variable_get("@filename"),
+              link: true
+            }
+          else
+            {
+              id: file.id,
+              name: file.blob.filename,
+              uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+              link: false
+            }
+          end
+        rescue Exception => e
+          puts "There is an exception"
         end
-      end
+      end.compact.uniq
     end
+
     fp = self.facility_project
     
     t_users = options[:all_risk_users] || []
@@ -381,7 +388,7 @@ class Risk < ApplicationRecord
     link_files = params[:file_links]
     if link_files && link_files.any?
       link_files.each do |f|
-        next if !f.present? || f.nil? || (f =~ /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/).nil?
+        next if !f.present? || f.nil? || !valid_url?(f)
         self.risk_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
       end
     end
