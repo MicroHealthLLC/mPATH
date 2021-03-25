@@ -1272,6 +1272,13 @@ export default {
       },
       deep: true,
     },
+    isSheetsView: {
+      handler() {
+        if (this.getRiskFormOpen) {
+          this.SET_RISK_FORM_OPEN(false);
+        } 
+      }
+    }
   },
 };
 </script>
