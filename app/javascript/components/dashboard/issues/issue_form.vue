@@ -749,8 +749,7 @@ Tab 1 Row Begins here -->
 
 <!-- FILES TAB # 4-->
 <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
-       <div class="container mx-4 mt-2">  
-        
+       <div class="container-fluid mx-4 mt-2">          
            <div class="row">           
                <div class="col-5 pr-4 links-col">
                   <div v-if="_isallowed('write')" class="form-group">
@@ -759,47 +758,41 @@ Tab 1 Row Begins here -->
                     :show-label="true"
                   ></attachment-input>
                 </div>
-             <div
-                  v-for="file in filteredFiles.slice().reverse()"
-              
+               <div
+                  v-for="file in filteredFiles.slice().reverse()"              
                   class="d-flex mb-2 w-100"
-                   v-if="!file.link"
-                  
-                >
-                  <div class="input-group-prepend d-inline-block">
-                    <div
-                      class="input-group-text clickable"
+                   v-if="!file.link" 
+                >               
+                 <div
+                      class="input-group-text d-inline clickable px-1 w-100 hover"
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                  <i class="fas fa-file-image"></i>
-                   
-                    </div>
-                  </div>
+                   <span class="scales"><font-awesome-icon icon="file" class="mr-1"/></span>                
                   <input
                     readonly
                     type="text"
-                    class="form-control form-control-sm mw-95"               
+                    class="w-100 mr-1 file-link"
+                    style="border:none; cursor:pointer; background-color:transparent"               
                     :value="file.name || file.uri"                  
-                  />
-                    <!-- <a :href="file.uri" target="_blank" v-if="file.link">
-                    {{ file.uri }}
-                  </a> -->
-               
-                  <div
+                  >
+                </div>
+                               
+                  <span
                     :class="{ _disabled: loading || !_isallowed('write') }"
-                    class="del-check clickable"
+                    class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
                     <i class="fas fa-times"></i>
-                  </div>
-                </div>
+                  </span>                 
+                 </div>
+            
               </div>
-              <div class="col-7 mb-2 pl-4 links-col">                   
+              <div class="col-6 mb-2 pl-4 links-col"> 
                
                  <div class="input-group mb-1">
                     <div class="d-block mt-1">
-                    <label class="font-md">Add link to a file</label>
+                    <label class="font-lg">Add link</label>
                     <span
                       class="ml-2 clickable"
                       v-if="_isallowed('write')"
@@ -826,7 +819,7 @@ Tab 1 Row Begins here -->
                     </div>
                     <input
                       type="text"
-                      placeholder="Enter link to a file"
+                      placeholder="Enter link here (http or https prefix required)"
                       class="form-control form-control-sm mw-95"
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
@@ -839,26 +832,13 @@ Tab 1 Row Begins here -->
                     </div>
                   </div>
 
-
-
                   <div
-                  v-for="(file, index) in filteredFiles.slice().reverse()"
-                  :key="index"               
-                  class="d-flex mb-0 w-100"
-                   style="height:min-content"
-                   v-if="file.link && file.id"
+                    v-for="(file, index) in filteredFiles.slice().reverse()"
+                    :key="index"               
+                    class="d-flex mb-2 w-100 px-1 hover"                   
+                    v-if="file.link && file.id"
                 >
-                  <div class="d-inline-block">
-                    <div
-                      class="input-group-text clickable"
-                      :class="{ 'btn-disabled': !file.uri }"
-                      @click.prevent="downloadFile(file)"
-                    >
-                    <span v-if="file.link"> <i class="fas fa-link"></i></span>
-                       <span v-else><i class="fas fa-file-image"></i></span>
-                   
-                    </div>
-                  </div>
+                  
                   <input
                     readonly
                     type="text"
@@ -866,8 +846,8 @@ Tab 1 Row Begins here -->
                     :value="file.name || file.uri"
                     v-if="!file.link"
                   />
-                  <a :href="file.uri" target="_blank" v-if="file.link">
-                    {{ file.uri }}
+                  <a :href="file.uri" target="_blank" v-if="file.link" class="no-text-decoration">
+                       <span v-if="file.link"> <i class="fas fa-link mr-1"></i></span>{{ file.uri }}
                   </a>
                   <div
                     :class="{ _disabled: loading || !_isallowed('write') }"
@@ -880,10 +860,8 @@ Tab 1 Row Begins here -->
                 </div>
                   
               </div>
-            </div>
-          
-</div>
-
+            </div>          
+          </div>
 </div>
 
 
@@ -1053,6 +1031,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 import FormTabs from './../../shared/FormTabs'
 
+
 export default {
   name: "IssueForm",
   props: ["facility", "issue", "task", "fixedStage"],
@@ -1060,6 +1039,7 @@ export default {
     AttachmentInput,
     Draggable,
     FormTabs
+    
   },
   data() {
     return {
@@ -1102,7 +1082,7 @@ export default {
           closable: false
         },
         {
-          label: 'Files',
+          label: 'Files & Links',
           key: 'tab4',
           closable: false
         },
@@ -1863,12 +1843,11 @@ export default {
   border-radius: 4px;
 }
 .del-check {
-  position: relative;
-  top: -5px;
+  position: absolute; 
   display: flex;
-  right: 1px;
+  right: 2rem;
   font-weight: 500;
-  background: #fff;
+  background: transparent;
   height: fit-content;
   color: #dc3545;
 }
@@ -2011,4 +1990,31 @@ ul {
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
+.no-text-decoration:link {
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+.no-text-decoration:active{
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+.no-text-decoration:visited {
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+ .hover {
+   background: transparent;
+   border-radius: 0 !important;
+  }
+  .hover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3) !important;
+  }
+  input.file-link {
+    outline:0 none; 
+  }
+
 </style>
