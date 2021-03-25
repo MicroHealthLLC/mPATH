@@ -53,8 +53,8 @@ Cypress.Commands.add("fillKanbanIssueForm", () => {
 
   cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
   cy.get('[data-cy=issue_type_field]').click().type('{downarrow}{enter}')
-
   cy.get('[data-cy=issue_severity]').click().type('{downarrow}{enter}')
+
   cy.get('[data-cy=issue_start_date]').type(`${start_date}{enter}`)
   cy.get('[data-cy=issue_due_date]').type(`${due_date}{enter}`)
 })
