@@ -823,7 +823,7 @@ export default new Vuex.Store({
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
         valid = valid && _isOverdues.includes(false)
       }
-      debugger;
+      
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
 
