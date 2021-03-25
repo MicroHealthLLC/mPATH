@@ -823,15 +823,15 @@ export default new Vuex.Store({
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
         valid = valid && _isOverdues.includes(false)
       }
-
+      debugger;
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
 
-      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false) {
+      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false && _progressStatuses.lenth > 0) {
         valid = valid && _progressStatuses.includes('active')
       }
 
-      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
+      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.lenth > 0) {
         valid = valid && _progressStatuses.includes('completed')
       }
 
