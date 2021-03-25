@@ -2020,6 +2020,7 @@ export default {
         (t) => t.id === this.fixedStage
       );
     }
+    this.SET_RISK_FORM_OPEN(true)
   },
   beforeDestroy() {
     this.SET_RISK_FORM_OPEN(false)
