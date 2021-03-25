@@ -34,6 +34,9 @@ Rails.application.routes.draw do
     get :facility_manager, on: :member
     get :kanban, on: :member
     get :map, on: :member
+    
+    resources :query_filters
+
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do
