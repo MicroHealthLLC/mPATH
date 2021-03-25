@@ -29,7 +29,7 @@
                       </small>
                    </span>
                   </p>
-                  <p>Categories: </p>
+               
                 </div>
 
                 <div class="col">
@@ -62,27 +62,7 @@
                           >
                        </el-option>
                    </el-select> 
-                  </div>
-
-                  <div class="el-dropdown-wrapper">
-                     <el-select 
-                       v-model="C_taskTypeFilter"                    
-                       class="w-100" 
-                       track-by="name" 
-                       value-key="id"
-                       multiple                    
-                       @select="onChange"                                                                                                                                           
-                       placeholder="Select Category"
-                       >
-                        <el-option 
-                        v-for="item in taskTypes"                                                     
-                        :value="item"   
-                        :key="item.id"
-                        :label="item.name"                                                  
-                        >
-                        </el-option>
-                     </el-select>                    
-                    </div>
+                  </div>                
                 </div>
               </div>
                <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-2 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>
