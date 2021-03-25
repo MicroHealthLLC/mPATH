@@ -24,6 +24,24 @@ describe('Kanban Issues View', function() {
     cy.logout()
   })
 
+  it("Create new issue in kanban issue page", function() {
+    cy.fillKanbanIssueForm()
+    cy.get('[data-cy=issue_save_btn]').click({force: true})
+    cy.get('.el-message__content').contains('New test issue in kanban was saved successfully.').should('be.visible')
+    cy.logout()
+  })
+
+
+  it("In Issue form if title's field empty, error message display", function() {
+    cy.fillKanbanIssueForm()
+    cy.get('[data-cy=issue_title]').clear()
+    cy.get('[data-cy=issue_title_error]').contains('The Issue Name field is required.').should('be.visible')
+    cy.get('[data-cy=issue_save_btn]').click()
+    cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
+    cy.get('[data-cy=issue_close_btn]').click()
+    cy.logout()
+  })
+
   it('Update on watch state of a issue', function() {
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {

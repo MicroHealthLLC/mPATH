@@ -36,3 +36,25 @@ Cypress.Commands.add("openKanbanIssue", () => {
   })
   cy.facilityUnderGroup()
 })
+
+// Fill Issue form
+Cypress.Commands.add("fillKanbanIssueForm", () => {
+  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+
+  cy.get('[data-cy=kanban]').within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+    })
+  })
+
+  cy.get('[data-cy=issue_title]').type('New test issue in kanban').should('have.value', 'New test issue in kanban')
+  cy.get('[data-cy=issue_description]').type('Kanban Issue brief description').should('have.value', 'Kanban Issue brief description')
+
+  cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
+  cy.get('[data-cy=issue_type_field]').click().type('{downarrow}{enter}')
+
+  cy.get('[data-cy=issue_severity]').click().type('{downarrow}{enter}')
+  cy.get('[data-cy=issue_start_date]').type(`${start_date}{enter}`)
+  cy.get('[data-cy=issue_due_date]').type(`${due_date}{enter}`)
+})
