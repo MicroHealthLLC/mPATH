@@ -235,7 +235,7 @@
   }
   td {
     overflow-wrap: break-word;
-    text-transform: uppercase;
+    text-transform: capitalize;
   }
   .issue_form_modal.sweet-modal-overlay {
     z-index: 10000001;
