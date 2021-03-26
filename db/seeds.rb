@@ -24,17 +24,3 @@ Setting.first_or_create(google_map_key: ENV['GOOGLE_MAP_KEY'])
 puts "Seeds completed.."
 
 Status.find_or_create_by(name: "Not Started", color: "#000000")
-
-
-[
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] },
-  {filter_key: "project_groups", name: "Project Names", filter_value:  [] }
-]

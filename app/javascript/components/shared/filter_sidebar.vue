@@ -9,6 +9,7 @@
       <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="saveFilters" data-cy="save_filter"><i class="fas fa-redo pr-1"></i>SAVE</button>
           <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
@@ -406,6 +407,8 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
+import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
 export default {
@@ -750,6 +753,40 @@ export default {
         this.facilities = this.unFilterFacilities
         this.isLoading = false
       }
+    },
+    saveFilters(){
+      let formData = new FormData()
+      formData.append('query_filters[][filter_key]', "project_groups")
+      formData.append('query_filters[][name]', "Project Names")
+      formData.append('query_filters[][filter_value]', "")
+      formData.append('query_filters[][filter_key]', "project_groups")
+      formData.append('query_filters[][name]', "Project Names")
+      formData.append('query_filters[][filter_value]', "")
+
+      var url = `/projects/1/query_filters.json`
+      var method = "POST"
+      var callback = "filter-created"
+
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        console.log("asdfasdff")
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+
+
     },
     onClearFilter() {
       this.setTaskIssueUserFilter([])
