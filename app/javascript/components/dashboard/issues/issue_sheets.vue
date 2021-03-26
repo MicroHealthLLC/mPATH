@@ -3,8 +3,8 @@
     <table class="table table-sm table-bordered table-striped">
       <tr v-if="!loading" class="issues_show mx-3 mb-3 mt-0 py-4 edit-action" @click.prevent="editIssue" data-cy="issue_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneFive">{{issue.title}}</td>
-        <td class="ten">{{issue.issueType}}</td>
-        <td class="nine">{{issue.issueSeverity}}</td>
+        <td class="ten col-issue_type">{{issue.issueType}}</td>
+        <td class="nine col-issue_severity">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
         <td class="eight">{{formatDate(issue.dueDate)}}</td>       
          <td class="elev" >  
@@ -234,7 +234,8 @@
     }
   }
   td {
-  overflow-wrap: break-word;
+    overflow-wrap: break-word;
+    text-transform: uppercase;
   }
   .issue_form_modal.sweet-modal-overlay {
     z-index: 10000001;

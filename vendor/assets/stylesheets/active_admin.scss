@@ -18,7 +18,9 @@ body {
   font-weight: 300;
   letter-spacing: .04em;
 }
-
+td.col-issue_type, td.col-issue_severity {
+  text-transform: uppercase !important;
+}
 .active_admin {
   #header {
     text-shadow: none;
