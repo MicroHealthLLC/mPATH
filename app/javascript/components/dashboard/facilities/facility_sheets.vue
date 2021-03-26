@@ -610,7 +610,7 @@
         },
         set (value) {
           this.$data._selected = value
-          this.facility.statusId = value
+          // this.facility.statusId = value
           // console.log(value)
           if (value) {
             this.$nextTick(() => {

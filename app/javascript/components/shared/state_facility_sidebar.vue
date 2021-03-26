@@ -1080,7 +1080,7 @@ export default {
         this.$refs.newFormModal && this.$refs.newFormModal.open();
       } else {
         this.SET_RISK_FORM_OPEN(true);
-        this.SET_SELECTED_RISK({});
+        this.SET_SELECTED_RISK({riskStageId: stage.id, riskStage: stage.name});
       }      
     },
     showFacility(facility) {
@@ -1272,6 +1272,13 @@ export default {
       },
       deep: true,
     },
+    isSheetsView: {
+      handler() {
+        if (this.getRiskFormOpen) {
+          this.SET_RISK_FORM_OPEN(false);
+        } 
+      }
+    }
   },
 };
 </script>
