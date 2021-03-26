@@ -19,7 +19,8 @@ body {
   letter-spacing: .04em;
 }
 td.col-issue_type, td.col-issue_severity {
-  text-transform: uppercase !important;
+  text-transform: capitalize !important;
+  // color: #932419 !important;
 }
 .active_admin {
   #header {

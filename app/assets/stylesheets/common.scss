@@ -42,7 +42,7 @@ input[type=button]:focus {
   box-shadow: none;
 }
 td.col-issue_type, td.col-issue_severity {
-  text-transform: uppercase !important;
+  text-transform: capitalize !important;
 }
 .font-sm {
   font-size: 13px;
