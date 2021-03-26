@@ -15,9 +15,36 @@ class Task < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|task| task.task_stage_id_was.nil?}
 
+  after_save :update_facility_project
+  after_destroy :update_facility_project
+
   amoeba do
-    enable
+    include_association :task_type
+    include_association :task_stage
+    include_association :task_users
+    include_association :users
+    
+    include_association :facility_project
+    include_association :checklists
+    include_association :related_tasks
+    include_association :related_issues
+    include_association :related_risks
+    include_association :sub_tasks
+    include_association :sub_issues
+    include_association :sub_risks
+
     append :text => " - Copy"
+  end
+
+  def update_facility_project
+    if self.previous_changes.keys.include?("progress")
+      fp = facility_project
+      p = fp.project
+
+      fp.update_progress
+      p.update_progress
+      FacilityGroup.where(project_id: p.id).map(&:update_progerss)
+    end
   end
 
   def to_json(options = {})
@@ -25,19 +52,34 @@ class Task < ApplicationRecord
     tf = self.task_files
     if tf.attached?
       attach_files = tf.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
-      end
+        next if !file.blob.filename.instance_variable_get("@filename").present?
+        begin
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+            {
+              id: file.id,
+              name: file.blob.filename.instance_variable_get("@filename"),
+              uri: file.blob.filename.instance_variable_get("@filename"),
+              link: true
+            }
+          else
+            {
+              id: file.id,
+              name: file.blob.filename,
+              uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+              link: false
+            }
+          end
+        rescue Exception => e
+          puts "There is an exception"
+        end
+      end.compact.uniq
     end
     fp = self.facility_project
 
-    t_users = options[:all_task_users]
-    all_users = options[:all_users]
-    if options[:for].present? && options[:for] == :project_build_response
-      resource_users = t_users && t_users.any? ? t_users : []
+    t_users = options[:all_task_users] || []
+    all_users = options[:all_users] || []
+    if options[:for].present? && [:project_build_response, :task_index].include?(options[:for])
+      resource_users = t_users
     else
       resource_users = self.task_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
@@ -48,15 +90,16 @@ class Task < ApplicationRecord
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
  
-    users = []
-    if all_users && all_users.any?
-      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    p_users = []
+
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = User.where(id: resource_user_ids).active
+      p_users = users.select(&:active?)
     end
 
     users_hash = {} 
-    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -71,9 +114,9 @@ class Task < ApplicationRecord
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
-      user_ids: users.map(&:id).compact.uniq,
-      user_names: users.map(&:full_name).compact.join(", "),
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      user_ids: p_users.map(&:id).compact.uniq,
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
 
@@ -170,6 +213,9 @@ class Task < ApplicationRecord
 
     task.transaction do
       task.save
+      
+      task.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         task_users_obj = []
         user_ids.each do |uid|
@@ -254,6 +300,16 @@ class Task < ApplicationRecord
     task.reload
   end
 
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        next if !f.present? || f.nil? || !valid_url?(f)
+        self.task_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
+  end
+
   def assign_users(params)
     accountable_resource_users = []
     responsible_resource_users = []
@@ -322,11 +378,21 @@ class Task < ApplicationRecord
 
   def files_as_json
     task_files.map do |file|
-      {
-        id: file.id,
-        name: file.blob.filename,
-        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-      }
+      if file.blob.content_type == "text/plain"
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      else
+        {
+          id: file.id,
+          name: file.blob.filename,
+          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+          link: false
+        }
+      end
     end.as_json
   end
 

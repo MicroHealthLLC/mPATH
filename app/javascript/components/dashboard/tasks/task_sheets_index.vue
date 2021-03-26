@@ -3,45 +3,53 @@
     <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
         <div class="input-group task-search-bar w-100">
-             <div class="input-group-prepend">
-             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-            </div>
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+          </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Tasks"
+            placeholder="Search by Task Name, Category, or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="tasksQuery"
             data-cy="search_tasks">
-          </div>
-        <div class="simple-select w-100 mx-1 d-flex">
-          <multiselect
-            v-model="C_taskTypeFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Task Category"
-            :options="taskTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+        </div>
+        <div class="mx-1 w-100">
+          <el-select 
+           v-model="C_taskTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Select Category"
+           >
+          <el-option 
+            v-for="item in taskTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>                
         </div>
 
-        <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsTaskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="w-100">
+           <el-select 
+           v-model="C_sheetsTaskFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Flags"
+           >
+          <el-option 
+            v-for="item in getAdvancedFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select> 
         </div>
     </div>
     <div class="wrapper p-3">
@@ -53,7 +61,7 @@
         <font-awesome-icon icon="plus-circle" /> 
         Add Task
       </button>
-       <div class="float-right">
+       <div class="float-right mb-2">
        <button
           v-tooltip="`Export to PDF`"
           @click.prevent="exportToPdf"
@@ -96,7 +104,7 @@
               <col class="eight" />
               <col class="twenty" />
             </colgroup>
-            <tr style="background-color:#ededed;">
+            <tr class="thead" style="background-color:#ededed;">
               <th class="sort-th" @click="sort('text')" >Task<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="sort-th" @click="sort('taskType')">Category <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
               <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
@@ -119,21 +127,22 @@
             />
      
           <div class="float-right mb-4 mt-2 font-sm">
-           <span>Displaying </span>
-           <div class="simple-select d-inline-block font-sm">          
-            <multiselect 
-              v-model="C_tasksPerPage" 
-              track-by="value"
-              label="name"      
-              deselect-label=""                     
-              :allow-empty="false"
-              :options="getTasksPerPageFilterOptions">
-                <template slot="singleLabel" slot-scope="{option}">
-                      <div class="d-flex">
-                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                      </div>
-                </template>
-            </multiselect>            
+           <div class="simple-select d-inline-block text-right font-sm"> 
+           <span class="mr-1">Displaying </span>                   
+            <el-select 
+            v-model="C_tasksPerPage"                    
+            class="w-33" 
+            track-by="value" 
+            value-key="id"                                                                                                                               
+            >
+            <el-option 
+              v-for="item in getTasksPerPageFilterOptions"                                                     
+              :value="item"   
+              :key="item.id"
+              :label="item.name"                                                  
+              >
+            </el-option>                
+            </el-select>          
            </div>
           <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
             <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
@@ -204,13 +213,10 @@
   import {mapGetters, mapMutations} from "vuex"
   import {jsPDF} from "jspdf"
   import 'jspdf-autotable'
-  // import moment from 'moment'
   import TaskSheets from "./task_sheets"
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
-  library.add(faFilePdf)
-  // Vue.prototype.moment = moment
-
+  library.add(faFilePdf)  
   import * as Moment from 'moment'
   import {extendMoment} from 'moment-range'
   const moment = extendMoment(Moment)
@@ -218,8 +224,7 @@
   export default {
     name: 'TasksSheetsIndex',
     components: {
-      TaskSheets
-     
+      TaskSheets   
     },
     props: ['facility', 'from'],
     data() {
@@ -318,6 +323,7 @@
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
         
@@ -372,7 +378,10 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (search_query) valid = valid && search_query.test(resource.text) || 
+            valid && search_query.test(resource.taskType) || 
+            valid && search_query.test(resource.userNames)
+          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
 
           return valid
         }), ['dueDate'])
@@ -448,7 +457,9 @@
     };
 </script>
 
-<style scoped lang="scss">
+
+
+<style lang="scss">
 // Most datatable css located in app/assets/stylesheets/common.scss file
   #tasks-index {
     background-color: #ffffff;
@@ -460,6 +471,7 @@
     width: 310px;
     border-radius: 5px;
   }
+
   input[type=search] {
     color: #383838;
     text-align: left;
@@ -510,10 +522,10 @@
     border-radius: 4px;
     padding: 4px;
   }
+ 
   .taskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
   }
   table {
     table-layout: fixed;
@@ -524,8 +536,8 @@
   .stickyTableHeader {
     position: sticky;
     position: -webkit-sticky;
-    justify-content: center;
     z-index: 10;
+    justify-content: center;
     left: 15;
     top: 0;
     width: 100%;

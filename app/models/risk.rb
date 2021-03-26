@@ -22,13 +22,43 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  amoeba do
+    include_association :risk_stage
+    include_association :user
+
+    include_association :task_type
+    include_association :risk_users
+    include_association :users
+
+    include_association :facility_project
+    include_association :checklists
+    include_association :related_tasks
+    include_association :related_issues
+    include_association :related_risks
+    include_association :sub_tasks
+    include_association :sub_issues
+    include_association :sub_risks
+
+    append :text => " - Copy"
+  end
+
   def files_as_json
     risk_files.map do |file|
-      {
-        id: file.id,
-        name: file.blob.filename,
-        uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-      }
+      if file.blob.content_type == "text/plain"
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      else
+        {
+          id: file.id,
+          name: file.blob.filename,
+          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+          link: false
+        }
+      end
     end.as_json
   end
 
@@ -73,21 +103,38 @@ class Risk < ApplicationRecord
   def to_json(options = {})
     attach_files = []
     rf = self.risk_files
+
     if rf.attached?
       attach_files = rf.map do |file|
-        {
-          id: file.id,
-          name: file.blob.filename,
-          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)
-        }
-      end
+        next if !file.blob.filename.instance_variable_get("@filename").present?
+        begin
+          if file.blob.content_type == "text/plain" && valid_url?(file.blob.filename.instance_variable_get("@filename"))
+            {
+              id: file.id,
+              name: file.blob.filename.instance_variable_get("@filename"),
+              uri: file.blob.filename.instance_variable_get("@filename"),
+              link: true
+            }
+          else
+            {
+              id: file.id,
+              name: file.blob.filename,
+              uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+              link: false
+            }
+          end
+        rescue Exception => e
+          puts "There is an exception"
+        end
+      end.compact.uniq
     end
+
     fp = self.facility_project
     
-    t_users = options[:all_risk_users]
-    all_users = options[:all_users]
-    if options[:for].present? && options[:for] == :project_build_response
-      resource_users = t_users && t_users.any? ? t_users : []
+    t_users = options[:all_risk_users] || []
+    all_users = options[:all_users] || []
+    if options[:for].present? && [:project_build_response, :risk_index].include?(options[:for])
+      resource_users = t_users
     else
       resource_users = self.risk_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
@@ -103,15 +150,15 @@ class Risk < ApplicationRecord
     
     resource_user_ids += risk_approver_user_ids
 
-    users = [] 
-    if all_users && all_users.any?
-      users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    p_users = [] 
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
-      users = User.where(id: resource_user_ids).active
+      p_users = User.where(id: resource_user_ids).active
     end
     
     users_hash = {} 
-    users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -135,10 +182,10 @@ class Risk < ApplicationRecord
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       # Remove this
-      user_ids: users.map(&:id).compact.uniq,
-      risk_owners: users.map(&:full_name).compact.join(", "),
-      users: users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      user_names: users.map(&:full_name).compact.join(", "),
+      user_ids: p_users.map(&:id).compact.uniq,
+      risk_owners: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      user_names: p_users.map(&:full_name).compact.join(", "),
 
 
      # Add RACI user name
@@ -170,8 +217,6 @@ class Risk < ApplicationRecord
       sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
-
-
 
   # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
   def create_or_update_risk(params, user)
@@ -253,6 +298,9 @@ class Risk < ApplicationRecord
 
     risk.transaction do
       risk.save
+      
+      risk.add_link_attachment(params)
+
       if user_ids && user_ids.present?
         risk_users_obj = []
         user_ids.each do |uid|
@@ -336,6 +384,16 @@ class Risk < ApplicationRecord
     risk.reload
   end
 
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        next if !f.present? || f.nil? || !valid_url?(f)
+        self.risk_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
+  end
+  
   # Above this line Added by JR to fix Watched and add Approved values
 
   def assign_users(params)

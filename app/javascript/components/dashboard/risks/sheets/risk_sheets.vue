@@ -1,8 +1,8 @@
 
 <template>
-  <div id="risk-sheets">   
+  <div id="risk-sheets">    
     <table class="table table-sm table-bordered">    
-      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row">
+      <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editRisk" data-cy="risk_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
        <td class="oneFive">{{risk.text}}</td>
        <td class="eight">{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1) }}</td>
        <td class="eight pt-2 font-sm">
@@ -24,7 +24,7 @@
          </span>        
         </td>
         <td class="eight">{{risk.progress + "%"}}</td>
-        <td class="eight" v-if="(risk.dueDate) <= now"><h5>x</h5></td>
+        <td class="eight" v-if="risk.isOverdue"><h5>x</h5></td>
         <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
@@ -34,34 +34,30 @@
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
+      <!-- The context-menu appears only if table row is right-clicked -->
+      <RiskContextMenu
+        :facilities="facilities"
+        :facilityGroups="facilityGroups"
+        :risk="risk"
+        :display="showContextMenu"
+        ref="menu"
+        @open-risk="editRisk">  
+      </RiskContextMenu>
     </table>
-<!-- moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a' -->
-      <div v-if="has_risk" class="w-100 action-form-overlay updateForm">
-        <risk-form
-          v-if="Object.entries(DV_edit_risk).length"
-          :facility="facility"
-          :risk="DV_edit_risk"
-          title="Edit Risk"
-          @risk-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></risk-form>
-      </div>
-    
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import RiskForm from "./../risk_form"
   // import IssueForm from "./../issues/issue_form"
+  import RiskContextMenu from "../../../shared/RiskContextMenu"
   import moment from 'moment'
   Vue.prototype.moment = moment
 
   export default {
     name: 'RiskSheets',
     components: {
-      RiskForm 
+      RiskContextMenu 
     },
     props: {
       fromView: {
@@ -76,7 +72,8 @@
         now: new Date().toISOString(),
         DV_risk: {},
         DV_edit_risk: {},
-        has_risk: false
+        has_risk: false,
+        showContextMenu: false
       }
     },
     mounted() {
@@ -89,7 +86,9 @@
       ...mapMutations([
         'updateRisksHash',
         'setRiskForManager',
-        'setToggleRACI'
+        'setToggleRACI',
+        'SET_RISK_FORM_OPEN',
+        'SET_SELECTED_RISK'
       ]),
       ...mapActions([
         'riskDeleted',
@@ -123,6 +122,10 @@
         // else if (this.fromView == 'manager_view') {
         //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
         // }
+        else if (this.$route.name === 'ProjectSheets') {
+          this.SET_RISK_FORM_OPEN(true);
+          this.SET_SELECTED_RISK(this.DV_risk);
+        }
         else {
           this.has_risk = Object.entries(this.DV_risk).length > 0
           this.DV_edit_risk = this.DV_risk
@@ -151,7 +154,11 @@
       },
       getIssue(issue) {
         return this.currentIssues.find(t => t.id == issue.id) || {}
-      }
+      },
+      openContextMenu(e) {
+        e.preventDefault();
+        this.$refs.menu.open(e);
+      },
     },
     computed: {
       ...mapGetters([

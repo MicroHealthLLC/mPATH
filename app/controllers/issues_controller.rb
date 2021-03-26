@@ -1,9 +1,28 @@
 class IssuesController < AuthenticatedController
-  before_action :set_resources
-  before_action :set_issue, only: [:show, :update, :destroy]
+  before_action :set_resources, except: [:show]
+  before_action :set_issue, only: [:update, :destroy, :create_duplicate, :create_bulk_duplicate]
 
   def index
-    render json: {issues: @facility_project.issues.map(&:to_json)}
+
+    all_users = []
+    all_user_ids = []
+
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, { issue_users: :user} , {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: @facility_project.id).paginate(:page => params[:page], :per_page => 15)
+    all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
+    all_user_ids += all_issue_users.values.flatten.map(&:user_id)
+    all_user_ids = all_user_ids.compact.uniq
+
+    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
+
+    h = []
+    all_issues.each do |i| 
+      h << i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :issue_index} )
+    end
+
+    render json: {issues: h, total_pages: all_issues.total_pages, current_page: all_issues.current_page, next_page: all_issues.next_page}
+
+    # render json: {issues: @facility_project.issues.map(&:to_json)}
   end
 
   def create
@@ -25,11 +44,36 @@ class IssuesController < AuthenticatedController
     end
     @issue.update(i_params)
     @issue.assign_users(params)
+    @issue.add_link_attachment(params)
 
     render json: {issue: @issue.reload.to_json}
   end
 
+  def create_duplicate
+    duplicate_issue = @issue.amoeba_dup
+    duplicate_issue.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {issue: duplicate_issue.reload.to_json}
+  end
+
+  def create_bulk_duplicate
+    all_objs = []
+    if params[:facility_project_ids].present?
+      params[:facility_project_ids].each do |fp_id|
+        duplicate_issue = @issue.amoeba_dup
+        duplicate_issue.facility_project_id = fp_id
+        duplicate_issue.save
+        all_objs << duplicate_issue
+      end
+    end
+    # duplicate_task.save
+    # @task.create_or_update_task(params, current_user)
+    render json: {issues: all_objs.map(&:to_json)}
+  end
+
   def show
+    @facility_project = FacilityProject.find(params[:facility_project_id])
+    @issue = @facility_project.issues.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).find(params[:id])
     render json: {issue: @issue.to_json}
   end
 

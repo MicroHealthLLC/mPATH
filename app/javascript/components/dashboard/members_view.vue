@@ -45,13 +45,13 @@
          <table class="table table-sm table-bordered" id="taskList1"  ref="table">
           <thead>
               <tr class="thead" style="background-color:#ededed;">
-              <th class="sort-th" @click="sort('id')"># <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th firstCol" @click="sort('id')"># <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="sort-th" @click="sort('fullName')">Name <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <!-- <th class="sort-th" @click="sort('lastName')">Last Name<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th> -->
               <th class="sort-th"  @click="sort('title')">Position<span class="sort-icon scroll"><font-awesome-icon icon="sort" /> </span></th>
               <th class="pl-1 sort-th" @click="sort('organization')">Organization<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
               <th class="pl-1 sort-th" @click="sort('phoneNumber')">Phone Number<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
-              <th class="sort-th"  @click="sort('email')" >Email<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th emailCol"  @click="sort('email')" >Email<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
 
             </tr>
           </thead>
@@ -67,25 +67,26 @@
             </tr>
           </tbody>
         </table>
-         <div class="float-right mb-4 font-sm">
-           <span>Displaying </span>
-           <div class="simple-select d-inline-block font-sm">
-
-            <multiselect
-              v-model="C_membersPerPage"
-              track-by="value"
-              label="name"
-              deselect-label=""
-              :allow-empty="false"
-              :options="getMembersPerPageFilterOptions">
-                <template slot="singleLabel" slot-scope="{option}">
-                      <div class="d-flex">
-                        <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                      </div>
-                </template>
-            </multiselect>
-           </div>
-          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+         <div class="float-right mb-4 font-sm">     
+         <div class="simple-select my-1 text-right d-inline-block font-sm">   
+          <span class="mr-2">Displaying </span>        
+          <el-select 
+           v-model="C_membersPerPage"                    
+           class="w-33" 
+           track-by="value" 
+           value-key="id"                                                                                                                               
+           >
+          <el-option 
+            v-for="item in getMembersPerPageFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>     
+           </div> 
+            
+          <span class="mr-1 ml-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
           <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
           <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_membersPerPage.value) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
@@ -152,12 +153,11 @@ import 'jspdf-autotable'
        },
      C_membersPerPage: {
       get() {
-        return this.getMembersPerPageFilter || {id: 10, name: '10', value: 10}
+        return this.getMembersPerPageFilter || {id: 15, name: '15', value: 15}
       },
       set(value) {
         this.setMembersPerPageFilter(value)
       }
-
     },
      },
      methods: {
@@ -234,9 +234,21 @@ import 'jspdf-autotable'
     background-color: rgba(211, 211, 211, 10%);
     border:none !important;
   }
+  td {
+    overflow-wrap: break-word;
+  }
   #page-count {
     width: auto !important;
     cursor: default;
+  }
+  .firstCol {
+    width: 8%;
+  }
+  .emailCol {
+    width: 23%;
+  }
+  .w-33 {
+    width:33%;
   }
   input[type=search] {
     color: #383838;

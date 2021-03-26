@@ -8,6 +8,7 @@ body {
   font-style: normal;
   font-weight: 300;
   overflow-x: hidden;
+  // overflow-y: hidden;
   letter-spacing: .035em; 
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
@@ -39,6 +40,9 @@ input[type=button]:focus {
 .form-control:focus {
   outline: none;
   box-shadow: none;
+}
+td.col-issue_type, td.col-issue_severity {
+  text-transform: capitalize !important;
 }
 .font-sm {
   font-size: 13px;
@@ -130,6 +134,65 @@ input[type=button]:focus {
   }
 }
 
+.grid-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-row-gap: 1em;
+  grid-column-gap: 1em;
+}
+
+
+// Portfolio page is on _landing.html.slim file
+.portfolio-page {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23); 
+  transition: all .2s ease-in
+}
+.portfolio-page:hover { 
+  transform: scale(1.015); 
+}
+
+.program-name a {
+ text-decoration: none !important;
+ text-decoration-color: none !important;
+}
+
+.program-name a:active {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+ .program-name a:visited {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+
+ .program-name a:hover {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+ .program-name a:link {
+  text-decoration: none !important;
+  text-decoration-color: none !important;
+ }
+
+.lt-green {
+  background-color: #90EE90
+}
+.lt-yellow {
+  background-color: #FFFACD
+}
+.lt-red {
+  background-color: #FFA07A
+}
+ .fafa {
+  //  background-color: #fafafa;
+   background-color:#e9ecef
+ }
+
+ .light-gray {
+   color: rgb(24, 19, 19);
+ }
+
 .el-collapse-item__header {color:#0275d8 !important}
 .el-collapse {
   border-top: none !important;
@@ -199,14 +262,22 @@ input[type=button]:focus {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .risks-form, .tasks-form, .issues-form, #risks-form {
+ .tasks-form, .issues-form, .notes-form {
   background-color: #fff;
   position:fixed;
   height: 100vh;
 }
-// .kanban-form {   
-//   width: 100%;   
-// }
+.risks-form {
+  z-index: 10;
+  width: 83.1%;
+ }
+
+// This prevents the text overflow in all tables
+ td {
+  overflow-wrap: break-word !important;
+ }
+
+
 .warning-icon {
   font-size: 16px;
   color: #dc3545;
@@ -440,8 +511,10 @@ input[type=button]:focus {
 .mx-datepicker-main.mx-datepicker-popup {
   z-index: 10000001 !important;
 }
+
 .simple-select /deep/ .multiselect,
 .user-select /deep/ .multiselect {
+
   .multiselect__tags {
     min-height: 25px;
     padding: 5px 40px 0 8px;
@@ -449,6 +522,7 @@ input[type=button]:focus {
     border: 1px solid #ced4da;
     font-size: 13px;
   }
+ 
   .multiselect__single {
     font-size: 13px;
     position: relative;
@@ -720,4 +794,57 @@ th {
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+// This defines height of all Element UI dropdown menus
+.el-input__inner {
+  height: 32px;
+}
+// For the badges inside the el dropdown menus
+.el-tag.el-tag--info {
+  background-color: #41b883;
+  color: white;
+  border: none;
+}
+
+i.el-tag__close.el-icon-close {
+  background-color: #41b883 !important;
+  color: #383838;
+}
+
+
+.el-tag.el-tag--info .el-tag__close { 
+  color: #383838 !important;
+}
+
+#tabbar {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.w-33 {
+  width:33%;
+}
+
+.risks-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 100px);
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+}
+
+i.el-icon-circle-close {
+  // For el-select dropdown clear icon
+  color: #dc3545 !important;
+}
+
+.el-slider__stop {
+  border: 1px solid #b4b4b4;
+}
+
+.el-slider__runway.disabled .el-slider__bar {
+  background-color: #409EFF;
 }

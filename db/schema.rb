@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_08_155824) do
+ActiveRecord::Schema.define(version: 2021_03_17_174756) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_id"], name: "index_active_storage_attachments_on_record_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
@@ -76,6 +77,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.date "due_date"
     t.index ["listable_id"], name: "index_checklists_on_listable_id"
     t.index ["listable_type"], name: "index_checklists_on_listable_type"
+    t.index ["position"], name: "index_checklists_on_position"
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
@@ -107,6 +109,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.integer "region_type", default: 0
     t.string "center", default: "[]"
     t.bigint "project_id"
+    t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
@@ -117,6 +120,8 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.datetime "updated_at", null: false
     t.date "due_date"
     t.bigint "status_id"
+    t.integer "progress", default: 0
+    t.string "color", default: "#ff0000"
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
@@ -183,6 +188,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.text "body", limit: 4294967295
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_notes_on_created_at"
     t.index ["noteable_id"], name: "index_notes_on_noteable_id"
     t.index ["noteable_type"], name: "index_notes_on_noteable_type"
     t.index ["user_id"], name: "index_notes_on_user_id"
@@ -311,6 +317,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.string "uuid"
     t.bigint "project_type_id"
     t.integer "status", default: 1
+    t.integer "progress", default: 0
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
@@ -412,7 +419,9 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.string "impact_level_name"
     t.text "probability_description"
     t.string "approval_time"
+    t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
+    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
@@ -466,6 +475,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "progress", default: 0
   end
 
   create_table "task_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -494,6 +504,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_155824) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
+    t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"

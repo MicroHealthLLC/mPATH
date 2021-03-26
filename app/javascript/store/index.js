@@ -4,6 +4,12 @@ import {extendMoment} from 'moment-range'
 const moment = extendMoment(Moment)
 import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
+import exampleModule from './modules/example-module-store'
+import programStore from './modules/program-store'
+import projectStore from './modules/project-store'
+import taskStore from './modules/task-store'
+import issueStore from './modules/issue-store'
+import riskStore from './modules/risk-store'
 
 // utility function
 const getSimpleDate = (date) => {
@@ -15,6 +21,14 @@ const getSimpleDate = (date) => {
 }
 
 export default new Vuex.Store({
+  modules: {
+    exampleModule,
+    programStore,
+    projectStore,
+    taskStore,
+    issueStore,
+    riskStore
+  },
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
@@ -222,8 +236,12 @@ export default new Vuex.Store({
             _.remove(t.subTaskIds, id => id == t.id)
           }
           Vue.delete(facility.tasks, task_i)
+        
+        }else if (task_i > -1){
+         Vue.set(facility.tasks, task_i, task)
+        }else if (task_i == -1){
+          facility.tasks.push(task)
         }
-        else if (task_i > -1) Vue.set(facility.tasks, task_i, task)
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -238,7 +256,11 @@ export default new Vuex.Store({
           }
           Vue.delete(facility.issues, issue_i)
         }
-        else if (issue_i > -1) Vue.set(facility.issues, issue_i, issue)
+        else if (issue_i > -1){
+          Vue.set(facility.issues, issue_i, issue)
+        }else if(issue_i == -1){
+          facility.issues.push(issue)
+        }
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -253,7 +275,11 @@ export default new Vuex.Store({
           }
           Vue.delete(facility.risks, risk_i)
         }
-        else if (risk_i > -1) Vue.set(facility.risks, risk_i, risk)
+        else if (risk_i > -1){ 
+          Vue.set(facility.risks, risk_i, risk)
+        }else if (risk_i == -1){
+          facility.risks.push(risk)
+        }
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -474,17 +500,17 @@ export default new Vuex.Store({
     getAllFilterNames: (state, getters) => {
       return [
 
-        ['facilityGroupFilter', 'Project Group'],
-        ['facilityNameFilter', 'Project Name'],
-        ['projectStatusFilter', 'Program Status'],
-        ['facilityProgressFilter', 'Project Progress'],
+        ['facilityGroupFilter', 'Project Groups'],
+        ['facilityNameFilter', 'Project Names'],
+        ['projectStatusFilter', 'Project Statuses'],
+        ['facilityProgressFilter', 'Project Progress Range'],
         ['facilityDueDateFilter', 'Project Completion Date Range'],
-        ['taskTypeFilter', 'Task Category'],
+        ['taskTypeFilter', 'Categories'],
         ['noteDateFilter', 'Updates Date Range'],
         ['taskIssueDueDateFilter', 'Action Due Date Range'],
-        ['taskIssueProgressFilter', 'Action Progress'],
+        ['taskIssueProgressFilter', 'Action Progress Range'],
         ['taskUserFilter', 'Task Users'],
-        ['issueTypeFilter', 'Issue Type'],
+        ['issueTypeFilter', 'Issue Types'],
         ['issueSeverityFilter', 'Issue Severities'],
         ['issueUserFilter', 'Issue Users'],
         ['taskStageFilter', 'Task Stages'],
@@ -494,7 +520,7 @@ export default new Vuex.Store({
         ['issuesPerPageFilter', 'Issues Per Page'],
         ['risksPerPageFilter', 'Risks Per Page'],
         ['taskIssueUserFilter', 'Action Users'],
-        ['riskApproachFilter', 'Risk Approach'],
+        ['riskApproachFilter', 'Risk Approaches'],
         ['riskStageFilter', 'Risk Stages'],
         ['riskPriorityLevelFilter', 'Risk Priority Levels'],
 
@@ -797,15 +823,15 @@ export default new Vuex.Store({
       if(taskIssueOverdue == false && taskIssueNotOverdue == true){
         valid = valid && _isOverdues.includes(false)
       }
-
+      
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
 
-      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false) {
+      if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false && _progressStatuses.lenth > 0) {
         valid = valid && _progressStatuses.includes('active')
       }
 
-      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true) {
+      if (taskIssueActiveProgressStatus == false && taskIssueCompletedProgressStatus == true && _progressStatuses.lenth > 0) {
         valid = valid && _progressStatuses.includes('completed')
       }
 
@@ -1130,6 +1156,8 @@ export default new Vuex.Store({
     },
     facilityGroupFacilities: (state, getters) => (group, status='active') => {
       return _.filter(getters.filteredFacilities(status), f => f.facilityGroupId == group.id && f.projectId == getters.currentProject.id)
+        // Alphabetize facilities (programs)
+        .sort((a, b) => a.facilityName.localeCompare(b.facilityName))    
     },
 
     // for gantt chart view
@@ -1665,7 +1693,7 @@ export default new Vuex.Store({
           .delete(`/projects/${task.projectId}/facilities/${task.facilityId}/tasks/${task.id}.json`)
           .then((res) => {
             commit('updateTasksHash', {task: task, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)
@@ -1694,7 +1722,7 @@ export default new Vuex.Store({
           .delete(`/projects/${issue.projectId}/facilities/${issue.facilityId}/issues/${issue.id}.json`)
           .then((res) => {
             commit('updateIssuesHash', {issue: issue, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)
@@ -1708,7 +1736,7 @@ export default new Vuex.Store({
           .delete(`/projects/${risk.projectId}/facilities/${risk.facilityId}/risks/${risk.id}.json`)
           .then((res) => {
             commit('updateRisksHash', {risk: risk, action: 'delete'})
-            resolve()
+            resolve('Success')
           })
           .catch((err) => {
             console.log(err)

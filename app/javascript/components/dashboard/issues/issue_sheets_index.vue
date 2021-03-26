@@ -1,18 +1,6 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-         <div v-if="_isallowed('read')">
-    <!-- <div v-if="newIssue && from != 'manager_view'">
-      <issue-form
-        :facility="facility"
-        :issue="currentIssue"
-        @on-close-form="newIssue=false"
-        @issue-created="issueCreated"
-        @issue-updated="issueUpdated"
-        class="issue-form-modal"
-      />
-    </div> -->
-
-         
+    <div v-if="_isallowed('read')">         
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
@@ -20,92 +8,96 @@
           </div>
           <input type="search" 
             class="form-control form-control-sm" 
-            placeholder="Search Issues" 
+            placeholder="Search by Issue Name, Type, Severity or Assigned User" 
             aria-label="Search" 
             aria-describedby="search-addon" 
             v-model="issuesQuery"
             data-cy="search_issues"
             >
         </div>
-        <div class="simple-select mr-1 w-100 justify-content-start">
-            <multiselect
-              v-model="C_taskTypeFilter"                
-              track-by="name"
-              label="name"
-              placeholder="Filter by Task Category"
-              :options="taskTypes"
-              :searchable="false"
-              :multiple="true"
-              select-label="Select"
-              deselect-label="Remove"
-              >
-              <template slot="singleLabel" slot-scope="{option}">
-                <div class="d-flex">
-                  <span class='select__tag-name'>{{option.name}}</span>
-                </div>
-              </template>
-            </multiselect>
-          </div>
-        <div class="simple-select mr-1 w-100">
-          <multiselect v-model="C_sheetsIssueFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+        <div class="mr-1 font-sm w-100">
+          <el-select 
+           v-model="C_taskTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Select Category"
+           >
+          <el-option 
+            v-for="item in taskTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
+         </div>
+        <div class="mr-1 w-100">
+          <el-select 
+           v-model="C_sheetsIssueFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Flags"
+           >
+          <el-option 
+            v-for="item in getAdvancedFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
         </div>  
        </div>
       <div class="d-flex align-item-center justify-content-start filter-second-row">          
-       <div class="simple-select mr-1 d-inline w-100">        
-          <multiselect
-            v-model="C_issueTypeFilter"
-            track-by="name"        
-            label="name"
-            class="issueTypeMs"
-            placeholder="Filter by Issue Type"
-            :options="issueTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-          >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div>
-        <div class="simple-select mr-1 d-flex w-100">
-          <multiselect
-            v-model="C_issueSeverityFilter"
-            track-by="name"          
-            label="name"
-            placeholder="Filter by Issue Severity"
-            :options="issueSeverities"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+       <div class="simple-select mr-1 d-inline w-100">    
+         <el-select 
+           v-model="C_issueTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Types"
+           >
+          <el-option 
+            v-for="item in issueTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>       
+        </div>
+        <div class="mr-1 d-flex w-100">
+          <el-select 
+           v-model="C_issueSeverityFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Issue Severities"
+           >
+          <el-option 
+            v-for="item in issueSeverities"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>        
         </div>  
     </div>  
-     <div class="wrapper mt-2 p-3">
-      <div class="mt-2">
+     <div class="wrapper mt-2 p-3">    
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="reportNew" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
-      <div class="float-right">
+      <div class="float-right mb-2">
           <button
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
@@ -149,7 +141,7 @@
                   <col class="nine" />
                   <col class="oneFive" />
                 </colgroup>
-                <tr style="background-color:#ededed">
+                <tr class="thead" style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
                   <th class="sort-th" @click="sort('issueType')">Issue Type <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
@@ -164,28 +156,29 @@
               </table>            
                 <issue-sheets
                   v-for="issue in sortedIssues"      
-                  id="issueHover"               
+                  id="issueHover"                     
                   :key="issue.id"
                   :issue="issue"
                   :from-view="from"                
                   @toggle-watch-issue="toggleWatched"
                 />
                <div class="float-right mb-4 mt-2 font-sm">
-                <span>Displaying </span>
-                <div class="simple-select d-inline-block font-sm">          
-                  <multiselect 
-                    v-model="C_issuesPerPage" 
-                    track-by="value"
-                    label="name"      
-                    deselect-label=""                     
-                    :allow-empty="false"
-                    :options="getIssuesPerPageFilterOptions">
-                      <template slot="singleLabel" slot-scope="{option}">
-                            <div class="d-flex">
-                              <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                            </div>
-                      </template>
-                  </multiselect>            
+               <div class="simple-select d-inline-block text-right font-sm"> 
+                <span>Displaying </span>                      
+                   <el-select 
+                    v-model="C_issuesPerPage"                   
+                    class="w-33" 
+                    track-by="value" 
+                    value-key="id"                                                                                                                               
+                    >
+                    <el-option 
+                    v-for="item in getIssuesPerPageFilterOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                    </el-option>                
+                    </el-select>    
                 </div>
                 <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
@@ -198,9 +191,7 @@
             
           </div>
            <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
-         
-        </div>
-        
+                         
      </div>
      
       </div>
@@ -316,7 +307,7 @@
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
-      ]),
+      ]), 
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -472,7 +463,11 @@
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
 
-          if (search_query) valid = valid && search_query.test(resource.title)
+          
+          if (search_query) valid = valid && search_query.test(resource.title) || 
+            valid && search_query.test(resource.issueType) || 
+            valid && search_query.test(resource.issueSeverity) || 
+            valid && search_query.test(resource.userNames)
 
           return valid;
         })), ['dueDate'])
@@ -571,6 +566,20 @@
     width: 100% ;
     margin-bottom: 0 !important;
   }
+  .task-search-bar {
+    height: 31px;
+    width: 310px;
+    border-radius: 5px;
+  }
+  .stickyTableHeader {
+    position: sticky;
+    position: -webkit-sticky;
+    z-index: 10;
+    justify-content: center;
+    left: 15;
+    top: 0;
+    width: 100%;
+  }
   .eight {
     width: 8%;
   }
@@ -604,8 +613,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
+    background-color: rgba(91, 192, 222, 0.3);   
   }
   .floatRight {
     text-align: right;

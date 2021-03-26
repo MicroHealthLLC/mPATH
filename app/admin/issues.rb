@@ -13,6 +13,7 @@ ActiveAdmin.register Issue do
   permit_params do
     permitted = [
       :title,
+      :task_type_id,
       :description,
       :due_date,
       :progress,
@@ -37,7 +38,8 @@ ActiveAdmin.register Issue do
         :_destroy,
         :text,
         :user_id,
-        :checked
+        :checked,
+        :due_date
       ]
     ]
   end
@@ -46,6 +48,13 @@ ActiveAdmin.register Issue do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
     column :title
+    column "Category", :task_type, nil, sortable: 'task_types.name' do |issue|
+      if current_user.admin_write?
+        link_to "#{issue.task_type.name}", "#{edit_admin_task_type_path(issue.task_type)}" if issue.task_type.present?
+      else
+        "<span>#{issue.task_type&.name}</span>".html_safe
+      end
+    end
     column :issue_type, nil, sortable: 'issue_types.name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.issue_type.name}", "#{edit_admin_issue_type_path(issue.issue_type)}" if issue.issue_type.present?
@@ -70,14 +79,14 @@ ActiveAdmin.register Issue do
     column :progress
     column :start_date
     column "Estimated Completion Date", :due_date
-    column :project, nil, sortable: 'projects.name' do |issue|
+    column "Program", :project, nil, sortable: 'projects.name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.project.name}", "#{edit_admin_project_path(issue.project)}" if issue.project.present?
       else
         "<span>#{issue.project&.name}</span>".html_safe
       end
     end
-    column :facility, nil, sortable: 'facilities.facility_name' do |issue|
+    column "Project", :facility, nil, sortable: 'facilities.facility_name' do |issue|
       if current_user.admin_write?
         link_to "#{issue.facility.facility_name}", "#{edit_admin_facility_path(issue.facility)}" if issue.facility.present?
       else
@@ -94,8 +103,13 @@ ActiveAdmin.register Issue do
     column :description, sortable: false
     column "Files" do |issue|
       issue.issue_files.map do |file|
+        next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          if file.blob.content_type == "text/plain"
+            link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
+          else
+            link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          end
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
@@ -113,11 +127,12 @@ ActiveAdmin.register Issue do
     f.inputs 'Basic Details' do
       f.input :id, input_html: { value: f.object.id }, as: :hidden
       f.input :title
+      f.input :task_type, label: 'Category', include_blank: true
       f.input :description
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
       f.input :issue_type, include_blank: false
@@ -134,6 +149,7 @@ ActiveAdmin.register Issue do
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :due_date, input_html: {style: "width: 100%"}
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :issue_files
@@ -150,15 +166,28 @@ ActiveAdmin.register Issue do
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Issues"
   end
 
+  batch_action :add_checklist_to_issues, if: proc {current_user.admin_write?}, form: -> {{
+    "Title": :text,
+    "Checked": :checkbox,
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
+  }} do |ids, inputs|
+    Issue.where(id: ids).each do |issue|
+      issue.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
+    end
+    redirect_to collection_path, notice: "Successfully created Issue checklists"
+  end
+
   filter :title
+  filter :task_type, label: 'Category'
   filter :issue_type
   filter :issue_severity
   filter :issue_stage
   filter :progress
   filter :start_date
   filter :due_date, label: 'Estimated Completion Date'
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
+  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
   filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}

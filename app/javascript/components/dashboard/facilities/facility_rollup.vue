@@ -84,10 +84,7 @@
             <div v-if="contentLoaded" v-for="facilityGroup in filteredFacilityGroups">
 
               <div class="row">
-                <div class="col-7 mb-2 pl-2 pr-0">
-                    <span class="badge badge-pill font-sm" :class="{'badge-success': facilityGroup.status == 'active', 'badge-danger': facilityGroup.status == 'inactive'}">
-                    {{facilityGroup.status}}
-                    </span>
+                <div class="col-7 mb-2 pl-2 pr-0">                   
                     <span v-if="isMapView" class="font-sm">{{facilityGroup.name}}</span>
                     <span v-else>{{facilityGroup.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{facilityGroupFacilities(facilityGroup).length}}</span>
@@ -247,11 +244,30 @@
           <el-collapse>
             <el-collapse-item title="Details" name="1">
            
-               <div class="col mt-1 mb-1 text-center">
-                       CATEGORIES
-               </div>
-           
-             <div v-for="issue in currentIssueTypes">
+              <div v-if="contentLoaded">
+                <div class="row">
+                  <div class="col mt-1 mb-2 text-center">
+                   CATEGORIES
+                  </div>
+                </div>
+                <div class="row"  v-for="(issue, index) in issueTaskCATEGORIES" :key="index">
+                  <div class="col">
+                    <span> {{issue.name}}</span>
+                    <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
+                  </div>
+                  <div class="col">
+                    <span class="w-100 progress pg-content" :class="{'progress-0': issue.progress <= 0}">
+                      <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}} %</div>
+                    </span>
+                  </div>
+                </div>
+              </div>   
+              
+              
+             <div class="col mt-1 mb-1 text-center">
+                       ISSUE TYPES
+             </div>          
+             <div v-for="issue in currentIssueTypes" :key="issue.id">
              <div class="row font-sm" v-if="issue._display">
 
                   <div class="col">
@@ -530,6 +546,19 @@ export default {
         return valid
       })
     },
+    issueTaskCATEGORIES() {
+        let issues = new Array
+        let group = _.groupBy(this.filteredIssues, 'taskTypeName')
+        for (let type in group) {
+          if(!type || type == "null") continue;
+          issues.push({
+            name: type,
+            count: group[type].length,
+            progress: Number((_.meanBy(group[type], 'progress') || 0).toFixed(0))
+          })
+        }
+        return issues
+      },
     filteredRisks() {
       let typeIds = _.map(this.taskTypeFilter, 'id')
       let stageIds = _.map(this.riskStageFilter, 'id')
@@ -634,7 +663,7 @@ export default {
     taskVariation() {
       let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -644,7 +673,7 @@ export default {
     issueVariation() {
       let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -654,7 +683,7 @@ export default {
      riskVariation() {
       let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
       let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue)
       let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
       return {
         completed: {count: completed.length, percentage: Math.round( completed_percent )},

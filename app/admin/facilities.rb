@@ -3,7 +3,7 @@ ActiveAdmin.register Facility do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Facilities', admin_facilities_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_facilities_path)]
     if %(show edit).include?(params['action'])
       links << link_to(facility.facility_name, edit_admin_facility_path)
     end
@@ -36,7 +36,7 @@ ActiveAdmin.register Facility do
     ]
   end
 
-  index title: 'Project' do
+  index title: 'Projects' do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
@@ -90,7 +90,9 @@ ActiveAdmin.register Facility do
 
       tab 'Advanced' do
         f.inputs 'Assign Programs' do
-          f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+          # f.input :projects, label: 'Programs', as: :select, collection: Project.all.map{|p| [p.name, p.id]}
+          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+
         end
         div id: 'facility_projects-tab', "data-key": "#{resource.id}"
       end
@@ -110,17 +112,17 @@ ActiveAdmin.register Facility do
     f.actions
   end
 
-  batch_action :"Assign/Unassign Facility Group", if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :"Assign/Unassign Project Group", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Facility Group": FacilityGroup.pluck(:name, :id)
+    "Project Group": FacilityGroup.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Facility group is updated"
+    notice = "Project Group is updated"
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).update_all(facility_group_id: inputs["Facility Group"])
-      notice = "Facility group is assigned"
+      notice = "Project Group is assigned"
     elsif inputs['assign'] === 'unassign'
       Facility.where(id: ids, facility_group_id: inputs["Facility Group"]).update_all(facility_group_id: nil)
-      notice = "Facility group is unassigned"
+      notice = "Project Group is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end
@@ -132,20 +134,20 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, notice: 'State is updated'
   end
 
-  batch_action :"Assign/Unassign Project", if: proc {current_user.admin_write?}, form: -> {{
+  batch_action :"Assign/Unassign Program", if: proc {current_user.admin_write?}, form: -> {{
     assign: :checkbox,
-    "Project": Project.pluck(:name, :id)
+    "Program": Project.pluck(:name, :id)
   }} do |ids, inputs|
-    notice = "Project is assigned"
+    notice = "Program is assigned"
     project = Project.find_by_id(inputs["Project"])
     if inputs['assign'] === 'assign'
       Facility.where(id: ids).each do |facility|
         facility.projects << project unless facility.projects.pluck(:id).include?(project.id)
       end
-      notice = "Project is assigned"
+      notice = "Program is assigned"
     elsif inputs['assign'] === 'unassign'
       FacilityProject.where(project_id: project.id, facility_id: ids).destroy_all
-      notice = "Project is unassigned"
+      notice = "Program is unassigned"
     end
     redirect_to collection_path, notice: "#{notice}"
   end
@@ -153,8 +155,8 @@ ActiveAdmin.register Facility do
   batch_action :add_task, if: proc {current_user.admin_write?}, id:"add-tasks", form: -> {{
     "Name": :text,
     "Description": :textarea,
-    "Project": Project.pluck(:name, :id),
-    "Task Category": TaskType.pluck(:name, :id),
+    "Program": Project.pluck(:name, :id),
+    "Category": TaskType.pluck(:name, :id),
     "Stage": TaskStage.pluck(:name, :id),
     "Start Date": :datepicker,
     "Due Date": :datepicker,
@@ -169,7 +171,7 @@ ActiveAdmin.register Facility do
     checklists = JSON.parse(inputs["Checklists"]) rescue []
     Facility.where(id: ids).each do |facility|
       facility.facility_projects.where(project_id: inputs['Project']).each do |facility_project|
-        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Task Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
+        task = facility_project.tasks.create!(text: inputs['Name'], task_type_id: inputs['Category'], task_stage_id: inputs['Stage'], start_date: inputs['Start Date'], due_date: inputs['Due Date'], progress: inputs['Progress'], description: inputs['Description'], auto_calculate: inputs['AutoCalculate'], user_ids: user_ids, checklists_attributes: checklists)
         task.task_files.create(file_blobs) if file_blobs.present?
       end
     end
@@ -178,8 +180,8 @@ ActiveAdmin.register Facility do
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :"Assign Project, Duedate and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
-    "Project": Project.pluck(:name, :id),
+  batch_action :"Assign Program, Due Date and Status", if: proc {current_user.admin_write?}, id:"assign-duedate-status", form: -> {{
+    "Program": Project.pluck(:name, :id),
     "Status": Status.pluck(:name, :id),
     "Due Date": :datepicker
   }} do |ids, inputs|
@@ -189,14 +191,14 @@ ActiveAdmin.register Facility do
       facility_project.due_date = inputs['Due Date']
       facility_project.save
     end
-    redirect_to collection_path, notice: "Due Date, Status and Assign project is updated"
+    redirect_to collection_path, notice: "Due Date, Status and Assign Program is updated"
   rescue => e
     redirect_to collection_path, flash: {error: e.message}
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Facilities" do |ids|
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Projects" do |ids|
     deleted = Facility.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Facilities"
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Projects"
   end
 
   controller do
@@ -245,6 +247,7 @@ ActiveAdmin.register Facility do
     end
 
     def index
+
       super do |format|
         format.json {send_data collection.to_json, type: :json, disposition: "attachment"}
       end
@@ -264,8 +267,8 @@ ActiveAdmin.register Facility do
   filter :phone_number
   filter :status, label: 'State', as: :select, collection: Facility.statuses
   filter :tasks_text, as: :string, label: "Task Name"
-  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Task Category'
-  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Program Status'
+  filter :tasks_task_type_id, as: :select, collection: -> {TaskType.pluck(:name, :id)}, label: 'Category'
+  filter :facility_projects_status_id, as: :select, collection: -> {Status.pluck(:name, :id)}, label: 'Project Status'
   filter :projects, label: "Programs"
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   remove_filter :creator

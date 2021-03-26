@@ -42,6 +42,7 @@ ActiveAdmin.register Risk do
         :_destroy,
         :text,
         :user_id,
+        :due_date,
         :checked
       ]
     ]
@@ -50,7 +51,7 @@ ActiveAdmin.register Risk do
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_delete?
-    column "Risk Name", :text, sortable: false
+    column "Risk Name", :text
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
     column "Probability Description", :probability_description, sortable: false
@@ -62,7 +63,7 @@ ActiveAdmin.register Risk do
     tag_column :priority_level
     tag_column :risk_approach
     column :risk_approach_description, sortable: false
-    column "Task Category", :task_type, nil, sortable: 'task_types.name' do |risk|
+    column "Category", :task_type, nil, sortable: 'task_types.name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.task_type.name}", "#{edit_admin_task_type_path(risk.task_type)}" if risk.task_type.present?
       else
@@ -78,21 +79,27 @@ ActiveAdmin.register Risk do
     end
     column "Files" do |risk|
       risk.risk_files.map do |file|
+
+        next if file.nil? || !file.blob.filename.instance_variable_get("@filename").present?
         if current_user.admin_write?
-          link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          if file.blob.content_type == "text/plain"
+            link_to file.blob.filename.instance_variable_get("@filename"), file.blob.filename.instance_variable_get("@filename"), target: '_blank'
+          else
+            link_to "#{file.blob.filename}", "#{Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true)}", target: '_blank'
+          end
         else
           "<span>#{file.blob.filename}</span>".html_safe
         end
       end
     end
-    column :project, nil, sortable: 'projects.name' do |risk|
+    column "Program", :project, nil, sortable: 'projects.name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.project.name}", "#{edit_admin_project_path(risk.project)}" if risk.project.present?
       else
         "<span>#{risk.project&.name}</span>".html_safe
       end
     end
-    column :facility, nil, sortable: 'facilities.facility_name' do |risk|
+    column "Project", :facility, nil, sortable: 'facilities.facility_name' do |risk|
       if current_user.admin_write?
         link_to "#{risk.facility.facility_name}", "#{edit_admin_facility_path(risk.facility)}" if risk.facility.present?
       else
@@ -123,13 +130,13 @@ ActiveAdmin.register Risk do
       f.input :probability_description, label: 'Probability Description', input_html: { rows: 8 }
       div id: 'facility_projects' do
         f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Project', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Facility', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
         end
       end
       f.input :start_date, label: 'Identified Date', as: :datepicker
       f.input :due_date, label: 'Risk Approach Due Date', as: :datepicker
-      f.input :task_type, label: 'Task Category', include_blank: false, include_hidden: false
+      f.input :task_type, label: 'Category', include_blank: false, include_hidden: false
       f.input :risk_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
       f.input :probability, include_blank: false, include_hidden: false, min: 1, max: 5, input_html: { onchange: 'checkRiskProbabilityImpactNumber(this)' }
       div id: 'risk_probability_text'
@@ -144,6 +151,7 @@ ActiveAdmin.register Risk do
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
         c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :due_date, as: :datepicker
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
       f.input :risk_files, label: 'Risk Files'
@@ -155,6 +163,23 @@ ActiveAdmin.register Risk do
     f.actions
   end
 
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Risks?" do |ids|
+    deleted = Risk.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Risks"
+  end
+
+  batch_action :add_checklist_to_risks, if: proc {current_user.admin_write?}, form: -> {{
+    "Title": :text,
+    "Checked": :checkbox,
+    "User Assigned": User.active.map{|u| [u.full_name, u.id]},
+    "Due Date": :datepicker
+  }} do |ids, inputs|
+    Risk.where(id: ids).each do |risk|
+      risk.checklists.create(text: inputs['Title'], checked: inputs['Checked'], user_id: inputs['User Assigned'], due_date: inputs['Due Date'])
+    end
+    redirect_to collection_path, notice: "Successfully created Risk checklists"
+  end
+    
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
@@ -206,11 +231,11 @@ ActiveAdmin.register Risk do
   filter :impact_level
   filter :risk_approach, as: :select, collection: Risk.risk_approaches
   filter :risk_approach_description
-  filter :task_type
+  filter :task_type, label: "Category"
   filter :start_date
   filter :due_date
-  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Project'
-  filter :facility_project_facility_facility_name, as: :string, label: 'Facility'
+  filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
+  filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :user, label: "Owned by"
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false

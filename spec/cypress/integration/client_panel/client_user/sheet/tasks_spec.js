@@ -28,9 +28,9 @@ describe('Sheets Tasks View', function() {
       cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
     })
     cy.get('[data-cy=search_tasks]').clear().type('task is not in the list').should('have.value', 'task is not in the list')
-    cy.contains('No tasks found..').should('be.visible')
+    cy.contains('No Tasks found...').should('be.visible')
 
-    cy.get('[data-cy=search_tasks]').clear().type('Test task').should('have.value', 'Test task')
+    cy.get('[data-cy=search_tasks]').clear().type('New task').should('have.value', 'New task')
     cy.get('[data-cy=tasks_table]').within(() => {
       cy.get('[data-cy=task_row]').its('length').should('be.eq', 1)
     })
@@ -41,22 +41,74 @@ describe('Sheets Tasks View', function() {
     cy.logout()
   })
 
-  // it('Select task status from list to display related tasks', function() {
-  //   cy.get('[data-cy=tasks_table]').within(() => {
-  //     cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.get('[data-cy=task_status_list]').as('list')
-  //   cy.get('@list').click()
-  //   cy.get('@list').within(() => {
-  //     cy.contains('complete').click()
-  //   })
-  //   cy.contains('No tasks found..').should('be.visible')
-  //   cy.get('@list').within(() => {
-  //     cy.contains('all').click()
-  //   })
-  //   cy.get('[data-cy=tasks_table]').within(() => {
-  //     cy.get('[data-cy=task_row]').its('length').should('be.eq', 2)
-  //   })
-  //   cy.logout()
-  // })
+  it('Sort Task according to Task name', function() {
+    cy.get('[data-cy=task_row]').first().contains('New Task').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test Task').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(1)').click()
+    cy.get('[data-cy=task_row]').first().contains('New Task').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Category', function() {
+    cy.get('.mt-3 > tr > :nth-child(2)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test Task Type(milestone)').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Start Date', function() {
+    const new_start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+    const test_start_date = Cypress.moment().format('DD MMM YYYY')
+    cy.get('[data-cy=task_row]').first().contains(new_start_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(3)').click()
+    cy.get('[data-cy=task_row]').first().contains(test_start_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(3)').click()
+    cy.get('[data-cy=task_row]').first().contains(new_start_date).should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Due Date', function() {
+    const new_due_date = Cypress.moment().add(6, 'day').format('DD MMM YYYY')
+    const test_due_date = Cypress.moment().add(5, 'day').format('DD MMM YYYY')
+    cy.get('[data-cy=task_row]').first().contains(new_due_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(4)').click()
+    cy.get('[data-cy=task_row]').first().contains(test_due_date).should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(4)').click()
+    cy.get('[data-cy=task_row]').first().contains(new_due_date).should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Assigned User', function() {
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test2 Client').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Progress', function() {
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=task_row]').first().contains('10%').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=task_row]').first().contains('70%').should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=task_row]').first().contains('10%').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to On Watch', function() {
+    cy.get('.mt-3 > tr > :nth-child(8)').click()
+    cy.get('[data-cy=task_row]').first().should('be.visible')
+    cy.get('.mt-3 > tr > :nth-child(8)').click()
+    cy.get('[data-cy=task_row]').first().contains('x').should('be.visible')
+    cy.logout()
+  })
+
+  it('Sort Task according to Last Update', function() {
+    cy.get('.mt-3 > tr > :nth-child(9)').click()
+    cy.get('[data-cy=task_row]').first().contains('No Updates').should('be.visible')
+    cy.logout()
+  })
 })

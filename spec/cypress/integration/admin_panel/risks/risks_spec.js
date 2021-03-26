@@ -119,26 +119,6 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Risk according to Task Category', function() {
-    cy.get('.sortable').contains('Task Category').click()
-    cy.get('.sortable').last().scrollIntoView()
-    cy.get('#index_table_risks > tbody > tr').first().contains('Test Task Type(milestone)').should('be.visible')
-    cy.get('#logout').click()
-  })
-
-  // it('Sort Risk according to Risk Stage', function() {
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('New Risk Stage').should('be.visible')
-  //   cy.get('.sortable').contains('Risk Stage').click()
-  //   cy.get('.sortable').last().scrollIntoView()
-  //   cy.get('#index_table_risks > tbody > tr').first().contains('Test Risk Stage').should('be.visible')
-  //   cy.get('#logout').click()
-  // })
-
   it('Sort Risk according to Project', function() {
     cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
@@ -146,14 +126,14 @@ describe('Admin Panel Risk', function() {
     cy.get('#logout').click()
   })
 
-  it('Sort Risk according to Facility', function() {
-    cy.get('.sortable').contains('Facility').click()
+  it('Sort Risk according to Project', function() {
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 1').should('be.visible')
-    cy.get('.sortable').contains('Facility').click()
+    cy.get('.sortable').contains('Project').click()
     cy.get('.sortable').last().scrollIntoView()
     cy.get('#index_table_risks > tbody > tr').first().contains('Test Facility 4').should('be.visible')
     cy.get('#logout').click()
@@ -280,7 +260,7 @@ describe('Admin Panel Risk', function() {
     const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 6)
+    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
     cy.get('#logout').click()
   })
 
@@ -288,7 +268,7 @@ describe('Admin Panel Risk', function() {
     const start_date = Cypress.moment().format('YYYY-MM-DD')
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
-    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)
+    cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
     cy.get('#logout').click()
   })
 

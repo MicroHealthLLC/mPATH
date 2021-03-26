@@ -8,80 +8,94 @@
             </div>
             <input type="search"
             class="form-control form-control-sm"
-            placeholder="Search Risks"
+            placeholder="Search by Risk Name, Approach, Priority Level or Assigned User"
             aria-label="Search"
             aria-describedby="search-addon"
             v-model="risksQuery"
             data-cy="search_risks">
           </div>
-        <div class="simple-select w-100 mx-1 d-flex">
-          <multiselect
-            v-model="C_taskTypeFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Task Category"
-            :options="taskTypes"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+        <div class="w-100 mx-1">
+         <el-select 
+           v-model="C_taskTypeFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Select Category"
+           >
+          <el-option 
+            v-for="item in taskTypes"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>      
         </div>
 
-        <div class="simple-select d-flex w-100">
-          <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Filter by Flags">
+        <div class="w-100">
+          <el-select 
+           v-model="C_sheetsRiskFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Flags"
+           >
+          <el-option 
+            v-for="item in getAdvancedFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
+            >
+          </el-option>
+          </el-select>      
+
+          <!-- <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
             <template slot="singleLabel" slot-scope="{option}">
               <div class="d-flex">
                 <span class='select__tag-name'>{{option.name}}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
         </div>
     </div>
      <div class="d-flex align-item-center justify-content-start filter-second-row w-60"> 
-       <div class="simple-select w-50 mr-1" v-if="true">
-          <multiselect
-            v-model="C_riskApproachFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Risk Approach"
-            :options="getRiskApproachFilterOptions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+       <div class="w-50 mr-1" v-if="true">
+         <el-select 
+           v-model="C_riskApproachFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Risk Approach"
+           >
+          <el-option 
+            v-for="item in getRiskApproachFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>        
         </div>
        <div class="simple-select w-50 mr-1" v-if="true">
-          <multiselect
-            v-model="C_riskPriorityLevelFilter"
-            track-by="name"
-            label="name"
-            placeholder="Filter by Risk Priority Level"
-            :options="getRiskPriorityLevelFilterOptions"
-            :searchable="false"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
+        <el-select 
+           v-model="C_riskPriorityLevelFilter"                    
+           class="w-100" 
+           track-by="name" 
+           value-key="id"
+           multiple                                                                                                                                               
+           placeholder="Filter by Risk Priority Levels"
+           >
+          <el-option 
+            v-for="item in getRiskPriorityLevelFilterOptions"                                                     
+            :value="item"   
+            :key="item.id"
+            :label="item.name"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.name}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>        
         </div>
      </div>
      <div class="wrapper mt-2 p-3">
@@ -163,22 +177,23 @@
             />
           </tbody>
            <div class="float-right mb-4 mt-2 font-sm">
-           <span>Displaying </span>
-           <div class="simple-select d-inline-block font-sm">          
-              <multiselect 
-                v-model="C_risksPerPage" 
-                track-by="value"
-                label="name"      
-                deselect-label=""                     
-                :allow-empty="false"
-                :options="getRisksPerPageFilterOptions">
-                  <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name selected-opt'>{{option.name}}</span>
-                        </div>
-                  </template>
-              </multiselect>            
-            </div>
+            <div class="simple-select d-inline-block text-right font-sm"> 
+                <span>Displaying </span>                      
+                   <el-select 
+                    v-model="C_risksPerPage"                   
+                    class="w-33" 
+                    track-by="value" 
+                    value-key="id"                                                                                                                               
+                    >
+                    <el-option 
+                    v-for="item in getRisksPerPageFilterOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                    </el-option>                
+                    </el-select>    
+              </div>      
               <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
                 <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
                 <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / this.C_risksPerPage.value) }} </button>
@@ -295,9 +310,11 @@
         'setOnWatchFilter',
         'setRiskApproachFilter',
         'setRiskForManager',
+        'SET_RISK_FORM_OPEN',
+        'SET_SELECTED_RISK'
       ]),
       log(t){
-        // console.log(t)
+        console.log(t)
       },
       sort:function(s) {
       //if s == current sort, reverse
@@ -315,6 +332,9 @@
       addNewRisk() {
         if (this.from == "manager_view") {
           this.setRiskForManager({key: 'risk', value: {}})
+          // Sets risk form in state_facility_sidebar
+          this.SET_RISK_FORM_OPEN(true);
+          this.SET_SELECTED_RISK({});
         } else {
           this.$emit('show-hide')
         }
@@ -411,7 +431,11 @@
           
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
 
-          if (search_query) valid = valid && search_query.test(resource.text)
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.riskApproach) ||
+          valid && search_query.test(resource.priorityLevelName) ||   
+          valid && search_query.test(resource.userNames)
 
 
           return valid;
@@ -556,7 +580,6 @@
   .riskHover:hover {
     cursor: pointer;
     background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
   }
   table {
     table-layout: fixed;

@@ -23,7 +23,7 @@
             <div class="box-card my-el-card p-3" style="position:relative">               
 
              <div class="row">
-                <div class="col font-weight-bold">                
+                <div class="col-5 font-weight-bold">                
                   <p>Project Group:</p>
                   <p>Completion Date: </p>               
                   <p>Status:
@@ -34,10 +34,10 @@
                       </small>
                    </span>
                   </p>                    
-                  <p>CATEGORIES: </p>                 
+                            
                 </div>
 
-                <div class="col">            
+                <div class="col-7">            
                  <p class="badge badge-secondary badge-pill font-weight-light"> {{facilityGroup.name}}</p>
                  <div class="simple-select">
                   <v2-date-picker
@@ -51,43 +51,24 @@
                   />
                  </div>
                                
-                 <div class="simple-select mt-2">                
-                   <multiselect
-                      v-model="selectedStatus"
-                      track-by="id"
-                      label="name"                     
-                      :options="statuses"                    
-                      :searchable="false"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      @select="onChange"
-                      :disabled="!_isallowed('write')"
+                   <div class="mt-2">                
+                     <el-select 
+                      v-model="selectedStatus"  
+                      track-by="id" 
+                      class="w-100"                     
+                      :disabled="!_isallowed('write')"                                                                       
+                      placeholder="Select Project Status"
+                       >
+                     <el-option 
+                      v-for="item in statuses"
+                      :label="item.name"
+                      :key="item.id"
+                      :value="item.id"                                                    
                       >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                      </template>
-                    </multiselect> 
+                     </el-option>
+                   </el-select> 
                   </div> 
-                  <div class="simple-select mt-1"> 
-                      <multiselect
-                      v-model="C_taskTypeFilter"
-                      track-by="name"
-                      label="name"                                
-                      :options="taskTypes"
-                      :searchable="false"
-                      :multiple="true"
-                      select-label="Select"
-                      deselect-label="Remove"
-                      >
-                      <template slot="singleLabel" slot-scope="{option}">
-                        <div class="d-flex">
-                          <span class='select__tag-name'>{{option.name}}</span>
-                        </div>
-                     </template>
-                     </multiselect> 
-                    </div>                  
+                 
                 </div>
               </div>
                <button v-if="_isallowed('write') && DV_updated" class="btn btn-secondary mt-1 btn-sm apply-btn w-100" @click="updateFacility" :disabled="!DV_updated">Apply</button>             
@@ -262,20 +243,16 @@
                     </div>
               </div>
 
- <div v-if="issueStats.length > 0" data-cy="issue_types" >
+ <div v-if="filteredIssues.length" data-cy="issue_types" >
     <el-collapse>
-            <el-collapse-item title="Details" name="1">
-
-  <div v-if="issueTaskCATEGORIES.length > 0" data-cy="issue_types"> 
-         
-         
+      <el-collapse-item title="Details" name="1">          
               <div v-if="contentLoaded">
                 <div class="row">
                   <div class="col mt-1 mb-2 text-center">
                    CATEGORIES
                   </div>
                 </div>
-                <div class="row" v-for="issue in issueTaskCATEGORIES">
+                <div class="row"  v-for="(issue, index) in issueTaskCATEGORIES" :key="index">
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -286,12 +263,7 @@
                     </span>
                   </div>
                 </div>
-              </div>
-          
-           </div>
-
-
-              
+              </div>             
 
              <div class="row">
                <div class="col mt-3 mb-1 text-center">
@@ -299,7 +271,7 @@
                </div>                  
             </div>
             
-             <div class="row mb-1 font-sm" v-for="issue in issueStats">          
+             <div class="row mb-1 font-sm" v-for="issue in issueStats" :key="issue.id">          
                   <div class="col">
                     <span> {{issue.name}}</span>
                     <span class="badge badge-secondary badge-pill">{{issue.count}}</span>
@@ -311,8 +283,8 @@
                   </div>
             </div>
 
-              </el-collapse-item>
-          </el-collapse>
+      </el-collapse-item>
+    </el-collapse>
  </div>
           <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
          
@@ -510,7 +482,7 @@
         DV_updated: false,
         notesQuery: '',
         DV_facility: Object.assign({}, this.facility),
-        selectedStatus: null,
+        _selected: null,
         currentTab: 'overview',
         tabs: [
           {
@@ -567,7 +539,7 @@
       },
       loadFacility(facility) {
         this.DV_facility = Object.assign({}, facility)
-        this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+        this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
         this.loading = false
       },
       getFacility() {
@@ -628,6 +600,21 @@
         'myActionsFilter',
         'onWatchFilter'
       ]),
+      selectedStatus: {
+        get () {
+          return this.$data._selected || this.DV_facility.statusId
+        },
+        set (value) {       
+          this.$data._selected = value
+          // console.log(value)
+          if (value) {
+            this.$nextTick(() => {
+              this.DV_updated = true
+            })
+            this.DV_facility.statusId = value
+          }        
+        }
+      },
       C_taskTypeFilter: {
         get() {
           return this.taskTypeFilter
@@ -693,7 +680,7 @@
       taskVariation() {
         let completed = _.filter(this.filteredTasks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredTasks.length)
-        let overdue = _.filter(this.filteredTasks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredTasks.length)
 
         return {
@@ -731,6 +718,7 @@
         let issues = new Array
         let group = _.groupBy(this.filteredIssues, 'taskTypeName')
         for (let type in group) {
+          if(!type || type == "null") continue;
           issues.push({
             name: type,
             count: group[type].length,
@@ -754,7 +742,7 @@
       issueVariation() {
         let completed = _.filter(this.filteredIssues, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredIssues.length)
-        let overdue = _.filter(this.filteredIssues, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredIssues.length)
 
         return {
@@ -771,7 +759,7 @@
 
         
         if (riskPriorityLevelIds ){         
-          console.log(riskPriorityLevelIds)
+          // console.log(riskPriorityLevelIds)
         }
         return _.filter(this.DV_facility.risks, (resource) => {
           let valid = true
@@ -808,7 +796,7 @@
        riskVariation() {
         let completed = _.filter(this.filteredRisks, (t) => t && t.progress && t.progress == 100)
         let completed_percent = this.getAverage(completed.length, this.filteredRisks.length)
-        let overdue = _.filter(this.filteredRisks, (t) => t && t.progress !== 100 && new Date(t.dueDate).getTime() < new Date().getTime())
+        let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue)
         let overdue_percent = this.getAverage(overdue.length, this.filteredRisks.length)
         return {
           completed: {count: completed.length, percentage: Math.round( completed_percent )},
@@ -839,7 +827,7 @@
       facility: {
         handler(value) {
           this.DV_facility = Object.assign({}, value)
-          this.selectedStatus = this.statuses.find(s => s.id == this.DV_facility.statusId)
+          this._selected = this.statuses.find(s => s.id == this.DV_facility.statusId)
           this.loading = false
           this.DV_updated = false
           if (this.from != "manager_view") {
@@ -850,12 +838,7 @@
       },
       "DV_facility.statusId"(value) {
         if (!value) this.DV_facility.dueDate = null
-      },
-      selectedStatus: {
-        handler(value) {
-          this.DV_facility.statusId = value ? value.id : null
-        }, deep: true
-      },
+      },   
       currentTab(value) {
         this.nullifyTasksForManager()
       }
@@ -931,9 +914,9 @@
     color: #555;
     background-color: #fff;
   }
+
   .simple-select /deep/ .multiselect {
-    .multiselect__placeholder {
-      color: #dc3545;
+    .multiselect__placeholder {    
       text-overflow: ellipsis;
     }
   }
@@ -1022,3 +1005,5 @@
   }
 
 </style>
+
+

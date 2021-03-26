@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div>   
     <form
       id="issues-form"
       @submit.prevent="saveIssue"    
@@ -8,116 +8,126 @@
       data-cy="issue_form"
      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
     >
-      <div v-if="_isallowed('read')" class="d-flex form-group sticky mb-1 pl-3 pr-4  justify-content-start action-bar">
-        <button
-          v-if="_isallowed('write')"
-          :disabled="!readyToSave"
-          class="btn btn-sm sticky-btn btn-success"
-          data-cy="issue_save_btn"
-        >
-          Save
-        </button>
-        <button
-          v-else
-          disabled
-          class="btn btn-sm sticky-btn btn-light"
-          data-cy="issue_read_only_btn"
-        >
-          Read Only
-        </button>
-        <button
-          class="btn btn-sm sticky-btn btn-warning ml-2"
-          @click.prevent="cancelIssueSave"
-          data-cy="issue_close_btn"
-        >
-          Close
-        </button>
-        <!-- <div class="btn-group">
+      <div class="mt-2 mx-4 d-flex align-items-center">
+        <div>
+          <h5 class="mb-0">
+            <span style="font-size: 16px; margin-right: 10px"
+              ><i class="fas fa-building"></i
+            ></span>
+            {{ facility.facilityName }}
+            <el-icon
+              class="el-icon-arrow-right"
+              style="font-size: 12px"
+            ></el-icon>
+            Issues
+            <el-icon
+              class="el-icon-arrow-right"
+              style="font-size: 12px"
+            ></el-icon>
+            <span v-if="DV_issue.title.length > 0">{{ DV_issue.title }}</span>
+            <span v-else style="color: gray">(Issue Name)</span>
+          </h5>
+        </div>
+        <div class="ml-auto d-flex" v-if="_isallowed('read')">
           <button
             v-if="_isallowed('write')"
-            class="btn btn-sm sticky-btn btn-light mr-1 scrollToChecklist"
-            @click.prevent="scrollToChecklist"
+            class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+            data-cy="issue_save_btn"
           >
-            <font-awesome-icon icon="plus-circle" />
-            Checklists
+            Save Issue
           </button>
           <button
-            v-if="_isallowed('write')"
-            class="btn btn-sm sticky-btn btn-light scrollToChecklist"
-            @click.prevent="scrollToUpdates"
+            v-else
+            disabled
+            class="btn btn-sm sticky-btn btn-primary mr-2"
+            data-cy="issue_read_only_btn"
           >
-            <font-awesome-icon icon="plus-circle" />
-            Updates
+            Read Only
           </button>
-        </div> -->
-        <button
-          v-if="_isallowed('delete') && DV_issue.id"
-          @click.prevent="deleteIssue"
-          class="btn btn-sm btn-danger sticky-btn ml-auto"
-          data-cy="issue_delete_btn"
-        >
-          <i class="fas fa-trash-alt mr-2"></i>
-          Delete
-        </button>
+          <button
+            class="btn btn-sm sticky-btn btn-outline-secondary"
+            @click.prevent="cancelIssueSave"
+            data-cy="issue_close_btn"
+          >
+            Close
+          </button>
+        </div>
       </div>
-       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">          
-          <custom-tabs :current-tab="currentTab" :tabs="tabs" @on-change-tab="onChangeTab" class="custom-tab pl-2" :class="{'font-sm':isMapView}" />       
+
+      <hr class="mx-4 mb-6 mt-2" />
+      
+      <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
+        <FormTabs 
+          :current-tab="currentTab" 
+          :tabs="tabs"
+          :allErrors="errors"
+          @on-change-tab="onChangeTab"
+        />       
       </div>
+      <h6 class="mx-4 mt-4 mb-0" style="color: gray; font-size: 13px">
+        <span style="color: #dc3545; font-size: 15px">*</span> Indicates
+        required fields
+      </h6>
 
 <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
       <div class="formTitle fixed-form">
-        <div v-if="showErrors" class="text-danger mb-3">
-          Please fill the required fields before submitting
+        <div v-if="errors.items.length > 0" class="text-danger mx-4">
+        Please fill the required fields before submitting
+          <ul class="error-list mx-4">
+            <li
+              v-for="(error, index) in errors.all()"
+              :key="index"
+              v-tooltip="{
+                content: 'Field is located on Issue Info',
+                placement: 'left',
+              }"
+            >
+              {{ error }}
+            </li>
+          </ul>
+        </div>      
+    <!-- ISSUE INFO TAB #1 -->
+    <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
+      <div class="form-group pt-3 mx-4">
+        <label class="font-md">Issue Name <span style="color: #dc3545">*</span></label>
+        <span
+          v-if="_isallowed('write')"
+          class="watch_action clickable float-right"
+          @click.prevent.stop="toggleWatched"
+          data-cy="issue_on_watch"
+        >
+          <span v-show="DV_issue.watched" class="check_box mx-1"
+            ><i class="far fa-check-square font-md"></i
+          ></span>
+          <span v-show="!DV_issue.watched" class="empty_box mr-1"
+            ><i class="far fa-square"></i
+          ></span>
+          <span><i class="fas fa-eye mr-1"></i></span
+          ><small style="vertical-align: text-top">On Watch</small>
+        </span>
+        <input
+          name="Issue Name"
+          v-validate="'required'"
+          type="text"
+          class="form-control form-control-sm"
+          v-model="DV_issue.title"
+          placeholder="Issue Name"
+          :readonly="!_isallowed('write')"
+          :class="{ 'form-control': true, error: errors.has('Issue Name') }"
+          data-cy="issue_title"
+        />
+        <div
+          v-show="errors.has('Issue Name')"
+          class="text-danger"
+          data-cy="issue_title_error"
+        >
+          {{ errors.first("Issue Name") }}
         </div>
-
-
-
-  <!-- NAME persists throughout tab selection -->
-        <div class="form-group pt-3 mx-4">
-          <label class="font-sm">*Issue Name:</label>
-          <span
-            v-if="_isallowed('write')"
-            class="watch_action clickable float-right"
-            @click.prevent.stop="toggleWatched"
-            data-cy="issue_on_watch"
-          >
-            <span v-show="DV_issue.watched" class="check_box mx-1"
-              ><i class="far fa-check-square font-md"></i
-            ></span>
-            <span v-show="!DV_issue.watched" class="empty_box mr-1"
-              ><i class="far fa-square"></i
-            ></span>
-            <span><i class="fas fa-eye mr-1"></i></span
-            ><small style="vertical-align: text-top">On Watch</small>
-          </span>
-          <input
-            name="title"
-            v-validate="'required'"
-            type="text"
-            class="form-control form-control-sm"
-            v-model="DV_issue.title"
-            placeholder="Issue Name"
-            :readonly="!_isallowed('write')"
-            :class="{ 'form-control': true, error: errors.has('title') }"
-            data-cy="issue_title"
-          />
-          <div
-            v-show="errors.has('title')"
-            class="text-danger"
-            data-cy="issue_title_error"
-          >
-            {{ errors.first("title") }}
-          </div>
-     </div>
-
-
-  <!-- ISSUE INFO TAB #1 -->
-
-<div v-if="currentTab == 'tab1'" class="paperLookTab tab1">
+      </div>
 
 
         <div class="form-group mx-4">
-          <label class="font-sm">Description:</label>
+          <label class="font-md">Description</label>
           <textarea
             class="form-control"
             placeholder="Issue brief description"
@@ -131,7 +141,27 @@
  <!-- Row begins -->
      <div  class="d-flex mb-0 mx-4 form-group">
        <div class="simple-select w-100 form-group">
-          <label class="font-sm">Category:</label>
+          <label class="font-md">Category</label>
+            <el-select 
+              v-model="selectedTaskType"                 
+              class="w-100" 
+              clearable    
+              track-by="id" 
+              value-key="id"
+              :disabled="!_isallowed('write')"
+              data-cy="task_type"
+              name="Category"                                                   
+              placeholder="Select Category"
+              >
+              <el-option 
+                v-for="item in taskTypes"                                                     
+                :value="item"   
+                :key="item.id"
+                :label="item.name"                                                  
+                >
+              </el-option>
+              </el-select>        
+<!--  
           <multiselect
             v-model="selectedTaskType"
             track-by="id"
@@ -140,7 +170,7 @@
             :options="taskTypes"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
             :class="{ error: errors.has('Task Category') }"
             data-cy="task_type"
@@ -150,19 +180,31 @@
                 <span class="select__tag-name">{{ option.name }}</span>
               </div>
             </template>
-          </multiselect>
-          <div
-            v-show="errors.has('Task Type')"
-            class="text-danger"
-            data-cy="task_type_error"
-          >
-            {{ errors.first("Task Type") }}
-          </div>
+          </multiselect> -->
         </div>        
 
         <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">*Issue Type:</label>
-          <multiselect
+          <label class="font-md">Issue Type <span style="color: #dc3545">*</span></label>
+             <el-select 
+              v-model="selectedIssueType"  
+              v-validate="'required'"                  
+              class="w-100" 
+              track-by="id" 
+              value-key="id"            
+              :class="{ 'error-border': errors.has('Issue Type') }"
+              data-cy="issue_type"
+              name="Issue Type"                                                                                                                                                                              
+              placeholder="Issue Type"
+              >
+              <el-option 
+                v-for="item in issueTypes"                                                     
+                :value="item"   
+                :key="item.id"
+                :label="item.name"                                                  
+                >
+              </el-option>
+              </el-select>       
+          <!-- <multiselect
             v-model="selectedIssueType"
             v-validate="'required'"
             track-by="id"
@@ -171,17 +213,18 @@
             :options="issueTypes"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
-            :class="{ error: errors.has('Issue Type') }"
+            :class="{ 'error-border': errors.has('Issue Type') }"
             data-cy="issue_type"
+            name="Issue Type"
           >
             <template slot="singleLabel" slot-scope="{ option }">
               <div class="d-flex">
                 <span class="select__tag-name">{{ option.name }}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
           <div
             v-show="errors.has('Issue Type')"
             class="text-danger"
@@ -195,8 +238,28 @@
     <!-- Tab 1 Row begins here -->
      <div class="d-flex mx-4">
        <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">*Issue Severity:</label>
-          <multiselect
+          <label class="font-md">Issue Severity <span style="color: #dc3545">*</span></label>
+           <el-select 
+            v-model="selectedIssueSeverity"  
+            v-validate="'required'"                  
+            class="w-100" 
+            track-by="id" 
+            value-key="id"            
+            :disabled="!_isallowed('write')"
+            :class="{ 'error-border': errors.has('Issue Severity') }"
+            data-cy="issue_severity"
+            name="Issue Severity"                                                                                                                                                                    
+            placeholder="Issue Severity"
+            >
+            <el-option 
+              v-for="item in issueSeverities"                                                     
+              :value="item"   
+              :key="item.id"
+              :label="item.name"                                                  
+              >
+            </el-option>
+            </el-select>      
+          <!-- <multiselect
             v-model="selectedIssueSeverity"
             v-validate="'required'"
             track-by="id"
@@ -205,17 +268,18 @@
             :options="issueSeverities"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write')"
-            :class="{ error: errors.has('Issue Severity') }"
+            :class="{ 'error-border': errors.has('Issue Severity') }"
             data-cy="issue_severity"
+            name="Issue Severity"
           >
             <template slot="singleLabel" slot-scope="{ option }">
               <div class="d-flex">
                 <span class="select__tag-name">{{ option.name }}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
           <div
             v-show="errors.has('Issue Severity')"
             class="text-danger"
@@ -225,8 +289,26 @@
           </div>
         </div>
         <div class="simple-select form-group w-100 mx-1">
-          <label class="font-sm">Stage:</label>
-          <multiselect
+          <label class="font-md">Stage</label>
+          <el-select 
+            v-model="selectedIssueStage"                    
+            class="w-100" 
+            track-by="id" 
+            clearable    
+            value-key="id"    
+            :disabled="!_isallowed('write') || !!fixedStage"
+            data-cy="task_stage"                                                                                                                                                
+            placeholder="Select Stage"
+            >
+             <el-option 
+              v-for="item in issueStages"                                                     
+              :value="item"   
+              :key="item.id"
+              :label="item.name"                                                  
+              >
+            </el-option>
+           </el-select>
+          <!-- <multiselect
             v-model="selectedIssueStage"
             track-by="id"
             label="name"
@@ -234,7 +316,7 @@
             :options="issueStages"
             :searchable="false"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :disabled="!_isallowed('write') || !!fixedStage"
             data-cy="issue_stage"
           >
@@ -243,7 +325,7 @@
                 <span class="select__tag-name">{{ option.name }}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
         </div>
      </div>   
 
@@ -252,7 +334,7 @@
 Tab 1 Row Begins here -->
 <div  class="d-flex mb-0 mx-4 form-group">
       <div class="form-group mx-1 w-75">
-            <label class="font-sm">*Start Date:</label>
+            <label class="font-md">Start Date <span style="color: #dc3545">*</span></label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_issue.startDate"
@@ -261,6 +343,7 @@ Tab 1 Row Begins here -->
               placeholder="DD MM YYYY"
               name="Start Date"
               class="w-100 vue2-datepicker"
+              :class="{ 'error-border': errors.has('Start Date') }"
               :disabled="!_isallowed('write')"
               data-cy="issue_start_date"
             />
@@ -273,7 +356,7 @@ Tab 1 Row Begins here -->
             </div>
           </div>
           <div class="form-group w-75 ml-1">
-            <label class="font-sm">*Estimated Completion Date:</label>
+            <label class="font-md">Estimated Completion Date <span style="color: #dc3545">*</span></label>
             <v2-date-picker
               v-validate="'required'"
               v-model="DV_issue.dueDate"
@@ -282,6 +365,7 @@ Tab 1 Row Begins here -->
               placeholder="DD MM YYYY"
               name="Estimated Completion Date"
               class="w-100 vue2-datepicker"
+              :class="{ 'error-border': errors.has('Estimated Completion Date') }"
               :disabled="
                 !_isallowed('write') ||
                 DV_issue.startDate === '' ||
@@ -331,60 +415,75 @@ Tab 1 Row Begins here -->
 
 
  <!-- ASSIGN USERS TAB # 2-->
-  <div v-if="currentTab == 'tab2'" class="paperLookTab tab2">
+  <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
    
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-sm mb-0">Responsible:</label>
-          <multiselect
-            v-model="responsibleUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Responsible User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="true"
-            :disabled="!_isallowed('write')"
-            data-cy="issue_user"
+          <label class="font-md mb-0">Responsible</label>          
+          <el-select 
+           v-model="responsibleUsers" 
+           class="w-100" 
+           filterable
+           clearable    
+           track-by="id"    
+           value-key="id"                                                                                                                                                          
+           placeholder="Select Responsible User"
+           :disabled="!_isallowed('write')"
+           data-cy="task_owner"
+           >
+          <el-option 
+            v-for="item in activeProjectUsers"                                                            
+            :value="item"   
+            :key="item.id"
+            :label="item.fullName"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>      
+         
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Accountable:</label>
-          <multiselect
-            v-model="accountableIssueUsers"              
-            track-by="id"
-            label="fullName"
+          <label class="font-md mb-0">Accountable</label>            
+           <el-select 
+            v-model="accountableIssueUsers"          
+            class="w-100"    
+            clearable           
+            track-by="id"    
+            value-key="id"                                                                                                                                                          
             placeholder="Select Accountable User"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="false"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="true"
-              
+            filterable       
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
+            <el-option 
+              v-for="item in activeProjectUsers"                                                            
+              :value="item"   
+              :key="item.id"
+              :label="item.fullName"                                                  
+              >
+            </el-option>
+          </el-select>        
         </div>             
   </div> 
   <div class="form-group  mt-0 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
-          <label class="font-sm mb-0">Consulted:</label>
-          <multiselect
+          <label class="font-md mb-0">Consulted</label>
+           <el-select 
+           v-model="consultedIssueUsers"
+           class="w-100"           
+           track-by="id"    
+           value-key="id"   
+           :multiple="true"                                                                                                                                                       
+           placeholder="Select Consulted Users"
+           filterable
+           >
+          <el-option 
+            v-for="item in activeProjectUsers"                                                            
+            :value="item"   
+            :key="item.id"
+            :label="item.fullName"                                                  
+            >
+          </el-option>
+          </el-select>        
+          <!-- <multiselect
             v-model="consultedIssueUsers"         
             track-by="id"
             label="fullName"
@@ -393,7 +492,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
     
             data-cy="risk_owner"
@@ -403,29 +502,27 @@ Tab 1 Row Begins here -->
                 <span class='select__tag-name'>{{option.fullName}}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
         </div>     
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-sm mb-0">Informed:</label>
-          <multiselect
-            v-model="informedIssueUsers"        
-            track-by="id"
-            label="fullName"
-            placeholder="Select Informed Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false" 
-            data-cy="risk_owner"
+          <label class="font-md mb-0">Informed</label>
+          <el-select 
+           v-model="informedIssueUsers"       
+           class="w-100"           
+           track-by="id"    
+           value-key="id"   
+           multiple  
+           filterable                                                                                                                                                     
+           placeholder="Select Informed Users"           
+           >
+          <el-option 
+            v-for="item in activeProjectUsers"                                                            
+            :value="item"   
+            :key="item.id"
+            :label="item.fullName"                                                  
             >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect>
+          </el-option>
+          </el-select>        
         </div>         
     </div>
   </div>
@@ -433,9 +530,29 @@ Tab 1 Row Begins here -->
 
 
   <!-- CHECKLIST TAB #3 -->
-<div v-if="currentTab == 'tab3'" class="paperLookTab tab2">
-<div class="form-group pt-3 mx-4" >
-    <label class="font-sm">Checklists:</label>
+<div v-show="currentTab == 'tab3'" class="paperLookTab tab2">
+      <div class="form-group pt-3 ml-4 mr-5">
+          <label class="font-md mb-0">Progress (in %)</label>
+          <span class="ml-3">
+            <label class="font-sm mb-0 d-inline-flex align-items-center"
+              ><input
+                type="checkbox"
+                v-model="DV_issue.autoCalculate"
+                :disabled="!_isallowed('write')"
+                :readonly="!_isallowed('write')"
+              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
+            >
+          </span>
+          <el-slider
+            v-model="DV_issue.progress"   
+            :disabled="!_isallowed('write') || DV_issue.autoCalculate"
+            :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
+            :format-tooltip="(value) => value + '%'"
+            class="mx-2"
+          ></el-slider>
+        </div>
+    <div class="form-group pt-3 mx-4" >
+    <label class="font-md">Checklists</label>
     <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
       <i class="fas fa-plus-circle" ></i>
     </span>
@@ -497,39 +614,34 @@ Tab 1 Row Begins here -->
                     :class="{ disabled: disabledDateRange }"          
                   />            
               </div>
-          </div>
-            
-            
+          </div>          
             
             
             
             <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
                <div class="d-flex w-100" style="padding-left:4.5rem">
-                <span class="font-sm pt-2 pr-2 m">Assigned To:</span>
-                <multiselect
-                  v-model="check.user"
-                  track-by="id"
-                  label="fullName"                  
-                  class="w-75"
-                  placeholder="Search and select users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :disabled="!_isallowed('write') || !check.text"
-                  select-label="Select"
-                  deselect-label="Enter to remove"
+                <span class="font-md pt-2 pr-2 m">Assigned To:</span>
+                <el-select 
+                  v-model="check.user" 
+                  class="w-75"           
+                  track-by="id"    
+                  value-key="id"  
+                  clearable         
+                  filterable  
+                  :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
+                  placeholder="Search and select user"                  
                   >
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.fullName}}</span>
-                    </div>
-                  </template>
-                </multiselect>
+                <el-option 
+                  v-for="item in activeProjectUsers"                                                            
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.fullName"                                                  
+                  >
+                </el-option>
+                </el-select> 
                </div>
-              </div>
-              <!-- <div class="simple-select form-group col mb-0">
-              
-              </div> -->
+              </div>             
             </div>
 
             <!-- Start Checkbox Progress List -->
@@ -636,79 +748,173 @@ Tab 1 Row Begins here -->
 
 
 <!-- FILES TAB # 4-->
-<div v-if="currentTab == 'tab4'" class="paperLookTab tab4">
-<div class="mx-4 pt-3">
-          <div class="input-group mb-2">
-            <div v-for="file in filteredFiles" class="d-flex mb-2 w-100">
-              <div class="input-group-prepend">
-                <div
-                  class="input-group-text clickable"
-                  :class="{ 'btn-disabled': !file.uri }"
-                  @click.prevent="downloadFile(file)"
-                >
-                  <i class="fas fa-file-image"></i>
+<div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
+       <div class="container-fluid mx-4 mt-2">          
+           <div class="row">           
+               <div class="col-5 pr-4 links-col">
+                  <div v-if="_isallowed('write')" class="form-group">
+                  <attachment-input
+                    @input="addFile"
+                    :show-label="true"
+                  ></attachment-input>
                 </div>
+               <div
+                  v-for="file in filteredFiles.slice().reverse()"              
+                  class="d-flex mb-2 w-100"
+                   v-if="!file.link" 
+                >               
+                 <div
+                      class="input-group-text d-inline clickable px-1 w-100 hover"
+                      :class="{ 'btn-disabled': !file.uri }"
+                      @click.prevent="downloadFile(file)"
+                    >
+                   <span class="scales"><font-awesome-icon icon="file" class="mr-1"/></span>                
+                  <input
+                    readonly
+                    type="text"
+                    class="w-100 mr-1 file-link"
+                    style="border:none; cursor:pointer; background-color:transparent"               
+                    :value="file.name || file.uri"                  
+                  >
+                </div>
+                               
+                  <span
+                    :class="{ _disabled: loading || !_isallowed('write') }"
+                    class="del-check mt-2 clickable"
+                    @click.prevent="deleteFile(file)"
+                  >
+                    <i class="fas fa-times"></i>
+                  </span>                 
+                 </div>
+            
               </div>
-              <input
-                readonly
-                type="text"
-                class="form-control form-control-sm mw-95"
-                :value="file.name || file.uri"
-              />
-              <div
-                :class="{ _disabled: loading || !_isallowed('write') }"
-                class="del-check clickable"
-                @click.prevent="deleteFile(file)"
-              >
-                <i class="fas fa-times"></i>
+              <div class="col-6 mb-2 pl-4 links-col"> 
+               
+                 <div class="input-group mb-1">
+                    <div class="d-block mt-1">
+                    <label class="font-lg">Add link</label>
+                    <span
+                      class="ml-2 clickable"
+                      v-if="_isallowed('write')"
+                      @click.prevent="addFilesInput"
+                    >
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                   </div>
+        
+                  <div
+                    v-for="(file, index) in DV_issue.issueFiles.slice().reverse()"
+                    :key="index"
+                    class="d-flex mb-2 w-75"
+                    v-if="!file.id && file.link"
+                  >
+                    <div class="input-group-append" >
+                      <div
+                        class="input-group-text clickable"
+                        :class="{ 'btn-disabled': !file.uri }"
+                        @click.prevent="downloadFile(file)"
+                      >
+                        <!-- <i class="fas fa-link"></i> -->
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Enter link to a site or file"
+                      class="form-control form-control-sm mw-95"
+                      @input="updateFileLinkItem($event, 'text', file)"
+                    />
+                    <div
+                      :class="{ _disabled: loading || !_isallowed('write') }"
+                      class="del-check clickable"
+                      @click.prevent="deleteFile(file)"
+                    >
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </div>
+
+                  <div
+                    v-for="(file, index) in filteredFiles.slice().reverse()"
+                    :key="index"               
+                    class="d-flex mb-2 w-100 px-1 hover"                   
+                    v-if="file.link && file.id"
+                >
+                  
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control form-control-sm mw-95"
+                    :value="file.name || file.uri"
+                    v-if="!file.link"
+                  />
+                  <a :href="file.uri" target="_blank" v-if="file.link" class="no-text-decoration">
+                       <span v-if="file.link"> <i class="fas fa-link mr-1"></i></span>{{ urlShortener(file.uri, 68) }}
+                  </a>
+                  <div
+                    :class="{ _disabled: loading || !_isallowed('write') }"
+                    class="del-check clickable"
+                    @click.prevent="deleteFile(file)"
+                  >
+                    <i class="fas fa-times"></i>
+                  </div>
+                </div>
+                </div>
+                  
               </div>
-            </div>
+            </div>          
           </div>
-        </div>
-        <div ref="addCheckItem" class="pt-0 mt-0 mb-4"></div>
-        <div v-if="_isallowed('write')" class="form-group mx-4">
-          <label class="font-sm">Files:</label>
-          <attachment-input
-            @input="addFile"
-            :show-label="true"
-          ></attachment-input>
-        </div>
-          <!-- closing div for tab4 -->
 </div>
 
 
 
-
  <!-- RELATED TAB #5 -->  
-<div v-if="currentTab == 'tab5'" class="paperLookTab tab4">
+<div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
 
 
         <div class="form-group user-select pt-3 mx-4">
-          <label class="font-sm mb-0">Related Issues:</label>
-          <multiselect
-            v-model="relatedIssues"
-            track-by="id"
-            label="title"
+          <label class="font-md mb-0">Related Issues</label>
+          <el-select 
+            v-model="relatedIssues" 
+            class="w-100"           
+            track-by="id"    
+            value-key="id"                
+            filterable 
+            multiple 
+            :disabled="!_isallowed('write')"                                                                                                                                                
             placeholder="Search and select Related-issues"
-            :options="filteredIssues"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false"
-            :disabled="!_isallowed('write')"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.title }}</span>
-              </div>
-            </template>
-          </multiselect>
+                  
+            >
+          <el-option 
+            v-for="item in filteredIssues"                                                            
+            :value="item"   
+            :key="item.id"
+            :label="item.title"                                                  
+            >
+            </el-option>
+            </el-select>          
         </div>
 
         <div class="form-group user-select mx-4">
-          <label class="font-sm mb-0">Related Tasks:</label>
-          <multiselect
+          <label class="font-md mb-0">Related Tasks</label>
+           <el-select 
+            v-model="relatedTasks" 
+            class="w-100"           
+            track-by="id"    
+            value-key="id"                
+            filterable 
+            multiple 
+           :disabled="!_isallowed('write')"                                                                                                                                                
+            placeholder="Search and select Related-tasks"                 
+            >
+          <el-option 
+            v-for="item in filteredTasks"                                                            
+            :value="item"   
+            :key="item.id"
+            :label="item.text"                                                  
+            >
+            </el-option>
+            </el-select>                
+
+          <!-- <multiselect
             v-model="relatedTasks"
             track-by="id"
             label="text"
@@ -717,7 +923,7 @@ Tab 1 Row Begins here -->
             :searchable="true"
             :multiple="true"
             select-label="Select"
-            deselect-label="Enter to remove"
+            deselect-label="Remove"
             :close-on-select="false"
             :disabled="!_isallowed('write')"
           >
@@ -726,30 +932,30 @@ Tab 1 Row Begins here -->
                 <span class="select__tag-name">{{ option.text }}</span>
               </div>
             </template>
-          </multiselect>
+          </multiselect> -->
         </div>
 
         <div class="form-group user-select mx-4">
-        <label class="font-sm mb-0">Related Risks:</label>
-        <multiselect
-          v-model="relatedRisks"
-          track-by="id"
-          label="text"
+        <label class="font-md mb-0">Related Risks</label>
+         <el-select 
+          v-model="relatedRisks" 
+          class="w-100"           
+          track-by="id"    
+          value-key="id"                
+          filterable 
+          multiple 
+         :disabled="!_isallowed('write')"                                                                                                                                                
           placeholder="Search and select Related-risks"
-          :options="filteredRisks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Enter to remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
+                
           >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect>
+         <el-option 
+          v-for="item in filteredRisks"                                                            
+          :value="item"   
+          :key="item.id"
+          :label="item.text"                                                  
+           >
+          </el-option>
+          </el-select>  
       </div>
           <!-- closing div for tab4 -->
 </div>
@@ -757,30 +963,10 @@ Tab 1 Row Begins here -->
 
 
  <!-- UPDATE TAB 6 -->
-<div v-if="currentTab == 'tab6'" class="paperLookTab tab5">
-
-   <div class="form-group pt-3 mx-4">
-          <label class="font-sm mb-0">Progress: (in %)</label>
-          <span class="ml-3">
-            <label class="font-sm mb-0 d-inline-flex align-items-center"
-              ><input
-                type="checkbox"
-                v-model="DV_issue.autoCalculate"
-                :disabled="!_isallowed('write')"
-                :readonly="!_isallowed('write')"
-              /><span>&nbsp;&nbsp;Auto Calculate Progress</span></label
-            >
-          </span>
-          <vue-slide-bar
-            v-model="DV_issue.progress"
-            :line-height="8"
-            :is-disabled="!_isallowed('write') || DV_issue.autoCalculate"
-            :draggable="_isallowed('write') && !DV_issue.autoCalculate"
-          ></vue-slide-bar>
-        </div>
+<div v-show="currentTab == 'tab6'" class="paperLookTab tab5">    
 
         <div class="form-group mx-4 paginated-updates">
-          <label class="font-sm">Updates:</label>
+          <label class="font-md">Updates</label>
           <span
             class="ml-2 clickable"
             v-if="_isallowed('write')"
@@ -827,13 +1013,6 @@ Tab 1 Row Begins here -->
       </div>
           <!-- closing div for tab5 -->
 </div>
-
-
-
-
-      <h6 class="text-danger text-small pl-1 float-right pr-3">
-        *Indicates required fields
-      </h6>
       <div ref="addUpdates" class="pt-0 mt-0"></div>
     </form>
     <div
@@ -850,7 +1029,8 @@ import humps from "humps";
 import Draggable from "vuedraggable";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
-import CustomTabs from './../../shared/custom-tabs'
+import FormTabs from './../../shared/FormTabs'
+
 
 export default {
   name: "IssueForm",
@@ -858,11 +1038,13 @@ export default {
   components: {
     AttachmentInput,
     Draggable,
-    CustomTabs
+    FormTabs
+    
   },
   data() {
     return {
       DV_issue: this.INITIAL_ISSUE_STATE(),
+      DV_facility: Object.assign({}, this.facility),
       paginate: ["filteredNotes"],
       destroyedFiles: [],
       selectedIssueType: null,
@@ -871,8 +1053,8 @@ export default {
       editToggle: false,
       selectedIssueStage: null,
       issueUsers: [],
-      responsibleUsers: [],
-      accountableIssueUsers:[],
+      responsibleUsers: null,
+      accountableIssueUsers:null,
       consultedIssueUsers:[],
       informedIssueUsers:[],
       relatedIssues: [],
@@ -881,43 +1063,43 @@ export default {
       showErrors: false,
       loading: true,
       movingSlot: "",
-           currentTab: 'tab1',
-        tabs: [
+      currentTab: 'tab1',
+      tabs: [
+        {
+          label: 'Issue Info',
+          key: 'tab1',
+          closable: false,
+          form_fields: ['Issue Name', 'Description', 'Category', 'Issue Type', 'Issue Severity', 'Stage', 'Start Date', 'Estimated Completion Date']
+        },
           {
-            label: 'ISSUE INFO',
-            key: 'tab1',
-            closable: false
-          },
-           {
-            label: 'ASSIGNMENTS',
-            key: 'tab2',
-            closable: false,                       
-          },        
+          label: 'Assignments',
+          key: 'tab2',
+          closable: false,                     
+        },        
+        {
+          label: 'Checklist',
+          key: 'tab3',
+          closable: false
+        },
+        {
+          label: 'Files & Links',
+          key: 'tab4',
+          closable: false
+        },
           {
-            label: 'CHECKLIST',
-            key: 'tab3',
-            closable: false
-          },
+          label: 'Related',
+          key: 'tab5',
+          closable: false,     
+                    
+        },          
           {
-            label: 'FILES',
-            key: 'tab4',
-            closable: false
-          },
-           {
-            label: 'RELATED',
-            key: 'tab5',
-            closable: false,     
-                      
-          },          
-           {
-            label: 'UPDATES',
-            key: 'tab6',
-            closable: false,     
-                      
-          },      
-                 
-        ]
-      }
+          label: 'Updates',
+          key: 'tab6',
+          closable: false,     
+                    
+        },                  
+      ]
+    }
   },
   mounted() {
     if (!_.isEmpty(this.issue)) {
@@ -933,7 +1115,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setTaskForManager"]),
+    ...mapMutations(["setTaskForManager", 'updateIssuesHash']),
     ...mapActions(["issueDeleted", "taskUpdated", "updateWatchedIssues"]),
     INITIAL_ISSUE_STATE() {
       return {
@@ -959,6 +1141,19 @@ export default {
         checklists: [],
         notes: [],
       };
+    },
+    urlShortener(str, length, ending) {
+      if (length == null) {
+        length = 70;
+      }
+      if (ending == null) {
+        ending = '...';
+      }
+      if (str.length > length) {
+        return str.substring(0, length - ending.length) + ending;
+      } else {
+        return str;
+      }
     },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
@@ -1006,8 +1201,8 @@ export default {
 
       this.DV_issue = { ...this.DV_issue, ..._.cloneDeep(issue) };
 
-      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id) );
-      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id) );
+      this.responsibleUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.responsibleUserIds.includes(u.id))[0];
+      this.accountableIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.accountableUserIds.includes(u.id))[0];
       this.consultedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.consultedUserIds.includes(u.id) );
       this.informedIssueUsers = _.filter(this.activeProjectUsers, (u) => this.DV_issue.informedUserIds.includes(u.id) );
 
@@ -1032,12 +1227,15 @@ export default {
       this.selectedIssueStage = this.issueStages.find(
         (t) => t.id === this.DV_issue.issueStageId
       );
-      if (issue.attachFiles) this.addFile(issue.attachFiles, false);
+      if (this.DV_issue.attachFiles) this.addFile(this.DV_issue.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
         this.loading = false;
       });
+    },
+    addFilesInput(){
+      this.DV_issue.issueFiles.push({name: "", uri: '', link: true, guid: this.guid()})
     },
     addFile(files = [], append = true) {
       let _files = append ?  [...this.DV_issue.issueFiles] : [];
@@ -1064,12 +1262,17 @@ export default {
       );
       if (!confirm) return;
 
-      if (file.uri) {
+      if (file.uri || file.link) {
         let index = this.DV_issue.issueFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        Vue.set(this.DV_issue.issueFiles, index, { ...file, _destroy: true });
-        this.destroyedFiles.push(file);
+
+        if(file.id){
+          Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
+          this.destroyedFiles.push(file)            
+        }
+        this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
+
       } else if (file.name) {
         this.DV_issue.issueFiles.splice(
           this.DV_issue.issueFiles.findIndex((f) => f.guid === file.guid),
@@ -1118,7 +1321,7 @@ export default {
   // RACI USERS HERE Awaiting backend work
      
      //Responsible USer Id
-        if (this.DV_issue.responsibleUserIds.length) {
+        if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.responsibleUserIds.length)
           // console.log(this.DV_issue.responsibleUserIds)
@@ -1132,7 +1335,7 @@ export default {
 
           // Accountable UserId
 
-         if (this.DV_issue.accountableUserIds.length) {
+         if (this.DV_issue.accountableUserIds && this.DV_issue.accountableUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.accountableUserIds.length)
           // console.log(this.DV_issue.accountableUserIds)
@@ -1171,10 +1374,6 @@ export default {
           else {
             formData.append('informed_user_ids[]', [])
           }
-
-  // RACI USERS ABOVE THIS LINE  Awaiting backend work
-  // More RACI Users in Computed section below
-
 
         if (this.DV_issue.subTaskIds.length) {
           for (let u_id of this.DV_issue.subTaskIds) {
@@ -1258,8 +1457,11 @@ export default {
         }
 
         for (let file of this.DV_issue.issueFiles) {
-          if (!file.id) {
-            formData.append("issue[issue_files][]", file);
+          if(file.id) continue
+          if (!file.link) {
+          formData.append("issue[issue_files][]", file);
+          }else if(file.link){
+            formData.append('file_links[]', file.name)
           }
         }
 
@@ -1290,7 +1492,15 @@ export default {
 
             var responseIssue = humps.camelizeKeys(response.data.issue)
             this.loadIssue(responseIssue)
-            this.$emit(callback, responseIssue)
+            //this.$emit(callback, responseIssue)
+            this.updateIssuesHash({issue: responseIssue})
+            if (response.status === 200) {
+              this.$message({
+                message: `${response.data.issue.title} was saved successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -1384,6 +1594,13 @@ export default {
         this.DV_issue.checklists[index].checked = event.target.checked;
       } else if (name === "dueDate" && this.DV_issue.checklists[index].text) {
         this.DV_issue.checklists[index].dueDate = event.target.value;
+      }
+    },
+    updateFileLinkItem(event, name, input) {
+      //var v = event.target.value
+      //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
+      if(event.target.value){
+        input.name = event.target.value  
       }
     },
     updateProgressListItem(event, name, progressList) {
@@ -1507,15 +1724,13 @@ export default {
     },
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
-    },
-
-    //RACI USERS HERE awaiting backend work
+    },  
   responsibleUsers: {
       handler: function (value) {
         if (value) {
           this.DV_issue.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
         }else{
-          this.DV_issue.responsibleUserIds = []
+          this.DV_issue.responsibleUserIds = null
         }
       },
       deep: true,
@@ -1525,7 +1740,7 @@ export default {
       if (value) {
         this.DV_issue.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
       }else{
-        this.DV_issue.accountableUserIds = []
+        this.DV_issue.accountableUserIds = null
       }
           }, deep: true
         },
@@ -1641,13 +1856,13 @@ export default {
   border-radius: 4px;
 }
 .del-check {
-  position: relative;
-  top: -5px;
+  position: absolute; 
   display: flex;
-  right: 10px;
-  background: #fff;
+  right: 2rem;
+  font-weight: 500;
+  background: transparent;
   height: fit-content;
-  color: red;
+  color: #dc3545;
 }
 ul {
   list-style-type: none;
@@ -1673,9 +1888,6 @@ ul {
   }
   /deep/.el-collapse-item__content {
     padding-bottom: 0 !important;
-  }
-  /deep/.mx-input-wrapper {
-    position: absolute;
   }
 .paperLook {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); 
@@ -1743,13 +1955,15 @@ ul {
     padding: 1px 3px;
   }
  .fixed-form {
-   overflow-y: auto;
-   height: 80vh;
-   padding-bottom: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 275px);
   }
   .fixed-form-mapView {
    width: 100%;
+   top:0;
    position: absolute;
+   transform: scale(1.03);
   }
  .display-length {
    border-radius: 0.15rem;
@@ -1766,6 +1980,54 @@ ul {
     outline: none;
     border: solid #ededed 1px;
     border-radius: 4px;  
+  }
+  .fa-building {
+    font-size: large !important;
+    color: #383838 !important;
+  }
+  .error-list {
+  list-style-type: circle;
+  li {
+    width: max-content;
+  }
+}
+.text-danger {
+  font-size: 13px;
+}
+.error-border {
+  border: 1px solid red;
+  border-radius: 4px;
+}
+.overflow-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+.no-text-decoration:link {
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+.no-text-decoration:active{
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+.no-text-decoration:visited {
+  text-decoration: none;
+  color: #495057;
+  text-decoration-color: none;
+}
+ .hover {
+   background: transparent;
+   border-radius: 0 !important;
+  }
+  .hover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3) !important;
+  }
+  input.file-link {
+    outline:0 none; 
   }
 
 </style>

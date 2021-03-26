@@ -1,11 +1,11 @@
 <template>
-  <div id="notes-index" data-cy="note_list" class="px-3">
+  <div id="notes-index" data-cy="note_list">
     <div v-if="_isallowed('write') && newNote" class="mb-3">
       <notes-form
         title="Add Note"
         :facility="DV_facility"
         @close-note-input="newNote=false"
-        @note-created="noteCreated"
+        @note-created="noteCreated"       
       ></notes-form>
     </div>
     <div v-else>
@@ -37,15 +37,13 @@
       </div>
       <hr/>
       <div v-if="_isallowed('read')" >
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" :key="note.id" class="mb-2">
+        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes"  id="notesHover" :key="note.id" class="mb-1 notes">
           <notes-show
             :facility="DV_facility"
-            :note="note"
-            id="notesHover"
+            :note="note"           
             :from="from"
             @note-updated="noteUpdated"
-            @note-deleted="noteDeleted"
-            class="notes"
+            @note-deleted="noteDeleted"           
           ></notes-show>
         </div>
         <div v-show="filteredNotes.length <= 0" class="text-danger ml-3">No notes found..</div>
@@ -104,6 +102,9 @@
       ...mapGetters([
         'myActionsFilter'
       ]),
+      isMapView() {
+        return this.$route.name === 'ProjectMapView'
+      },
       filteredNotes() {
         const resp = this.exists(this.notesQuery.trim()) ? new RegExp(_.escapeRegExp(this.notesQuery.trim().toLowerCase()), 'i') : null
         return _.filter(this.DV_facility.notes, n => {
@@ -154,13 +155,12 @@
   .addNote{
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
-  .notes{
-    padding:8px;
+  .notes{ 
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 1px 1px rgba(56,56,56,0.23);
   }
   #notesHover:hover {
     box-shadow: 0.5px 0.5px 1px 1px rgba(56,56, 56,0.29), 0 2px 2px rgba(56,56,56,0.23);
     background-color: rgba(91, 192, 222, 0.3);
-    border-left: solid rgb(91, 192, 222);
+    // border-left: solid rgb(91, 192, 222);
   }
 </style>

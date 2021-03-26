@@ -41,6 +41,7 @@ class Project < SortableRecord
 
   before_create :set_uuid
   after_save :grant_access_to_admins
+  after_save :add_not_started_status
 
   def as_json(options=nil)
     json = super(options)
@@ -134,15 +135,15 @@ class Project < SortableRecord
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort_by(&:due_date)
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
 
-    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+    all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
     all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
     all_user_ids += all_issue_users.values.flatten.map(&:user_id)
 
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids)
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort_by(&:due_date)
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)
 
@@ -242,7 +243,7 @@ class Project < SortableRecord
       users: users.as_json({only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email,:status ], all_organizations: all_organizations}),
       facilities: facility_projects_hash,
       facility_groups: facility_groups_hash,
-      statuses: statuses.as_json,
+      statuses: statuses.as_json(except: [:created_at, :updated_at]),
       task_types: task_types.as_json,
       issue_types: issue_types.as_json,
       issue_severities: issue_severities.as_json,
@@ -254,13 +255,28 @@ class Project < SortableRecord
     hash
   end
 
+  def add_not_started_status
+    if !self.statuses.exists?(id: Status.not_started.id)
+      self.statuses << Status.not_started
+    end
+  end
+
   def reject_comment(comment)
     comment['body'].blank?
   end
-
-  def progress
-    self.tasks.map(&:progress).sum / self.tasks.count rescue 0
+  
+  def update_progress
+    t = self.tasks
+    p = 0
+    if t.any?
+      p = (t.map(&:progress).sum / t.size).round(0)
+    end
+    self.update(progress: p)
   end
+
+  # def progress
+  #   self.tasks.map(&:progress).sum / self.tasks.count rescue 0
+  # end
 
   def delete_nested_facilities ids
     ids = ids.reject(&:blank?)
