@@ -220,16 +220,15 @@
 
                 <div class="simple-select form-group w-100 mx-1">
                   <label class="font-sm">Stage</label>
-                <el-select 
-                  v-model="selectedRiskStage"                    
-                  class="w-100" 
-                  clearable
-                  track-by="id" 
-                  value-key="id"    
-                  :disabled="!_isallowed('write') || !!fixedStage"
-                  data-cy="risk_stage"                                                                                                                                              
-                  placeholder="Select Stage"
-
+                  <el-select 
+                    v-model="selectedRiskStage"                    
+                    class="w-100" 
+                    clearable
+                    track-by="id" 
+                    value-key="id"    
+                    :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+                    data-cy="risk_stage"         
+                    placeholder="Select Stage"
                   >
                     <el-option
                       v-for="item in riskStages"
@@ -1894,7 +1893,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "fixedStage"],
+  props: ["facility", "risk"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -1984,6 +1983,7 @@ export default {
           closable: false,        
         },
       ],
+      fixedStage: false
     };
   },
   mounted() {
@@ -1999,6 +1999,9 @@ export default {
       );
     }
     this.SET_RISK_FORM_OPEN(true)
+    if (this.DV_risk.text === "") {
+      this.fixedStage = true;
+    }
   },
   beforeDestroy() {
     this.SET_RISK_FORM_OPEN(false)
