@@ -1678,7 +1678,7 @@
                     </div>
                     <input
                       type="text"
-                      placeholder="Enter link here (http or https prefix required)"
+                      placeholder="Enter link to a site or file"
                       class="form-control form-control-sm mw-95"
                       @input="updateFileLinkItem($event, 'text', file)"
                     />
@@ -1705,7 +1705,7 @@
                         v-if="!file.link"
                       />
                       <a :href="file.uri" target="_blank" v-if="file.link" class="no-text-decoration">
-                        <span v-if="file.link"> <i class="fas fa-link mr-1"></i></span>  {{ file.uri }}
+                        <span v-if="file.link"> <i class="fas fa-link mr-1"></i></span>  {{ urlShortener(file.uri, 68) }}
                       </a>
                       <div
                         :class="{ _disabled: loading || !_isallowed('write') }"
@@ -2059,6 +2059,19 @@ export default {
     log(e) {
       console.log("this is the file data: " + e)
     },
+    urlShortener(str, length, ending) {
+      if (length == null) {
+        length = 70;
+      }
+      if (ending == null) {
+        ending = '...';
+      }
+      if (str.length > length) {
+        return str.substring(0, length - ending.length) + ending;
+      } else {
+        return str;
+      }
+      },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
         behavior: "smooth",
