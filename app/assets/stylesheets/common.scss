@@ -8,6 +8,7 @@ body {
   font-style: normal;
   font-weight: 300;
   overflow-x: hidden;
+  // overflow-y: hidden;
   letter-spacing: .035em; 
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
@@ -39,6 +40,9 @@ input[type=button]:focus {
 .form-control:focus {
   outline: none;
   box-shadow: none;
+}
+td.col-issue_type, td.col-issue_severity {
+  text-transform: capitalize !important;
 }
 .font-sm {
   font-size: 13px;
