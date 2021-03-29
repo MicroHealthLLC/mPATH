@@ -756,12 +756,107 @@ export default {
     },
     saveFilters(){
       let formData = new FormData()
-      formData.append('query_filters[][filter_key]', "project_groups")
-      formData.append('query_filters[][name]', "Project Names")
-      formData.append('query_filters[][filter_value]', "")
-      formData.append('query_filters[][filter_key]', "project_groups")
-      formData.append('query_filters[][name]', "Project Names")
-      formData.append('query_filters[][filter_value]', "")
+
+      // Categories Filter
+      if(this.taskTypeFilter && this.taskTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskTypeFilter")
+        formData.append('query_filters[][name]', "Categories")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )        
+      }
+
+      // Categories Filter
+      if(this.taskIssueDueDateFilter && this.taskIssueDueDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueDueDateFilter")
+        formData.append('query_filters[][name]', "Action Due Date Range")
+        var dates = []
+        dates.push( moment(this.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates )        
+      }
+
+      // Categories Filter
+      if(this.taskIssueProgressFilter && this.taskIssueProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
+        formData.append('query_filters[][name]', "Action % Progress Range")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskIssueUserFilter && this.taskIssueUserFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
+        formData.append('query_filters[][name]', "Action Users")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskIssueUserFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskStageFilter && this.taskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskStageFilter")
+        formData.append('query_filters[][name]', "Task Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueTypeFilter && this.issueTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueTypeFilter")
+        formData.append('query_filters[][name]', "Issue Types")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueSeverityFilter && this.issueSeverityFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueSeverityFilter")
+        formData.append('query_filters[][name]', "Issue Severities")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueStageFilter && this.issueStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueStageFilter")
+        formData.append('query_filters[][name]', "Issue Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskPriorityLevelFilter && this.getRiskPriorityLevelFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskPriorityLevelFilter")
+        formData.append('query_filters[][name]', "Risk Priority Levels")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.riskStageFilter && this.riskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskStageFilter")
+        formData.append('query_filters[][name]', "Risk Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskApproachFilter && this.getRiskApproachFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskApproachFilter")
+        formData.append('query_filters[][name]', "Risk Approaches")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.riskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
 
       var url = `/projects/1/query_filters.json`
       var method = "POST"
@@ -820,6 +915,29 @@ export default {
       this.setIssuesPerPageFilter(null)
       this.setMembersPerPageFilter(null)
       this.setFacilities(this.getUnfilteredFacilities)
+
+      var url = `/projects/1/query_filters/reset.json`
+      var method = "DELETE"
+      var callback = "filter-destroyed"
+
+      axios({
+        method: method,
+        url: url,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        console.log("asdfasdff")
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;
