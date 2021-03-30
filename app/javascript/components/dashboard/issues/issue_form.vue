@@ -429,7 +429,7 @@ Tab 1 Row Begins here -->
            clearable    
            track-by="id"    
            value-key="id"                                                                                                                                                          
-           placeholder="Select and select Responsible User"
+           placeholder="Search and select Responsible User"
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
@@ -451,7 +451,7 @@ Tab 1 Row Begins here -->
             clearable           
             track-by="id"    
             value-key="id"                                                                                                                                                          
-            placeholder="Select and select Accountable User"
+            placeholder="Search and select Accountable User"
             :disabled="!_isallowed('write')"
             filterable       
             >
@@ -474,7 +474,7 @@ Tab 1 Row Begins here -->
            track-by="id"    
            value-key="id"   
            :multiple="true"                                                                                                                                                       
-           placeholder="Select and select Consulted Users"
+           placeholder="Search and select Consulted Users"
            :disabled="!_isallowed('write')"
            filterable
            >
@@ -490,7 +490,7 @@ Tab 1 Row Begins here -->
             v-model="consultedIssueUsers"         
             track-by="id"
             label="fullName"
-            placeholder="Select Consulted Users"
+            placeholder="Search and select Consulted Users"
             :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
@@ -516,7 +516,7 @@ Tab 1 Row Begins here -->
            value-key="id"   
            multiple  
            filterable                                                                                                                                                     
-           placeholder="Select and select Informed Users"
+           placeholder="Search and select Informed Users"
            :disabled="!_isallowed('write')"
            >
           <el-option 
