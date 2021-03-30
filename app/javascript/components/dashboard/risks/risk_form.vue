@@ -163,8 +163,8 @@
                 </div>
               </div>
 
-              <div class="d-flex mb-0 form-group mx-4">
-                <div class="simple-select form-group w-100">
+              <div class="d-flex mb-0 form-group">
+                <div class="simple-select form-group w-33 ml-4">
                   <label class="font-sm"
                     >Category <span style="color: #dc3545">*</span></label
                   >
@@ -218,7 +218,7 @@
                   </div>
                 </div>
 
-                <div class="simple-select form-group w-100 mx-1">
+                <!-- <div class="simple-select form-group w-100 mx-1">
                   <label class="font-sm">Stage</label>
                   <el-select 
                     v-model="selectedRiskStage"                    
@@ -232,37 +232,67 @@
                   >
                     <el-option
                       v-for="item in riskStages"
+                      :load="log(item.id)"                   
                       :value="item"
                       :key="item.id"
                       :label="item.name"
                     >
                     </el-option>
                   </el-select>
-                </div>
+                </div> -->
 
-                <!-- <div class="simple-select w-100 form-group">
-              <label class="font-sm">*Project:</label>
-              <multiselect
-                v-model="selectedFacilityProject"
-                v-validate="'required'"
-                track-by="id"
-                label="name"
-                placeholder="Select Project"
-                :options="getFacilityProjectOptions"
-                :searchable="true"
-                select-label="Select"
-                deselect-label="Remove"
-                :disabled="!_isallowed('write')"
-                data-cy="facility_project_id"
-                >
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect>
-            </div> -->
+        
               </div>
+             
+
+               <div class="simple-select form-group w-33 mx-4">
+                  <label class="font-sm">Stage</label>
+                  <!-- <el-select 
+                    v-model="selectedRiskStage"  
+                                   
+                    class="w-100" 
+                    clearable
+                    track-by="id" 
+                    value-key="id"    
+                    :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+                    data-cy="risk_stage"         
+                    placeholder="Select Stage"
+                  >
+                    <el-option
+                      v-for="item in riskStages"
+                      :load="log(item.id)"                   
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                    >
+                    </el-option>
+                  </el-select> -->
+                </div>
+           <div class="mx-4 my-3" v-if="selectedRiskStage !== null">
+             <div v-if="selectedRiskStage !== undefined">                  
+            <el-steps 
+              class="exampleOne" 
+              :active="selectedRiskStage.id - 1" 
+              :load="log(selectedRiskStage.id)" 
+              finish-status="success"  
+              v-model="selectedRiskStage"
+              track-by="id" 
+              value-key="id"    >         
+             <el-step
+              v-for="item in riskStages"
+              :key="item.id"  
+              :value="item"          
+              @click.native="selectStage"        
+              :title="item.name"   
+              description="This is an example description"                    
+            ></el-step>          
+              </el-steps>
+          
+             </div>
+
+            </div>
+
+        
 
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
@@ -1806,12 +1836,13 @@
           >
             <div class="form-group mx-4">
               <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
-              <textarea
+              <!-- <textarea
                 class="form-control"
                 placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
                 rows="4"
               >
-              </textarea>
+              </textarea> -->
+         
             </div>
           </div>
           <!-- END RISK DISPOSITION SECTION TAB -->
@@ -1893,7 +1924,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 export default {
   name: "RiskForm",
-  props: ["facility", "risk"],
+  props: ["facility", "risk", "facilities"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -1918,13 +1949,14 @@ export default {
       selectedTaskType: null,
       selectedRiskStage: null,
       relatedIssues: [],
+ 
       editToggle: false,
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
       loading: true,
       movingSlot: "",
-      currentTab: "risk",
+      currentTab: "risk", 
       tabs: [
         {
           label: "Identify",
@@ -1975,7 +2007,7 @@ export default {
           label: "Disposition",
           key: "tab7",
           closable: false,
-          disabled: true,
+          disabled: false,
         },
          {
           label: "Updates",
@@ -2060,7 +2092,7 @@ export default {
       };
     },
     log(e) {
-      console.log("this is the file data: " + e)
+      console.log("this is the selectedRiskStage.id: " + e)
     },
     urlShortener(str, length, ending) {
       if (length == null) {
@@ -2218,6 +2250,10 @@ export default {
       if (!this.DV_risk.approved) {
         this.DV_risk.approvalTime = "";
       }
+    },
+    selectStage(item){
+      console.log("this is the value: " + item.name)
+      // this.selectedRiskStage = value;
     },
     editProgress() {
       this.editToggle = !this.editToggle;
@@ -2667,7 +2703,7 @@ export default {
       return this.$route.name === "ProjectSheets";
     },
     isKanbanView() {
-      return this.$route.name === "ProjectKanbanView";
+      return this.$route.name === "ProjectKanbanView";;
     },
     filteredChecks() {
       return _.filter(this.DV_risk.checklists, (c) => !c._destroy);
@@ -3449,6 +3485,17 @@ ul {
   }
   input.file-link {
     outline:0 none; 
+  }
+.exampleOne {
+.el-steps, .el-steps--simple {
+    // border: 1px solid #DCDFE6;
+    background: #fff; 
+  }
+}
+
+.exampleTwo.el-steps, .exampleTwo.el-steps--simple {
+    border: 1px solid #DCDFE6;
+    background: #fff; 
   }
 
 </style>
