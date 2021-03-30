@@ -434,6 +434,7 @@ export default {
     }
   },
   mounted() {
+    this.resetFilters()
     this.fetchFilters()
   },
   computed: {
@@ -758,8 +759,7 @@ export default {
       }
     },
     fetchFilters(){
-
-      var url = `/projects/1/query_filters.json`
+      var url = `/projects/${this.currentProject.id}/query_filters.json`
       var method = "GET"
 
       axios({
@@ -772,90 +772,66 @@ export default {
       .then((response) => {
         var res = response.data
 
-        // this.setTaskIssueUserFilter([])
-        // this.setTaskIssueProgressStatusFilter([])
-        // this.setAdvancedFilter([])
-        // this.setProjectStatusFilter(null)
-        // this.setTaskIssueOverdueFilter([])
-        // this.setTaskTypeFilter(null)
-        // this.setFacilityGroupFilter(null)
-        // this.setFacilityProgressFilter(null)
-        // this.setFacilityDueDateFilter([null])
-        // this.setNoteDateFilter([null])
-        // this.setTaskIssueDueDateFilter([null])
-        // this.setFacilityNameFilter(null)
-        // this.setIssueTypeFilter(null)
-        // this.setIssueSeverityFilter(null)
-        // this.setIssueStageFilter(null)
-        // this.setTaskStageFilter(null)
-        // this.setRiskStageFilter(null)
-        // this.setTaskIssueProgressFilter(null)
-        // this.setMyActionsFilter([])
-        // this.setOnWatchFilter([])
-        // this.setMapFilters([])
-        // this.clearProgressFilters()
-        // this.setIssueUserFilter([])
-        // this.setTaskUserFilter(null)
-        // this.setRiskApproachFilter([])
-        // this.setRiskPriorityLevelFilter([])
-        // this.setTasksPerPageFilter(null)
-        // this.setRisksPerPageFilter(null)
-        // this.setIssuesPerPageFilter(null)
-        // this.setMembersPerPageFilter(null)
-
         for(var i = 0; i < res.length; i++){
 
-          // if(res[i].filter_key == "issueTypeFilter"){
-          //   this.setIssueTypeFilter(res[i].filter_value)
+          if(res[i].filter_key == "issueTypeFilter"){
+            this.setIssueTypeFilter(res[i].filter_value)
 
-          // }else if(res[i].filter_key == "issueSeverityFilter"){
-          //   this.setIssueSeverityFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "issueSeverityFilter"){
+            this.setIssueSeverityFilter(res[i].filter_value)
 
-          // }else if(res[i].filter_key == "getAdvancedFilter"){
-          //   this.setAdvancedFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "getAdvancedFilter"){
+            this.setAdvancedFilter(res[i].filter_value)
 
-          // }else if(res[i].filter_key == "facilityGroupFilter"){
-          //   this.setFacilityGroupFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "facilityGroupFilter"){
+            this.setFacilityGroupFilter(res[i].filter_value)
 
-          // }else if(res[i].filter_key == "projectStatusFilter"){
-          //   this.setProjectStatusFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "projectStatusFilter"){
+            this.setProjectStatusFilter(res[i].filter_value)
 
-          // }else if(res[i].filter_key == "facilityDueDateFilter"){
-          //   // this.setFacilityDueDateFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "facilityDueDateFilter"){
+            this.setFacilityDueDateFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "riskPriorityLevelFilter"){
-          //   this.setRiskPriorityLevelFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "riskPriorityLevelFilter"){
+            this.setRiskPriorityLevelFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "riskApproachFilter"){
-          //   this.setRiskApproachFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "riskApproachFilter"){
+            this.setRiskApproachFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "taskTypeFilter"){
-          //   this.setTaskTypeFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "taskTypeFilter"){
+            this.setTaskTypeFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "taskIssueProgressFilter"){
-          //   // this.setTaskIssueProgressFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "taskIssueProgressFilter"){
+            //this.setTaskIssueProgressFilter(res[i].filter_value)
+            var min = res[i].filter_value[0].name.split("-")[0]
+            var max = res[i].filter_value[0].name.split("-")[1]
+            this.progressFilter.taskIssue = {min: min, max: max}
+
+          }else if(res[i].filter_key == "taskIssueDueDateFilter"){
+            this.setTaskIssueDueDateFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "taskIssueDueDateFilter"){
-          //   // this.setTaskIssueDueDateFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "noteDateFilter"){
+            this.setNoteDateFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "noteDateFilter"){
-          //   this.setNoteDateFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "facilityNameFilter"){
+            this.setFacilityNameFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "facilityNameFilter"){
-          //   this.setFacilityNameFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "facilityProgressFilter"){
+            //this.setFacilityProgressFilter(res[i].filter_value)
+            var min = res[i].filter_value[0].name.split("-")[0]
+            var max = res[i].filter_value[0].name.split("-")[1]
+            this.progressFilter.facility = {min: min, max: max}
+
+          }else if(res[i].filter_key == "taskStageFilter"){
+            this.setTaskStageFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "facilityProgress"){
-          //   // this.setFacilityProgressFilter(res[i].filter_value)
+          }else if(res[i].filter_key == "issueStageFilter"){
+            this.setIssueStageFilter(res[i].filter_value)
           
-          // }else if(res[i].filter_key == "taskStageFilter"){
-          //   this.setTaskStageFilter(res[i].filter_value)
-          
-          // }else if(res[i].filter_key == "issueStageFilter"){
-          //   this.setIssueStageFilter(res[i].filter_value)
-          
-          // }
+          }else if(res[i].filter_key == "taskIssueUserFilter"){
+            this.setTaskIssueUserFilter(res[i].filter_value)
+          }
         }
-
 
       })
       .catch((err) => {
@@ -875,7 +851,7 @@ export default {
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityGroupFilter")
         formData.append('query_filters[][name]', "Project Groups")
-        // var v = JSON.stringify(this.taskTypeFilter)
+        // var v = JSON.stringify(this.facilityGroupFilter)
         var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
@@ -899,11 +875,12 @@ export default {
       }      
 
       // Categories Filter
-      if(this.facilityProgress && this.facilityProgress[0]){
-        formData.append('query_filters[][filter_key]', "facilityProgress")
+      if(this.facilityProgressFilter && this.facilityProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityProgressFilter")
         formData.append('query_filters[][name]', "Project % Progress Range")
         // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.facilityProgress, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -911,9 +888,11 @@ export default {
       if(this.facilityDueDateFilter && this.facilityDueDateFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityDueDateFilter")
         formData.append('query_filters[][name]', "Project Completion Date Range")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.facilityDueDateFilter, function(val) {  return {id: val.id, name: val.name}  }) );
-        formData.append('query_filters[][filter_value]', v )       
+        var dates = []
+        dates.push( moment(this.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates ) 
       }
 
       // Categories Filter
@@ -989,11 +968,11 @@ export default {
       }
 
       // Categories Filter
-      if(this.taskIssueUserFilter && this.taskIssueUserFilter[0]){
+      if(this.getTaskIssueUserFilter && this.getTaskIssueUserFilter[0]){
         formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
         formData.append('query_filters[][name]', "Action Users")
         // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskIssueUserFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, name: val.fullName}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1011,7 +990,7 @@ export default {
         formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
         formData.append('query_filters[][name]', "Action % Progress Range")
         // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
       
@@ -1037,9 +1016,7 @@ export default {
         formData.append('query_filters[][filter_value]', dates )        
       }
 
-      //TODO: More filters to add
-
-      var url = `/projects/1/query_filters.json`
+      var url = `/projects/${this.currentProject.id}/query_filters.json`
       var method = "POST"
       var callback = "filter-created"
 
@@ -1061,8 +1038,39 @@ export default {
       .finally(() => {
         // this.loading = false
       })
-
-
+    },
+    resetFilters(){
+      this.setTaskIssueUserFilter([])
+      this.setTaskIssueProgressStatusFilter([])
+      this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+      this.setProjectStatusFilter(null)
+      this.setTaskIssueOverdueFilter([])
+      this.setTaskTypeFilter(null)
+      this.setFacilityGroupFilter(null)
+      this.setFacilityProgressFilter(null)
+      this.setFacilityDueDateFilter([null])
+      this.setNoteDateFilter([null])
+      this.setTaskIssueDueDateFilter([null])
+      this.setFacilityNameFilter(null)
+      this.setIssueTypeFilter(null)
+      this.setIssueSeverityFilter(null)
+      this.setIssueStageFilter(null)
+      this.setTaskStageFilter(null)
+      this.setRiskStageFilter(null)
+      this.setTaskIssueProgressFilter(null)
+      this.setMyActionsFilter([])
+      this.setOnWatchFilter([])
+      this.setMapFilters([])
+      this.clearProgressFilters()
+      this.setIssueUserFilter([])
+      this.setTaskUserFilter(null)
+      this.setRiskApproachFilter([])
+      this.setRiskPriorityLevelFilter([])
+      this.setTasksPerPageFilter(null)
+      this.setRisksPerPageFilter(null)
+      this.setIssuesPerPageFilter(null)
+      this.setMembersPerPageFilter(null)
+      //this.setFacilities(this.getUnfilteredFacilities)
     },
     onClearFilter() {
       this.setTaskIssueUserFilter([])
@@ -1097,7 +1105,7 @@ export default {
       this.setMembersPerPageFilter(null)
       this.setFacilities(this.getUnfilteredFacilities)
 
-      var url = `/projects/1/query_filters/reset.json`
+      var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
       var method = "DELETE"
       var callback = "filter-destroyed"
 
@@ -1109,7 +1117,7 @@ export default {
         }
       })
       .then((response) => {
-        console.log("asdfasdff")
+        
       })
       .catch((err) => {
         // var errors = err.response.data.errors

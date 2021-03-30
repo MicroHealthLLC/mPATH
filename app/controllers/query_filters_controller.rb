@@ -31,7 +31,7 @@ class QueryFiltersController < AuthenticatedController
 
   def reset
     project = Project.find(params[:project_id])
-    # project.query_filters.where(user_id: current_user.id).destroy_all
+    project.query_filters.where(user_id: current_user.id).destroy_all
     render json: {message: "Filters destroyed successfully"}
   end
 

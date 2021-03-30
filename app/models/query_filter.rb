@@ -28,6 +28,7 @@ class QueryFilter < ApplicationRecord
     {
       id: self.id,
       filter_key: self.filter_key,
+      name: self.name,
       filter_value: self.filter_value.present? ? JSON.parse(self.filter_value) : nil,
       # filter_value: self.filter_value,
       project_id: self.project_id,
