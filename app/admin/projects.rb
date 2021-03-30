@@ -41,7 +41,7 @@ ActiveAdmin.register Project do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
     selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :name
-    column :description
+    column :description, sortable: false
     column "Program Type", :project_type, sortable: 'project_types.name' do |project|
       if current_user.admin_write?
         link_to "#{project.project_type.name}", "#{edit_admin_project_type_path(project.project_type)}" if project.project_type.present?
