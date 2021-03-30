@@ -14,3 +14,28 @@ Cypress.Commands.add("openKanbanRisk", () => {
   })
   cy.facilityUnderGroup()
 })
+
+// Fill Risk form
+Cypress.Commands.add("fillRiskForm", () => {
+  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+
+  cy.get('[data-cy=kanban]').within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+    })
+  })
+
+  cy.get('[data-cy=risk_name]').type('New test risk in kanban').should('have.value', 'New test risk in kanban')
+  cy.get('[data-cy=risk_description]').type('Kanban risk brief description').should('have.value', 'Kanban risk brief description')
+
+  cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
+
+  cy.get('[data-cy=risk_start_date]').type(`${start_date}{enter}`)
+  cy.get('[data-cy=risk_due_date]').type(`${due_date}{enter}`)
+
+  cy.get('.label').contains('Prioritize').click()
+  cy.get('[data-cy=probability_description]').type('Risk probability description')
+  cy.get('[data-cy=impact_description]').type('Risk impact description')
+  cy.get('.col-md-12 > [data-cy=approach_description]').type('Risk approach description')
+})

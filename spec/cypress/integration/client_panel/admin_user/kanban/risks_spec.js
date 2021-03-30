@@ -26,6 +26,23 @@ describe('Kanban Risks View', function() {
     cy.logout()
   })
 
+  it("Create new risk in kanban risk page", function() {
+    cy.fillRiskForm()
+    cy.get('[data-cy=risk_save_btn]').click({force: true})
+    cy.get('.el-message__content').contains('New test risk in kanban was saved successfully.').should('be.visible')
+    cy.logout()
+  })
+
+  it("In Risk form if title's field empty, error message display", function() {
+    cy.fillRiskForm()
+    cy.get(':nth-child(1) > [data-cy=facility_tabs]').click()
+    cy.get('[data-cy=risk_name]').clear()
+    cy.get('[data-cy=risk_name_error]').contains('The Risk Name field is required.').should('be.visible')
+    cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
+    cy.get('[data-cy=risk_close_btn]').click()
+    cy.logout()
+  })
+
   it('Update on watch state of a risk', function() {
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
