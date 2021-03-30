@@ -342,7 +342,7 @@
                   clearable   
                   filterable  
                   value-key="id"                                                                                                                                                          
-                  placeholder="Select Responsible User"
+                  placeholder="Search and select Responsible User"
                   :disabled="!_isallowed('write')"
                   data-cy="risk_owner"
                 >
@@ -364,7 +364,8 @@
                   track-by="id"
                   clearable        
                   value-key="id"                                                                                                                                                          
-                  placeholder="Select Accountable User"
+                  placeholder="Search and select Accountable User"
+                  :disabled="!_isallowed('write')"
                   filterable
                 >
                   <el-option
@@ -387,7 +388,8 @@
                   track-by="id"
                   value-key="id"
                   :multiple="true"
-                  placeholder="Select Consulted Users"
+                  placeholder="Search and select Consulted Users"
+                  :disabled="!_isallowed('write')"
                   filterable
                 >
                   <el-option
@@ -408,7 +410,8 @@
                   value-key="id"
                   multiple
                   filterable
-                  placeholder="Select Informed Users"
+                  placeholder="Search and select Informed Users"
+                  :disabled="!_isallowed('write')"
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -1124,8 +1127,9 @@
                   value-key="id"
                   clearable
                   filterable
-                  placeholder="Select Risk Approver"
+                  placeholder="Search and select Risk Approver"
                   :disabled="this.DV_risk.approved"
+                  :disabled="!_isallowed('write')"
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
