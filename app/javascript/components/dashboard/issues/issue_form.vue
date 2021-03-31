@@ -846,11 +846,10 @@ Tab 1 Row Begins here -->
               <div class="col-6 mb-2 pl-4 links-col">
 
                  <div class="input-group mb-1">
-                    <div class="d-block mt-1">
+                    <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span
-                      class="ml-2 clickable"
-                      v-if="_isallowed('write')"
+                      class="ml-2 clickable"                      
                       @click.prevent="addFilesInput"
                     >
                       <i class="fas fa-plus-circle"></i>
