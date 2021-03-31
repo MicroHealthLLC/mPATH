@@ -163,7 +163,7 @@
                 </div>
               </div>
 
-              <div class="d-flex mb-0 form-group">
+              <div class="d-flex mb-1 form-group">
                 <div class="simple-select form-group w-33 ml-4">
                   <label class="font-sm"
                     >Category <span style="color: #dc3545">*</span></label
@@ -188,27 +188,7 @@
                     >
                     </el-option>
                   </el-select>
-                  <!-- <multiselect
-                    v-model="selectedTaskType"
-                    v-validate="'required'"
-                    track-by="id"
-                    label="name"
-                    placeholder="Select Category"
-                    :options="taskTypes"
-                    :searchable="false"
-                    select-label="Select"
-                    deselect-label="Remove"
-                    :disabled="!_isallowed('write')"
-                    :class="{ 'error-border': errors.has('Category') }"
-                    data-cy="risk_milestone"
-                    name="Category"
-                  >
-                    <template slot="singleLabel" slot-scope="{ option }">
-                      <div class="d-flex">
-                        <span class="select__tag-name">{{ option.name }}</span>
-                      </div>
-                    </template>
-                  </multiselect> -->
+            
                   <div
                     v-show="errors.has('Category')"
                     class="text-danger"
@@ -216,81 +196,60 @@
                   >
                     {{ errors.first("Category") }}
                   </div>
-                </div>
-
-                <!-- <div class="simple-select form-group w-100 mx-1">
-                  <label class="font-sm">Stage</label>
-                  <el-select 
-                    v-model="selectedRiskStage"                    
-                    class="w-100" 
-                    clearable
-                    track-by="id" 
-                    value-key="id"    
-                    :disabled="!_isallowed('write') || fixedStage && isKanbanView"
-                    data-cy="risk_stage"         
-                    placeholder="Select Stage"
-                  >
-                    <el-option
-                      v-for="item in riskStages"
-                      :load="log(item.id)"                   
-                      :value="item"
-                      :key="item.id"
-                      :label="item.name"
-                    >
-                    </el-option>
-                  </el-select>
-                </div> -->
-
-        
+                </div>              
               </div>
-             
-
-               <div class="simple-select form-group w-33 mx-4">
-                  <label class="font-sm">Stage</label>
-                  <!-- <el-select 
-                    v-model="selectedRiskStage"  
-                                   
-                    class="w-100" 
-                    clearable
-                    track-by="id" 
-                    value-key="id"    
-                    :disabled="!_isallowed('write') || fixedStage && isKanbanView"
-                    data-cy="risk_stage"         
-                    placeholder="Select Stage"
-                  >
-                    <el-option
-                      v-for="item in riskStages"
-                      :load="log(item.id)"                   
-                      :value="item"
-                      :key="item.id"
-                      :label="item.name"
-                    >
-                    </el-option>
-                  </el-select> -->
-                </div>
-           <div class="mx-4 my-3" v-if="selectedRiskStage !== null">
-             <div v-if="selectedRiskStage !== undefined">                  
+                 
+           <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
+             <div v-if="selectedRiskStage !== undefined">       
+              <div><label class="font-sm mb-0">Stage</label>               
+                <button @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+              </div>    
             <el-steps 
-              class="exampleOne" 
-              :active="selectedRiskStage.id - 1" 
-              :load="log(selectedRiskStage.id)" 
+              class="exampleOne mt-3" 
+              :active="selectedRiskStage.id - 1"                      
               finish-status="success"  
+              :disabled="!_isallowed('write') || fixedStage && isKanbanView"
               v-model="selectedRiskStage"
               track-by="id" 
-              value-key="id"    >         
+              value-key="id"
+              >         
              <el-step
               v-for="item in riskStages"
-              :key="item.id"  
-              :value="item"          
-              @click.native="selectStage"        
+              :key="item.id"              
+              :load="log(riskStages)" 
+              :value="item"
+              style="cursor:pointer"     
+              @click.native="selectedStage(item)"        
               :title="item.name"   
-              description="This is an example description"                    
+              description=""                    
             ></el-step>          
-              </el-steps>
-          
-             </div>
+              </el-steps>          
+           </div>
+          </div>
 
-            </div>
+          <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
+            <label class="font-sm">Select Stage</label>                           
+            <el-steps 
+              class="exampleOne"           
+              clearable             
+              finish-status="success"  
+              :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+              v-model="selectedRiskStage"
+              track-by="id" 
+              value-key="id"
+              >         
+             <el-step
+              v-for="item in riskStages"
+              :key="item.id"              
+              :load="log(riskStages)" 
+              :value="item"
+              style="cursor:pointer"     
+              @click.native="selectedStage(item)"        
+              :title="item.name"   
+              description=""                    
+            ></el-step>          
+             </el-steps>
+          </div>
 
         
 
@@ -2007,7 +1966,7 @@ export default {
           label: "Disposition",
           key: "tab7",
           closable: false,
-          disabled: false,
+          disabled: true,
         },
          {
           label: "Updates",
@@ -2092,7 +2051,7 @@ export default {
       };
     },
     log(e) {
-      console.log("this is the selectedRiskStage.id: " + e)
+      console.log("this is the riskStages object: " + e)
     },
     urlShortener(str, length, ending) {
       if (length == null) {
@@ -2251,9 +2210,12 @@ export default {
         this.DV_risk.approvalTime = "";
       }
     },
-    selectStage(item){
-      console.log("this is the value: " + item.name)
-      // this.selectedRiskStage = value;
+    selectedStage(item){    
+     this.selectedRiskStage = item
+    },  
+    clearStages() {
+    this.selectedRiskStage = null
+    this.riskStageId = ""
     },
     editProgress() {
       this.editToggle = !this.editToggle;
@@ -2545,7 +2507,7 @@ export default {
         ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
         : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
       Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
-    },
+    },  
     addChecks() {
       var postion = this.DV_risk.checklists.length;
       this.DV_risk.checklists.push({
@@ -2695,6 +2657,9 @@ export default {
         this.exists(this.DV_risk.startDate) &&
         this.exists(this.DV_risk.dueDate)
       );
+    },
+    riskStagePercentage() {
+      return _.map(this.riskStages, "percentage").toString();
     },
     isMapView() {
       return this.$route.name === "ProjectMapView";
@@ -3041,7 +3006,9 @@ export default {
     },
     selectedRiskStage: {
       handler: function(value) {
+        // console.log("This is the watcher id value: " + value.id)
         this.DV_risk.riskStageId = value ? value.id : null;
+     
       },
       deep: true,
     },
@@ -3491,6 +3458,9 @@ ul {
     // border: 1px solid #DCDFE6;
     background: #fff; 
   }
+}
+.clearStageBtn {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 
 .exampleTwo.el-steps, .exampleTwo.el-steps--simple {
