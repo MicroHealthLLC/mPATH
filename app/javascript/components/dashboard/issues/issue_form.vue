@@ -338,7 +338,7 @@
     <el-steps 
       class="exampleOne mt-3" 
       :class="{'overSixSteps': issueStages.length >= 6 }"   
-      :active="selectedIssueStage.id"                      
+      :active="selectedIssueStage.id - 1"                      
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"

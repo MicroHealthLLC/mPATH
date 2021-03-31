@@ -164,7 +164,7 @@
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
-      :active="selectedTaskStage.id"                      
+      :active="selectedTaskStage.id - 1"                      
       finish-status="success"  
       :class="{'overSixSteps': taskStages.length >= 6 }" 
       :disabled="!_isallowed('write') || !!fixedStage"

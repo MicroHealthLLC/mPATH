@@ -207,7 +207,7 @@
                 <el-steps 
                   class="exampleOne mt-3" 
                   :class="{'overSixSteps': riskStages.length >= 6 }" 
-                  :active="selectedRiskStage.id"                      
+                  :active="selectedRiskStage.id - 1"                      
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
