@@ -10,42 +10,42 @@ export default new VueRouter({
   routes: [
     {
       name: 'ProjectMapView',
-      path: '/projects/:projectId/',
+      path: '/programs/:programId/',
       component: ProjectMapView
     },
     {
       name: 'ProjectMapView',
-      path: '/projects/:projectId/map',
+      path: '/programs/:programId/map',
       component: ProjectMapView
     },
     {
       name: 'ProjectGanttChart',
-      path: '/projects/:projectId/gantt_chart',
+      path: '/programs/:programId/gantt_chart',
       component: GanttChartView
     },
     {
       name: 'ProjectWatchView',
-      path: '/projects/:projectId/watch_view',
+      path: '/programs/:programId/watch_view',
       component: WatchView
     },
     {
       name: 'TeamMembersView',
-      path: '/projects/:projectId/member_list',
+      path: '/programs/:programId/member_list',
       component: MembersView
     },
     {
       name: 'FacilityManagerView',
-      path: '/projects/:projectId/facility_manager',
+      path: '/programs/:programId/facility_manager',
       component: FacilityView
     },
     {
       name: 'ProjectSheets',
-      path: '/projects/:projectId/sheet',
+      path: '/programs/:programId/sheet',
       component: Sheets
     },
     {
       name: 'ProjectKanbanView',
-      path: '/projects/:projectId/kanban',
+      path: '/programs/:programId/kanban',
       component: KanbanView
     }
   ],
