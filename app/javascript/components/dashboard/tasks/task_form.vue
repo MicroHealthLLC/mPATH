@@ -124,8 +124,8 @@
       </div>
 
   <!-- Row begins -->
-     <div  class="d-flex mb-0 mx-4 form-group">        
-      <div class="simple-select form-group w-100">
+     <div  class="d-flex mb-1 form-group">        
+      <div class="simple-select form-group w-33 ml-4">
         <label class="font-md" >Category <span style="color: #dc3545">*</span></label >
         <el-select 
           v-model="selectedTaskType"  
@@ -155,77 +155,62 @@
           {{ errors.first("Category") }}
         </div>
       </div>                
-       
-        <!-- <multiselect
-          v-model="selectedTaskType"
-          v-validate="'required'"
-          track-by="id"
-          label="name"
-          placeholder="Select Category"
-          :options="taskTypes"
-          :searchable="false"
-          select-label="Select"
-          deselect-label="Remove"
-          :disabled="!_isallowed('write')"
-          data-cy="task_type"
-          name="Category"
-          :class="{ 'error-border': errors.has('Category') }"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.name}}</span>
-            </div>
-          </template>
-        </multiselect> 
-        <div
-          v-show="errors.has('Category')"
-          class="text-danger"
-          data-cy="task_start_date_error"
-        >
-          {{ errors.first("Category") }}
-        </div>
-      </div> -->
-      <div class="simple-select w-100 form-group mx-1">
-        <label class="font-md">Stage</label>
-        <el-select 
-          v-model="selectedTaskStage"                         
-          class="w-100" 
-          track-by="id" 
-          clearable
-          value-key="id"    
-          :disabled="!_isallowed('write') || !!fixedStage"
-          data-cy="task_stage"                                                                                                                                                
-          placeholder="Select Stage"
-           >
-          <el-option 
-            v-for="item in taskStages"                                                     
-            :value="item"   
-            :key="item.id"
-            :label="item.name"                                                  
-            >
-          </el-option>
-          </el-select>
-        <!-- <multiselect
-          v-model="selectedTaskStage"
-          track-by="id"
-          label="name"
-          placeholder="Select Stage"
-          :options="taskStages"
-          :searchable="false"
-          select-label="Select"
-          deselect-label="Remove"
-          :disabled="!_isallowed('write') || !!fixedStage"
-          data-cy="task_stage"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.name}}</span>
-            </div>
-          </template>
-        </multiselect> -->
-      </div>
     </div>
-    <!-- Row ends -->
+               
+    <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
+      <div v-if="selectedTaskStage !== undefined">       
+      <div style="position:relative"><label class="font-md mb-0">Stage</label>               
+        <button @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
+      </div>    
+    <el-steps 
+      class="exampleOne mt-3" 
+      :active="selectedTaskStage.id - 1"                      
+      finish-status="success"  
+      :disabled="!_isallowed('write') || !!fixedStage"
+      v-model="selectedTaskStage"
+      track-by="id" 
+      value-key="id"
+      >         
+      <el-step
+      v-for="item in taskStages"
+      :key="item.id"             
+      :value="item"
+      style="cursor:pointer"     
+      @click.native="selectedStage(item)"        
+      :title="item.name"   
+      description=""                    
+    ></el-step>          
+      </el-steps>          
+    </div>
+  </div>
+
+  <div class="mx-4 mt-2 mb-4" v-if="(selectedTaskStage == null) || selectedTaskStage == undefined">
+    <label class="font-md">Select Stage</label>                           
+    <el-steps 
+      class="exampleOne"              
+      finish-status="success"
+      :class="{'overSixSteps': taskStages.length >= 6 }"   
+      :disabled="!_isallowed('write') || !!fixedStage"
+      v-model="selectedTaskStage"  
+      track-by="id" 
+      value-key="id"
+      >         
+      <el-step
+      v-for="item in taskStages"
+      :key="item.id"            
+      :value="item"
+      style="cursor:pointer"     
+      :load="log( taskStages.length )"
+     
+      @click.native="selectedStage(item)"        
+      :title="item.name"   
+      description=""                    
+    ></el-step>          
+      </el-steps>
+  </div>
+
+    <!-- Stages Row ends -->
+
     <div class="form-row mx-4">
         <div class="form-group col-md-6 pl-0">
           <label class="font-md" >Start Date <span style="color: #dc3545">*</span></label>
@@ -1016,7 +1001,14 @@
         }
       },
       log(e){
-        console.log("item in activeProjectUsers: " + e)
+        console.log("This is the taskStages: " + e)
+      },
+      selectedStage(item){    
+        this.selectedTaskStage = item
+      },  
+      clearStages() {
+        this.selectedTaskStage = null
+        this.taskStageId = ""
       },
       urlShortener(str, length, ending) {
         if (length == null) {
@@ -1793,6 +1785,22 @@
 }
 input.file-link {
   outline:0 none; 
+}
+.clearStageBtn {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
+
+.exampleTwo.el-steps, .exampleTwo.el-steps--simple {
+  border: 1px solid #DCDFE6;
+  background: #fff; 
+}
+
+.overSixSteps {
+/deep/.el-step__title {
+  font-size: 11px !important;
+  line-height: 23px !important;
+  margin: 5px !important;
+ }
 }
 
 </style>
