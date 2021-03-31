@@ -206,7 +206,8 @@
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
-                  :active="selectedRiskStage.id - 1"                      
+                  :class="{'overSixSteps': riskStages.length >= 6 }" 
+                  :active="selectedRiskStage.id"                      
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -230,8 +231,8 @@
               <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
                 <label class="font-sm">Select Stage</label>                           
                 <el-steps 
-                  class="exampleOne"           
-                  clearable             
+                  class="exampleOne"   
+                  :class="{'overSixSteps': riskStages.length >= 6 }"                           
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -3464,5 +3465,13 @@ ul {
   border: 1px solid #DCDFE6;
   background: #fff; 
 }
+.overSixSteps {
+/deep/.el-step__title {
+  font-size: 11px !important;
+  line-height: 23px !important;
+  margin: 5px !important;
+ }
+}
+
 
 </style>

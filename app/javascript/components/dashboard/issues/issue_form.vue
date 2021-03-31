@@ -337,7 +337,8 @@
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
-      :active="selectedIssueStage.id - 1"                      
+      :class="{'overSixSteps': issueStages.length >= 6 }"   
+      :active="selectedIssueStage.id"                      
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"
@@ -360,7 +361,8 @@
   <div class="mx-4 mt-2 mb-4" v-if="(selectedIssueStage == null) || selectedIssueStage == undefined">
     <label class="font-md">Select Stage</label>                           
     <el-steps 
-      class="exampleOne"              
+      class="exampleOne"    
+      :class="{'overSixSteps': issueStages.length >= 6 }"            
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"
@@ -2099,6 +2101,14 @@ input.file-link {
   border: 1px solid #DCDFE6;
   background: #fff; 
 }
+.overSixSteps {
+/deep/.el-step__title {
+  font-size: 11px !important;
+  line-height: 23px !important;
+  margin: 5px !important;
+ }
+}
+
 
 
 </style>

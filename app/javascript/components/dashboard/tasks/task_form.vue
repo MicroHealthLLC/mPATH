@@ -164,8 +164,9 @@
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
-      :active="selectedTaskStage.id - 1"                      
+      :active="selectedTaskStage.id"                      
       finish-status="success"  
+      :class="{'overSixSteps': taskStages.length >= 6 }" 
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedTaskStage"
       track-by="id" 
@@ -200,8 +201,7 @@
       :key="item.id"            
       :value="item"
       style="cursor:pointer"     
-      :load="log( taskStages.length )"
-     
+      :load="log( taskStages.length )"     
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
