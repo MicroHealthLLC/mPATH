@@ -232,8 +232,8 @@ ActiveAdmin.register Risk do
   filter :risk_approach, as: :select, collection: Risk.risk_approaches
   filter :risk_approach_description
   filter :task_type, label: "Category"
-  filter :start_date
-  filter :due_date
+  filter :start_date, label: "Identified Date"
+  filter :due_date, label: "Risk Approach Due Date"
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :user, label: "Owned by"

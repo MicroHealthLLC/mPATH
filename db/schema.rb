@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_17_174756) do
+ActiveRecord::Schema.define(version: 2021_03_29_191207) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -320,6 +320,17 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.integer "progress", default: 0
     t.index ["project_type_id"], name: "index_projects_on_project_type_id"
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
+  end
+
+  create_table "query_filters", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "filter_key"
+    t.text "filter_value"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_query_filters_on_user_id"
   end
 
   create_table "rails_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

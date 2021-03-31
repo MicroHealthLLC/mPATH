@@ -192,6 +192,7 @@
               track-by="id" 
               value-key="id"            
               :class="{ 'error-border': errors.has('Issue Type') }"
+              :disabled="!_isallowed('write')"
               data-cy="issue_type"
               name="Issue Type"                                                                                                                                                                              
               placeholder="Issue Type"
@@ -428,7 +429,7 @@ Tab 1 Row Begins here -->
            clearable    
            track-by="id"    
            value-key="id"                                                                                                                                                          
-           placeholder="Select Responsible User"
+           placeholder="Search and select Responsible User"
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
@@ -450,7 +451,8 @@ Tab 1 Row Begins here -->
             clearable           
             track-by="id"    
             value-key="id"                                                                                                                                                          
-            placeholder="Select Accountable User"
+            placeholder="Search and select Accountable User"
+            :disabled="!_isallowed('write')"
             filterable       
             >
             <el-option 
@@ -472,7 +474,8 @@ Tab 1 Row Begins here -->
            track-by="id"    
            value-key="id"   
            :multiple="true"                                                                                                                                                       
-           placeholder="Select Consulted Users"
+           placeholder="Search and select Consulted Users"
+           :disabled="!_isallowed('write')"
            filterable
            >
           <el-option 
@@ -487,7 +490,7 @@ Tab 1 Row Begins here -->
             v-model="consultedIssueUsers"         
             track-by="id"
             label="fullName"
-            placeholder="Select Consulted Users"
+            placeholder="Search and select Consulted Users"
             :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
@@ -513,7 +516,8 @@ Tab 1 Row Begins here -->
            value-key="id"   
            multiple  
            filterable                                                                                                                                                     
-           placeholder="Select Informed Users"           
+           placeholder="Search and select Informed Users"
+           :disabled="!_isallowed('write')"
            >
           <el-option 
             v-for="item in activeProjectUsers"                                                            

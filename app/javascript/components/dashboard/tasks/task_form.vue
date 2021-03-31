@@ -283,7 +283,7 @@
            clearable    
            track-by="id"    
            value-key="id"
-           placeholder="Select Responsible User"
+           placeholder="Search and select Responsible User"
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
@@ -305,7 +305,8 @@
            clearable               
            track-by="id"           
            value-key="id"                                                                                                                                                          
-           placeholder="Select Accountable User"
+           placeholder="Search and select Accountable User"
+	   :disabled="!_isallowed('write')"
            filterable       
            >
           <el-option 
@@ -327,7 +328,8 @@
            track-by="id"    
            value-key="id"   
            :multiple="true"                                                                                                                                                       
-           placeholder="Select Consulted Users"
+           placeholder="Search and select Consulted Users"
+	   :disabled="!_isallowed('write')"
            filterable
            >
           <el-option 
@@ -348,7 +350,8 @@
            value-key="id"   
            multiple  
            filterable                                                                                                                                                     
-           placeholder="Select Informed Users"           
+           placeholder="Search and select Informed Users"
+	   :disabled="!_isallowed('write')"
            >
           <el-option 
             v-for="item in activeProjectUsers"                                                            
