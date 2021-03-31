@@ -194,6 +194,7 @@
               :class="{ 'error-border': errors.has('Issue Type') }"
               data-cy="issue_type_field"
               name="Issue Type"
+              :disabled="!_isallowed('write')"          
               placeholder="Issue Type"
               >
               <el-option
@@ -288,7 +289,7 @@
             {{ errors.first("Issue Severity") }}
           </div>
         </div>
-        <div class="simple-select form-group w-100 mx-1">
+        <!-- <div class="simple-select form-group w-100 mx-1">
           <label class="font-md">Stage</label>
           <el-select
             v-model="selectedIssueStage"
@@ -307,7 +308,7 @@
               :label="item.name"
               >
             </el-option>
-           </el-select>
+           </el-select> -->
           <!-- <multiselect
             v-model="selectedIssueStage"
             track-by="id"
@@ -326,8 +327,57 @@
               </div>
             </template>
           </multiselect> -->
-        </div>
-     </div>
+        <!-- </div> -->
+     </div>  
+          
+    <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
+      <div v-if="selectedIssueStage !== undefined">       
+      <div style="position:relative"><label class="font-md mb-0">Stage</label>               
+        <button @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+      </div>    
+    <el-steps 
+      class="exampleOne mt-3" 
+      :active="selectedIssueStage.id - 1"                      
+      finish-status="success"  
+      :disabled="!_isallowed('write') || !!fixedStage"
+      v-model="selectedIssueStage"
+      track-by="id" 
+      value-key="id"
+      >         
+      <el-step
+      v-for="item in issueStages"
+      :key="item.id"             
+      :value="item"
+      style="cursor:pointer"     
+      @click.native="selectedStage(item)"        
+      :title="item.name"   
+      description=""                    
+    ></el-step>          
+      </el-steps>          
+    </div>
+  </div>
+
+  <div class="mx-4 mt-2 mb-4" v-if="(selectedIssueStage == null) || selectedIssueStage == undefined">
+    <label class="font-md">Select Stage</label>                           
+    <el-steps 
+      class="exampleOne"              
+      finish-status="success"  
+      :disabled="!_isallowed('write') || !!fixedStage"
+      v-model="selectedIssueStage"
+      track-by="id" 
+      value-key="id"
+      >         
+      <el-step
+      v-for="item in issueStages"
+      :key="item.id"            
+      :value="item"
+      style="cursor:pointer"     
+      @click.native="selectedStage(item)"        
+      :title="item.name"   
+      description=""                    
+    ></el-step>          
+      </el-steps>
+  </div> 
 
 
 <!--
@@ -425,10 +475,11 @@ Tab 1 Row Begins here -->
            v-model="responsibleUsers"
            class="w-100"
            filterable
-           clearable
-           track-by="id"
-           value-key="id"
-           placeholder="Select Responsible User"
+           clearable    
+           track-by="id"    
+           value-key="id"                                                                                                                                                          
+           placeholder="Search and select Responsible User"
+
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
@@ -443,15 +494,16 @@ Tab 1 Row Begins here -->
 
         </div>
         <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-md mb-0">Accountable</label>
-           <el-select
-            v-model="accountableIssueUsers"
-            class="w-100"
-            clearable
-            track-by="id"
-            value-key="id"
-            placeholder="Select Accountable User"
-            filterable
+          <label class="font-md mb-0">Accountable</label>            
+           <el-select 
+            v-model="accountableIssueUsers"          
+            class="w-100"    
+            clearable           
+            track-by="id"    
+            value-key="id"                                                                                                                                                          
+            placeholder="Search and select Accountable User"
+            :disabled="!_isallowed('write')"
+            filterable       
             >
             <el-option
               v-for="item in activeProjectUsers"
@@ -468,11 +520,12 @@ Tab 1 Row Begins here -->
           <label class="font-md mb-0">Consulted</label>
            <el-select
            v-model="consultedIssueUsers"
-           class="w-100"
-           track-by="id"
-           value-key="id"
-           :multiple="true"
-           placeholder="Select Consulted Users"
+           class="w-100"           
+           track-by="id"    
+           value-key="id"   
+           :multiple="true"                                                                                                                                                       
+           placeholder="Search and select Consulted Users"
+           :disabled="!_isallowed('write')"
            filterable
            >
           <el-option
@@ -487,7 +540,7 @@ Tab 1 Row Begins here -->
             v-model="consultedIssueUsers"
             track-by="id"
             label="fullName"
-            placeholder="Select Consulted Users"
+            placeholder="Search and select Consulted Users"
             :options="activeProjectUsers"
             :searchable="true"
             :multiple="true"
@@ -506,14 +559,16 @@ Tab 1 Row Begins here -->
         </div>
         <div class="form-group user-select ml-1 mr-4 w-100">
           <label class="font-md mb-0">Informed</label>
-          <el-select
-           v-model="informedIssueUsers"
-           class="w-100"
-           track-by="id"
-           value-key="id"
-           multiple
-           filterable
-           placeholder="Select Informed Users"
+
+          <el-select 
+           v-model="informedIssueUsers"       
+           class="w-100"           
+           track-by="id"    
+           value-key="id"   
+           multiple  
+           filterable                                                                                                                                                     
+           placeholder="Search and select Informed Users"
+           :disabled="!_isallowed('write')"
            >
           <el-option
             v-for="item in activeProjectUsers"
@@ -1142,6 +1197,13 @@ export default {
         notes: [],
       };
     },
+    selectedStage(item){    
+        this.selectedIssueStage = item
+    },  
+    clearStages() {
+        this.selectedIssueStage = null
+        this.IssueStageId = ""
+      },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2018,16 +2080,25 @@ ul {
   color: #495057;
   text-decoration-color: none;
 }
- .hover {
-   background: transparent;
-   border-radius: 0 !important;
-  }
-  .hover:hover {
-    cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3) !important;
-  }
-  input.file-link {
-    outline:0 none;
-  }
+
+.hover {
+  background: transparent;
+  border-radius: 0 !important;
+}
+.hover:hover {
+  cursor: pointer;
+  background-color: rgba(91, 192, 222, 0.3) !important;
+}
+input.file-link {
+  outline:0 none; 
+}
+.clearStageBtn {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
+.exampleTwo.el-steps, .exampleTwo.el-steps--simple {
+  border: 1px solid #DCDFE6;
+  background: #fff; 
+}
+
 
 </style>

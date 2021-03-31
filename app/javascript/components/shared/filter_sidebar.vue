@@ -9,6 +9,7 @@
       <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
+          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="saveFilters" data-cy="save_filter"><i class="fas fa-redo pr-1"></i>SAVE</button>
           <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
         </div>
       </div>
@@ -406,6 +407,8 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
+import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import XLSX from 'xlsx'
 export default {
@@ -429,6 +432,10 @@ export default {
       ],
       mapFilterSet: false
     }
+  },
+  mounted() {
+    this.resetFilters()
+    this.fetchFilters()
   },
   computed: {
     ...mapGetters([
@@ -751,6 +758,320 @@ export default {
         this.isLoading = false
       }
     },
+    fetchFilters(){
+      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var method = "GET"
+
+      axios({
+        method: method,
+        url: url,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        var res = response.data
+
+        for(var i = 0; i < res.length; i++){
+
+          if(res[i].filter_key == "issueTypeFilter"){
+            this.setIssueTypeFilter(res[i].filter_value)
+
+          }else if(res[i].filter_key == "issueSeverityFilter"){
+            this.setIssueSeverityFilter(res[i].filter_value)
+
+          }else if(res[i].filter_key == "getAdvancedFilter"){
+            this.setAdvancedFilter(res[i].filter_value)
+
+          }else if(res[i].filter_key == "facilityGroupFilter"){
+            this.setFacilityGroupFilter(res[i].filter_value)
+
+          }else if(res[i].filter_key == "projectStatusFilter"){
+            this.setProjectStatusFilter(res[i].filter_value)
+
+          }else if(res[i].filter_key == "facilityDueDateFilter"){
+            this.setFacilityDueDateFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "riskPriorityLevelFilter"){
+            this.setRiskPriorityLevelFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "riskApproachFilter"){
+            this.setRiskApproachFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "taskTypeFilter"){
+            this.setTaskTypeFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "taskIssueProgressFilter"){
+            //this.setTaskIssueProgressFilter(res[i].filter_value)
+            var min = res[i].filter_value[0].name.split("-")[0]
+            var max = res[i].filter_value[0].name.split("-")[1]
+            this.progressFilter.taskIssue = {min: min, max: max}
+
+          }else if(res[i].filter_key == "taskIssueDueDateFilter"){
+            this.setTaskIssueDueDateFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "noteDateFilter"){
+            this.setNoteDateFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "facilityNameFilter"){
+            this.setFacilityNameFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "facilityProgressFilter"){
+            //this.setFacilityProgressFilter(res[i].filter_value)
+            var min = res[i].filter_value[0].name.split("-")[0]
+            var max = res[i].filter_value[0].name.split("-")[1]
+            this.progressFilter.facility = {min: min, max: max}
+
+          }else if(res[i].filter_key == "taskStageFilter"){
+            this.setTaskStageFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "issueStageFilter"){
+            this.setIssueStageFilter(res[i].filter_value)
+          
+          }else if(res[i].filter_key == "taskIssueUserFilter"){
+            this.setTaskIssueUserFilter(res[i].filter_value)
+          }
+        }
+
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+
+
+    },
+    saveFilters(){
+      let formData = new FormData()
+
+      // Categories Filter
+      if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityGroupFilter")
+        formData.append('query_filters[][name]', "Project Groups")
+        // var v = JSON.stringify(this.facilityGroupFilter)
+        var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.projectStatusFilter && this.projectStatusFilter[0]){
+        formData.append('query_filters[][filter_key]', "projectStatusFilter")
+        formData.append('query_filters[][name]', "Project Statuses")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.facilityNameFilter && this.facilityNameFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityNameFilter")
+        formData.append('query_filters[][name]', "Project Names")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }      
+
+      // Categories Filter
+      if(this.facilityProgressFilter && this.facilityProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityProgressFilter")
+        formData.append('query_filters[][name]', "Project % Progress Range")
+        // var v = JSON.stringify(this.taskTypeFilter)
+
+        var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.facilityDueDateFilter && this.facilityDueDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityDueDateFilter")
+        formData.append('query_filters[][name]', "Project Completion Date Range")
+        var dates = []
+        dates.push( moment(this.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates ) 
+      }
+
+      // Categories Filter
+      if(this.taskStageFilter && this.taskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskStageFilter")
+        formData.append('query_filters[][name]', "Task Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueTypeFilter && this.issueTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueTypeFilter")
+        formData.append('query_filters[][name]', "Issue Types")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueSeverityFilter && this.issueSeverityFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueSeverityFilter")
+        formData.append('query_filters[][name]', "Issue Severities")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueStageFilter && this.issueStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueStageFilter")
+        formData.append('query_filters[][name]', "Issue Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskPriorityLevelFilter && this.getRiskPriorityLevelFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskPriorityLevelFilter")
+        formData.append('query_filters[][name]', "Risk Priority Levels")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.riskStageFilter && this.riskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskStageFilter")
+        formData.append('query_filters[][name]', "Risk Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskApproachFilter && this.getRiskApproachFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskApproachFilter")
+        formData.append('query_filters[][name]', "Risk Approaches")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskTypeFilter && this.taskTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskTypeFilter")
+        formData.append('query_filters[][name]', "Categories")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )        
+      }
+
+      // Categories Filter
+      if(this.getTaskIssueUserFilter && this.getTaskIssueUserFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
+        formData.append('query_filters[][name]', "Action Users")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, name: val.fullName}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getAdvancedFilter && this.getAdvancedFilter[0]){
+        formData.append('query_filters[][filter_key]', "getAdvancedFilter")
+        formData.append('query_filters[][name]', "Flags")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskIssueProgressFilter && this.taskIssueProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
+        formData.append('query_filters[][name]', "Action % Progress Range")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+      
+      // Categories Filter
+      if(this.taskIssueDueDateFilter && this.taskIssueDueDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueDueDateFilter")
+        formData.append('query_filters[][name]', "Action Due Date Range")
+        var dates = []
+        dates.push( moment(this.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates )        
+      }
+
+      // Categories Filter
+      if(this.noteDateFilter && this.noteDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "noteDateFilter")
+        formData.append('query_filters[][name]', "Updates Date Range")
+        var dates = []
+        dates.push( moment(this.noteDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.noteDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates )        
+      }
+
+      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var method = "POST"
+      var callback = "filter-created"
+
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        console.log("asdfasdff")
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+    },
+    resetFilters(){
+      this.setTaskIssueUserFilter([])
+      this.setTaskIssueProgressStatusFilter([])
+      this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+      this.setProjectStatusFilter(null)
+      this.setTaskIssueOverdueFilter([])
+      this.setTaskTypeFilter(null)
+      this.setFacilityGroupFilter(null)
+      this.setFacilityProgressFilter(null)
+      this.setFacilityDueDateFilter([null])
+      this.setNoteDateFilter([null])
+      this.setTaskIssueDueDateFilter([null])
+      this.setFacilityNameFilter(null)
+      this.setIssueTypeFilter(null)
+      this.setIssueSeverityFilter(null)
+      this.setIssueStageFilter(null)
+      this.setTaskStageFilter(null)
+      this.setRiskStageFilter(null)
+      this.setTaskIssueProgressFilter(null)
+      this.setMyActionsFilter([])
+      this.setOnWatchFilter([])
+      this.setMapFilters([])
+      this.clearProgressFilters()
+      this.setIssueUserFilter([])
+      this.setTaskUserFilter(null)
+      this.setRiskApproachFilter([])
+      this.setRiskPriorityLevelFilter([])
+      this.setTasksPerPageFilter(null)
+      this.setRisksPerPageFilter(null)
+      this.setIssuesPerPageFilter(null)
+      this.setMembersPerPageFilter(null)
+      //this.setFacilities(this.getUnfilteredFacilities)
+    },
     onClearFilter() {
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
@@ -783,6 +1104,29 @@ export default {
       this.setIssuesPerPageFilter(null)
       this.setMembersPerPageFilter(null)
       this.setFacilities(this.getUnfilteredFacilities)
+
+      var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
+      var method = "DELETE"
+      var callback = "filter-destroyed"
+
+      axios({
+        method: method,
+        url: url,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+
     },
     exportData() {
       if (!this.enableExport || this.exporting) return;

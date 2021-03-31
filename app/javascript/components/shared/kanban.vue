@@ -179,8 +179,8 @@ export default {
     border: 1px solid #4299e1;
   }
   .overflow-x-auto {
-    overflow-x: hidden; 
-    margin-right: -100px;
+    overflow-x: auto; 
+    margin-right: -200px;
     overflow-y: hidden !important;
   }
   .unset {

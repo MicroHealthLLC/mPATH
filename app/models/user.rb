@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :risks
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
+  has_many :query_filters, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
