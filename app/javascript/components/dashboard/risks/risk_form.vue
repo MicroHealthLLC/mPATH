@@ -199,57 +199,57 @@
                 </div>              
               </div>
                  
-           <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
-             <div v-if="selectedRiskStage !== undefined">       
-              <div><label class="font-sm mb-0">Stage</label>               
-                <button @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
-              </div>    
-            <el-steps 
-              class="exampleOne mt-3" 
-              :active="selectedRiskStage.id - 1"                      
-              finish-status="success"  
-              :disabled="!_isallowed('write') || fixedStage && isKanbanView"
-              v-model="selectedRiskStage"
-              track-by="id" 
-              value-key="id"
-              >         
-             <el-step
-              v-for="item in riskStages"
-              :key="item.id"              
-              :load="log(riskStages)" 
-              :value="item"
-              style="cursor:pointer"     
-              @click.native="selectedStage(item)"        
-              :title="item.name"   
-              description=""                    
-            ></el-step>          
-              </el-steps>          
-           </div>
-          </div>
+              <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
+                <div v-if="selectedRiskStage !== undefined">       
+                  <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
+                    <button @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                  </div>    
+                <el-steps 
+                  class="exampleOne mt-3" 
+                  :active="selectedRiskStage.id - 1"                      
+                  finish-status="success"  
+                  :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+                  v-model="selectedRiskStage"
+                  track-by="id" 
+                  value-key="id"
+                  >         
+                <el-step
+                  v-for="item in riskStages"
+                  :key="item.id"              
+                  :load="log(riskStages)" 
+                  :value="item"
+                  style="cursor:pointer"     
+                  @click.native="selectedStage(item)"        
+                  :title="item.name"   
+                  description=""                    
+                ></el-step>          
+                  </el-steps>          
+              </div>
+              </div>
 
-          <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
-            <label class="font-sm">Select Stage</label>                           
-            <el-steps 
-              class="exampleOne"           
-              clearable             
-              finish-status="success"  
-              :disabled="!_isallowed('write') || fixedStage && isKanbanView"
-              v-model="selectedRiskStage"
-              track-by="id" 
-              value-key="id"
-              >         
-             <el-step
-              v-for="item in riskStages"
-              :key="item.id"              
-              :load="log(riskStages)" 
-              :value="item"
-              style="cursor:pointer"     
-              @click.native="selectedStage(item)"        
-              :title="item.name"   
-              description=""                    
-            ></el-step>          
-             </el-steps>
-          </div>
+              <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
+                <label class="font-sm">Select Stage</label>                           
+                <el-steps 
+                  class="exampleOne"           
+                  clearable             
+                  finish-status="success"  
+                  :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+                  v-model="selectedRiskStage"
+                  track-by="id" 
+                  value-key="id"
+                  >         
+                <el-step
+                  v-for="item in riskStages"
+                  :key="item.id"              
+                  :load="log(riskStages)" 
+                  :value="item"
+                  style="cursor:pointer"     
+                  @click.native="selectedStage(item)"        
+                  :title="item.name"   
+                  description=""                    
+                ></el-step>          
+                </el-steps>
+              </div>
 
         
 
@@ -1117,8 +1117,7 @@
                   clearable
                   filterable
                   placeholder="Search and select Risk Approver"
-                  :disabled="this.DV_risk.approved"
-                  :disabled="!_isallowed('write')"
+                  :disabled="this.DV_risk.approved && !_isallowed('write')"             
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -2215,11 +2214,11 @@ export default {
       }
     },
     selectedStage(item){    
-     this.selectedRiskStage = item
+      this.selectedRiskStage = item
     },  
     clearStages() {
-    this.selectedRiskStage = null
-    this.riskStageId = ""
+      this.selectedRiskStage = null
+      this.riskStageId = ""
     },
     editProgress() {
       this.editToggle = !this.editToggle;
@@ -3457,19 +3456,13 @@ ul {
   input.file-link {
     outline:0 none; 
   }
-.exampleOne {
-.el-steps, .el-steps--simple {
-    // border: 1px solid #DCDFE6;
-    background: #fff; 
-  }
-}
+
 .clearStageBtn {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
-
 .exampleTwo.el-steps, .exampleTwo.el-steps--simple {
-    border: 1px solid #DCDFE6;
-    background: #fff; 
-  }
+  border: 1px solid #DCDFE6;
+  background: #fff; 
+}
 
 </style>
