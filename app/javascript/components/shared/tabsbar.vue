@@ -59,16 +59,16 @@ export default {
   name: "Tabsbar",
   computed: {
     isSheetsView() {
-      return this.$route.name === "ProjectSheets";
+      return this.$route.name === "SheetView";
     },
     isMapView() {
-      return this.$route.name === "ProjectMapView";
+      return this.$route.name === "MapView";
     },
     isGanttView() {
-      return this.$route.name === "ProjectGanttChart";
+      return this.$route.name === "GanttChartView";
     },
     isKanbanView() {
-      return this.$route.name === "ProjectKanbanView";
+      return this.$route.name === "KanbanView";
     },
     isMembersView() {
       return this.$route.name === "TeamMembersView";

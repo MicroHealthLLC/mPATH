@@ -1,32 +1,25 @@
-import ProjectMapView from './../components/dashboard/map_view'
+import MapView from './../components/dashboard/map_view'
 import GanttChartView from './../components/dashboard/gantt_view'
-import WatchView from './../components/dashboard/watch_view'
 import MembersView from './../components/dashboard/members_view'
-import FacilityView from './../components/dashboard/facility_view'
-import Sheets from './../components/dashboard/sheets'
+import SheetView from './../components/dashboard/sheets'
 import KanbanView from './../components/dashboard/kanban_view'
 
 export default new VueRouter({
   routes: [
     {
-      name: 'ProjectMapView',
+      name: 'MapView',
       path: '/programs/:programId/',
-      component: ProjectMapView
+      component: MapView
     },
     {
-      name: 'ProjectMapView',
+      name: 'MapView',
       path: '/programs/:programId/map',
-      component: ProjectMapView
+      component: MapView
     },
     {
-      name: 'ProjectGanttChart',
+      name: 'GanttChartView',
       path: '/programs/:programId/gantt_chart',
       component: GanttChartView
-    },
-    {
-      name: 'ProjectWatchView',
-      path: '/programs/:programId/watch_view',
-      component: WatchView
     },
     {
       name: 'TeamMembersView',
@@ -34,17 +27,12 @@ export default new VueRouter({
       component: MembersView
     },
     {
-      name: 'FacilityManagerView',
-      path: '/programs/:programId/facility_manager',
-      component: FacilityView
-    },
-    {
-      name: 'ProjectSheets',
+      name: 'SheetView',
       path: '/programs/:programId/sheet',
-      component: Sheets
+      component: SheetView
     },
     {
-      name: 'ProjectKanbanView',
+      name: 'KanbanView',
       path: '/programs/:programId/kanban',
       component: KanbanView
     }

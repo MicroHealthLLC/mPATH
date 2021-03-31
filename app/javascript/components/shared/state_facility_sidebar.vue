@@ -1003,10 +1003,10 @@ export default {
       return this.$route.name === "FacilityManagerView";
     },
     isSheetsView() {
-      return this.$route.name === "ProjectSheets";
+      return this.$route.name === "SheetView";
     },
     isKanbanView() {
-      return this.$route.name === "ProjectKanbanView";
+      return this.$route.name === "KanbanView";
     },
     C_onWatchTasks: {
       get() {
