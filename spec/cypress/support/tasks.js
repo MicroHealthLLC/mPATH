@@ -35,3 +35,23 @@ Cypress.Commands.add("openKanbanTask", () => {
   })
   cy.facilityUnderGroup()
 })
+
+// Fill Task form
+Cypress.Commands.add("fillKanbanTaskForm", () => {
+  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+
+  cy.get('[data-cy=kanban]').within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+    })
+  })
+
+  cy.get('[data-cy=task_name]').type('New test task in kanban').should('have.value', 'New test task in kanban')
+  cy.get('[data-cy=task_description]').type('Kanban task brief description').should('have.value', 'Kanban task brief description')
+
+  cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
+
+  cy.get('[data-cy=task_start_date]').type(`${start_date}{enter}`)
+  cy.get('[data-cy=task_due_date]').type(`${due_date}{enter}`)
+})

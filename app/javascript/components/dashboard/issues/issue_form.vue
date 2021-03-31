@@ -1,8 +1,8 @@
 <template>
-  <div>   
+  <div>
     <form
       id="issues-form"
-      @submit.prevent="saveIssue"    
+      @submit.prevent="saveIssue"
       class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
@@ -55,14 +55,14 @@
       </div>
 
       <hr class="mx-4 mb-6 mt-2" />
-      
+
       <div v-if="_isallowed('read')" class="d-flex form-group pt-1 mb-1 justify-content-start">
-        <FormTabs 
-          :current-tab="currentTab" 
+        <FormTabs
+          :current-tab="currentTab"
           :tabs="tabs"
           :allErrors="errors"
           @on-change-tab="onChangeTab"
-        />       
+        />
       </div>
       <h6 class="mx-4 mt-4 mb-0" style="color: gray; font-size: 13px">
         <span style="color: #dc3545; font-size: 15px">*</span> Indicates
@@ -85,7 +85,7 @@
               {{ error }}
             </li>
           </ul>
-        </div>      
+        </div>
     <!-- ISSUE INFO TAB #1 -->
     <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
       <div class="form-group pt-3 mx-4">
@@ -142,26 +142,26 @@
      <div  class="d-flex mb-0 mx-4 form-group">
        <div class="simple-select w-100 form-group">
           <label class="font-md">Category</label>
-            <el-select 
-              v-model="selectedTaskType"                 
-              class="w-100" 
-              clearable    
-              track-by="id" 
+            <el-select
+              v-model="selectedTaskType"
+              class="w-100"
+              clearable
+              track-by="id"
               value-key="id"
               :disabled="!_isallowed('write')"
               data-cy="task_type"
-              name="Category"                                                   
+              name="Category"
               placeholder="Select Category"
               >
-              <el-option 
-                v-for="item in taskTypes"                                                     
-                :value="item"   
+              <el-option
+                v-for="item in taskTypes"
+                :value="item"
                 :key="item.id"
-                :label="item.name"                                                  
+                :label="item.name"
                 >
               </el-option>
-              </el-select>        
-<!--  
+              </el-select>
+<!--
           <multiselect
             v-model="selectedTaskType"
             track-by="id"
@@ -181,30 +181,30 @@
               </div>
             </template>
           </multiselect> -->
-        </div>        
+        </div>
 
         <div class="simple-select form-group w-100 mx-1">
           <label class="font-md">Issue Type <span style="color: #dc3545">*</span></label>
-             <el-select 
-              v-model="selectedIssueType"  
-              v-validate="'required'"                  
-              class="w-100" 
-              track-by="id" 
-              value-key="id"            
+             <el-select
+              v-model="selectedIssueType"
+              v-validate="'required'"
+              class="w-100"
+              track-by="id"
+              value-key="id"
               :class="{ 'error-border': errors.has('Issue Type') }"
-              :disabled="!_isallowed('write')"
-              data-cy="issue_type"
-              name="Issue Type"                                                                                                                                                                              
+              data-cy="issue_type_field"
+              name="Issue Type"
+              :disabled="!_isallowed('write')"          
               placeholder="Issue Type"
               >
-              <el-option 
-                v-for="item in issueTypes"                                                     
-                :value="item"   
+              <el-option
+                v-for="item in issueTypes"
+                :value="item"
                 :key="item.id"
-                :label="item.name"                                                  
+                :label="item.name"
                 >
               </el-option>
-              </el-select>       
+              </el-select>
           <!-- <multiselect
             v-model="selectedIssueType"
             v-validate="'required'"
@@ -240,26 +240,26 @@
      <div class="d-flex mx-4">
        <div class="simple-select form-group w-100 mx-1">
           <label class="font-md">Issue Severity <span style="color: #dc3545">*</span></label>
-           <el-select 
-            v-model="selectedIssueSeverity"  
-            v-validate="'required'"                  
-            class="w-100" 
-            track-by="id" 
-            value-key="id"            
+           <el-select
+            v-model="selectedIssueSeverity"
+            v-validate="'required'"
+            class="w-100"
+            track-by="id"
+            value-key="id"
             :disabled="!_isallowed('write')"
             :class="{ 'error-border': errors.has('Issue Severity') }"
             data-cy="issue_severity"
-            name="Issue Severity"                                                                                                                                                                    
+            name="Issue Severity"
             placeholder="Issue Severity"
             >
-            <el-option 
-              v-for="item in issueSeverities"                                                     
-              :value="item"   
+            <el-option
+              v-for="item in issueSeverities"
+              :value="item"
               :key="item.id"
-              :label="item.name"                                                  
+              :label="item.name"
               >
             </el-option>
-            </el-select>      
+            </el-select>
           <!-- <multiselect
             v-model="selectedIssueSeverity"
             v-validate="'required'"
@@ -291,21 +291,21 @@
         </div>
         <!-- <div class="simple-select form-group w-100 mx-1">
           <label class="font-md">Stage</label>
-          <el-select 
-            v-model="selectedIssueStage"                    
-            class="w-100" 
-            track-by="id" 
-            clearable    
-            value-key="id"    
+          <el-select
+            v-model="selectedIssueStage"
+            class="w-100"
+            track-by="id"
+            clearable
+            value-key="id"
             :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="task_stage"                                                                                                                                                
+            data-cy="task_stage"
             placeholder="Select Stage"
             >
-             <el-option 
-              v-for="item in issueStages"                                                     
-              :value="item"   
+             <el-option
+              v-for="item in issueStages"
+              :value="item"
               :key="item.id"
-              :label="item.name"                                                  
+              :label="item.name"
               >
             </el-option>
            </el-select> -->
@@ -380,7 +380,7 @@
   </div> 
 
 
-<!-- 
+<!--
 Tab 1 Row Begins here -->
 <div  class="d-flex mb-0 mx-4 form-group">
       <div class="form-group mx-1 w-75">
@@ -433,10 +433,10 @@ Tab 1 Row Begins here -->
             </div>
           </div>
 </div>
-         
+
 
 <!-- Next Row in Tab 1 -->
-<!--        
+<!--
           <div class="form-group user-select mx-4">
           <label class="font-sm mb-0">Assign Users:</label>
           <multiselect
@@ -466,32 +466,33 @@ Tab 1 Row Begins here -->
 
  <!-- ASSIGN USERS TAB # 2-->
   <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
-   
+
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-md mb-0">Responsible</label>          
-          <el-select 
-           v-model="responsibleUsers" 
-           class="w-100" 
+          <label class="font-md mb-0">Responsible</label>
+          <el-select
+           v-model="responsibleUsers"
+           class="w-100"
            filterable
            clearable    
            track-by="id"    
            value-key="id"                                                                                                                                                          
            placeholder="Search and select Responsible User"
+
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
-          <el-option 
-            v-for="item in activeProjectUsers"                                                            
-            :value="item"   
+          <el-option
+            v-for="item in activeProjectUsers"
+            :value="item"
             :key="item.id"
-            :label="item.fullName"                                                  
+            :label="item.fullName"
             >
           </el-option>
-          </el-select>      
-         
-        </div>     
+          </el-select>
+
+        </div>
         <div class="form-group user-select ml-1 mr-4 w-100">
           <label class="font-md mb-0">Accountable</label>            
            <el-select 
@@ -504,20 +505,20 @@ Tab 1 Row Begins here -->
             :disabled="!_isallowed('write')"
             filterable       
             >
-            <el-option 
-              v-for="item in activeProjectUsers"                                                            
-              :value="item"   
+            <el-option
+              v-for="item in activeProjectUsers"
+              :value="item"
               :key="item.id"
-              :label="item.fullName"                                                  
+              :label="item.fullName"
               >
             </el-option>
-          </el-select>        
-        </div>             
-  </div> 
+          </el-select>
+        </div>
+  </div>
   <div class="form-group  mt-0 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <label class="font-md mb-0">Consulted</label>
-           <el-select 
+           <el-select
            v-model="consultedIssueUsers"
            class="w-100"           
            track-by="id"    
@@ -527,16 +528,16 @@ Tab 1 Row Begins here -->
            :disabled="!_isallowed('write')"
            filterable
            >
-          <el-option 
-            v-for="item in activeProjectUsers"                                                            
-            :value="item"   
+          <el-option
+            v-for="item in activeProjectUsers"
+            :value="item"
             :key="item.id"
-            :label="item.fullName"                                                  
+            :label="item.fullName"
             >
           </el-option>
-          </el-select>        
+          </el-select>
           <!-- <multiselect
-            v-model="consultedIssueUsers"         
+            v-model="consultedIssueUsers"
             track-by="id"
             label="fullName"
             placeholder="Search and select Consulted Users"
@@ -546,7 +547,7 @@ Tab 1 Row Begins here -->
             select-label="Select"
             deselect-label="Remove"
             :close-on-select="false"
-    
+
             data-cy="risk_owner"
             >
             <template slot="singleLabel" slot-scope="{option}">
@@ -555,9 +556,10 @@ Tab 1 Row Begins here -->
               </div>
             </template>
           </multiselect> -->
-        </div>     
+        </div>
         <div class="form-group user-select ml-1 mr-4 w-100">
           <label class="font-md mb-0">Informed</label>
+
           <el-select 
            v-model="informedIssueUsers"       
            class="w-100"           
@@ -568,15 +570,15 @@ Tab 1 Row Begins here -->
            placeholder="Search and select Informed Users"
            :disabled="!_isallowed('write')"
            >
-          <el-option 
-            v-for="item in activeProjectUsers"                                                            
-            :value="item"   
+          <el-option
+            v-for="item in activeProjectUsers"
+            :value="item"
             :key="item.id"
-            :label="item.fullName"                                                  
+            :label="item.fullName"
             >
           </el-option>
-          </el-select>        
-        </div>         
+          </el-select>
+        </div>
     </div>
   </div>
 
@@ -597,7 +599,7 @@ Tab 1 Row Begins here -->
             >
           </span>
           <el-slider
-            v-model="DV_issue.progress"   
+            v-model="DV_issue.progress"
             :disabled="!_isallowed('write') || DV_issue.autoCalculate"
             :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
             :format-tooltip="(value) => value + '%'"
@@ -626,12 +628,12 @@ Tab 1 Row Begins here -->
                 <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
               </div>
                  <div v-if="isSheetsView || isKanbanView"  class="col-1 pl-0 pr-0">
-                   <span class="font-sm dueDate">Due Date:</span>                
+                   <span class="font-sm dueDate">Due Date:</span>
                 </div>
-                 <div v-if="isSheetsView || isKanbanView" class="col-3 pl-0" style="margin-left:-25px">                   
-                    <v2-date-picker                    
+                 <div v-if="isSheetsView || isKanbanView" class="col-3 pl-0" style="margin-left:-25px">
+                    <v2-date-picker
                     v-model="check.dueDate"
-                    :value="check.dueDate" 
+                    :value="check.dueDate"
                     :disabled="!_isallowed('write') || !check.text"
                     @selected="updateCheckItem($event, 'dueDate', index)"
                     :key="`dueDate_${index}`"
@@ -641,20 +643,20 @@ Tab 1 Row Begins here -->
                     name="dueDate"
                     class="w-100 vue2-datepicker d-flex ml-auto"
                     :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"          
+                    :class="{ disabled: disabledDateRange }"
                   />
-                </div>         
+                </div>
             </div>
 
             <!-- Collpase section begins here -->
          <el-collapse id="roll_up" style="background-color:#fafafa">
             <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-             <div v-if="isMapView" class="row justify-content-end pt-2 pb-5" style="background-color:#fafafa;position:relative">          
+             <div v-if="isMapView" class="row justify-content-end pt-2 pb-5" style="background-color:#fafafa;position:relative">
             <div  class="d-flex col mb-0" style="position:absolute">
                     Due Date:
-                <v2-date-picker                    
+                <v2-date-picker
                     v-model="check.dueDate"
-                    :value="check.dueDate" 
+                    :value="check.dueDate"
                     :disabled="!_isallowed('write') || !check.text"
                     @selected="updateCheckItem($event, 'dueDate', index)"
                     :key="`dueDate_${index}`"
@@ -664,43 +666,43 @@ Tab 1 Row Begins here -->
                     name="dueDate"
                     class="w-100 vue2-datepicker d-flex ml-auto"
                     :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"          
-                  />            
+                    :class="{ disabled: disabledDateRange }"
+                  />
               </div>
-          </div>          
-            
-            
-            
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">             
+          </div>
+
+
+
+            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">
               <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
                <div class="d-flex w-100" style="padding-left:4.5rem">
                 <span class="font-md pt-2 pr-2 m">Assigned To:</span>
-                <el-select 
-                  v-model="check.user" 
-                  class="w-75"           
-                  track-by="id"    
-                  value-key="id"  
-                  clearable         
-                  filterable  
-                  :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
-                  placeholder="Search and select user"                  
+                <el-select
+                  v-model="check.user"
+                  class="w-75"
+                  track-by="id"
+                  value-key="id"
+                  clearable
+                  filterable
+                  :disabled="!_isallowed('write') || !check.text"
+                  placeholder="Search and select user"
                   >
-                <el-option 
-                  v-for="item in activeProjectUsers"                                                            
-                  :value="item"   
+                <el-option
+                  v-for="item in activeProjectUsers"
+                  :value="item"
                   :key="item.id"
-                  :label="item.fullName"                                                  
+                  :label="item.fullName"
                   >
                 </el-option>
-                </el-select> 
+                </el-select>
                </div>
-              </div>             
+              </div>
             </div>
 
             <!-- Start Checkbox Progress List -->
             <!-- Create component to manage progress list -->
-            <div class="pt-5 pb-3" style="background-color:#fafafa">             
-                Progress Update             
+            <div class="pt-5 pb-3" style="background-color:#fafafa">
+                Progress Update
                <span v-if="editToggle">
                <span class="ml-2 clickable">
                  <font-awesome-icon icon="plus-circle" class="mr-1 text-danger"/>
@@ -711,43 +713,43 @@ Tab 1 Row Begins here -->
                  <font-awesome-icon icon="plus-circle" class="mr-1"/>
                </span>
                </span>
-          
+
               <table v-if="check.progressLists.length > 0" style="width:100%" class="mt-1">
                   <thead>
                     <tr>
                       <th style="width:60%">Progress</th>
                       <th>Last Updated</th>
-                      <th>By</th> 
-                      <th>Action</th> 
-                    </tr>                   
+                      <th>By</th>
+                      <th>Action</th>
+                    </tr>
                   </thead>
                   <tbody>
-                    <tr 
-                      v-for="(progress, pindex) in check.progressLists.slice().reverse()" 
-                      :key="pindex" 
-                     
+                    <tr
+                      v-for="(progress, pindex) in check.progressLists.slice().reverse()"
+                      :key="pindex"
+
                       v-if="!progress._destroy">
-                    <td>                     
+                    <td>
                       <span v-if="editToggle">
-                       <input :value="progress.body" 
-                              name="text"  
-                             :class="{'red-border':!progress.user}"                       
-                              @input="updateProgressListItem($event, 'text', progress)"                              
-                              :key="`ptext_${pindex}`" 
-                              placeholder="Type Progress update here"                              
-                              type="text" 
-                              class="checklist-text pl-1" 
-                              maxlength="80"                               
+                       <input :value="progress.body"
+                              name="text"
+                             :class="{'red-border':!progress.user}"
+                              @input="updateProgressListItem($event, 'text', progress)"
+                              :key="`ptext_${pindex}`"
+                              placeholder="Type Progress update here"
+                              type="text"
+                              class="checklist-text pl-1"
+                              maxlength="80"
                               >
-                       </span>  
+                       </span>
                        <span v-else>
                         {{progress.body}}
-                       </span>                     
+                       </span>
                     </td>
-                    <td>                   
-                      <span v-if="!progress.user"></span>                   
-                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>                                          
-                    </td>      
+                    <td>
+                      <span v-if="!progress.user"></span>
+                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>
+                    </td>
                     <td >
                        <span v-if="progress.user">
                          <span>
@@ -755,8 +757,8 @@ Tab 1 Row Begins here -->
                        </span>
                        <span v-else>
                          {{ $currentUser.full_name }}
-                       </span>                                            
-                    </td> 
+                       </span>
+                    </td>
                     <td>
                        <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveIssue">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
@@ -766,15 +768,15 @@ Tab 1 Row Begins here -->
                       </span>
                       <span v-tooltip="`Delete`" class="pl-1" v-if="progress.user">
                         <font-awesome-icon icon="trash" class="text-danger clickable"  v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)"/>
-                      </span>                      
-                    </td>                    
+                      </span>
+                    </td>
                     </tr>
-                    
-                  </tbody>             
-              </table>       
+
+                  </tbody>
+              </table>
               <div v-else class="text-danger">
                 No Checklist Progress Updates to Display
-              </div>     
+              </div>
             <!-- End Checkbox Progress List -->
             </div>
               </el-collapse-item>
@@ -784,12 +786,12 @@ Tab 1 Row Begins here -->
           </div>
           <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
               <i class="fas fa-times"></i>
-          </span>             
-        
+          </span>
+
 
         </div>
 
-      </draggable> 
+      </draggable>
 
           </div>
           <p v-else class="text-danger font-sm">No checks..</p>
@@ -802,8 +804,8 @@ Tab 1 Row Begins here -->
 
 <!-- FILES TAB # 4-->
 <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
-       <div class="container-fluid mx-4 mt-2">          
-           <div class="row">           
+       <div class="container-fluid mx-4 mt-2">
+           <div class="row">
                <div class="col-5 pr-4 links-col">
                   <div v-if="_isallowed('write')" class="form-group">
                   <attachment-input
@@ -812,37 +814,37 @@ Tab 1 Row Begins here -->
                   ></attachment-input>
                 </div>
                <div
-                  v-for="file in filteredFiles.slice().reverse()"              
+                  v-for="file in filteredFiles.slice().reverse()"
                   class="d-flex mb-2 w-100"
-                   v-if="!file.link" 
-                >               
+                   v-if="!file.link"
+                >
                  <div
                       class="input-group-text d-inline clickable px-1 w-100 hover"
                       :class="{ 'btn-disabled': !file.uri }"
                       @click.prevent="downloadFile(file)"
                     >
-                   <span class="scales"><font-awesome-icon icon="file" class="mr-1"/></span>                
+                   <span class="scales"><font-awesome-icon icon="file" class="mr-1"/></span>
                   <input
                     readonly
                     type="text"
                     class="w-100 mr-1 file-link"
-                    style="border:none; cursor:pointer; background-color:transparent"               
-                    :value="file.name || file.uri"                  
+                    style="border:none; cursor:pointer; background-color:transparent"
+                    :value="file.name || file.uri"
                   >
                 </div>
-                               
+
                   <span
                     :class="{ _disabled: loading || !_isallowed('write') }"
                     class="del-check mt-2 clickable"
                     @click.prevent="deleteFile(file)"
                   >
                     <i class="fas fa-times"></i>
-                  </span>                 
+                  </span>
                  </div>
-            
+
               </div>
-              <div class="col-6 mb-2 pl-4 links-col"> 
-               
+              <div class="col-6 mb-2 pl-4 links-col">
+
                  <div class="input-group mb-1">
                     <div class="d-block mt-1">
                     <label class="font-lg">Add link</label>
@@ -854,7 +856,7 @@ Tab 1 Row Begins here -->
                       <i class="fas fa-plus-circle"></i>
                     </span>
                    </div>
-        
+
                   <div
                     v-for="(file, index) in DV_issue.issueFiles.slice().reverse()"
                     :key="index"
@@ -887,11 +889,11 @@ Tab 1 Row Begins here -->
 
                   <div
                     v-for="(file, index) in filteredFiles.slice().reverse()"
-                    :key="index"               
-                    class="d-flex mb-2 w-100 px-1 hover"                   
+                    :key="index"
+                    class="d-flex mb-2 w-100 px-1 hover"
                     v-if="file.link && file.id"
                 >
-                  
+
                   <input
                     readonly
                     type="text"
@@ -911,61 +913,61 @@ Tab 1 Row Begins here -->
                   </div>
                 </div>
                 </div>
-                  
+
               </div>
-            </div>          
+            </div>
           </div>
 </div>
 
 
 
- <!-- RELATED TAB #5 -->  
+ <!-- RELATED TAB #5 -->
 <div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
 
 
         <div class="form-group user-select pt-3 mx-4">
           <label class="font-md mb-0">Related Issues</label>
-          <el-select 
-            v-model="relatedIssues" 
-            class="w-100"           
-            track-by="id"    
-            value-key="id"                
-            filterable 
-            multiple 
-            :disabled="!_isallowed('write')"                                                                                                                                                
+          <el-select
+            v-model="relatedIssues"
+            class="w-100"
+            track-by="id"
+            value-key="id"
+            filterable
+            multiple
+            :disabled="!_isallowed('write')"
             placeholder="Search and select Related-issues"
-                  
+
             >
-          <el-option 
-            v-for="item in filteredIssues"                                                            
-            :value="item"   
+          <el-option
+            v-for="item in filteredIssues"
+            :value="item"
             :key="item.id"
-            :label="item.title"                                                  
+            :label="item.title"
             >
             </el-option>
-            </el-select>          
+            </el-select>
         </div>
 
         <div class="form-group user-select mx-4">
           <label class="font-md mb-0">Related Tasks</label>
-           <el-select 
-            v-model="relatedTasks" 
-            class="w-100"           
-            track-by="id"    
-            value-key="id"                
-            filterable 
-            multiple 
-           :disabled="!_isallowed('write')"                                                                                                                                                
-            placeholder="Search and select Related-tasks"                 
+           <el-select
+            v-model="relatedTasks"
+            class="w-100"
+            track-by="id"
+            value-key="id"
+            filterable
+            multiple
+           :disabled="!_isallowed('write')"
+            placeholder="Search and select Related-tasks"
             >
-          <el-option 
-            v-for="item in filteredTasks"                                                            
-            :value="item"   
+          <el-option
+            v-for="item in filteredTasks"
+            :value="item"
             :key="item.id"
-            :label="item.text"                                                  
+            :label="item.text"
             >
             </el-option>
-            </el-select>                
+            </el-select>
 
           <!-- <multiselect
             v-model="relatedTasks"
@@ -990,25 +992,25 @@ Tab 1 Row Begins here -->
 
         <div class="form-group user-select mx-4">
         <label class="font-md mb-0">Related Risks</label>
-         <el-select 
-          v-model="relatedRisks" 
-          class="w-100"           
-          track-by="id"    
-          value-key="id"                
-          filterable 
-          multiple 
-         :disabled="!_isallowed('write')"                                                                                                                                                
+         <el-select
+          v-model="relatedRisks"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          filterable
+          multiple
+         :disabled="!_isallowed('write')"
           placeholder="Search and select Related-risks"
-                
+
           >
-         <el-option 
-          v-for="item in filteredRisks"                                                            
-          :value="item"   
+         <el-option
+          v-for="item in filteredRisks"
+          :value="item"
           :key="item.id"
-          :label="item.text"                                                  
+          :label="item.text"
            >
           </el-option>
-          </el-select>  
+          </el-select>
       </div>
           <!-- closing div for tab4 -->
 </div>
@@ -1016,7 +1018,7 @@ Tab 1 Row Begins here -->
 
 
  <!-- UPDATE TAB 6 -->
-<div v-show="currentTab == 'tab6'" class="paperLookTab tab5">    
+<div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
 
         <div class="form-group mx-4 paginated-updates">
           <label class="font-md">Updates</label>
@@ -1092,7 +1094,7 @@ export default {
     AttachmentInput,
     Draggable,
     FormTabs
-    
+
   },
   data() {
     return {
@@ -1127,8 +1129,8 @@ export default {
           {
           label: 'Assignments',
           key: 'tab2',
-          closable: false,                     
-        },        
+          closable: false,
+        },
         {
           label: 'Checklist',
           key: 'tab3',
@@ -1142,15 +1144,15 @@ export default {
           {
           label: 'Related',
           key: 'tab5',
-          closable: false,     
-                    
-        },          
+          closable: false,
+
+        },
           {
           label: 'Updates',
           key: 'tab6',
-          closable: false,     
-                    
-        },                  
+          closable: false,
+
+        },
       ]
     }
   },
@@ -1249,8 +1251,8 @@ export default {
     editProgress() {
        this.editToggle = !this.editToggle
        //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
-     
-      },  
+
+      },
      progressListTitleText(progressList){
         if(!progressList.id) return;
         var date = moment(progressList.createdAt).format("MM/DD/YYYY")
@@ -1272,7 +1274,7 @@ export default {
       this.relatedTasks = _.filter(this.currentTasks, (u) =>
         this.DV_issue.subTaskIds.includes(u.id)
       );
-      this.relatedRisks = _.filter(this.filteredRisks, u => 
+      this.relatedRisks = _.filter(this.filteredRisks, u =>
         this.DV_issue.subRiskIds.includes(u.id)
       );
       this.selectedIssueType = this.issueTypes.find(
@@ -1329,7 +1331,7 @@ export default {
 
         if(file.id){
           Vue.set(this.DV_issue.issueFiles, index, {...file, _destroy: true})
-          this.destroyedFiles.push(file)            
+          this.destroyedFiles.push(file)
         }
         this.DV_issue.issueFiles.splice(this.DV_issue.issueFiles.findIndex(f => f.guid === file.guid), 1)
 
@@ -1379,7 +1381,7 @@ export default {
 
 
   // RACI USERS HERE Awaiting backend work
-     
+
      //Responsible USer Id
         if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
@@ -1408,7 +1410,7 @@ export default {
           }
 
           // Consulted UserId
-          
+
           if (this.DV_issue.consultedUserIds.length) {
             // console.log("this.DV_issue.responsibleUserIds.length")
             // console.log(this.DV_issue.consultedUserIds.length)
@@ -1422,7 +1424,7 @@ export default {
           }
 
           // Informed UserId
-          
+
           if (this.DV_issue.informedUserIds.length) {
             // console.log("this.DV_issue.responsibleUserIds.length")
             // console.log(this.DV_issue.informedUserIds.length)
@@ -1497,10 +1499,10 @@ export default {
               }
         }
 
-           
 
-            
-          
+
+
+
 
         for (let i in this.DV_issue.notes) {
           let note = this.DV_issue.notes[i];
@@ -1660,7 +1662,7 @@ export default {
       //var v = event.target.value
       //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
       if(event.target.value){
-        input.name = event.target.value  
+        input.name = event.target.value
       }
     },
     updateProgressListItem(event, name, progressList) {
@@ -1784,7 +1786,7 @@ export default {
     },
     "DV_issue.autoCalculate"(value) {
       if (value) this.calculateProgress();
-    },  
+    },
   responsibleUsers: {
       handler: function (value) {
         if (value) {
@@ -1895,10 +1897,10 @@ export default {
   z-index: 10;
   width: 83.1%;
 }
-.kanban-form {   
+.kanban-form {
   left: 16.4%;
-  width: 83.33%;  
-  z-index: 100;   
+  width: 83.33%;
+  z-index: 100;
 }
 .form-control.error {
   border-color: #e84444;
@@ -1916,7 +1918,7 @@ export default {
   border-radius: 4px;
 }
 .del-check {
-  position: absolute; 
+  position: absolute;
   display: flex;
   right: 2rem;
   font-weight: 500;
@@ -1950,7 +1952,7 @@ ul {
     padding-bottom: 0 !important;
   }
 .paperLook {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   position: relative;
 }
 .sticky-btn {
@@ -1973,7 +1975,7 @@ ul {
 .sticky-kanban {
     position: sticky;
     position: -webkit-sticky;
-    margin-bottom: -2.5rem;    
+    margin-bottom: -2.5rem;
  }
 .scrollToChecklist {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
@@ -2008,7 +2010,7 @@ ul {
   }
   tbody {
     background-color: #fff;
-  } 
+  }
   th {
     background:  #ededed;
     color: #383838;
@@ -2039,7 +2041,7 @@ ul {
     width: 95%;
     outline: none;
     border: solid #ededed 1px;
-    border-radius: 4px;  
+    border-radius: 4px;
   }
   .fa-building {
     font-size: large !important;
@@ -2078,6 +2080,7 @@ ul {
   color: #495057;
   text-decoration-color: none;
 }
+
 .hover {
   background: transparent;
   border-radius: 0 !important;
@@ -2096,5 +2099,6 @@ input.file-link {
   border: 1px solid #DCDFE6;
   background: #fff; 
 }
+
 
 </style>
