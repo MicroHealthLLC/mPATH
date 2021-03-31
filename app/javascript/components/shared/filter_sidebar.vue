@@ -9,9 +9,9 @@
       <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="saveFilters" data-cy="save_filter"><i class="fas fa-redo pr-1"></i>SAVE</button>
-          <button class="btn btn-sm btn-link float-right d-inline-block clear-btn pb-0" @click.prevent="onClearFilter" data-cy="clear_filter"><i class="fas fa-redo pr-1"></i>CLEAR</button>
-        </div>
+             <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
+            <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button>
+         </div>
       </div>
       <!-- Next row for Facilities label with border div -->
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
@@ -1593,4 +1593,8 @@ input[type=number] {
     padding-top:0;
     }
   }
+.btn-success, .btn-danger {
+   box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+   text-decoration-line: none !important;
+}
 </style>
