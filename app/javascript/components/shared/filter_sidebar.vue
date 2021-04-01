@@ -33,7 +33,7 @@
                   filterable
                   value-key="id"
                   multiple                                                                                                                                               
-                  placeholder="Select Project Group"
+                  placeholder="Search and select Project Group"
                 >
                 <el-option 
                   v-for="item in C_activeFacilityGroups"                                                     
@@ -53,26 +53,18 @@
                   data-cy="facility_name" 
                   :loading="isLoading"
                   multiple   
-                  filterable
-                  @search-change="findFacility"                                                                                                                                           
-                  placeholder="Select Project Name"
+                  filterable                                                                                                                                                        
+                  placeholder="Search and select Project Name"
                   >
                 <el-option 
-                  v-for="item in facilities"                                                     
+                  v-for="item in C_activeProjectNames"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.facilityName"                                                  
                   >
                 </el-option>
               </el-select> 
-              <!-- <multiselect v-model="C_facilityNameFilter" label="facilityName" track-by="id" :multiple="true" data-cy="facility_name" :options="facilities" :searchable="true" :loading="isLoading" :preserve-search="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" @search-change="findFacility">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.facilityName}}</span>
-                  </div>
-                </template>
-                <span slot="noOptions">...</span>
-              </multiselect> -->
+
             <div>
                <label class="font-sm mb-0">Project % Progress Range</label>
               <div class="form-row">
@@ -108,13 +100,7 @@
                   >
                 </el-option>
               </el-select> 
-              <!-- <multiselect v-model="C_projectStatusFilter" track-by="name" label="name" :options="statuses" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="project_status">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect> -->
+
             <div>
               <!-- Available row for filter -->
             </div>
@@ -178,14 +164,7 @@
                   :label="item.name"                                                  
                   >
                 </el-option>
-              </el-select> 
-              <!-- <multiselect v-model="C_issueTypeFilter" track-by="name" label="name" :options="issueTypes" :searchable="false" :multiple="true" select-label="Select" deselect-label="Remove" data-cy="issue_type">
-                <template slot="singleLabel" slot-scope="{option}">
-                  <div class="d-flex">
-                    <span class='select__tag-name'>{{option.name}}</span>
-                  </div>
-                </template>
-              </multiselect> -->
+              </el-select>            
             </div>
             <div>
               <label class="font-sm mb-0">Issue Stages</label>
@@ -341,15 +320,6 @@
                   >
                 </el-option>
               </el-select> 
-
-
-                <!-- <multiselect v-model="C_taskIssueUserFilter" track-by="id" label="fullName" :options="activeProjectUsers" :searchable="true" :multiple="true" placeholder="Search and select option" select-label="Select" deselect-label="Remove" data-cy="issue_user">
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.fullName}}</span>
-                    </div>
-                  </template>
-                </multiselect> -->
               </div>
               </div>
               <div class="col-md-4" style="border-right:solid lightgray .8px">
@@ -419,8 +389,6 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
-
-      facilities: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
         { name: 'My Issues', value: 'issues' },
@@ -507,7 +475,7 @@ export default {
       set(value) {
         this.setRiskApproachFilter(value)
       }
-    },
+    }, 
     C_taskIssueProgress: {
       get() {
         return this.progressFilter.taskIssue
@@ -539,6 +507,9 @@ export default {
     C_activeFacilityGroups() {
       let id = Number(this.$route.params.projectId)
       return this.activeFacilityGroups(id)
+    },
+    C_activeProjectNames() {
+      return this.getUnfilteredFacilities
     },
     C_projectStatusFilter: {
       get() {
@@ -746,18 +717,18 @@ export default {
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id
     },
-    findFacility(query) {
-      this.isLoading = true
-      if (query) {
-        const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
-        const isMatch = (result) => resp.test(result.facilityName)
-        this.facilities = _.filter(this.unFilterFacilities, isMatch)
-        this.isLoading = false
-      } else {
-        this.facilities = this.unFilterFacilities
-        this.isLoading = false
-      }
-    },
+    // findFacility(query) {
+    //   this.isLoading = true
+    //   if (query) {
+    //     const resp = new RegExp(_.escapeRegExp(query.toLowerCase()), 'i')
+    //     const isMatch = (result) => resp.test(result.facilityName)
+    //     this.facilities = _.filter(this.unFilterFacilities, isMatch)
+    //     this.isLoading = false
+    //   } else {
+    //     this.facilities = this.unFilterFacilities
+    //     this.isLoading = false
+    //   }
+    // },
     fetchFilters(){
       var url = `/projects/${this.currentProject.id}/query_filters.json`
       var method = "GET"
