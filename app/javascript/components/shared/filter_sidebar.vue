@@ -60,7 +60,7 @@
                   v-for="item in C_activeProjectNames"                                                     
                   :value="item"   
                   :key="item.id"
-                  :label="item.facilityName"                                                  
+                  :label="projectNameShortener(item.facilityName, 35)"                                                     
                   >
                 </el-option>
               </el-select> 
@@ -708,6 +708,19 @@ export default {
       'setFacilities',
       'setMapZoomFilter'
     ]),
+   projectNameShortener(str, length, ending) {
+      if (length == null) {
+        length = 40;
+      }
+      if (ending == null) {
+        ending = '...';
+      }
+      if (str.length > length) {
+        return str.substring(0, length - ending.length) + ending;
+      } else {
+        return str;
+      }
+    },
     handleOutsideClick() {
       if (this.showFilters && !this.datePicker) this.showFilters = false
     },
