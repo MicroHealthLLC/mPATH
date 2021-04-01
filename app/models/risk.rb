@@ -207,7 +207,8 @@ class Risk < ApplicationRecord
       # Risk Approver user ids
       risk_approver_user_ids: risk_approver_user_ids,
       
-      notes: notes.as_json,
+      notes: notes.as_json,  
+      notes_last_update: notes.map(&:updated_at).compact.uniq,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
