@@ -21,9 +21,9 @@
         <td class="eight" v-else></td>
         <td class="eight" v-if="task.watched == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-        <td class="twenty" v-if="(task.notesLastUpdate.length) > 0">
+        <td class="twenty" v-if="(task.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[0].user.fullName)">              
-          {{moment(task.notesLastUpdate[0]).format('DD MMM YYYY, h:mm a')}}
+          {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> {{task.notes[0].body}}
            
