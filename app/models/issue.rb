@@ -131,7 +131,7 @@ class Issue < ApplicationRecord
 
       checklists: checklists.as_json,
       notes: notes.as_json,  
-      notes_last_update: notes.map(&:updated_at).compact.uniq,
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
       project_id: fp.try(:project_id),

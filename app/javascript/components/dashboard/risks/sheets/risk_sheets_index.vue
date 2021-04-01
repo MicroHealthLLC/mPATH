@@ -160,7 +160,7 @@
               <th class="sort-th"  @click="sort('progress')" >Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="pl-1 sort-th" @click="sort('watched')">On Watch<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
-              <th class="sort-th" @click="sort('notesLastUpdate')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
             </tr>
           </table>
           <tbody>
@@ -250,9 +250,9 @@
           <td v-else></td>
           <td v-if="(risk.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(risk.notesLastUpdate.length) > 0">
+          <td v-if="(risk.notesUpdatedAt.length) > 0">
              By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notesLastUpdate[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
+            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
