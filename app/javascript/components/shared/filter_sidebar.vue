@@ -10,9 +10,30 @@
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
-            <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button>
+            <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button>
          </div>
       </div>
+
+      <!-- Next row for Facilities label with border div -->
+      <div class="filter-border filter-sections px-3 pb-1 pt-0">
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="mb-0">Favorites</h5>
+          </div>
+        </div>
+
+        <!-- FAVORITE FILTERS SECTION -->
+        <div class="row justify-content-between pb-2">
+          <div class="col-md-6">
+            <div>
+              <label class="font-sm mb-0">Name</label>
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
+              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Next row for Facilities label with border div -->
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
         <div class="row">
@@ -142,8 +163,6 @@
               </el-select> 
             </div>
           </div>
- 
-
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
@@ -268,10 +287,9 @@
               </el-select> 
             </div>             
           </div>
-        </div>
-            
-        
+        </div>        
       </div>
+
       <div class="filter-border filter-sections px-3 pb-1 mt-3 pt-0">
             <div class="row">
               <div class="col-md-12">
@@ -389,6 +407,7 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
+      favoriteFilterData: {id: null, name: null},
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
         { name: 'My Issues', value: 'issues' },
@@ -458,6 +477,15 @@ export default {
       'getMapZoomFilter',
       'getUnfilteredFacilities'
     ]),
+
+    C_favoriteFilter: {
+      get() {
+        return this.favoriteFilterData
+      },
+      set(value) {
+        this.favoriteFilterData.name = value
+      }
+    },
 
     C_riskPriorityLevelFilter: {
       get() {
@@ -815,6 +843,213 @@ export default {
 
 
     },
+    setFavoriteFilterResponse(value){
+      debugger;
+      
+    },
+    saveFavoriteFilters(){
+
+      let formData = new FormData()
+
+      formData.append('favorite_filter[name]', this.favoriteFilterData.name)
+      formData.append('favorite_filter[id]', this.favoriteFilterData.id)
+
+      // Categories Filter
+      if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityGroupFilter")
+        formData.append('query_filters[][name]', "Project Groups")
+        // var v = JSON.stringify(this.facilityGroupFilter)
+        var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.projectStatusFilter && this.projectStatusFilter[0]){
+        formData.append('query_filters[][filter_key]', "projectStatusFilter")
+        formData.append('query_filters[][name]', "Project Statuses")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.facilityNameFilter && this.facilityNameFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityNameFilter")
+        formData.append('query_filters[][name]', "Project Names")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }      
+
+      // Categories Filter
+      if(this.facilityProgressFilter && this.facilityProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityProgressFilter")
+        formData.append('query_filters[][name]', "Project % Progress Range")
+        // var v = JSON.stringify(this.taskTypeFilter)
+
+        var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.facilityDueDateFilter && this.facilityDueDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "facilityDueDateFilter")
+        formData.append('query_filters[][name]', "Project Completion Date Range")
+        var dates = []
+        dates.push( moment(this.facilityDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.facilityDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates ) 
+      }
+
+      // Categories Filter
+      if(this.taskStageFilter && this.taskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskStageFilter")
+        formData.append('query_filters[][name]', "Task Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueTypeFilter && this.issueTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueTypeFilter")
+        formData.append('query_filters[][name]', "Issue Types")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueSeverityFilter && this.issueSeverityFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueSeverityFilter")
+        formData.append('query_filters[][name]', "Issue Severities")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.issueStageFilter && this.issueStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "issueStageFilter")
+        formData.append('query_filters[][name]', "Issue Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskPriorityLevelFilter && this.getRiskPriorityLevelFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskPriorityLevelFilter")
+        formData.append('query_filters[][name]', "Risk Priority Levels")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.riskStageFilter && this.riskStageFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskStageFilter")
+        formData.append('query_filters[][name]', "Risk Stages")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getRiskApproachFilter && this.getRiskApproachFilter[0]){
+        formData.append('query_filters[][filter_key]', "riskApproachFilter")
+        formData.append('query_filters[][name]', "Risk Approaches")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskTypeFilter && this.taskTypeFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskTypeFilter")
+        formData.append('query_filters[][name]', "Categories")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )        
+      }
+
+      // Categories Filter
+      if(this.getTaskIssueUserFilter && this.getTaskIssueUserFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
+        formData.append('query_filters[][name]', "Action Users")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, name: val.fullName}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.getAdvancedFilter && this.getAdvancedFilter[0]){
+        formData.append('query_filters[][filter_key]', "getAdvancedFilter")
+        formData.append('query_filters[][name]', "Flags")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+
+      // Categories Filter
+      if(this.taskIssueProgressFilter && this.taskIssueProgressFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
+        formData.append('query_filters[][name]', "Action % Progress Range")
+        // var v = JSON.stringify(this.taskTypeFilter)
+        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        formData.append('query_filters[][filter_value]', v )       
+      }
+      
+      // Categories Filter
+      if(this.taskIssueDueDateFilter && this.taskIssueDueDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "taskIssueDueDateFilter")
+        formData.append('query_filters[][name]', "Action Due Date Range")
+        var dates = []
+        dates.push( moment(this.taskIssueDueDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.taskIssueDueDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates )        
+      }
+
+      // Categories Filter
+      if(this.noteDateFilter && this.noteDateFilter[0]){
+        formData.append('query_filters[][filter_key]', "noteDateFilter")
+        formData.append('query_filters[][name]', "Updates Date Range")
+        var dates = []
+        dates.push( moment(this.noteDateFilter[0]).format("YYYY-MM-DD") )
+        dates.push( moment(this.noteDateFilter[1]).format("YYYY-MM-DD") )
+        dates = JSON.stringify(dates)
+        formData.append('query_filters[][filter_value]', dates )        
+      }
+
+      var url = `/projects/${this.currentProject.id}/query_filters.json`
+      var method = "POST"
+      var callback = "filter-created"
+      var favoriteFilterData = this.favoriteFilterData
+
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        this.favoriteFilterData.id = response.data.favorite_filter.id
+        // this.setFavoriteFilterResponse(response.data.favorite_filter.id)
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        // this.loading = false
+      })
+
+    },
+    //NOTE: Remove this filter function once saveFavoriteFilters are done
     saveFilters(){
       let formData = new FormData()
 

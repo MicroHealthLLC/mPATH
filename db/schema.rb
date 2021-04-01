@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_29_191207) do
+ActiveRecord::Schema.define(version: 2021_04_01_201418) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -125,6 +125,17 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.index ["facility_id"], name: "index_facility_projects_on_facility_id"
     t.index ["project_id"], name: "index_facility_projects_on_project_id"
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
+  end
+
+  create_table "favorite_filters", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "project_id"
+    t.integer "user_id"
+    t.boolean "is_default", default: false
+    t.boolean "shared"
+    t.boolean "private"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -330,6 +341,7 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.integer "favorite_filter_id"
     t.index ["user_id"], name: "index_query_filters_on_user_id"
   end
 
