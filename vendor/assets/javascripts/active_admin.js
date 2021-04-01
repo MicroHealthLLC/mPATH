@@ -1005,11 +1005,7 @@ jQuery(function($) {
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
         <fieldset v-if="!loading" class="inputs">
           <legend><span>Privileges</span></legend>
-          <ol class="choices-group">
-            <li class="choice d-flex">
-              <label>Facility Manager</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="facility_manager_view.read">Read</label>
-            </li>
+          <ol class="choices-group">           
             <li class="choice d-flex">
             <label>Sheets</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
@@ -1021,11 +1017,7 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-            </li>
-            <li class="choice d-flex">
-              <label>On Watch</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
-            </li>
+            </li>         
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
