@@ -130,7 +130,8 @@ class Issue < ApplicationRecord
       informed_user_ids: informed_user_ids,
 
       checklists: checklists.as_json,
-      notes: notes.as_json,
+      notes: notes.as_json,  
+      notes_last_update: notes.map(&:updated_at).compact.uniq,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
       project_id: fp.try(:project_id),

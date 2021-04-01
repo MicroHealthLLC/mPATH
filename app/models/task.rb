@@ -119,6 +119,7 @@ class Task < ApplicationRecord
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
       notes: notes.as_json,
+      notes_last_update: notes.map(&:updated_at).compact.uniq,
 
 
       # Add RACI user names

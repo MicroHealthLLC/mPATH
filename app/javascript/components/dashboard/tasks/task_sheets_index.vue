@@ -113,11 +113,11 @@
               <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
               <th class="sort-th" @click="sort('watched')">On Watch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-              <th class="sort-th" @click="sort('notes')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th" @click="sort('notesLastUpdate')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
             </tr>
           </table>
              <task-sheets
-              v-for="(task, i) in sortedTasks"
+              v-for="task in sortedTasks"
               class="taskHover"
               href="#"       
               :load="log(task)"    
@@ -197,9 +197,9 @@
           <td v-else></td>
           <td v-if="(task.watched) == true"><h5>X</h5></td>
           <td v-else></td>
-          <td v-if="(task.notes.length) > 0">
+          <td v-if="(task.notesLastUpdate.length) > 0">
              By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+            {{moment(task.notesLastUpdate[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -326,7 +326,7 @@
         const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         let noteDates = this.noteDateFilter
         let taskIssueDueDates = this.taskIssueDueDateFilter
-        
+   
         let taskIssueProgress = this.taskIssueProgressFilter
 
         let taskIssueUsers = this.getTaskIssueUserFilter
@@ -386,6 +386,7 @@
           return valid
         }), ['dueDate'])
         return tasks
+      
       },
       C_sheetsTaskFilter: {
         get() {
