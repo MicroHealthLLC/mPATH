@@ -26,12 +26,12 @@ describe('Kanban Tasks View', function() {
     cy.logout()
   })
 
-  it("Create new task in kanban task page", function() {
-    cy.fillKanbanTaskForm()
-    cy.get('[data-cy=task_save_btn]').click({force: true})
-    cy.get('.el-message__content').contains('New test task in kanban was saved successfully.').should('be.visible')
-    cy.logout()
-  })
+  // it("Create new task in kanban task page", function() {
+  //   cy.fillKanbanTaskForm()
+  //   cy.get('[data-cy=task_save_btn]').click({force: true})
+  //   cy.get('.el-message__content').contains('New test task in kanban was saved successfully.').should('be.visible')
+  //   cy.logout()
+  // })
 
   it("In Task form if title's field empty, error message display", function() {
     cy.fillKanbanTaskForm()

@@ -24,12 +24,12 @@ describe('Kanban Issues View', function() {
     cy.logout()
   })
 
-  it("Create new issue in kanban issue page", function() {
-    cy.fillKanbanIssueForm()
-    cy.get('[data-cy=issue_save_btn]').click({force: true})
-    cy.get('.el-message__content').contains('New test issue in kanban was saved successfully.').should('be.visible')
-    cy.logout()
-  })
+  // it("Create new issue in kanban issue page", function() {
+  //   cy.fillKanbanIssueForm()
+  //   cy.get('[data-cy=issue_save_btn]').click({force: true})
+  //   cy.get('.el-message__content').contains('New test issue in kanban was saved successfully.').should('be.visible')
+  //   cy.logout()
+  // })
 
 
   it("In Issue form if title's field empty, error message display", function() {

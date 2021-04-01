@@ -26,12 +26,12 @@ describe('Kanban Risks View', function() {
     cy.logout()
   })
 
-  it("Create new risk in kanban risk page", function() {
-    cy.fillRiskForm()
-    cy.get('[data-cy=risk_save_btn]').click({force: true})
-    cy.get('.el-message__content').contains('New test risk in kanban was saved successfully.').should('be.visible')
-    cy.logout()
-  })
+  // it("Create new risk in kanban risk page", function() {
+  //   cy.fillRiskForm()
+  //   cy.get('[data-cy=risk_save_btn]').click({force: true})
+  //   cy.get('.el-message__content').contains('New test risk in kanban was saved successfully.').should('be.visible')
+  //   cy.logout()
+  // })
 
   it("In Risk form if title's field empty, error message display", function() {
     cy.fillRiskForm()
