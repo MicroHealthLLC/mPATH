@@ -55,6 +55,7 @@ describe('Kanban Issues View', function() {
     cy.get('[data-cy=issue_title]').scrollIntoView()
     cy.get('[data-cy=issue_title_error]').contains('The Issue Name field is required.').should('be.visible')
     cy.get('[data-cy=issue_save_btn]').click()
+    cy.get('.text-danger.mx-4').scrollIntoView()
     cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
     cy.get('[data-cy=issue_close_btn]').click()
     cy.logout()

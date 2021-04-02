@@ -51,6 +51,7 @@ describe('Kanban Tasks View', function() {
     cy.get('[data-cy=task_save_btn]').click()
     cy.get('[data-cy=task_name]').scrollIntoView()
     cy.get('[data-cy=task_name_error]').contains('The Task Name field is required.').should('be.visible')
+    cy.get('.text-danger.mx-4').scrollIntoView()
     cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
     cy.get('[data-cy=task_close_btn]').click()
     cy.logout()
