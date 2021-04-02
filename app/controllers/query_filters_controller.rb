@@ -2,7 +2,7 @@ class QueryFiltersController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    render json: project.query_filters.where(user_id: current_user.id).map(&:to_json)
+    render json: project.favorite_filters.includes(:query_filters).where(user_id: current_user.id).map(&:to_json)
   end
 
   def create
@@ -20,6 +20,7 @@ class QueryFiltersController < AuthenticatedController
     favorite_filter = nil
     if fav_params[:id].present?
       favorite_filter = project.favorite_filters.where(user_id: current_user.id, id: fav_params[:id]).first
+      favorite_filter.update(fav_params)
     end
 
     if favorite_filter.nil?
@@ -39,13 +40,21 @@ class QueryFiltersController < AuthenticatedController
     end
     QueryFilter.import(query_filters) if query_filters.any?
 
-    render json: {query_filters: query_filters, favorite_filter: favorite_filter}
+    render json: {favorite_filter: favorite_filter.to_json}
   end
 
   def reset
     project = Project.find(params[:project_id])
-    project.query_filters.where(user_id: current_user.id).destroy_all
-    render json: {message: "Filters destroyed successfully"}
+    fav_params = query_filters_params[:favorite_filter]
+
+    if fav_params && fav_params[:id].present?
+      project.favorite_filters.where(user_id: current_user.id, id: fav_params[:id]).destroy_all
+      render json: {message: "Filters destroyed successfully", id: fav_params[:id]}
+
+    else
+      render json: {error: "No Filter found"}, status: 404
+    end
+
   end
 
   def query_filters_params

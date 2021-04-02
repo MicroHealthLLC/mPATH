@@ -6,10 +6,8 @@ class FavoriteFilter < ApplicationRecord
   def to_json(options = {})
     {
       id: self.id,
-      filter_key: self.filter_key,
       name: self.name,
-      filter_value: self.filter_value.present? ? JSON.parse(self.filter_value) : nil,
-      # filter_value: self.filter_value,
+      query_filters: query_filters.map(&:to_json),
       project_id: self.project_id,
       user_id: self.user_id
     }
