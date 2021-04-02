@@ -38,6 +38,7 @@ describe('Kanban Risks View', function() {
     cy.get(':nth-child(1) > [data-cy=facility_tabs]').click()
     cy.get('[data-cy=risk_name]').clear()
     cy.get('[data-cy=risk_name_error]').contains('The Risk Name field is required.').should('be.visible')
+    cy.get('.text-danger.mx-4').scrollIntoView()
     cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
     cy.get('[data-cy=risk_close_btn]').click()
     cy.logout()

@@ -36,6 +36,7 @@ jobs:
           yarn add cypress
           bundle exec rails db:create
           bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rails db:seed RAILS_ENV=test
           bundle exec rails assets:precompile RAILS_ENV=test
           bundle exec rails server -e test -p 5017 -d
           yarn cypress run --record --parallel --project ./spec

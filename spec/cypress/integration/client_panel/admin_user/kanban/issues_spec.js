@@ -33,8 +33,26 @@ describe('Kanban Issues View', function() {
 
 
   it("In Issue form if title's field empty, error message display", function() {
-    cy.fillKanbanIssueForm()
-    cy.get('[data-cy=issue_title]').clear()
+    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+    const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+
+    cy.get('[data-cy=kanban]').within(() => {
+      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+        cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+      })
+    })
+
+    cy.get('[data-cy=issue_description]').type('Kanban Issue brief description').should('have.value', 'Kanban Issue brief description')
+
+    cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
+    cy.get('[data-cy=issue_type_field]').click().type('{downarrow}{enter}')
+    cy.get('[data-cy=issue_severity]').click().type('{downarrow}{enter}')
+
+    cy.get('[data-cy=issue_start_date]').type(`${start_date}{enter}`)
+    cy.get('[data-cy=issue_due_date]').type(`${due_date}{enter}`)
+
+    cy.get('[data-cy=issue_save_btn]').click()
+    cy.get('[data-cy=issue_title]').scrollIntoView()
     cy.get('[data-cy=issue_title_error]').contains('The Issue Name field is required.').should('be.visible')
     cy.get('[data-cy=issue_save_btn]').click()
     cy.get('.text-danger.mx-4').contains('Please fill the required fields before submitting').should('be.visible')
