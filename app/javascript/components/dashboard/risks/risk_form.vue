@@ -1118,7 +1118,7 @@
                   clearable
                   filterable
                   placeholder="Search and select Risk Approver"
-                  :disabled="this.DV_risk.approved && !_isallowed('write')"             
+                  :disabled="!_isallowed('write') || this.DV_risk.approved"             
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -1206,7 +1206,7 @@
                   disabled
                 />
                 <!-- </span>    -->
-                <span v-if="this.DV_risk.text">
+                <span v-if="_isallowed('write') && this.DV_risk.text">
                   <button
                     v-if="isMapView"
                     class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
