@@ -503,6 +503,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          calendar_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           map_view: {
             read: false,
             write: false,
@@ -581,6 +586,7 @@ jQuery(function($) {
           let admin = $("#user_privilege_attributes_admin").val() || "";
           let map_view = $("#user_privilege_attributes_map_view").val() || "";
           let facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || "";
+          let calendar_view = $("#user_privilege_attributes_calendar_view").val() || "";
           let sheets_view = $("#user_privilege_attributes_sheets_view").val() || "";
           let gantt_view = $("#user_privilege_attributes_gantt_view").val() || "";
           let watch_view = $("#user_privilege_attributes_watch_view").val() || "";
@@ -631,6 +637,11 @@ jQuery(function($) {
             read: sheets_view.includes("R"),
             write: sheets_view.includes("W"),
             delete: sheets_view.includes("D")
+          }
+          this.calendar_view = {
+            read: calendar_view.includes("R"),
+            write: calendar_view.includes("W"),
+            delete: calendar_view.includes("D")
           }
           this.gantt_view = {
             read: gantt_view.includes("R"),
@@ -905,6 +916,30 @@ jQuery(function($) {
           if (value) this.sheets_view.read = value;
           $("#user_privilege_attributes_sheets_view").val(v);
         },
+        "calendar_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_calendar_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.calendar_view.write = false;
+            this.calendar_view.delete = false;
+          }
+          $("#user_privilege_attributes_calendar_view").val(v);
+        },
+        "calendar_view.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_calendar_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.calendar_view.read = value;
+          $("#user_privilege_attributes_calendar_view").val(v);
+        },
+        "calendar_view.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_calendar_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.calendar_view.read = value;
+          $("#user_privilege_attributes_calendar_view").val(v);
+        },
         "watch_view.read"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_watch_view").val();
@@ -1014,6 +1049,10 @@ jQuery(function($) {
               <label>Map</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="map_view.read">Read</label>
             </li>
+            <li class="choice d-flex">
+            <label>Calendar</label>
+            <label class="d-flex align-center"><input type="checkbox" disabled v-model="calendar_view.read">Read</label>
+           </li>
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>

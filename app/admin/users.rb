@@ -37,6 +37,7 @@ ActiveAdmin.register User do
         :map_view,
         :gantt_view,
         :watch_view,
+        :calendar_view,
         :kanban_view,
         :documents,
         :facility_manager_view,
@@ -76,6 +77,7 @@ ActiveAdmin.register User do
             p.input :map_view
             p.input :gantt_view
             p.input :watch_view
+            p.input :calendar_view
             p.input :kanban_view
             p.input :overview
             p.input :tasks

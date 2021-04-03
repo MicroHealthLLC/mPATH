@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_29_191207) do
+ActiveRecord::Schema.define(version: 2021_04_02_150145) do
+
+  create_table "accountable_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_accountable_users_on_project_id"
+    t.index ["user_id"], name: "index_accountable_users_on_user_id"
+  end
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "namespace"
@@ -46,6 +53,12 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -218,6 +231,7 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.string "sheets_view", default: "R"
     t.string "kanban_view", default: "R"
     t.string "risks", default: "R"
+    t.string "calendar_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -423,16 +437,17 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
-    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
+    t.text "type"
     t.text "probability_description"
+    t.datetime "approved_at"
+    t.boolean "approved"
     t.string "approval_time"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
@@ -555,7 +570,10 @@ ActiveRecord::Schema.define(version: 2021_03_29_191207) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accountable_users", "projects"
+  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"
   add_foreign_key "facilities", "users", column: "creator_id"
   add_foreign_key "facility_groups", "projects"

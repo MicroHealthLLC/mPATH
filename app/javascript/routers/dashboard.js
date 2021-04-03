@@ -1,6 +1,7 @@
 import ProjectMapView from './../components/dashboard/map_view'
 import GanttChartView from './../components/dashboard/gantt_view'
 import MembersView from './../components/dashboard/members_view'
+import CalendarView from './../components/dashboard/calendar_view'
 import Sheets from './../components/dashboard/sheets'
 import KanbanView from './../components/dashboard/kanban_view'
 
@@ -10,6 +11,11 @@ export default new VueRouter({
       name: 'ProjectMapView',
       path: '/projects/:projectId/',
       component: ProjectMapView
+    },
+    {
+      name: 'CalendarView',
+      path: '/projects/:projectId/calendar_view',
+      component: CalendarView
     },
     {
       name: 'ProjectMapView',

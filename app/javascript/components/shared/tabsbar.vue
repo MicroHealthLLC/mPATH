@@ -15,6 +15,9 @@
     <router-link v-if="permitted('gantt_view')" :to="ganttView" tag="div">
       <div class="badge" :class="{'active': isGanttView}" data-cy="gantt_tab">Gantt</div>
     </router-link>
+      <router-link v-if="permitted('calendar_view')" :to="calendarView" tag="div">
+      <div class="badge" :class="{'active': isCalendarView}">Calendar</div>
+    </router-link>
     <!-- <router-link v-if="permitted('watch_view')" :to="watchView" tag="div">
       <div class="badge" :class="{'active': isWatchView}" data-cy="on_watch_tab">On Watch</div>
     </router-link> -->
@@ -40,17 +43,16 @@
       isGanttView() {
         return this.$route.name === 'ProjectGanttChart'
       },
-      // isWatchView() {
-      //   return this.$route.name === 'ProjectWatchView'
+      isCalendarView() {
+        return this.$route.name === 'CalendarView'
+      },
       isKanbanView() {
         return this.$route.name === 'ProjectKanbanView'
       },
       isMembersView() {
         return this.$route.name === 'TeamMembersView'
       },
-      // isFacilityManagerView() {
-      //   return this.$route.name === 'FacilityManagerView'
-      // },
+
       sheetsView() {
         return `/projects/${this.$route.params.projectId}/sheet`
       },
@@ -60,9 +62,9 @@
       ganttView() {
         return `/projects/${this.$route.params.projectId}/gantt_chart`
       },
-      // watchView() {
-      //   return `/projects/${this.$route.params.projectId}/watch_view`
-      // },
+      calendarView() {
+        return `/projects/${this.$route.params.projectId}/calendar_view`
+      },
       kanbanView() {
         return `/projects/${this.$route.params.projectId}/kanban`
       },

@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     get :facility_manager, on: :member
     get :kanban, on: :member
     get :map, on: :member
+    get :calendar_view, on: :member
     
     resources :query_filters do
       collection do

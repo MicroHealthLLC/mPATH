@@ -1,6 +1,6 @@
 <!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
-  <div id="facility-sheets"  data-cy="facility_sheets">
+  <div id="project-calendar"  >
     <div  class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
@@ -399,28 +399,28 @@
             @refresh-facility="refreshFacility"
           ></notes-sheets-index>
         </div>
-        <div v-if="currentTab == 'tasks'">
+        <div v-if="currentTab == 'task_calendar'">
           <div>
-            <detail-sheet
+            <TaskCalendar
               :facility="DV_facility"
               :from="from"
               @refresh-facility="refreshFacility"
-            ></detail-sheet>
+            ></TaskCalendar>
           </div>
         </div>
-        <div v-if="currentTab == 'issues'">
-          <issue-sheets-index
+        <div v-if="currentTab == 'issue_calendar'">
+          <IssueCalendar
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
-          ></issue-sheets-index>
+          ></IssueCalendar>
         </div>
-        <div v-if="currentTab == 'risks'">
-          <risk-sheets-index
+        <div v-if="currentTab == 'risk_calendar'">
+          <RiskCalendar
             :facility="DV_facility"
             :from="from"
             @refresh-facility="refreshFacility"
-          ></risk-sheets-index>
+          ></RiskCalendar>
         </div>
       </div>
     </div>
@@ -432,19 +432,19 @@
   import {mapGetters, mapMutations, mapActions} from 'vuex'
   import DetailSheet from './detail_sheet'
   import NotesSheetsIndex from './../notes/notes_sheets_index'
-  import IssueSheetsIndex from './../issues/issue_sheets_index'
-  import TaskSheetsIndex from './../tasks/task_sheets_index'
-  import RiskSheetsIndex from './../risks/sheets/risk_sheets_index'
+  import IssueCalendar from './../issues/calendar/issue_calendar'
+  import TaskCalendar from './../tasks/calendar/task_calendar'
+  import RiskCalendar from './../risks/calendar/risk_calendar'
   import Loader from './../../shared/loader'
   import CustomTabs from './../../shared/custom-tabs'
   export default {
-    name: 'FacilitySheets',
+    name: 'ProjectCalendar',
     components: {
       DetailSheet,
       NotesSheetsIndex,
-      IssueSheetsIndex,
-      TaskSheetsIndex,
-      RiskSheetsIndex,
+      IssueCalendar,
+      TaskCalendar,
+      RiskCalendar,
       CustomTabs,
       Loader
     },
@@ -482,18 +482,18 @@
             closable: false
           },
           {
-            label: 'Tasks',
-            key: 'tasks',
+            label: 'Tasks',        
+            key: 'task_calendar',
             closable: false
           },
           {
             label: 'Issues',
-            key: 'issues',
+            key: 'issue_calendar',
             closable: false
           },
            {
             label: 'Risks',
-            key: 'risks',
+            key: 'risk_calendar',
             closable: false,
           },
           {
