@@ -202,7 +202,7 @@
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
                   <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
-                    <button @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                    <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
