@@ -28,9 +28,11 @@
         <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-        <td class="twenty" v-if="(risk.notes.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)"> 
-           {{ moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}</span><br> {{risk.notes[0].body}}
+       <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)">        
+           {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           </span>
+           <br> {{risk.notes[0].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>

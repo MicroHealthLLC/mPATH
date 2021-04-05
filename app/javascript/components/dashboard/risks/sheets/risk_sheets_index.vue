@@ -289,7 +289,7 @@
                 <font-awesome-icon icon="sort" /></span>   
                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">                
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">                
                 <font-awesome-icon icon="sort-up" /></span>
                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">                
                 <font-awesome-icon icon="sort-down" /></span>      
