@@ -9,7 +9,7 @@
       <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-             <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
+             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button> -->
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
@@ -48,6 +48,7 @@
               <label class="font-sm mb-0">Name</label>
               <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
               <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
+              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
             </div>
           </div>
         </div>
@@ -516,7 +517,7 @@ export default {
       get() {
         let i = this.favoriteFilterOptions.findIndex(n => n.id === null)
         if(i == -1){
-          this.favoriteFilterOptions.push({id: null, name: "RESET"})  
+          this.favoriteFilterOptions.push({id: null, name: "New Filter"})
         }
         return this.favoriteFilterOptions
       },
@@ -817,6 +818,7 @@ export default {
     //   }
     // },
     loadFavoriteFilter(fav_filter){
+      this.resetFilters()
       var res = fav_filter.query_filters
       for(var i = 0; i < res.length; i++){
 
@@ -1094,15 +1096,34 @@ export default {
         }
       })
       .then((response) => {
-        this.favoriteFilterData = response.data.favorite_filter
-        let i = this.favoriteFilterOptions.findIndex(n => n.id === response.data.id)
+        var favorite_filter = response.data.favorite_filter
+        this.favoriteFilterData = favorite_filter
+        let i = this.favoriteFilterOptions.findIndex(n => n.id === favorite_filter.id)
         if(i == -1){
-          this.favoriteFilterOptions.push(response.data)  
-        }        
+          this.favoriteFilterOptions.unshift(favorite_filter) 
+        }else{
+          Vue.set(this.favoriteFilterOptions, i, favorite_filter)
+        }
+
+        let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
+        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter"})
+        
+        this.$message({
+          message: `Favorite Filter is saved successfully.`,
+          type: "success",
+          showClose: true,
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
+        if (response.status === 200) {
+          this.$message({
+            message: `Error in saving filter data.`,
+            type: "error",
+            showClose: true,
+          });
+        }
       })
       .finally(() => {
         // this.loading = false
@@ -1175,7 +1196,6 @@ export default {
       this.setMembersPerPageFilter(null)
       this.setFacilities(this.getUnfilteredFacilities)
 
-      debugger;
       if(!this.favoriteFilterData.id)
         return
 
@@ -1202,16 +1222,27 @@ export default {
         });
         if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
           this.favoriteFilterData = this.favoriteFilterOptions[0]
+          this.loadFavoriteFilter(this.favoriteFilterData)
         }else{
-          this.favoriteFilterData = {id: null, name: null}
+          this.favoriteFilterData = {id: null, name: "New Filter"}
         }
         
         //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
         //Vue.set(this.favoriteFilterOptions, i, null)
+        this.$message({
+          message: `Favorite Filter is removed successfully.`,
+          type: "success",
+          showClose: true,
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
+        this.$message({
+          message: `Error removing favorite filter.`,
+          type: "error",
+          showClose: true,
+        });
       })
       .finally(() => {
         // this.loading = false

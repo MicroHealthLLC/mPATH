@@ -28,15 +28,22 @@ class QueryFiltersController < AuthenticatedController
     end
 
     existing_query_filters = project.query_filters.where(user_id: current_user.id, favorite_filter_id: favorite_filter.id)
+    existing_query_filter_keys = existing_query_filters.map(&:filter_key).compact.uniq
+
     query_filters = []
+    query_filters_to_remove = []
 
     p_params.each do |filter|
       f = existing_query_filters.detect{|qf| qf.filter_key == filter[:filter_key] }
       if f.present?
+        existing_query_filter_keys.delete(f.filter_key)
         f.update(filter)
       else
         query_filters << QueryFilter.new(filter.merge({project_id: project.id, user_id: current_user.id, favorite_filter_id: favorite_filter.id }))
       end
+    end
+    if existing_query_filter_keys.any?
+      existing_query_filters.map{|f| f.destroy if existing_query_filter_keys.include?(f.filter_key) }
     end
     QueryFilter.import(query_filters) if query_filters.any?
 
