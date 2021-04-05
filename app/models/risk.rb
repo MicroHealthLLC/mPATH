@@ -159,6 +159,10 @@ class Risk < ApplicationRecord
     
     users_hash = {} 
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -179,6 +183,7 @@ class Risk < ApplicationRecord
       is_overdue: progress < 100 && (due_date < Date.today),
       progress_status: progress_status,
       checklists: checklists.as_json,  
+      due_date_duplicate: due_date.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       # Remove this
@@ -189,8 +194,11 @@ class Risk < ApplicationRecord
 
 
      # Add RACI user name
+      # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] },
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] },
       accountable_users: accountable_user_ids.map{|id| users_hash[id] },
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] },
       consulted_users: consulted_user_ids.map{|id| users_hash[id] },
       informed_users: informed_user_ids.map{|id| users_hash[id] }, 
 

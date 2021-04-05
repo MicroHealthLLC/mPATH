@@ -101,6 +101,10 @@ class Task < ApplicationRecord
     users_hash = {} 
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
@@ -115,6 +119,7 @@ class Task < ApplicationRecord
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
       user_ids: p_users.map(&:id).compact.uniq,
+      due_date_duplicate: due_date.as_json,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       checklists: checklists.as_json,
@@ -122,8 +127,11 @@ class Task < ApplicationRecord
 
 
       # Add RACI user names
+      # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] },
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] },
       accountable_users: accountable_user_ids.map{|id| users_hash[id] },
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] },
       consulted_users: consulted_user_ids.map{|id| users_hash[id] },
       informed_users: informed_user_ids.map{|id| users_hash[id] }, 
     
