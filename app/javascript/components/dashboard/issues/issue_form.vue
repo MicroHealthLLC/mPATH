@@ -333,7 +333,7 @@
     <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
       <div v-if="selectedIssueStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
