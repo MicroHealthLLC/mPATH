@@ -148,7 +148,7 @@ ActiveAdmin.register Task do
         end
       end
 
-      tab 'Files and Links' do
+      tab 'Files & Links' do
         f.inputs 'Basic Details' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :task_files
