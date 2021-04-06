@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TaskSheetsIndex from "../dashboard/tasks/task_sheets_index";
+import TaskSheetsIndex from "../../dashboard/tasks/task_sheets_index";
 
 export default {
   props: ["facility"],

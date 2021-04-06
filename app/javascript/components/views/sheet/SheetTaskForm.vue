@@ -4,7 +4,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import TaskForm from "../dashboard/tasks/task_form";
+import TaskForm from "../../dashboard/tasks/task_form";
 
 export default {
   props: ["facility"],

@@ -4,17 +4,17 @@ import MembersView from "./../components/dashboard/members_view";
 // import SheetView from './../components/dashboard/sheets'
 import KanbanView from "./../components/dashboard/kanban_view";
 
-import SheetView from "./../components/views/SheetView";
+import SheetView from "./../components/views/sheet/SheetView";
 import ProjectRollup from "./../components/shared/ProjectRollup";
-import SheetOverview from "./../components/views/SheetOverview";
-import SheetTasks from "./../components/views/SheetTasks";
-import SheetTaskForm from "./../components/views/SheetTaskForm";
-import SheetIssues from "./../components/views/SheetIssues";
-import SheetIssueForm from "./../components/views/SheetIssueForm";
-import SheetRisks from "./../components/views/SheetRisks";
-import SheetRiskForm from "./../components/views/SheetRiskForm";
-import SheetNotes from "./../components/views/SheetNotes";
-import SheetNoteForm from "./../components/views/SheetNoteForm";
+import SheetOverview from "./../components/views/sheet/SheetOverview";
+import SheetTasks from "./../components/views/sheet/SheetTasks";
+import SheetTaskForm from "./../components/views/sheet/SheetTaskForm";
+import SheetIssues from "./../components/views/sheet/SheetIssues";
+import SheetIssueForm from "./../components/views/sheet/SheetIssueForm";
+import SheetRisks from "./../components/views/sheet/SheetRisks";
+import SheetRiskForm from "./../components/views/sheet/SheetRiskForm";
+import SheetNotes from "./../components/views/sheet/SheetNotes";
+import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
 
 export default new VueRouter({
   routes: [

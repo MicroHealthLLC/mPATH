@@ -8,7 +8,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import IssueForm from "../dashboard/issues/issue_form.vue";
+import IssueForm from "../../dashboard/issues/issue_form.vue";
 export default {
   props: ["facility"],
   components: { IssueForm },

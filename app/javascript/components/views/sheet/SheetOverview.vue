@@ -598,9 +598,9 @@
 </template>
 
 <script>
-import http from "./../../common/http";
+import http from "../../../common/http";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import Loader from "./../shared/loader";
+import Loader from "../../shared/loader";
 
 export default {
   name: "SheetOverview",

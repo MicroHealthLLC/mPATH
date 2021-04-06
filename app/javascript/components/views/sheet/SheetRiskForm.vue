@@ -5,7 +5,7 @@
 <script>
 import { mapGetters } from "vuex";
 
-import RiskForm from "../dashboard/risks/risk_form.vue";
+import RiskForm from "../../dashboard/risks/risk_form.vue";
 export default {
   props: ["facility"],
   components: { RiskForm },

@@ -4,7 +4,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import NotesForm from "../dashboard/notes/notes_form.vue";
+import NotesForm from "../../dashboard/notes/notes_form.vue";
 
 export default {
   props: ["facility"],

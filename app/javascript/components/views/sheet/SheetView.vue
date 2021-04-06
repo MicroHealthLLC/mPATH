@@ -43,8 +43,8 @@
 
 <script>
 import { mapGetters } from "vuex";
-import ProjectSidebar from "../shared/ProjectSidebar";
-import ProjectTabs from "../shared/ProjectTabs";
+import ProjectSidebar from "../../shared/ProjectSidebar";
+import ProjectTabs from "../../shared/ProjectTabs";
 
 export default {
   name: "SheetView",
