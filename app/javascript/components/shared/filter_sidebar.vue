@@ -846,6 +846,9 @@ export default {
         }else if(res[i].filter_key == "riskApproachFilter"){
           this.setRiskApproachFilter(res[i].filter_value)
         
+        }else if(res[i].filter_key == "riskStageFilter"){
+          this.setRiskStageFilter(res[i].filter_value)
+        
         }else if(res[i].filter_key == "taskTypeFilter"){
           this.setTaskTypeFilter(res[i].filter_value)
         
