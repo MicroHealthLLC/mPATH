@@ -957,7 +957,6 @@
     },
     mounted() {
       if (!_.isEmpty(this.task)) {
-        this.loadTask(this.task)
       }else{
         this.loadTask(this.DV_task)
       }
@@ -1447,11 +1446,8 @@
     watch: {
       task: {
         handler: function(value) {
-          if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()
-          this.DV_task.taskFiles = []
-          this.destroyedFiles = []
-          //this.loadTask(value)
-        }, deep: true
+          this.loadTask(this.task)
+        }
       },
       "DV_task.startDate"(value) {
         if (this._ismounted && !value) this.DV_task.dueDate = ''
@@ -1566,8 +1562,7 @@
 
 <style scoped lang="scss">
   .tasks-form {
-    z-index: 10;
-    width: 83.1%;
+    
   }
   .kanban-form {
     left: 16.4%;

@@ -24,17 +24,21 @@
           </div>
           <div v-show="expanded.id == group.id" class="ml-2">
             <div
-              v-for="(item, index) in facilityGroupFacilities(group)"
+              v-for="(facility, index) in facilityGroupFacilities(group)"
               :key="index"
             >
-              <router-link :to="`/programs/${$route.params.programId}/sheet/projects/${item.id}`">
+              <router-link
+                :to="
+                  `/programs/${$route.params.programId}/sheet/projects/${facility.id}${pathTab}`
+                "
+              >
                 <div
                   class="d-flex align-items-center expandable fac-name"
-                  @click="showFacility(item)"
-                  :class="{ active: item.id == currentFacility.id }"
+                  @click="showFacility(facility)"
+                  :class="{ active: facility.id == $route.params.projectId }"
                 >
                   <p class="facility-header" data-cy="facilities">
-                    {{ item.facility.facilityName }}
+                    {{ facility.facility.facilityName }}
                   </p>
                 </div>
               </router-link>
@@ -74,16 +78,25 @@ export default {
         a.name.localeCompare(b.name)
       );
     },
-  },
-  mounted() {
-    // make the first facility_group expanded
+    pathTab() {
+      let url = this.$route.path;
+
+      if (url.includes("tasks")) {
+        return "/tasks";
+      } else if (url.includes("issues")) {
+        return "/issues";
+      } else if (url.includes("risks")) {
+        return "/risks";
+      } else if (url.includes("notes")) {
+        return "/notes";
+      } else {
+        return "";
+      }
+    },
   },
   methods: {
     expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
-    },
-    log(t) {
-      console.log("this is the group object: " + t);
     },
     showFacility(facility) {
       this.$emit("on-expand-facility", facility);
@@ -94,6 +107,10 @@ export default {
 
 <style lang="scss" scoped>
 #facility_sidebar {
+  background: #ededed;
+  max-height: calc(100vh - 94px);
+  height: calc(100vh - 94px);
+  overflow-y: auto;
   .facility-header {
     padding: 0 8px;
     cursor: pointer;
@@ -119,6 +136,7 @@ export default {
   .fac-name {
     &.active {
       background-color: rgba(211, 211, 211, 10%);
+      color: #007bff;
     }
     &.active,
     &:hover {
@@ -126,6 +144,13 @@ export default {
       h6 {
         font-weight: 900 !important;
       }
+    }
+  }
+  a {
+    color: unset;
+    &:hover {
+      color: unset;
+      text-decoration: unset;
     }
   }
 }

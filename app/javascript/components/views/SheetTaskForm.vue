@@ -1,13 +1,46 @@
 <template>
-  <h1>TASK FORM</h1>
+  <TaskForm :facility="facility" :task="task" @on-close-form="redirectBack" />
 </template>
 
 <script>
-export default {
+import { mapGetters } from "vuex";
+import TaskForm from "../dashboard/tasks/task_form";
 
-}
+export default {
+  props: ["facility"],
+  components: {
+    TaskForm,
+  },
+  data() {
+    return {
+      task: {},
+    };
+  },
+  methods: {
+    redirectBack() {
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks`
+      );
+    },
+  },
+  computed: {
+    ...mapGetters(["contentLoaded", "currentProject"]),
+  },
+  mounted() {
+    if (this.contentLoaded) {
+      this.task = this.facility.tasks.find(
+        (task) => task.id == this.$route.params.taskId
+      );
+    }
+  },
+  watch: {
+    task: {
+      handler(value) {
+        console.log(value);
+      },
+    },
+  },
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -687,7 +687,7 @@ import Loader from "./loader";
 import { mapGetters } from "vuex";
 export default {
   name: "ProjectRollup",
-  props: ["from", "facilityGroup"],
+  props: ["from"],
   components: {
     Loader,
   },

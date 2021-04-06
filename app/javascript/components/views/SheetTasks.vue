@@ -1,13 +1,20 @@
 <template>
   <div>
-    <h1>Tasks</h1>
+    <TaskSheetsIndex
+      :facility="facility"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import TaskSheetsIndex from "../dashboard/tasks/task_sheets_index"
 
 export default {
+  props: ["facility"],
+  components: {
+    TaskSheetsIndex
+  },
   data() {
     return {
       project: {},

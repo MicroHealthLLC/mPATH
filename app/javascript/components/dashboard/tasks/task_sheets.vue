@@ -112,16 +112,8 @@ export default {
       this.$refs.taskFormModal && this.$refs.taskFormModal.open();
     },  
     editTask() {
-      if (this.fromView == "map_view") {
-        this.$emit("edit-task", this.DV_task);
-      // } else if (this.fromView == "manager_view") {
-      //   this.setTaskForManager({ key: "task", value: this.DV_task });
-      } 
-      else {
-        this.has_task = Object.entries(this.DV_task).length > 0;
         this.DV_edit_task = this.DV_task;
-        this.$refs.taskFormModal && this.$refs.taskFormModal.open();
-      }
+        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
     },
     onCloseForm() {
       this.$refs.taskFormModal && this.$refs.taskFormModal.close();

@@ -22,39 +22,38 @@ export default {
           label: "Overview",
           key: "overview",
           closable: false,
-          path: `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}`,
         },
         {
           label: "Tasks",
           key: "tasks",
           closable: false,
-          path: `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks`,
         },
         {
           label: "Issues",
           key: "issues",
           closable: false,
-          path: `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues`,
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
-          path: `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks`,
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
-          path: `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes`,
         },
       ],
     };
   },
   methods: {
     changeTab(tab) {
-      this.$router.push(tab.path)
-    }
+      if (tab.key === "overview") {
+        this.$router.push(this.path);
+      } else {
+        this.$router.push(this.path + `/${tab.key}`);
+      }
+    },
   },
   computed: {
     currentTab() {
@@ -64,12 +63,20 @@ export default {
           this.$route.name.toUpperCase().includes(key.toUpperCase())
         );
     },
+    path() {
+      return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}`;
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
 #customtabs {
+  background-color: #ededed;
+  border-top: solid 0.3px #ededed;
+  padding-left: 5px;
+  padding-right: 5px;
+  box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
   .badge {
     cursor: pointer;
     padding: 7px 10px;
@@ -95,8 +102,5 @@ export default {
       color: #383838;
     }
   }
-}
-.tab-shadow {
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.02), 0 2px 5px 0 rgba(0, 0, 0, 0.03);
 }
 </style>
