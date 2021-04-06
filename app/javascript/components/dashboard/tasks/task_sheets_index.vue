@@ -119,8 +119,7 @@
              <task-sheets
               v-for="(task, i) in sortedTasks"
               class="taskHover"
-              href="#"       
-              :load="log(task)"    
+              href="#"          
               :key="task.id"
               :task="task"
               :from-view="from"                       
@@ -177,7 +176,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
+        <tr  v-for="(task, i) in filteredTasks" :key="i">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -253,9 +252,6 @@
         'setToggleRACI',
         'setTaskForManager'
       ]),
-      log(t){
-        console.log(t)
-      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {

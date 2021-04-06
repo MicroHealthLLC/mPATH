@@ -1,11 +1,15 @@
 <template>
   <div>
-    <h1>Issues</h1>
+    <IssueSheetsIndex :facility="facility" />
   </div>
 </template>
 
 <script>
-export default {};
+import IssueSheetsIndex from "../dashboard/issues/issue_sheets_index.vue";
+export default {
+  props: ["facility"],
+  components: { IssueSheetsIndex },
+};
 </script>
 
 <style></style>

@@ -13,7 +13,8 @@
       <div
         v-if="
           $route.name !== 'SheetProjectRollup' &&
-            $route.name !== 'SheetProjectTaskForm'
+            $route.name !== 'SheetProjectTaskForm' &&
+            $route.name !== 'SheetProjectIssueForm'
         "
         class="d-flex align-items-center my-2"
       >
@@ -23,7 +24,8 @@
       <ProjectTabs
         v-if="
           $route.name !== 'SheetProjectRollup' &&
-            $route.name !== 'SheetProjectTaskForm'
+            $route.name !== 'SheetProjectTaskForm' &&
+            $route.name !== 'SheetProjectIssueForm'
         "
       />
       <router-view

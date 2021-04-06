@@ -105,17 +105,8 @@
         'updateWatchedIssues'
       ]),
       editIssue() {
-        if (this.fromView == 'map_view') {
-          this.$emit('issue-edited', this.issue)
-        }
-        // else if (this.fromView == 'manager_view') {
-        //   this.setTaskForManager({key: 'issue', value: this.DV_issue})
-        // }
-        else {
           this.DV_edit_issue = this.DV_issue
-          this.has_issue = Object.entries(this.DV_issue).length > 0
-          this.$refs.issueFormModal && this.$refs.issueFormModal.open()
-        }
+          this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`)
       },
       deleteIssue() {
         let confirm = window.confirm(`Are you sure, you want to delete this issue?`)

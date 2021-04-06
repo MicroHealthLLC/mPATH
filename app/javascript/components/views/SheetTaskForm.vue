@@ -33,13 +33,6 @@ export default {
       );
     }
   },
-  watch: {
-    task: {
-      handler(value) {
-        console.log(value);
-      },
-    },
-  },
 };
 </script>
 

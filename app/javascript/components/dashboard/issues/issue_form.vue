@@ -1768,12 +1768,8 @@ export default {
   watch: {
     issue: {
       handler: function (value) {
-        if (!("id" in value)) this.DV_issue = this.INITIAL_ISSUE_STATE();
-        this.DV_issue.issueFiles = [];
-        this.destroyedFiles = [];
-        this.loadIssue(value);
+        this.loadIssue(this.issue)
       },
-      deep: true,
     },
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
@@ -1894,8 +1890,7 @@ export default {
 
 <style lang="scss" scoped>
 .issues-form {
-  z-index: 10;
-  width: 83.1%;
+  
 }
 .kanban-form {
   left: 16.4%;
