@@ -826,11 +826,7 @@ export default new Vuex.Store({
       
       let _progressStatuses = []
       _progressStatuses = _.map(resources, 'progressStatus')
-<<<<<<< HEAD
-
-=======
       
->>>>>>> f9f0fcbac4c5f42c744dbaf4942eb01aa3cd4621
       if (taskIssueActiveProgressStatus == true && taskIssueCompletedProgressStatus == false && _progressStatuses.length > 0) {
         valid = valid && _progressStatuses.includes('active')
       }
