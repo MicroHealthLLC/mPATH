@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <h1>Notes</h1>
-  </div>
+  <NotesSheetsIndex :facility="facility" class="mt-4" />
 </template>
 
 <script>
-export default {};
+import NotesSheetsIndex from '../dashboard/notes/notes_sheets_index.vue';
+export default {
+  props: ["facility"],
+  components: { NotesSheetsIndex },};
 </script>
 
 <style></style>

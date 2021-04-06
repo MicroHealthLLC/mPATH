@@ -15,7 +15,8 @@
           $route.name !== 'SheetProjectRollup' &&
             $route.name !== 'SheetProjectTaskForm' &&
             $route.name !== 'SheetProjectIssueForm' &&
-            $route.name !== 'SheetProjectRiskForm'
+            $route.name !== 'SheetProjectRiskForm' &&
+            $route.name !== 'SheetProjectNoteForm'
         "
         class="d-flex align-items-center my-2"
       >
@@ -27,7 +28,8 @@
           $route.name !== 'SheetProjectRollup' &&
             $route.name !== 'SheetProjectTaskForm' &&
             $route.name !== 'SheetProjectIssueForm' &&
-            $route.name !== 'SheetProjectRiskForm'
+            $route.name !== 'SheetProjectRiskForm' &&
+            $route.name !== 'SheetProjectNoteForm'
         "
       />
       <router-view
