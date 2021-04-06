@@ -2054,7 +2054,7 @@ export default {
       };
     },
     log(e) {
-      console.log("this is the riskStages object: " + e)
+      // console.log("this is the riskStages object: " + e)
     },
     urlShortener(str, length, ending) {
       if (length == null) {
@@ -3068,10 +3068,7 @@ export default {
   overflow-x: hidden;
   height: calc(100vh - 100px);
   background-color: #fff;
-  position: absolute;
   width: 100%;
-  top: 0;
-  z-index: 100;
 }
 .kanban-form {
   width: 97%;

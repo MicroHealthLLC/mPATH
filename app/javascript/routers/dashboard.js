@@ -12,6 +12,7 @@ import SheetTaskForm from './../components/views/SheetTaskForm'
 import SheetIssues from "./../components/views/SheetIssues";
 import SheetIssueForm from "./../components/views/SheetIssueForm";
 import SheetRisks from "./../components/views/SheetRisks";
+import SheetRiskForm from "./../components/views/SheetRiskForm";
 import SheetNotes from "./../components/views/SheetNotes"
 
 export default new VueRouter({
@@ -84,6 +85,11 @@ export default new VueRouter({
           component: SheetRisks,
         },
         // Risk Form
+        {
+          name: "SheetProjectRiskForm",
+          path: "projects/:projectId/risks/:riskId",
+          component: SheetRiskForm,
+        },
         // Project Notes
         {
           name: "SheetProjectNotes",

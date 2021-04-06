@@ -167,8 +167,7 @@
              <risk-sheets
               v-for="risk in sortedRisks"
               class="riskHover"
-              href="#"    
-              :load="log(risk)"           
+              href="#"             
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -313,9 +312,6 @@
         'SET_RISK_FORM_OPEN',
         'SET_SELECTED_RISK'
       ]),
-      log(t){
-        console.log(t)
-      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {

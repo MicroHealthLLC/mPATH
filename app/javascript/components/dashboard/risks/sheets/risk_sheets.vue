@@ -115,22 +115,8 @@
         this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
       editRisk() {
-
-        if (this.fromView == 'map_view') {
-          this.$emit('edit-risk', this.DV_risk)
-        }
-        // else if (this.fromView == 'manager_view') {
-        //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
-        // }
-        else if (this.$route.name === 'ProjectSheets') {
-          this.SET_RISK_FORM_OPEN(true);
-          this.SET_SELECTED_RISK(this.DV_risk);
-        }
-        else {
-          this.has_risk = Object.entries(this.DV_risk).length > 0
-          this.DV_edit_risk = this.DV_risk
-          this.$refs.riskFormModal && this.$refs.riskFormModal.open()
-        }
+        this.DV_edit_risk = this.DV_risk;
+        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
       },
       onCloseForm() {
         this.$refs.riskFormModal && this.$refs.riskFormModal.close()

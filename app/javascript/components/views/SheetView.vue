@@ -14,7 +14,8 @@
         v-if="
           $route.name !== 'SheetProjectRollup' &&
             $route.name !== 'SheetProjectTaskForm' &&
-            $route.name !== 'SheetProjectIssueForm'
+            $route.name !== 'SheetProjectIssueForm' &&
+            $route.name !== 'SheetProjectRiskForm'
         "
         class="d-flex align-items-center my-2"
       >
@@ -25,7 +26,8 @@
         v-if="
           $route.name !== 'SheetProjectRollup' &&
             $route.name !== 'SheetProjectTaskForm' &&
-            $route.name !== 'SheetProjectIssueForm'
+            $route.name !== 'SheetProjectIssueForm' &&
+            $route.name !== 'SheetProjectRiskForm'
         "
       />
       <router-view

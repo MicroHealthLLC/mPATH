@@ -1,11 +1,16 @@
 <template>
   <div>
-    <h1>Risks</h1>
+    <RiskSheetsIndex :facility="facility" />
   </div>
 </template>
 
 <script>
-export default {};
+import RiskSheetsIndex from "../dashboard/risks/sheets/risk_sheets_index.vue";
+
+export default {
+  props: ["facility"],
+  components: { RiskSheetsIndex },
+};
 </script>
 
 <style></style>
