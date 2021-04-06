@@ -21,7 +21,7 @@
         <td class="nine" v-else></td>
         <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
         <td class="nine" v-else></td>
-        <td class="oneFive" v-if="(issue.notesUpdatedAt.length) > 0">
+         <td class="oneFive" v-if="(issue.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
            {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
            </span>
@@ -234,6 +234,9 @@
     .check_box {
       font-size: 16px;
     }
+  }
+  td {
+    overflow-wrap: break-word;   
   }
   .issue_form_modal.sweet-modal-overlay {
     z-index: 10000001;
