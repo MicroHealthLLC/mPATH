@@ -176,7 +176,8 @@
       v-for="item in taskStages"
       :key="item.id"             
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      :disabled="!_isallowed('write')
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -201,7 +202,8 @@
       :key="item.id"            
       :value="item"
       style="cursor:pointer"     
-      :load="log( taskStages.length )"     
+      :load="log( taskStages.length )"
+      :disabled="!_isallowed('write')
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
