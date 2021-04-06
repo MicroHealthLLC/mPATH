@@ -147,14 +147,14 @@ ActiveAdmin.register Issue do
       end
 
       tab 'Assignments' do
-        f.inputs 'Basic Details' do
+        f.inputs 'Assign Users' do
           f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
           div id: 'projects_users-tab'
         end
       end
 
       tab 'Checklist' do
-        f.inputs 'Basic Details' do
+        f.inputs 'Progress and Checklist' do
           f.input :progress
           div id: 'progress_slider-tab'
           f.input :auto_calculate
@@ -168,14 +168,14 @@ ActiveAdmin.register Issue do
       end
 
       tab 'Files & Links' do
-        f.inputs 'Basic Details' do
+        f.inputs 'Upload Files and Links' do
           div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
           f.input :issue_files
         end
       end
 
       tab 'Related' do
-        f.inputs 'Basic Details' do
+        f.inputs 'Releated Items' do
           f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
           f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
           f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
