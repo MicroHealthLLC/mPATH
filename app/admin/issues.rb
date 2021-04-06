@@ -148,7 +148,7 @@ ActiveAdmin.register Issue do
 
       tab 'Assignments' do
         f.inputs 'Assign Users' do
-          f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
+          f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]},  input_html: {class: "select2"}
           div id: 'projects_users-tab'
         end
       end
@@ -176,9 +176,9 @@ ActiveAdmin.register Issue do
 
       tab 'Related' do
         f.inputs 'Releated Items' do
-          f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
-          f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
-          f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
+          f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]},  input_html: {class: "select2"}
+          f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]},  input_html: {class: "select2"}
+          f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]},  input_html: {class: "select2"}
           div id: 'related_tasks-issues-tab'
         end
       end
