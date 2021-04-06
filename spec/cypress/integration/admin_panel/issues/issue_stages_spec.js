@@ -54,6 +54,10 @@ describe('Admin Panel Issue Stages', function() {
     cy.get('.action_item > a').contains('New Issue Stage').click()
     cy.get('#issue_stage_name').type('New Test Issue Stage').should('have.value', 'New Test Issue Stage')
     cy.get('#issue_stage_submit_action').contains('Create Issue stage').click()
+
+    cy.get('#q_name').type('New Test Issue Stage').should('have.value', 'New Test Issue Stage')
+    cy.get('[type=submit]').first().contains('Filter').click()
+
     cy.get('#index_table_issue_stages > tbody > tr').last().within(() => {
       cy.get('.col-actions').contains('Delete').click()
     })

@@ -34,8 +34,10 @@ jobs:
           gem install bundler
           bundle install --jobs 4 --retry 3
           yarn add cypress
+          yarn add moment
           bundle exec rails db:create
           bundle exec rails db:migrate RAILS_ENV=test
+          bundle exec rails db:seed RAILS_ENV=test
           bundle exec rails assets:precompile RAILS_ENV=test
           bundle exec rails server -e test -p 5017 -d
           yarn cypress run --record --parallel --project ./spec
