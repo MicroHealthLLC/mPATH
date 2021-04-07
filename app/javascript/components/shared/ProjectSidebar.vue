@@ -82,9 +82,9 @@ export default {
       let url = this.$route.path;
 
       if (url.includes("sheet")) {
-        return "sheet"
+        return "sheet";
       } else {
-        return "kanban"
+        return "kanban";
       }
     },
     pathTab() {
@@ -98,6 +98,8 @@ export default {
         return "/risks";
       } else if (url.includes("notes")) {
         return "/notes";
+      } else if (url.includes("kanban")) {
+        return "/tasks";
       } else {
         return "";
       }
