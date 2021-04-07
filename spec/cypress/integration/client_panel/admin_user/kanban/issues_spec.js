@@ -33,8 +33,9 @@ describe('Kanban Issues View', function() {
 
 
   it("In Issue form if title's field empty, error message display", function() {
-    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-    const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+    const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
@@ -62,8 +63,9 @@ describe('Kanban Issues View', function() {
   })
 
   it("In Issue form if issue type  field empty, error message display", function() {
-    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-    const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+    const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
@@ -87,8 +89,9 @@ describe('Kanban Issues View', function() {
   })
 
   it("In Issue form if issue severity field empty, error message display", function() {
-    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-    const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+    const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
@@ -134,7 +137,8 @@ describe('Kanban Issues View', function() {
   })
 
   it("In Issue form if due date empty, error message display", function() {
-    const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
 
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {

@@ -79,8 +79,9 @@ describe('Sheets Tasks View', function() {
   })
 
   it('Sort Task according to Start Date', function() {
-    const new_start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-    const test_start_date = Cypress.moment().format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const new_start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+    const test_start_date = dayjs().format('DD MMM YYYY')
     cy.get('[data-cy=task_row]').first().contains(new_start_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(3)').click()
     cy.get('[data-cy=task_row]').first().contains(test_start_date).should('be.visible')
@@ -90,8 +91,9 @@ describe('Sheets Tasks View', function() {
   })
 
   it('Sort Task according to Due Date', function() {
-    const new_due_date = Cypress.moment().add(6, 'day').format('DD MMM YYYY')
-    const test_due_date = Cypress.moment().add(5, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const new_due_date = dayjs().add(6, 'day').format('DD MMM YYYY')
+    const test_due_date = dayjs().add(5, 'day').format('DD MMM YYYY')
     cy.get('[data-cy=task_row]').first().contains(new_due_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(4)').click()
     cy.get('[data-cy=task_row]').first().contains(test_due_date).should('be.visible')
