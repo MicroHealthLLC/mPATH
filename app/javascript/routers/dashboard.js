@@ -2,7 +2,7 @@ import MapView from "./../components/dashboard/map_view";
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
-
+//Sheet Routes Components
 import SheetView from "./../components/views/sheet/SheetView";
 import ProjectRollup from "./../components/shared/ProjectRollup";
 import SheetOverview from "./../components/views/sheet/SheetOverview";
@@ -14,12 +14,15 @@ import SheetRisks from "./../components/views/sheet/SheetRisks";
 import SheetRiskForm from "./../components/views/sheet/SheetRiskForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
-
+// Kanban Routes Components
 import KanbanView from "./../components/views/kanban/KanbanView";
 import KanbanDefault from "./../components/views/kanban/KanbanDefault";
 import KanbanTasks from "./../components/views/kanban/KanbanTasks";
+import KanbanTaskForm from "./../components/views/kanban/KanbanTaskForm";
 import KanbanIssues from "./../components/views/kanban/KanbanIssues";
+import KanbanIssueForm from "./../components/views/kanban/KanbanIssueForm";
 import KanbanRisks from "./../components/views/kanban/KanbanRisks";
+import KanbanRiskForm from "./../components/views/kanban/KanbanRiskForm";
 
 export default new VueRouter({
   routes: [
@@ -121,9 +124,14 @@ export default new VueRouter({
           component: KanbanDefault,
         },
         {
-          name: "KanbanDefault",
+          name: "KanbanProjectSelected",
           path: "projects/:projectId",
           component: KanbanDefault,
+        },
+        {
+          name: "KanbanTaskForm",
+          path: "projects/:projectId/tasks/:taskId",
+          component: KanbanTaskForm,
         },
         {
           name: "KanbanTasks",
@@ -136,10 +144,20 @@ export default new VueRouter({
           component: KanbanIssues,
         },
         {
+          name: "KanbanIssueForm",
+          path: "projects/:projectId/issues/:issueId",
+          component: KanbanIssueForm,
+        },
+        {
           name: "KanbanRisks",
           path: "projects/:projectId/risks",
           component: KanbanRisks,
         },
+        {
+          name: "KanbanRiskForm",
+          path: "projects/:projectId/risks/:riskId",
+          component: KanbanRiskForm,
+        }
       ],
     },
   ],

@@ -82,17 +82,6 @@
 
        
     </div>
-      <div v-if="has_risk" class="w-100 action-form-overlay">
-        <risk-form
-          v-if="Object.entries(DV_edit_risk).length"
-          :facility="facility"
-          :risk="DV_edit_risk"
-          @risk-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></risk-form>
-      </div>
-
     <!-- The context-menu appears only if table row is right-clicked -->
     <RiskContextMenu
       :facilities="facilities"
@@ -102,27 +91,17 @@
       ref="menu"
       @open-risk="editRisk">  
     </RiskContextMenu>
- 
-
   </div>
 </template>
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
-  import IssueForm from "./../issues/issue_form"
-  import TaskForm from "./../tasks/task_form"
-  import RiskForm from "./risk_form"
   import RiskContextMenu from "../../shared/RiskContextMenu"
 
 
   export default {
     name: 'RiskShow',
     components: {
-      IssueForm,
-      TaskForm,
-      RiskForm,
-      SweetModal,
       RiskContextMenu
     },
     props: {
@@ -163,21 +142,8 @@
         'updateWatchedRisks'
       ]),
       editRisk() {
-        if (this.fromView == 'map_view') {
-          this.$emit('risk-edited', this.risk)
-        }
-        else if (this.fromView == 'manager_view') {
-          this.setTaskForManager({key: 'risk', value: this.DV_risk})
-        }
-        else if (this.$route.name === 'ProjectKanbanView') {
-          this.SET_RISK_FORM_OPEN(true);
-          this.SET_SELECTED_RISK(this.DV_risk);
-        }
-        else {
-          this.DV_edit_risk = this.DV_risk
-          this.has_risk = Object.entries(this.DV_risk).length > 0
-          this.$refs.riskFormModal && this.$refs.riskFormModal.open()
-        }
+        this.DV_edit_risk = this.DV_risk;
+        this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)

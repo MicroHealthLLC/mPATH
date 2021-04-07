@@ -10,24 +10,36 @@
       />
     </div>
     <div class="col-md-10 pr-4">
-      <router-link
-        :to="
-          `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
+      <div
+        v-if="
+          $route.name === 'KanbanProjectSelected' ||
+            $route.name === 'KanbanTasks' ||
+            $route.name === 'KanbanTaskForm' ||
+            $route.name === 'KanbanIssues' ||
+            $route.name === 'KanbanIssueForm' ||
+            $route.name === 'KanbanRisks' ||
+            $route.name === 'KanbanRiskForm'
         "
-        >Tasks</router-link
       >
-      <router-link
-        :to="
-          `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
-        "
-        >Issues</router-link
-      >
-      <router-link
-        :to="
-          `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/risks`
-        "
-        >Risks</router-link
-      >
+        <router-link
+          :to="
+            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
+          "
+          >Tasks</router-link
+        >
+        <router-link
+          :to="
+            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
+          "
+          >Issues</router-link
+        >
+        <router-link
+          :to="
+            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/risks`
+          "
+          >Risks</router-link
+        >
+      </div>
 
       <router-view
         :key="$route.path"
@@ -85,7 +97,7 @@ export default {
   mounted() {
     console.log(this.$route.params);
 
-    if (this.contentLoaded && this.$route.params.projectId) {
+    if (this.contentLoaded || this.$route.params.projectId) {
       console.log(this.$route.params.projectId);
     }
   },

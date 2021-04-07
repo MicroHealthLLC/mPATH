@@ -95,18 +95,6 @@
       </div>
   
       </div>
-
-      <div v-if="has_issue" class="w-100 action-form-overlay">
-          <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
-      </div>
-
     <!-- The context-menu appears only if table row is right-clicked -->
       <IssueContextMenu
         :facilities="facilities"
@@ -122,17 +110,11 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
-  import IssueForm from "./issue_form"
-  import TaskForm from "./../tasks/task_form"
   import IssueContextMenu from "../../shared/IssueContextMenu"
 
   export default {
     name: 'IssueShow',
     components: {
-      IssueForm,
-      TaskForm,
-      SweetModal,
       IssueContextMenu
     },
     props: {
@@ -170,17 +152,8 @@
         'updateWatchedIssues'
       ]),
       editIssue() {
-        if (this.fromView == 'map_view') {
-          this.$emit('issue-edited', this.issue)
-        }
-        else if (this.fromView == 'manager_view') {
-          this.setTaskForManager({key: 'issue', value: this.DV_issue})
-        }
-        else {
-          this.DV_edit_issue = this.DV_issue
-          this.has_issue = Object.entries(this.DV_issue).length > 0
-          this.$refs.issueFormModal && this.$refs.issueFormModal.open()
-        }
+        this.DV_edit_issue = this.DV_issue;
+        this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`);
       },
       deleteIssue() {
         let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
