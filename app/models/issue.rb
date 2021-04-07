@@ -124,12 +124,12 @@ class Issue < ApplicationRecord
 
     # Add RACI user names
       # Last name values added for improved sorting in datatables
-      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
-      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] },
-      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
-      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] },
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
-      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
 
      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,

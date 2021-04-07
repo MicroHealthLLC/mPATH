@@ -1,4 +1,5 @@
-.container.signin-section
+.container
+.login-wrapper.signin-section
   .row.d-flex.justify-content-center
     =form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-signin mg-btm' }) do |f|
       = render "devise/shared/messages"
