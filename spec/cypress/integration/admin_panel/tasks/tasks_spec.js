@@ -57,8 +57,9 @@ describe('Admin Panel Task', function() {
   })
 
   it('Sort Task start date', function() {
-    const start_date_from = Cypress.moment().subtract(1, 'day').format('MMMM DD, YYYY')
-    const start_date_to = Cypress.moment().add(2, 'day').format('MMMM DD, YYYY')
+    var dayjs = require('dayjs')
+    const start_date_from = dayjs().subtract(1, 'day').format('MMMM DD, YYYY')
+    const start_date_to = dayjs().add(2, 'day').format('MMMM DD, YYYY')
     cy.get('.sortable').contains('Start Date').click()
     cy.get('#index_table_tasks > tbody > tr').first().contains(start_date_to).should('be.visible')
     cy.get('.sortable').contains('Start Date').click()
@@ -69,8 +70,9 @@ describe('Admin Panel Task', function() {
   })
 
   it('Sort Task Due Date', function() {
-    const due_date_from = Cypress.moment().add(4, 'day').format('MMMM DD, YYYY')
-    const due_date_to = Cypress.moment().add(7, 'day').format('MMMM DD, YYYY')
+    var dayjs = require('dayjs')
+    const due_date_from = dayjs().add(4, 'day').format('MMMM DD, YYYY')
+    const due_date_to = dayjs().add(7, 'day').format('MMMM DD, YYYY')
     cy.get('.sortable').contains('Due Date').click()
     cy.get('#index_table_tasks > tbody > tr').first().contains(due_date_to).should('be.visible')
     cy.get('.sortable').contains('Due Date').click()
@@ -148,7 +150,8 @@ describe('Admin Panel Task', function() {
   })
 
   it('Search Task start date from', function() {
-    const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('YYYY-MM-DD')
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 6)
@@ -156,7 +159,8 @@ describe('Admin Panel Task', function() {
   })
 
   it('Search Task start date to', function() {
-    const start_date = Cypress.moment().format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().format('YYYY-MM-DD')
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 2)
@@ -164,7 +168,8 @@ describe('Admin Panel Task', function() {
   })
 
   it('Search Task Due Date from', function() {
-    const completion_date = Cypress.moment().add(6, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const completion_date = dayjs().add(6, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_gteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 6)
@@ -172,7 +177,8 @@ describe('Admin Panel Task', function() {
   })
 
   it('Search Task Due Date to', function() {
-    const completion_date = Cypress.moment().add(5, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const completion_date = dayjs().add(5, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_lteq').type(`${completion_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_tasks > tbody > tr').its('length').should('be.eq', 2)
