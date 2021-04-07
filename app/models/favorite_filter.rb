@@ -9,8 +9,14 @@ class FavoriteFilter < ApplicationRecord
       name: self.name,
       query_filters: query_filters.map(&:to_json),
       project_id: self.project_id,
-      user_id: self.user_id
+      user_id: self.user_id,
+      shared: self.shared,
+      private: self.private
     }
+  end
+
+  def can_update?(user)
+    self.user_id == user.id
   end
 
 end
