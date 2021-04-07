@@ -1,6 +1,6 @@
 <template>
   <div id="members" data-cy="members_view" class="mt-5">
-     <div class="container my-2 px-4 pb-4 pt-2 wrapper" style="border-radius:3px" >
+     <div class="container my-2 px-4 pt-2 wrapper" style="border-radius:3px" >
         <h2 class="mt-1 mb-1"><span><i class="fas fa-users mr-2"></i></span>Team</h2>
            <div class="mb-0 p-b-0">
             <el-row>
@@ -41,18 +41,83 @@
             </el-row>
 
            </div>
-       <div class="pb-3">
+       <div class="pb-2 table-div">
          <table class="table table-sm table-bordered" id="taskList1"  ref="table">
-          <thead>
+          <thead style="min-height:50px">
               <tr class="thead" style="background-color:#ededed;">
-              <th class="sort-th firstCol" @click="sort('id')"># <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-              <th class="sort-th" @click="sort('fullName')">Name <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
+              <th class="sort-th firstCol" @click="sort('id')"># 
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'id'">    
+                <font-awesome-icon icon="sort" /></span>            
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'id'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'id'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'id'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'id'">                
+                <font-awesome-icon icon="sort-down" /></span>                
+             </th>
+              <th class="sort-th" @click="sort('fullName')">Name 
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'fullName'">    
+                <font-awesome-icon icon="sort" /></span>            
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'fullName'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'fullName'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'fullName'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'fullName'">                
+                <font-awesome-icon icon="sort-down" /></span>                
+              </th>
               <!-- <th class="sort-th" @click="sort('lastName')">Last Name<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th> -->
-              <th class="sort-th"  @click="sort('title')">Position<span class="sort-icon scroll"><font-awesome-icon icon="sort" /> </span></th>
-              <th class="pl-1 sort-th" @click="sort('organization')">Organization<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
-              <th class="pl-1 sort-th" @click="sort('phoneNumber')">Phone Number<span class="sort-icon scroll" ><font-awesome-icon icon="sort" /></span></th>
-              <th class="sort-th emailCol"  @click="sort('email')" >Email<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-
+              <th class="sort-th"  @click="sort('title')">Position
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'title'"> 
+                <font-awesome-icon icon="sort" /></span>                 
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">                
+                <font-awesome-icon icon="sort-down" /></span>                  
+              </th>
+              <th class="pl-1 sort-th" @click="sort('organization')">Organization
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'organization'">  
+                <font-awesome-icon icon="sort" /></span>                
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'organization'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'organization'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'organization'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'organization'">                
+                <font-awesome-icon icon="sort-down" /></span>              
+                </th>
+              <th class="pl-1 sort-th" @click="sort('phoneNumber')">Phone Number
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'phoneNumber'">  
+                <font-awesome-icon icon="sort" /></span>                
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'phoneNumber'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'phoneNumber'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'phoneNumber'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'phoneNumber'">                
+                <font-awesome-icon icon="sort-down" /></span> 
+              </th>
+              <th class="sort-th emailCol"  @click="sort('email')" >Email
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'email'">                
+                <font-awesome-icon icon="sort" /></span>  
+                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'email'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'email'">                
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'email'">                
+                <font-awesome-icon icon="sort-down" /></span>  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'email'">                
+                <font-awesome-icon icon="sort-down" /></span>               
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -67,7 +132,7 @@
             </tr>
           </tbody>
         </table>
-         <div class="float-right mb-4 font-sm">     
+         <div class="float-right mb-4 mt-1 font-sm">     
          <div class="simple-select my-1 text-right d-inline-block font-sm">   
           <span class="mr-2">Displaying </span>        
           <el-select 
@@ -91,19 +156,16 @@
           <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_membersPerPage.value) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
         </div>
-           </div>
+           </div>       
      </div>
   </div>
 
 </template>
 
 <script>
-
 import {mapGetters, mapMutations} from 'vuex'
 import {jsPDF} from "jspdf"
 import 'jspdf-autotable'
-
-
   export default {
     name: "TeamMembersView",
     props: ['facility', 'from'],
@@ -144,7 +206,6 @@ import 'jspdf-autotable'
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-
           let start = (this.currentPage-1)*this.C_membersPerPage.value;
           let end = this.currentPage*this.C_membersPerPage.value;
           if(index >= start && index < end) return true;
@@ -166,7 +227,6 @@ import 'jspdf-autotable'
     ]),
        changeHead({row, column, rowIndex, columnIndex}){
       return { backgroundColor: '#343F52', width: '100%' };
-
        },
       sort:function(s) {
         //if s == current sort, reverse
@@ -218,9 +278,20 @@ import 'jspdf-autotable'
   }
 </script>
 <style scoped lang="scss">
+  #members {
+    overflow-y:scroll;
+    max-height: calc(100vh - 120px) !important;
+    padding-bottom: 50px;
+  }
+  .table-div {
+    overflow-y:auto;
+    height: auto;  
+  }
   .wrapper {
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
     border: 1px solid #dee2e6 !important;
+    overflow-y: auto;
+    height: auto;
   }
  .total {
     text-align: end;
@@ -256,6 +327,13 @@ import 'jspdf-autotable'
     cursor: pointer;
     display: block;
  }
+ .team-scroll {
+  cursor:pointer !important;
+    top: 28%;
+    right: 5px;
+    position:absolute;   
+    padding-left:4px !important
+}
   #clear {
       cursor: pointer;
       margin: auto -23px;
