@@ -1475,7 +1475,7 @@
                                   <th style="width: 60%">Progress</th>
                                   <th>Last Updated</th>
                                   <th>By</th>
-                                  <th>Action</th>
+                                  <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1531,7 +1531,7 @@
                                       {{ $currentUser.full_name }}
                                     </span>
                                   </td>
-                                  <td>
+                                  <td v-if="_isallowed('write') || _isallowed('delete')">
                                     <span
                                       class="pl-2"
                                       v-tooltip="`Save`"
