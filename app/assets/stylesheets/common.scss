@@ -36,6 +36,9 @@ input[type=button]:focus {
 .body-wrapper {
   border-top: 1px solid #dee2e6;
   padding: 7px 70px;
+  overflow-y:scroll;
+  max-height: calc(100vh - 120px) !important;
+  padding-bottom: 50px;
 }
 .form-control:focus {
   outline: none;
