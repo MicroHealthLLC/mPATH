@@ -1,8 +1,7 @@
 import MapView from "./../components/dashboard/map_view";
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-// import SheetView from './../components/dashboard/sheets'
-import KanbanView from "./../components/dashboard/kanban_view";
+
 
 import SheetView from "./../components/views/sheet/SheetView";
 import ProjectRollup from "./../components/shared/ProjectRollup";
@@ -15,6 +14,12 @@ import SheetRisks from "./../components/views/sheet/SheetRisks";
 import SheetRiskForm from "./../components/views/sheet/SheetRiskForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
+
+import KanbanView from "./../components/views/kanban/KanbanView";
+import KanbanDefault from "./../components/views/kanban/KanbanDefault";
+import KanbanTasks from "./../components/views/kanban/KanbanTasks";
+import KanbanIssues from "./../components/views/kanban/KanbanIssues";
+import KanbanRisks from "./../components/views/kanban/KanbanRisks";
 
 export default new VueRouter({
   routes: [
@@ -109,6 +114,33 @@ export default new VueRouter({
       name: "KanbanView",
       path: "/programs/:programId/kanban",
       component: KanbanView,
+      children: [
+        {
+          name: "KanbanDefault",
+          path: "",
+          component: KanbanDefault,
+        },
+        {
+          name: "KanbanDefault",
+          path: "projects/:projectId",
+          component: KanbanDefault,
+        },
+        {
+          name: "KanbanTasks",
+          path: "projects/:projectId/tasks",
+          component: KanbanTasks,
+        },
+        {
+          name: "KanbanIssues",
+          path: "projects/:projectId/issues",
+          component: KanbanIssues,
+        },
+        {
+          name: "KanbanRisks",
+          path: "projects/:projectId/risks",
+          component: KanbanRisks,
+        },
+      ],
     },
   ],
   hashbang: false,

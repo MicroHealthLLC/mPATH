@@ -68,7 +68,7 @@ export default {
       return this.$route.name === "GanttChartView";
     },
     isKanbanView() {
-      return this.$route.name === "KanbanView";
+      return this.$route.name.includes("Kanban");
     },
     isMembersView() {
       return this.$route.name === "TeamMembersView";

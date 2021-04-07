@@ -29,7 +29,7 @@
             >
               <router-link
                 :to="
-                  `/programs/${$route.params.programId}/sheet/projects/${facility.id}${pathTab}`
+                  `/programs/${$route.params.programId}/${tab}/projects/${facility.id}${pathTab}`
                 "
               >
                 <div
@@ -77,6 +77,15 @@ export default {
       return this.filteredFacilityGroups.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
+    },
+    tab() {
+      let url = this.$route.path;
+
+      if (url.includes("sheet")) {
+        return "sheet"
+      } else {
+        return "kanban"
+      }
     },
     pathTab() {
       let url = this.$route.path;
