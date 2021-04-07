@@ -1,5 +1,5 @@
 <template>
-  <div data-cy="gantt_view">
+  <div data-cy="gantt_view" id="gantt_wrapper">
     <div class="gantt_board">
       <div v-if="!loading && contentLoaded">
         <gantt-elastic
@@ -326,8 +326,13 @@
 </script>
 
 <style scoped lang="scss">
+  #gantt_wrapper {
+    max-height: calc(100vh - 120px) !important;
+    padding-bottom: 20px; 
+    overflow-y: auto;
+  }
   .gantt_board {
-    padding: 10px 70px;
+    padding: 20px 70px;
   }
   .task_form_modal.sweet-modal-overlay /deep/ .sweet-modal {
     width: 325px;

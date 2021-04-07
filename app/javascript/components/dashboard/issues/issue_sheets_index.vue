@@ -142,18 +142,6 @@
                   <col class="oneFive" />
                 </colgroup>
                 <tr class="thead" style="background-color:#ededed">
-<<<<<<< HEAD
-                  <th class="sort-th" @click="sort('title')">Issue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('issueType')">Issue Type <span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span> </th>
-                  <th class="sort-th" @click="sort('issueSeverity')">Issue Severity<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="pl-1 sort-th" @click="sort('startDate')">Start Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('responsibleUserNames')">Assigned<br/> Users<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('progress')">Progress<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('dueDate')">Overdue<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('watched')">Onwatch<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>
-                  <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update<span class="sort-icon scroll"><font-awesome-icon icon="sort" /></span></th>               
-=======
                   <th class="sort-th" @click="sort('title')">Issue
                   <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">                
                   <font-awesome-icon icon="sort" /></span>
@@ -302,7 +290,6 @@
                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">                
                   <font-awesome-icon icon="sort-down" /></span> 
                   </th>               
->>>>>>> f9f0fcbac4c5f42c744dbaf4942eb01aa3cd4621
                 </tr>
               </table>            
                 <issue-sheets
