@@ -1121,7 +1121,6 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        debugger
         this.$message({
           message: err.response.data.error ,
           type: "error",

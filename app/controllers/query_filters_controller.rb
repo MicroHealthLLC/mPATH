@@ -8,7 +8,7 @@ class QueryFiltersController < AuthenticatedController
 
   def create
     p_params = query_filters_params[:query_filters]
-    fav_params = query_filters_params[:favorite_filter]
+    fav_params = favorite_filter_params #query_filters_params[:favorite_filter]
 
 
     if p_params.nil? || fav_params.nil?
@@ -56,7 +56,7 @@ class QueryFiltersController < AuthenticatedController
 
   def reset
     project = Project.find(params[:project_id])
-    fav_params = query_filters_params[:favorite_filter]
+    fav_params = favorite_filter_params
 
     if fav_params && fav_params[:id].present?
       filter = project.favorite_filters.where(id: fav_params[:id]).first
@@ -76,7 +76,10 @@ class QueryFiltersController < AuthenticatedController
 
   end
 
+  def favorite_filter_params
+    params.require(:favorite_filter).permit(:name, :id, :shared)
+  end
   def query_filters_params
-    params.permit!
+    params.permit(query_filters: [:filter_key, :name, :filter_value])
   end
 end
