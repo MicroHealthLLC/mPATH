@@ -124,39 +124,64 @@ ActiveAdmin.register Issue do
   form do |f|
     f.semantic_errors *f.object.errors.keys
     div id: 'direct-upload-url', "data-direct-upload-url": "#{rails_direct_uploads_url}"
-    f.inputs 'Basic Details' do
-      f.input :id, input_html: { value: f.object.id }, as: :hidden
-      f.input :title
-      f.input :task_type, label: 'Category', include_blank: true
-      f.input :description
-      div id: 'facility_projects' do
-        f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-            fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-            fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+
+    tabs do
+      tab 'Issue Info' do
+        f.inputs 'Basic Details' do
+          f.input :id, input_html: { value: f.object.id }, as: :hidden
+          f.input :title
+          f.input :task_type, label: 'Category', include_blank: true
+          f.input :description
+          div id: 'facility_projects' do
+            f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
+                fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+                fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+            end
+          end
+          f.input :issue_type, include_blank: false
+          f.input :issue_severity, include_blank: false
+          f.input :issue_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
+          f.input :start_date, as: :datepicker
+          f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
         end
       end
-      f.input :issue_type, include_blank: false
-      f.input :issue_severity, include_blank: false
-      f.input :issue_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
-      f.input :start_date, as: :datepicker
-      f.input :due_date, as: :datepicker, label: 'Estimated Completion Date'
-      f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}
-      div id: 'projects_users-tab'
-      f.input :progress
-      div id: 'progress_slider-tab'
-      f.input :auto_calculate
-      f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
-        c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
-        c.input :text, input_html: {class: 'checklist_item_text'}
-        c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
-        c.input :due_date, input_html: {style: "width: 100%"}
+
+      tab 'Assignments' do
+        f.inputs 'Assign Users' do
+          f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]},  input_html: {class: "select2"}
+          div id: 'projects_users-tab'
+        end
       end
-      div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
-      f.input :issue_files
-      f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]}, input_html: {multiple: true}
-      f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]}, input_html: {multiple: true}
-      f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]}, input_html: {multiple: true}
-      div id: 'related_tasks-issues-tab'
+
+      tab 'Checklist' do
+        f.inputs 'Progress and Checklist' do
+          f.input :progress
+          div id: 'progress_slider-tab'
+          f.input :auto_calculate
+          f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
+            c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
+            c.input :text, input_html: {class: 'checklist_item_text'}
+            c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+            c.input :due_date, input_html: {style: "width: 100%"}
+          end
+        end
+      end
+
+      tab 'Files & Links' do
+        f.inputs 'Upload Files and Links' do
+          div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
+          f.input :issue_files
+        end
+      end
+
+      tab 'Related' do
+        f.inputs 'Releated Items' do
+          f.input :sub_tasks, label: 'Related Tasks', as: :select, collection: Task.all.map{|u| [u.text, u.id]},  input_html: {class: "select2"}
+          f.input :sub_issues, label: 'Related Issues', as: :select, collection: Issue.all.map{|u| [u.title, u.id]},  input_html: {class: "select2"}
+          f.input :sub_risks, label: 'Related Risks', as: :select, collection: Risk.all.map{|u| [u.risk_description, u.id]},  input_html: {class: "select2"}
+          div id: 'related_tasks-issues-tab'
+        end
+      end
     end
     f.actions
   end

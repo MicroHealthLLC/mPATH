@@ -9,10 +9,51 @@
       <div class="row mt-1">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-             <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
-            <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button>
+             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button> -->
+            <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
+
+      <!-- Next row for Facilities label with border div -->
+      <div class="filter-border filter-sections px-3 pb-1 pt-0">
+        <div class="row">
+          <div class="col-md-12">
+            <h5 class="mb-0">Favorites</h5>
+          </div>
+        </div>
+
+        <!-- FAVORITE FILTERS SECTION -->
+        <div class="row justify-content-between pb-2">
+          <div class="col-md-6">
+            <div>
+                <el-select 
+                  v-model="C_favoriteFilterSelectModel"                    
+                  class="w-100" 
+                  track-by="name" 
+                  filterable
+                  value-key="id"
+                  placeholder="Search and select Project Group"
+                >
+                  <el-option 
+                    v-for="item in C_favoriteFilterSelectOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                </el-select>
+              
+            </div>
+            <div>
+              <label class="font-sm mb-0">Name</label>
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
+              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
+              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Next row for Facilities label with border div -->
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
         <div class="row">
@@ -142,8 +183,6 @@
               </el-select> 
             </div>
           </div>
- 
-
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
@@ -268,10 +307,9 @@
               </el-select> 
             </div>             
           </div>
-        </div>
-            
-        
+        </div>        
       </div>
+
       <div class="filter-border filter-sections px-3 pb-1 mt-3 pt-0">
             <div class="row">
               <div class="col-md-12">
@@ -389,6 +427,8 @@ export default {
       exporting: false,
       showFilters: false,
       datePicker: false,
+      favoriteFilterData: {id: null, name: null},
+      favoriteFilterOptions: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
         { name: 'My Issues', value: 'issues' },
@@ -458,6 +498,41 @@ export default {
       'getMapZoomFilter',
       'getUnfilteredFacilities'
     ]),
+
+    C_favoriteFilterSelectModel: {
+      get() {
+        return this.favoriteFilterData
+      },
+      set(value) {
+        this.favoriteFilterData = value
+        if(!this.favoriteFilterData.id){
+          this.resetFilters()
+        }else{
+          this.loadFavoriteFilter(this.favoriteFilterData)
+        }
+        
+      }
+    },
+    C_favoriteFilterSelectOptions: {
+      get() {
+        let i = this.favoriteFilterOptions.findIndex(n => n.id === null)
+        if(i == -1){
+          this.favoriteFilterOptions.push({id: null, name: "New Filter"})
+        }
+        return this.favoriteFilterOptions
+      },
+      set(value) {
+        this.favoriteFilterOptions = value
+      }
+    },
+    C_favoriteFilter: {
+      get() {
+        return this.favoriteFilterData
+      },
+      set(value) {
+        this.favoriteFilterData.name = value
+      }
+    },
 
     C_riskPriorityLevelFilter: {
       get() {
@@ -742,6 +817,73 @@ export default {
     //     this.isLoading = false
     //   }
     // },
+    loadFavoriteFilter(fav_filter){
+      this.resetFilters()
+      var res = fav_filter.query_filters
+      for(var i = 0; i < res.length; i++){
+
+        if(res[i].filter_key == "issueTypeFilter"){
+          this.setIssueTypeFilter(res[i].filter_value)
+
+        }else if(res[i].filter_key == "issueSeverityFilter"){
+          this.setIssueSeverityFilter(res[i].filter_value)
+
+        }else if(res[i].filter_key == "getAdvancedFilter"){
+          this.setAdvancedFilter(res[i].filter_value)
+
+        }else if(res[i].filter_key == "facilityGroupFilter"){
+          this.setFacilityGroupFilter(res[i].filter_value)
+
+        }else if(res[i].filter_key == "projectStatusFilter"){
+          this.setProjectStatusFilter(res[i].filter_value)
+
+        }else if(res[i].filter_key == "facilityDueDateFilter"){
+          this.setFacilityDueDateFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "riskPriorityLevelFilter"){
+          this.setRiskPriorityLevelFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "riskApproachFilter"){
+          this.setRiskApproachFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "riskStageFilter"){
+          this.setRiskStageFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "taskTypeFilter"){
+          this.setTaskTypeFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "taskIssueProgressFilter"){
+          //this.setTaskIssueProgressFilter(res[i].filter_value)
+          var min = res[i].filter_value[0].name.split("-")[0]
+          var max = res[i].filter_value[0].name.split("-")[1]
+          this.progressFilter.taskIssue = {min: min, max: max}
+
+        }else if(res[i].filter_key == "taskIssueDueDateFilter"){
+          this.setTaskIssueDueDateFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "noteDateFilter"){
+          this.setNoteDateFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "facilityNameFilter"){
+          this.setFacilityNameFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "facilityProgressFilter"){
+          //this.setFacilityProgressFilter(res[i].filter_value)
+          var min = res[i].filter_value[0].name.split("-")[0]
+          var max = res[i].filter_value[0].name.split("-")[1]
+          this.progressFilter.facility = {min: min, max: max}
+
+        }else if(res[i].filter_key == "taskStageFilter"){
+          this.setTaskStageFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "issueStageFilter"){
+          this.setIssueStageFilter(res[i].filter_value)
+        
+        }else if(res[i].filter_key == "taskIssueUserFilter"){
+          this.setTaskIssueUserFilter(res[i].filter_value)
+        }
+      }
+    },
     fetchFilters(){
       var url = `/projects/${this.currentProject.id}/query_filters.json`
       var method = "GET"
@@ -755,68 +897,7 @@ export default {
       })
       .then((response) => {
         var res = response.data
-
-        for(var i = 0; i < res.length; i++){
-
-          if(res[i].filter_key == "issueTypeFilter"){
-            this.setIssueTypeFilter(res[i].filter_value)
-
-          }else if(res[i].filter_key == "issueSeverityFilter"){
-            this.setIssueSeverityFilter(res[i].filter_value)
-
-          }else if(res[i].filter_key == "getAdvancedFilter"){
-            this.setAdvancedFilter(res[i].filter_value)
-
-          }else if(res[i].filter_key == "facilityGroupFilter"){
-            this.setFacilityGroupFilter(res[i].filter_value)
-
-          }else if(res[i].filter_key == "projectStatusFilter"){
-            this.setProjectStatusFilter(res[i].filter_value)
-
-          }else if(res[i].filter_key == "facilityDueDateFilter"){
-            this.setFacilityDueDateFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "riskPriorityLevelFilter"){
-            this.setRiskPriorityLevelFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "riskApproachFilter"){
-            this.setRiskApproachFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "taskTypeFilter"){
-            this.setTaskTypeFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "taskIssueProgressFilter"){
-            //this.setTaskIssueProgressFilter(res[i].filter_value)
-            var min = res[i].filter_value[0].name.split("-")[0]
-            var max = res[i].filter_value[0].name.split("-")[1]
-            this.progressFilter.taskIssue = {min: min, max: max}
-
-          }else if(res[i].filter_key == "taskIssueDueDateFilter"){
-            this.setTaskIssueDueDateFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "noteDateFilter"){
-            this.setNoteDateFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "facilityNameFilter"){
-            this.setFacilityNameFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "facilityProgressFilter"){
-            //this.setFacilityProgressFilter(res[i].filter_value)
-            var min = res[i].filter_value[0].name.split("-")[0]
-            var max = res[i].filter_value[0].name.split("-")[1]
-            this.progressFilter.facility = {min: min, max: max}
-
-          }else if(res[i].filter_key == "taskStageFilter"){
-            this.setTaskStageFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "issueStageFilter"){
-            this.setIssueStageFilter(res[i].filter_value)
-          
-          }else if(res[i].filter_key == "taskIssueUserFilter"){
-            this.setTaskIssueUserFilter(res[i].filter_value)
-          }
-        }
-
+        this.favoriteFilterOptions = res
       })
       .catch((err) => {
         // var errors = err.response.data.errors
@@ -828,8 +909,13 @@ export default {
 
 
     },
-    saveFilters(){
+    saveFavoriteFilters(){
+
       let formData = new FormData()
+
+      formData.append('favorite_filter[name]', this.favoriteFilterData.name)
+      if(this.favoriteFilterData.id)
+        formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
       // Categories Filter
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
@@ -1013,15 +1099,39 @@ export default {
         }
       })
       .then((response) => {
-        console.log("asdfasdff")
+        var favorite_filter = response.data.favorite_filter
+        this.favoriteFilterData = favorite_filter
+        let i = this.favoriteFilterOptions.findIndex(n => n.id === favorite_filter.id)
+        if(i == -1){
+          this.favoriteFilterOptions.unshift(favorite_filter) 
+        }else{
+          Vue.set(this.favoriteFilterOptions, i, favorite_filter)
+        }
+
+        let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
+        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter"})
+        
+        this.$message({
+          message: `Favorite Filter is saved successfully.`,
+          type: "success",
+          showClose: true,
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
+        if (response.status === 200) {
+          this.$message({
+            message: `Error in saving filter data.`,
+            type: "error",
+            showClose: true,
+          });
+        }
       })
       .finally(() => {
         // this.loading = false
       })
+
     },
     resetFilters(){
       this.setTaskIssueUserFilter([])
@@ -1089,23 +1199,53 @@ export default {
       this.setMembersPerPageFilter(null)
       this.setFacilities(this.getUnfilteredFacilities)
 
+      if(!this.favoriteFilterData.id)
+        return
+
       var url = `/projects/${this.currentProject.id}/query_filters/reset.json`
       var method = "DELETE"
       var callback = "filter-destroyed"
 
+      let formData = new FormData()
+
+      formData.append('favorite_filter[id]', this.favoriteFilterData.id)
+
       axios({
         method: method,
         url: url,
+        data: formData,
         headers: {
           'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
         }
       })
       .then((response) => {
+        var id = parseInt(response.data.id)
+        this.favoriteFilterOptions = _.filter(this.favoriteFilterOptions, function(currentObject) {
+          return currentObject.id != id;
+        });
+        if(this.favoriteFilterOptions && this.favoriteFilterOptions.length > 0){
+          this.favoriteFilterData = this.favoriteFilterOptions[0]
+          this.loadFavoriteFilter(this.favoriteFilterData)
+        }else{
+          this.favoriteFilterData = {id: null, name: "New Filter"}
+        }
         
+        //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
+        //Vue.set(this.favoriteFilterOptions, i, null)
+        this.$message({
+          message: `Favorite Filter is removed successfully.`,
+          type: "success",
+          showClose: true,
+        });
       })
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
+        this.$message({
+          message: `Error removing favorite filter.`,
+          type: "error",
+          showClose: true,
+        });
       })
       .finally(() => {
         // this.loading = false

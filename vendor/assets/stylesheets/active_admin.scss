@@ -218,8 +218,8 @@ td.col-issue_type, td.col-issue_severity {
   #task_task_files,
   #risk_risk_files,
   #issue_issue_files {
-    display: none;
-    width: 0;
+    /* display: block;
+    width: 0; */
   }
   input[type=tel]:focus {
     border: none;

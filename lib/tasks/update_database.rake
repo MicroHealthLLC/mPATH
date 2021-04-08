@@ -14,3 +14,11 @@ task :update_progress => :environment do
   puts "Updating Facility Groups Progress"
   FacilityGroup.all.map(&:update_progress)
 end
+
+desc "Remove Query filters without Favorite filters"
+task :remove_query_filters => :environment do
+
+  puts "Removing Query Filters without Favorite filters"
+  QueryFilter.where(favorite_filter_id: nil).destroy_all
+
+end

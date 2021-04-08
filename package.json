@@ -11,13 +11,14 @@
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.20.1",
     "chart.js": "^2.9.3",
+    "dayjs": "^1.10.4",
     "el-table-export": "^1.0.8",
     "element-ui": "^2.14.1",
     "gantt-elastic": "^1.0.11",
     "gantt-elastic-header": "^0.1.11",
     "humps": "^2.0.1",
     "js-cookie": "^2.2.1",
-    "jspdf": "^2.1.1",
+    "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.5.13",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
@@ -57,7 +58,7 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
-    "cypress": "^5.6.0",
+    "cypress": "^7.0.0",
     "webpack-dev-server": "^3.9.0"
   }
 }

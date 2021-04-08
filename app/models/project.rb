@@ -33,6 +33,7 @@ class Project < SortableRecord
   has_many :project_issue_stages, dependent: :destroy
   has_many :issue_stages, through: :project_issue_stages
 
+  has_many :favorite_filters, dependent: :destroy
   has_many :query_filters, dependent: :destroy
 
   enum status: [:inactive, :active].freeze

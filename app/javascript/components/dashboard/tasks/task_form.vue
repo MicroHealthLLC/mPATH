@@ -160,7 +160,7 @@
     <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
       <div v-if="selectedTaskStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
+        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
@@ -176,7 +176,8 @@
       v-for="item in taskStages"
       :key="item.id"             
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      :disabled="!_isallowed('write')
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -201,7 +202,8 @@
       :key="item.id"            
       :value="item"
       style="cursor:pointer"     
-      :load="log( taskStages.length )"     
+      :load="log( taskStages.length )"
+      :disabled="!_isallowed('write')
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -506,7 +508,7 @@
                       <th style="width:60%">Progress</th>
                       <th>Last Updated</th>
                       <th>By</th>
-                      <th>Action</th>
+                      <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -544,7 +546,7 @@
                          {{ $currentUser.full_name }}
                        </span>
                     </td>
-                    <td>
+                    <td v-if="_isallowed('write') || _isallowed('delete')">
                        <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
                       </span>

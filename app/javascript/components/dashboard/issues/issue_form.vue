@@ -333,7 +333,7 @@
     <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
       <div v-if="selectedIssueStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
@@ -349,7 +349,8 @@
       v-for="item in issueStages"
       :key="item.id"             
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      :disabled="!_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -373,7 +374,8 @@
       v-for="item in issueStages"
       :key="item.id"            
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      :disabled="!_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -722,7 +724,7 @@ Tab 1 Row Begins here -->
                       <th style="width:60%">Progress</th>
                       <th>Last Updated</th>
                       <th>By</th>
-                      <th>Action</th>
+                      <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -761,7 +763,7 @@ Tab 1 Row Begins here -->
                          {{ $currentUser.full_name }}
                        </span>
                     </td>
-                    <td>
+                    <td v-if="_isallowed('write') || _isallowed('delete')">
                        <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveIssue">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
                       </span>

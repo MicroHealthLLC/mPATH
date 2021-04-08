@@ -36,6 +36,9 @@ input[type=button]:focus {
 .body-wrapper {
   border-top: 1px solid #dee2e6;
   padding: 7px 70px;
+  overflow-y:scroll;
+  max-height: calc(100vh - 70px) !important;
+  padding-bottom: 50px;
 }
 .form-control:focus {
   outline: none;
@@ -299,11 +302,22 @@ td.col-issue_type, td.col-issue_severity {
 .pac-container {
   z-index: 100000;
 }
+.signin-section {
+  // Signin page main container 
 
+  overflow-y: auto;
+  max-height: calc(100vh - 120px) !important;
+}
+.form-signin {
+  position: absolute;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .signup-section,
 .signin-section {
-  .form-signin {
-    margin-top: 10vh;
+  .form-signin {  
     width: 450px;
     display: block;
     background-color: #f7f7f7;
@@ -597,8 +611,6 @@ body /deep/ .mx-input.disabled {
   border: 1px solid #dee2e6 !important;
   margin-bottom: 20px;
 }
-
-
 // CSS for datatables
 .scroll {
   cursor:pointer !important;
@@ -635,7 +647,12 @@ th {
   vertical-align: middle !important;
 }
 .sort-icon {
+  color:#17a2b8 !important;
+  font-size: .88rem !important;
+} 
+.inactive-sort-icon {
   color:#C0C4CC !important;
+  font-size: .88rem !important;
 } 
 
 .el-collapse-item__arrow {
