@@ -12,11 +12,11 @@
     <div class="col-md-10 pr-4">
       <div
         v-if="
-          $route.name !== 'SheetProjectRollup' &&
-            $route.name !== 'SheetProjectTaskForm' &&
-            $route.name !== 'SheetProjectIssueForm' &&
-            $route.name !== 'SheetProjectRiskForm' &&
-            $route.name !== 'SheetProjectNoteForm'
+          $route.name !== 'SheetRollup' &&
+            $route.name !== 'SheetTaskForm' &&
+            $route.name !== 'SheetIssueForm' &&
+            $route.name !== 'SheetRiskForm' &&
+            $route.name !== 'SheetNoteForm'
         "
         class="d-flex align-items-center my-2"
       >
@@ -25,11 +25,11 @@
       </div>
       <ProjectTabs
         v-if="
-          $route.name !== 'SheetProjectRollup' &&
-            $route.name !== 'SheetProjectTaskForm' &&
-            $route.name !== 'SheetProjectIssueForm' &&
-            $route.name !== 'SheetProjectRiskForm' &&
-            $route.name !== 'SheetProjectNoteForm'
+          $route.name !== 'SheetRollup' &&
+            $route.name !== 'SheetTaskForm' &&
+            $route.name !== 'SheetIssueForm' &&
+            $route.name !== 'SheetRiskForm' &&
+            $route.name !== 'SheetNoteForm'
         "
       />
       <router-view

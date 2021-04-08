@@ -62,7 +62,7 @@ export default {
       return this.$route.name.includes("Sheet");
     },
     isMapView() {
-      return this.$route.name === "MapView";
+      return this.$route.name.includes("Map");
     },
     isGanttView() {
       return this.$route.name === "GanttChartView";

@@ -1,6 +1,14 @@
-import MapView from "./../components/dashboard/map_view";
+// import MapView from "./../components/dashboard/map_view";
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
+
+// Map Routes Components
+import MapView from "./../components/views/map/MapView";
+import MapOverview from "./../components/views/map/MapOverview";
+import MapTasks from "./../components/views/map/MapTasks";
+import MapIssues from "./../components/views/map/MapIssues";
+import MapRisks from "./../components/views/map/MapRisks";
+import MapNotes from "./../components/views/map/MapNotes";
 
 //Sheet Routes Components
 import SheetView from "./../components/views/sheet/SheetView";
@@ -35,6 +43,38 @@ export default new VueRouter({
       name: "MapView",
       path: "/programs/:programId/map",
       component: MapView,
+      children: [
+        {
+          name: "MapRollup",
+          path: "",
+          component: ProjectRollup,
+        },
+        {
+          name: "MapOverview",
+          path: "projects/:projectId",
+          component: MapOverview,
+        },
+        {
+          name: "MapTasks",
+          path: "projects/:projectId/tasks",
+          component: MapTasks,
+        },
+        {
+          name: "MapIssues",
+          path: "projects/:projectId/issues",
+          component: MapIssues,
+        },
+        {
+          name: "MapRisks",
+          path: "projects/:projectId/risks",
+          component: MapRisks,
+        },
+        {
+          name: "MapNotes",
+          path: "projects/:projectId/notes",
+          component: MapNotes,
+        },
+      ],
     },
     {
       name: "GanttChartView",
@@ -53,61 +93,61 @@ export default new VueRouter({
       children: [
         // Rollup
         {
-          name: "SheetProjectRollup",
+          name: "SheetRollup",
           path: "",
           component: ProjectRollup,
         },
         // Project Overview tab
         {
-          name: "SheetProjectOverview",
+          name: "SheetOverview",
           path: "projects/:projectId",
           component: SheetOverview,
         },
-        // Project Tasks
+        // Project Tasks tab
         {
-          name: "SheetProjectTasks",
+          name: "SheetTasks",
           path: "projects/:projectId/tasks",
           component: SheetTasks,
         },
         // Task Form
         {
-          name: "SheetProjectTaskForm",
+          name: "SheetTaskForm",
           path: "projects/:projectId/tasks/:taskId",
           component: SheetTaskForm,
         },
-        // Project Issues
+        // Project Issues tab
         {
-          name: "SheetProjectIssues",
+          name: "SheetIssues",
           path: "projects/:projectId/issues",
           component: SheetIssues,
         },
         // Issue Form
         {
-          name: "SheetProjectIssueForm",
+          name: "SheetIssueForm",
           path: "projects/:projectId/issues/:issueId",
           component: SheetIssueForm,
         },
-        // Project Risks
+        // Project Risks tab
         {
-          name: "SheetProjectRisks",
+          name: "SheetRisks",
           path: "projects/:projectId/risks",
           component: SheetRisks,
         },
         // Risk Form
         {
-          name: "SheetProjectRiskForm",
+          name: "SheetRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: SheetRiskForm,
         },
-        // Project Notes
+        // Project Notes tab
         {
-          name: "SheetProjectNotes",
+          name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,
         },
         // Note Form
         {
-          name: "SheetProjectNoteForm",
+          name: "SheetNoteForm",
           path: "projects/:projectId/notes/:noteId",
           component: SheetNoteForm,
         },
@@ -129,14 +169,14 @@ export default new VueRouter({
           component: KanbanDefault,
         },
         {
-          name: "KanbanTaskForm",
-          path: "projects/:projectId/tasks/:taskId",
-          component: KanbanTaskForm,
-        },
-        {
           name: "KanbanTasks",
           path: "projects/:projectId/tasks",
           component: KanbanTasks,
+        },
+        {
+          name: "KanbanTaskForm",
+          path: "projects/:projectId/tasks/:taskId",
+          component: KanbanTaskForm,
         },
         {
           name: "KanbanIssues",
@@ -157,7 +197,7 @@ export default new VueRouter({
           name: "KanbanRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: KanbanRiskForm,
-        }
+        },
       ],
     },
   ],

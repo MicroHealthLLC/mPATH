@@ -63,8 +63,17 @@ export default {
           this.$route.name.toUpperCase().includes(key.toUpperCase())
         );
     },
+    tab() {
+      let url = this.$route.path;
+
+      if (url.includes("sheet")) {
+        return "sheet";
+      } else {
+        return "map";
+      }
+    },
     path() {
-      return `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}`;
+      return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
     },
   },
 };
