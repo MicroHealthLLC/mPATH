@@ -3,10 +3,10 @@ import '@4tw/cypress-drag-drop'
 // Login command
 Cypress.Commands.add("login", (email, password) => {
   cy.visit('/')
-  cy.get('[data-cy=user_email]').type(email).should('have.value', email)
-  cy.get('[data-cy=user_password]').type(password).should('have.value', password)
-  cy.get('[data-cy=user_remember_me]').click()
-  cy.get('[data-cy=submit]').click()
+  cy.get('[data-cy=user_email]').type(email, {force: true}).should('have.value', email)
+  cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
+  cy.get('[data-cy=user_remember_me]').click({force: true})
+  cy.get('[data-cy=submit]').click({force: true})
   cy.contains('Welcome to MicroHealth Geographic Information System')
 })
 
