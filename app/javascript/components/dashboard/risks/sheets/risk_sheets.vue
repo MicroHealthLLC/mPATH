@@ -14,7 +14,7 @@
        </td>
        <td class="eight">{{formatDate(risk.startDate)}}</td>
        <td class="seven">{{formatDate(risk.dueDate)}}</td>
-       <td class="ten" >
+       <td class="twelve" >
           <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{risk.responsibleUsers[0].name}} <br></span> 
           <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{risk.accountableUsers[0].name}}<br></span>   
            <!-- Consulted Users and Informed Users are toggle values         -->
@@ -28,13 +28,13 @@
         <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-       <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
+       <td class="oneEight" v-if="(risk.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)">        
            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
            </span>
            <br> {{risk.notes[0].body}}
         </td>
-        <td v-else class="twenty">No Updates</td>
+        <td v-else class="oneEight">No Updates</td>
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu
@@ -237,27 +237,23 @@
   .ten {
     width: 10%;
   }
+  .twelve {
+    width: 12%;
+  }
   .oneFive {
     width: 15%;
   }
   .sixteen {
     width: 16%;
   }
-  .twenty {
-    width: 20%;
+  .oneEight{
+    width: 18%;
   }
   .pg-content {
     width: 100%;
     height: 20px;
     font-weight: bold;
   }
-  // .toolTip {
-  //   background-color: rgba(132, 133, 133, 1);
-  //   font-size: .75rem;
-  //   padding:1px;
-  //   color: #fff;
-  //   border-radius: 3px;
-  // }
   td {
     overflow-wrap: break-word;
   }
