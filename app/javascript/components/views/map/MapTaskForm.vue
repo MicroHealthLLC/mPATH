@@ -41,7 +41,6 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        console.log("This is happen?")
         this.task = this.facility.tasks.find(
           (task) => task.id == this.$route.params.taskId
         );

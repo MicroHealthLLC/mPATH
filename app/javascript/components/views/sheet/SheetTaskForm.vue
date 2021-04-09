@@ -33,6 +33,15 @@ export default {
       );
     }
   },
+  watch: {
+    contentLoaded: {
+      handler() {
+        this.task = this.facility.tasks.find(
+          (task) => task.id == this.$route.params.taskId
+        );
+      },
+    },
+  },
 };
 </script>
 

@@ -31,6 +31,15 @@ export default {
       );
     }
   },
+  watch: {
+    contentLoaded: {
+      handler() {
+        this.risk = this.facility.risks.find(
+          (risk) => risk.id == this.$route.params.riskId
+        );
+      },
+    },
+  },
 };
 </script>
 

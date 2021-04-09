@@ -1,5 +1,9 @@
 <template>
-  <NotesForm :facility="facility" :note="note" @close-note-input="redirectBack" />
+  <NotesForm
+    :facility="facility"
+    :note="note"
+    @close-note-input="redirectBack"
+  />
 </template>
 
 <script>
@@ -30,6 +34,15 @@ export default {
         (note) => note.id == this.$route.params.noteId
       );
     }
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        this.note = this.facility.notes.find(
+          (note) => note.id == this.$route.params.noteId
+        );
+      },
+    },
   },
 };
 </script>

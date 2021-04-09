@@ -34,6 +34,15 @@ export default {
       );
     }
   },
+  watch: {
+    contentLoaded: {
+      handler() {
+        this.issue = this.facility.issues.find(
+          (issue) => issue.id == this.$route.params.issueId
+        );
+      },
+    },
+  },
 };
 </script>
 

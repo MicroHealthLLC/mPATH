@@ -1,5 +1,11 @@
 <template>
-  <div class="row m-0 mw-100">
+  <div
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="row m-0 mw-100"
+  >
     <!-- World Map -->
     <div id="map-wrap" class="col-7 p-0">
       <GmapMap

@@ -1,5 +1,11 @@
 <template>
-  <div v-if="contentLoaded" class="row">
+  <div
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="row"
+  >
     <div class="col-md-2">
       <ProjectSidebar
         :current-facility-group="currentFacilityGroup"
@@ -21,7 +27,7 @@
         class="d-flex align-items-center my-2"
       >
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
+        <h5 class="f-head mb-0">{{ currentFacility.facilityName || "Loading..." }}</h5>
       </div>
       <ProjectTabs
         v-if="
