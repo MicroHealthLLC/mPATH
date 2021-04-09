@@ -320,7 +320,8 @@ jQuery(function($) {
   }
 
   // task/issue form slider tab
-  if ($("#progress_slider-tab").is(":visible"))
+  // if ($("#progress_slider-tab").is(":visible"))
+  if ($("#progress_slider-tab").length > 0)
   {
     Vue.component('vue-slide-bar', vueSlideBar);
     $.Vue_task_slider = new Vue({
@@ -334,6 +335,8 @@ jQuery(function($) {
       },
       mounted() {
         this.tab_type = $('form').attr('id').split('_').pop();
+        console.log("this.tab_type")
+        console.log(this.tab_type)
         this.setAutoCalculate();
         this.progress = $(`#${this.tab_type}_progress`).val();
       },
