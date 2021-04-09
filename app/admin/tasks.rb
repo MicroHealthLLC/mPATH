@@ -136,7 +136,7 @@ ActiveAdmin.register Task do
 
       tab 'Checklist' do
         f.inputs 'Progress and Checklist' do
-          f.input :progress
+          f.input :progress, as: :hidden
           div id: 'progress_slider-tab'
           f.input :auto_calculate
           f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
