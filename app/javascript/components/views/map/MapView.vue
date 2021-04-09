@@ -64,12 +64,15 @@
       </GmapMap>
     </div>
     <!-- Right panel -->
-    <div class="col-md-5">
+    <div class="col-5 right-panel">
       <div
         v-if="
           currentFacility !== null &&
             $route.name !== 'MapRollup' &&
-            $route.name !== 'MapTaskForm'
+            $route.name !== 'MapTaskForm' &&
+            $route.name !== 'MapIssueForm' &&
+            $route.name !== 'MapRiskForm' &&
+            $route.name !== 'MapNoteForm'
         "
         class="d-flex align-items-center my-2"
       >
@@ -77,7 +80,13 @@
         <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
       </div>
       <ProjectTabs
-        v-if="$route.name !== 'MapRollup' && $route.name !== 'MapTaskForm'"
+        v-if="
+          $route.name !== 'MapRollup' &&
+            $route.name !== 'MapTaskForm' &&
+            $route.name !== 'MapIssueForm' &&
+            $route.name !== 'MapRiskForm' &&
+            $route.name !== 'MapNoteForm'
+        "
       />
       <router-view :key="$route.path" :facility="currentFacility"></router-view>
     </div>
@@ -339,7 +348,6 @@ export default {
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
-          console.log("YESSS?");
           this.setCurrentFacility(
             this.currentProject.facilities.find(
               (facility) => facility.facilityId == this.$route.params.projectId
@@ -355,5 +363,9 @@ export default {
 <style scoped lang="scss">
 #map-wrap {
   height: calc(100vh - 100px);
+}
+.right-panel {
+  height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 </style>

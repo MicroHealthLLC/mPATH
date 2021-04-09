@@ -153,7 +153,11 @@
       ]),
       editIssue() {
         this.DV_edit_issue = this.DV_issue;
-        this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`);
+        if (this.$route.path.includes("kanban")) {
+          this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`);
+        } else {
+          this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`);
+        }      
       },
       deleteIssue() {
         let confirm = window.confirm(`Are you sure, you want to delete this issue?`)

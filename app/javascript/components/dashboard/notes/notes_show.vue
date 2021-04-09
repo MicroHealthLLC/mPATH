@@ -76,11 +76,9 @@
         'setTaskForManager'
       ]),
       editNoteMode() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'note', value: this.DV_note})
-        } else {
-          this.show = false
-        }
+        this.setTaskForManager({key: 'note', value: this.DV_note})
+
+        this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${this.DV_note.id}`)
       },
       noteUpdated(note) {
         this.show = true

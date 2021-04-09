@@ -143,7 +143,11 @@
       ]),
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
-        this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
+        if (this.$route.name.includes("kanban")) {
+          this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
+        } else {
+          this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
+        }
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)

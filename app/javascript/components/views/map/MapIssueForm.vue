@@ -1,30 +1,28 @@
 <template>
-  <TaskForm
+  <IssueForm
     v-if="facility !== null"
     :facility="facility"
-    :task="task"
+    :issue="issue"
     @on-close-form="redirectBack"
   />
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import TaskForm from "../../dashboard/tasks/task_form";
+import IssueForm from "../../dashboard/issues/issue_form.vue";
 
 export default {
   props: ["facility"],
-  components: {
-    TaskForm,
-  },
+  components: { IssueForm },
   data() {
     return {
-      task: {},
+      issue: {},
     };
   },
   methods: {
     redirectBack() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks`
+        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/issues`
       );
     },
   },
@@ -33,17 +31,16 @@ export default {
   },
   mounted() {
     if (this.contentLoaded) {
-      this.task = this.facility.tasks.find(
-        (task) => task.id == this.$route.params.taskId
+      this.issue = this.facility.issues.find(
+        (issue) => issue.id == this.$route.params.issueId
       );
     }
   },
   watch: {
     contentLoaded: {
       handler() {
-        console.log("This is happen?")
-        this.task = this.facility.tasks.find(
-          (task) => task.id == this.$route.params.taskId
+        this.issue = this.facility.issues.find(
+          (issue) => issue.id == this.$route.params.issueId
         );
       },
     },

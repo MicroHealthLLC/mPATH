@@ -1,14 +1,10 @@
-<!--  NOTE: This file is used in Sheets view as overview tab -->
 <template>
-  <div
-    v-if="contentLoaded"
-    id="facility-sheets"
-    data-cy="facility_sheets"
-  >
-    <div v-if="_isallowed('read')" class="container-fluid px-0 mx-0">
+  <div v-if="contentLoaded" id="facility-sheets" data-cy="facility_sheets">
+    <div v-if="_isallowed('read')" class="px-0 mx-0">
       <div class="row row-1 mt-2">
-        <div class="col-md-12">
-          <div class="box-card my-el-card p-3" style="position:relative">
+        <!-- Key Details Card -->
+        <div class="col-md-8 pr-2">
+          <el-card class="box-card" style="position:relative">
             <div class="row">
               <div class="col font-weight-bold">
                 <p>Project Group:</p>
@@ -26,7 +22,6 @@
                   </span>
                 </p>
               </div>
-
               <div class="col">
                 <p class="badge badge-secondary badge-pill font-weight-light">
                   {{ DV_facility.facility.facilityGroupName }}
@@ -70,10 +65,10 @@
             >
               Apply
             </button>
-          </div>
+          </el-card>
         </div>
-
-        <div class="col-md-6" data-cy="date_set_filter">
+        <!-- Progress Card -->
+        <div class="col-md-4 pl-2" data-cy="date_set_filter">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -91,77 +86,11 @@
             </div>
           </el-card>
         </div>
-
-        <div class="col-md-6" data-cy="date_set_filter">
-          <el-card
-            class="box-card"
-            style="background-color: #41b883; color:#fff"
-          >
-            <div class="row">
-              <div class="col">
-                <h5 class="d-inline">Filters</h5>
-                <hr style="background-color: #fff; color:#fff" />
-              </div>
-            </div>
-
-            <div v-for="(filterArray, index) in getAllFilterNames" :key="index">
-              <span v-if="getFilterValue(filterArray[0])">
-                <span
-                  ><b class="mr-1">{{ filterArray[1] }}:</b>
-                  {{ getFilterValue(filterArray[0]) }}
-                </span>
-              </span>
-            </div>
-            <span v-show="facilities.length !== getUnfilteredFacilities.length"
-              >Map Boundary Filter: Active</span
-            >
-          </el-card>
-        </div>
-
-        <div class="col-md-6" data-cy="date_set_filter">
-          <el-card class="box-card" style="background-color: #fafafa">
-            <div class="row">
-              <div class="col">
-                <h5 class="d-inline">Contact</h5>
-                <hr class="mb-0 pb-0" />
-              </div>
-            </div>
-            <div class="row">
-              <div class="col font-sm">
-                <p class="mt-1">
-                  <span class="fbody-icon"
-                    ><i class="far fa-id-badge"></i
-                  ></span>
-                  <span>{{
-                    DV_facility.facility.pointOfContact || "N/A"
-                  }}</span>
-                </p>
-                <p class="mt-0">
-                  <span class="fbody-icon"
-                    ><i class="fas fa-map-marker"></i
-                  ></span>
-                  <span>{{ DV_facility.facility.address || "N/A" }}</span>
-                </p>
-                <p class="my-0">
-                  <span class="fbody-icon"><i class="fas fa-phone"></i></span>
-                  <span>{{ DV_facility.facility.phoneNumber || "N/A" }}</span>
-                </p>
-                <p class="my-0">
-                  <span class="fbody-icon"
-                    ><i class="far fa-envelope"></i
-                  ></span>
-                  <span>{{ DV_facility.facility.email || "N/A" }}</span>
-                </p>
-              </div>
-            </div>
-          </el-card>
-        </div>
       </div>
-      <!-- SECOND ROW WITH TASKS ISSUES & RISKS -->
-
-      <!-- Row 2, col-1 for Tasks Card -->
+      <!-- Action Cards -->
       <div class="row row-2 mt-3 task-issue-risk-row">
-        <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
+        <!-- Tasks Cards -->
+        <div class="col-md-6 pr-2" data-cy="facility_tasks">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -174,7 +103,6 @@
                 <hr />
               </div>
             </div>
-
             <div class="row">
               <div class="col">
                 <span>Complete</span>
@@ -221,7 +149,6 @@
                 </span>
               </div>
             </div>
-
             <div v-if="taskStats.length > 0" data-cy="task_categories">
               <el-collapse>
                 <el-collapse-item title="Details" name="1">
@@ -261,10 +188,8 @@
             </div>
           </el-card>
         </div>
-
-        <!-- Row 2, col-2 for Issues Card -->
-
-        <div class="col-md-4 col-lg-4 col-sm-12 mb-2" data-cy="facility_issues">
+        <!-- Issues Card -->
+        <div class="col-md-6 pl-2" data-cy="facility_issues">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -277,7 +202,6 @@
                 <hr />
               </div>
             </div>
-
             <div class="row">
               <div class="col">
                 <span>Complete</span>
@@ -324,9 +248,7 @@
                 </span>
               </div>
             </div>
-
             <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
-
             <div v-if="filteredIssues.length" data-cy="issue_types">
               <el-collapse>
                 <el-collapse-item title="Details" name="1">
@@ -362,13 +284,11 @@
                       </div>
                     </div>
                   </div>
-
                   <div data-cy="issue_types">
                     <div class="col mt-1 mb-2 text-center">
                       ISSUE TYPES
                     </div>
                   </div>
-
                   <div
                     class="row font-sm"
                     v-for="issue in issueStats"
@@ -399,9 +319,8 @@
             </div>
           </el-card>
         </div>
-
-        <!-- Row 2, col-3 for Risks Card -->
-        <div class="col-md-4 col-lg-4 col-sm-12 mb-3" data-cy="facility_risks">
+        <!-- Risks Card -->
+        <div class="col-md-12 pt-3" data-cy="facility_risks">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
@@ -414,7 +333,6 @@
                 <hr />
               </div>
             </div>
-
             <div v-if="contentLoaded">
               <div class="row">
                 <div class="col">
@@ -463,7 +381,6 @@
                 </div>
               </div>
             </div>
-
             <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
             <div v-if="filteredRisks.length">
               <el-collapse>
@@ -496,7 +413,6 @@
                       </div>
                     </div>
                   </div>
-
                   <div class="row mt-3 mb-1">
                     <div class="col text-center">
                       RISK PRIORITY LEVELS
@@ -556,7 +472,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import Loader from "../../shared/loader";
 
 export default {
-  name: "SheetOverview",
+  name: "MapOverview",
   components: {
     Loader,
   },
@@ -596,9 +512,6 @@ export default {
       "nullifyTasksForManager",
     ]),
     ...mapActions(["fetchFacility"]),
-    log(p) {
-      // console.log(p)
-    },
     loadFacility(facility) {
       this.DV_facility = Object.assign({}, facility);
       this._selected = this.DV_facility.statusId; //this.statuses.find(s => s.id == this.DV_facility.statusId)
@@ -709,7 +622,6 @@ export default {
         return this.taskTypeFilter;
       },
       set(value) {
-        //  console.log(" C_taskTypeFilter set value: " + value)
         this.setTaskTypeFilter(value);
       },
     },
@@ -1042,31 +954,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.f-head {
-  word-break: break-word;
-  text-overflow: ellipsis;
-}
-.f-notes {
-  border: 1px solid #ccc;
-  padding: 5px 10px;
-  border-radius: 5px;
-  overflow: auto;
-  min-height: 20vh;
-  max-height: 34vh;
-}
-.f-show-btn {
-  font-size: 12px;
-  font-style: italic;
-  display: flex;
-  flex-direction: row-reverse;
-}
-.custom-tab {
-  background-color: #ededed !important;
-  width: auto;
-  text-transform: uppercase;
-  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
-    0 3px 3px rgba(56, 56, 56, 0.23);
-}
 .apply-btn,
 .red,
 .orange,
@@ -1083,35 +970,6 @@ export default {
   font-size: 14px;
   font-weight: bold;
 }
-.vue-tabs {
-  margin-top: 15px;
-}
-.vdp-datepicker {
-  width: 100%;
-}
-.search-tab {
-  width: 80%;
-}
-.displayNone {
-  display: none !important;
-}
-.fa-building {
-  font-size: large !important;
-  color: #383838 !important;
-}
-.close-sidebar-btn {
-  z-index: 800;
-  cursor: pointer;
-  display: flex;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: #fff;
-  padding: 5px;
-}
-.my-el-card {
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
 .vue2-datepicker /deep/ .mx-input:disabled {
   color: #555;
   background-color: #fff;
@@ -1120,14 +978,6 @@ export default {
   .multiselect__placeholder {
     text-overflow: ellipsis;
   }
-}
-
-.fac-sum {
-  border-radius: 2px;
-  padding: 8px;
-  margin-bottom: 8px;
-  background-color: #fff;
-  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
 }
 .grey {
   background-color: lightgray;
@@ -1162,8 +1012,5 @@ export default {
 }
 .font-12 {
   font-size: 12px;
-}
-.mt-neg-4 {
-  margin-top: -4px;
 }
 </style>

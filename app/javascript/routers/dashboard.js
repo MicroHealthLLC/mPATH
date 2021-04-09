@@ -8,8 +8,11 @@ import MapOverview from "./../components/views/map/MapOverview";
 import MapTasks from "./../components/views/map/MapTasks";
 import MapTaskForm from "./../components/views/map/MapTaskForm";
 import MapIssues from "./../components/views/map/MapIssues";
+import MapIssueForm from "./../components/views/map/MapIssueForm";
 import MapRisks from "./../components/views/map/MapRisks";
+import MapRiskForm from "./../components/views/map/MapRiskForm";
 import MapNotes from "./../components/views/map/MapNotes";
+import MapNoteForm from "./../components/views/map/MapNoteForm";
 
 //Sheet Routes Components
 import SheetView from "./../components/views/sheet/SheetView";
@@ -71,14 +74,29 @@ export default new VueRouter({
           component: MapIssues,
         },
         {
+          name: "MapIssueForm",
+          path: "projects/:projectId/issues/:issueId",
+          component: MapIssueForm,
+        },
+        {
           name: "MapRisks",
           path: "projects/:projectId/risks",
           component: MapRisks,
         },
         {
+          name: "MapRiskForm",
+          path: "projects/:projectId/risks/:riskId",
+          component: MapRiskForm,
+        },
+        {
           name: "MapNotes",
           path: "projects/:projectId/notes",
           component: MapNotes,
+        },
+        {
+          name: "MapNoteForm",
+          path: "projects/:projectId/notes/:noteId",
+          component: MapNoteForm,
         },
       ],
     },

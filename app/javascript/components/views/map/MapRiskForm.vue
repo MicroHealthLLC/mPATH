@@ -1,30 +1,28 @@
 <template>
-  <TaskForm
+  <RiskForm
     v-if="facility !== null"
     :facility="facility"
-    :task="task"
+    :risk="risk"
     @on-close-form="redirectBack"
   />
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import TaskForm from "../../dashboard/tasks/task_form";
+import RiskForm from "../../dashboard/risks/risk_form.vue";
 
 export default {
   props: ["facility"],
-  components: {
-    TaskForm,
-  },
+  components: { RiskForm },
   data() {
     return {
-      task: {},
+      risk: {},
     };
   },
   methods: {
     redirectBack() {
       this.$router.push(
-        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks`
+        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks`
       );
     },
   },
@@ -33,17 +31,16 @@ export default {
   },
   mounted() {
     if (this.contentLoaded) {
-      this.task = this.facility.tasks.find(
-        (task) => task.id == this.$route.params.taskId
+      this.risk = this.facility.risks.find(
+        (risk) => risk.id == this.$route.params.riskId
       );
     }
   },
   watch: {
     contentLoaded: {
       handler() {
-        console.log("This is happen?")
-        this.task = this.facility.tasks.find(
-          (task) => task.id == this.$route.params.taskId
+        this.risk = this.facility.risks.find(
+          (risk) => risk.id == this.$route.params.riskId
         );
       },
     },
