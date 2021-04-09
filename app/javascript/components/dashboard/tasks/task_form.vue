@@ -177,7 +177,7 @@
       :key="item.id"             
       :value="item"
       style="cursor:pointer"
-      :disabled="!_isallowed('write')
+      v-if="_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -203,7 +203,7 @@
       :value="item"
       style="cursor:pointer"     
       :load="log( taskStages.length )"
-      :disabled="!_isallowed('write')
+      v-if="_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
