@@ -142,7 +142,7 @@ ActiveAdmin.register Task do
           f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
             c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
             c.input :text, input_html: {class: 'checklist_item_text'}
-            c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+            c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'select2 checklist_user'}
             c.input :due_date, as: :datepicker
           end
         end

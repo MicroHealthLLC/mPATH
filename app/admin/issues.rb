@@ -155,13 +155,13 @@ ActiveAdmin.register Issue do
 
       tab 'Checklist' do
         f.inputs 'Progress and Checklist' do
-          f.input :progress
+          f.input :progress, as: :hidden
           div id: 'progress_slider-tab'
           f.input :auto_calculate
           f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
             c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
             c.input :text, input_html: {class: 'checklist_item_text'}
-            c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+            c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'select2 checklist_user'}
             c.input :due_date, input_html: {style: "width: 100%"}
           end
         end
