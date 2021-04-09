@@ -68,11 +68,12 @@ describe('Admin Panel Statuses', function() {
   })
 
   it('Sort Status according to Name', function() {
-    cy.get('#index_table_statuses > tbody > tr').first().contains('Not Started').should('be.visible')
     cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
     cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_statuses > tbody > tr').first().contains('Not Started').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
     cy.get('#logout').click()
   })
 
