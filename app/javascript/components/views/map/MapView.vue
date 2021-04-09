@@ -1,6 +1,6 @@
 <template>
   <div class="row m-0 mw-100">
-    <!-- Map -->
+    <!-- World Map -->
     <div id="map-wrap" class="col-7 p-0">
       <GmapMap
         ref="googlemap"
@@ -65,8 +65,21 @@
     </div>
     <!-- Right panel -->
     <div class="col-md-5">
-      <ProjectTabs v-if="$route.name !== 'MapRollup'" />
-      <router-view></router-view>
+      <div
+        v-if="
+          currentFacility !== null &&
+            $route.name !== 'MapRollup' &&
+            $route.name !== 'MapTaskForm'
+        "
+        class="d-flex align-items-center my-2"
+      >
+        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
+      </div>
+      <ProjectTabs
+        v-if="$route.name !== 'MapRollup' && $route.name !== 'MapTaskForm'"
+      />
+      <router-view :key="$route.path" :facility="currentFacility"></router-view>
     </div>
   </div>
 </template>
@@ -176,7 +189,7 @@ export default {
     resetView() {
       this.setCurrentFacility(null);
       this.tooltip.opened = false;
-      this.$router.push(`/programs/${this.$route.params.programId}/map`)
+      this.$router.push(`/programs/${this.$route.params.programId}/map`);
     },
     toggleTooltip(marker, key) {
       this.tooltip.position = this.getLatLngForFacility(marker);
@@ -322,6 +335,18 @@ export default {
           this.setNewSession();
         }
       }
+    },
+    contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId) {
+          console.log("YESSS?");
+          this.setCurrentFacility(
+            this.currentProject.facilities.find(
+              (facility) => facility.facilityId == this.$route.params.projectId
+            )
+          );
+        }
+      },
     },
   },
 };

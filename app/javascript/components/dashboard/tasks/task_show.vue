@@ -149,8 +149,12 @@
         this.$refs.taskFormModal && this.$refs.taskFormModal.open()
       },
       editTask() {
-          this.DV_edit_task = this.DV_task
+        this.DV_edit_task = this.DV_task
+        if (this.$route.path.includes("kanban")) {
           this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
+        } else {
+          this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
+        }
       },
       onCloseForm() {
         this.$refs.taskFormModal && this.$refs.taskFormModal.close()

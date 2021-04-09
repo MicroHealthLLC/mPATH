@@ -6,6 +6,7 @@ import MembersView from "./../components/dashboard/members_view";
 import MapView from "./../components/views/map/MapView";
 import MapOverview from "./../components/views/map/MapOverview";
 import MapTasks from "./../components/views/map/MapTasks";
+import MapTaskForm from "./../components/views/map/MapTaskForm";
 import MapIssues from "./../components/views/map/MapIssues";
 import MapRisks from "./../components/views/map/MapRisks";
 import MapNotes from "./../components/views/map/MapNotes";
@@ -58,6 +59,11 @@ export default new VueRouter({
           name: "MapTasks",
           path: "projects/:projectId/tasks",
           component: MapTasks,
+        },
+        {
+          name: "MapTaskForm",
+          path: "projects/:projectId/tasks/:taskId",
+          component: MapTaskForm,
         },
         {
           name: "MapIssues",
