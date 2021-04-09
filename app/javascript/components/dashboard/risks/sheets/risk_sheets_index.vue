@@ -144,11 +144,11 @@
               <col class="eight" />
               <col class="eight" />
               <col class="seven" />
-              <col class="ten" />
+              <col class="twelve" />
               <col class="eight" />
               <col class="eight" />
               <col class="eight" />
-              <col class="twenty" />
+              <col class="oneEight" />
             </colgroup>
             <tr class="thead" style="background-color:#ededed;">
               <th class="sort-th" @click="sort('text')">Risk 
@@ -212,39 +212,54 @@
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">                
                 <font-awesome-icon icon="sort-down" /></span>      
               </th>
-              <th class="sort-th">Assigned Users<br/>
-               <span class="btn-group">
+              <th class="sort-th p-1 w-100">          
+                 <span class="py-2 d-inline-block">Assigned Users</span><br> 
+              <span class="btn-group">
+                 <button 
+                :class="{'activeFirstName': sortedResponsibleUser === 'responsibleUsersFirstName' || sortedAccountableUser === 'accountableUsersFirstName'}"
+                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"              
+                @click.prevent="firstNameSort"
+                >First
+                </button> 
               <button 
-                :class="{'activeResponsible':currentSort === 'responsibleUsersLastName'}"
-                class="btn-group-btns inactiveResponsible px-2" 
-                @click="sort('responsibleUsersLastName')"
+                :class="{'activeLastName': sortedResponsibleUser  === 'responsibleUsersLastName'  || sortedAccountableUser === 'accountableUsersLastName'}"
+                class="btn-group-btns inactiveLastName outerRightBtn last px-2"              
+                @click.prevent="lastNameSort"
+                >Last
+                </button>
+            
+              </span>
+                 <span class="btn-group">         
+              <button 
+                :class="{'activeResponsible':currentSort === sortedResponsibleUser }"
+                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"             
+                @click="sort(sortedResponsibleUser)"
                 >R
                 </button> 
               <button 
-                :class="{'activeAccountable':currentSort === 'accountableUsersLastName'}"
-                class="btn-group-btns inactiveAccountable px-2" 
-                @click="sort('accountableUsersLastName')"
+                :class="{'activeAccountable':currentSort === sortedAccountableUser }"
+                class="btn-group-btns outerRightBtn inactiveAccountable px-2"            
+                @click="sort(sortedAccountableUser)"
                 >A
                 </button>
               </span>
-               <span class="inactive-sort-icon scroll" v-if="currentSort !== 'responisbleUsersLastName' || 'accountableUsersLastName'"> 
-              <font-awesome-icon icon="sort" /></span>   
-
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'responsibleUsersLastName'">                
+               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser"> 
+              <font-awesome-icon icon="sort" /></span>  
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">                
                 <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'responsibleUsersLastName'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">                
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'responsibleUsersLastName'">                
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">                
                 <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'responsibleUsersLastName'">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">                
                 <font-awesome-icon icon="sort-down" /></span>    
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'accountableUsersLastName'">                
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">                
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'accountableUsersLastName'">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">                
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'accountableUsersLastName'">                
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">                
                 <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'accountableUsersLastName'">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">                
                 <font-awesome-icon icon="sort-down" /></span>    
 
               </th>
@@ -422,6 +437,8 @@
         now: new Date().toISOString(),
         risksQuery: '',      
         currentPage:1,     
+        sortedResponsibleUser: 'responsibleUsersFirstName',
+        sortedAccountableUser: 'accountableUsersFirstName',
         currentSort:'text',
         currentSortDir:'asc',
         uri :'data:application/vnd.ms-excel;base64,',
@@ -461,6 +478,14 @@
       },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
+      },
+      firstNameSort(){
+        this.sortedResponsibleUser = 'responsibleUsersFirstName'
+        this.sortedAccountableUser = 'accountableUsersFirstName'    
+      },
+      lastNameSort(){
+        this.sortedResponsibleUser = 'responsibleUsersLastName'
+        this.sortedAccountableUser = 'accountableUsersLastName'      
       },
       addNewRisk() {
         if (this.from == "manager_view") {
@@ -728,14 +753,17 @@
   .ten {
     width: 10%;
   }
+  .twelve {
+    width: 12%;
+  }
   .oneFive{
     width: 15%;
   }
   .sixteen {
     width: 16%;
   }
-  .twenty {
-    width: 20%;
+  .oneEight {
+    width: 18%;
   }
   .floatRight {
     text-align: right;
@@ -756,25 +784,27 @@
  }
  .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
  
-.btn-group-btns {
-  border: solid 1px lightgray;
-  
+ .btn-group-btns {
+  border: solid 1px lightgray;  
   line-height: 1 !important;
 }
-.activeResponsible, .activeAccountable {
+.activeLastName, .activeFirstName, .activeResponsible, .activeAccountable {
   background-color: lightgray;
 }
-.inactiveResponsible:hover, .inactiveAccountable:hover {
-  background-color: #fafafa;
+.inactiveLastName:hover, .inactiveFirstName:hover, .inactiveResponsible:hover, .inactiveAccountable:hover {
+  background-color: lightgray;
 }
-.inactiveResponsible {
+.outerLeftBtn {
   border-top-left-radius: .15rem;
-  border-bottom-left-radius: .15rem;  
+  border-bottom-left-radius: .15rem; 
+  // background-color:#383838;
+  // color:#fff;
 }
-.inactiveAccountable {
+.outerRightBtn {
   border-top-right-radius: .15rem;
   border-bottom-right-radius: .15rem;  
 }
+
 .sort-btn-group {
   position: absolute;
   top: 2px;

@@ -144,6 +144,84 @@
       </div>
 
       <!-- Sheets View ends here -->
+      
+
+
+      <!-- Calendar View starts here -->
+         <div
+        class="col-md-10 facility-show-tab px-0"
+        data-cy="sheets_view"
+        style="background-color: solid #ededed 15px"
+        v-if="isCalendarView"
+        v-loading="!contentLoaded"
+        element-loading-text="Fetching your data. Please wait..."
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
+        <div v-show="isCalendarView && !getRiskFormOpen" class="mt-3 px-3">
+          <ProjectCalendar
+            v-if="C_showFacilityTab"
+            from="manager_view"
+            :facility="currentFacility"
+            :facility-group="currentFacilityGroup"
+          ></ProjectCalendar>
+          <facility-rollup v-else></facility-rollup>
+        </div>
+
+        <div
+          v-if="
+            (isCalendarView && getRiskFormOpen) ||
+              managerView.task ||
+              managerView.issue ||
+              managerView.risk ||
+              managerView.note
+          "
+        >
+          <div class="w-100 action-form-overlay">
+            <task-form
+              v-if="managerView.task"
+              :facility="currentFacility"
+              :task="managerView.task"
+              title="Edit Task"
+              @on-close-form="onCloseForm"
+              @task-created="handleNewTask"
+              @task-updated="handleNewTask"
+              class="form-inside-modal"
+            ></task-form>
+            <risk-form
+              v-if="getRiskFormOpen"
+              :facility="currentFacility"
+              :risk="getSelectedRisk"
+              @on-close-form="onCloseForm"
+              @risk-created="handleNewRisk"
+              @risk-updated="handleNewRisk"
+              class="form-inside-modal"
+            ></risk-form>
+            <issue-form
+              v-else-if="managerView.issue"
+              :facility="currentFacility"
+              :issue="managerView.issue"
+              @on-close-form="onCloseForm"
+              @issue-updated="handleNewIssue"
+              @issue-created="handleNewIssue"
+              class="form-inside-modal"
+            ></issue-form>
+            <notes-form
+              v-else-if="managerView.note"
+              from="manager_view"
+              :facility="currentFacility"
+              :note="managerView.note"
+              @close-note-input="newNote = false"
+              @note-created="createdFacilityNote"
+              @note-updated="updatedFacilityNote"
+            ></notes-form>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Calendare View Ends here -->
 
       <!-- Kanban Starts here -->
       <div
@@ -413,6 +491,7 @@ import { SweetModal } from "sweet-modal-vue";
 import CustomTabs from "./custom-tabs";
 import FacilityShow from "./../dashboard/facilities/facility_show";
 import FacilitySheets from "./../dashboard/facilities/facility_sheets";
+import ProjectCalendar from "./../dashboard/facilities/project_calendar";
 import FacilityRollup from "./../dashboard/facilities/facility_rollup";
 import FacilitySidebar from "./../dashboard/facilities/facility_sidebar";
 import TaskForm from "./../dashboard/tasks/task_form";
@@ -428,6 +507,7 @@ export default {
     FacilitySidebar,
     CustomTabs,
     FacilityRollup,
+    ProjectCalendar,
     FacilitySheets,
     FacilityShow,
     SweetModal,
@@ -1004,6 +1084,9 @@ export default {
     },
     isSheetsView() {
       return this.$route.name === "ProjectSheets";
+    },
+    isCalendarView() {
+      return this.$route.name === "CalendarView";
     },
     isKanbanView() {
       return this.$route.name === "ProjectKanbanView";

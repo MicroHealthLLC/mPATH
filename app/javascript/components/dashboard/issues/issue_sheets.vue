@@ -7,7 +7,7 @@
         <td class="nine col-issue_severity">{{issue.issueSeverity}}</td>
         <td class="eight">{{formatDate(issue.startDate)}}</td>
         <td class="eight">{{formatDate(issue.dueDate)}}</td>       
-         <td class="elev" >  
+         <td class="oneThree" >  
           <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
           <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
       <!-- Consulted Users and Informed Users are toggle values         -->
@@ -17,10 +17,10 @@
          </span>        
         </td>
         <td class="eight">{{issue.progress + "%"}}</td>
-        <td class="nine" v-if="issue.isOverdue"><h5>x</h5></td>
-        <td class="nine" v-else></td>
-        <td class="nine" v-if="(issue.watched) == true"><h5>x</h5></td>
-        <td class="nine" v-else></td>
+        <td class="eight" v-if="issue.isOverdue"><h5>x</h5></td>
+        <td class="eight" v-else></td>
+        <td class="eight" v-if="(issue.watched) == true"><h5>x</h5></td>
+        <td class="eight" v-else></td>
          <td class="oneFive" v-if="(issue.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
            {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
@@ -219,6 +219,9 @@
   }
   .elev {
     width: 11%;
+  }
+  .oneThree {
+    width: 13%;
   }
   .oneFive {
     width: 15%;
