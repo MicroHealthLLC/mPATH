@@ -2,12 +2,13 @@ class QueryFiltersController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    render json: project.favorite_filters.includes(:query_filters).where(user_id: current_user.id).map(&:to_json)
+    filters = project.favorite_filters.includes(:query_filters).where("favorite_filters.user_id = ? or shared = ?",current_user.id, true)
+    render json: filters.map(&:to_json)
   end
 
   def create
     p_params = query_filters_params[:query_filters]
-    fav_params = query_filters_params[:favorite_filter]
+    fav_params = favorite_filter_params #query_filters_params[:favorite_filter]
 
 
     if p_params.nil? || fav_params.nil?
@@ -19,12 +20,15 @@ class QueryFiltersController < AuthenticatedController
 
     favorite_filter = nil
     if fav_params[:id].present?
-      favorite_filter = project.favorite_filters.where(user_id: current_user.id, id: fav_params[:id]).first
-      favorite_filter.update(fav_params)
+      favorite_filter = project.favorite_filters.where(id: fav_params[:id]).first
+    else
+      favorite_filter = FavoriteFilter.create(project_id: project.id, name: fav_params[:name], user_id: current_user.id, shared: fav_params[:shared])
     end
 
-    if favorite_filter.nil?
-      favorite_filter = FavoriteFilter.create(project_id: project.id, name: fav_params[:name], user_id: current_user.id)
+    if favorite_filter && !favorite_filter.can_update?(current_user)
+      raise CanCan::AccessDenied, "You are not authorized to modify filter"
+    else
+      favorite_filter.update(fav_params)
     end
 
     existing_query_filters = project.query_filters.where(user_id: current_user.id, favorite_filter_id: favorite_filter.id)
@@ -52,19 +56,30 @@ class QueryFiltersController < AuthenticatedController
 
   def reset
     project = Project.find(params[:project_id])
-    fav_params = query_filters_params[:favorite_filter]
+    fav_params = favorite_filter_params
 
     if fav_params && fav_params[:id].present?
-      project.favorite_filters.where(user_id: current_user.id, id: fav_params[:id]).destroy_all
-      render json: {message: "Filters destroyed successfully", id: fav_params[:id]}
-
+      filter = project.favorite_filters.where(id: fav_params[:id]).first
+      if filter
+        if !filter.can_update?(current_user)
+          raise CanCan::AccessDenied, "You are not authorized to remove filter"
+        else
+          filter.destroy
+          render json: {message: "Filters destroyed successfully", id: filter.id}
+        end
+      else        
+        render json: {error: "No Filter found"}, status: 404
+      end
     else
-      render json: {error: "No Filter found"}, status: 404
+      render json: {error: "Can not found filter without ID"}, status: 404
     end
 
   end
 
+  def favorite_filter_params
+    params.require(:favorite_filter).permit(:name, :id, :shared)
+  end
   def query_filters_params
-    params.permit!
+    params.permit(query_filters: [:filter_key, :name, :filter_value])
   end
 end

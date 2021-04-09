@@ -47,6 +47,8 @@
             <div>
               <label class="font-sm mb-0">Name</label>
               <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
+              Shared:
+              <input type="checkbox" style="" v-model="C_favoriteFilter.shared">
               <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
               <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
             </div>
@@ -917,6 +919,8 @@ export default {
       if(this.favoriteFilterData.id)
         formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
+      formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      
       // Categories Filter
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityGroupFilter")
@@ -1120,13 +1124,11 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        if (response.status === 200) {
-          this.$message({
-            message: `Error in saving filter data.`,
-            type: "error",
-            showClose: true,
-          });
-        }
+        this.$message({
+          message: err.response.data.error ,
+          type: "error",
+          showClose: true,
+        });
       })
       .finally(() => {
         // this.loading = false
@@ -1242,7 +1244,7 @@ export default {
         // var errors = err.response.data.errors
         console.log(err)
         this.$message({
-          message: `Error removing favorite filter.`,
+          message: err.response.data.error,
           type: "error",
           showClose: true,
         });
