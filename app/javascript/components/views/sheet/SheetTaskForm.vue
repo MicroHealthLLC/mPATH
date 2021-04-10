@@ -27,7 +27,7 @@ export default {
     ...mapGetters(["contentLoaded", "currentProject"]),
   },
   mounted() {
-    if (this.contentLoaded) {
+    if (this.contentLoaded && this.$route.params.taskId !== "new") {
       this.task = this.facility.tasks.find(
         (task) => task.id == this.$route.params.taskId
       );
@@ -36,9 +36,11 @@ export default {
   watch: {
     contentLoaded: {
       handler() {
-        this.task = this.facility.tasks.find(
-          (task) => task.id == this.$route.params.taskId
-        );
+        if (this.$route.params.taskId !== "new") {
+          this.task = this.facility.tasks.find(
+            (task) => task.id == this.$route.params.taskId
+          );
+        }
       },
     },
   },
