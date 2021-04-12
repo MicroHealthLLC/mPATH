@@ -20,25 +20,30 @@
             $route.name === 'KanbanRisks' ||
             $route.name === 'KanbanRiskForm'
         "
+        class="tabs mt-2"
       >
         <router-link
           :to="
             `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
           "
-          class="mr-2"
+          class="tab mr-2"
+          :class="{ active: $route.path.includes('tasks') }"
           >Tasks</router-link
         >
         <router-link
           :to="
             `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
           "
-          class="mr-2"
+          class="tab mr-2"
+          :class="{ active: $route.path.includes('issues') }"
           >Issues</router-link
         >
         <router-link
           :to="
             `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/risks`
           "
+          class="tab"
+          :class="{ active: $route.path.includes('risks') }"
           >Risks</router-link
         >
       </div>
@@ -119,9 +124,32 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
+}
+.tabs {
+  background-color: #ededed;
+  border-top: solid 0.3px #ededed;
+  padding: 7px 10px;
+  box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
+  .tab {
+    cursor: pointer;
+    padding: 7px 10px;
+    border-radius: 0.1rem;
+    font-weight: 500;
+    letter-spacing: 1;
+    transition: auto;
+    font-size: 75%;
+  }
+  .active {
+    color: #fff !important;
+    background-color: #383838 !important;
+  }
+}
+a {
+  color: unset;
+  text-decoration: unset;
 }
 </style>
