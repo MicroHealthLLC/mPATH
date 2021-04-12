@@ -4,9 +4,7 @@
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto pb-4"
       :class="{
-        'fixed-form-mapView': isMapView,
-        _disabled: loading,
-        'kanban-form': isKanbanView,
+        _disabled: loading
       }"
       accept-charset="UTF-8"
     >
@@ -2433,7 +2431,7 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/risks.json`;
+        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/risks.json`;
         let method = "POST";
         let callback = "risk-created";
         if (this.risk && this.risk.id) {
@@ -2462,6 +2460,14 @@ export default {
                 type: "success",
                 showClose: true,
               });
+            }
+            //Route to newly created task form page
+            if (this.$route.path.includes("sheet")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+            } else {
+              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
             }
           })
           .catch((err) => {
@@ -3067,15 +3073,7 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 100px);
-  background-color: #fff;
   width: 100%;
-}
-.kanban-form {
-  width: 97%;
-}
-.fixed-form-mapView {
-  transform: scale(1.03);
-  height: calc(100vh - 130px);
 }
 .form-control.error {
   border-color: #e84444;

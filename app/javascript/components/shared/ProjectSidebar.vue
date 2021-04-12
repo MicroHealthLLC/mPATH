@@ -6,7 +6,7 @@
         <div
           v-for="(group, index) in sortedGroups"
           :key="index"
-          class="my-2 pl-2"
+          class="my-2 px-2"
         >
           <div
             class="d-flex expandable"

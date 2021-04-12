@@ -251,12 +251,11 @@
         this.newRisk = true
       },
       addNewRisk() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'risk', value: {}})
-        } else {
-          this.currentRisk = null
-          this.newRisk = true
-        }
+        this.setTaskForManager({key: 'risk', value: {}})
+        // Route to new risk form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/new`
+        );
       }
     },
     computed: {

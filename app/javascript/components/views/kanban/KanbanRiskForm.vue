@@ -25,11 +25,22 @@ export default {
     ...mapGetters(["contentLoaded"]),
   },
   mounted() {
-    if (this.contentLoaded) {
+    if (this.contentLoaded && this.$route.params.riskId !== "new") {
       this.risk = this.facility.risks.find(
         (risk) => risk.id == this.$route.params.riskId
       );
     }
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        if (this.$route.params.riskId !== "new") {
+          this.risk = this.facility.risks.find(
+            (risk) => risk.id == this.$route.params.riskId
+          );
+        }
+      },
+    },
   },
 };
 </script>

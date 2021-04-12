@@ -14,11 +14,8 @@
         v-if="
           $route.name === 'KanbanProjectSelected' ||
             $route.name === 'KanbanTasks' ||
-            $route.name === 'KanbanTaskForm' ||
             $route.name === 'KanbanIssues' ||
-            $route.name === 'KanbanIssueForm' ||
-            $route.name === 'KanbanRisks' ||
-            $route.name === 'KanbanRiskForm'
+            $route.name === 'KanbanRisks'
         "
         class="tabs mt-2"
       >

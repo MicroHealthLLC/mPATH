@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="d-flex mb-4">
-      <div class="searchBar input-group w-25 d-inline-flex mr-1 align-items-end
-      ">
+      <div
+        class="searchBar input-group w-25 d-inline-flex mr-1 align-items-end
+      "
+      >
         <div class="input-group-prepend d-inline">
           <span class="input-group-text searchB"
             ><i class="fa fa-search"></i
@@ -112,15 +114,10 @@ export default {
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
       this.fixedStageId = stage.id;
-      if (this.currentTab === "tasks" || this.currentTab === "issues") {
-        this.$refs.newFormModal && this.$refs.newFormModal.open();
-      } else {
-        this.SET_RISK_FORM_OPEN(true);
-        this.SET_SELECTED_RISK({
-          riskStageId: stage.id,
-          riskStage: stage.name,
-        });
-      }
+
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/new`
+      );
     },
     handleSearchQueryChange(searchElement) {
       this.searchStageId = $(searchElement).attr("data-stage-id");
