@@ -93,7 +93,7 @@
      <div class="wrapper mt-2 p-3">    
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
-          @click.prevent="reportNew" data-cy="add_issue">
+          @click.prevent="addNewIssue" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
@@ -358,13 +358,12 @@
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
       },    
-      reportNew() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'issue', value: {}})
-        } else {
-          this.currentIssue = null
-          this.newIssue = true
-        }
+      addNewIssue() {
+        this.setTaskForManager({key: 'issue', value: {}})
+        // Route to new issue form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/new`
+        );
       }
    },
     computed: {

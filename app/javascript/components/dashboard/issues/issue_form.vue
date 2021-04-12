@@ -1527,7 +1527,7 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues.json`;
+        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
@@ -1562,6 +1562,13 @@ export default {
                 type: "success",
                 showClose: true,
               });
+            }
+            if (this.$route.path.includes("sheet")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
+            } else {
+              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
             }
           })
           .catch((err) => {

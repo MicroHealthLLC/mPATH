@@ -28,11 +28,22 @@ export default {
     ...mapGetters(["contentLoaded"]),
   },
   mounted() {
-    if (this.contentLoaded) {
+    if (this.contentLoaded && this.$route.params.issueId !== "new") {
       this.issue = this.facility.issues.find(
         (issue) => issue.id == this.$route.params.issueId
       );
     }
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        if (this.$route.params.issueId !== "new") {
+          this.issue = this.facility.issues.find(
+            (issue) => issue.id == this.$route.params.issueId
+          );
+        }
+      },
+    },
   },
 };
 </script>

@@ -112,15 +112,10 @@ export default {
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
       this.fixedStageId = stage.id;
-      if (this.currentTab === "tasks" || this.currentTab === "issues") {
-        this.$refs.newFormModal && this.$refs.newFormModal.open();
-      } else {
-        this.SET_RISK_FORM_OPEN(true);
-        this.SET_SELECTED_RISK({
-          riskStageId: stage.id,
-          riskStage: stage.name,
-        });
-      }
+      // Route to new issue form page
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/new`
+      );
     },
     handleSearchQueryChange(searchElement) {
       this.searchStageId = $(searchElement).attr("data-stage-id");
