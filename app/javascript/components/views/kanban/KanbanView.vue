@@ -25,12 +25,14 @@
           :to="
             `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
           "
+          class="mr-2"
           >Tasks</router-link
         >
         <router-link
           :to="
             `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
           "
+          class="mr-2"
           >Issues</router-link
         >
         <router-link
@@ -93,13 +95,6 @@ export default {
       "facilityGroupFacilities",
       "facilityGroups",
     ]),
-  },
-  mounted() {
-    console.log(this.$route.params);
-
-    if (this.contentLoaded || this.$route.params.projectId) {
-      console.log(this.$route.params.projectId);
-    }
   },
   watch: {
     contentLoaded: {

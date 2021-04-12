@@ -27,7 +27,9 @@
         class="d-flex align-items-center my-2"
       >
         <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h5 class="f-head mb-0">{{ currentFacility.facilityName || "Loading..." }}</h5>
+        <h5 class="f-head mb-0">
+          {{ currentFacility.facilityName || "Loading..." }}
+        </h5>
       </div>
       <ProjectTabs
         v-if="
@@ -94,8 +96,6 @@ export default {
     ]),
   },
   mounted() {
-    console.log(this.$route.params);
-
     if (this.contentLoaded && this.$route.params.projectId) {
       console.log(this.$route.params.projectId);
     }

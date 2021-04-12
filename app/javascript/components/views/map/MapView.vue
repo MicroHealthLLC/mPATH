@@ -159,6 +159,23 @@ export default {
       "getUnfilteredFacilities",
       "getNewSession",
     ]),
+    pathTab() {
+      let url = this.$route.path;
+
+      if (url.includes("tasks")) {
+        return "/tasks";
+      } else if (url.includes("issues")) {
+        return "/issues";
+      } else if (url.includes("risks")) {
+        return "/risks";
+      } else if (url.includes("notes")) {
+        return "/notes";
+      } else if (url.includes("kanban")) {
+        return "/tasks";
+      } else {
+        return "";
+      }
+    },
   },
   methods: {
     ...mapMutations([
@@ -188,7 +205,7 @@ export default {
       this.setCurrentFacility(facility);
 
       this.$router.push(
-        `/programs/${this.$route.params.programId}/map/projects/${facility.id}`
+        `/programs/${this.$route.params.programId}/map/projects/${facility.id}${this.pathTab}`
       );
     },
     updateExpanded(facility) {
