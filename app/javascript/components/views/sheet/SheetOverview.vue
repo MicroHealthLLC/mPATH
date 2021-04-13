@@ -150,7 +150,9 @@
                         <span class="fbody-icon"
                           ><i class="far fa-id-badge"></i
                         ></span>
-                        <span>{{ DV_facility.facility.pointOfContact || "N/A" }}</span>
+                        <span>{{
+                          DV_facility.facility.pointOfContact || "N/A"
+                        }}</span>
                       </p>
                       <p class="mt-0">
                         <span class="fbody-icon"
@@ -162,7 +164,9 @@
                         <span class="fbody-icon"
                           ><i class="fas fa-phone"></i
                         ></span>
-                        <span>{{ DV_facility.facility.phoneNumber || "N/A" }}</span>
+                        <span>{{
+                          DV_facility.facility.phoneNumber || "N/A"
+                        }}</span>
                       </p>
                       <p class="my-0">
                         <span class="fbody-icon"
@@ -632,17 +636,12 @@ export default {
     };
   },
   mounted() {
-
     if (Vue.prototype.$preferences.sub_navigation_menu) {
       this.currentTab = Vue.prototype.$preferences.sub_navigation_menu;
     }
   },
   methods: {
-    ...mapMutations([
-      "setTaskTypeFilter",
-      "updateFacilityHash",
-      "nullifyTasksForManager",
-    ]),
+    ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     ...mapActions(["fetchFacility"]),
     log(p) {
       // console.log(p)

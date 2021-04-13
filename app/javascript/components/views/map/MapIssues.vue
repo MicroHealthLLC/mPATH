@@ -3,14 +3,11 @@
 </template>
 
 <script>
-import IssueIndex from '../../dashboard/issues/issue_index.vue'
+import IssueIndex from "../../dashboard/issues/issue_index.vue";
 export default {
   props: ["facility"],
   components: { IssueIndex },
-
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

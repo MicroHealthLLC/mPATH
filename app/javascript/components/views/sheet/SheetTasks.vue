@@ -12,11 +12,6 @@ export default {
   components: {
     TaskSheetsIndex,
   },
-  data() {
-    return {};
-  },
-  computed: {},
-  mounted() {},
 };
 </script>
 

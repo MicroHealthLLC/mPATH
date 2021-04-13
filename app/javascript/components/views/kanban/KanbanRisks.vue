@@ -94,23 +94,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations([
-      "updateIssuesHash",
-      "updateRisksHash",
-      "setTaskForManager",
-      "setRiskForManager",
-      "setAdvancedFilter",
-      "setTaskIssueOverdueFilter",
-      "setMyActionsFilter",
-      "setOnWatchFilter",
-      "setIssueSeverityFilter",
-      "setIssueTypeFilter",
-      "setTaskTypeFilter",
-      "updateTasksHash",
-      "setPreviousRoute",
-      "SET_RISK_FORM_OPEN",
-      "SET_SELECTED_RISK",
-    ]),
+    ...mapMutations(["setAdvancedFilter", "setTaskTypeFilter"]),
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
       this.fixedStageId = stage.id;
@@ -134,22 +118,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "facilityGroups",
-      "managerView",
       "getAdvancedFilterOptions",
       "filterDataForAdvancedFilter",
       "taskIssueProgressFilter",
       "getTaskIssueUserFilter",
       "getAdvancedFilter",
-      "getTaskIssueProgressStatusOptions",
-      "getTaskIssueProgressStatusFilter",
-      "getTaskIssueTabFilterOptions",
-      "getTaskIssueOverdueOptions",
-      "taskIssueOverdueFilter",
       "noteDateFilter",
       "taskIssueDueDateFilter",
       "contentLoaded",
-      "filteredFacilityGroups",
       "taskStages",
       "issueStages",
       "riskStages",
@@ -157,20 +133,12 @@ export default {
       "taskStageFilter",
       "issueStageFilter",
       "riskStageFilter",
-      "myActionsFilter",
-      "onWatchFilter",
       "issueTypeFilter",
       "issueSeverityFilter",
       "viewPermit",
-      "facilityGroupFacilities",
       "taskTypes",
       "issueTypes",
       "issueSeverities",
-      "facilities",
-      "getUnfilteredFacilities",
-      "getPreviousRoute",
-      "getRiskFormOpen",
-      "getSelectedRisk",
     ]),
     C_kanban() {
       let stages = [];

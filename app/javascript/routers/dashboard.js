@@ -1,4 +1,3 @@
-// import MapView from "./../components/dashboard/map_view";
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
 
@@ -114,61 +113,51 @@ export default new VueRouter({
       path: "/programs/:programId/sheet",
       component: SheetView,
       children: [
-        // Rollup
         {
           name: "SheetRollup",
           path: "",
           component: ProjectRollup,
         },
-        // Project Overview tab
         {
           name: "SheetOverview",
           path: "projects/:projectId",
           component: SheetOverview,
         },
-        // Project Tasks tab
         {
           name: "SheetTasks",
           path: "projects/:projectId/tasks",
           component: SheetTasks,
         },
-        // Task Form
         {
           name: "SheetTaskForm",
           path: "projects/:projectId/tasks/:taskId",
           component: SheetTaskForm,
         },
-        // Project Issues tab
         {
           name: "SheetIssues",
           path: "projects/:projectId/issues",
           component: SheetIssues,
         },
-        // Issue Form
         {
           name: "SheetIssueForm",
           path: "projects/:projectId/issues/:issueId",
           component: SheetIssueForm,
         },
-        // Project Risks tab
         {
           name: "SheetRisks",
           path: "projects/:projectId/risks",
           component: SheetRisks,
         },
-        // Risk Form
         {
           name: "SheetRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: SheetRiskForm,
         },
-        // Project Notes tab
         {
           name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,
         },
-        // Note Form
         {
           name: "SheetNoteForm",
           path: "projects/:projectId/notes/:noteId",

@@ -506,11 +506,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      "setTaskTypeFilter",
-      "updateFacilityHash",
-      "nullifyTasksForManager",
-    ]),
+    ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
     ...mapActions(["fetchFacility"]),
     loadFacility(facility) {
       this.DV_facility = Object.assign({}, facility);
@@ -579,10 +575,7 @@ export default {
     ...mapGetters([
       "getTaskIssueUserFilter",
       "filterDataForAdvancedFilter",
-      "facilityGroupFacilities",
       "taskTypes",
-      "getAllFilterNames",
-      "getFilterValue",
       "contentLoaded",
       "currentProject",
       "taskTypeFilter",
@@ -590,25 +583,21 @@ export default {
       "riskStageFilter",
       "issueSeverityFilter",
       "getRiskPriorityLevelFilter",
-      "taskUserFilter",
       "taskStageFilter",
       "issueStageFilter",
       "riskStageFilter",
-      "issueUserFilter",
       "statuses",
       "myActionsFilter",
       "onWatchFilter",
       "facilities",
-      "getUnfilteredFacilities",
     ]),
     selectedStatus: {
       get() {
-        return this.DV_facility.statusId; //this.$data._selected
+        return this.DV_facility.statusId;
       },
       set(value) {
         this.$data._selected = value;
-        // this.facility.statusId = value
-        // console.log(value)
+
         if (value) {
           this.$nextTick(() => {
             this.DV_updated = true;

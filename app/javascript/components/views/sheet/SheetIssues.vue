@@ -6,6 +6,7 @@
 
 <script>
 import IssueSheetsIndex from "../../dashboard/issues/issue_sheets_index.vue";
+
 export default {
   props: ["facility"],
   components: { IssueSheetsIndex },
