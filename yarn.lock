@@ -8465,10 +8465,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vis-timeline@^7.3.9:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.0.tgz#65e95d580d446a080fe54c432fff247ddc44ebc0"
-  integrity sha512-ddJcOQR8iFVlnyCViibHVGtE1yf+USElFyE8Qtkf/OAuQwiNsCe0rNSWW9DRAuDmYqgTUl1o9C9VC0RGjDdtkg==
+vis-timeline@^7.4.4:
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.4.tgz#9d52885fa6e098f0860dd9a4f712691b7a222d98"
+  integrity sha512-L7SAIjMuccBl476ByskJbm4KLUIzxwflQ/zIL2WcaLgtdedyza+VLB+MVOv/RwavpdHCUY7ygLJ77cKe4dPzIg==
 
 vm-browserify@^1.0.1:
   version "1.1.2"
