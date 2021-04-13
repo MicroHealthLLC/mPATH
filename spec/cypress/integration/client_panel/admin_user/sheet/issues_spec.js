@@ -108,11 +108,11 @@ describe('Sheets Issues View', function() {
   })
 
   it('Sort Issue according to Assigned User', function() {
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test2 Client').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
     cy.logout()
   })
