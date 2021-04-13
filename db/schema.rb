@@ -229,7 +229,7 @@ ActiveRecord::Schema.define(version: 2021_04_08_173138) do
     t.datetime "updated_at", null: false
     t.string "map_view", default: "R"
     t.string "gantt_view", default: "R"
-    t.string "watch_view", default: "R"
+     t.string "watch_view", default: "R"
     t.string "documents", default: "R"
     t.string "members", default: "R"
     t.string "facility_manager_view", default: "R"
