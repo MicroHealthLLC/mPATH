@@ -81,11 +81,11 @@ describe('Sheets Tasks View', function() {
   })
 
   it('Sort Task according to Assigned User', function() {
-    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=task_row]').first().contains('Test2 Client').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(5)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=task_row]').first().contains('Test1 Admin').should('be.visible')
     cy.logout()
   })
