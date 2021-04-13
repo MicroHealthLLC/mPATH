@@ -83,7 +83,7 @@
                 <font-awesome-icon icon="sort-down" /></span>                  
               </th>
               <th class="pl-1 sort-th" @click="sort('organization')">Organization
-                <span class="inactive-sort-icon steam-scroll" v-if="currentSort !== 'organization'">  
+                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'organization'">  
                 <font-awesome-icon icon="sort" /></span>                
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'organization'">                
                 <font-awesome-icon icon="sort-up" /></span>
@@ -163,12 +163,9 @@
 </template>
 
 <script>
-
 import {mapGetters, mapMutations} from 'vuex'
 import {jsPDF} from "jspdf"
 import 'jspdf-autotable'
-
-
   export default {
     name: "TeamMembersView",
     props: ['facility', 'from'],
@@ -209,7 +206,6 @@ import 'jspdf-autotable'
           if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
           return 0;
            }).filter((row, index) => {
-
           let start = (this.currentPage-1)*this.C_membersPerPage.value;
           let end = this.currentPage*this.C_membersPerPage.value;
           if(index >= start && index < end) return true;
@@ -231,7 +227,6 @@ import 'jspdf-autotable'
     ]),
        changeHead({row, column, rowIndex, columnIndex}){
       return { backgroundColor: '#343F52', width: '100%' };
-
        },
       sort:function(s) {
         //if s == current sort, reverse

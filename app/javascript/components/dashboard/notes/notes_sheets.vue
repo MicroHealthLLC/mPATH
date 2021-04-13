@@ -84,6 +84,7 @@
           this.show = false
           // this.DV_note = this.note
           // this.$refs.notesFormModal && this.$refs.notesFormModal.open() 
+          this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${this.DV_note.id}`)
         }
       },
       log(fac){

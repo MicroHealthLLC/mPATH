@@ -269,11 +269,8 @@
       },
       note: {
         handler: function(value) {
-          if (!('id' in value)) this.DV_note = this.INITIAL_NOTE_STATE()
-          this.DV_note.noteFiles = []
-          this.destroyedFiles = []
-          this.loadNote(value)
-        }, deep: true
+          this.loadNote(this.note);
+        }
       }
     }
   }
@@ -281,9 +278,7 @@
 
 <style scoped lang="scss">
   .notes-form {
-    z-index: 10;
-    width: 83.3%;
-    background-color: #fff;
+    
   }
   .notes_input {
     border: 1px solid #ccc;

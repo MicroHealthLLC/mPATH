@@ -14,7 +14,7 @@
        </td>
        <td class="eight">{{formatDate(risk.startDate)}}</td>
        <td class="seven">{{formatDate(risk.dueDate)}}</td>
-       <td class="ten" >
+       <td class="twelve" >
           <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{risk.responsibleUsers[0].name}} <br></span> 
           <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{risk.accountableUsers[0].name}}<br></span>   
            <!-- Consulted Users and Informed Users are toggle values         -->
@@ -28,13 +28,13 @@
         <td class="eight" v-else></td>
         <td class="eight" v-if="(risk.watched) == true"><h5>x</h5></td>
         <td class="eight" v-else></td>
-       <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
+       <td class="oneEight" v-if="(risk.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)">        
            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
            </span>
            <br> {{risk.notes[0].body}}
         </td>
-        <td v-else class="twenty">No Updates</td>
+        <td v-else class="oneEight">No Updates</td>
       </tr>
       <!-- The context-menu appears only if table row is right-clicked -->
       <RiskContextMenu
@@ -117,22 +117,8 @@
         this.$refs.riskFormModal && this.$refs.riskFormModal.open()
       },
       editRisk() {
-
-        if (this.fromView == 'map_view') {
-          this.$emit('edit-risk', this.DV_risk)
-        }
-        // else if (this.fromView == 'manager_view') {
-        //   this.setRiskForManager({key: 'risk', value: this.DV_risk})
-        // }
-        else if (this.$route.name === 'ProjectSheets') {
-          this.SET_RISK_FORM_OPEN(true);
-          this.SET_SELECTED_RISK(this.DV_risk);
-        }
-        else {
-          this.has_risk = Object.entries(this.DV_risk).length > 0
-          this.DV_edit_risk = this.DV_risk
-          this.$refs.riskFormModal && this.$refs.riskFormModal.open()
-        }
+        this.DV_edit_risk = this.DV_risk;
+        this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
       },
       onCloseForm() {
         this.$refs.riskFormModal && this.$refs.riskFormModal.close()
@@ -237,27 +223,23 @@
   .ten {
     width: 10%;
   }
+  .twelve {
+    width: 12%;
+  }
   .oneFive {
     width: 15%;
   }
   .sixteen {
     width: 16%;
   }
-  .twenty {
-    width: 20%;
+  .oneEight{
+    width: 18%;
   }
   .pg-content {
     width: 100%;
     height: 20px;
     font-weight: bold;
   }
-  // .toolTip {
-  //   background-color: rgba(132, 133, 133, 1);
-  //   font-size: .75rem;
-  //   padding:1px;
-  //   color: #fff;
-  //   border-radius: 3px;
-  // }
   td {
     overflow-wrap: break-word;
   }

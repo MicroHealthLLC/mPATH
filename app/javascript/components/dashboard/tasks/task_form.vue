@@ -1003,7 +1003,7 @@
         }
       },
       log(e){
-        console.log("This is the taskStages: " + e)
+        // console.log("This is the taskStages: " + e)
       },
       selectedStage(item){    
         this.selectedTaskStage = item
@@ -1249,7 +1249,7 @@
               formData.append('file_links[]', file.name)
             }
           }
-          let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/tasks.json`
+          let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`
           let method = "POST"
           let callback = "task-created"
           if (this.task && this.task.id) {
@@ -1280,6 +1280,15 @@
                 showClose: true,
               });
             }
+            //Route to newly created task form page
+            if (this.$route.path.includes("sheet")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            } else {
+              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            }
+            
           })
           .catch((err) => {
             // var errors = err.response.data.errors
@@ -1448,11 +1457,8 @@
     watch: {
       task: {
         handler: function(value) {
-          if (!('id' in value)) this.DV_task = this.INITIAL_TASK_STATE()
-          this.DV_task.taskFiles = []
-          this.destroyedFiles = []
-          //this.loadTask(value)
-        }, deep: true
+          this.loadTask(this.task)
+        }
       },
       "DV_task.startDate"(value) {
         if (this._ismounted && !value) this.DV_task.dueDate = ''
@@ -1567,8 +1573,7 @@
 
 <style scoped lang="scss">
   .tasks-form {
-    z-index: 10;
-    width: 83.1%;
+    
   }
   .kanban-form {
     left: 16.4%;

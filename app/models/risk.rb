@@ -164,6 +164,11 @@ class Risk < ApplicationRecord
     users_last_name_hash = {} 
     p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
+    
+    # First name values added for improved sorting in datatables
+    users_first_name_hash = {} 
+    p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     sub_risks = self.sub_risks
@@ -197,9 +202,11 @@ class Risk < ApplicationRecord
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
       responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      responsible_users_first_name: responsible_user_ids.map{|id| users_first_name_hash[id] }.compact,
       accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
       accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
       informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
 
             

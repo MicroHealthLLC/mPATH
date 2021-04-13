@@ -1,7 +1,7 @@
 <template>
   <div id="kanban" data-cy="kanban">
     <div class="overflow-x-auto">
-      <div class="d-flex" v-if="!loading">
+      <div class="d-flex">
         <div
           v-for="column in columns"
           :key="column.title"
@@ -184,8 +184,7 @@ export default {
     overflow-y: hidden !important;
   }
   .unset {
-    position: unset !important;
-    margin-top:6rem;
+    
   }
   .kan-col {
     background-color: #ededed;
