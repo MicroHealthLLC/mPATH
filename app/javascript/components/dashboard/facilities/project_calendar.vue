@@ -3,7 +3,7 @@
   <div id="project-calendar"  >
     <div  class="position-sticky" v-if="!loading">
       <div class="d-flex align-items-center my-2">
-        <span class="fbody-icon"><i class="fas fa-building"></i></span>
+        <span class="fbody-icon"><i class="fas fa-calendar"></i></span>
         <h4 class="f-head mb-0">{{DV_facility.facilityName}}</h4>
       </div>
       <div class="facility-tab mb-4">

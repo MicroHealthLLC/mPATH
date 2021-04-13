@@ -1,175 +1,219 @@
 <template>
-  <div class="task-calendar calender_view text-center section">
-    <!-- <h3 class="h3">  <font-awesome-icon icon="calendar-alt" class="mr-1"/>Tasks</h3>
-  
-    <v-calendar
-      class="custom-calendar max-w-full"
-      :masks="masks"
-      :attributes="attributes"
-      disable-page-swipe
-      is-expanded
-    >
-      <template v-slot:day-content="{ day, attributes }">
-        <div class="flex flex-col h-full z-10 overflow-hidden">
-          <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
-          <div class="flex-grow overflow-y-auto overflow-x-auto">
-            <p
-              v-for="attr in attributes"
-              :key="attr.key"
-              class="text-xs leading-tight rounded-sm p-1 mt-0 mb-1"
-              :class="attr.customData.class"
+  <v-app id="app">
+  <v-row class="fill-height">
+    <v-col class="pt-0">
+      <v-sheet height="64">
+        <v-toolbar
+          flat
+        >
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="setToday"
+          >
+            Today
+          </v-btn>
+          <v-btn
+            fab
+            text
+            small
+            color="grey darken-2"
+            @click="prev"
+          >
+            <v-icon small>
+              mdi-chevron-left
+            </v-icon>
+          </v-btn>
+          <v-btn
+            fab
+            text
+            small
+            color="grey darken-2"
+            @click="next"
+          >
+            <v-icon small>
+              mdi-chevron-right
+            </v-icon>
+          </v-btn>
+          <v-toolbar-title v-if="$refs.calendar">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <el-select
+            v-model="type" 
+              
+            track-by="id"
+            value-key="id"     
+          >
+          <el-option
+            v-for="item in typeToLabel"
+            :load="log(typeToLabel)"
+            :value="item.id"
+            :key="item.id"
+            :label="item.name"
             >
-              {{ attr.customData.title }}
-            </p>
-          </div>
-        </div>
-      </template>
-    </v-calendar> -->
-  </div>
+          </el-option>
+          </el-select>
+         
+        </v-toolbar>
+      </v-sheet>
+      <v-sheet height="600">
+        <v-calendar
+          ref="calendar"
+          v-model="focus"
+          color="primary"
+          :events="events"
+          :event-color="getEventColor"
+          :type="type"
+          @click:event="showEvent"
+          @click:more="viewDay"
+          @click:date="viewDay"
+          @change="updateRange"
+        ></v-calendar>
+        <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"
+          offset-x
+        >
+          <v-card
+            color="grey lighten-4"
+            min-width="350px"
+            flat
+          >
+            <v-toolbar
+              :color="selectedEvent.color"
+              dark
+            >
+              <v-btn icon>
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon>
+                <v-icon>mdi-heart</v-icon>
+              </v-btn>
+              <v-btn icon>
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </v-toolbar>
+            <v-card-text>
+              <span v-html="selectedEvent.details"></span>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                text
+                color="secondary"
+                @click="selectedOpen = false"
+              >
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
+      </v-sheet>
+    </v-col>
+  </v-row>
+  </v-app>
 </template>
 
 <script>
-
-
-export default {
-  name: 'TaskCalendar',
-  data() {
-    const month = new Date().getMonth();
-    const year = new Date().getFullYear();
-    return {
-      masks: {
-        weekdays: 'WWW',
+  export default {
+    data: () => ({
+      focus: '',
+      type: 'month',
+      // typeToLabel:{},
+      selectedEvent: {},
+      selectedElement: null,      
+      selectedOpen: false,
+      events: [],
+      colors: ['#383838', '#4b008', '#800080', '#00ffff', '#008000', '#ffa500', '#008000'],
+      names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+    }),
+    mounted () {
+      this.$refs.calendar.checkChange()
+    },
+    methods: {
+      log(e){
+          console.log("This is typeToLabel: " + e)
+      },    
+      viewDay ({ date }) {
+        this.focus = date
+        this.type = 'day'
       },
-      attributes: [
-        {
-          key: 1,
-          customData: {
-            title: 'Lunch with mom.',
-            class: 'bg-red-600 text-white',
-          },
-          dates: new Date(year, month, 1),
-        },
-        {
-          key: 2,
-          customData: {
-            title: 'Take Noah to basketball practice',
-            class: 'bg-blue-500 text-white',
-          },
-          dates: new Date(year, month, 2),
-        },
-        {
-          key: 3,
-          customData: {
-            title: "Noah's basketball game.",
-            class: 'bg-blue-500 text-white',
-          },
-          dates: new Date(year, month, 5),
-        },
-        {
-          key: 4,
-          customData: {
-            title: 'Take car to the shop',
-            class: 'bg-indigo-500 text-white',
-          },
-          dates: new Date(year, month, 5),
-        },
-        {
-          key: 4,
-          customData: {
-            title: 'Meeting with new client.',
-            class: 'bg-teal-500 text-white',
-          },
-          dates: new Date(year, month, 7),
-        },
-        {
-          key: 5,
-          customData: {
-            title: "Mia's gymnastics practice.",
-            class: 'bg-pink-500 text-white',
-          },
-          dates: new Date(year, month, 11),
-        },
-        {
-          key: 6,
-          customData: {
-            title: 'Cookout with friends.',
-            class: 'bg-orange-500 text-white',
-          },
-          dates: { months: 5, ordinalWeekdays: { 2: 1 } },
-        },
-        {
-          key: 7,
-          customData: {
-            title: "Mia's gymnastics recital.",
-            class: 'bg-pink-500 text-white',
-          },
-          dates: new Date(year, month, 22),
-        },
-        {
-          key: 8,
-          customData: {
-            title: 'Visit great grandma.',
-            class: 'bg-red-600 text-white',
-          },
-          dates: new Date(year, month, 25),
-        },
-      ],
-    };
-  },
-};
+      getEventColor (event) {
+        return event.color
+      },
+      setToday () {
+        this.focus = ''
+      },
+      prev () {
+        this.$refs.calendar.prev()
+      },
+      next () {
+        this.$refs.calendar.next()
+      },
+      showEvent ({ nativeEvent, event }) {
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          setTimeout(() => {
+            this.selectedOpen = true
+          }, 10)
+        }
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          setTimeout(open, 10)
+        } else {
+          open()
+        }
+        nativeEvent.stopPropagation()
+      },
+      updateRange ({ start, end }) {
+        const events = []
+        const min = new Date(`${start.date}T00:00:00`)
+        const max = new Date(`${end.date}T23:59:59`)
+        const days = (max.getTime() - min.getTime()) / 86400000
+        const eventCount = this.rnd(days, days + 20)
+        for (let i = 0; i < eventCount; i++) {
+          const allDay = this.rnd(0, 3) === 0
+          const firstTimestamp = this.rnd(min.getTime(), max.getTime())
+          const first = new Date(firstTimestamp - (firstTimestamp % 900000))
+          const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
+          const second = new Date(first.getTime() + secondTimestamp)
+          events.push({
+            name: this.names[this.rnd(0, this.names.length - 1)],
+            start: first,
+            end: second,
+            color: this.colors[this.rnd(0, this.colors.length - 1)],
+            timed: !allDay,
+          })
+        }
+        this.events = events
+      },
+      rnd (a, b) {
+        return Math.floor((b - a + 1) * Math.random()) + a
+      },
+    },
+    computed: {
+       typeToLabel () {  
+      var options = [
+        {id: 'month', name: 'Month', value: 'month'},
+        {id: 'week', name: 'Week', value: 'week'},
+        {id: 'day', name: 'Day', value: 'day'},
+        {id: '4day', name: '4 Days', value: '4day'}, 
+      ]
+      return options;
+    },
+    },
+  }
 </script>
 
 <style lang="scss" scoped>
- ::-webkit-scrollbar {
-  width: 0px;
-}
-::-webkit-scrollbar-track {
-  display: none;
-}
-/deep/ .custom-calendar.vc-container {
-  --day-border: 1px solid #b8c2cc;
-  --day-border-highlight: 1px solid #b8c2cc;
-  --day-width: 90px;
-  --day-height: 90px;
-  --weekday-bg: #f8fafc;
-  --weekday-border: 1px solid #eaeaea;
-  border-radius: 0;
-  width: 100%;
-  & .vc-header {
-    background-color: #f1f5f8;
-    padding: 10px 0;
-  }
-  & .vc-weeks {
-    padding: 0;
-  }
-  & .vc-weekday {
-    background-color: var(--weekday-bg);
-    border-bottom: var(--weekday-border);
-    border-top: var(--weekday-border);
-    padding: 5px 0;
-  }
-  & .vc-day {
-    padding: 0 5px 3px 5px;
-    text-align: left;
-    height: var(--day-height);
-    min-width: var(--day-width);
-    background-color: white;
-    &.weekday-1,
-    &.weekday-7 {
-      background-color: #eff8ff;
-    }
-    &:not(.on-bottom) {
-      border-bottom: var(--day-border);
-      &.weekday-1 {
-        border-bottom: var(--day-border-highlight);
-      }
-    }
-    &:not(.on-right) {
-      border-right: var(--day-border);
-    }
-  }
-  & .vc-day-dots {
-    margin-bottom: 5px;
-  }
+
+/deep/.v-toolbar__content {
+  padding-left: 0;
+  padding-right: 0;
 }
 </style>
