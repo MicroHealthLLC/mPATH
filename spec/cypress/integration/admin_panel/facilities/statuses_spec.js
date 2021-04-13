@@ -68,11 +68,11 @@ describe('Admin Panel Statuses', function() {
   })
 
   it('Sort Status according to Name', function() {
-    cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
-    cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_statuses > tbody > tr').first().contains('Not Started').should('be.visible')
     cy.get('.sortable').contains('Name').click()
     cy.get('#index_table_statuses > tbody > tr').first().contains('Active').should('be.visible')
+    cy.get('.sortable').contains('Name').click()
+    cy.get('#index_table_statuses > tbody > tr').first().contains('Not Started').should('be.visible')
     cy.get('#logout').click()
   })
 
@@ -85,6 +85,7 @@ describe('Admin Panel Statuses', function() {
     cy.get('.current_filter').contains('Name contains InActive').should('be.visible')
     cy.get('#index_table_statuses > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
   })
 
   it('Search Status contains color', function() {
@@ -96,5 +97,6 @@ describe('Admin Panel Statuses', function() {
     cy.get('.current_filter').contains('Color contains 0b8e1a').should('be.visible')
     cy.get('#index_table_statuses > tbody > tr').its('length').should('be.eq', 1)
     cy.get('.clear_filters_btn').last().contains('Clear Filters').click()
+    cy.get('#logout').click()
   })
 })

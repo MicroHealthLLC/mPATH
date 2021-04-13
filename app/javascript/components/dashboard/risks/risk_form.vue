@@ -200,10 +200,11 @@
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
                   <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
-                    <button @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                    <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
+                  :class="{'overSixSteps': riskStages.length >= 6 }" 
                   :active="selectedRiskStage.id - 1"                      
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
@@ -216,7 +217,8 @@
                   :key="item.id"              
                   :load="log(riskStages)" 
                   :value="item"
-                  style="cursor:pointer"     
+                  style="cursor:pointer"
+                  v-if="_isallowed('write')"
                   @click.native="selectedStage(item)"        
                   :title="item.name"   
                   description=""                    
@@ -228,8 +230,8 @@
               <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
                 <label class="font-sm">Select Stage</label>                           
                 <el-steps 
-                  class="exampleOne"           
-                  clearable             
+                  class="exampleOne"   
+                  :class="{'overSixSteps': riskStages.length >= 6 }"                           
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -241,7 +243,8 @@
                   :key="item.id"              
                   :load="log(riskStages)" 
                   :value="item"
-                  style="cursor:pointer"     
+                  style="cursor:pointer"
+                  v-if="_isallowed('write')"
                   @click.native="selectedStage(item)"        
                   :title="item.name"   
                   description=""                    
@@ -1115,7 +1118,7 @@
                   clearable
                   filterable
                   placeholder="Search and select Risk Approver"
-                  :disabled="this.DV_risk.approved && !_isallowed('write')"             
+                  :disabled="!_isallowed('write') || this.DV_risk.approved"             
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -1203,7 +1206,7 @@
                   disabled
                 />
                 <!-- </span>    -->
-                <span v-if="this.DV_risk.text">
+                <span v-if="_isallowed('write') && this.DV_risk.text">
                   <button
                     v-if="isMapView"
                     class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
@@ -1470,7 +1473,7 @@
                                   <th style="width: 60%">Progress</th>
                                   <th>Last Updated</th>
                                   <th>By</th>
-                                  <th>Action</th>
+                                  <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1526,7 +1529,7 @@
                                       {{ $currentUser.full_name }}
                                     </span>
                                   </td>
-                                  <td>
+                                  <td v-if="_isallowed('write') || _isallowed('delete')">
                                     <span
                                       class="pl-2"
                                       v-tooltip="`Save`"
@@ -1639,11 +1642,10 @@
               <div class="col-6 mb-2 pl-4 links-col">                   
                
                  <div class="input-group mb-1">
-                    <div class="d-block mt-1">
+                    <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span
-                      class="ml-2 clickable"
-                      v-if="_isallowed('write')"
+                      class="ml-2 clickable"                    
                       @click.prevent="addFilesInput"
                     >
                       <i class="fas fa-plus-circle"></i>
@@ -3459,5 +3461,13 @@ ul {
   border: 1px solid #DCDFE6;
   background: #fff; 
 }
+.overSixSteps {
+/deep/.el-step__title {
+  font-size: 11px !important;
+  line-height: 23px !important;
+  margin: 5px !important;
+ }
+}
+
 
 </style>

@@ -95,6 +95,10 @@ class Issue < ApplicationRecord
     users_hash = {} 
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
+
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
@@ -111,6 +115,7 @@ class Issue < ApplicationRecord
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
       task_type_name: task_type_name,
+      due_date_duplicate: due_date.as_json,
       responsible_user_names: p_users.map(&:full_name).compact.join(", "),
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
@@ -118,10 +123,13 @@ class Issue < ApplicationRecord
       
 
     # Add RACI user names
-      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
-      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
-      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+      # Last name values added for improved sorting in datatables
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
 
      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
@@ -131,6 +139,7 @@ class Issue < ApplicationRecord
 
       checklists: checklists.as_json,
       notes: notes.as_json,
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
       project_id: fp.try(:project_id),

@@ -333,10 +333,11 @@
     <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
       <div v-if="selectedIssueStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
+      :class="{'overSixSteps': issueStages.length >= 6 }"   
       :active="selectedIssueStage.id - 1"                      
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
@@ -348,7 +349,8 @@
       v-for="item in issueStages"
       :key="item.id"             
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      v-if="_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -360,7 +362,8 @@
   <div class="mx-4 mt-2 mb-4" v-if="(selectedIssueStage == null) || selectedIssueStage == undefined">
     <label class="font-md">Select Stage</label>                           
     <el-steps 
-      class="exampleOne"              
+      class="exampleOne"    
+      :class="{'overSixSteps': issueStages.length >= 6 }"            
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"
@@ -371,7 +374,8 @@
       v-for="item in issueStages"
       :key="item.id"            
       :value="item"
-      style="cursor:pointer"     
+      style="cursor:pointer"
+      v-if="_isallowed('write')"
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -720,7 +724,7 @@ Tab 1 Row Begins here -->
                       <th style="width:60%">Progress</th>
                       <th>Last Updated</th>
                       <th>By</th>
-                      <th>Action</th>
+                      <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -759,7 +763,7 @@ Tab 1 Row Begins here -->
                          {{ $currentUser.full_name }}
                        </span>
                     </td>
-                    <td>
+                    <td v-if="_isallowed('write') || _isallowed('delete')">
                        <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveIssue">
                         <font-awesome-icon icon="save" class="text-primary clickable" />
                       </span>
@@ -846,11 +850,10 @@ Tab 1 Row Begins here -->
               <div class="col-6 mb-2 pl-4 links-col">
 
                  <div class="input-group mb-1">
-                    <div class="d-block mt-1">
+                    <div v-if="_isallowed('write')" class="d-block mt-1">
                     <label class="font-lg">Add link</label>
                     <span
-                      class="ml-2 clickable"
-                      v-if="_isallowed('write')"
+                      class="ml-2 clickable"                      
                       @click.prevent="addFilesInput"
                     >
                       <i class="fas fa-plus-circle"></i>
@@ -2101,6 +2104,14 @@ input.file-link {
   border: 1px solid #DCDFE6;
   background: #fff; 
 }
+.overSixSteps {
+/deep/.el-step__title {
+  font-size: 11px !important;
+  line-height: 23px !important;
+  margin: 5px !important;
+ }
+}
+
 
 
 </style>

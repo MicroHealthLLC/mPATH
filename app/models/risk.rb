@@ -159,6 +159,10 @@ class Risk < ApplicationRecord
     
     users_hash = {} 
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+    
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
@@ -179,6 +183,7 @@ class Risk < ApplicationRecord
       is_overdue: progress < 100 && (due_date < Date.today),
       progress_status: progress_status,
       checklists: checklists.as_json,  
+      due_date_duplicate: due_date.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
       # Remove this
@@ -189,10 +194,13 @@ class Risk < ApplicationRecord
 
 
      # Add RACI user name
-      responsible_users: responsible_user_ids.map{|id| users_hash[id] },
-      accountable_users: accountable_user_ids.map{|id| users_hash[id] },
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] },
-      informed_users: informed_user_ids.map{|id| users_hash[id] }, 
+      # Last name values added for improved sorting in datatables
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
 
             
       # Add RACI user ids     
@@ -208,6 +216,7 @@ class Risk < ApplicationRecord
       risk_approver_user_ids: risk_approver_user_ids,
       
       notes: notes.as_json,
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: fp.try(:project_id),
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),

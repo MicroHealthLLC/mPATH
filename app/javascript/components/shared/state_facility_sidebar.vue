@@ -391,7 +391,7 @@
                 class="fa fa-tasks font-lg text-center"
                 style="font-size: 1.8rem"
               ></i>
-              <p>View, Edit, filter Tasks/Issues/Risks in kanban mode.</p>
+              <p>View, Add, Edit, Delete, Filter Tasks/Issues/Risks in kanban mode.</p>
             </div>
           </div>
         </div>

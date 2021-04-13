@@ -21,8 +21,9 @@ describe('Admin Panel Risk', function() {
   })
 
   // it('Create new Risk', function() {
-  //   const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
-  //   const due_date = Cypress.moment().add(7, 'day').format('YYYY-MM-DD')
+  //   var dayjs = require('dayjs')
+  //   const start_date = dayjs().add(1, 'day').format('YYYY-MM-DD')
+  //   const due_date = dayjs().add(7, 'day').format('YYYY-MM-DD')
   //   cy.get('.action_item > a').contains('New Risk').click()
   //   cy.get('#page_title').contains('New Risk').should('be.visible')
   //   cy.get('#risk_text').type('New Test Risk').should('have.value', 'New Test Risk')
@@ -61,8 +62,9 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Sort Risk identified date', function() {
-    const start_date_from = Cypress.moment().format('MMMM DD, YYYY')
-    const start_date_to = Cypress.moment().add(1, 'day').format('MMMM DD, YYYY')
+    var dayjs = require('dayjs')
+    const start_date_from = dayjs().format('MMMM DD, YYYY')
+    const start_date_to = dayjs().add(1, 'day').format('MMMM DD, YYYY')
     cy.get('.sortable').contains('Identified Date').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(start_date_to).should('be.visible')
     cy.get('.sortable').contains('Identified Date').click()
@@ -73,8 +75,9 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Sort Risk Due Date', function() {
-    const due_date_from = Cypress.moment().add(5, 'day').format('MMMM DD, YYYY')
-    const due_date_to = Cypress.moment().add(6, 'day').format('MMMM DD, YYYY')
+    var dayjs = require('dayjs')
+    const due_date_from = dayjs().add(5, 'day').format('MMMM DD, YYYY')
+    const due_date_to = dayjs().add(6, 'day').format('MMMM DD, YYYY')
     cy.get('.sortable').contains('Due Date').click()
     cy.get('#index_table_risks > tbody > tr').first().contains(due_date_to).should('be.visible')
     cy.get('.sortable').contains('Due Date').click()
@@ -257,7 +260,8 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Search Risk start date from', function() {
-    const start_date = Cypress.moment().add(1, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().add(1, 'day').format('YYYY-MM-DD')
     cy.get('#q_start_date_gteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 7)
@@ -265,7 +269,8 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Search Risk start date to', function() {
-    const start_date = Cypress.moment().format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const start_date = dayjs().format('YYYY-MM-DD')
     cy.get('#q_start_date_lteq').type(`${start_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 1)
@@ -273,7 +278,8 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Search Risk Due Date from', function() {
-    const due_date = Cypress.moment().add(6, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const due_date = dayjs().add(6, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_gteq').type(`${due_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 6)
@@ -281,7 +287,8 @@ describe('Admin Panel Risk', function() {
   })
 
   it('Search Risk Due Date to', function() {
-    const due_date = Cypress.moment().add(5, 'day').format('YYYY-MM-DD')
+    var dayjs = require('dayjs')
+    const due_date = dayjs().add(5, 'day').format('YYYY-MM-DD')
     cy.get('#q_due_date_lteq').type(`${due_date}{enter}`)
     cy.get('[type=submit]').first().contains('Filter').click()
     cy.get('#index_table_risks > tbody > tr').its('length').should('be.eq', 2)

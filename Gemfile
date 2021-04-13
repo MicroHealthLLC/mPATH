@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '6.1.3.1' #'~> 5.2.3'
 # Use postgresql as the database for Active Record
 gem 'mysql2'
 # Use Puma as the app server
@@ -55,7 +55,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'cypress-on-rails', '~> 1.0'
   gem 'letter_opener'
-  gem 'bullet', '6.1.0'
+  # gem 'bullet', '6.1.0'
   gem 'pry', '~> 0.13.1'
   gem 'pry-rails'
   gem 'pry-byebug'

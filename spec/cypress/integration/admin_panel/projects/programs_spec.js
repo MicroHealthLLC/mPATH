@@ -47,7 +47,7 @@ describe('Admin Panel Program', function() {
   })
 
   it('Sort Program according to Description', function() {
-    cy.get('.sortable').contains('Description').click()
+    cy.get('thead > tr > .col-description').contains('Description').click()
     cy.get('#index_table_projects > tbody > tr').first().contains('Test project description').should('be.visible')
     cy.get('#logout').click()
   })

@@ -144,13 +144,13 @@ ActiveAdmin.register Risk do
       div id: 'risk_impact_text'
       f.input :risk_approach, include_blank: false, include_hidden: false
       f.input :risk_approach_description, label: 'Risk Approach Description', input_html: { rows: 8 }
-      f.input :progress
+      f.input :progress, as: :hidden
       div id: 'progress_slider-tab'
       f.input :auto_calculate
       f.has_many :checklists, heading: 'Checklist Items', allow_destroy: true do |c|
         c.input :checked, label: '', input_html: {class: 'checklist_item_checked', disabled: !c.object.text&.strip}
         c.input :text, input_html: {class: 'checklist_item_text'}
-        c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'checklist_user'}
+        c.input :user_id, as: :select, label: 'Assigned To', collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: 'select2 checklist_user'}
         c.input :due_date, as: :datepicker
       end
       div id: 'uploaded-task-files', 'data-files': "#{f.object.files_as_json}"
@@ -236,7 +236,9 @@ ActiveAdmin.register Risk do
   filter :due_date, label: "Risk Approach Due Date"
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
+  filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
   filter :user, label: "Owned by"
+  filter :checklists_user_id, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Checklist Item assigned to', input_html: {multiple: true, id: '__checklist_users_filters'}
   filter :progress
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
 end

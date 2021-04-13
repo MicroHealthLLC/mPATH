@@ -8,8 +8,9 @@ Cypress.Commands.add('issueList', () => {
 
 // Create new issue under a facility
 Cypress.Commands.add("createNewIssue", () => {
-  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+  var dayjs = require('dayjs')
+  const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+  const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
   cy.get('[data-cy=new_issue]').click()
   cy.contains('Issue Name:')
@@ -39,8 +40,9 @@ Cypress.Commands.add("openKanbanIssue", () => {
 
 // Fill Issue form
 Cypress.Commands.add("fillKanbanIssueForm", () => {
-  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+  var dayjs = require('dayjs')
+  const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+  const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
   cy.get('[data-cy=kanban]').within(() => {
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {

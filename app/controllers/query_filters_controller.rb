@@ -2,41 +2,84 @@ class QueryFiltersController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    render json: project.query_filters.where(user_id: current_user.id).map(&:to_json)
+    filters = project.favorite_filters.includes(:query_filters).where("favorite_filters.user_id = ? or shared = ?",current_user.id, true)
+    render json: filters.map(&:to_json)
   end
 
   def create
-    if query_filters_params[:query_filters].nil?
+    p_params = query_filters_params[:query_filters]
+    fav_params = favorite_filter_params #query_filters_params[:favorite_filter]
+
+
+    if p_params.nil? || fav_params.nil?
       render json: {error: "No filter found"}, status: 403
       return
     end
 
     project = Project.find(params[:project_id])
-    p_params = query_filters_params
-    existing_query_filters = project.query_filters.where(user_id: current_user.id)
-    query_filters = []
 
-    p_params[:query_filters].each do |filter|
+    favorite_filter = nil
+    if fav_params[:id].present?
+      favorite_filter = project.favorite_filters.where(id: fav_params[:id]).first
+    else
+      favorite_filter = FavoriteFilter.create(project_id: project.id, name: fav_params[:name], user_id: current_user.id, shared: fav_params[:shared])
+    end
+
+    if favorite_filter && !favorite_filter.can_update?(current_user)
+      raise CanCan::AccessDenied, "You are not authorized to modify filter"
+    else
+      favorite_filter.update(fav_params)
+    end
+
+    existing_query_filters = project.query_filters.where(user_id: current_user.id, favorite_filter_id: favorite_filter.id)
+    existing_query_filter_keys = existing_query_filters.map(&:filter_key).compact.uniq
+
+    query_filters = []
+    query_filters_to_remove = []
+
+    p_params.each do |filter|
       f = existing_query_filters.detect{|qf| qf.filter_key == filter[:filter_key] }
       if f.present?
+        existing_query_filter_keys.delete(f.filter_key)
         f.update(filter)
       else
-        query_filters << QueryFilter.new(filter.merge({project_id: project.id, user_id: current_user.id}))
+        query_filters << QueryFilter.new(filter.merge({project_id: project.id, user_id: current_user.id, favorite_filter_id: favorite_filter.id }))
       end
+    end
+    if existing_query_filter_keys.any?
+      existing_query_filters.map{|f| f.destroy if existing_query_filter_keys.include?(f.filter_key) }
     end
     QueryFilter.import(query_filters) if query_filters.any?
 
-    render json: query_filters
+    render json: {favorite_filter: favorite_filter.to_json}
   end
 
   def reset
     project = Project.find(params[:project_id])
-    project.query_filters.where(user_id: current_user.id).destroy_all
-    render json: {message: "Filters destroyed successfully"}
+    fav_params = favorite_filter_params
+
+    if fav_params && fav_params[:id].present?
+      filter = project.favorite_filters.where(id: fav_params[:id]).first
+      if filter
+        if !filter.can_update?(current_user)
+          raise CanCan::AccessDenied, "You are not authorized to remove filter"
+        else
+          filter.destroy
+          render json: {message: "Filters destroyed successfully", id: filter.id}
+        end
+      else        
+        render json: {error: "No Filter found"}, status: 404
+      end
+    else
+      render json: {error: "Can not found filter without ID"}, status: 404
+    end
+
   end
 
+  def favorite_filter_params
+    params.require(:favorite_filter).permit(:name, :id, :shared)
+  end
   def query_filters_params
-    params.permit!
+    params.permit(query_filters: [:filter_key, :name, :filter_value])
   end
-
 end

@@ -22,6 +22,8 @@
 class QueryFilter < ApplicationRecord
   belongs_to :project
   belongs_to :user
+  belongs_to :favorite_filter
+
   serialize :filter_value
 
   def to_json(options = {})
