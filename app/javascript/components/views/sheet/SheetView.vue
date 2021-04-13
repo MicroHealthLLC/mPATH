@@ -91,13 +91,26 @@ export default {
     ...mapGetters([
       "contentLoaded",
       "currentProject",
+      "facilities",
       "facilityGroupFacilities",
       "facilityGroups",
+      "getPreviousRoute",
+      "getUnfilteredFacilities",
     ]),
   },
   mounted() {
-    if (this.contentLoaded && this.$route.params.projectId) {
-      console.log(this.$route.params.projectId);
+    // Display notification when leaving map view to another page and conditions met
+    if (
+      this.getPreviousRoute.includes("Map") &&
+      this.facilities.length !== this.getUnfilteredFacilities.length
+    ) {
+      this.$notify.info({
+        title: "Filter Set",
+        message:
+          "A filter was set based on the map boundary. Reset the Map Boundary Filter in the Advanced Filters tab.",
+        offset: 150,
+        position: "bottom-left",
+      });
     }
   },
   watch: {
