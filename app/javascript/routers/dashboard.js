@@ -33,6 +33,18 @@ import KanbanIssues from "./../components/views/kanban/KanbanIssues";
 import KanbanIssueForm from "./../components/views/kanban/KanbanIssueForm";
 import KanbanRisks from "./../components/views/kanban/KanbanRisks";
 import KanbanRiskForm from "./../components/views/kanban/KanbanRiskForm";
+//Calendar Routes Components
+import CalendarView from "./../components/views/calendar/CalendarView";
+import CalendarRollup from "./../components/shared/ProjectRollup";
+import CalendarOverview from "./../components/views/calendar/CalendarOverview";
+import CalendarTasks from "./../components/views/calendar/CalendarTasks";
+import CalendarTaskForm from "./../components/views/calendar/CalendarTaskForm";
+import CalendarIssues from "./../components/views/calendar/CalendarIssues";
+import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm";
+import CalendarRisks from "./../components/views/calendar/CalendarRisks";
+import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
+import CalendarNotes from "./../components/views/calendar/CalendarNotes";
+import CalendarNoteForm from "./../components/views/calendar/CalendarNoteForm";
 
 export default new VueRouter({
   routes: [
@@ -162,6 +174,63 @@ export default new VueRouter({
           name: "SheetNoteForm",
           path: "projects/:projectId/notes/:noteId",
           component: SheetNoteForm,
+        },
+      ],
+    },
+    {
+      name: "CalendarView",
+      path: "/programs/:programId/calendar",
+      component: CalendarView,
+      children: [
+        {
+          name: "CalendarRollup",
+          path: "",
+          component: CalendarRollup,
+        },
+        {
+          name: "CalendarOverview",
+          path: "projects/:projectId",
+          component: CalendarOverview,
+        },
+        {
+          name: "CalendarTasks",
+          path: "projects/:projectId/tasks",
+          component: CalendarTasks,
+        },
+        {
+          name: "CalendarTaskForm",
+          path: "projects/:projectId/tasks/:taskId",
+          component: CalendarTaskForm,
+        },
+        {
+          name: "CalendarIssues",
+          path: "projects/:projectId/issues",
+          component: CalendarIssues,
+        },
+        {
+          name: "CalendarIssueForm",
+          path: "projects/:projectId/issues/:issueId",
+          component: CalendarIssueForm,
+        },
+        {
+          name: "CalendarRisks",
+          path: "projects/:projectId/risks",
+          component: CalendarRisks,
+        },
+        {
+          name: "CalendarRiskForm",
+          path: "projects/:projectId/risks/:riskId",
+          component: CalendarRiskForm,
+        },
+        {
+          name: "CalendarNotes",
+          path: "projects/:projectId/notes",
+          component: CalendarNotes,
+        },
+        {
+          name: "CalendarNoteForm",
+          path: "projects/:projectId/notes/:noteId",
+          component: CalendarNoteForm,
         },
       ],
     },

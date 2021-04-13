@@ -1,5 +1,5 @@
 class ProjectsController < AuthenticatedController
-  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet]
+  before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
 
   def vue_js_route
 
@@ -7,6 +7,8 @@ class ProjectsController < AuthenticatedController
       check_permit("map_view")
     elsif params[:tab] == "sheet"
       check_permit("sheets_view")
+    elsif params[:tab] == "calendar"
+      check_permit("calendar_view")
     elsif params[:tab] == "kanban"
       check_permit("kanban_view")
     elsif ["gantt_chart", "gantt"].include?(params[:tab])
@@ -86,6 +88,14 @@ class ProjectsController < AuthenticatedController
 
   def sheet
     check_permit("sheets_view")
+    respond_to do |format|
+      format.json {}
+      format.html {render action: :index}
+    end
+  end
+
+  def calendar
+    check_permit("calendar_view")
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
