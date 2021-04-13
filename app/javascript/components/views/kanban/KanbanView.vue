@@ -1,5 +1,11 @@
 <template>
-  <div v-if="contentLoaded" class="row">
+  <div
+    v-loading="!contentLoaded"
+    element-loading-text="Fetching your data. Please wait..."
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+    class="row"
+  >
     <div class="col-md-2">
       <ProjectSidebar
         :current-facility-group="currentFacilityGroup"
@@ -9,7 +15,7 @@
         @on-expand-facility="showFacility"
       />
     </div>
-    <div class="col-md-10 pr-4">
+    <div class="col-md-10 pr-4 right-panel">
       <div
         v-if="
           $route.name === 'KanbanProjectSelected' ||
@@ -148,5 +154,9 @@ export default {
 a {
   color: unset;
   text-decoration: unset;
+}
+.right-panel {
+  height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 </style>

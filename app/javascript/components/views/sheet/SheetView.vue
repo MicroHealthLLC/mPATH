@@ -15,7 +15,7 @@
         @on-expand-facility="showFacility"
       />
     </div>
-    <div class="col-md-10 pr-4">
+    <div class="col-md-10 pr-4 right-panel">
       <div
         v-if="
           $route.name !== 'SheetRollup' &&
@@ -123,9 +123,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
+}
+.right-panel {
+  height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 </style>

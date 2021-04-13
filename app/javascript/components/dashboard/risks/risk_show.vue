@@ -143,7 +143,7 @@
       ]),
       editRisk() {
         this.DV_edit_risk = this.DV_risk;
-        if (this.$route.name.includes("kanban")) {
+        if (this.$route.path.includes("kanban")) {
           this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);
         } else {
           this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${this.DV_edit_risk.id}`);

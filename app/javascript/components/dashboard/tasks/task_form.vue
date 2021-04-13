@@ -957,6 +957,7 @@
     },
     mounted() {
       if (!_.isEmpty(this.task)) {
+        this.loadTask(this.task)
       }else{
         this.loadTask(this.DV_task)
       }
