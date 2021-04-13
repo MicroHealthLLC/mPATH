@@ -317,8 +317,7 @@
              <risk-sheets
               v-for="risk in sortedRisks"
               class="riskHover"
-              href="#"
-              :load="log(risk)"
+              href="#"                         
               :key="risk.id"
               :risk="risk"
               :from-view="from"
@@ -463,9 +462,6 @@
         'SET_RISK_FORM_OPEN',
         'SET_SELECTED_RISK'
       ]),
-      log(t){
-        console.log(t)
-      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -488,14 +484,11 @@
         this.sortedAccountableUser = 'accountableUsersLastName'      
       },
       addNewRisk() {
-        if (this.from == "manager_view") {
-          this.setRiskForManager({key: 'risk', value: {}})
-          // Sets risk form in state_facility_sidebar
-          this.SET_RISK_FORM_OPEN(true);
-          this.SET_SELECTED_RISK({});
-        } else {
-          this.$emit('show-hide')
-        }
+        this.setRiskForManager({key: 'risk', value: {}})
+        // Route to new risk form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
+        );
       },
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;

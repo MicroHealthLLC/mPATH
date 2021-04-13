@@ -265,16 +265,6 @@ td.col-issue_type, td.col-issue_severity {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .tasks-form, .issues-form, .notes-form {
-  background-color: #fff;
-  position:fixed;
-  height: 100vh;
-}
-.risks-form {
-  z-index: 10;
-  width: 83.1%;
- }
-
 // This prevents the text overflow in all tables
  td {
   overflow-wrap: break-word !important;
@@ -840,17 +830,6 @@ i.el-tag__close.el-icon-close {
 
 .w-33 {
   width:33%;
-}
-
-.risks-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 100px);
-  background-color: #fff;
-  position: absolute;
-  width: 100%;
-  top: 0;
-  z-index: 100;
 }
 
 i.el-icon-circle-close {

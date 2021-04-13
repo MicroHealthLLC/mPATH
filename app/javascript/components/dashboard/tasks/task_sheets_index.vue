@@ -261,8 +261,7 @@
              <task-sheets
               v-for="task in sortedTasks"
               class="taskHover"
-              href="#"
-              :load="log(task)"
+              href="#"         
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -318,7 +317,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr  v-for="(task, i) in filteredTasks" :key="i" :load="log(task)">
+        <tr  v-for="(task, i) in filteredTasks" :key="i">
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
@@ -395,9 +394,6 @@
         'setToggleRACI',
         'setTaskForManager'
       ]),
-      log(t){
-        console.log(t)
-      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -426,11 +422,11 @@
         // + this.sortedAccountableUser)
       },
       addNewTask() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'task', value: {}})
-        } else {
-          this.$emit('show-hide')
-        }
+        this.setTaskForManager({key: 'task', value: {}})
+        // Route to new task form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
+        );
       },
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;

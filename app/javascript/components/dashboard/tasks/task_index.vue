@@ -163,11 +163,11 @@ export default {
       'setTaskForManager'
     ]),
     addNewTask() {
-      if (this.from == "manager_view") {
-        this.setTaskForManager({ key: 'task', value: {} })
-      } else {
-        this.$emit('show-hide')
-      }
+      this.setTaskForManager({key: 'task', value: {}})
+      // Route to new task form page
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/new`
+      );
     },
     log(t){
       console.log(t)

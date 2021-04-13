@@ -1530,7 +1530,7 @@ export default {
           }
         }
 
-        let url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/issues.json`;
+        let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/issues.json`;
         let method = "POST";
         let callback = "issue-created";
 
@@ -1565,6 +1565,13 @@ export default {
                 type: "success",
                 showClose: true,
               });
+            }
+            if (this.$route.path.includes("sheet")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
+            } else {
+              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/${response.data.issue.id}`);
             }
           })
           .catch((err) => {
@@ -1771,12 +1778,8 @@ export default {
   watch: {
     issue: {
       handler: function (value) {
-        if (!("id" in value)) this.DV_issue = this.INITIAL_ISSUE_STATE();
-        this.DV_issue.issueFiles = [];
-        this.destroyedFiles = [];
-        this.loadIssue(value);
+        this.loadIssue(this.issue)
       },
-      deep: true,
     },
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
@@ -1897,8 +1900,7 @@ export default {
 
 <style lang="scss" scoped>
 .issues-form {
-  z-index: 10;
-  width: 83.1%;
+  
 }
 .kanban-form {
   left: 16.4%;
