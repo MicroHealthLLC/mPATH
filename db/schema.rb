@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_08_173138) do
+ActiveRecord::Schema.define(version: 2021_04_12_174000) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -197,6 +197,22 @@ ActiveRecord::Schema.define(version: 2021_04_08_173138) do
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
     t.index ["issue_type_id"], name: "index_issues_on_issue_type_id"
     t.index ["task_type_id"], name: "index_issues_on_task_type_id"
+  end
+
+  create_table "lessons", charset: "utf8", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "date"
+    t.string "stage"
+    t.integer "task_type_id"
+    t.integer "task_id"
+    t.integer "risk_id"
+    t.integer "issue_id"
+    t.integer "issue_type_id"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "notes", charset: "utf8", force: :cascade do |t|

@@ -81,6 +81,9 @@ Rails.application.routes.draw do
       post :create_bulk_duplicate, on: :member
     end
   end
+  
+  resources :lessons
+
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'

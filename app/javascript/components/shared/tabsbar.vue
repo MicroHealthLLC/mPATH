@@ -24,6 +24,9 @@
     <router-link v-if="permitted('members')" :to="membersView" tag="div">
       <div class="badge" :class="{'active': isMembersView}" data-cy="team_tab">Team</div>
     </router-link>
+    <router-link v-if="permitted('lessons')" :to="lessonsView" tag="div">
+      <div class="badge" :class="{'active': isLessonsView}" data-cy="lesson_tab">Lessons</div>
+    </router-link>
   </div>
 </template>
 
