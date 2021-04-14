@@ -1966,15 +1966,15 @@ export default {
           closable: false,
         },
          {
+          label: "Updates",
+          key: "tab8",
+          closable: false,        
+        },
+        {
           label: "Disposition",
           key: "tab7",
           closable: false,
           disabled: true,
-        },
-         {
-          label: "Updates",
-          key: "tab8",
-          closable: false,        
         },
       ],
       fixedStage: false
