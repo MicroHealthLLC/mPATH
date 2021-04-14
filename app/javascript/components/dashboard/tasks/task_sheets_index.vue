@@ -154,56 +154,57 @@
                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
                 <font-awesome-icon icon="sort-down" /></span>
               </th>
-              <th class="sort-th p-1 w-100">            
-                 <span class="py-2 d-inline-block">Assigned Users</span><br> 
+              <th class="sort-th p-1 w-100">
+                 <span class="py-2 d-inline-block">Assigned Users</span><br>
               <span class="btn-group">
-                 <button 
+                 <button
                 :class="{'activeFirstName': sortedResponsibleUser === 'responsibleUsersFirstName' || sortedAccountableUser === 'accountableUsersFirstName'}"
-                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"              
+                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"
                 @click.prevent="firstNameSort"
                 >First
-                </button> 
-              <button 
+                </button>
+              <button
                 :class="{'activeLastName': sortedResponsibleUser  === 'responsibleUsersLastName'  || sortedAccountableUser === 'accountableUsersLastName'}"
-                class="btn-group-btns inactiveLastName outerRightBtn last px-2"              
+                class="btn-group-btns inactiveLastName outerRightBtn last px-2"
                 @click.prevent="lastNameSort"
                 >Last
                 </button>
-            
+
               </span>
-                 <span class="btn-group">         
-              <button 
+                 <span class="btn-group">
+              <button
                 :class="{'activeResponsible':currentSort === sortedResponsibleUser }"
-                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"             
+                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"
                 @click="sort(sortedResponsibleUser)"
+                data-cy="responsibleUsers"
                 >R
-                </button> 
-              <button 
+                </button>
+              <button
                 :class="{'activeAccountable':currentSort === sortedAccountableUser }"
-                class="btn-group-btns outerRightBtn inactiveAccountable px-2"            
+                class="btn-group-btns outerRightBtn inactiveAccountable px-2"
                 @click="sort(sortedAccountableUser)"
                 >A
                 </button>
               </span>
-               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser"> 
-              <font-awesome-icon icon="sort" /></span>  
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">                
+               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser">
+              <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">                
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">
+                <font-awesome-icon icon="sort-down" /></span>
+
               </th>
               <th class="sort-th" @click="sort('progress')">Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
@@ -261,7 +262,7 @@
              <task-sheets
               v-for="task in sortedTasks"
               class="taskHover"
-              href="#"         
+              href="#"
               :key="task.id"
               :task="task"
               :from-view="from"
@@ -409,16 +410,16 @@
       },
       firstNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersFirstName'
-        this.sortedAccountableUser = 'accountableUsersFirstName'     
-        // console.log("First Name Sort: this is the sorted responsible user: " 
-        // + this.sortedResponsibleUser + " and this is the sorted accountable user: " 
+        this.sortedAccountableUser = 'accountableUsersFirstName'
+        // console.log("First Name Sort: this is the sorted responsible user: "
+        // + this.sortedResponsibleUser + " and this is the sorted accountable user: "
         // + this.sortedAccountableUser)
       },
       lastNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersLastName'
         this.sortedAccountableUser = 'accountableUsersLastName'
-        // console.log("Last Name Sort: This is the sorted responsible user: " 
-        // + this.sortedResponsibleUser + " and this is the sorted accountable user: " 
+        // console.log("Last Name Sort: This is the sorted responsible user: "
+        // + this.sortedResponsibleUser + " and this is the sorted accountable user: "
         // + this.sortedAccountableUser)
       },
       addNewTask() {
@@ -728,7 +729,7 @@
 }
 .outerLeftBtn {
   border-top-left-radius: .15rem;
-  border-bottom-left-radius: .15rem; 
+  border-bottom-left-radius: .15rem;
   // background-color:#383838;
   // color:#fff;
 }

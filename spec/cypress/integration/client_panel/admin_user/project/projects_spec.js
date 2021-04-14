@@ -23,16 +23,13 @@ describe('Projects List', function() {
 
   it('Open a particular project', function() {
     cy.openProject()
-    cy.get('[data-cy=facility_rollup]').within(() => {
-      cy.contains('PROJECTS').should('be.visible')
-      cy.contains('4').should('be.visible')
-    })
+    cy.get('#customtabs').should('be.visible')
     cy.logout()
   })
 
-  it('Open a facility of a project', function() {
-    cy.openFacility()
-    cy.facilityRollup()
-    cy.logout()
-  })
+  // it('Open a facility of a project', function() {
+  //   cy.openFacility()
+  //   cy.facilityRollup()
+  //   cy.logout()
+  // })
 })

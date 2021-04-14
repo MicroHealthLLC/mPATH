@@ -32,6 +32,7 @@
             "
             class="tab mr-2"
             :class="{ active: $route.path.includes('tasks') }"
+            data-cy="task_link"
             >Tasks</router-link
           >
           <router-link
@@ -40,6 +41,7 @@
             "
             class="tab mr-2"
             :class="{ active: $route.path.includes('issues') }"
+            data-cy="issue_link"
             >Issues</router-link
           >
           <router-link
@@ -48,6 +50,7 @@
             "
             class="tab"
             :class="{ active: $route.path.includes('risks') }"
+            data-cy="risk_link"
             >Risks</router-link
           >
         </div>

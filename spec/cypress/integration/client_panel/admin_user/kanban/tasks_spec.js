@@ -135,6 +135,8 @@ describe('Kanban Tasks View', function() {
     })
     cy.get('[data-cy=task_on_watch]').click({force: true})
     cy.get('[data-cy=task_save_btn]').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=task_close_btn]').click({force: true})
     cy.get('[data-cy=kanban_col]').eq(1).within(() => {
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=tasks]').first().within(() => {
@@ -142,7 +144,6 @@ describe('Kanban Tasks View', function() {
         })
       })
     })
-    cy.get('[data-cy=task_close_btn]').click({force: true})
     cy.logout()
   })
 
@@ -197,12 +198,13 @@ describe('Kanban Tasks View', function() {
     it('Update task from kanban', function() {
       cy.get('[data-cy=task_name]').clear({force: true}).type('Updated new test task').should('have.value', 'Updated new test task')
       cy.get('[data-cy=task_save_btn]').click({force: true})
+      cy.wait(1000)
+      cy.get('[data-cy=task_close_btn]').click({force: true})
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=kanban_draggable]').within(() => {
           cy.get('[data-cy=tasks]').first().contains('Updated new test task').should('be.visible')
         })
       })
-      cy.get('[data-cy=task_close_btn]').click({force: true})
       cy.logout()
     })
   })
