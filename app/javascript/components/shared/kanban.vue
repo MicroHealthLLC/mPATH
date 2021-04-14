@@ -1,6 +1,6 @@
 <template>
   <div id="kanban" data-cy="kanban">
-    <div class="overflow-x-auto">
+    <div>
       <div class="d-flex">
         <div
           v-for="column in columns"
@@ -170,18 +170,13 @@ export default {
   .task-card { cursor: move;}
   .read-only-card { cursor: pointer;}
   .kanban-draggable {
-    height: 71vh;
+    height: 65vh;
     overflow-wrap: break-word;
   }
   .ghost-card {
     opacity: 0.5;
     background: #F7FAFC;
     border: 1px solid #4299e1;
-  }
-  .overflow-x-auto {
-    overflow-x: auto; 
-    margin-right: -200px;
-    overflow-y: hidden !important;
   }
   .unset {
     
@@ -200,7 +195,6 @@ export default {
      max-width: 18.5rem;
   }
   .kan-body {
-    max-height: 71vh;
     overflow-y: auto;
   }
   .badge {
