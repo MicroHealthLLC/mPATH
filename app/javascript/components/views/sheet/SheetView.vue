@@ -15,36 +15,42 @@
         @on-expand-facility="showFacility"
       />
     </div>
-    <div class="col-md-10 pr-4 right-panel">
-      <div
-        v-if="
-          $route.name !== 'SheetRollup' &&
-            $route.name !== 'SheetTaskForm' &&
-            $route.name !== 'SheetIssueForm' &&
-            $route.name !== 'SheetRiskForm' &&
-            $route.name !== 'SheetNoteForm'
-        "
-        class="d-flex align-items-center my-2"
-      >
-        <span class="fbody-icon"><i class="fas fa-building"></i></span>
-        <h5 class="f-head mb-0">
-          {{ currentFacility.facilityName || "Loading..." }}
-        </h5>
+    <div class="col-md-10">
+      <div class="right-panel">
+        <div
+          v-if="
+            $route.name !== 'SheetRollup' &&
+              $route.name !== 'SheetTaskForm' &&
+              $route.name !== 'SheetIssueForm' &&
+              $route.name !== 'SheetRiskForm' &&
+              $route.name !== 'SheetNoteForm'
+          "
+          class="d-flex align-items-center my-2"
+        >
+          <span class="fbody-icon"><i class="fas fa-building"></i></span>
+          <h5 class="f-head mb-0">
+            {{ currentFacility.facilityName || "Loading..." }}
+          </h5>
+        </div>
+        <div class="pr-3">
+          <ProjectTabs
+            v-if="
+              $route.name !== 'SheetRollup' &&
+                $route.name !== 'SheetTaskForm' &&
+                $route.name !== 'SheetIssueForm' &&
+                $route.name !== 'SheetRiskForm' &&
+                $route.name !== 'SheetNoteForm'
+            "
+          />
+        </div>
+        <div class="pr-3">
+          <router-view
+            :key="$route.path"
+            :facility="currentFacility"
+            :facilityGroup="currentFacilityGroup"
+          ></router-view>
+        </div>
       </div>
-      <ProjectTabs
-        v-if="
-          $route.name !== 'SheetRollup' &&
-            $route.name !== 'SheetTaskForm' &&
-            $route.name !== 'SheetIssueForm' &&
-            $route.name !== 'SheetRiskForm' &&
-            $route.name !== 'SheetNoteForm'
-        "
-      />
-      <router-view
-        :key="$route.path"
-        :facility="currentFacility"
-        :facilityGroup="currentFacilityGroup"
-      ></router-view>
     </div>
   </div>
 </template>
@@ -144,5 +150,6 @@ export default {
 .right-panel {
   height: calc(100vh - 100px);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
