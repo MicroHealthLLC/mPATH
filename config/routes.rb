@@ -54,6 +54,9 @@ Rails.application.routes.draw do
     get :facility_manager, on: :member
     get :kanban, on: :member
     get :map, on: :member
+    
+    resources :lessons
+
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do
@@ -93,8 +96,6 @@ Rails.application.routes.draw do
       post :create_bulk_duplicate, on: :member
     end
   end
-  
-  resources :lessons
 
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'

@@ -105,14 +105,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in sortedMembers" :key="index" data-cy="user_data">
-              <td class="text-center">{{user.id}}</td>
-              <td>{{user.fullName}}</td>
+            <tr v-for="(lesson, index) in sortedLessons" :key="index" data-cy="user_data">
+              <td class="text-center">{{lesson.id}}</td>
+              <td>{{lesson.title}}</td>
               <!-- <td>{{user.lastName}}</td> -->
-              <td>{{user.title}}</td>
-              <td>{{user.organization}}</td>
-              <td>{{user.phoneNumber}}</td>
-              <td>{{user.email}}</td>
+              <td>{{lesson.description}}</td>
+              <td>{{lesson.date}}</td>
+              <td>{{lesson.stage}}</td>
+              <td>{{lesson.project_id}}</td>
             </tr>
           </tbody>
         </table>
@@ -134,20 +134,27 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
+
 export default {
-  name: "LessionsView",
+  name: "LessonsView",
   props: ['facility', 'from'],
   data() {
     return {
       pages: [],
+      lessonsList: [],
       currentPage: 1,
       currentSort: 'id',
       currentSortDir: 'asc',
     }
   },
+  mounted() {
+    this.fetchLessons()
+  },
   computed: {
     ...mapGetters([
+      'currentProject',
       'activeProjectUsers',
       'filterDataForAdvancedFilter',
       'getMembersPerPageFilterOptions',
@@ -157,28 +164,31 @@ export default {
       'membersPerPageFilter'
     ]),
     tableData() {
-      return this.activeProjectUsers
+      return this.lessonsList
     },
-    orderedUsers: function() {
-      return _.orderBy(this.activeProjectUsers, 'lastName', 'asc')
+    orderedLessons: function() {
+      return _.orderBy(this.lessonsList, 'title', 'asc')
     },
-    sortedMembers: function() {
-      return this.tableData.sort((a, b) => {
-        let modifier = 1;
-        if (this.currentSortDir === 'desc') modifier = -1;
-        if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
-        if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
-        return 0;
-      }).filter((row, index) => {
-        let start = (this.currentPage - 1) * this.C_membersPerPage.value;
-        let end = this.currentPage * this.C_membersPerPage.value;
-        if (index >= start && index < end) return true;
-        return this.end
-      });
+    sortedLessons: function() {
+      debugger;
+      return this.tableData
+      // return this.tableData.sort((a, b) => {
+      //   let modifier = 1;
+      //   if (this.currentSortDir === 'desc') modifier = -1;
+      //   if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+      //   if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+      //   return 0;
+      // }).filter((row, index) => {
+      //   let start = (this.currentPage - 1) * this.C_membersPerPage.value;
+      //   let end = this.currentPage * this.C_membersPerPage.value;
+      //   if (index >= start && index < end) return true;
+      //   return this.end
+      // });
     },
     C_membersPerPage: {
       get() {
-        return this.getMembersPerPageFilter || { id: 15, name: '15', value: 15 }
+        //return this.getMembersPerPageFilter || { id: 15, name: '15', value: 15 }
+        return { id: 15, name: '15', value: 15 }
       },
       set(value) {
         this.setMembersPerPageFilter(value)
@@ -189,6 +199,28 @@ export default {
     ...mapMutations([
       'setMembersPerPageFilter'
     ]),
+    fetchLessons(){
+      let url = `/projects/${this.currentProject.id}/lessons.json`
+      let method = "GET"
+
+      axios({
+        method: method,
+        url: url,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        this.lessonsList = response.data.lessons        
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        this.loading = false
+      })
+    },
     changeHead({ row, column, rowIndex, columnIndex }) {
       return { backgroundColor: '#343F52', width: '100%' };
     },
@@ -239,7 +271,7 @@ export default {
       window.location.href = this.uri + this.base64(this.format(this.template, ctx))
     }
   }
-}
+};
 </script>
 <style scoped lang="scss">
 #members {

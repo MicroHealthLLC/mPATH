@@ -83,7 +83,7 @@ export default {
       return this.$route.name === "TeamMembersView";
     },
     isLessonsView() {
-      return this.$route.name === "LessionsView";
+      return this.$route.name === "LessonsView";
     },
     permitted() {
       return (salut) =>
