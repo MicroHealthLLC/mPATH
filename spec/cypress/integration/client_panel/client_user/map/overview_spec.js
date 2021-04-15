@@ -7,9 +7,7 @@ describe('Map Page', function() {
   })
 
   it('Open Map overview to display the summary of a Project', function() {
-    cy.get('[data-cy=map_view]').within(() => {
-      cy.facilityRollup()
-    })
+    cy.facilityRollup()
     cy.logout()
   })
 })
