@@ -81,13 +81,8 @@ export default {
     return {
       kanbanType: "tasks",
       currentTab: "tasks",
-      currentFacility: Object.assign({}, this.facility),
       searchTasksQuery: "",
-      searchIssuesQuery: "",
-      searchRisksQuery: "",
       sidebarTasksQuery: "",
-      sidebarIssuesQuery: "",
-      sidebarRisksQuery: "",
       searchStageId: null,
     };
   },
@@ -103,31 +98,21 @@ export default {
     },
     handleSearchQueryChange(searchElement) {
       this.searchStageId = $(searchElement).attr("data-stage-id");
-      if ($(searchElement).attr("data-kanban-type") == "issues") {
-        this.searchIssuesQuery = $(searchElement).val();
-      }
       if ($(searchElement).attr("data-kanban-type") == "tasks") {
         this.searchTasksQuery = $(searchElement).val();
-      }
-      if ($(searchElement).attr("data-kanban-type") == "risks") {
-        this.searchIssuesQuery = $(searchElement).val();
       }
     },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
+      "currentProject",
+      "facilities",
       "filterDataForAdvancedFilter",
       "getAdvancedFilter",
       "getAdvancedFilterOptions",
       "getTaskIssueUserFilter",
-      "issueSeverityFilter",
-      "issueStageFilter",
-      "issueStages",
-      "issueTypeFilter",
       "noteDateFilter",
-      "riskStageFilter",
-      "riskStages",
       "taskIssueDueDateFilter",
       "taskIssueProgressFilter",
       "taskStageFilter",
@@ -139,33 +124,15 @@ export default {
     C_kanban() {
       let stages = [];
       let cards = [];
-      if (this.currentTab == "tasks") {
-        stages = this.filterTaskStages;
-        cards = this.filteredTasks;
-      } else if (this.currentTab == "issues") {
-        stages = this.filterIssueStages;
-        cards = this.filteredIssues;
-      } else if (this.currentTab == "risks") {
-        stages = this.filterRiskStages;
-        cards = this.filteredRisks;
-      }
+
+      stages = this.filterTaskStages;
+      cards = this.filteredTasks;
+
       return { stages, cards };
     },
     filterTaskStages() {
       let stageIds = _.map(this.taskStageFilter, "id");
       return _.filter(this.taskStages, (s) =>
-        stageIds && stageIds.length ? stageIds.includes(s.id) : true
-      );
-    },
-    filterIssueStages() {
-      let stageIds = _.map(this.issueStageFilter, "id");
-      return _.filter(this.issueStages, (s) =>
-        stageIds && stageIds.length ? stageIds.includes(s.id) : true
-      );
-    },
-    filterRiskStages() {
-      let stageIds = _.map(this.riskStageFilter, "id");
-      return _.filter(this.riskStages, (s) =>
         stageIds && stageIds.length ? stageIds.includes(s.id) : true
       );
     },
@@ -193,7 +160,7 @@ export default {
         .filterDataForAdvancedFilter;
 
       return _.orderBy(
-        _.filter(this.currentFacility.tasks, (resource) => {
+        _.filter(this.facility.tasks, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
           if (typeIds.length > 0)
             valid = valid && typeIds.includes(resource.taskTypeId);
@@ -255,227 +222,6 @@ export default {
           if (search_query) valid = valid && search_query.test(resource.text);
           if (sidebar_search_query)
             valid = valid && sidebar_search_query.test(resource.text);
-          return valid;
-        }),
-        "kanbanOrder",
-        "asc"
-      );
-    },
-    filteredIssues() {
-      let typeIds = _.map(this.C_issueTypeFilter, "id");
-      let taskTypeIds = _.map(this.C_taskTypeFilter, "id");
-      let severityIds = _.map(this.C_issueSeverityFilter, "id");
-      let stageIds = _.map(this.issueStageFilter, "id");
-      const search_query = this.exists(this.searchIssuesQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      let noteDates = this.noteDateFilter;
-      let taskIssueDueDates = this.taskIssueDueDateFilter;
-      let taskIssueProgress = this.taskIssueProgressFilter;
-
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-
-      return _.orderBy(
-        _.filter(this.currentFacility.issues, (resource) => {
-          let valid = Boolean(resource && resource.hasOwnProperty("progress"));
-
-          let userIds = [
-            ..._.map(resource.checklists, "userId"),
-            ...resource.userIds,
-          ];
-
-          if (taskIssueUsers.length > 0) {
-            if (taskIssueUsers.length > 0) {
-              valid =
-                valid &&
-                userIds.some(
-                  (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-                );
-            }
-          }
-
-          //TODO: For performance, send the whole tasks array instead of one by one
-          valid =
-            valid &&
-            this.filterDataForAdvancedFilter([resource], "kanbanIssues");
-
-          if (typeIds.length > 0)
-            valid = valid && typeIds.includes(resource.issueTypeId);
-          if (taskTypeIds.length > 0)
-            valid = valid && taskTypeIds.includes(resource.taskTypeId);
-
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            let startDate = moment(noteDates[0], "YYYY-MM-DD");
-            let endDate = moment(noteDates[1], "YYYY-MM-DD");
-            let _notesCreatedAt = _.map(resource.notes, "createdAt");
-            let is_valid = resource.notes.length > 0;
-            for (let createdAt of _notesCreatedAt) {
-              let nDate = moment(createdAt, "YYYY-MM-DD");
-              is_valid = nDate.isBetween(startDate, endDate, "days", true);
-              if (is_valid) break;
-            }
-            valid = is_valid;
-          }
-
-          if (
-            taskIssueDueDates &&
-            taskIssueDueDates[0] &&
-            taskIssueDueDates[1]
-          ) {
-            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
-            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
-            let is_valid = true;
-            let nDate = moment(resource.dueDate, "YYYY-MM-DD");
-            is_valid = nDate.isBetween(startDate, endDate, "days", true);
-            valid = is_valid;
-          }
-
-          if (taskIssueProgress && taskIssueProgress[0]) {
-            let min = taskIssueProgress[0].value.split("-")[0];
-            let max = taskIssueProgress[0].value.split("-")[1];
-            valid =
-              valid && resource.progress >= min && resource.progress <= max;
-          }
-
-          if (
-            this.searchStageId &&
-            this.searchStageId == resource.issueStageId
-          ) {
-            if (search_query)
-              valid = valid && search_query.test(resource.title);
-          } else if (stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.issueStageId);
-          }
-          if (sidebar_search_query)
-            valid = valid && sidebar_search_query.test(resource.title);
-          if (severityIds.length > 0)
-            valid = valid && severityIds.includes(resource.issueSeverityId);
-
-          return valid;
-        }),
-        "kanbanOrder",
-        "asc"
-      );
-    },
-    filteredRisks() {
-      let taskTypeIds = _.map(this.C_taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      const search_query = this.exists(this.searchRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-
-      let noteDates = this.noteDateFilter;
-      let taskIssueDueDates = this.taskIssueDueDateFilter;
-      let taskIssueProgress = this.taskIssueProgressFilter;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-
-      let riskPriorityLevelFilterIds = _.map(
-        this.getRiskPriorityLevelFilter,
-        "id"
-      );
-
-      let riskApproachIds = _.map(this.getRiskApproachFilter, "id");
-
-      return _.orderBy(
-        _.filter(this.currentFacility.risks, (resource) => {
-          let valid = Boolean(resource && resource.hasOwnProperty("progress"));
-
-          let userIds = [
-            ..._.map(resource.checklists, "userId"),
-            ...resource.userIds,
-          ];
-
-          if (taskIssueUsers.length > 0) {
-            if (taskIssueUsers.length > 0) {
-              valid =
-                valid &&
-                userIds.some(
-                  (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-                );
-            }
-          }
-
-          //TODO: For performance, send the whole tasks array instead of one by one
-          valid =
-            valid &&
-            this.filterDataForAdvancedFilter([resource], "kanbanRisks");
-
-          if (taskTypeIds.length > 0)
-            valid = valid && taskTypeIds.includes(resource.taskTypeId);
-
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            let startDate = moment(noteDates[0], "YYYY-MM-DD");
-            let endDate = moment(noteDates[1], "YYYY-MM-DD");
-            let _notesCreatedAt = _.map(resource.notes, "createdAt");
-            let is_valid = resource.notes.length > 0;
-            for (let createdAt of _notesCreatedAt) {
-              let nDate = moment(createdAt, "YYYY-MM-DD");
-              is_valid = nDate.isBetween(startDate, endDate, "days", true);
-              if (is_valid) break;
-            }
-            valid = is_valid;
-          }
-
-          if (
-            taskIssueDueDates &&
-            taskIssueDueDates[0] &&
-            taskIssueDueDates[1]
-          ) {
-            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
-            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
-            let is_valid = true;
-            let nDate = moment(resource.dueDate, "YYYY-MM-DD");
-            is_valid = nDate.isBetween(startDate, endDate, "days", true);
-            valid = is_valid;
-          }
-
-          if (taskIssueProgress && taskIssueProgress[0]) {
-            let min = taskIssueProgress[0].value.split("-")[0];
-            let max = taskIssueProgress[0].value.split("-")[1];
-            valid =
-              valid && resource.progress >= min && resource.progress <= max;
-          }
-
-          if (riskApproachIds.length > 0)
-            valid = valid && riskApproachIds.includes(resource.riskApproach);
-
-          if (riskPriorityLevelFilterIds.length > 0)
-            valid =
-              valid &&
-              riskPriorityLevelFilterIds.includes(
-                resource.priorityLevelName.toLowerCase()
-              );
-
-          if (
-            this.searchStageId &&
-            this.searchStageId == resource.riskStageId
-          ) {
-            if (search_query)
-              valid = valid && search_query.test(resource.title);
-          } else if (stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.riskStageId);
-          }
-          if (sidebar_search_query)
-            valid = valid && sidebar_search_query.test(resource.text);
-
           return valid;
         }),
         "kanbanOrder",
