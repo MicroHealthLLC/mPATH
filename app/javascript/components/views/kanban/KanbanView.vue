@@ -94,15 +94,11 @@ export default {
     showFacility(facility) {
       this.currentFacility = facility;
     },
-    changeTab(tab) {
-      console.log(tab);
-      this.$router.push(tab.path);
-    },
   },
   computed: {
     ...mapGetters([
       "contentLoaded",
-      "currentProject",
+      "facilities",
       "facilityGroupFacilities",
       "facilityGroups",
     ]),
@@ -111,7 +107,7 @@ export default {
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
-          this.currentFacility = this.currentProject.facilities.find(
+          this.currentFacility = this.facilities.find(
             (facility) => facility.facilityId == this.$route.params.projectId
           );
         }
@@ -124,6 +120,13 @@ export default {
         );
 
         this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
       },
     },
   },
