@@ -1,7 +1,11 @@
 <template>
   <div
     class="d-flex align-items-center mx-4"
-    :class="{ 'map-width': $route.name === 'ProjectMapView' }"
+    :class="{
+      'map-width': $route.name.includes('Map') && !$route.name.includes('Risk'),
+      'map-risk-width':
+        $route.name.includes('Map') && $route.name.includes('Risk'),
+    }"
   >
     <div v-for="tab in tabs" :key="tab.key">
       <div
@@ -10,7 +14,9 @@
         @click.prevent="changeTab(tab)"
         data-cy="facility_tabs"
       >
-        <div :class="{ label: tabHasErrors(tab) }"><span class="inner-label-text">{{ tab.label }}</span></div>
+        <div :class="{ label: tabHasErrors(tab) }">
+          <span class="inner-label-text">{{ tab.label }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -58,6 +64,10 @@ export default {
 }
 .map-width {
   transform: scale(0.85);
+  transform-origin: left;
+}
+.map-risk-width {
+  transform: scale(0.75);
   transform-origin: left;
 }
 .label::after {

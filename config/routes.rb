@@ -57,6 +57,11 @@ Rails.application.routes.draw do
     
     resources :lessons
 
+    resources :query_filters do
+      collection do
+        delete "reset" => "query_filters#reset"
+      end
+    end
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do

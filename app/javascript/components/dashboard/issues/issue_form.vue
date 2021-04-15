@@ -14,12 +14,12 @@
             <span style="font-size: 16px; margin-right: 10px"
               ><i class="fas fa-building"></i
             ></span>
-            {{ facility.facilityName }}
+            <router-link :to="projectNameLink">{{ facility.facilityName }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            Issues
+            <router-link :to="`/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/issues`">Issues</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -1774,6 +1774,22 @@ export default {
         this.$currentUser.role == "superadmin" ||
         this.$permissions.issues[salut];
     },
+    tab() {
+      if (this.$route.path.includes("map")) {
+        return "map";
+      } else if (this.$route.path.includes("sheet")) {
+        return "sheet";
+      } else {
+        return "kanban";
+      }
+    },
+    projectNameLink() {
+      if (this.$route.path.includes("kanban")) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`
+      } else {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`
+      }
+    }
   },
   watch: {
     issue: {
@@ -2111,7 +2127,10 @@ input.file-link {
   margin: 5px !important;
  }
 }
-
-
-
+a {
+  color: #007bff
+}
+a:hover {
+  text-decoration: unset;
+}
 </style>

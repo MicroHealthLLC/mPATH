@@ -15,47 +15,50 @@
         @on-expand-facility="showFacility"
       />
     </div>
-    <div class="col-md-10 pr-4 right-panel">
-      <div
-        v-if="
-          $route.name === 'KanbanProjectSelected' ||
-            $route.name === 'KanbanTasks' ||
-            $route.name === 'KanbanIssues' ||
-            $route.name === 'KanbanRisks'
-        "
-        class="tabs mt-2"
-      >
-        <router-link
-          :to="
-            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
+    <div class="col-md-10">
+      <div class="right-panel">
+        <div
+          v-if="
+            $route.name === 'KanbanProjectSelected' ||
+              $route.name === 'KanbanTasks' ||
+              $route.name === 'KanbanIssues' ||
+              $route.name === 'KanbanRisks'
           "
-          class="tab mr-2"
-          :class="{ active: $route.path.includes('tasks') }"
-          >Tasks</router-link
+          class="tabs mt-2 mr-3"
         >
-        <router-link
-          :to="
-            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
-          "
-          class="tab mr-2"
-          :class="{ active: $route.path.includes('issues') }"
-          >Issues</router-link
-        >
-        <router-link
-          :to="
-            `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/risks`
-          "
-          class="tab"
-          :class="{ active: $route.path.includes('risks') }"
-          >Risks</router-link
-        >
+          <router-link
+            :to="
+              `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/tasks`
+            "
+            class="tab mr-2"
+            :class="{ active: $route.path.includes('tasks') }"
+            >Tasks</router-link
+          >
+          <router-link
+            :to="
+              `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/issues`
+            "
+            class="tab mr-2"
+            :class="{ active: $route.path.includes('issues') }"
+            >Issues</router-link
+          >
+          <router-link
+            :to="
+              `/programs/${$route.params.programId}/kanban/projects/${$route.params.projectId}/risks`
+            "
+            class="tab"
+            :class="{ active: $route.path.includes('risks') }"
+            >Risks</router-link
+          >
+        </div>
+        <div class="pr-3">
+          <router-view
+            :key="$route.path"
+            :facility="currentFacility"
+            :facilityGroup="currentFacilityGroup"
+          ></router-view>
+        </div>
       </div>
-
-      <router-view
-        :key="$route.path"
-        :facility="currentFacility"
-        :facilityGroup="currentFacilityGroup"
-      ></router-view>
     </div>
   </div>
 </template>
