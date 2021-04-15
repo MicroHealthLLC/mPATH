@@ -106,8 +106,6 @@ export default {
   computed: {
     ...mapGetters([
       "contentLoaded",
-      "currentProject",
-      "facilities",
       "filterDataForAdvancedFilter",
       "getAdvancedFilter",
       "getAdvancedFilterOptions",
