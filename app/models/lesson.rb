@@ -14,5 +14,38 @@ class Lesson < ApplicationRecord
   validates :title, :description, :date, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
+  def create_or_update_lession(params, user)
+
+    lesson_params = params.require(:lesson).permit(
+      :title, 
+      :description, 
+      :date, 
+      :stage, 
+      :task_type_id, 
+      :task_id, 
+      :risk_id, 
+      :issue_id, 
+      :issue_type_id, 
+      :user_id, 
+      :project_id,
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    )
+
+    lesson = self
+    t_params = lesson_params.dup
+    notes_attributes = t_params.delete(:notes_attributes)
+
+    lesson.attributes = t_params
+
+    lesson.transaction do
+      lesson.save
+    end
+    lesson.reload
+  end
 
 end

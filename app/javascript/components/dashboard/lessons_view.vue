@@ -13,13 +13,7 @@
             </div>
           </el-col>
           <div class="total" data-cy="team_total">
-<!--             <button @click.prevent="exportToPdf" v-tooltip="`Export to PDF`" id="printBtn" class="btn btn-md exportBtns text-light">
-              <font-awesome-icon icon="file-pdf" />
-            </button>
-            <button v-tooltip="`Export to Excel`" @click.prevent="exportToExcel('table', 'Team Members List')" class="btn btn-md exportBtns text-light">
-              <font-awesome-icon icon="file-excel" />
-            </button> -->
-            <button class="btn btn-md btn-info team-total">
+            <button class="btn btn-md btn-info team-total" @click="saveLesson()">
               New Lesson
             </button>
           </div>
@@ -170,7 +164,6 @@ export default {
       return _.orderBy(this.lessonsList, 'title', 'asc')
     },
     sortedLessons: function() {
-      debugger;
       return this.tableData
       // return this.tableData.sort((a, b) => {
       //   let modifier = 1;
@@ -199,6 +192,55 @@ export default {
     ...mapMutations([
       'setMembersPerPageFilter'
     ]),
+    saveLesson(){
+      let formData = new FormData()
+      formData.append('lesson[title]', "title")
+      formData.append('lesson[description]', "description")
+      formData.append('lesson[date]', "04/04/2021")
+      formData.append('lesson[task_type_id]', 1)
+      formData.append('lesson[task_id]', 1)
+      formData.append('lesson[risk_id]', 1)
+      formData.append('lesson[issue_id]', 1)
+      formData.append('lesson[issue_type_id]', 1)
+      formData.append('lesson[user_id]', 1)
+      formData.append('lesson[project_id]', 2)
+      // let url = `/projects/2/lessons.json`
+      // let method = "POST"
+
+      let url = `/projects/2/lessons/2.json`
+      let method = "PATCH"
+
+      axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+        }
+      })
+      .then((response) => {
+        // var responseTask = humps.camelizeKeys(response.data.task)
+        // this.loadTask(responseTask)
+        //this.$emit(callback, responseTask)
+        // this.updateTasksHash({task: responseTask})
+        if (response.status === 200) {
+          this.fetchLessons()
+          this.$message({
+            message: `Lesson was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+        }        
+      })
+      .catch((err) => {
+        // var errors = err.response.data.errors
+        console.log(err)
+      })
+      .finally(() => {
+        this.loading = false
+      })
+
+    },
     fetchLessons(){
       let url = `/projects/${this.currentProject.id}/lessons.json`
       let method = "GET"
