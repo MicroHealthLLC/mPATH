@@ -2468,6 +2468,8 @@ export default {
               this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
             } else if (this.$route.path.includes("map")) {
               this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+            } else if (this.$route.path.includes("calendar")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
             } else {
               this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
             }

@@ -68,7 +68,11 @@ export default {
 
       if (url.includes("sheet")) {
         return "sheet";
-      } else {
+      } 
+      if (url.includes("calendar")) {
+        return "calendar";
+      } 
+      else {
         return "map";
       }
     },

@@ -1,0 +1,808 @@
+<template>
+  <div id="risks-index" class="my-4" data-cy="risk_sheet_index">
+    <div v-if="_isallowed('read')">
+      <div class="d-flex align-item-center justify-content-between mb-1 w-100">
+        <div class="input-group risk-search-bar w-100">
+             <div class="input-group-prepend">
+             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
+            </div>
+            <input type="search"
+            class="form-control form-control-sm"
+            placeholder="Search by Risk Name, Approach, Priority Level or Assigned User"
+            aria-label="Search"
+            aria-describedby="search-addon"
+            v-model="risksQuery"
+            data-cy="search_risks">
+          </div>
+        <div class="w-100 mx-1">
+         <el-select
+           v-model="C_taskTypeFilter"
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Select Category"
+           >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+
+        <div class="w-100">
+          <el-select
+           v-model="C_sheetsRiskFilter"
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Filter by Flags"
+           >
+          <el-option
+            v-for="item in getAdvancedFilterOptions"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+
+          <!-- <multiselect v-model="C_sheetsRiskFilter" :options="getAdvancedFilterOptions" track-by="name" label="name" :multiple="true" select-label="Select" deselect-label="Remove" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Filter by Flags">
+            <template slot="singleLabel" slot-scope="{option}">
+              <div class="d-flex">
+                <span class='select__tag-name'>{{option.name}}</span>
+              </div>
+            </template>
+          </multiselect> -->
+        </div>
+    </div>
+     <div class="d-flex align-item-center justify-content-start filter-second-row w-60">
+       <div class="w-50 mr-1" v-if="true">
+         <el-select
+           v-model="C_riskApproachFilter"
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Filter by Risk Approach"
+           >
+          <el-option
+            v-for="item in getRiskApproachFilterOptions"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+       <div class="simple-select w-50 mr-1" v-if="true">
+        <el-select
+           v-model="C_riskPriorityLevelFilter"
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Filter by Risk Priority Levels"
+           >
+          <el-option
+            v-for="item in getRiskPriorityLevelFilterOptions"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+     </div>
+     <div class="wrapper mt-2 p-3">
+      <button v-if="_isallowed('write')"
+         class="btn btn-md btn-primary mr-3 addRiskBtn"
+        @click.prevent="addNewRisk"
+        data-cy="add_risk"
+      >
+        <font-awesome-icon icon="plus-circle" />
+        Add Risk
+      </button>
+      <div class="float-right">
+       <button
+          v-tooltip="`Export to PDF`"
+          @click.prevent="exportToPdf"
+          class="btn btn-md mr-1 exportBtns text-light">
+          <font-awesome-icon icon="file-pdf"/>
+        </button>
+        <button
+          v-tooltip="`Export to Excel`"
+          @click.prevent="exportToExcel('table', 'Risk Register')"
+          class="btn btn-md mr-1 exportBtns text-light">
+          <font-awesome-icon icon="file-excel"/>
+        </button>
+         <button
+          v-tooltip="`Show More/Show Less`"
+          @click.prevent="showAllToggle"
+          class="btn btn-md mr-1 showAll text-light"          >
+          <span v-if="getToggleRACI">
+          <font-awesome-icon icon="user" />
+          </span>
+           <span v-else>
+          <font-awesome-icon icon="users"/>
+           </span>
+         </button>
+        <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
+          Total: {{filteredRisks.length}}
+        </button>
+      </div>
+      <div v-if="filteredRisks.length > 0">
+        <div style="margin-bottom:50px" data-cy="risks_table">
+          <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
+            <colgroup>
+              <col class="oneFive" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="seven" />
+              <col class="twelve" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="eight" />
+              <col class="oneEight" />
+            </colgroup>
+            <tr class="thead" style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('text')">Risk
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'text'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'text'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'text'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'text'">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="sort-th" @click="sort('riskApproach')">Risk Approach
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'riskApproach'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'riskApproach'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'riskApproach'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'riskApproach'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'riskApproach'">
+                <font-awesome-icon icon="sort-down" /></span>
+
+              </th>
+              <th class="sort-th"  @click="sort('priorityLevel')">Priority Level
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'priorityLevel'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'priorityLevel'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'priorityLevel'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'priorityLevel'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priorityLevel'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="pl-1 sort-th" @click="sort('startDate')">Start Date
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'startDate'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'startDate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'startDate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'startDate'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'startDate'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDate'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDate'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="sort-th p-1 w-100">          
+                 <span class="py-2 d-inline-block">Assigned Users</span><br> 
+              <span class="btn-group">
+                 <button 
+                :class="{'activeFirstName': sortedResponsibleUser === 'responsibleUsersFirstName' || sortedAccountableUser === 'accountableUsersFirstName'}"
+                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"              
+                @click.prevent="firstNameSort"
+                >First
+                </button> 
+              <button 
+                :class="{'activeLastName': sortedResponsibleUser  === 'responsibleUsersLastName'  || sortedAccountableUser === 'accountableUsersLastName'}"
+                class="btn-group-btns inactiveLastName outerRightBtn last px-2"              
+                @click.prevent="lastNameSort"
+                >Last
+                </button>
+            
+              </span>
+                 <span class="btn-group">         
+              <button 
+                :class="{'activeResponsible':currentSort === sortedResponsibleUser }"
+                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"             
+                @click="sort(sortedResponsibleUser)"
+                >R
+                </button> 
+              <button 
+                :class="{'activeAccountable':currentSort === sortedAccountableUser }"
+                class="btn-group-btns outerRightBtn inactiveAccountable px-2"            
+                @click="sort(sortedAccountableUser)"
+                >A
+                </button>
+              </span>
+               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser"> 
+              <font-awesome-icon icon="sort" /></span>  
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">                
+                <font-awesome-icon icon="sort-up" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">                
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">                
+                <font-awesome-icon icon="sort-down" /></span>    
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">                
+                <font-awesome-icon icon="sort-down" /></span>    
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">                
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">                
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">                
+                <font-awesome-icon icon="sort-down" /></span>    
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">                
+                <font-awesome-icon icon="sort-down" /></span>    
+
+              </th>
+              <th class="sort-th"  @click="sort('progress')" >Progress
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="pl-1 sort-th" @click="sort('watched')">On Watch
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+              <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
+                <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                <font-awesome-icon icon="sort-up" /></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                <font-awesome-icon icon="sort-down" /></span>
+              </th>
+            </tr>
+          </table>
+          <tbody>
+             <risk-calendar
+              v-for="risk in sortedRisks"
+              class="riskHover"
+              href="#"                         
+              :key="risk.id"
+              :risk="risk"
+              :from-view="from"
+              @edit-risk="editRisk"
+              @toggle-watched="toggleWatched"
+            />
+          </tbody>
+           <div class="float-right mb-4 mt-2 font-sm">
+            <div class="simple-select d-inline-block text-right font-sm">
+                <span>Displaying </span>
+                   <el-select
+                    v-model="C_risksPerPage"
+                    class="w-33"
+                    track-by="value"
+                    value-key="id"
+                    >
+                    <el-option
+                    v-for="item in getRisksPerPageFilterOptions"
+                    :value="item"
+                    :key="item.id"
+                    :label="item.name"
+                    >
+                    </el-option>
+                    </el-select>
+              </div>
+              <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+                <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+                <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredRisks.length / this.C_risksPerPage.value) }} </button>
+                <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+            </div>
+        </div>
+      </div>
+      <h6 v-else class="text-danger alt-text" data-cy="no_risk_found">No Risks found...</h6>
+    </div>
+  </div>
+    <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
+
+      <!-- debug: sort={{currentSort}}, dir={{currentSortDir}}, page={{currentPage}}  sum={{pageSize}} -->
+
+    <table
+      class="table table-sm table-bordered table-striped"
+      ref="table" id="riskSheetsList1"
+      style="display:none"
+      >
+      <thead>
+        <tr style="background-color:#ededed">
+          <th>Risk</th>
+          <th>Project</th>
+          <th>Risk Approach</th>
+          <th>Priority Level</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Assigned Users</th>
+          <th>Progress</th>
+          <th>Overdue</th>
+          <th>On Watch</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr  v-for="(risk, index) in filteredRisks" :key="index">
+          <td>{{risk.text}}</td>
+          <td>{{risk.facilityName}}</td>
+          <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
+          <td>{{risk.priorityLevel}}</td>
+          <td>{{formatDate(risk.startDate)}}</td>
+          <td>{{formatDate(risk.dueDate)}}</td>
+          <td>
+           <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)">(R) {{risk.responsibleUsers[0].name}} <br></span>
+          <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)">(A) {{risk.accountableUsers[0].name}}<br></span>
+           <!-- Consulted Users and Informed Users are toggle values         -->
+          <span :class="{'show-all': getToggleRACI }" >
+             <span v-if="(risk.consultedUsers.length > 0) && (risk.consultedUsers[0] !== null)">(C) {{JSON.stringify(risk.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span>
+             <span v-if="(risk.informedUsers.length > 0) && (risk.informedUsers[0] !== null)">(I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>
+         </span>
+          </td>
+          <td>{{risk.progress + "%"}}</td>
+          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.watched) == true"><h5>X</h5></td>
+          <td v-else></td>
+          <td v-if="(risk.notesUpdatedAt.length) > 0">
+             By: {{ risk.notes[0].user.fullName}} on
+            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
+          </td>
+          <td v-else>No Updates</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</template>
+
+<script>
+  import {mapGetters, mapMutations} from "vuex"
+  import {jsPDF} from "jspdf"
+  import 'jspdf-autotable'
+  // import moment from 'moment'
+  import RiskCalendar from "./risk_calendar"
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
+  library.add(faFilePdf)
+  // Vue.prototype.moment = moment
+  import * as Moment from 'moment'
+  import {extendMoment} from 'moment-range'
+import Risk_calendar from './risk_calendar.vue'
+  const moment = extendMoment(Moment)
+  export default {
+    name: 'RiskCalendarIndex',
+    components: {
+      RiskCalendar
+       
+    },
+    props: ['facility', 'from'],
+    data() {
+      return {
+        risks: Object,
+        now: new Date().toISOString(),
+        risksQuery: '',      
+        currentPage:1,     
+        sortedResponsibleUser: 'responsibleUsersFirstName',
+        sortedAccountableUser: 'accountableUsersFirstName',
+        currentSort:'text',
+        currentSortDir:'asc',
+        uri :'data:application/vnd.ms-excel;base64,',
+        template:'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+        base64: function(s){ return window.btoa(unescape(encodeURIComponent(s))) },
+        format: function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+     }
+    },
+    methods: {
+      ...mapMutations([
+        'setRiskPriorityLevelFilter',
+        'setAdvancedFilter',
+        'setRisksPerPageFilter',
+        'setTaskIssueProgressStatusFilter',
+        'setTaskIssueOverdueFilter',
+        'setTaskTypeFilter',
+        'setToggleRACI',
+        'setMyActionsFilter',
+        'setOnWatchFilter',
+        'setRiskApproachFilter',
+        'setRiskForManager',
+        'SET_RISK_FORM_OPEN',
+        'SET_SELECTED_RISK'
+      ]),
+      sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextPage:function() {
+        if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+      },
+      firstNameSort(){
+        this.sortedResponsibleUser = 'responsibleUsersFirstName'
+        this.sortedAccountableUser = 'accountableUsersFirstName'    
+      },
+      lastNameSort(){
+        this.sortedResponsibleUser = 'responsibleUsersLastName'
+        this.sortedAccountableUser = 'accountableUsersLastName'      
+      },
+      addNewRisk() {
+        this.setRiskForManager({key: 'risk', value: {}})
+        // Route to new risk form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/new`
+        );
+      },
+      showAllToggle() {
+         this.setToggleRACI(!this.getToggleRACI)  ;
+      },
+      editRisk(risk) {
+        this.$emit('show-hide', risk)
+      },
+      toggleWatched(risk) {
+        this.$emit('toggle-watch-risk', risk)
+      },
+      exportToPdf() {
+        const doc = new jsPDF("l")
+        const html =  this.$refs.table.innerHTML
+        doc.autoTable({html: "#riskSheetsList1"})
+        doc.save("Risk Register.pdf")
+      },
+      exportToExcel(table, name){
+        if (!table.nodeType) table = this.$refs.table
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = this.uri + this.base64(this.format(this.template, ctx))
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'getRiskPriorityLevelFilter',
+        'getRiskPriorityLevelFilterOptions',
+        'getRisksPerPageFilterOptions',
+        'getRisksPerPageFilter',
+        'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter',
+        'getTaskIssueUserFilter',
+        'getAdvancedFilter',
+        'getTaskIssueTabFilterOptions',
+        'getTaskIssueProgressStatusOptions',
+        'getTaskIssueProgressStatusFilter',
+        'taskIssueProgressFilter',
+        'getTaskIssueOverdueOptions',
+        'taskIssueOverdueFilter',
+        'noteDateFilter',
+        'taskIssueDueDateFilter',
+        'taskTypeFilter',
+        'getRiskApproachFilterOptions',
+        'getRiskApproachFilter',
+        'riskStageFilter',
+        'myActionsFilter',
+        'onWatchFilter',
+        'riskUserFilter',
+        'taskTypes',
+        'viewPermit',
+        'getToggleRACI'
+      ]),
+      _isallowed() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
+      },
+      filteredRisks() {
+        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+        let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
+        let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
+        const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+          }
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
+          }
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.riskApproach) ||
+          valid && search_query.test(resource.priorityLevelName) ||
+          valid && search_query.test(resource.userNames)
+          return valid;
+        })), ['dueDate'])
+        return risks
+      },
+      C_riskPriorityLevelFilter: {
+        get() {
+          return this.getRiskPriorityLevelFilter
+        },
+        set(value) {
+          this.setRiskPriorityLevelFilter(value)
+        }
+      },
+      C_sheetsRiskFilter: {
+        get() {
+          return this.getAdvancedFilter
+        },
+        set(value) {
+          this.setAdvancedFilter(value)
+        }
+      },
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
+      },
+      C_taskTypeFilter: {
+        get() {
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.setTaskTypeFilter(value)
+        }
+      },
+      C_riskApproachFilter: {
+        get() {
+          return this.getRiskApproachFilter
+        },
+        set(value) {
+            this.setRiskApproachFilter(value)
+        }
+      },
+      C_myRisks: {
+        get() {
+          return _.map(this.myActionsFilter, 'value').includes('risks')
+        },
+        set(value) {
+          if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Risks", value: "risks"}])
+          else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "risks"))
+        }
+      },
+      C_risksPerPage: {
+        get() {
+          return this.getRisksPerPageFilter || {id: 15, name: '15', value: 15}
+        },
+        set(value) {
+          this.setRisksPerPageFilter(value)
+        }
+     },
+      sortedRisks:function() {
+          return this.filteredRisks.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+          let start = (this.currentPage-1)*this.C_risksPerPage.value;
+          let end = this.currentPage*this.C_risksPerPage.value;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
+       }
+      }
+    };
+</script>
+
+<style scoped lang="scss">
+// Most datatable css located in app/assets/stylesheets/common.scss file
+  #risks-index {
+    background-color: #ffffff;
+    z-index: 100;
+    height: 500px
+  }
+  .risk-search-bar {
+    height: 31px;
+    width: 310px;
+    border-radius: 5px;
+  }
+  input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+ }
+  #page-count {
+    width: auto !important;
+    cursor: default;
+  }
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ }
+  .alt-text {
+    position: relative;
+    margin-top: 50px;
+    margin-left: 2px;
+  }
+  #printBtn, .addBtns, .team-total {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  }
+  #total {
+    margin-right: 18px;
+    line-height: 3 !important;
+  }
+  .filter {
+    color: #ced4da !important;
+    border: solid #ced4da .8px !important;
+    padding: 4px;
+    font-size: 2rem;
+    border-radius: 4px;
+    padding: 4px;
+  }
+  .riskHover:hover {
+    cursor: pointer;
+    background-color: rgba(91, 192, 222, 0.3);
+  }
+  table {
+    table-layout: fixed;
+    width: 100%;
+    color: #606266;
+    position: relative;
+    margin-bottom: 0 !important;
+  }
+  .stickyTableHeader {
+    position: sticky;
+    position: -webkit-sticky;
+    justify-content: center;
+    z-index: 10;
+    left: 15;
+    top: 0;
+    width: 100%;
+  }
+  .seven {
+    width: 7%;
+  }
+  .eight {
+    width: 8%;
+  }
+  .nine {
+    width: 9%;
+  }
+  .ten {
+    width: 10%;
+  }
+  .twelve {
+    width: 12%;
+  }
+  .oneFive{
+    width: 15%;
+  }
+  .sixteen {
+    width: 16%;
+  }
+  .oneEight {
+    width: 18%;
+  }
+  .floatRight {
+    text-align: right;
+    right: 0px;
+  }
+  .pagination {
+    margin-bottom: 50px !important;
+  }
+  .addRiskBtn, .exportBtns, .showAll {
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+ }
+ .exportBtns, .showAll {
+    transition: all .2s ease-in-out;
+    background-color: #41b883;
+ }
+ .total-label {
+   margin-top: 20px;
+ }
+ .exportBtns:hover, .showAll:hover { transform: scale(1.06); }
+ 
+ .btn-group-btns {
+  border: solid 1px lightgray;  
+  line-height: 1 !important;
+}
+.activeLastName, .activeFirstName, .activeResponsible, .activeAccountable {
+  background-color: lightgray;
+}
+.inactiveLastName:hover, .inactiveFirstName:hover, .inactiveResponsible:hover, .inactiveAccountable:hover {
+  background-color: lightgray;
+}
+.outerLeftBtn {
+  border-top-left-radius: .15rem;
+  border-bottom-left-radius: .15rem; 
+  // background-color:#383838;
+  // color:#fff;
+}
+.outerRightBtn {
+  border-top-right-radius: .15rem;
+  border-bottom-right-radius: .15rem;
+}
+
+.sort-btn-group {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+}
+</style>
