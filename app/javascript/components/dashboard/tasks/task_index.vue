@@ -170,7 +170,7 @@ export default {
       );
     },
     log(t){
-      console.log(t)
+      // console.log(t)
     },
     editTask(task) {
       this.$emit('show-hide', task)

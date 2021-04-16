@@ -15,12 +15,12 @@
               <span style="font-size: 16px; margin-right: 10px"
                 ><i class="fas fa-building"></i
               ></span>
-              {{ facility.facilityName }}
+              <router-link :to="projectNameLink">{{ facility.facilityName }}</router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
-              Risks
+              <router-link :to="`/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/risks`">Risks</router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -1966,15 +1966,15 @@ export default {
           closable: false,
         },
          {
+          label: "Updates",
+          key: "tab8",
+          closable: false,        
+        },
+        {
           label: "Disposition",
           key: "tab7",
           closable: false,
           disabled: true,
-        },
-         {
-          label: "Updates",
-          key: "tab8",
-          closable: false,        
         },
       ],
       fixedStage: false
@@ -2914,6 +2914,22 @@ export default {
       )
         return true;
     },
+    tab() {
+      if (this.$route.path.includes("map")) {
+        return "map";
+      } else if (this.$route.path.includes("sheet")) {
+        return "sheet";
+      } else {
+        return "kanban";
+      }
+    },
+    projectNameLink() {
+      if (this.$route.path.includes("kanban")) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      } else {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`
+      }
+    }
   },
   watch: {
     risk: {
@@ -3470,6 +3486,10 @@ ul {
   margin: 5px !important;
  }
 }
-
-
+a {
+  color: #007bff
+}
+a:hover {
+  text-decoration: unset;
+}
 </style>

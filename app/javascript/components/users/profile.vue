@@ -389,9 +389,10 @@
             .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
+              debugger;
               var pref = res.data.preferences
-              if(pref.programId){
-                window.location.pathname = "/projects/"+pref.programId+"/"+pref.navigationMenu
+              if(res.data.preferenceUrl){
+                window.location.pathname = res.data.preferenceUrl
               }else{
                 this.gotoDashboard()
               }
