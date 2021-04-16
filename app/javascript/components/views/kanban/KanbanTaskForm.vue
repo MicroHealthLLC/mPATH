@@ -1,5 +1,10 @@
 <template>
-  <TaskForm :facility="facility" :task="task" @on-close-form="redirectBack" />
+  <TaskForm
+    :facility="facility"
+    :task="task"
+    :fixedStage="stage"
+    @on-close-form="redirectBack"
+  />
 </template>
 
 <script>
@@ -7,7 +12,7 @@ import { mapGetters } from "vuex";
 import TaskForm from "../../dashboard/tasks/task_form";
 
 export default {
-  props: ["facility"],
+  props: ["facility", "stage"],
   components: {
     TaskForm,
   },

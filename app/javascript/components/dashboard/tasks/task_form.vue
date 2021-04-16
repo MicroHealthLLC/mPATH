@@ -160,7 +160,7 @@
     <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
       <div v-if="selectedTaskStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
+        <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
@@ -956,15 +956,18 @@
         ],
       }
     },
+    updated() {
+      if (this.fixedStage) {
+        this.selectedTaskStage = this.fixedStage;
+      }
+    },
     mounted() {
       if (!_.isEmpty(this.task)) {
         this.loadTask(this.task)
       }else{
         this.loadTask(this.DV_task)
       }
-      if (this.fixedStage) {
-        this.selectedTaskStage = this.taskStages.find(t => t.id === this.fixedStage)
-      }
+      
       this.loading = false
       this._ismounted = true
      },
@@ -1010,7 +1013,7 @@
       },  
       clearStages() {
         this.selectedTaskStage = null
-        this.taskStageId = ""
+        this.taskStageId = ""   
       },
       urlShortener(str, length, ending) {
         if (length == null) {

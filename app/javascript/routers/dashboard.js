@@ -189,6 +189,7 @@ export default new VueRouter({
           name: "KanbanTaskForm",
           path: "projects/:projectId/tasks/:taskId",
           component: KanbanTaskForm,
+          props: true,
         },
         {
           name: "KanbanIssues",
