@@ -119,7 +119,8 @@ export default new Vuex.Store({
       task: null,
       issue: null,
       note: null,
-      risk: null
+      risk: null,
+      lesson: null
     },
     mapZoomFilter: new Array,
     unfilteredFacilities: new Array,
@@ -328,6 +329,11 @@ export default new Vuex.Store({
     },
     setMapZoomFilter: (state, filteredIds) => state.mapZoomFilter = filteredIds,
     setRiskForManager: (state, {key, value}) => {
+      for (let k in state.managerView) {
+        state.managerView[k] = k == key ? value : null
+      }
+    },
+    setLessonForManager: (state, {key, value}) => {
       for (let k in state.managerView) {
         state.managerView[k] = k == key ? value : null
       }

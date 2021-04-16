@@ -146,10 +146,10 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
-import LessonForm from './lessons/lesson_form'
+import LessonForm from './lesson_form'
 
 export default {
-  name: "LessonsView",
+  name: "LessonsIndex",
   props: ['facility', 'from'],
   components: {
     LessonForm,
@@ -213,8 +213,8 @@ export default {
   methods: {
     ...mapMutations([
       'setMembersPerPageFilter',
-      'setTaskForManager'
-    ]),
+      'setLessonForManager'
+  ]),
     lessonCreated(risk) {
       this.facility.risks.unshift(risk)
       this.newRisk = false
@@ -231,11 +231,11 @@ export default {
       }
     },
     addNewLesson() {
-      this.setTaskForManager({key: 'lesson', value: {}})
+      this.setLessonForManager({key: 'lesson', value: {}})
       // Route to new task form page
-      // this.$router.push(
-      //   `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
-      // );
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/lessons/new`
+      );
     },
     saveLesson(){
       let formData = new FormData()
