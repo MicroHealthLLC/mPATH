@@ -211,6 +211,7 @@ export default new VueRouter({
           name: "KanbanRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: KanbanRiskForm,
+          props: true
         },
       ],
     },

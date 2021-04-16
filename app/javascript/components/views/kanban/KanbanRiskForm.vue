@@ -1,5 +1,10 @@
 <template>
-  <RiskForm :facility="facility" :risk="risk" @on-close-form="redirectBack" />
+  <RiskForm
+    :facility="facility"
+    :risk="risk"
+    :fixedStage="stage"
+    @on-close-form="redirectBack"
+  />
 </template>
 
 <script>
@@ -7,7 +12,7 @@ import { mapGetters } from "vuex";
 
 import RiskForm from "../../dashboard/risks/risk_form.vue";
 export default {
-  props: ["facility"],
+  props: ["facility", "stage"],
   components: { RiskForm },
   data() {
     return {

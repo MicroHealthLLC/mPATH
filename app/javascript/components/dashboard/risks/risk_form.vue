@@ -200,7 +200,7 @@
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
                   <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
-                    <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                    <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
@@ -1886,7 +1886,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "facilities"],
+  props: ["facility", "risk", "facilities", "fixedStage"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -1976,9 +1976,13 @@ export default {
           closable: false,
           disabled: true,
         },
-      ],
-      fixedStage: false
+      ]
     };
+  },
+  updated() {
+    if (this.fixedStage) {
+      this.selectedRiskStage = this.fixedStage;
+    }
   },
   mounted() {
     if (!_.isEmpty(this.risk)) {
@@ -1987,28 +1991,13 @@ export default {
       this.loading = false;
       this.loadRisk(this.DV_risk);
     }
-    if (this.fixedStage) {
-      this.selectedRiskStage = this.riskStages.find(
-        (t) => t.id === this.fixedStage
-      );
-    }
-    this.SET_RISK_FORM_OPEN(true)
-    if (this.DV_risk.text === "") {
-      this.fixedStage = true;
-    }
-  },
-  beforeDestroy() {
-    this.SET_RISK_FORM_OPEN(false)
-    this.SET_SELECTED_RISK({})
   },
   methods: {
     ...mapMutations([
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      "updateRisksHash",
-      "SET_RISK_FORM_OPEN",
-      "SET_SELECTED_RISK"
+      "updateRisksHash"
     ]),
     ...mapActions([
       "riskDeleted",
@@ -2258,7 +2247,6 @@ export default {
     cancelRiskSave() {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
-      this.SET_RISK_FORM_OPEN(false);
     },
     validateThenSave(e) {
       e.preventDefault();
@@ -3072,16 +3060,7 @@ export default {
           this.$refs.paginator.goToPage(1);
         }
       });
-    },
-    facility: {
-      handler({facilityName: newValue}, {facilityName: oldValue}) {
-        // Checks to see if user navigates to another project(facility)
-        if (newValue !== oldValue) {
-          this.SET_RISK_FORM_OPEN(false);
-          this.SET_SELECTED_RISK({});
-        }       
-      },
-    },
+    }
   },
 };
 </script>
