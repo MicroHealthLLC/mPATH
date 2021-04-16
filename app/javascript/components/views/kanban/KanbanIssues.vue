@@ -90,11 +90,17 @@ export default {
     ...mapMutations(["setAdvancedFilter", "setTaskTypeFilter"]),
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
-      this.fixedStageId = stage.id;
+
       // Route to new issue form page
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/issues/new`
-      );
+      this.$router.push({
+        name: "KanbanIssueForm",
+        params: {
+          programId: this.$route.params.programId,
+          projectId: this.$route.params.projectId,
+          issueId: "new",
+          stage: stage,
+        },
+      });
     },
     handleSearchQueryChange(searchElement) {
       this.searchStageId = $(searchElement).attr("data-stage-id");

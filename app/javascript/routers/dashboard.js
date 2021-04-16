@@ -200,6 +200,7 @@ export default new VueRouter({
           name: "KanbanIssueForm",
           path: "projects/:projectId/issues/:issueId",
           component: KanbanIssueForm,
+          props: true
         },
         {
           name: "KanbanRisks",
