@@ -219,7 +219,7 @@ export default {
       this.$router.push(`/programs/${this.$route.params.programId}/map`);
     },
     toggleTooltip(marker, key) {
-      this.tooltip.position = this.getLatLngForFacility(marker);
+      this.tooltip.position = this.getLatLngForFacility(marker.facility);
       this.tooltip.content = marker.facilityName;
       this.tooltip.opened = true;
       this.tooltip.key = key;
@@ -371,6 +371,8 @@ export default {
               (facility) => facility.facilityId == this.$route.params.projectId
             )
           );
+          // Display tooltip for current project
+          this.toggleTooltip(this.currentFacility);
         }
       },
     },
