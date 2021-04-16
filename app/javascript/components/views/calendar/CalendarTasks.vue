@@ -1,16 +1,16 @@
 <template>
   <div>
-    <TaskCalendarIndex :facility="facility" />
+    <TaskCalendar :facility="facility" />
   </div>
 </template>
 
 <script>
-import TaskCalendarIndex from "../../dashboard/tasks/task_calendar_index";
+import TaskCalendar from "../../dashboard/tasks/task_calendar";
 
 export default {
   props: ["facility"],
   components: {
-    TaskCalendarIndex,
+    TaskCalendar,
   },
 };
 </script>

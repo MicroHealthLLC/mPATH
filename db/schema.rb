@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_08_173138) do
+ActiveRecord::Schema.define(version: 2021_04_16_210508) do
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -543,6 +543,7 @@ ActiveRecord::Schema.define(version: 2021_04_08_173138) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
+    t.datetime "calendar_start_date"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

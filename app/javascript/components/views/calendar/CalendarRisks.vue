@@ -1,15 +1,15 @@
 <template>
   <div>
-    <RiskCalendarIndex :facility="facility" />
+    <RiskCalendar :facility="facility" />
   </div>
 </template>
 
 <script>
-import RiskSheetsIndex from "../../dashboard/risks/calendar/risk_calendar_index.vue";
+import RiskCalendar from "../../dashboard/risks/calendar/risk_calendar.vue";
 
 export default {
   props: ["facility"],
-  components: { RiskSheetsIndex },
+  components: { RiskCalendar },
 };
 </script>
 

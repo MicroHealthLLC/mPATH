@@ -1,15 +1,15 @@
 <template>
   <div>
-    <IssueCalendarIndex :facility="facility" />
+    <IssueCalendar :facility="facility" />
   </div>
 </template>
 
 <script>
-import IssueCalendarIndex from "../../dashboard/issues/issue_calendar_index.vue";
+import IssueCalendar from "../../dashboard/issues/issue_calendar.vue";
 
 export default {
   props: ["facility"],
-  components: { IssueCalendarIndex },
+  components: { IssueCalendar },
 };
 </script>
 
