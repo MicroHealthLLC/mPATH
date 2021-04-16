@@ -15,17 +15,6 @@ describe('Kanban Tasks View', function() {
     cy.logout()
   })
 
-  it('Open and close tasks from kanban view', function() {
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=tasks]').first().click()
-      })
-      cy.get('[data-cy=task_read_only_btn]').should('be.disabled')
-      cy.get('[data-cy=task_close_btn]').click({force: true})
-    })
-    cy.logout()
-  })
-
   it('Cannot open new Task form and edit/delete existing task', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')

@@ -35,7 +35,7 @@ Cypress.Commands.add("openKanbanIssue", () => {
   cy.get('[data-cy=issue_link]').within(() => {
     cy.contains('Issues').should('be.visible').click()
   })
-  cy.facilityUnderGroup()
+  // cy.facilityUnderGroup()
 })
 
 // Fill Issue form

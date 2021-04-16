@@ -34,7 +34,7 @@ Cypress.Commands.add("openKanbanTask", () => {
   cy.get('[data-cy=task_link]').within(() => {
     cy.contains('Tasks').should('be.visible').click()
   })
-  cy.facilityUnderGroup()
+  // cy.facilityUnderGroup()
 })
 
 // Fill Task form
