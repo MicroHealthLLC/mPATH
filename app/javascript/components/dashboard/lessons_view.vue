@@ -3,6 +3,14 @@
     <div class="container my-2 px-4 pt-2 wrapper" style="border-radius:3px">
       <h2 class="mt-1 mb-1"><span><i class="fas fa-document mr-2"></i></span>Lesson</h2>
       <div class="mb-0 p-b-0">
+        <lesson-form
+          :facility="facility"
+          :lesson="currentLesson"
+          @on-close-form="newLesson=false"
+          @lesson-created="lessonCreated"
+          @lesson-updated="lessonUpdated"
+          class="risk-form-modal"
+        ></lesson-form>
         <el-row>
           <el-col :span="9">
             <div class="input-group w-100 task-search-bar">
@@ -15,6 +23,14 @@
           <div class="total" data-cy="team_total">
             <button class="btn btn-md btn-info team-total" @click="saveLesson()">
               New Lesson
+            </button>
+            <button
+               class="btn btn-md btn-primary mr-3 addLessonBtn"
+              @click.prevent="addNewLesson"
+              data-cy="add_lesson"
+            >
+              <font-awesome-icon icon="plus-circle" />
+              Add Lesson
             </button>
           </div>
         </el-row>
@@ -130,12 +146,18 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
+import LessonForm from './lessons/lesson_form'
 
 export default {
   name: "LessonsView",
   props: ['facility', 'from'],
+  components: {
+    LessonForm,
+  },
   data() {
     return {
+      newLesson: false,
+      currentLesson: null,
       pages: [],
       lessonsList: [],
       currentPage: 1,
@@ -190,8 +212,31 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'setMembersPerPageFilter'
+      'setMembersPerPageFilter',
+      'setTaskForManager'
     ]),
+    lessonCreated(risk) {
+      this.facility.risks.unshift(risk)
+      this.newRisk = false
+      this.$emit('refresh-facility')
+    },
+    lessonUpdated(risk, refresh=true) {
+      let index = this.facility.risks.findIndex((t) => t.id == risk.id)
+      if (index > -1) Vue.set(this.facility.risks, index, risk)
+      if (refresh) {
+        this.newRisk = false
+        this.$emit('refresh-facility')
+      } else {
+        this.updateFacilityHash(this.facility)
+      }
+    },
+    addNewLesson() {
+      this.setTaskForManager({key: 'lesson', value: {}})
+      // Route to new task form page
+      // this.$router.push(
+      //   `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
+      // );
+    },
     saveLesson(){
       let formData = new FormData()
       formData.append('lesson[title]', "title")
@@ -242,7 +287,8 @@ export default {
 
     },
     fetchLessons(){
-      let url = `/projects/${this.currentProject.id}/lessons.json`
+      // let url = `/projects/${this.currentProject.id}/lessons.json`
+      let url = `/projects/2/lessons.json`
       let method = "GET"
 
       axios({
