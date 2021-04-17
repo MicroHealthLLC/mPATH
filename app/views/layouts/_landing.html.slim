@@ -30,13 +30,13 @@
                         ="Progress"
 
                     .row.font-md data-cy="tasks"
-                     .col-4
+                     .col-4.py-0
                       span.text-dark.mr-1
                        ="TASKS"
-                     .col-2.pl-0
+                     .col-2.pl-0.py-0
                       span.badge.lt-green.text-dark.badge-pill.font-weight-light.text-left
                        ="#{project.tasks.size}"
-                     .col-6
+                     .col-6.py-0
                       span
                         -ft = project.tasks
                         -progs = ft.map(&:progress)
@@ -46,13 +46,13 @@
                             ="#{percentage} %"
 
                     .row.font-md data-cy="issues"
-                      .col-4
+                      .col-4.py-0
                        span.text-dark.mr-1
                         ="ISSUES"
-                      .col-2.pl-0
+                      .col-2.pl-0.py-0
                        span.badge.lt-yellow.text-dark.badge-secondary.badge-pill.font-weight-light.text-left
                         ="#{project.issues.size}"
-                      .col-6
+                      .col-6.py-0
                        span
                         - fi = project.issues
                         -progs = fi.map(&:progress)
@@ -63,13 +63,13 @@
 
 
                     .row.font-md.mb-4 data-cy="risks"
-                     .col-4
+                     .col-4.py-0
                       span.text-dark.mr-1
                        ="RISKS"
-                     .col-2.pl-0
+                     .col-2.pl-0.py-0
                       span.badge.lt-red.text-dark.badge-secondary.badge-pill.font-weight-light.text-left
                        ="#{project.risks.size}"
-                     .col-6
+                     .col-6.py-0
                       span
                       - fr = project.risks
                       -progs = fr.map(&:progress)

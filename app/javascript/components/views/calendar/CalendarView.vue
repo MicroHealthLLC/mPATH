@@ -15,8 +15,9 @@
         @on-expand-facility="showFacility"
       />
     </div>
-    <div class="col-md-10 pr-4 right-panel">
-      <div
+    <div class="col-md-10 px-2">
+    <div class="right-panel">
+      <div 
         v-if="
           $route.name !== 'CalendarRollup' &&
             $route.name !== 'CalendarTaskForm' &&
@@ -45,6 +46,7 @@
         :facility="currentFacility"
         :facilityGroup="currentFacilityGroup"
       ></router-view>
+      </div>
     </div>
   </div>
 </template>
@@ -144,5 +146,6 @@ export default {
 .right-panel {
   height: calc(100vh - 100px);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>

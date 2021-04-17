@@ -1,6 +1,6 @@
 
 <template>
-  <v-app id="app" class="mt-4">
+  <v-app id="app" class="mt-4 mr-2">
   <v-row class="fill-height">
     <v-col class="pt-0">
       <v-sheet height="64">
