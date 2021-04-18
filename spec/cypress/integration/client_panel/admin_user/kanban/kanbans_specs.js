@@ -7,11 +7,9 @@ describe('Kanban View', function() {
   })
 
   it('Open kanban view to display the tasks and issues under each facility', function() {
-    cy.get('[data-cy=facility_tabs]').within(() => {
-      cy.contains('Tasks').should('be.visible')
-      cy.contains('Issues').should('be.visible')
-      cy.contains('Risks').should('be.visible')
-    })
+    cy.get('[data-cy=task_link]').contains('Tasks').should('be.visible')
+    cy.get('[data-cy=issue_link]').contains('Issues').should('be.visible')
+    cy.get('[data-cy=risk_link]').contains('Risks').should('be.visible')
     cy.logout()
   })
 })

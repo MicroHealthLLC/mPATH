@@ -4,7 +4,7 @@ describe('Sheets Risks View', function() {
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
-    cy.get('[data-cy=facility_tabs]').contains('Risks').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(4) > .badge').contains('Risks').should('be.visible').click()
   })
 
   it('Open Sheets Risks in a facility', function() {

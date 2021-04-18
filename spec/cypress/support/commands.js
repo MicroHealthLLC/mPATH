@@ -43,6 +43,7 @@ Cypress.Commands.add("openTeam", () => {
 Cypress.Commands.add("openKanban", () => {
   cy.openProject()
   cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
+  cy.facilityUnderGroup()
 })
 
 // Open Sheet view of a project

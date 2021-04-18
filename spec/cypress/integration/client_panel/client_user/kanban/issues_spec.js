@@ -13,17 +13,6 @@ describe('Kanban Issues View', function() {
     cy.logout()
   })
 
-  it('Open and close issues from kanban view', function() {
-    cy.get('[data-cy=kanban]').within(() => {
-      cy.get('[data-cy=kanban_col]').eq(1).within(() => {
-        cy.get('[data-cy=issues]').first().click()
-      })
-      cy.get('[data-cy=issue_read_only_btn]').should('be.disabled')
-      cy.get('[data-cy=issue_close_btn]').click({force: true})
-    })
-    cy.logout()
-  })
-
   it('Cannot open new Issue form and edit/delete existing issue', function() {
     cy.get('[data-cy=kanban]').within(() => {
       cy.get('[data-cy=kanban_add_btn]').should('not.exist')
