@@ -2,6 +2,7 @@
   <IssueForm
     :facility="facility"
     :issue="issue"
+    :fixedStage="stage"
     @on-close-form="redirectBack"
   />
 </template>
@@ -10,7 +11,7 @@
 import { mapGetters } from "vuex";
 import IssueForm from "../../dashboard/issues/issue_form.vue";
 export default {
-  props: ["facility"],
+  props: ["facility", "stage"],
   components: { IssueForm },
   data() {
     return {
