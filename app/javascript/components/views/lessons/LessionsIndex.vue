@@ -3,14 +3,14 @@
     <div class="container my-2 px-4 pt-2 wrapper" style="border-radius:3px">
       <h2 class="mt-1 mb-1"><span><i class="fas fa-document mr-2"></i></span>Lesson</h2>
       <div class="mb-0 p-b-0">
-        <lesson-form
+        <LessonForm
           :facility="facility"
           :lesson="currentLesson"
           @on-close-form="newLesson=false"
           @lesson-created="lessonCreated"
           @lesson-updated="lessonUpdated"
           class="risk-form-modal"
-        ></lesson-form>
+        ></LessonForm>
         <el-row>
           <el-col :span="9">
             <div class="input-group w-100 task-search-bar">
@@ -146,7 +146,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapMutations } from 'vuex'
-import LessonForm from './lesson_form'
+import LessonForm from './LessionForm'
 
 export default {
   name: "LessonsIndex",
