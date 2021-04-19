@@ -4,7 +4,7 @@ describe('Sheets Tasks View', function() {
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
-    cy.get('[data-cy=facility_tabs]').contains('Tasks').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(2)').contains('Tasks').should('be.visible').click()
   })
 
   it('Open Sheets tasks in a facility', function() {

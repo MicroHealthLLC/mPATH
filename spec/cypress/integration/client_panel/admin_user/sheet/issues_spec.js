@@ -4,7 +4,7 @@ describe('Sheets Issues View', function() {
     cy.appScenario('basic')
     cy.login('admin@test.com', 'T3$tAdmin')
     cy.openFacilitySheet()
-    cy.get('[data-cy=facility_tabs]').contains('Issues').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
   })
 
   it('Open Sheets issues in a facility', function() {
@@ -38,6 +38,8 @@ describe('Sheets Issues View', function() {
     })
     cy.get('[data-cy=issue_title]').clear({force: true}).type('Updated new test issue', {force: true}).should('have.value', 'Updated new test issue')
     cy.get('[data-cy=issue_save_btn]').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.get('[data-cy=issues_table]').within(() => {
       cy.get('[data-cy=issue_row]').contains('Updated new test issue').should('be.exist')
     })

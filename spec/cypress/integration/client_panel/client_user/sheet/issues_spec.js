@@ -4,7 +4,7 @@ describe('Sheets Issues View', function() {
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
-    cy.get('[data-cy=facility_tabs]').contains('Issues').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
   })
 
   it('Open Sheets issues in a facility', function() {

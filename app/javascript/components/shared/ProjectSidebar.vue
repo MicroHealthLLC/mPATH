@@ -82,7 +82,10 @@ export default {
       let url = this.$route.path;
 
       if (url.includes("sheet")) {
-        return "sheet";
+        return "sheet";        
+      } 
+       if (url.includes("calendar")) {
+        return "calendar";        
       } else {
         return "kanban";
       }

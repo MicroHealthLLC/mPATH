@@ -173,12 +173,13 @@ describe('Kanban Issues View', function() {
     })
     cy.get('[data-cy=issue_on_watch]').click({force: true})
     cy.get('[data-cy=issue_save_btn]').click({force: true})
+    cy.wait(1000)
+    cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.get('[data-cy=kanban_draggable]').within(() => {
       cy.get('[data-cy=issues]').first().within(() => {
         cy.get('[data-cy=on_watch_icon]').should('not.exist')
       })
     })
-    cy.get('[data-cy=issue_close_btn]').click({force: true})
     cy.logout()
   })
 
@@ -231,10 +232,11 @@ describe('Kanban Issues View', function() {
     it('Update issue from kanban', function() {
       cy.get('[data-cy=issue_title]').clear({force: true}).type('Updated new test issue').should('have.value', 'Updated new test issue')
       cy.get('[data-cy=issue_save_btn]').click({force: true})
+      cy.wait(1000)
+      cy.get('[data-cy=issue_close_btn]').click({force: true})
       cy.get('[data-cy=kanban_draggable]').within(() => {
         cy.get('[data-cy=issues]').first().contains('Updated new test issue').should('be.visible')
       })
-      cy.get('[data-cy=issue_close_btn]').click({force: true})
       cy.logout()
     })
   })

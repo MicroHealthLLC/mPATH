@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(version: 2021_04_12_174000) do
     t.string "sheets_view", default: "R"
     t.string "kanban_view", default: "R"
     t.string "risks", default: "R"
+    t.string "calendar_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -458,16 +459,17 @@ ActiveRecord::Schema.define(version: 2021_04_12_174000) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
-    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
+    t.text "type"
     t.text "probability_description"
+    t.datetime "approved_at"
+    t.boolean "approved"
     t.string "approval_time"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
@@ -550,6 +552,7 @@ ActiveRecord::Schema.define(version: 2021_04_12_174000) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
+    t.datetime "calendar_start_date"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -590,6 +593,8 @@ ActiveRecord::Schema.define(version: 2021_04_12_174000) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accountable_users", "projects"
+  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"

@@ -31,10 +31,10 @@ Cypress.Commands.add("createNewTask", () => {
 // Open Kanban Tasks
 Cypress.Commands.add("openKanbanTask", () => {
   cy.openKanban()
-  cy.get('[data-cy=facility_tabs]').within(() => {
+  cy.get('[data-cy=task_link]').within(() => {
     cy.contains('Tasks').should('be.visible').click()
   })
-  cy.facilityUnderGroup()
+  // cy.facilityUnderGroup()
 })
 
 // Fill Task form

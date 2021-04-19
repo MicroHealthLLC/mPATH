@@ -53,8 +53,9 @@ Rails.application.routes.draw do
     get :member_list, on: :member
     get :facility_manager, on: :member
     get :kanban, on: :member
-    get :map, on: :member
-    
+    get :map, on: :member    
+    get :calendar, on: :member
+
     resources :lessons
 
     resources :query_filters do
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
         delete "reset" => "query_filters#reset"
       end
     end
+
     resources :facilities do
       resources :notes, module: :facilities
       resources :issues do
