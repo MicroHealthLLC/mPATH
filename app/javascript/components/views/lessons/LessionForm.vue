@@ -515,12 +515,6 @@
             form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
           },
           {
-            label: "Checklist",
-            key: "tab3",
-            closable: false,
-            form_fields: ["Checklists"],
-          },
-          {
             label: "Files & Links",
             key: "tab4",
             closable: false,
@@ -533,11 +527,23 @@
             form_fields: ["Related Task", "Related Issue", "Related Risk"],
           },
           {
+            label: "Successes",
+            key: "tab4",
+            closable: false,
+            form_fields: ["Files"],
+          },
+          {
+            label: "Failures",
+            key: "tab4",
+            closable: false,
+            form_fields: ["Files"],
+          },
+          {
             label: "Updates",
             key: "tab6",
             closable: false,
             form_fields: ["Progress", "Updates"],
-          },
+          }
         ],
       }
     },
