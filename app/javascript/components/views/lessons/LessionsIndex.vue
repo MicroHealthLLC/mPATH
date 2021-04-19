@@ -3,14 +3,6 @@
     <div class="container my-2 px-4 pt-2 wrapper" style="border-radius:3px">
       <h2 class="mt-1 mb-1"><span><i class="fas fa-document mr-2"></i></span>Lesson</h2>
       <div class="mb-0 p-b-0">
-        <LessonForm
-          :facility="facility"
-          :lesson="currentLesson"
-          @on-close-form="newLesson=false"
-          @lesson-created="lessonCreated"
-          @lesson-updated="lessonUpdated"
-          class="risk-form-modal"
-        ></LessonForm>
         <el-row>
           <el-col :span="9">
             <div class="input-group w-100 task-search-bar">
@@ -21,9 +13,6 @@
             </div>
           </el-col>
           <div class="total" data-cy="team_total">
-            <button class="btn btn-md btn-info team-total" @click="saveLesson()">
-              New Lesson
-            </button>
             <button
                class="btn btn-md btn-primary mr-3 addLessonBtn"
               @click.prevent="addNewLesson"
@@ -167,6 +156,7 @@ export default {
   },
   mounted() {
     this.fetchLessons()
+    debugger;
   },
   computed: {
     ...mapGetters([
@@ -236,55 +226,6 @@ export default {
       this.$router.push(
         `/programs/${this.$route.params.programId}/lessons/new`
       );
-    },
-    saveLesson(){
-      let formData = new FormData()
-      formData.append('lesson[title]', "title")
-      formData.append('lesson[description]', "description")
-      formData.append('lesson[date]', "04/04/2021")
-      formData.append('lesson[task_type_id]', 1)
-      formData.append('lesson[task_id]', 1)
-      formData.append('lesson[risk_id]', 1)
-      formData.append('lesson[issue_id]', 1)
-      formData.append('lesson[issue_type_id]', 1)
-      formData.append('lesson[user_id]', 1)
-      formData.append('lesson[project_id]', 2)
-      // let url = `/projects/2/lessons.json`
-      // let method = "POST"
-
-      let url = `/projects/2/lessons/2.json`
-      let method = "PATCH"
-
-      axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
-        }
-      })
-      .then((response) => {
-        // var responseTask = humps.camelizeKeys(response.data.task)
-        // this.loadTask(responseTask)
-        //this.$emit(callback, responseTask)
-        // this.updateTasksHash({task: responseTask})
-        if (response.status === 200) {
-          this.fetchLessons()
-          this.$message({
-            message: `Lesson was saved successfully.`,
-            type: "success",
-            showClose: true,
-          });
-        }        
-      })
-      .catch((err) => {
-        // var errors = err.response.data.errors
-        console.log(err)
-      })
-      .finally(() => {
-        this.loading = false
-      })
-
     },
     fetchLessons(){
       // let url = `/projects/${this.currentProject.id}/lessons.json`

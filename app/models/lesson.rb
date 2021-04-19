@@ -9,7 +9,7 @@ class Lesson < ApplicationRecord
   has_many :lesson_users, dependent: :destroy
   has_many :users, through: :lesson_users
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many_attached :task_files, dependent: :destroy
+  has_many_attached :lesson_files, dependent: :destroy
 
   validates :title, :description, :date, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
@@ -28,6 +28,8 @@ class Lesson < ApplicationRecord
       :issue_type_id, 
       :user_id, 
       :project_id,
+      lesson_files: [],
+      user_ids: [],
       notes_attributes: [
         :id,
         :_destroy,
@@ -44,8 +46,57 @@ class Lesson < ApplicationRecord
 
     lesson.transaction do
       lesson.save
+      lesson.add_link_attachment(params)
     end
     lesson.reload
   end
+
+  def valid_url?(url)
+    uri = URI.parse(url)
+    (uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS) ) && !uri.host.nil?
+  rescue URI::InvalidURIError
+    false
+  end
+
+  def add_link_attachment(params = {})
+    link_files = params[:file_links]
+    if link_files && link_files.any?
+      link_files.each do |f|
+        next if !f.present? || f.nil? || !valid_url?(f)
+        self.lesson_files.attach(io: StringIO.new(f), filename: f, content_type: "text/plain")
+      end
+    end
+  end
+
+
+  # def assign_users(params)
+  #   resource_users = []
+
+  #   resource = self
+
+  #   user_ids = resource.user_ids
+
+  #   users_to_delete = []
+
+  #   if params[:user_ids].present?
+  #     params[:user_ids].each do |uid|
+  #       next if uid == "undefined"
+  #       if !user_ids.include?(uid.to_i)
+  #         user_ids << uid
+  #         # resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id)
+  #       end
+  #     end
+  #   end
+    
+  #   records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    
+  #   if users_to_delete.any?
+  #     resource_users.where(user_id: users_to_delete).destroy_all
+  #   end
+
+  #   if records_to_import.any?
+  #     LessonUser.import(records_to_import)
+  #   end
+  # end
 
 end

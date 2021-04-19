@@ -2,7 +2,7 @@
   <div>
     <form
       id="tasks-form"
-      @submit.prevent="saveTask"
+      @submit.prevent="saveLesson"
       class="mx-auto tasks-form"
       accept-charset="UTF-8"
       :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
@@ -13,27 +13,22 @@
             <span style="font-size: 16px; margin-right: 10px"
               ><i class="fas fa-building"></i
             ></span>
-            <router-link :to="projectNameLink">{{ facility.facilityName }}</router-link>
+            <router-link :to="projectNameLink">{{ this.currentProject.name }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            <router-link :to="`/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/tasks`">Tasks</router-link>
-            <el-icon
-              class="el-icon-arrow-right"
-              style="font-size: 12px"
-            ></el-icon>
-            <span v-if="DV_task.text.length > 0">{{ DV_task.text }}</span>
-            <span v-else style="color: gray">(Task Name)</span>
+            <span v-if="DV_lesson.text.length > 0">{{ DV_lesson.text }}</span>
+            <span v-else style="color: gray">(Lesson Name)</span>
           </h5>
         </div>
         <div class="ml-auto d-flex" v-if="_isallowed('read')">
           <button
             v-if="_isallowed('write')"
             class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
-            data-cy="task_save_btn"
+            data-cy="task_save_btn" @click="saveLession()"
           >
-            Save Task
+            Save Lesson
           </button>
           <button
             v-else
@@ -78,7 +73,7 @@
             v-for="(error, index) in errors.all()"
             :key="index"
             v-tooltip="{
-              content: 'Field is located on Task Info',
+              content: 'Field is located on Lesson Info',
               placement: 'left',
             }"
           >
@@ -87,36 +82,31 @@
         </ul>
       </div>
 
-  <!-- TASK INFO TAB #1 -->
+  <!-- Lesson INFO TAB #1 -->
   <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
     <div class="form-group pt-3 mx-4">
-      <label class="font-md">Task Name <span style="color: #dc3545">*</span></label>
-          <span v-if="_isallowed('write')" class="watch_action clickable float-right" @click.prevent.stop="toggleWatched" data-cy="task_on_watch">
-            <span v-show="DV_task.watched" class="check_box mr-1"><i class="far fa-check-square"></i></span>
-            <span v-show="!DV_task.watched" class="empty_box mr-1"><i class="far fa-square"></i></span>
-            <span><i class="fas fa-eye"></i></span><small style="vertical-align:text-top"> On Watch</small>
-          </span>
+      <label class="font-md">Lesson Name <span style="color: #dc3545">*</span></label>
           <input
-            name="Task Name"
+            name="Lesson Name"
             v-validate="'required'"
             type="text"
             class="form-control form-control-sm"
-            v-model="DV_task.text"
-            placeholder="Task Name"
+            v-model="DV_lesson.text"
+            placeholder="Lesson Name"
             :readonly="!_isallowed('write')"
-            :class="{'form-control': true, 'error': errors.has('Task Name') }"
+            :class="{'form-control': true, 'error': errors.has('Lesson Name') }"
             data-cy="task_name"
           />
-      <div v-show="errors.has('Task Name')" class="text-danger" data-cy="task_name_error">
-        {{errors.first('Task Name')}}
+      <div v-show="errors.has('Lesson Name')" class="text-danger" data-cy="task_name_error">
+        {{errors.first('Lesson Name')}}
       </div>
     </div>
         <div class="form-group mx-4">
         <label class="font-md">Description</label>
         <textarea
           class="form-control"
-          placeholder="Task brief description"
-          v-model="DV_task.description"
+          placeholder="Lesson brief description"
+          v-model="DV_lesson.description"
           rows="4"
           :readonly="!_isallowed('write')"
           data-cy="task_description"
@@ -210,67 +200,21 @@
     ></el-step>          
       </el-steps>
   </div>
-
-    <!-- Stages Row ends -->
-
-    <div class="form-row mx-4">
-        <div class="form-group col-md-6 pl-0">
-          <label class="font-md" >Start Date <span style="color: #dc3545">*</span></label>
-          <div :class="{ 'error-border': errors.has('Start Date') }">
-            <v2-date-picker
-              v-validate="'required'"
-              v-model="DV_task.startDate"
-              value-type="YYYY-MM-DD"
-              format="DD MMM YYYY"
-              placeholder="DD MM YYYY"
-              name="Start Date"
-              class="w-100 vue2-datepicker"
-              :disabled="!_isallowed('write')"
-              data-cy="task_start_date"
-            />
-          </div>
-          <div v-show="errors.has('Start Date')" class="text-danger" data-cy="task_start_date_error">
-            {{errors.first('Start Date')}}
-          </div>
-        </div>
-        <div class="form-group col-md-6 pr-0">
-          <label class="font-md" >Due Date <span style="color: #dc3545">*</span></label>
-          <div :class="{ 'error-border': errors.has('Due Date') }">
-            <v2-date-picker
-              v-validate="'required'"
-              v-model="DV_task.dueDate"
-              value-type="YYYY-MM-DD"
-              format="DD MMM YYYY"
-              placeholder="DD MM YYYY"
-              name="Due Date"
-              class="w-100 vue2-datepicker"
-              :disabled="!_isallowed('write') || DV_task.startDate === '' || DV_task.startDate === null"
-              :disabled-date="disabledDueDate"
-              data-cy="task_due_date"
-            />
-          </div>
-          <div v-show="errors.has('Due Date')" class="text-danger" data-cy="task_due_date_error">
-            {{errors.first('Due Date')}}
-          </div>
-        </div>
-      </div>
-
-      <!-- closing div for tab1 -->
 </div>
 
   <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
   <div class="form-group mb-0 pt-3 d-flex w-100">
         <div class="form-group user-select ml-4 mr-1 w-100">
           <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-md mb-0">Responsible</label>
+          <label class="font-md mb-0">Assign To:</label>
           <el-select
-           v-model="responsibleUsers"
+           v-model="users"
            class="w-100"
            filterable
            clearable
            track-by="id"
            value-key="id"
-           placeholder="Search and select Responsible User"
+           placeholder="Search and select User"
            :disabled="!_isallowed('write')"
            data-cy="task_owner"
            >
@@ -284,306 +228,9 @@
           </el-select>
 
         </div>
-        <div class="form-group user-select ml-1 mr-4 w-100">
-          <label class="font-md mb-0">Accountable</label>
-          <el-select
-           v-model="accountableTaskUsers"
-           class="w-100"
-           clearable               
-           track-by="id"           
-           value-key="id"                                                                                                                                                          
-           placeholder="Search and select Accountable User"
-          :disabled="!_isallowed('write')"
-           filterable       
-           >
-          <el-option
-            v-for="item in activeProjectUsers"
-            :value="item"
-            :key="item.id"
-            :label="item.fullName"
-            >
-          </el-option>
-          </el-select>
-        </div>
-  </div>
-  <div class="mt-0 d-flex w-100">
-        <div class="ml-4 form-group w-100 mr-1">
-          <label class="font-md mb-0">Consulted</label>
-          <el-select 
-           v-model="consultedTaskUsers" 
-           class="w-100"           
-           track-by="id"    
-           value-key="id"   
-           :multiple="true"                                                                                                                                                       
-           placeholder="Search and select Consulted Users"
-          :disabled="!_isallowed('write')"
-           filterable
-           >
-          <el-option
-            v-for="item in activeProjectUsers"
-            :value="item"
-            :key="item.id"
-            :label="item.fullName"
-            >
-          </el-option>
-          </el-select>
-        </div>
-        <div class="ml-1 form-group mr-4 w-100">
-          <label class="font-md mb-0">Informed</label>
-          <el-select 
-           v-model="informedTaskUsers" 
-           class="informed w-100"           
-           track-by="id"    
-           value-key="id"   
-           multiple  
-           filterable                                                                                                                                                     
-           placeholder="Search and select Informed Users"
-          :disabled="!_isallowed('write')"
-
-           >
-          <el-option
-            v-for="item in activeProjectUsers"
-            :value="item"
-            :key="item.id"
-            :label="item.fullName"
-            >
-          </el-option>
-          </el-select>
-        </div>
-    </div>
   </div>
 
-<!-- CHECKLIST TAB #3-->
-
-<div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
-   <div class="form-group pt-3 ml-4 mr-5">
-        <label class="font-md mb-0">Progress (in %)</label>
-        <span class="ml-3">
-          <label class="font-sm mb-0 d-inline-flex align-items-center">
-            <input type="checkbox"
-            v-model="DV_task.autoCalculate"
-            :disabled="!_isallowed('write')"
-            :readonly="!_isallowed('write')">
-            <span>&nbsp;&nbsp;Auto Calculate Progress</span></label>
-        </span>
-        <el-slider
-          v-model="DV_task.progress"
-          :disabled="!_isallowed('write') || DV_task.autoCalculate"
-          :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
-          :format-tooltip="(value) => value + '%'"
-          class="mx-2"
-        ></el-slider>
-      </div>
-
-  <div class="form-group pt-3 mx-4" >
-    <label class="font-md">Checklists</label>
-    <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addChecks">
-      <i class="fas fa-plus-circle" ></i>
-    </span>
-    <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length > 1">
-       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> items
-    </span>
-     <span class="float-right bg-dark font-sm text-light display-length px-1" v-if="filteredChecks.length == 1">
-       Displaying: <span class="mx-1">{{filteredChecks.length}}</span> item
-    </span>
-    <div v-if="filteredChecks.length > 0">
-      <draggable :move="handleMove" @change="(e) => handleEnd(e, DV_task.checklists)" :list="DV_task.checklists" :animation="100" ghost-class="ghost-card" >
-        <div v-for="(check, index) in DV_task.checklists" :key="index"  class="d-flex w-100 mb-3 drag" v-if="!check._destroy && isMyCheck(check)">
-          <div class="form-control h-100 check-items pb-0" style="background-color:#fafafa;position:relative">
-            <div class="row" style="width:97%">
-              <div class="col-8 justify-content-start" >
-                <input type="checkbox" name="check" :checked="check.checked" @change="updateCheckItem($event, 'check', index)" :key="`check_${index}`" :disabled="!_isallowed('write') || !check.text.trim()">
-                <input :value="check.text" name="text" @input="updateCheckItem($event, 'text', index)" :key="`text_${index}`" placeholder="Checkpoint name here" type="text" class="checklist-text pl-1" maxlength="80" :readonly="!_isallowed('write')">
-              </div>
-                 <div v-if="isSheetsView || isKanbanView" class="col-1 pl-0 pr-0">
-                   <span class="font-sm dueDate">Due Date:</span>
-                </div>
-                 <div v-if="isSheetsView || isKanbanView" class="col-3 pl-0" style="margin-left:-25px">
-                    <v2-date-picker
-                    v-model="check.dueDate"
-                    :value="check.dueDate"
-                    :disabled="!_isallowed('write') || !check.text"
-                    @selected="updateCheckItem($event, 'dueDate', index)"
-                    :key="`dueDate_${index}`"
-                    value-type="YYYY-MM-DD"
-                    format="DD MMM YYYY"
-                    placeholder="DD MM YYYY"
-                    name="dueDate"
-                    class="w-100 vue2-datepicker d-flex ml-auto"
-                    :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"
-                  />
-                </div>
-            </div>
-
-            <!-- Collpase section begins here -->
-         <el-collapse id="roll_up" style="background-color:#fafafa">
-       <el-collapse-item title="Details" name="1" style="background-color:#fafafa">
-          <div v-if="isMapView" class="row justify-content-end pt-2 pb-5" style="background-color:#fafafa;position:relative">
-            <div  class="d-flex col mb-0" style="position:absolute">
-              Due Date:
-                <v2-date-picker
-                    v-model="check.dueDate"
-                    :value="check.dueDate"
-                    :disabled="!_isallowed('write') || !check.text"
-                    @selected="updateCheckItem($event, 'dueDate', index)"
-                    :key="`dueDate_${index}`"
-                    value-type="YYYY-MM-DD"
-                    format="DD MMM YYYY"
-                    placeholder="DD MM YYYY"
-                    name="dueDate"
-                    class="w-100 vue2-datepicker d-flex ml-auto"
-                    :disabled-date="disabledDateRange"
-                    :class="{ disabled: disabledDateRange }"
-                  />
-              </div>
-          </div>
-            <div class="row justify-content-end pt-2" style="background-color:#fafafa;position:inherit">
-              <div class="simple-select d-flex form-group col mb-0" style="position:absolute">
-               <div class="d-flex w-100" style="padding-left:6.1rem">
-                <span class="font-sm pt-2 pr-2">Assigned To:</span>
-                <el-select
-                  v-model="check.user"
-                  class="w-75"
-                  track-by="id"
-                  clearable
-                  value-key="id"
-                  filterable
-                  :disabled="!_isallowed('write') || !check.text"
-                  placeholder="Search and select user"
-
-                  >
-                <el-option
-                  v-for="item in activeProjectUsers"
-                  :value="item"
-                  :key="item.id"
-                  :label="item.fullName"
-                  >
-                </el-option>
-                </el-select>
-
-                <!-- <multiselect
-                  v-model="check.user"
-                  track-by="id"
-                  label="fullName"
-                  class="w-75"
-                  placeholder="Search and select users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :disabled="!_isallowed('write') || !check.text"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  >
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.fullName}}</span>
-                    </div>
-                  </template>
-                </multiselect> -->
-               </div>
-              </div>
-              <!-- <div class="simple-select form-group col mb-0">
-
-              </div> -->
-            </div>
-
-            <!-- Start Checkbox Progress List -->
-            <!-- Create component to manage progress list -->
-            <div class="pt-5 pb-3" style="background-color:#fafafa">
-                Progress Update
-               <span v-if="editToggle">
-               <span class="ml-2 clickable">
-                 <font-awesome-icon icon="plus-circle" class="mr-1 text-danger"/>
-               </span>
-               </span>
-                <span v-else>
-               <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addProgressList(check)">
-                 <font-awesome-icon icon="plus-circle" class="mr-1"/>
-               </span>
-               </span>
-
-              <table v-if="check.progressLists.length > 0" style="width:100%" class="mt-1">
-                  <thead>
-                    <tr>
-                      <th style="width:60%">Progress</th>
-                      <th>Last Updated</th>
-                      <th>By</th>
-                      <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(progress, pindex) in check.progressLists.slice().reverse()"
-                      :key="pindex"
-                      v-if="!progress._destroy">
-                    <td>
-                      <span v-if="editToggle">
-                       <input :value="progress.body"
-                              name="text"
-                             :class="{'red-border':!progress.user}"
-                              @input="updateProgressListItem($event, 'text', progress)"
-                              :key="`ptext_${pindex}`"
-                              placeholder="Type Progress update here"
-                              type="text"
-                              class="checklist-text pl-1"
-                              maxlength="80"
-                              >
-                       </span>
-                       <span v-else>
-                        {{progress.body}}
-                       </span>
-                    </td>
-                    <td>
-                      <span v-if="!progress.user"></span>
-                      <span v-else> {{moment(progress.updatedAt).format('DD MMM YYYY, h:mm a')}} </span>
-                    </td>
-                    <td >
-                       <span v-if="progress.user">
-                         <span>
-                         {{progress.user.fullName}}</span>
-                       </span>
-                       <span v-else>
-                         {{ $currentUser.full_name }}
-                       </span>
-                    </td>
-                    <td v-if="_isallowed('write') || _isallowed('delete')">
-                       <span class="pl-2" v-tooltip="`Save`" v-if="!progress.user" @click.prevent="saveTask">
-                        <font-awesome-icon icon="save" class="text-primary clickable" />
-                      </span>
-                      <span v-tooltip="`Edit`" v-if="progress.user" class="px-2">
-                        <font-awesome-icon icon="pencil-alt" class="text-info clickable" @click.prevent="editProgress" :readonly="!_isallowed('write')" />
-                      </span>
-                      <span v-tooltip="`Delete`" class="pl-1" v-if="progress.user">
-                        <font-awesome-icon icon="trash" class="text-danger clickable"  v-if="_isallowed('write')" @click.prevent="destroyProgressList(check, progress, pindex)"/>
-                      </span>
-                    </td>
-                    </tr>
-
-                  </tbody>
-              </table>
-              <div v-else class="text-danger">
-                No Checklist Progress Updates to Display
-              </div>
-            <!-- End Checkbox Progress List -->
-            </div>
-              </el-collapse-item>
-          </el-collapse>
-
-
-          </div>
-          <span class="del-check clickable" v-if="_isallowed('write')" @click.prevent="destroyCheck(check, index)">
-              <i class="fas fa-times"></i>
-          </span>
-
-
-        </div>
-
-      </draggable>
-    </div>
-    <p v-else class="text-danger font-sm">No checks..</p>
   </div>
- <!-- closing div for tab2 -->
-</div>
 
 
    <!-- FILES TAB # 4-->
@@ -640,7 +287,7 @@
                    </div>
 
                   <div
-                    v-for="(file, index) in DV_task.taskFiles.slice().reverse()"
+                    v-for="(file, index) in DV_lesson.lessonFiles.slice().reverse()"
                     :key="index"
                     class="d-flex mb-2 w-75"
                     v-if="!file.id && file.link"
@@ -708,14 +355,13 @@
 <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
 
       <div class="form-group user-select pt-3 mx-4">
-        <label class="font-md mb-0">Related Tasks</label>
+        <label class="font-md mb-0">Related Task</label>
          <el-select
           v-model="relatedTasks"
           class="w-100"
           track-by="id"
           value-key="id"
           filterable
-          multiple
          :disabled="!_isallowed('write')"
           placeholder="Search and select Related-tasks"
 
@@ -728,36 +374,17 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedTasks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-tasks"
-          :options="filteredTasks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect> -->
+
       </div>
 
       <div class="form-group user-select mx-4">
-        <label class="font-md mb-0">Related Issues</label>
+        <label class="font-md mb-0">Related Issue</label>
           <el-select
           v-model="relatedIssues"
           class="w-100"
           track-by="id"
           value-key="id"
           filterable
-          multiple
           :disabled="!_isallowed('write')"
           placeholder="Search and select Related-issues"
 
@@ -770,35 +397,16 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedIssues"
-          track-by="id"
-          label="title"
-          placeholder="Search and select Related-issues"
-          :options="filteredIssues"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.title}}</span>
-            </div>
-          </template>
-        </multiselect> -->
+
       </div>
         <div class="form-group user-select mx-4">
-        <label class="font-md mb-0">Related Risks</label>
+        <label class="font-md mb-0">Related Risk</label>
          <el-select
           v-model="relatedRisks"
           class="w-100"
           track-by="id"
           value-key="id"
           filterable
-          multiple
          :disabled="!_isallowed('write')"
           placeholder="Search and select Related-risks"
 
@@ -811,25 +419,6 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedRisks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-risks"
-          :options="filteredRisks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect> -->
       </div>
 
 
@@ -894,10 +483,7 @@
         editTimeLive:"",
         selectedTaskType: null,
         selectedTaskStage: null,
-        responsibleUsers: null,
-        accountableTaskUsers:null,
-        consultedTaskUsers:[],
-        informedTaskUsers:[],
+        users: [],
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
@@ -944,7 +530,7 @@
             label: "Related",
             key: "tab5",
             closable: false,
-            form_fields: ["Related Tasks", "Related Issues", "Related Risks"],
+            form_fields: ["Related Task", "Related Issue", "Related Risk"],
           },
           {
             label: "Updates",
@@ -956,8 +542,8 @@
       }
     },
     mounted() {
-      if (!_.isEmpty(this.task)) {
-        this.loadTask(this.task)
+      if (!_.isEmpty(this.lesson)) {
+        this.loadTask(this.lesson)
       }else{
         this.loadTask(this.DV_lesson)
       }
@@ -986,17 +572,14 @@
           checklistDueDate: '',
           taskTypeId: '',
           taskStageId: '',
-          responsibleUserIds: [],
-          accountableUserIds:[],
-          consultedUserIds:[],
-          informedUserIds:[],
+          userIds: [],
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
           description: '',
           progress: 0,
           autoCalculate: true,
-          taskFiles: [],
+          lessonFiles: [],
           checklists: [],
           notes: []
         }
@@ -1067,10 +650,11 @@
          // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(task)}
-        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.responsibleUserIds.includes(u.id))[0]
-        this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.accountableUserIds.includes(u.id))[0]
-        this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.consultedUserIds.includes(u.id))
-        this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.informedUserIds.includes(u.id))
+        this.userIds = _.filter(this.activeProjectUsers, u => this.DV_lesson.responsibleUserIds.includes(u.id))[0]
+        // this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))[0]
+        // this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.accountableUserIds.includes(u.id))[0]
+        // this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.consultedUserIds.includes(u.id))
+        // this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.informedUserIds.includes(u.id))
         this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_lesson.subIssueIds.includes(u.id))
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_lesson.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_lesson.subRiskIds.includes(u.id))
@@ -1084,12 +668,12 @@
         })
       },
       addFile(files, append = true) {
-        let _files = append ? [...this.DV_lesson.taskFiles] : []
+        let _files = append ? [...this.DV_lesson.lessonFiles] : []
         for (let file of files) {
           file.guid = this.guid()
           _files.push(file)
         }
-        this.DV_lesson.taskFiles = _files
+        this.DV_lesson.lessonFiles = _files
       },
       deleteFile(file) {
         if (!file) return;
@@ -1097,30 +681,30 @@
         if (!confirm) return;
 
         if (file.uri || file.link) {
-          let index = this.DV_lesson.taskFiles.findIndex(f => f.guid === file.guid)
+          let index = this.DV_lesson.lessonFiles.findIndex(f => f.guid === file.guid)
           if(file.id){
-            Vue.set(this.DV_lesson.taskFiles, index, {...file, _destroy: true})
+            Vue.set(this.DV_lesson.lessonFiles, index, {...file, _destroy: true})
             this.destroyedFiles.push(file)
           }
-          this.DV_lesson.taskFiles.splice(this.DV_lesson.taskFiles.findIndex(f => f.guid === file.guid), 1)
+          this.DV_lesson.lessonFiles.splice(this.DV_lesson.lessonFiles.findIndex(f => f.guid === file.guid), 1)
         }
         else if (file.name) {
-          this.DV_lesson.taskFiles.splice(this.DV_lesson.taskFiles.findIndex(f => f.guid === file.guid), 1)
+          this.DV_lesson.lessonFiles.splice(this.DV_lesson.lessonFiles.findIndex(f => f.guid === file.guid), 1)
         }
       },
-       toggleWatched() {
-        if (this.DV_lesson.watched) {
-          let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
-          if (!confirm) {return}
-        }
-          this.DV_lesson = {...this.DV_lesson, watched: !this.DV_lesson.watched}
-          this.updateWatchedTasks(this.DV_lesson)
+      toggleWatched() {
+      if (this.DV_lesson.watched) {
+        let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
+        if (!confirm) {return}
+      }
+        this.DV_lesson = {...this.DV_lesson, watched: !this.DV_lesson.watched}
+        this.updateWatchedTasks(this.DV_lesson)
       },
       cancelSave() {
         this.$emit('on-close-form')
         this.setTaskForManager({key: 'task', value: null})
       },
-      saveTask() {
+      saveLesson() {
         if (!this._isallowed('write')) return
         this.$validator.validate().then((success) =>
         {
@@ -1131,56 +715,28 @@
           this.editToggle = !this.editToggle
           this.loading = true
           let formData = new FormData()
-          formData.append('task[text]', this.DV_lesson.text)
-          formData.append('task[due_date]', this.DV_lesson.dueDate)
-          formData.append('task[start_date]', this.DV_lesson.startDate)
-          formData.append('task[task_type_id]', this.DV_lesson.taskTypeId)
-          formData.append('task[task_stage_id]', this.DV_lesson.taskStageId)
-          formData.append('task[progress]', this.DV_lesson.progress)
-          formData.append('task[auto_calculate]', this.DV_lesson.autoCalculate)
-          formData.append('task[description]', this.DV_lesson.description)
-          formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
-          // RACI USERS START HERE Awaiting backend work
 
-          //Responsible USer Id
-            //  formData.append('responsible_user_ids', this.DV_lesson.responsibleUserIds)
-          if (this.DV_lesson.responsibleUserIds && this.DV_lesson.responsibleUserIds.length) {
-            for (let u_id of this.DV_lesson.responsibleUserIds) {
-              formData.append('responsible_user_ids[]', u_id)
-            }
-          }
-          else {
-            formData.append('responsible_user_ids[]', [])
-          }
-          // Accountable UserId
-         if (this.DV_lesson.accountableUserIds && this.DV_lesson.accountableUserIds.length) {
-            for (let u_id of this.DV_lesson.accountableUserIds) {
-              formData.append('accountable_user_ids[]', u_id)
-            }
-          }
-          else {
-            formData.append('accountable_user_ids[]', [])
-          }
-          // Consulted UserId
+          formData.append('lesson[title]', "title")
+          formData.append('lesson[description]', "description")
+          formData.append('lesson[date]', "04/04/2021")
 
-          if (this.DV_lesson.consultedUserIds.length) {
-            for (let u_id of this.DV_lesson.consultedUserIds) {
-              formData.append('consulted_user_ids[]', u_id)
+          formData.append('lesson[task_type_id]', 1)
+          formData.append('lesson[task_id]', 1)
+          formData.append('lesson[risk_id]', 1)
+          formData.append('lesson[issue_id]', 1)
+          formData.append('lesson[issue_type_id]', 1)
+          formData.append('lesson[user_id]', 1)
+          formData.append('lesson[project_id]', 2)
+          
+          if (this.DV_lesson.userIds.length) {
+            for (let u_id of this.DV_lesson.userIds) {
+              formData.append('user_ids[]', u_id)
             }
           }
           else {
-            formData.append('consulted_user_ids[]', [])
+            formData.append('user_ids[]', [])
           }
-          // Informed UserId
 
-          if (this.DV_lesson.informedUserIds.length) {
-            for (let u_id of this.DV_lesson.informedUserIds) {
-              formData.append('informed_user_ids[]', u_id)
-            }
-          }
-          else {
-            formData.append('informed_user_ids[]', [])
-          }
           // RACI USERS ABOVE THIS LINE  Awaiting backend work
           // More RACI Users in Computed section below
           if (this.DV_lesson.subTaskIds.length) {
@@ -1240,23 +796,26 @@
               formData.append(`task[notes_attributes][${i}][${key}]`, value)
             }
           }
-          for (let file of this.DV_lesson.taskFiles) {
+          for (let file of this.DV_lesson.lessonFiles) {
             if(file.id) continue
             if (!file.link) {
-              formData.append('task[task_files][]', file)
+              formData.append('task[lesson_files][]', file)
             }else if(file.link){
               formData.append('file_links[]', file.name)
             }
           }
-          let url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/tasks.json`
+
+          let url = `/projects/${this.currentProject.id}/lessons.json`
           let method = "POST"
           let callback = "task-created"
+
           if (this.task && this.task.id) {
-            url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
+            // url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
+            url = `/projects/${this.currentProject.id}/lessons/${this.task.id}.json`
             method = "PUT"
             callback = "task-updated"
           }
-          // var beforeSaveTask = this.task
+          // var beforesaveLesson = this.task
           axios({
             method: method,
             url: url,
@@ -1266,27 +825,28 @@
             }
           })
           .then((response) => {
-            // if(beforeSaveTask.facilityId && beforeSaveTask.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforeSaveTask))
-            var responseTask = humps.camelizeKeys(response.data.task)
-            this.loadTask(responseTask)
+            // if(beforesaveLesson.facilityId && beforesaveLesson.projectId )
+            //   this.$emit(callback, humps.camelizeKeys(beforesaveLesson))
+            // var responseTask = humps.camelizeKeys(response.data.task)
+            // this.loadTask(responseTask)
             //this.$emit(callback, responseTask)
-            this.updateTasksHash({task: responseTask})
+            // this.updateTasksHash({task: responseTask})
             if (response.status === 200) {
               this.$message({
-                message: `${response.data.task.text} was saved successfully.`,
+                // message: `${response.data.task.text} was saved successfully.`,
+                 message: `Lesson was saved successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
             //Route to newly created task form page
-            if (this.$route.path.includes("sheet")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            } else if (this.$route.path.includes("map")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            } else {
-              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            }
+            // if (this.$route.path.includes("sheet")) {
+            //   this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            // } else if (this.$route.path.includes("map")) {
+            //   this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            // } else {
+            //   this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
+            // }
             
           })
           .catch((err) => {
@@ -1308,7 +868,7 @@
         this.DV_lesson.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addFilesInput(){
-        this.DV_lesson.taskFiles.push({name: "", uri: '', link: true,guid: this.guid()})
+        this.DV_lesson.lessonFiles.push({name: "", uri: '', link: true,guid: this.guid()})
       },
       addNote() {
         this.DV_lesson.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -1332,14 +892,14 @@
         if (!confirm) return;
         let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
         Vue.set(check.progressLists, i, {...progressList, _destroy: true})
-        this.saveTask()
+        this.saveLesson()
       },
       destroyCheck(check, index) {
         let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
         if (!confirm) return;
         let i = check.id ? this.DV_lesson.checklists.findIndex(c => c.id === check.id) : index
         Vue.set(this.DV_lesson.checklists, i, {...check, _destroy: true})
-        this.saveTask()
+        this.saveLesson()
       },
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
@@ -1426,7 +986,7 @@
         return _.filter(this.DV_lesson.checklists, c => !c._destroy)
       },
       filteredFiles() {
-        return _.filter(this.DV_lesson.taskFiles, f => !f._destroy)
+        return _.filter(this.DV_lesson.lessonFiles, f => !f._destroy)
       },
       C_myTasks() {
         return _.map(this.myActionsFilter, 'value').includes('tasks')
@@ -1493,41 +1053,12 @@
       "DV_lesson.autoCalculate"(value) {
         if (value) this.calculateProgress()
       },
-  // RACI USERS HERE awaiting backend work
-   responsibleUsers: {
+      users: {
         handler: function(value) {
           if (value){
-              this.DV_lesson.responsibleUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+              this.DV_lesson.userIds = _.uniq(_.map( _.flatten([value]) , 'id'))
           }else{
-            this.DV_lesson.responsibleUserIds = null
-          }
-        }, deep: true
-      },
-    accountableTaskUsers: {
-        handler: function(value) {
-          if (value){
-            this.DV_lesson.accountableUserIds = _.uniq(_.map( _.flatten([value]) , 'id'))
-          }else{
-            this.DV_lesson.accountableUserIds = null
-          }
-        }, deep: true
-      },
-        consultedTaskUsers: {
-        handler: function(value) {
-          if (value) {
-
-            this.DV_lesson.consultedUserIds = _.uniq(_.map(value, 'id'))
-          }else{
-            this.DV_lesson.consultedUserIds = []
-          }
-        }, deep: true
-      },
-      informedTaskUsers: {
-        handler: function(value) {
-          if (value){
-            this.DV_lesson.informedUserIds = _.uniq(_.map(value, 'id'))
-          }else{
-            this.DV_lesson.informedUserIds = []
+            this.DV_lesson.userIds = null
           }
         }, deep: true
       },
