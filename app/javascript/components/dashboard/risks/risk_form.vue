@@ -1115,10 +1115,11 @@
                   class="w-100"
                   track-by="id"
                   value-key="id"
+                
                   clearable
                   filterable
                   placeholder="Search and select Risk Approver"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"             
+                  :disabled="!_isallowed('write') || DV_risk.approved"             
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -1134,18 +1135,12 @@
               <div
                 v-if="riskApprover && riskApprover !== null"
                 class="col-md-4 pl-0 py-2 mb-0 text-center"
-              >
-                <div
-                  v-if="
-                    this.DV_risk.riskApprover ||
-                      this.DV_risk.riskApprover !== null
-                  "
-                >
+              >                    
                   <label class="font-sm mb-0">Risk Approach Approved</label>
-                  <span
+                   <span
                     v-if="
-                      this.DV_risk.riskApprover[0] && this.$currentUser.full_name ==
-                        this.DV_risk.riskApprover[0].name
+                     $currentUser.full_name ==
+                      riskApprover.fullName
                     "
                     class="d-block approver-pointer"
                     @click.prevent="toggleApproved"
@@ -1161,8 +1156,7 @@
                       ><i class="far fa-square"></i
                     ></span>
                     <small style="vertical-align: text-top">Approved</small>
-                  </span>
-                </div>
+                  </span>               
               </div>
               <div v-else class="col-md-4 pl-0 py-2 mb-0 text-center">
                 <label class="font-sm mb-0">Risk Approach Approved</label>
@@ -1206,7 +1200,7 @@
                   disabled
                 />
                 <!-- </span>    -->
-                <span v-if="_isallowed('write') && this.DV_risk.text">
+                <span v-if="_isallowed('write') && DV_risk.text">
                   <button
                     v-if="isMapView"
                     class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
@@ -2230,7 +2224,7 @@ export default {
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
       return `${progressList.user.fullName} at ${date} ${time} `;
     },
-    resetApprovalSection() {
+     resetApprovalSection() {
       if (this.DV_risk.approved) {
         this.DV_risk.approved = !this.DV_risk.approved;
       }
