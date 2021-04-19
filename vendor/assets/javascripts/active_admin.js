@@ -1055,11 +1055,7 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-            </li>  
-            <li class="choice d-flex">
-            <label>Calendar</label>
-            <label class="d-flex align-center"><input type="checkbox" v-model="calendar_view.read">Read</label>
-           </li>       
+            </li>               
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
