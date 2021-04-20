@@ -1684,7 +1684,7 @@ export default new Vuex.Store({
             let facility = Object.assign({}, {...res.data, ...res.data.facility})
             let index = getters.facilities.findIndex(f => f.id == facility.id)
             if (index > -1) commit('updateFacilities', {index, facility})
-            return resolve(facility)
+            return resolve(res)
           })
           .catch((err) => {
             console.error(err)

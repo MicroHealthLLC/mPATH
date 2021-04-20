@@ -124,7 +124,17 @@ export default {
             }            
           }
         }
-        this.updateKanbanTaskIssues({projectId, facilityId, data, type: this.kanbanType})
+        this.updateKanbanTaskIssues({ projectId, facilityId, data, type: this.kanbanType, })
+          .then((res) => {
+            if (res.status === 200 && item.added) {
+              this.$message({
+                message: 'Stage was updated successfully.',
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+
         this.movingSlot = ''
       }
     },

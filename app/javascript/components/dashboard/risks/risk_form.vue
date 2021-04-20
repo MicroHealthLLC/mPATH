@@ -200,7 +200,7 @@
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
                   <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
-                    <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                    <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
                   class="exampleOne mt-3" 
@@ -218,7 +218,6 @@
                   :load="log(riskStages)" 
                   :value="item"
                   style="cursor:pointer"
-                  v-if="_isallowed('write')"
                   @click.native="selectedStage(item)"        
                   :title="item.name"   
                   description=""                    
@@ -244,7 +243,6 @@
                   :load="log(riskStages)" 
                   :value="item"
                   style="cursor:pointer"
-                  v-if="_isallowed('write')"
                   @click.native="selectedStage(item)"        
                   :title="item.name"   
                   description=""                    
@@ -1115,10 +1113,11 @@
                   class="w-100"
                   track-by="id"
                   value-key="id"
+                
                   clearable
                   filterable
                   placeholder="Search and select Risk Approver"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"             
+                  :disabled="!_isallowed('write') || DV_risk.approved"             
                 >
                   <el-option
                     v-for="item in activeProjectUsers"
@@ -1134,18 +1133,12 @@
               <div
                 v-if="riskApprover && riskApprover !== null"
                 class="col-md-4 pl-0 py-2 mb-0 text-center"
-              >
-                <div
-                  v-if="
-                    this.DV_risk.riskApprover ||
-                      this.DV_risk.riskApprover !== null
-                  "
-                >
+              >                    
                   <label class="font-sm mb-0">Risk Approach Approved</label>
-                  <span
+                   <span
                     v-if="
-                      this.DV_risk.riskApprover[0] && this.$currentUser.full_name ==
-                        this.DV_risk.riskApprover[0].name
+                     $currentUser.full_name ==
+                      riskApprover.fullName
                     "
                     class="d-block approver-pointer"
                     @click.prevent="toggleApproved"
@@ -1161,8 +1154,7 @@
                       ><i class="far fa-square"></i
                     ></span>
                     <small style="vertical-align: text-top">Approved</small>
-                  </span>
-                </div>
+                  </span>               
               </div>
               <div v-else class="col-md-4 pl-0 py-2 mb-0 text-center">
                 <label class="font-sm mb-0">Risk Approach Approved</label>
@@ -1206,7 +1198,7 @@
                   disabled
                 />
                 <!-- </span>    -->
-                <span v-if="_isallowed('write') && this.DV_risk.text">
+                <span v-if="_isallowed('write') && DV_risk.text">
                   <button
                     v-if="isMapView"
                     class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
@@ -1886,7 +1878,7 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
 export default {
   name: "RiskForm",
-  props: ["facility", "risk", "facilities"],
+  props: ["facility", "risk", "facilities", "fixedStage"],
   components: {
     AttachmentInput,
     FormTabs,
@@ -1976,9 +1968,13 @@ export default {
           closable: false,
           disabled: true,
         },
-      ],
-      fixedStage: false
+      ]
     };
+  },
+  updated() {
+    if (this.fixedStage) {
+      this.selectedRiskStage = this.fixedStage;
+    }
   },
   mounted() {
     if (!_.isEmpty(this.risk)) {
@@ -1987,28 +1983,13 @@ export default {
       this.loading = false;
       this.loadRisk(this.DV_risk);
     }
-    if (this.fixedStage) {
-      this.selectedRiskStage = this.riskStages.find(
-        (t) => t.id === this.fixedStage
-      );
-    }
-    this.SET_RISK_FORM_OPEN(true)
-    if (this.DV_risk.text === "") {
-      this.fixedStage = true;
-    }
-  },
-  beforeDestroy() {
-    this.SET_RISK_FORM_OPEN(false)
-    this.SET_SELECTED_RISK({})
   },
   methods: {
     ...mapMutations([
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      "updateRisksHash",
-      "SET_RISK_FORM_OPEN",
-      "SET_SELECTED_RISK"
+      "updateRisksHash"
     ]),
     ...mapActions([
       "riskDeleted",
@@ -2230,7 +2211,7 @@ export default {
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
       return `${progressList.user.fullName} at ${date} ${time} `;
     },
-    resetApprovalSection() {
+     resetApprovalSection() {
       if (this.DV_risk.approved) {
         this.DV_risk.approved = !this.DV_risk.approved;
       }
@@ -2258,7 +2239,6 @@ export default {
     cancelRiskSave() {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
-      this.SET_RISK_FORM_OPEN(false);
     },
     validateThenSave(e) {
       e.preventDefault();
@@ -3074,16 +3054,7 @@ export default {
           this.$refs.paginator.goToPage(1);
         }
       });
-    },
-    facility: {
-      handler({facilityName: newValue}, {facilityName: oldValue}) {
-        // Checks to see if user navigates to another project(facility)
-        if (newValue !== oldValue) {
-          this.SET_RISK_FORM_OPEN(false);
-          this.SET_SELECTED_RISK({});
-        }       
-      },
-    },
+    }
   },
 };
 </script>
