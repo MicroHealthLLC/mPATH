@@ -2,7 +2,7 @@
   <div>
     <form
       @submit.prevent="validateThenSave"
-      class="risks-form mx-auto pb-4"
+      class="risks-form mx-auto"
       :class="{
         _disabled: loading
       }"
@@ -71,7 +71,6 @@
           required fields
         </h6>
 
-        <!-- fixed-form class covers entire tab form.  CSS properties can be found in app/assets/stylesheets/common.scss file -->
         <div class="fixed-form">
           <div class="mx-0">
             <div v-if="errors.items.length > 0" class="text-danger mx-4">
@@ -3065,6 +3064,11 @@ export default {
   overflow-x: hidden;
   height: calc(100vh - 100px);
   width: 100%;
+}
+.fixed-form {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 275px);
 }
 .form-control.error {
   border-color: #e84444;
