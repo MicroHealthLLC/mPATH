@@ -47,6 +47,16 @@ class Lesson < ApplicationRecord
     lesson.transaction do
       lesson.save
       lesson.add_link_attachment(params)
+
+      if notes_attributes.present?
+        notes_objs = []
+        notes_attributes.each do |key, value|
+          value.delete("_destroy")
+          notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+        end
+        Note.import(notes_objs) if notes_objs.any?
+      end
+
     end
     lesson.reload
   end

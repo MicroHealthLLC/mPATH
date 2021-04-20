@@ -234,7 +234,7 @@
 
 
    <!-- FILES TAB # 4-->
-<div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
+<div v-show="currentTab == 'tab3'" class="paperLookTab tab4">
           <div class="container-fluid mx-4 mt-2">
            <div class="row">
                <div class="col-5 pr-4 links-col">
@@ -352,7 +352,7 @@
 
 
  <!-- RELATED TAB #5 -->
-<div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
+<div v-show="currentTab == 'tab4'" class="paperLookTab tab5">
 
       <div class="form-group user-select pt-3 mx-4">
         <label class="font-md mb-0">Related Task</label>
@@ -427,7 +427,7 @@
 
 
   <!-- UPDATE TAB 6 -->
-  <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
+  <div v-show="currentTab == 'tab7'" class="paperLookTab tab5">
 
 
      <div class="form-group mx-4 paginated-updates">
@@ -503,9 +503,7 @@
               "Description",
               "Start Date",
               "Category",
-              "Stage",
-              "Start Date",
-              "Due Date",
+              "Stage"
             ],
           },
           {
@@ -516,31 +514,31 @@
           },
           {
             label: "Files & Links",
-            key: "tab4",
+            key: "tab3",
             closable: false,
             form_fields: ["Files"],
           },
           {
             label: "Related",
-            key: "tab5",
+            key: "tab4",
             closable: false,
             form_fields: ["Related Task", "Related Issue", "Related Risk"],
           },
           {
             label: "Successes",
-            key: "tab4",
+            key: "tab5",
             closable: false,
             form_fields: ["Files"],
           },
           {
             label: "Failures",
-            key: "tab4",
+            key: "tab6",
             closable: false,
             form_fields: ["Files"],
           },
           {
             label: "Updates",
-            key: "tab6",
+            key: "tab7",
             closable: false,
             form_fields: ["Progress", "Updates"],
           }
@@ -653,20 +651,17 @@
         var time = moment(progressList.createdAt).format("hh:mm:ss a")
         return `${progressList.user.fullName} at ${date} ${time} `
       },
-         // RACI USERS commented out out here.....Awaiting backend work
+      // RACI USERS commented out out here.....Awaiting backend work
       loadTask(task) {
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(task)}
-        this.userIds = _.filter(this.activeProjectUsers, u => this.DV_lesson.responsibleUserIds.includes(u.id))[0]
-        // this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))[0]
-        // this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.accountableUserIds.includes(u.id))[0]
-        // this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.consultedUserIds.includes(u.id))
-        // this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_lesson.informedUserIds.includes(u.id))
-        this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_lesson.subIssueIds.includes(u.id))
-        this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_lesson.subTaskIds.includes(u.id))
-        this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_lesson.subRiskIds.includes(u.id))
-        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_lesson.taskTypeId)
-        this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_lesson.taskStageId)
-        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_lesson.facilityProjectId)
+        this.userIds = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))[0]
+
+        // this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_lesson.subIssueIds.includes(u.id))
+        // this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_lesson.subTaskIds.includes(u.id))
+        // this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_lesson.subRiskIds.includes(u.id))
+        // this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_lesson.taskTypeId)
+        // this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_lesson.taskStageId)
+        // this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_lesson.facilityProjectId)
         if (this.DV_lesson.attachFiles) this.addFile(this.DV_lesson.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
@@ -733,8 +728,8 @@
           formData.append('lesson[issue_type_id]', 1)
           formData.append('lesson[user_id]', 1)
           formData.append('lesson[project_id]', 2)
-          
-          if (this.DV_lesson.userIds.length) {
+          debugger;
+          if (this.DV_lesson.userIds && this.DV_lesson.userIds.length) {
             for (let u_id of this.DV_lesson.userIds) {
               formData.append('user_ids[]', u_id)
             }
@@ -769,43 +764,43 @@
           else {
             formData.append('task[sub_risk_ids][]', [])
           }
-          for (let i in this.DV_lesson.checklists) {
-            let check = this.DV_lesson.checklists[i]
-            if (!check.text && !check._destroy) continue
-            for (let key in check) {
-              if (key === 'user') key = 'user_id'
-              let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
-              // if (key === "dueDate"){
-              //   key = "due_date"
-              // }
-              key = humps.decamelize(key)
-              if(['created_at', 'updated_at', 'progress_lists'].includes(key)) continue
-              formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-              for (let pi in check.progressLists) {
-                let progressList = check.progressLists[pi]
-                if (!progressList.body && !progressList._destroy) continue
-                for (let pkey in progressList) {
-                  if (pkey === 'user') pkey = 'user_id'
-                  let pvalue = pkey == 'user_id' ? progressList.user ? progressList.user.id : null : progressList[pkey]
-                  pkey = humps.decamelize(pkey)
-                  if(['created_at', 'updated_at'].includes(pkey)) continue
-                  formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
-                }
-              }
-            }
-          }
+          // for (let i in this.DV_lesson.checklists) {
+          //   let check = this.DV_lesson.checklists[i]
+          //   if (!check.text && !check._destroy) continue
+          //   for (let key in check) {
+          //     if (key === 'user') key = 'user_id'
+          //     let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
+          //     // if (key === "dueDate"){
+          //     //   key = "due_date"
+          //     // }
+          //     key = humps.decamelize(key)
+          //     if(['created_at', 'updated_at', 'progress_lists'].includes(key)) continue
+          //     formData.append(`task[checklists_attributes][${i}][${key}]`, value)
+          //     for (let pi in check.progressLists) {
+          //       let progressList = check.progressLists[pi]
+          //       if (!progressList.body && !progressList._destroy) continue
+          //       for (let pkey in progressList) {
+          //         if (pkey === 'user') pkey = 'user_id'
+          //         let pvalue = pkey == 'user_id' ? progressList.user ? progressList.user.id : null : progressList[pkey]
+          //         pkey = humps.decamelize(pkey)
+          //         if(['created_at', 'updated_at'].includes(pkey)) continue
+          //         formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
+          //       }
+          //     }
+          //   }
+          // }
           for (let i in this.DV_lesson.notes) {
             let note = this.DV_lesson.notes[i]
             if (!note.body && !note._destroy) continue
             for (let key in note) {
               let value = key == 'user_id' ? note.user_id ? note.user_id : this.$currentUser.id : note[key]
-              formData.append(`task[notes_attributes][${i}][${key}]`, value)
+              formData.append(`lesson[notes_attributes][${i}][${key}]`, value)
             }
           }
           for (let file of this.DV_lesson.lessonFiles) {
             if(file.id) continue
             if (!file.link) {
-              formData.append('task[lesson_files][]', file)
+              formData.append('lesson[lesson_files][]', file)
             }else if(file.link){
               formData.append('file_links[]', file.name)
             }
@@ -1010,7 +1005,7 @@
         return _.orderBy(_.filter(this.DV_lesson.notes, n => !n._destroy), 'createdAt', 'desc')
       },
       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessions[salut]
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
@@ -1036,9 +1031,9 @@
       }
     },
     watch: {
-      task: {
+      lesson: {
         handler: function(value) {
-          this.loadTask(this.task)
+          this.loadLesson(this.lesson)
         }
       },
       "DV_lesson.startDate"(value) {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_19_213115) do
+ActiveRecord::Schema.define(version: 2021_04_20_204037) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -262,6 +262,7 @@ ActiveRecord::Schema.define(version: 2021_04_19_213115) do
     t.string "kanban_view", default: "R"
     t.string "risks", default: "R"
     t.string "calendar_view", default: "R"
+    t.string "lessons", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 

@@ -156,7 +156,6 @@ export default {
   },
   mounted() {
     this.fetchLessons()
-    debugger;
   },
   computed: {
     ...mapGetters([
