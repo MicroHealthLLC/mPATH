@@ -1,26 +1,19 @@
 <template>
   <div>
     <div class="d-flex mb-4">
-      <div
-        class="searchBar input-group w-25 d-inline-flex mr-1 align-items-end"
-      >
-        <div class="input-group-prepend d-inline">
-          <span class="input-group-text searchB"
-            ><i class="fa fa-search"></i
-          ></span>
-        </div>
-        <input
+      <div class="w-25 d-inline-flex mr-1 align-items-end">
+        <el-input
           type="search"
-          class="form-control searchB form-control-sm"
           placeholder="Search Risks"
           aria-label="Search"
           aria-describedby="search-addon"
           v-model="sidebarRisksQuery"
           data-cy="search_risks"
-        />
+          ><el-button slot="prepend" icon="el-icon-search"></el-button
+        ></el-input>
       </div>
 
-      <div class="simple-select w-25 d-inline">
+      <div class="simple-select w-25 mr-1 d-inline">
         <label class="font-sm mb-0">Category</label>
         <el-select
           v-model="C_taskTypeFilter"
@@ -29,6 +22,7 @@
           value-key="id"
           multiple
           placeholder="Select Category"
+          collapse-tags
         >
           <el-option
             v-for="item in taskTypes"
@@ -48,6 +42,7 @@
           value-key="id"
           multiple
           placeholder="Filter by Flags"
+          collapse-tags
         >
           <el-option
             v-for="item in getAdvancedFilterOptions"

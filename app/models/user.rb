@@ -45,7 +45,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"]
+    nagivation_tabs = ["map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
   end
 
@@ -56,7 +56,7 @@ class User < ApplicationRecord
       name = "gantt_chart" if t == "gantt_view"
       name = "kanban" if t == "kanban_view"
       name = "sheet" if t == "sheets_view"
-      name = "calendar" if t == "calendar_view"
+      # name = "calendar" if t == "calendar_view"
 
       n << {id: name.downcase, name: name.humanize, value: name.downcase}
     end

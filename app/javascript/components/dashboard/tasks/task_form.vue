@@ -1421,10 +1421,13 @@
         )
       },
       isMapView() {
-        return this.$route.name === 'ProjectMapView'
+        return this.$route.name === 'MapTaskForm'
       },
       isKanbanView() {
-        return this.$route.name === 'ProjectKanbanView'
+        return this.$route.name === 'KanbanTaskForm'
+      },
+      isSheetsView() {
+        return this.$route.name === 'SheetTaskForm'
       },
       filteredChecks() {
         return _.filter(this.DV_task.checklists, c => !c._destroy)
@@ -1452,9 +1455,6 @@
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
-      },
-      isSheetsView() {
-        return this.$route.name === 'ProjectSheets'
       },
       tab() {
         if (this.$route.path.includes("map")) {
