@@ -2655,13 +2655,13 @@ export default {
       return _.map(this.riskStages, "percentage").toString();
     },
     isMapView() {
-      return this.$route.name === "ProjectMapView";
+      return this.$route.name === "MapRiskForm";
     },
     isSheetsView() {
-      return this.$route.name === "ProjectSheets";
+      return this.$route.name === "SheetRiskForm";
     },
     isKanbanView() {
-      return this.$route.name === "ProjectKanbanView";;
+      return this.$route.name === "KanbanRiskForm";;
     },
     filteredChecks() {
       return _.filter(this.DV_risk.checklists, (c) => !c._destroy);

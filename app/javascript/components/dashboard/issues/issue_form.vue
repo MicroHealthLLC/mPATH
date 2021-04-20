@@ -1729,13 +1729,13 @@ export default {
       );
     },
     isMapView() {
-        return this.$route.name === 'ProjectMapView'
+        return this.$route.name === 'MapIssueForm'
     },
     isSheetsView() {
-        return this.$route.name === 'ProjectSheets'
+        return this.$route.name === 'SheetIssueForm'
      },
     isKanbanView() {
-        return this.$route.name === 'ProjectKanbanView'
+        return this.$route.name === 'KanbanIssueForm'
     },
     filteredChecks() {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
