@@ -2894,11 +2894,6 @@ export default {
     },
     riskApprover: {
       handler: function(value) {
-        // if (this.resetApprovalSection)  {
-        //  this.riskApprover = [];
-     
-        //   this.DV_risk.riskApproverUserIds = null;
-        // }
         if (value) {
           this.DV_risk.riskApproverUserIds = _.uniq(
             _.map(_.flatten([value]), "id")
