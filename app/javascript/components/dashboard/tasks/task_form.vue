@@ -1725,10 +1725,6 @@
     overflow-x: hidden;
     height: calc(100vh - 275px);
   }
-  .fixed-form-mapView {
-   width: 100%;
-   position: absolute;
-  }
   .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;

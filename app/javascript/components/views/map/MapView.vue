@@ -376,6 +376,15 @@ export default {
         }
       },
     },
+    "$route.path": {
+      handler() {
+        this.setCurrentFacility(
+          this.currentProject.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          )
+        );
+      },
+    },
   },
 };
 </script>
