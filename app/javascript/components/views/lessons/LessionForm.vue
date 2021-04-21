@@ -18,7 +18,7 @@
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
-            <span v-if="DV_lesson.text.length > 0">{{ DV_lesson.text }}</span>
+            <span v-if="DV_lesson.title.length > 0">{{ DV_lesson.title }}</span>
             <span v-else style="color: gray">(Lesson Name)</span>
           </h5>
         </div>
@@ -26,7 +26,7 @@
           <button
             v-if="_isallowed('write')"
             class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
-            data-cy="task_save_btn" @click="saveLession()"
+            data-cy="task_save_btn" @click="saveLesson()"
           >
             Save Lesson
           </button>
@@ -91,7 +91,7 @@
             v-validate="'required'"
             type="text"
             class="form-control form-control-sm"
-            v-model="DV_lesson.text"
+            v-model="DV_lesson.title"
             placeholder="Lesson Name"
             :readonly="!_isallowed('write')"
             :class="{'form-control': true, 'error': errors.has('Lesson Name') }"
@@ -113,41 +113,30 @@
         />
       </div>
 
-  <!-- Row begins -->
-     <div  class="d-flex mb-1 form-group">        
-      <div class="simple-select form-group w-33 ml-4">
-        <label class="font-md" >Category <span style="color: #dc3545">*</span></label >
-        <el-select
-          v-model="selectedTaskType"
-          v-validate="'required'"
-          class="w-100"
-          track-by="id"
-          value-key="id"
-          :disabled="!_isallowed('write')"
-          data-cy="task_type"
-          name="Category"
-          :class="{ 'error-border': errors.has('Category') }"
-          placeholder="Select Category"
-           >
-          <el-option
-            v-for="item in taskTypes"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-          <div
-          v-show="errors.has('Category')"
-          class="text-danger"
-          data-cy="task_category_error"
-        >
-          {{ errors.first("Category") }}
+    <!-- Stages Row ends -->
+
+    <div class="form-row mx-4">
+        <div class="form-group col-md-6 pl-0">
+          <label class="font-md" >Date <span style="color: #dc3545">*</span></label>
+          <div :class="{ 'error-border': errors.has('Date') }">
+            <v2-date-picker
+              v-model="DV_lesson.date"
+              value-type="YYYY-MM-DD"
+              format="DD MMM YYYY"
+              placeholder="DD MM YYYY"
+              name="Date"
+              class="w-100 vue2-datepicker"
+              :disabled="!_isallowed('write')"
+              data-cy="task_start_date"
+            />
+          </div>
+          <div v-show="errors.has('Date')" class="text-danger" data-cy="task_start_date_error">
+            {{errors.first('Date')}}
+          </div>
         </div>
       </div>
-     </div>
                
-    <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
+    <div class="mx-4 mt-2 mb-4" v-if='false'>
       <div v-if="selectedTaskStage !== undefined">       
       <div style="position:relative"><label class="font-md mb-0">Stage</label>               
         <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
@@ -168,7 +157,7 @@
       :value="item"
       style="cursor:pointer"
       v-if="_isallowed('write')"
-      @click.native="selectedStage(item)"        
+      @click.native="selectedStage(item)"
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -176,7 +165,7 @@
     </div>
   </div>
 
-  <div class="mx-4 mt-2 mb-4" v-if="(selectedTaskStage == null) || selectedTaskStage == undefined">
+  <div class="mx-4 mt-2 mb-4"  v-if='false'>
     <label class="font-md">Select Stage</label>                           
     <el-steps 
       class="exampleOne"              
@@ -216,6 +205,7 @@
            value-key="id"
            placeholder="Search and select User"
            :disabled="!_isallowed('write')"
+           multiple
            data-cy="task_owner"
            >
           <el-option
@@ -355,9 +345,39 @@
 <div v-show="currentTab == 'tab4'" class="paperLookTab tab5">
 
       <div class="form-group user-select pt-3 mx-4">
+        <label class="font-md" >Category</span></label >
+        <el-select
+          v-model="selectedTaskType"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          :disabled="!_isallowed('write')"
+          data-cy="task_type"
+          name="Category"
+          :class="{ 'error-border': errors.has('Category') }"
+          placeholder="Select Category"
+           >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+          <div
+          v-show="errors.has('Category')"
+          class="text-danger"
+          data-cy="task_category_error"
+        >
+          {{ errors.first("Category") }}
+        </div>
+      </div>
+
+      <div class="form-group user-select pt-3 mx-4">
         <label class="font-md mb-0">Related Task</label>
          <el-select
-          v-model="relatedTasks"
+          v-model="selectedTask"
           class="w-100"
           track-by="id"
           value-key="id"
@@ -380,7 +400,7 @@
       <div class="form-group user-select mx-4">
         <label class="font-md mb-0">Related Issue</label>
           <el-select
-          v-model="relatedIssues"
+          v-model="selectedIssue"
           class="w-100"
           track-by="id"
           value-key="id"
@@ -402,7 +422,7 @@
         <div class="form-group user-select mx-4">
         <label class="font-md mb-0">Related Risk</label>
          <el-select
-          v-model="relatedRisks"
+          v-model="selectedRisk"
           class="w-100"
           track-by="id"
           value-key="id"
@@ -518,7 +538,7 @@
   const moment = extendMoment(Moment)
   export default {
     name: 'LessonForm',
-    props: ['facility', 'task', 'title', 'fixedStage'],
+    // props: ['facility', 'task', 'title', 'fixedStage'],
     components: {
       AttachmentInput, Draggable, FormTabs
     },
@@ -531,6 +551,9 @@
         editTimeLive:"",
         selectedTaskType: null,
         selectedTaskStage: null,
+        selectedTask: null,
+        selectedIssue: null,
+        selectedRisk: null,
         users: [],
         relatedIssues: [],
         relatedTasks: [],
@@ -543,11 +566,11 @@
         currentTab: 'tab1',
         tabs: [
           {
-            label: "Task Info",
+            label: "Lesson Info",
             key: "tab1",
             closable: false,
             form_fields: [
-              "Task Name",
+              "Lesson Name",
               "Description",
               "Start Date",
               "Category",
@@ -599,15 +622,13 @@
       }else{
         this.loadTask(this.DV_lesson)
       }
-      if (this.fixedStage) {
-        this.selectedTaskStage = this.taskStages.find(t => t.id === this.fixedStage)
-      }
+
       this.loading = false
       this._ismounted = true
      },
     methods: {
        ...mapMutations([
-        'setTaskForManager',
+        'setLessonForManager',
         'updateTasksHash'
       ]),
       ...mapActions([
@@ -617,22 +638,19 @@
       ]),
       INITIAL_LESSON_STATE() {
         return {
-          text: '',
-          startDate: '',
-          dueDate: '',
-          // facilityProjectId: this.facility.id,
-          checklistDueDate: '',
+          title: '',
+          date: '',
           taskTypeId: '',
-          taskStageId: '',
+          taskId: '',
+          riskId: '',
+          issueId: '',
+          issueTypeId: '',
           userIds: [],
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
           description: '',
-          progress: 0,
-          autoCalculate: true,
           lessonFiles: [],
-          checklists: [],
           notes: [],
           lessonDetails: []
         }
@@ -660,10 +678,6 @@
           return str;
         }
       },
-      scrollToChecklist(){
-        this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-        this.DV_lesson.checklists.push({text: '', checked: false})
-      },
       scrollToUpdates(){
         this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
         this.DV_lesson.notes.unshift({body: '', user_id: '', guid: this.guid()})
@@ -675,21 +689,8 @@
       onChangeTab(tab) {
         this.currentTab = tab ? tab.key : 'tab1'
       },
-      handleEnd(e, checklists){
-        var cc = this.DV_lesson.checklists
-        var count = 0
-        for(var checklist of cc){
-          checklist.position = count
-          count++
-        }
-      },
-      editProgress() {
-       this.editToggle = !this.editToggle
-       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
-
-      },
       deleteTask() {
-        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_lesson.text}"?`)
+        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_lesson.title}"?`)
         if (!confirm) {return}
         this.taskDeleted(this.DV_lesson)
         this.cancelSave()
@@ -742,17 +743,10 @@
           this.DV_lesson.lessonFiles.splice(this.DV_lesson.lessonFiles.findIndex(f => f.guid === file.guid), 1)
         }
       },
-      toggleWatched() {
-      if (this.DV_lesson.watched) {
-        let confirm = window.confirm(`Are you sure, you want to remove this task from on-watch?`)
-        if (!confirm) {return}
-      }
-        this.DV_lesson = {...this.DV_lesson, watched: !this.DV_lesson.watched}
-        this.updateWatchedTasks(this.DV_lesson)
-      },
       cancelSave() {
-        this.$emit('on-close-form')
-        this.setTaskForManager({key: 'task', value: null})
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/lessons`
+        );
       },
       saveLesson() {
         if (!this._isallowed('write')) return
@@ -766,84 +760,51 @@
           this.loading = true
           let formData = new FormData()
 
-          formData.append('lesson[title]', "title")
-          formData.append('lesson[description]', "description")
-          formData.append('lesson[date]', "04/04/2021")
+          formData.append('lesson[title]', this.DV_lesson.title)
+          formData.append('lesson[description]',  this.DV_lesson.description)
+          formData.append('lesson[date]',  this.DV_lesson.date)
 
           formData.append('lesson[task_type_id]', 1)
-          formData.append('lesson[task_id]', 1)
-          formData.append('lesson[risk_id]', 1)
-          formData.append('lesson[issue_id]', 1)
           formData.append('lesson[issue_type_id]', 1)
-          formData.append('lesson[user_id]', 1)
-          formData.append('lesson[project_id]', 2)
-          debugger;
-          if (this.DV_lesson.userIds && this.DV_lesson.userIds.length) {
-            for (let u_id of this.DV_lesson.userIds) {
-              formData.append('user_ids[]', u_id)
-            }
+
+          if(this.DV_lesson.taskId){
+            formData.append('lesson[task_id]', this.DV_lesson.taskId)
           }
-          else {
-            formData.append('user_ids[]', [])
+          if(this.DV_lesson.riskId){
+            formData.append('lesson[risk_id]', this.DV_lesson.riskId)  
+          }
+          if(this.DV_lesson.issueId){
+            formData.append('lesson[issue_id]', this.DV_lesson.issueId)
+          }
+          
+          if(this.currentProject.id){
+            formData.append('lesson[project_id]', this.currentProject.id)
           }
 
-          // RACI USERS ABOVE THIS LINE  Awaiting backend work
-          // More RACI Users in Computed section below
-          if (this.DV_lesson.subTaskIds.length) {
-            for (let u_id of this.DV_lesson.subTaskIds) {
-              formData.append('task[sub_task_ids][]', u_id)
+          if (this.DV_lesson.userIds && this.DV_lesson.userIds.length) {
+            for (let u_id of this.DV_lesson.userIds) {
+              formData.append('lesson[user_ids][]', u_id)
             }
           }
           else {
-            formData.append('task[sub_task_ids][]', [])
+            formData.append('lesson[user_ids][]', [])
           }
-          if (this.DV_lesson.subIssueIds.length) {
-            for (let u_id of this.DV_lesson.subIssueIds) {
-              formData.append('task[sub_issue_ids][]', u_id)
-            }
-          }
-          else {
-            formData.append('task[sub_issue_ids][]', [])
-          }
-          if (this.DV_lesson.subRiskIds.length) {
-            for (let u_id of this.DV_lesson.subRiskIds) {
-              formData.append('task[sub_risk_ids][]', u_id)
-            }
-          }
-          else {
-            formData.append('task[sub_risk_ids][]', [])
-          }
-          // for (let i in this.DV_lesson.checklists) {
-          //   let check = this.DV_lesson.checklists[i]
-          //   if (!check.text && !check._destroy) continue
-          //   for (let key in check) {
-          //     if (key === 'user') key = 'user_id'
-          //     let value = key == 'user_id' ? check.user ? check.user.id : null : check[key]
-          //     // if (key === "dueDate"){
-          //     //   key = "due_date"
-          //     // }
-          //     key = humps.decamelize(key)
-          //     if(['created_at', 'updated_at', 'progress_lists'].includes(key)) continue
-          //     formData.append(`task[checklists_attributes][${i}][${key}]`, value)
-          //     for (let pi in check.progressLists) {
-          //       let progressList = check.progressLists[pi]
-          //       if (!progressList.body && !progressList._destroy) continue
-          //       for (let pkey in progressList) {
-          //         if (pkey === 'user') pkey = 'user_id'
-          //         let pvalue = pkey == 'user_id' ? progressList.user ? progressList.user.id : null : progressList[pkey]
-          //         pkey = humps.decamelize(pkey)
-          //         if(['created_at', 'updated_at'].includes(pkey)) continue
-          //         formData.append(`task[checklists_attributes][${i}][progress_lists_attributes][${pi}][${pkey}]`, pvalue)
-          //       }
-          //     }
-          //   }
-          // }
+
           for (let i in this.DV_lesson.notes) {
             let note = this.DV_lesson.notes[i]
             if (!note.body && !note._destroy) continue
             for (let key in note) {
               let value = key == 'user_id' ? note.user_id ? note.user_id : this.$currentUser.id : note[key]
               formData.append(`lesson[notes_attributes][${i}][${key}]`, value)
+            }
+          }
+          for (let i in this.DV_lesson.lessonDetails) {
+            let lessonDetail = this.DV_lesson.lessonDetails[i]
+            if (!lessonDetail.finding && !lessonDetail.recommendation && !lessonDetail._destroy) continue
+            for (let key in lessonDetail) {              
+              let value = key == 'user_id' ? lessonDetail.user_id ? lessonDetail.user_id : this.$currentUser.id : lessonDetail[key]
+              key = humps.decamelize(key)
+              formData.append(`lesson[lesson_details][${i}][${key}]`, value)
             }
           }
           for (let file of this.DV_lesson.lessonFiles) {
@@ -859,9 +820,9 @@
           let method = "POST"
           let callback = "task-created"
 
-          if (this.task && this.task.id) {
+          if (this.lesson && this.lesson.id) {
             // url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
-            url = `/projects/${this.currentProject.id}/lessons/${this.task.id}.json`
+            url = `/projects/${this.currentProject.id}/lessons/${this.lesson.id}.json`
             method = "PUT"
             callback = "task-updated"
           }
@@ -881,7 +842,13 @@
             // this.loadTask(responseTask)
             //this.$emit(callback, responseTask)
             // this.updateTasksHash({task: responseTask})
+
             if (response.status === 200) {
+              this.setLessonForManager({key: 'lesson', value: {}})
+              // Route to new task form page
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/lessons`
+              );
               this.$message({
                 // message: `${response.data.task.text} was saved successfully.`,
                  message: `Lesson was saved successfully.`,
@@ -907,15 +874,6 @@
             this.loading = false
           })
         })
-      },
-      addProgressList(check){
-        var postion = check.progressLists.length
-        check.progressLists.push({body: '', position: postion})
-        this.editToggle = true;
-      },
-      addChecks() {
-        var postion = this.DV_lesson.checklists.length
-        this.DV_lesson.checklists.push({text: '', checked: false, position: postion, progressLists: []})
       },
       addFilesInput(){
         this.DV_lesson.lessonFiles.push({name: "", uri: '', link: true,guid: this.guid()})
@@ -1016,6 +974,7 @@
     },
     computed: {
       ...mapGetters([
+        'fetchCurrentProject',
         'getFacilityProjectOptions',
         'currentProject',
         'taskTypes',
@@ -1032,10 +991,8 @@
       readyToSave() {
         return (
           this.DV_lesson &&
-          this.exists(this.DV_lesson.text) &&
-          this.exists(this.DV_lesson.taskTypeId) &&
-          this.exists(this.DV_lesson.dueDate) &&
-          this.exists(this.DV_lesson.startDate)
+          this.exists(this.DV_lesson.title) &&
+          this.exists(this.DV_lesson.description)
         )
       },
       isMapView() {
@@ -1046,9 +1003,6 @@
       },
       isSheetsView() {
         return this.$route.name === 'ProjectSheets'
-      },
-      filteredChecks() {
-        return _.filter(this.DV_lesson.checklists, c => !c._destroy)
       },
       filteredFiles() {
         return _.filter(this.DV_lesson.lessonFiles, f => !f._destroy)
@@ -1141,14 +1095,20 @@
           }
         }, deep: true
       },
-      relatedIssues: {
+      selectedIssue: {
         handler: function(value) {
-          if (value) this.DV_lesson.subIssueIds = _.uniq(_.map(value, 'id'))
+          if (value) this.DV_lesson.issueId = value.id
         }, deep: true
       },
-      relatedTasks: {
+      selectedTask: {
         handler: function(value) {
-          if (value) this.DV_lesson.subTaskIds = _.uniq(_.map(value, 'id'))
+          debugger;
+          if (value) this.DV_lesson.taskId = value.id
+        }, deep: true
+      },
+      selectedRisk:{
+        handler: function(value) {
+          if (value) this.DV_lesson.riskId = value.id
         }, deep: true
       },
       relatedRisks: {

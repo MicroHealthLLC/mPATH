@@ -13,7 +13,7 @@ class Lesson < ApplicationRecord
 
   has_many :lesson_details, dependent: :destroy
 
-  validates :title, :description, :date, presence: true
+  validates :title, :description, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   def create_or_update_lession(params, user)
@@ -49,13 +49,16 @@ class Lesson < ApplicationRecord
     )
 
     lesson = self
+    lesson.user_id = user.id
     t_params = lesson_params.dup
     notes_attributes = t_params.delete(:notes_attributes)
     params_lesson_details = t_params.delete(:lesson_details)
 
     lesson.attributes = t_params
-
+    lesson.date ||= Date.today
+     
     lesson.transaction do
+      binding.pry
       lesson.save
       lesson.add_link_attachment(params)
 
@@ -68,8 +71,17 @@ class Lesson < ApplicationRecord
         Note.import(notes_objs) if notes_objs.any?
       end
 
+      if params_lesson_details.present?
+        lesson_detail_objs = []
+        params_lesson_details.each do |key, value|
+          value.delete("_destroy")
+          lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id}) )
+        end
+        LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
+      end
+
     end
-    lesson.reload
+    lesson.persisted?  ? lesson.reload : lesson
   end
 
   def valid_url?(url)
