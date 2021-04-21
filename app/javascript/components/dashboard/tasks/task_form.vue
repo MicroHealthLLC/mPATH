@@ -5,7 +5,7 @@
       @submit.prevent="saveTask"
       class="mx-auto tasks-form"
       accept-charset="UTF-8"
-      :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
+      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -1593,11 +1593,6 @@
 <style scoped lang="scss">
   .tasks-form {
     
-  }
-  .kanban-form {
-    left: 16.4%;
-    width: 83.33%;
-    z-index: 100;
   }
   .fixed-form-mapView {
     width: 100%;
