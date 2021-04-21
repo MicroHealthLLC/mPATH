@@ -5,7 +5,7 @@
       @submit.prevent="saveTask"
       class="mx-auto tasks-form"
       accept-charset="UTF-8"
-      :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+      :class="{ _disabled: loading }"
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -1593,12 +1593,6 @@
 <style scoped lang="scss">
   .tasks-form {
     
-  }
-  .fixed-form-mapView {
-    width: 100%;
-    top:0;
-    position: absolute;
-    transform: scale(1.03);
   }
   td, th {
     border: solid 1px #ededed;

@@ -3028,7 +3028,7 @@ export default {
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 275px);
+  height: calc(100vh - 280px);
 }
 .form-control.error {
   border-color: #e84444;
