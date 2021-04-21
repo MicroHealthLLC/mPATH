@@ -2037,12 +2037,6 @@ ul {
     overflow-x: hidden;
     height: calc(100vh - 275px);
   }
-  .fixed-form-mapView {
-   width: 100%;
-   top:0;
-   position: absolute;
-   transform: scale(1.03);
-  }
  .display-length {
    border-radius: 0.15rem;
    margin-right: 12px;
