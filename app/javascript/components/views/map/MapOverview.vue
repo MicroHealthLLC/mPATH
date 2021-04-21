@@ -13,7 +13,7 @@
                   Status:
                   <span>
                     <small
-                      v-if="!DV_facility.statusId && _isallowed('write')"
+                      v-if="!facility.statusId && _isallowed('write')"
                       class="ml-2 d-inline text-danger"
                       style="position:absolute"
                     >
@@ -24,17 +24,17 @@
               </div>
               <div class="col">
                 <p class="badge badge-secondary badge-pill font-weight-light">
-                  {{ DV_facility.facility.facilityGroupName }}
+                  {{ facility.facility.facilityGroupName }}
                 </p>
                 <div class="simple-select">
                   <v2-date-picker
-                    v-model="DV_facility.dueDate"
+                    v-model="facility.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
                     class="w-100 vue2-datepicker"
                     @input="onChange"
                     placeholder="DD MM YYYY"
-                    :disabled="!_isallowed('write') || !DV_facility.statusId"
+                    :disabled="!_isallowed('write') || !facility.statusId"
                   />
                 </div>
 
@@ -75,10 +75,10 @@
                 <h5 class="d-inline">Progress</h5>
                 <hr />
                 <p class="text-center">
-                  <span :class="{ 'progress-0': DV_facility.progress <= 0 }">
+                  <span :class="{ 'progress-0': facility.progress <= 0 }">
                     <el-progress
                       type="circle"
-                      :percentage="DV_facility.progress"
+                      :percentage="facility.progress"
                     ></el-progress>
                   </span>
                 </p>
@@ -476,26 +476,12 @@ export default {
   components: {
     Loader,
   },
-  props: {
-    facility: {
-      default: null,
-      type: Object,
-    },
-    extras: {
-      default: true,
-      type: Boolean,
-    },
-    from: {
-      default: "",
-      type: String,
-    },
-  },
+  props: ["facility"], 
   data() {
     return {
       loading: true,
       DV_updated: false,
       notesQuery: "",
-      DV_facility: Object.assign({}, this.facility),
       _selected: null,
       _categories: null,
     };
@@ -507,62 +493,40 @@ export default {
   },
   methods: {
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
-    ...mapActions(["fetchFacility"]),
-    loadFacility(facility) {
-      this.DV_facility = Object.assign({}, facility);
-      this._selected = this.DV_facility.statusId; //this.statuses.find(s => s.id == this.DV_facility.statusId)
-      this.selectedStatus = this.DV_facility.statusId; //this.statuses.find(s => s.id == this.DV_facility.statusId)
-      this.loading = false;
-    },
-    getFacility() {
-      // this.fetchFacility({
-      //   projectId: this.currentProject.id,
-      //   facilityId: this.DV_facility.id,
-      // })
-      //   .then((facility) => {
-      //     this.loadFacility(facility);
-      //   })
-      //   .catch((err) => {
-      //     console.error(err);
-      //   });
-    },
     updateFacility(e) {
       if (e.target) e.target.blur();
       if (!this._isallowed("write") || !this.DV_updated) return;
       this.DV_updated = false;
       let data = {
         facility: {
-          statusId: this.DV_facility.statusId,
-          dueDate: this.DV_facility.dueDate,
+          statusId: this.facility.statusId,
+          dueDate: this.facility.dueDate,
         },
       };
       http
         .put(
-          `/projects/${this.currentProject.id}/facilities/${this.DV_facility.id}.json`,
+          `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}.json`,
           data
         )
         .then((res) => {
-          this.DV_facility = {
-            ...res.data.facility,
-            ...res.data.facility.facility,
-          };
-          if (this.from == "manager_view")
-            this.updateFacilityHash(this.DV_facility);
-          this.$emit("facility-update", this.DV_facility);
+          this.updateFacilityHash(res.data.facility);
+          if (res.status === 200) {
+            this.$message({
+              message: `${res.data.facility.facilityName} was saved successfully.`,
+              type: "success",
+              showClose: true,
+            });
+          }
         })
         .catch((err) => {
           console.error(err);
         });
     },
-    refreshFacility() {
-      this.loading = true;
-      this.getFacility();
-    },
     isBlockedStatus(status) {
       return (
         status &&
         status.name.toLowerCase().includes("complete") &&
-        this.DV_facility.progress < 100
+        this.facility.progress < 100
       );
     },
     onChange() {
@@ -593,7 +557,7 @@ export default {
     ]),
     selectedStatus: {
       get() {
-        return this.DV_facility.statusId;
+        return this.facility.statusId;
       },
       set(value) {
         this.$data._selected = value;
@@ -602,7 +566,7 @@ export default {
           this.$nextTick(() => {
             this.DV_updated = true;
           });
-          this.DV_facility.statusId = value;
+          this.facility.statusId = value;
         }
       },
     },
@@ -639,7 +603,7 @@ export default {
       let stageIds = _.map(this.taskStageFilter, "id");
       let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.filter(this.DV_facility.tasks, (resource) => {
+      return _.filter(this.facility.tasks, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
@@ -804,7 +768,7 @@ export default {
       let riskApproachIds = _.map(this.C_riskApproachFilter, "id");
       let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.filter(this.DV_facility.risks, (resource) => {
+      return _.filter(this.facility.risks, (resource) => {
         let valid = true;
         let userIds = [
           ..._.map(resource.checklists, "userId"),
@@ -910,33 +874,10 @@ export default {
       }
       return taskTypes;
     },
-    isMapView() {
-      return this.$route.name === "ProjectMapView";
-    },
     _isallowed() {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
         this.$permissions.overview[salut];
-    },
-  },
-  watch: {
-    facility: {
-      handler(value) {
-        this.DV_facility = Object.assign({}, value);
-        this._selected = this.statuses.find(
-          (s) => s.id == this.DV_facility.statusId
-        );
-        this.loading = false;
-        this.DV_updated = false;
-        if (this.from != "manager_view") {
-          this.loading = true;
-          this.getFacility();
-        }
-      },
-      deep: true,
-    },
-    "DV_facility.statusId"(value) {
-      if (!value) this.DV_facility.dueDate = null;
     },
   },
 };
