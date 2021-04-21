@@ -138,6 +138,13 @@ export default {
         this.expanded.id = this.currentFacilityGroup.id;
       },
     },
+    "$route.path": {
+      handler() {
+        this.currentFacility = this.currentProject.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+      }
+    }
   },
 };
 </script>
