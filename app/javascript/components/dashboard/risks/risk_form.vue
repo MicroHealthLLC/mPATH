@@ -1032,27 +1032,7 @@
                     :label="item"
                   >
                   </el-option>
-                </el-select>
-                <!-- <multiselect
-                  v-model="DV_risk.riskApproach"
-                  v-validate="'required'"
-                  :allow-empty="false"
-                  placeholder="Risk Approach"
-                  :options="riskApproaches"
-                  :searchable="false"
-                  select-label="Select"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"
-                  :class="{ error: errors.has('Risk Approach') }"
-                  data-cy="risk_approach"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name upperCase">{{
-                        option
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect> -->
+                </el-select>              
                 <div
                   v-show="errors.has('Risk Approach')"
                   class="text-danger"
@@ -1165,20 +1145,6 @@
                 </span>
               </div>
 
-              <!-- <div v-if="this.DV_risk.text" class="col-md-4 pl-0 py-2 mb-0 text-center">
-            <label class="font-sm mb-0">Risk Approach Approved:</label>
-              <span class="d-block approver-pointer" >
-                  <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>
-                  <small style="vertical-align:text-top">Approved</small>
-              </span>
-          </div>    -->
-
-              <!-- Users listed here for debugging Risk Approval Section.  Delete if no longer needed
-           Current User:  {{this.$currentUser.full_name  }} <br>
-
-              Risk Aprrover Array (before saving to db)  {{ riskApprover.fullName }}
-              Risk Aprrover Name (after saving to db)  {{this.DV_risk.riskApprover[0].name }}
-             -->
 
               <div
                 class="col-md-5 pr-2 py-2 mb-0 simple-select form-group ml-0"
@@ -2185,10 +2151,11 @@ export default {
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
       this.updateWatchedRisks(this.DV_risk);
     },
-    toggleApproved() {
+    toggleApproved(e) {
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.updateApprovedRisks(this.DV_risk);
       this.DV_risk.approvalTime = new Date().toLocaleString();
+      this.validateThenSave(e)
       if (!this.DV_risk.approved) {
         this.DV_risk.approvalTime = "";
       }
@@ -2210,7 +2177,7 @@ export default {
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
       return `${progressList.user.fullName} at ${date} ${time} `;
     },
-     resetApprovalSection() {
+     resetApprovalSection(e) {
       if (this.DV_risk.approved) {
         this.DV_risk.approved = !this.DV_risk.approved;
       }
@@ -2219,16 +2186,9 @@ export default {
         !this.DV_risk.approved;
       }
       this.updateApprovedRisks(this.DV_risk);
-      this.DV_risk.approvalTime = " ";
-      if (this.riskApprover.length > 0) {
-        this.riskApprover = [];
-        this.validateThenSave();
-      }
-      if (this.DV_risk.riskApprover.length > 0) {
-        this.DV_risk.riskApprover = [];
-        this.validateThenSave();
-      }
-      // this.validateThenSave
+      this.DV_risk.approvalTime = " "; 
+      this.riskApprover = " ";
+      this.validateThenSave(e);
     },
     notApprover() {
       alert(
