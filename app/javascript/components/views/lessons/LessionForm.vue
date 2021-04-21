@@ -426,7 +426,55 @@
  </div>
 
 
+  <!-- UPDATE TAB 5 -->
+  <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
+
+
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Success:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addSuccess">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filterLessonDetailSuccess" :list="filterLessonDetailSuccess" :per="5" class="paginate-list" :key="filterLessonDetailSuccess ? filterLessonDetailSuccess.length : 1">
+          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Success by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
+              <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
+          </div>
+        </paginate>
+      </div>
+  </div>
+
   <!-- UPDATE TAB 6 -->
+  <div v-show="currentTab == 'tab6'" class="paperLookTab tab6">
+
+
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Failuers:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFailure">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailSuccess.length : 1">
+          <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
+              <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
+          </div>
+        </paginate>
+      </div>
+  </div>
+
+  <!-- UPDATE TAB 7 -->
   <div v-show="currentTab == 'tab7'" class="paperLookTab tab5">
 
 
@@ -478,7 +526,7 @@
       return {
         DV_lesson: this.INITIAL_LESSON_STATE(),
         DV_facility: Object.assign({}, this.facility),
-        paginate: ['filteredNotes'],
+        paginate: ['filteredNotes', 'filterLessonDetailSuccess', 'filterLessonDetailFailure'],
         destroyedFiles: [],
         editTimeLive:"",
         selectedTaskType: null,
@@ -585,7 +633,8 @@
           autoCalculate: true,
           lessonFiles: [],
           checklists: [],
-          notes: []
+          notes: [],
+          lessonDetails: []
         }
       },
       log(e){
@@ -874,12 +923,24 @@
       addNote() {
         this.DV_lesson.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
-
+      addSuccess(){
+        this.DV_lesson.lessonDetails.unshift({finding: '',recommendation:'',detailType: 'success',  user_id: '', guid: this.guid()})
+      },
+      addFailure(){
+        this.DV_lesson.lessonDetails.unshift({finding: '',recommendation:'',detailType: 'failure',  user_id: '', guid: this.guid()})
+      },
       destroyNote(note) {
         let confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
         let i = note.id ? this.DV_lesson.notes.findIndex(n => n.id === note.id) : this.DV_lesson.notes.findIndex(n => n.guid === note.guid)
         Vue.set(this.DV_lesson.notes, i, {...note, _destroy: true})
+      },
+      destroyLessonDetail(lessonDetail) {
+        let confirm = window.confirm(`Are you sure you want to delete?`)
+        if (!confirm) return;
+        let i = lessonDetail.id ? this.DV_lesson.lessonDetails.findIndex(n => n.id === lessonDetail.id) : this.DV_lesson.lessonDetails.findIndex(n => n.guid === lessonDetail.guid)
+        debugger;
+        Vue.set(this.DV_lesson.lessonDetails, i, {...lessonDetail, _destroy: true})
       },
       noteBy(note) {
         return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
@@ -983,6 +1044,9 @@
       isKanbanView() {
         return this.$route.name === 'ProjectKanbanView'
       },
+      isSheetsView() {
+        return this.$route.name === 'ProjectSheets'
+      },
       filteredChecks() {
         return _.filter(this.DV_lesson.checklists, c => !c._destroy)
       },
@@ -1004,15 +1068,29 @@
       filteredNotes() {
         return _.orderBy(_.filter(this.DV_lesson.notes, n => !n._destroy), 'createdAt', 'desc')
       },
+      filterLessonDetailSuccess(){
+        var details = _.filter(this.DV_lesson.lessonDetails, n => (n.detailType == 'success' && !n._destroy))
+        return _.orderBy(details, 'createdAt', 'desc')
+      },
+      filterLessonDetailFailure(){
+        var details = _.filter(this.DV_lesson.lessonDetails, n => ( n.detailType == 'failure' && !n._destroy) )
+        return _.orderBy(details, 'createdAt', 'desc')
+      },
+      filterLessonDetailBestPractice(){
+        var details = _.filter(this.DV_lesson.lessonDetails, n => ( n.detailType == 'best_practices') && !n._destroy )
+        return _.orderBy(details, 'createdAt', 'desc')
+      },
+      filterLessonDetail(detailType){
+        var details = _.filter(this.DV_lesson.lessonDetails, n => n.detailType == detailType)
+        return _.orderBy(details, 'createdAt', 'desc')
+      },
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessions[salut]
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
       },
-      isSheetsView() {
-        return this.$route.name === 'ProjectSheets'
-      },
+
       tab() {
         if (this.$route.path.includes("map")) {
           return "map";

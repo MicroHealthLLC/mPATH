@@ -11,6 +11,8 @@ class Lesson < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
 
+  has_many :lesson_details, dependent: :destroy
+
   validates :title, :description, :date, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
@@ -35,12 +37,21 @@ class Lesson < ApplicationRecord
         :_destroy,
         :user_id,
         :body
+      ],
+      lesson_details: [
+        :id,
+        :_destroy,
+        :user_id,
+        :finding,
+        :recommendation,
+        :detail_type
       ]
     )
 
     lesson = self
     t_params = lesson_params.dup
     notes_attributes = t_params.delete(:notes_attributes)
+    params_lesson_details = t_params.delete(:lesson_details)
 
     lesson.attributes = t_params
 
