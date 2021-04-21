@@ -6,7 +6,7 @@
       class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
-     :class="{'fixed-form-mapView':isMapView, _disabled: loading }"
+     :class="{ _disabled: loading }"
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
