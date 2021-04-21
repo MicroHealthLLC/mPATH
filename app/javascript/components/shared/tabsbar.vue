@@ -45,10 +45,10 @@
         Calendar
       </div>
     </router-link> -->
-    <div v-if="permitted('issues')" class="badge disabled">
+    <div v-show="false" v-if="permitted('issues')" class="badge disabled">
       Mindmap (Coming Soon)
     </div>
-    <div v-if="permitted('documents')" class="badge disabled">
+    <div v-show="false" v-if="permitted('documents')" class="badge disabled">
       Documents (Coming Soon)
     </div>
     <router-link
