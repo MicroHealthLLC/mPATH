@@ -708,14 +708,17 @@
       },
       // RACI USERS commented out out here.....Awaiting backend work
       loadTask(lesson) {
+        debugger;
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
         this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
-        // this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_lesson.subIssueIds.includes(u.id))
-        // this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_lesson.subTaskIds.includes(u.id))
-        // this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_lesson.subRiskIds.includes(u.id))
+        this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
+        this.selectedTask = _.filter(this.filteredTasks, u => this.DV_lesson.taskId == u.id)[0]
+        this.selectedRisk = _.filter(this.filteredRisks, u => this.DV_lesson.riskId == u.id)[0]
+
         // this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_lesson.taskTypeId)
         // this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_lesson.taskStageId)
         // this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_lesson.facilityProjectId)
+
         if (this.DV_lesson.attachFiles) this.addFile(this.DV_lesson.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
