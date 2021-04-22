@@ -6,7 +6,7 @@
       class="mx-auto issues-form"
       accept-charset="UTF-8"
       data-cy="issue_form"
-     :class="{'fixed-form-mapView':isMapView, _disabled: loading, 'kanban-form':isKanbanView }"
+     :class="{ _disabled: loading }"
     >
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
@@ -1918,11 +1918,6 @@ export default {
 .issues-form {
   
 }
-.kanban-form {
-  left: 16.4%;
-  width: 83.33%;
-  z-index: 100;
-}
 .form-control.error {
   border-color: #e84444;
 }
@@ -2041,12 +2036,6 @@ ul {
     overflow-y: auto;
     overflow-x: hidden;
     height: calc(100vh - 275px);
-  }
-  .fixed-form-mapView {
-   width: 100%;
-   top:0;
-   position: absolute;
-   transform: scale(1.03);
   }
  .display-length {
    border-radius: 0.15rem;

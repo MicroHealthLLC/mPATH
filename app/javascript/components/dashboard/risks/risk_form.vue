@@ -278,7 +278,7 @@
                   </div>
                 </div>
 
-                <div class="form-group col-md-6 pr-0">
+            <div class="form-group col-md-6 pr-0">
                   <label class="font-sm"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
@@ -535,12 +535,11 @@
                 <div class="col-md-3 p-0">
                   <div class="simple-select form-group mb-4">
                     <label class="font-sm"
-                      >Probability <span style="color: #dc3545">*</span></label
+                      >Probability</label
                     >
                     <el-select
                       v-model="selectedRiskPossibility"
-                      class="w-100"
-                      v-validate="'required'"
+                      class="w-100"                   
                       track-by="value"
                       value-key="id"
                       placeholder="Risk Probablity"
@@ -556,28 +555,7 @@
                       >
                       </el-option>
                     </el-select>
-                    <!-- <multiselect
-                      v-model="selectedRiskPossibility"
-                      v-validate="'required'"
-                      track-by="value"
-                      label="name"
-                      placeholder="Risk Probablity"
-                      :options="getRiskProbabilityNames"
-                      :searchable="false"
-                      deselect-label=""
-                      :allow-empty="false"
-                      :disabled="!_isallowed('write')"
-                      :class="{ error: errors.has('Risk Probability') }"
-                      data-cy="risk_probability"
-                    >
-                      <template slot="singleLabel" slot-scope="{ option }">
-                        <div class="d-flex">
-                          <span class="select__tag-name">{{
-                            option.name
-                          }}</span>
-                        </div>
-                      </template>
-                    </multiselect> -->
+                
                     <div
                       v-show="errors.has('Risk Probability')"
                       class="text-danger"
@@ -590,12 +568,11 @@
                   <!-- COLUMN ROW 2 -->
                   <div class="simple-select form-group">
                     <label class="font-sm mb-0"
-                      >Impact Level <span style="color: #dc3545">*</span></label
+                      >Impact Level</label
                     >
                     <el-select
                       v-model="selectedRiskImpactLevel"
-                      class="w-100"
-                      v-validate="'required'"
+                      class="w-100"                   
                       track-by="value"
                       value-key="id"
                       placeholder="Impact Level"
@@ -611,28 +588,7 @@
                       >
                       </el-option>
                     </el-select>
-                    <!-- <multiselect
-                      v-model="selectedRiskImpactLevel"
-                      v-validate="'required'"
-                      placeholder="Impact Level"
-                      :options="getRiskImpactLevelNames"
-                      track-by="value"
-                      label="name"
-                      :searchable="false"
-                      deselect-label=""
-                      :disabled="!_isallowed('write')"
-                      :allow-empty="false"
-                      :class="{ error: errors.has('Impact Level') }"
-                      data-cy="impact_level"
-                    >
-                      <template slot="singleLabel" slot-scope="{ option }">
-                        <div class="d-flex">
-                          <span class="select__tag-name">{{
-                            option.name
-                          }}</span>
-                        </div>
-                      </template>
-                    </multiselect> -->
+            
                     <div
                       v-show="errors.has('Impact Level')"
                       class="text-danger"
@@ -645,14 +601,13 @@
                   <!-- COLUMN FOR TEXT FIELD            -->
                 </div>
 
-                <div class="col-md-6 pl-1 pr-3">
+                 <div class="col-md-6 pl-1 pr-3">
                   <div class="form-group mx-1 mb-0">
                     <label class="font-sm"
                       >Probability Description
-                      <span style="color: #dc3545">*</span></label
+                     </label
                     >
-                    <textarea
-                      v-validate="'required'"
+                    <textarea                 
                       class="form-control"
                       placeholder="Risk Probability description"
                       v-model="DV_risk.probabilityDescription"
@@ -676,10 +631,9 @@
                   <div class="form-group mx-1">
                     <label class="font-sm mb-0"
                       >Impact Description
-                      <span style="color: #dc3545">*</span></label
+                     </label
                     >
-                    <textarea
-                      v-validate="'required'"
+                    <textarea                   
                       class="form-control"
                       placeholder="Risk impact description"
                       v-model="DV_risk.impactDescription"
@@ -1032,27 +986,7 @@
                     :label="item"
                   >
                   </el-option>
-                </el-select>
-                <!-- <multiselect
-                  v-model="DV_risk.riskApproach"
-                  v-validate="'required'"
-                  :allow-empty="false"
-                  placeholder="Risk Approach"
-                  :options="riskApproaches"
-                  :searchable="false"
-                  select-label="Select"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"
-                  :class="{ error: errors.has('Risk Approach') }"
-                  data-cy="risk_approach"
-                >
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    <div class="d-flex">
-                      <span class="select__tag-name upperCase">{{
-                        option
-                      }}</span>
-                    </div>
-                  </template>
-                </multiselect> -->
+                </el-select>              
                 <div
                   v-show="errors.has('Risk Approach')"
                   class="text-danger"
@@ -1063,14 +997,13 @@
               </div>
             </div>
 
-            <div class="row form-group mx-4 mb-0">
+      <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
                 <label class="font-sm"
                   >Risk Approach Description
-                  <span style="color: #dc3545">*</span></label
+                </label
                 >
-                <textarea
-                  v-validate="'required'"
+                <textarea               
                   class="form-control"
                   placeholder="Describe how the Risk will be controlled"
                   v-model="DV_risk.riskApproachDescription"
@@ -1095,50 +1028,17 @@
 
             <div class="row mx-4 mb-0">
               <div class="col-md-12 font-sm pt-3 pl-0">
-                <span style="font-weight: 600">Note:</span> Risk Approach and
-                Risk Approach Description must be populated before the Risk
-                Approach can be approved.
+               Risk Approach Approval
               </div>
             </div>
 
             <div
-              class="row form-group pl-2 mx-4 mb-0"
+              class="row form-group pl-2 mx-4 mb-0 w-50"
               style="background-color: #fafafa; border: solid 1px #ededed"
-            >
-              <div class="form-group col-md-3 py-2 mb-0 px-0 user-select w-100">
-                <label class="font-sm mb-0">Risk Approach Approver</label>
-                <el-select
-                  v-model="riskApprover"
-                  class="w-100"
-                  track-by="id"
-                  value-key="id"
-                
-                  clearable
-                  filterable
-                  placeholder="Search and select Risk Approver"
-                  :disabled="!_isallowed('write') || DV_risk.approved"             
-                >
-                  <el-option
-                    v-for="item in activeProjectUsers"
-                    :value="item"
-                    :key="item.id"
-                    :label="item.fullName"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
-
-              <!-- <div v-if="this.DV_risk.text"> -->
-              <div
-                v-if="riskApprover && riskApprover !== null"
-                class="col-md-4 pl-0 py-2 mb-0 text-center"
-              >                    
-                  <label class="font-sm mb-0">Risk Approach Approved</label>
-                   <span
-                    v-if="
-                     $currentUser.full_name ==
-                      riskApprover.fullName
-                    "
+            >            
+              <div class="col-md-2 pl-1 py-2 mb-0">                    
+                  <label class="font-sm mb-0">Risk Approach</label>               
+                  <span                   
                     class="d-block approver-pointer"
                     @click.prevent="toggleApproved"
                   >
@@ -1155,39 +1055,14 @@
                     <small style="vertical-align: text-top">Approved</small>
                   </span>               
               </div>
-              <div v-else class="col-md-4 pl-0 py-2 mb-0 text-center">
-                <label class="font-sm mb-0">Risk Approach Approved</label>
-                <span class="d-block approver-pointer">
-                  <span class="empty_box mr-1 approver-pointer"
-                    ><i class="far fa-square"></i
-                  ></span>
-                  <small style="vertical-align: text-top">Approved</small>
-                </span>
-              </div>
-
-              <!-- <div v-if="this.DV_risk.text" class="col-md-4 pl-0 py-2 mb-0 text-center">
-            <label class="font-sm mb-0">Risk Approach Approved:</label>
-              <span class="d-block approver-pointer" >
-                  <span class="empty_box mr-1 approver-pointer"><i class="far fa-square"></i></span>
-                  <small style="vertical-align:text-top">Approved</small>
-              </span>
-          </div>    -->
-
-              <!-- Users listed here for debugging Risk Approval Section.  Delete if no longer needed
-           Current User:  {{this.$currentUser.full_name  }} <br>
-
-              Risk Aprrover Array (before saving to db)  {{ riskApprover.fullName }}
-              Risk Aprrover Name (after saving to db)  {{this.DV_risk.riskApprover[0].name }}
-             -->
-
-              <div
-                class="col-md-5 pr-2 py-2 mb-0 simple-select form-group ml-0"
+               <div
+                v-show="DV_risk.approved"
+                class="col-md-8 pr-2 py-2 mb-0 simple-select form-group ml-0"
               >
                 <label class="font-sm mb-0"
                   >Date/Time Risk Approach Approved:</label
-                >
-                <!-- <span v-if="riskApprover.length > 0"> -->
-                <textarea
+                >          
+                <input
                   class="form-control"
                   v-model="DV_risk.approvalTime"
                   rows="1"
@@ -1196,32 +1071,9 @@
                   name="Approval Time"
                   disabled
                 />
-                <!-- </span>    -->
-                <span v-if="_isallowed('write') && DV_risk.text">
-                  <button
-                    v-if="isMapView"
-                    class="btn clearBtn mr-2 font-sm btn-sm btn-warning"
-                    v-tooltip="`Clear Risk Approval`"
-                    @click.prevent="resetApprovalSection"
-                  >
-                    <i class="fas fa-redo"></i>
-                  </button>
-                  <button
-                    v-else
-                    class="btn clearBtn py-0 mr-1 font-sm btn-sm btn-warning"
-                    v-tooltip="`Clear Risk Approval`"
-                    v-on:click.prevent="resetApprovalSection"
-                  >
-                    <i class="fas fa-redo pr-1"></i>RISK APPROVAL SECTION
-                  </button>
-                </span>
-              </div>
-            </div>
 
-            <small v-if="!this.DV_risk.text" class="pl-4 text-danger">
-              Risk form and Risk Approach Approver must first be saved in order
-              to submit for approval
-            </small>
+              </div>
+            </div>          
           </div>
           <!-- END RISK PRIORITIZE TAB SECTION -->
 
@@ -1892,7 +1744,7 @@ export default {
       now: new Date().toLocaleString(),
       destroyedFiles: [],
       responsibleUsers: null,
-      riskApprover: null,
+      // riskApprover: null,
       accountableRiskUsers: null,
       consultedRiskUsers: [],
       informedRiskUsers: [],
@@ -1901,8 +1753,7 @@ export default {
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },
       selectedTaskType: null,
       selectedRiskStage: null,
-      relatedIssues: [],
- 
+      relatedIssues: [], 
       editToggle: false,
       relatedTasks: [],
       relatedRisks: [],
@@ -2008,7 +1859,7 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
-        riskApprover: [],
+        // riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
@@ -2020,7 +1871,7 @@ export default {
         getRiskImpactLevelNames: "1 - Negligible",
         dueDate: "",
         autoCalculate: true,
-        riskApproverUserIds: [],
+        // riskApproverUserIds: [],
         responsibleUserIds: [],
         accountableUserIds: [],
         consultedUserIds: [],
@@ -2101,9 +1952,9 @@ export default {
       this.informedRiskUsers = _.filter(this.activeProjectUsers, (u) =>
         this.DV_risk.informedUserIds.includes(u.id)
       );
-      this.riskApprover = _.filter(this.activeProjectUsers, (u) =>
-        this.DV_risk.riskApproverUserIds.includes(u.id)
-      )[0];
+      // this.riskApprover = _.filter(this.activeProjectUsers, (u) =>
+      //   this.DV_risk.riskApproverUserIds.includes(u.id)
+      // )[0];
       this.relatedIssues = _.filter(this.currentIssues, (u) =>
         this.DV_risk.subIssueIds.includes(u.id)
       );
@@ -2185,13 +2036,13 @@ export default {
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
       this.updateWatchedRisks(this.DV_risk);
     },
-    toggleApproved() {
-      this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
-      this.updateApprovedRisks(this.DV_risk);
-      this.DV_risk.approvalTime = new Date().toLocaleString();
+    toggleApproved(e) {
+      this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };    
+      this.DV_risk.approvalTime = this.$currentUser.full_name + " on " + new Date().toLocaleString() 
       if (!this.DV_risk.approved) {
-        this.DV_risk.approvalTime = "";
+        this.DV_risk.approvalTime = "";     
       }
+      // this.validateThenSave(e)
     },
     selectedStage(item){    
       this.selectedRiskStage = item
@@ -2210,37 +2061,13 @@ export default {
       var time = moment(progressList.createdAt).format("hh:mm:ss a");
       return `${progressList.user.fullName} at ${date} ${time} `;
     },
-     resetApprovalSection() {
-      if (this.DV_risk.approved) {
-        this.DV_risk.approved = !this.DV_risk.approved;
-      }
-      // this.DV_risk = {...this.DV_risk, approved: this.DV_risk.approved}
-      if (!this.DV_risk.approved) {
-        !this.DV_risk.approved;
-      }
-      this.updateApprovedRisks(this.DV_risk);
-      this.DV_risk.approvalTime = " ";
-      if (this.riskApprover.length > 0) {
-        this.riskApprover = [];
-        this.validateThenSave();
-      }
-      if (this.DV_risk.riskApprover.length > 0) {
-        this.DV_risk.riskApprover = [];
-        this.validateThenSave();
-      }
-      // this.validateThenSave
-    },
-    notApprover() {
-      alert(
-        "Sorry.  Only Risk Approach Approver is authorized to check this box."
-      );
-    },
     cancelRiskSave() {
       this.$emit("on-close-form");
       this.setRiskForManager({ key: "risk", value: null });
     },
     validateThenSave(e) {
       e.preventDefault();
+        this.updateApprovedRisks(this.DV_risk);
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2319,14 +2146,7 @@ export default {
         } else {
           formData.append("informed_user_ids[]", []);
         }
-        // Risk Approver User id
-        if (this.DV_risk.riskApproverUserIds && this.DV_risk.riskApproverUserIds.length) {
-          for (let u_id of this.DV_risk.riskApproverUserIds) {
-            formData.append("risk_approver_user_ids[]", u_id);
-          }
-        } else {
-          formData.append("risk_approver_user_ids[]", []);
-        }
+
 
         if (this.DV_risk.subTaskIds.length) {
           for (let u_id of this.DV_risk.subTaskIds) {
@@ -2593,8 +2413,7 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date",
-        "Risk Approach Due Date",
+        "Identified Date",   
       ];
 
       var tooltipMessage = "Field is located on Prioritize";
@@ -2637,14 +2456,14 @@ export default {
         this.DV_risk &&
         this.exists(this.DV_risk.text) &&
         this.exists(this.DV_risk.riskDescription) &&
-        this.exists(this.DV_risk.impactDescription) &&
-        this.exists(this.DV_risk.probabilityDescription) &&
+        // this.exists(this.DV_risk.impactDescription) &&
+        // this.exists(this.DV_risk.probabilityDescription) &&
         this.exists(this.selectedRiskPossibility.id) &&
         this.exists(this.selectedRiskImpactLevel.id) &&
         this.exists(this.selectedRiskPossibility.id) &&
         this.exists(this.selectedRiskImpactLevel.id) &&
         this.exists(this.DV_risk.riskApproach) &&
-        this.exists(this.DV_risk.riskApproachDescription) &&
+        // this.exists(this.DV_risk.riskApproachDescription) &&
         this.exists(this.DV_risk.taskTypeId) &&
         this.exists(this.DV_risk.startDate) &&
         this.exists(this.DV_risk.dueDate)
@@ -2932,18 +2751,6 @@ export default {
     "DV_risk.autoCalculate"(value) {
       if (value) this.calculateProgress();
     },
-    riskApprover: {
-      handler: function(value) {
-        if (value) {
-          this.DV_risk.riskApproverUserIds = _.uniq(
-            _.map(_.flatten([value]), "id")
-          );
-        } else {
-          this.DV_risk.riskApproverUserIds = null;
-        }
-      },
-      deep: true,
-    },
     responsibleUsers: {
       handler: function(value) {
         if (value) {
@@ -3068,7 +2875,7 @@ export default {
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 275px);
+  height: calc(100vh - 280px);
 }
 .form-control.error {
   border-color: #e84444;
