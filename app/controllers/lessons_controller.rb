@@ -2,7 +2,7 @@ class LessonsController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    render json: {lessons: project.lessons}, status: 200
+    render json: {lessons: project.lessons.map(&:to_json)}, status: 200
   end
 
   def create

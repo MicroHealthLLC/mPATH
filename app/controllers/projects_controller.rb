@@ -15,7 +15,7 @@ class ProjectsController < AuthenticatedController
       check_permit("gantt_view")
     elsif params[:tab] == "member_list"
       check_permit("members")
-    elsif params[:tab] == "lessons"
+    elsif params[:tab] == "lessons" || params[:lesson_id]
       true #check_permit("members")
     elsif params[:tab] == "watch_view"
       check_permit("watch_view")

@@ -617,6 +617,11 @@
       }
     },
     mounted() {
+      if (this.contentLoaded && this.$route.params.lessonId !== "new") {
+        this.lesson = this.currentProject.lessons.find(
+          (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
+        );
+      }
       if (!_.isEmpty(this.lesson)) {
         this.loadTask(this.lesson)
       }else{
@@ -627,7 +632,7 @@
       this._ismounted = true
      },
     methods: {
-       ...mapMutations([
+      ...mapMutations([
         'setLessonForManager',
         'updateTasksHash'
       ]),
@@ -702,10 +707,9 @@
         return `${progressList.user.fullName} at ${date} ${time} `
       },
       // RACI USERS commented out out here.....Awaiting backend work
-      loadTask(task) {
-        this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(task)}
-        this.userIds = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))[0]
-
+      loadTask(lesson) {
+        this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
+        this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
         // this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_lesson.subIssueIds.includes(u.id))
         // this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_lesson.subTaskIds.includes(u.id))
         // this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_lesson.subRiskIds.includes(u.id))
@@ -759,6 +763,9 @@
           this.editToggle = !this.editToggle
           this.loading = true
           let formData = new FormData()
+
+          if(this.DV_lesson.id)
+            formData.append('lesson[id]', this.DV_lesson.id)
 
           formData.append('lesson[title]', this.DV_lesson.title)
           formData.append('lesson[description]',  this.DV_lesson.description)
@@ -897,7 +904,6 @@
         let confirm = window.confirm(`Are you sure you want to delete?`)
         if (!confirm) return;
         let i = lessonDetail.id ? this.DV_lesson.lessonDetails.findIndex(n => n.id === lessonDetail.id) : this.DV_lesson.lessonDetails.findIndex(n => n.guid === lessonDetail.guid)
-        debugger;
         Vue.set(this.DV_lesson.lessonDetails, i, {...lessonDetail, _destroy: true})
       },
       noteBy(note) {
@@ -974,6 +980,7 @@
     },
     computed: {
       ...mapGetters([
+        'contentLoaded',
         'fetchCurrentProject',
         'getFacilityProjectOptions',
         'currentProject',
@@ -1063,6 +1070,24 @@
       }
     },
     watch: {
+      contentLoaded: {
+        handler() {
+          if (this.contentLoaded && this.$route.params.lessonId !== "new") {
+            this.lesson = this.currentProject.lessons.find(
+              (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
+            );
+          }
+          if (!_.isEmpty(this.lesson)) {
+            this.loadTask(this.lesson)
+          }else{
+            this.loadTask(this.DV_lesson)
+          }
+
+          this.loading = false
+          this._ismounted = true
+          
+        },
+      },
       lesson: {
         handler: function(value) {
           this.loadLesson(this.lesson)
@@ -1102,7 +1127,6 @@
       },
       selectedTask: {
         handler: function(value) {
-          debugger;
           if (value) this.DV_lesson.taskId = value.id
         }, deep: true
       },

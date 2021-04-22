@@ -104,7 +104,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(lesson, index) in sortedLessons" :key="index" data-cy="user_data">
+            <tr v-for="(lesson, index) in sortedLessons" :key="index" @click.prevent="editLesson(lesson)" data-cy="user_data">
               <td class="text-center">{{lesson.id}}</td>
               <td>{{lesson.title}}</td>
               <!-- <td>{{user.lastName}}</td> -->
@@ -134,6 +134,7 @@
 </template>
 <script>
 import axios from 'axios'
+import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
 import LessonForm from './LessionForm'
 
@@ -155,10 +156,17 @@ export default {
     }
   },
   mounted() {
-    this.fetchLessons()
+    if (this.contentLoaded){
+      if(!this.currentProject.lessons) {
+        this.fetchLessons()
+      }else{
+        this.lessonsList = this.currentProject.lessons
+      }
+    }
   },
   computed: {
     ...mapGetters([
+      'contentLoaded',
       'currentProject',
       'activeProjectUsers',
       'filterDataForAdvancedFilter',
@@ -202,8 +210,11 @@ export default {
   methods: {
     ...mapMutations([
       'setMembersPerPageFilter',
-      'setLessonForManager'
-  ]),
+      'setLessonForManager',
+    ]),
+    editLesson(lesson) {
+      this.$router.push(`/programs/${this.currentProject.id}/lessons/${lesson.id}`)
+    },
     lessonCreated(risk) {
       this.facility.risks.unshift(risk)
       this.newRisk = false
@@ -227,8 +238,7 @@ export default {
       );
     },
     fetchLessons(){
-      // let url = `/projects/${this.currentProject.id}/lessons.json`
-      let url = `/projects/2/lessons.json`
+      let url = `/projects/${this.currentProject.id}/lessons.json`
       let method = "GET"
 
       axios({
@@ -239,7 +249,8 @@ export default {
         }
       })
       .then((response) => {
-        this.lessonsList = response.data.lessons        
+        this.lessonsList = humps.camelizeKeys(response.data.lessons)
+        this.currentProject.lessons = this.lessonsList
       })
       .catch((err) => {
         // var errors = err.response.data.errors
@@ -298,7 +309,17 @@ export default {
       var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
       window.location.href = this.uri + this.base64(this.format(this.template, ctx))
     }
-  }
+  },
+  watch: {
+    // This will fire off when page is refreshed because the application needs to wait until it receives data from the backend request
+    contentLoaded: {
+      handler() {
+        if (this.$route.params.lessonId !== "new") {
+          this.fetchLessons()
+        }
+      },
+    },
+  },
 };
 </script>
 <style scoped lang="scss">

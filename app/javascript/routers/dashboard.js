@@ -133,6 +133,11 @@ export default new VueRouter({
       component: LessonForm,
     },
     {
+      name: "LessonForm",
+      path: "/programs/:programId/lessons/:lessonId",
+      component: LessonForm,
+    },
+    {
       name: "SheetView",
       path: "/programs/:programId/sheet",
       component: SheetView,
