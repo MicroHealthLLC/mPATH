@@ -123,8 +123,8 @@ export default {
     contentLoaded: {
       handler() {
         if (this.$route.params.projectId) {
-          this.currentFacility = this.currentProject.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.id == this.$route.params.projectId
           );
         }
       },
@@ -140,11 +140,13 @@ export default {
     },
     "$route.path": {
       handler() {
-        this.currentFacility = this.currentProject.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
+        if (this.$route.params.projectId) {
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.id == this.$route.params.projectId
           );
-      }
-    }
+        }
+      },
+    },
   },
 };
 </script>
