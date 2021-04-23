@@ -28,7 +28,7 @@
                 </p>
                 <div class="simple-select">
                   <v2-date-picker
-                    v-model="facility.dueDate"
+                    v-model="dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
                     class="w-100 vue2-datepicker"
@@ -40,9 +40,10 @@
 
                 <div class="el-dropdown-wrapper my-2">
                   <el-select
-                    v-model="selectedStatus"
+                    v-model="statusId"
                     track-by="id"
                     class="w-100"
+                    @change="onChange"
                     :disabled="!_isallowed('write')"
                     placeholder="Select Project Status"
                   >
@@ -476,9 +477,11 @@ export default {
   components: {
     Loader,
   },
-  props: ["facility"], 
+  props: ["facility"],
   data() {
     return {
+      dueDate: "",
+      statusId: 0,
       loading: true,
       DV_updated: false,
       notesQuery: "",
@@ -490,6 +493,10 @@ export default {
     if (Vue.prototype.$preferences.sub_navigation_menu) {
       this.currentTab = Vue.prototype.$preferences.sub_navigation_menu;
     }
+    if (this.contentLoaded) {
+      this.dueDate = this.facility.dueDate;
+      this.statusId = this.facility.statusId;
+    }
   },
   methods: {
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
@@ -499,17 +506,23 @@ export default {
       this.DV_updated = false;
       let data = {
         facility: {
-          statusId: this.facility.statusId,
-          dueDate: this.facility.dueDate,
+          statusId: this.statusId,
+          dueDate: this.dueDate,
         },
       };
+      // Used to update state
+      let updatedFacility = Object.assign(this.facility, {
+        statusId: this.statusId,
+        dueDate: this.dueDate,
+      });
+
       http
         .put(
           `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}.json`,
           data
         )
         .then((res) => {
-          this.updateFacilityHash(res.data.facility);
+          this.updateFacilityHash(updatedFacility);
           if (res.status === 200) {
             this.$message({
               message: `${res.data.facility.facilityName} was saved successfully.`,
@@ -878,6 +891,14 @@ export default {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
         this.$permissions.overview[salut];
+    },
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        this.dueDate = this.facility.dueDate;
+        this.statusId = this.facility.statusId;
+      },
     },
   },
 };
