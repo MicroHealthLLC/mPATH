@@ -131,19 +131,35 @@ class Lesson < ApplicationRecord
       lesson.add_link_attachment(params)
 
       if notes_attributes.present?
+        existing_notes = self.notes
         notes_objs = []
         notes_attributes.each do |key, value|
-          value.delete("_destroy")
-          notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+          if value[:_destroy].present?
+            n = existing_notes.detect{|e| e.id.to_s == value["id"]}.destroy
+            n.destroy if n
+          elsif value[:id].present?
+            n = existing_notes.detect{|e| e.id.to_s == value["id"]}
+            n.update(value) if n
+          else
+            notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+          end
         end
         Note.import(notes_objs) if notes_objs.any?
       end
 
       if params_lesson_details.present?
+        existing_lesson_details = self.lesson_details
         lesson_detail_objs = []
         params_lesson_details.each do |key, value|
-          value.delete("_destroy")
-          lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id}) )
+          if value[:_destroy].present?
+            l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}.destroy
+            l.destroy if l
+          elsif value[:id].present?
+            l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}
+            l.update(value) if l
+          else
+            lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id}) )
+          end
         end
         LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
       end
