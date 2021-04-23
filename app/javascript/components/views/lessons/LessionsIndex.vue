@@ -108,7 +108,7 @@
               <td class="text-center">{{lesson.id}}</td>
               <td>{{lesson.title}}</td>            
               <td>{{lesson.description}}</td>
-              <td>{{ moment(lesson.date).format('DD MM YYYY')}}</td>
+              <td>{{ moment(lesson.date).format('DD MMM YYYY')}}</td>
               <td>{{lesson.stage}}</td>
               <td>{{lesson.project_id}}</td>
             </tr>
