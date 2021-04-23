@@ -78,6 +78,7 @@ class Lesson < ApplicationRecord
       user_ids: p_users.map(&:id).compact.uniq,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      lesson_details: self.lesson_details.map(&:to_json),
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
 

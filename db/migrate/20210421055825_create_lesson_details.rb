@@ -5,7 +5,7 @@ class CreateLessonDetails < ActiveRecord::Migration[6.1]
       t.text :recommendation
       t.integer :user_id
       t.integer :lesson_id
-      t.integer :detail_type
+      t.string :detail_type, default: 'success'
       
       t.timestamps
     end
