@@ -1,7 +1,9 @@
 .body-wrapper
-  .mt-4.container
-    h1.text-center
-      | Welcome to MicroHealth Geographic Information System
+  .mt-2.container
+    .container.mb-4.text-center.d-inline-block
+      h4.mt-1.text-center.mpath-logo
+       | Welcome to     
+      =image_tag "mpath.png"
     br
     .grid-container.program-name
       -if @active_projects.size > 0
@@ -107,10 +109,3 @@
       -else
         li.list-group-item.text-center data-cy="not_access_projects"
           | Currently you dont have permissions to access projects
-
-
-
-/ Front end data info:
-
-/ Total # Tasks in Portfolio:
-                   ="(#{Task.count} Projects)"

@@ -2042,7 +2042,8 @@ export default {
       if (!this.DV_risk.approved) {
         this.DV_risk.approvalTime = "";     
       }
-      // this.validateThenSave(e)
+      this.updateApprovedRisks(this.DV_risk);
+      this.validateThenSave(e)
     },
     selectedStage(item){    
       this.selectedRiskStage = item
@@ -2066,8 +2067,7 @@ export default {
       this.setRiskForManager({ key: "risk", value: null });
     },
     validateThenSave(e) {
-      e.preventDefault();
-        this.updateApprovedRisks(this.DV_risk);
+      e.preventDefault();   
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2875,7 +2875,7 @@ export default {
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 280px);
+  height: calc(100vh - 275px);
 }
 .form-control.error {
   border-color: #e84444;
