@@ -224,6 +224,28 @@
           </el-option>
           </el-select>
 
+          <label class="font-md mb-0">Projects:</label>
+          <el-select
+           v-model="selectedFacilityProjects"
+           class="w-100"
+           filterable
+           clearable
+           track-by="id"
+           value-key="id"
+           placeholder="Search and select Project"
+           :disabled="!_isallowed('write')"
+           multiple
+           data-cy="task_owner"
+           >
+          <el-option
+            v-for="item in activeFacilityProjects"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+
         </div>
   </div>
 
@@ -561,10 +583,12 @@
         selectedTask: null,
         selectedIssue: null,
         selectedRisk: null,
+        selectedFacilityProjects: [],
         users: [],
         relatedIssues: [],
         relatedTasks: [],
         relatedRisks: [],
+        activeFacilityProjects: [],
         editToggle: false,
         _ismounted: false,
         showErrors: false,
@@ -628,6 +652,7 @@
         this.lesson = this.currentProject.lessons.find(
           (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
         );
+        this.activeFacilityProjects = _.flatten(_.map(this.currentProject.facilities, f => [{id: f.facilityProjectId, name: f.facilityName}] ) )
       }
       if (!_.isEmpty(this.lesson)) {
         this.loadLesson(this.lesson)
@@ -658,6 +683,7 @@
           issueId: '',
           issueTypeId: '',
           userIds: [],
+          facilityProjectIds: [],
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
@@ -715,9 +741,9 @@
       },
       // RACI USERS commented out out here.....Awaiting backend work
       loadLesson(lesson) {
-        debugger;
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
         this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
+        this.selectedFacilityProjects = _.filter(this.activeFacilityProjects, u => this.DV_lesson.facilityProjectIds.includes(u.id) )
         this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
         this.selectedTask = _.filter(this.filteredTasks, u => this.DV_lesson.taskId == u.id)[0]
         this.selectedRisk = _.filter(this.filteredRisks, u => this.DV_lesson.riskId == u.id)[0]
@@ -769,7 +795,6 @@
           }
         })
         .then((response) => {
-          debugger;
           var lessonId = response.data.lesson.id
           // this.currentProject.lessons = this.lessonsList
 
@@ -835,7 +860,15 @@
           else {
             formData.append('lesson[user_ids][]', [])
           }
-
+          if (this.DV_lesson.facilityProjectIds && this.DV_lesson.facilityProjectIds.length) {
+            for (let u_id of this.DV_lesson.facilityProjectIds) {
+              formData.append('lesson[facility_project_ids][]', u_id)
+            }
+          }
+          else {
+            formData.append('lesson[facility_project_ids][]', [])
+          }
+          
           for (let i in this.DV_lesson.notes) {
             let note = this.DV_lesson.notes[i]
             if (!note.body && !note._destroy) continue
@@ -1210,6 +1243,15 @@
         handler(value) {
           let ids = _.map(value, 'id')
           this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
+        }, deep: true
+      },
+      selectedFacilityProjects: {
+        handler: function(value) {
+          if (value){
+              this.DV_lesson.facilityProjectIds = _.uniq(_.map( _.flatten([value]) , 'id'))
+          }else{
+            this.DV_lesson.facilityProjectIds = null
+          }
         }, deep: true
       },
       "filteredNotes.length"(value, previous) {
