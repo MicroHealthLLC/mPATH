@@ -464,7 +464,7 @@
         </span>
         <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess"  class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filterLessonDetailSuccess" :list="filterLessonDetailSuccess" :per="5" class="paginate-list" :key="filterLessonDetailSuccess ? filterLessonDetailSuccess.length : 1">
-          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group" :key="lessonDetail.id">
+          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Success by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
               <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
                 <i class="fas fa-trash-alt"></i>
@@ -487,7 +487,7 @@
           <i class="fas fa-plus-circle"></i>
         </span>
         <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
-        <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailSuccess.length : 1">
+        <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailFailure.length : 1">
           <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
               <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
@@ -1070,9 +1070,9 @@
         return _.orderBy(_.filter(this.DV_lesson.notes, n => !n._destroy), 'createdAt', 'desc')
       },
       filterLessonDetailSuccess(){
-        // var details = _.filter(this.DV_lesson.lessonDetails, n => (n.detailType == 'success' && !n._destroy))
-        // return _.orderBy(details, 'createdAt', 'desc')
-        return _.orderBy(_.filter(this.DV_lesson.lessonDetails, n => !n._destroy), 'createdAt', 'desc')
+        var details = _.filter(this.DV_lesson.lessonDetails, n => (n.detailType == 'success' && !n._destroy))
+        return _.orderBy(details, 'createdAt', 'desc')
+      
       },
       filterLessonDetailFailure(){
         var details = _.filter(this.DV_lesson.lessonDetails, n => ( n.detailType == 'failure' && !n._destroy) )
@@ -1213,6 +1213,20 @@
         }, deep: true
       },
       "filteredNotes.length"(value, previous) {
+        this.$nextTick(() => {
+          if (this.$refs.paginator && (value === 1 || previous === 0)) {
+            this.$refs.paginator.goToPage(1)
+          }
+        })
+      },
+       "filterLessonDetailSuccess.length"(value, previous) {
+        this.$nextTick(() => {
+          if (this.$refs.paginator && (value === 1 || previous === 0)) {
+            this.$refs.paginator.goToPage(1)
+          }
+        })
+      },
+       "filterLessonDetailFailure.length"(value, previous) {
         this.$nextTick(() => {
           if (this.$refs.paginator && (value === 1 || previous === 0)) {
             this.$refs.paginator.goToPage(1)
