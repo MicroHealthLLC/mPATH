@@ -24,7 +24,7 @@
           </div>
         </el-row>
       </div>
-      <div class="pb-2 table-div">
+      <div class="pb-2 table-div" :load="log(this.projectId)">
         <table class="table table-sm table-bordered" id="taskList1" ref="table">
           <thead style="min-height:50px">
             <tr class="thead" style="background-color:#ededed;">
@@ -104,7 +104,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(lesson, index) in sortedLessons" :key="index" @click.prevent="editLesson(lesson)" data-cy="user_data">
+            <tr v-for="(lesson, index) in sortedLessons" :load="log(facilities)" :key="index" @click.prevent="editLesson(lesson)" data-cy="user_data">
               <td class="text-center">{{lesson.id}}</td>
               <td>{{lesson.title}}</td>
               <!-- <td>{{user.lastName}}</td> -->
@@ -147,6 +147,7 @@ export default {
   data() {
     return {
       newLesson: false,
+      DV_facility: Object.assign({}, this.facility),
       currentLesson: null,
       pages: [],
       lessonsList: [],
@@ -174,6 +175,7 @@ export default {
       'getMembersPerPageFilter',
       'getTaskIssueUserFilter',
       'facilities',
+      'projectId',
       'membersPerPageFilter'
     ]),
     tableData() {
@@ -212,6 +214,9 @@ export default {
       'setMembersPerPageFilter',
       'setLessonForManager',
     ]),
+    log(e){
+      console.log("This is the lesson obj: " + JSON.stringify(e)) 
+    },
     editLesson(lesson) {
       this.$router.push(`/programs/${this.currentProject.id}/lessons/${lesson.id}`)
     },
