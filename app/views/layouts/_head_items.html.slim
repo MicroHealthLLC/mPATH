@@ -1,5 +1,5 @@
 
-title = "mPATH Web" + (content_for?(:title) ? " ~ " + yield(:title) : "")
+title = "mPATH " + (content_for?(:title) ? " ~ " + yield(:title) : "")
 
 meta http-equiv="x-ua-compatible" content="ie=edge"
 meta content="width=device-width, initial-scale=1.0" name="viewport" id="viewport"
@@ -23,7 +23,7 @@ link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="styleshe
 /* 3rd Party Javascript */
 // Load minified Vue for production, and unminified for development
 - if Rails.env.development?
-  script src="https://unpkg.com/vue@2.x/dist/vue.js"   
+  script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"
 - else
   script src="https://unpkg.com/vue@2.x/dist/vue.js"   
 / script src="https://unpkg.com/vuetify@2.x/dist/vuetify.js"
