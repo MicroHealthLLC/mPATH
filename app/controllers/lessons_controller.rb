@@ -22,7 +22,14 @@ class LessonsController < AuthenticatedController
     render json: {lesson: lesson}, status: 200
   end
 
-  
+  def destroy
+    lesson = Lesson.find(params[:id])
+    if lesson.destroy
+      render json: {lesson: lesson}, status: 200
+    else
+      render json: {lesson: lesson}, status: 402
+    end
+  end
 
   private
 

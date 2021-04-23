@@ -157,11 +157,12 @@ export default {
   },
   mounted() {
     if (this.contentLoaded){
-      if(!this.currentProject.lessons) {
-        this.fetchLessons()
-      }else{
-        this.lessonsList = this.currentProject.lessons
-      }
+      this.fetchLessons()
+      // if(!this.currentProject.lessons) {
+      //   this.fetchLessons()
+      // }else{
+      //   this.lessonsList = this.currentProject.lessons
+      // }
     }
   },
   computed: {

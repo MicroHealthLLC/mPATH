@@ -45,6 +45,13 @@
           >
             Close
           </button>
+          <button
+            class="btn btn-sm sticky-btn btn-outline-secondary"
+            @click.prevent="deleteLesson"
+            data-cy="task_close_btn"
+          >
+            Delete
+          </button>
         </div>
       </div>
 
@@ -748,6 +755,40 @@
         this.$router.push(
           `/programs/${this.$route.params.programId}/lessons`
         );
+      },
+      deleteLesson() {
+        let confirm = window.confirm(`Are you sure you want to delete "${this.lesson.title}"?`)
+        if (!confirm) {return}
+
+        axios({
+          method: "DELETE",
+          url: `/projects/${this.currentProject.id}/lessons/${this.lesson.id}.json`,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          debugger;
+          var lessonId = response.data.lesson.id
+          // this.currentProject.lessons = this.lessonsList
+
+          _.remove(this.currentProject.lessons, lesson => lesson.id == lessonId)
+
+          this.$message({
+            // message: `${response.data.task.text} was saved successfully.`,
+             message: `Lesson was deleted successfully.`,
+            type: "success",
+            showClose: true,
+          });
+        })
+        .catch((err) => {
+          // var errors = err.response.data.errors
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+        this.cancelSave()
       },
       saveLesson() {
         if (!this._isallowed('write')) return
