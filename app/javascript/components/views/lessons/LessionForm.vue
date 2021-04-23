@@ -13,13 +13,13 @@
             <span style="font-size: 16px; margin-right: 10px"
               ><i class="fas fa-building"></i
             ></span>
-            <router-link :to="projectNameLink">{{ this.currentProject.name }}</router-link>
+            <router-link :to="projectNameLink" :load="log(projectNameLink)">{{ currentProject.name  }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
             ></el-icon>
             <span v-if="DV_lesson.title.length > 0">{{ DV_lesson.title }}</span>
-            <span v-else style="color: gray">(Lesson Name)</span>
+            <span v-else style="color: gray" >(Lesson Name)</span>
           </h5>
         </div>
         <div class="ml-auto d-flex" v-if="_isallowed('read')">
@@ -458,19 +458,19 @@
 
 
      <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Success:</label>
+        <label class="font-sm">Successes:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addSuccess">
           <i class="fas fa-plus-circle"></i>
         </span>
-        <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess"  class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filterLessonDetailSuccess" :list="filterLessonDetailSuccess" :per="5" class="paginate-list" :key="filterLessonDetailSuccess ? filterLessonDetailSuccess.length : 1">
-          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group">
+          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group" :key="lessonDetail.id">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Success by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
               <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
             <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
           </div>
         </paginate>
@@ -482,11 +482,11 @@
 
 
      <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Failuers:</label>
+        <label class="font-sm">Failures:</label>
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFailure">
           <i class="fas fa-plus-circle"></i>
         </span>
-        <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailSuccess.length : 1">
           <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
@@ -494,7 +494,7 @@
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
-            <textarea class="form-control" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
             <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
           </div>
         </paginate>
@@ -510,9 +510,9 @@
         <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addNote">
           <i class="fas fa-plus-circle"></i>
         </span>
-        <paginate-links v-if="filteredNotes.length" for="filteredNotes" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate-links v-if="filteredNotes.length" for="filteredNotes" class="float-right" :show-step-links="true" :limit="2"></paginate-links>
         <paginate ref="paginator" name="filteredNotes" :list="filteredNotes" :per="5" class="paginate-list" :key="filteredNotes ? filteredNotes.length : 1">
-          <div v-for="note in paginated('filteredNotes')" class="form-group">
+          <div v-for="note in paginated('filteredNotes')" class="form-group" :key="note.id">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Update by</label> <span class="font-sm text-muted">{{noteBy(note)}}</span>
               <span v-if="allowDeleteNote(note)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyNote(note)">
                 <i class="fas fa-trash-alt"></i>
@@ -545,7 +545,7 @@
   const moment = extendMoment(Moment)
   export default {
     name: 'LessonForm',
-    // props: ['facility', 'task', 'title', 'fixedStage'],
+    props: ['facility', 'facilities', 'title', 'fixedStage', 'projectId'],
     components: {
       AttachmentInput, Draggable, FormTabs
     },
@@ -630,9 +630,9 @@
         );
       }
       if (!_.isEmpty(this.lesson)) {
-        this.loadTask(this.lesson)
+        this.loadLesson(this.lesson)
       }else{
-        this.loadTask(this.DV_lesson)
+        this.loadLesson(this.DV_lesson)
       }
 
       this.loading = false
@@ -668,7 +668,7 @@
         }
       },
       log(e){
-        // console.log("This is the taskStages: " + e)
+        console.log("This is the currentProject: " + e)
       },
       selectedStage(item){    
         this.selectedTaskStage = item
@@ -714,7 +714,8 @@
         return `${progressList.user.fullName} at ${date} ${time} `
       },
       // RACI USERS commented out out here.....Awaiting backend work
-      loadTask(lesson) {
+      loadLesson(lesson) {
+        debugger;
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
         this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
         this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
@@ -928,7 +929,7 @@
         this.DV_lesson.notes.unshift({body: '', user_id: '', guid: this.guid()})
       },
       addSuccess(){
-        this.DV_lesson.lessonDetails.unshift({finding: '',recommendation:'',detailType: 'success',  user_id: '', guid: this.guid()})
+        this.DV_lesson.lessonDetails.unshift({finding: '', recommendation:'',detailType: 'success',  user_id: '', guid: this.guid()})
       },
       addFailure(){
         this.DV_lesson.lessonDetails.unshift({finding: '',recommendation:'',detailType: 'failure',  user_id: '', guid: this.guid()})
@@ -1022,7 +1023,7 @@
         'contentLoaded',
         'fetchCurrentProject',
         'getFacilityProjectOptions',
-        'currentProject',
+        'currentProject',        
         'taskTypes',
         'taskStages',
         'activeProjectUsers',
@@ -1031,8 +1032,8 @@
         'currentTasks',
         'currentIssues',
         'currentRisks',
-        'managerView',
-        'facilities',
+        'managerView'
+   
       ]),
       readyToSave() {
         return (
@@ -1069,8 +1070,9 @@
         return _.orderBy(_.filter(this.DV_lesson.notes, n => !n._destroy), 'createdAt', 'desc')
       },
       filterLessonDetailSuccess(){
-        var details = _.filter(this.DV_lesson.lessonDetails, n => (n.detailType == 'success' && !n._destroy))
-        return _.orderBy(details, 'createdAt', 'desc')
+        // var details = _.filter(this.DV_lesson.lessonDetails, n => (n.detailType == 'success' && !n._destroy))
+        // return _.orderBy(details, 'createdAt', 'desc')
+        return _.orderBy(_.filter(this.DV_lesson.lessonDetails, n => !n._destroy), 'createdAt', 'desc')
       },
       filterLessonDetailFailure(){
         var details = _.filter(this.DV_lesson.lessonDetails, n => ( n.detailType == 'failure' && !n._destroy) )
@@ -1096,15 +1098,17 @@
           return "map";
         } else if (this.$route.path.includes("sheet")) {
           return "sheet";
+        } else if (this.$route.path.includes("lessons")) {
+          return "lessons";
         } else {
           return "kanban";
         }
       },
       projectNameLink() {
-        if (this.$route.path.includes("kanban")) {
-          return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`
-        } else {
-          return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`
+        if (this.$route.path.includes("lessons")) {
+          return `/programs/${this.$route.params.programId}/${this.tab}`
+        // } else {
+        //   return `/programs/${this.$route.params.programId}/${this.tab}`
         }
       }
     },
@@ -1117,9 +1121,9 @@
             );
           }
           if (!_.isEmpty(this.lesson)) {
-            this.loadTask(this.lesson)
+            this.loadLesson(this.lesson)
           }else{
-            this.loadTask(this.DV_lesson)
+            this.loadLesson(this.DV_lesson)
           }
 
           this.loading = false
@@ -1279,50 +1283,7 @@
     padding-bottom: 20px;
     margin-bottom: 10px;
     position: relative;
-  }
-  .paginate-links.filteredNotes {
-    list-style: none !important;
-    user-select: none;
-    text-decoration-line: none !important;
-    margin-bottom: 18px;
-    a {
-      width: 20px;
-      height: 25px;
-      margin-right: 0;
-      border-radius: 2px;
-      background-color: white;
-      box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
-      color: #383838;
-      padding: 5px 12px;
-      cursor: pointer;
-      text-decoration-line: none !important;
-    }
-    a:hover {
-      background-color: #ededed;
-    }
-    li.active a {
-      font-weight: bold;
-      color: #383838;
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    a.active  {
-      background-color: rgba(211, 211, 211, 10%);
-    }
-    li.next:before {
-      content: ' | ';
-      margin-right: 13px;
-      color: #ddd;
-    }
-    li.disabled a {
-      color: #ccc;
-      cursor: no-drop;
-    }
-    li {
-      display: inline !important;
-      margin: 1px;
-      color: #383838 !important;
-    }
-  }
+  }    
   .red-border {
     border: solid .5px red;
   }
