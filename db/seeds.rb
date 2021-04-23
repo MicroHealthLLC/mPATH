@@ -11,7 +11,7 @@ user = User.find_or_initialize_by(email: 'admin@example.com') do |user|
 end
 
 if user.privilege.nil?
-  user.privilege = Privilege.new(overview: "RWD", tasks: "RWD", notes: "RWD", issues: "RWD", admin: "RWD", map_view: "RWD", gantt_view: "RWD", watch_view: "RWD", documents: "RWD", members: "RWD")
+  user.privilege = Privilege.new(lessons: "RWD", overview: "RWD", tasks: "RWD", notes: "RWD", issues: "RWD", admin: "RWD", map_view: "RWD", gantt_view: "RWD", watch_view: "RWD", documents: "RWD", members: "RWD")
 end
 
 user.save(validate: false)

@@ -35,6 +35,7 @@ class Project < SortableRecord
 
   has_many :favorite_filters, dependent: :destroy
   has_many :query_filters, dependent: :destroy
+  has_many :lessons, dependent: :destroy
 
   enum status: [:inactive, :active].freeze
 

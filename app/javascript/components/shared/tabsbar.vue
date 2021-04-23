@@ -60,6 +60,15 @@
         Team
       </div>
     </router-link>
+    <router-link
+      v-if="permitted('lessons')"
+      :to="`/programs/${this.$route.params.programId}/lessons`"
+      tag="div"
+    >
+      <div class="badge" :class="{ active: isLessonsView }" data-cy="lesson_tab">
+        Lessons
+      </div>
+    </router-link>
   </div>
 </template>
 
@@ -84,6 +93,9 @@ export default {
     },
     isMembersView() {
       return this.$route.name === "TeamMembersView";
+    },
+    isLessonsView() {
+      return this.$route.name === "LessonsView";
     },
     permitted() {
       return (salut) =>
