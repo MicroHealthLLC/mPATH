@@ -7,7 +7,6 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
   cy.get('[data-cy=user_remember_me]').click({force: true})
   cy.get('[data-cy=submit]').click({force: true})
-  cy.contains('Welcome to MicroHealth Geographic Information System')
 })
 
 // Logout Command
