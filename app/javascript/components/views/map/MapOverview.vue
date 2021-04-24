@@ -514,6 +514,9 @@ export default {
       let updatedFacility = Object.assign(this.facility, {
         statusId: this.statusId,
         dueDate: this.dueDate,
+        projectStatus: this.statuses.find(
+          (status) => status.id === this.statusId
+        ).name,
       });
 
       http

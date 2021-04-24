@@ -20,7 +20,7 @@
             </div>
           </div>
           <div v-if="contentLoaded && C_facilityCount > 0">
-            <div v-for="status in facilitiesByProjectStatus">
+            <div v-for="(status, index) in projectStatuses" :key="index">
               <div class="row">
                 <div class="col-6 mb-2 pl-2 pr-0">
                   <span
@@ -70,7 +70,7 @@
             </div>
           </div>
 
-          <div v-for="filterArray in getAllFilterNames">
+          <div v-for="(filterArray, index) in getAllFilterNames" :key="index">
             <div class="row">
               <div class="col" v-if="getFilterValue(filterArray[0])">
                 <b class="mr-1">{{ filterArray[1] }}:</b>
@@ -90,8 +90,8 @@
             </div>
           </div>
           <div
-            v-if="contentLoaded"
-            v-for="facilityGroup in filteredFacilityGroups"
+            v-for="(facilityGroup, index) in filteredFacilityGroups"
+            :key="index"
           >
             <div class="row">
               <div class="col-7 mb-2 pl-2 pr-0">
@@ -206,7 +206,7 @@
                       <span :class="{ 'font-sm': isMapView }"> CATEGORIES</span>
                     </div>
                   </div>
-                  <div v-for="task in currentTaskTypes">
+                  <div v-for="(task, index) in currentTaskTypes" :key="index">
                     <div class="row font-sm" v-if="task._display">
                       <div class="col">
                         <span class="font-sm"> {{ task.name }}</span>
@@ -486,7 +486,10 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col text-center" :class="{ 'font-sm': isMapView }">
+                    <div
+                      class="col text-center"
+                      :class="{ 'font-sm': isMapView }"
+                    >
                       <p class="mb-2 grey2" v-tooltip="`Very Low`">Very Low</p>
                       <p class="mb-2 green" v-tooltip="`Low`">Low</p>
                       <p class="mb-2 yellow" v-tooltip="`Moderate`">Moderate</p>
@@ -505,7 +508,10 @@
                         >{{ riskPriorityLevels.yellow }}</span
                       >
                     </div>
-                    <div class="col text-center" :class="{ 'font-sm': isMapView }">
+                    <div
+                      class="col text-center"
+                      :class="{ 'font-sm': isMapView }"
+                    >
                       <p class="mb-2 orange" v-tooltip="`High`">High</p>
                       <p class="mb-2 red" v-tooltip="`Extreme`">Extreme</p>
                     </div>
@@ -524,15 +530,12 @@
               </el-collapse-item>
             </el-collapse>
           </div>
-
           <div v-if="!contentLoaded" class="my-4">
             <loader type="code"></loader>
           </div>
         </el-card>
       </div>
     </div>
-
-    <!-- This is the 2nd row for filters -->
   </div>
 </template>
 
@@ -553,36 +556,37 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getTaskIssueUserFilter",
+      "contentLoaded",
+      "currentProject",
+      "facilities",
+      "facilityCount",
+      "facilityGroupFacilities",
+      "facilityProgress",
       "filterDataForAdvancedFilter",
-      "taskTypes",
+      "filteredAllIssues",
+      "filteredAllRisks",
+      "filteredAllTasks",
+      "filteredFacilities",
+      "filteredFacilityGroups",
       "getAllFilterNames",
       "getAllFilterNames",
       "getFilterValue",
-      "contentLoaded",
-      "facilities",
-      "currentProject",
-      "filteredFacilityGroups",
-      "facilityCount",
-      "facilityProgress",
-      "filteredFacilities",
-      "facilityGroupFacilities",
-      "taskTypeFilter",
-      "taskStageFilter",
-      "riskStageFilter",
+      "getTaskIssueUserFilter",
+      "getUnfilteredFacilities",
+      "issueSeverityFilter",
       "issueStageFilter",
       "issueTypeFilter",
-      "issueSeverityFilter",
-      "taskUserFilter",
-      "issueUserFilter",
-      "taskTypes",
       "issueTypes",
-      "filteredAllTasks",
-      "filteredAllIssues",
-      "filteredAllRisks",
+      "issueUserFilter",
       "myActionsFilter",
       "onWatchFilter",
-      "getUnfilteredFacilities",
+      "riskStageFilter",
+      "statuses",
+      "taskStageFilter",
+      "taskTypeFilter",
+      "taskTypes",
+      "taskTypes",
+      "taskUserFilter",
     ]),
     C_taskTypeFilter: {
       get() {
@@ -779,21 +783,24 @@ export default {
         ? this.facilityGroupFacilities(this.facilityGroup, "inactive").length
         : this.filteredFacilities("inactive").length;
     },
-    facilitiesByProjectStatus() {
-      let statuses = new Array();
-      const active = this.facilityGroup
-        ? this.facilityGroupFacilities(this.facilityGroup)
-        : this.filteredFacilities("active");
-      for (let [key, value] of Object.entries(
-        _.groupBy(active, "projectStatus")
-      )) {
-        statuses.push({
-          name: key.replace("null", "No Status"),
-          length: value.length,
-          color: value[0].color,
-          progress: this.getAverage(value.length, active.length),
+    projectStatuses() {
+      let statuses = [];
+
+      if (this.contentLoaded && this.facilities.length > 0) {
+        this.statuses.forEach((status) => {
+          let count = this.facilities
+            .filter((facility) => facility.projectStatus === status.name)
+            .reduce((total) => total + 1, 0);
+
+          statuses.push({
+            name: status.name,
+            color: status.color,
+            length: count,
+            progress: Math.floor((count / this.facilities.length) * 100),
+          });
         });
       }
+
       return statuses;
     },
     currentTaskTypes() {
