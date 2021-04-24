@@ -788,10 +788,11 @@ export default {
 
       if (this.contentLoaded && this.facilities.length > 0) {
         this.statuses.forEach((status) => {
+          // Find number of facilities with current status
           let count = this.facilities
             .filter((facility) => facility.projectStatus === status.name)
             .reduce((total) => total + 1, 0);
-
+          // Insert status into projectStatuses for use Project Status card
           statuses.push({
             name: status.name,
             color: status.color,
