@@ -27,7 +27,6 @@ Cypress.Commands.add("fillRiskForm", () => {
     })
   })
 
-  cy.get('[data-cy=risk_name]').type('New test risk in kanban').should('have.value', 'New test risk in kanban')
   cy.get('[data-cy=risk_description]').type('Kanban risk brief description').should('have.value', 'Kanban risk brief description')
 
   cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
@@ -35,8 +34,5 @@ Cypress.Commands.add("fillRiskForm", () => {
   cy.get('[data-cy=risk_start_date]').type(`${start_date}{enter}`)
   cy.get('[data-cy=risk_due_date]').type(`${due_date}{enter}`)
 
-  cy.get('.label').contains('Prioritize').click()
-  cy.get('[data-cy=probability_description]').type('Risk probability description')
-  cy.get('[data-cy=impact_description]').type('Risk impact description')
-  cy.get('.col-md-12 > [data-cy=approach_description]').type('Risk approach description')
+  cy.get('[data-cy=risk_name]').type('New test risk in kanban').should('have.value', 'New test risk in kanban')
 })

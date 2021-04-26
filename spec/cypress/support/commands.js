@@ -7,7 +7,6 @@ Cypress.Commands.add("login", (email, password) => {
   cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
   cy.get('[data-cy=user_remember_me]').click({force: true})
   cy.get('[data-cy=submit]').click({force: true})
-  cy.contains('Welcome to MicroHealth Geographic Information System')
 })
 
 // Logout Command
@@ -209,4 +208,12 @@ Cypress.Commands.add("openSettingAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#settings').click()
   cy.get('#page_title').contains('App configurations').should('be.visible')
+})
+
+// Open Category from Admin panel
+Cypress.Commands.add("openCategoryAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#task_types').contains('Categories').click({force: true})
+  })
 })
