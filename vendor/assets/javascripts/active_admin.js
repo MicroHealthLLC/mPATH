@@ -570,6 +570,11 @@ jQuery(function($) {
             read: false,
             write: false,
             delete: false
+          },
+          lessons: {
+            read: false,
+            write: false,
+            delete: false
           }
         }
       },
@@ -596,6 +601,12 @@ jQuery(function($) {
           let kanban_view = $("#user_privilege_attributes_kanban_view").val() || "";
           let documents = $("#user_privilege_attributes_documents").val() || "";
           let members = $("#user_privilege_attributes_members").val() || "";
+          let lessons = $("#user_privilege_attributes_lessons").val() || "";
+          this.lessons = {
+            read: lessons.includes("R"),
+            write: lessons.includes("W"),
+            delete: lessons.includes("D")
+          }
           this.overview = {
             read: overview.includes("R"),
             write: overview.includes("W"),
@@ -1038,6 +1049,30 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           if (value) this.members.read = value;
           $("#user_privilege_attributes_members").val(v);
+        },
+        "lessons.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.lessons.write = false;
+            this.lessons.delete = false;
+          }
+          $("#user_privilege_attributes_lessons").val(v);
+        },
+        "lessons.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.lessons.read = value;
+          $("#user_privilege_attributes_lessons").val(v);
+        },
+        "lessons.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.lessons.read = value;
+          $("#user_privilege_attributes_lessons").val(v);
         }
       },
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
@@ -1103,6 +1138,12 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Lessons</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.delete">Delete</label>
             </li>
           </ol>
         </fieldset>

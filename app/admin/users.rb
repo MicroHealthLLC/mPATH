@@ -43,7 +43,8 @@ ActiveAdmin.register User do
         # :calendar_view,
         :sheets_view,
         :members,
-        :risks
+        :risks,
+        :lessons
       ]
     ]
   end
@@ -74,7 +75,7 @@ ActiveAdmin.register User do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :facility_manager_view, as: :hidden
             p.input :sheets_view, as: :hidden
-            # p.input :calendar_view, as: :hidden
+            p.input :calendar_view, as: :hidden
             p.input :map_view, as: :hidden
             p.input :gantt_view, as: :hidden
             p.input :watch_view, as: :hidden
@@ -87,6 +88,7 @@ ActiveAdmin.register User do
             p.input :documents, as: :hidden
             p.input :members, as: :hidden
             p.input :admin, as: :hidden
+            p.input :lessons, as: :hidden
           end
         end
         div id: 'user-role_privilege-tab'
@@ -130,8 +132,8 @@ ActiveAdmin.register User do
       end
     end
     actions defaults: false do |user|
-      item "Edit", edit_admin_user_path(user), title: 'Edit', class: "member_link edit_link" if current_user.admin_write? && current_user.id != user.id
-      item "Delete", admin_user_path(user), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete? && current_user.id != user.id
+      item "Edit", edit_admin_user_path(user), title: 'Edit', class: "member_link edit_link" if current_user.admin_write? #&& current_user.id != user.id
+      item "Delete", admin_user_path(user), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete? #&& current_user.id != user.id
     end
   end
 
@@ -178,7 +180,7 @@ ActiveAdmin.register User do
     end
 
     def edit
-      redirect_to '/not_found' and return if params[:id].to_i == current_user.id
+      redirect_to '/not_found' and return if !current_user.admin_write? #params[:id].to_i == current_user.id
       super
     end
 

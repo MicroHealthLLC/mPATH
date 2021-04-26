@@ -2,29 +2,33 @@ class ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
 
   def vue_js_route
-
+    view = "map_view"
     if params[:tab] == "map"
-      check_permit("map_view")
+      view = "map_view"
     elsif params[:tab] == "sheet"
-      check_permit("sheets_view")
+      view = "sheets_view"
     elsif params[:tab] == "calendar"
-      check_permit("calendar_view")
+      view = "calendar_view"
     elsif params[:tab] == "kanban"
-      check_permit("kanban_view")
+      view = "kanban_view"
     elsif ["gantt_chart", "gantt"].include?(params[:tab])
-      check_permit("gantt_view")
+      view = "gantt_view"
     elsif params[:tab] == "member_list"
-      check_permit("members")
+      view = "members"
     elsif params[:tab] == "lessons" || params[:lesson_id]
-      true #check_permit("members")
+      view = "lessons"
     elsif params[:tab] == "watch_view"
-      check_permit("watch_view")
+      view = "watch_view"
     elsif params[:tab] == "facility_manager"
-      check_permit("facility_manager_view") 
+      view = "facility_manager_view" 
     else
       raise CanCan::AccessDenied
     end
 
+    if !current_user.allowed?(view)
+      raise CanCan::AccessDenied
+    end
+    
     respond_to do |format|
       format.json {}
       format.html {render action: :index}
