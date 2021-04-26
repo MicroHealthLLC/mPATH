@@ -209,3 +209,11 @@ Cypress.Commands.add("openSettingAP", () => {
   cy.get('#settings').click()
   cy.get('#page_title').contains('App configurations').should('be.visible')
 })
+
+// Open Category from Admin panel
+Cypress.Commands.add("openCategoryAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#task_types').contains('Categories').click({force: true})
+  })
+})
