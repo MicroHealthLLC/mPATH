@@ -2,7 +2,7 @@ class LessonsController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    lessons = project.lessons.includes([{lesson_files_attachments: :blob}, {lesson_users: [:users] }, {lesson_projects: [{facility_projects: :facilities}] }, :notes, :lesson_details, :task, :risk, :issue, :task_type, :issue_type, :project ])
+    lessons = project.lessons.includes([{lesson_files_attachments: :blob}, {lesson_users: [:user] }, {lesson_projects: [{facility_project: :facility}] }, :users, :facilities, :facility_projects, :notes, :lesson_details, :task, :risk, :issue, :task_type, :issue_type, :project ])
     render json: {lessons: lessons.map(&:to_json)}, status: 200
   end
 

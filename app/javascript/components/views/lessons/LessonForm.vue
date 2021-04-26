@@ -1066,7 +1066,8 @@
         return _.orderBy(details, 'createdAt', 'desc')
       },
       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessions[salut]
+        console.log(this.$currentUser.role)
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessons[salut]
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"

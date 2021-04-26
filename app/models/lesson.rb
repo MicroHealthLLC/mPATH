@@ -52,7 +52,7 @@ class Lesson < ApplicationRecord
       end.compact.uniq
     end
     
-    facility_projects = self.facility_projects
+    facility_ids = self.facility_projects.pluck(&:facility_id)
 
     f = self.facilities.pluck(:id, :facility_name)
 

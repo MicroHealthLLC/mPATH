@@ -77,19 +77,7 @@
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'date'">
                   <font-awesome-icon icon="sort-down" /></span>
               </th>
-              <th class="pl-1 sort-th" @click="sort('stage')">Stage
-                <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'stage'">
-                  <font-awesome-icon icon="sort" /></span>
-                <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'stage'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !== 'asc' && currentSort === 'stage'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                <span class="sort-icon team-scroll" v-if="currentSortDir ==='desc' && currentSort === 'stage'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'stage'">
-                  <font-awesome-icon icon="sort-down" /></span>
-              </th>
-              <th class="sort-th emailCol" @click="sort('project_id')">Project
+<!--               <th class="sort-th emailCol" @click="sort('project_id')">Projects
                 <span class="inactive-sort-icon team-scroll" v-if="currentSort !== 'project_id'">
                   <font-awesome-icon icon="sort" /></span>
                 <span class="sort-icon team-scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_id'">
@@ -100,7 +88,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                 <span class="inactive-sort-icon team-scroll" v-if="currentSortDir !=='desc' && currentSort === 'project_id'">
                   <font-awesome-icon icon="sort-down" /></span>
-              </th>
+              </th> -->
             </tr>
           </thead>
           <tbody>
@@ -109,8 +97,7 @@
               <td>{{lesson.title}}</td>            
               <td>{{lesson.description}}</td>
               <td>{{ moment(lesson.date).format('DD MMM YYYY')}}</td>
-              <td>{{lesson.stage}}</td>
-              <td>{{lesson.project_id}}</td>
+              <!-- <td>{{JSON.stringify( lesson.facilities.map( f => (f.facilityName) ) ).replace(/]|[['"]/g, '') }}</td> -->
             </tr>
           </tbody>
         </table>
@@ -135,7 +122,7 @@
 import axios from 'axios'
 import humps from 'humps'
 import { mapGetters, mapMutations } from 'vuex'
-import LessonForm from './LessionForm'
+import LessonForm from './LessonForm'
 
 export default {
   name: "LessonsIndex",

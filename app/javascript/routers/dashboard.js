@@ -1,7 +1,7 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-import LessonsIndex from "./../components/views/lessons/LessionsIndex";
-import LessonForm from "./../components/views/lessons/LessionForm";
+import LessonsIndex from "./../components/views/lessons/LessonsIndex";
+import LessonForm from "./../components/views/lessons/LessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
