@@ -1,4 +1,5 @@
 <template>
+<!-- Adding comment to resolve conflict -->
   <div>
     <form
       @submit.prevent="validateThenSave"
@@ -1556,11 +1557,9 @@
            </div>
           </div> 
           <!-- END RISK CONTROL TAB SECTION -->
-           
-           
+                      
           <!-- BEGIN RISK RELATED TAB SECTION -->
-           <div v-show="currentTab == 'tab6'" class="paperLookTab">
-            
+           <div v-show="currentTab == 'tab6'" class="paperLookTab">            
               <div class="form-group user-select mx-4 mt-2">
                 <label class="font-sm mb-0">Related Issues</label>
 
@@ -1583,7 +1582,6 @@
                   </el-option>
                 </el-select>
               </div>
-
               <div class="form-group user-select mx-4">
                 <label class="font-sm mb-0">Related Tasks</label>
                 <el-select

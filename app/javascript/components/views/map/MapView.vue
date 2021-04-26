@@ -379,7 +379,7 @@ export default {
     "$route.path": {
       handler() {
         this.setCurrentFacility(
-          this.currentProject.facilities.find(
+          this.facilities.find(
             (facility) => facility.facilityId == this.$route.params.projectId
           )
         );
