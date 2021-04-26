@@ -24,7 +24,7 @@
 
         <!-- FAVORITE FILTERS SECTION -->
         <div class="row justify-content-between pb-2">
-          <div class="col-md-6">
+          <div class="col-md-7">
             <div>
                 <el-select 
                   v-model="C_favoriteFilterSelectModel"                    
@@ -51,6 +51,7 @@
               <input type="checkbox" style="" v-model="C_favoriteFilter.shared">
               <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
               <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
+              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button>
             </div>
           </div>
         </div>
