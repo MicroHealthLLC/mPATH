@@ -46,6 +46,7 @@
             Close
           </button>
           <button
+            v-if="DV_lesson.id"
             class="btn btn-sm sticky-btn btn-outline-secondary"
             @click.prevent="deleteLesson"
             data-cy="task_close_btn"
@@ -574,10 +575,8 @@
     data() {
       return {
         DV_lesson: this.INITIAL_LESSON_STATE(),
-        DV_facility: Object.assign({}, this.facility),
         paginate: ['filteredNotes', 'filterLessonDetailSuccess', 'filterLessonDetailFailure'],
         destroyedFiles: [],
-        editTimeLive:"",
         selectedTaskType: null,
         selectedTaskStage: null,
         selectedTask: null,
@@ -585,12 +584,7 @@
         selectedRisk: null,
         selectedFacilityProjects: [],
         users: [],
-        relatedIssues: [],
-        relatedTasks: [],
-        relatedRisks: [],
         activeFacilityProjects: [],
-        editToggle: false,
-        _ismounted: false,
         showErrors: false,
         loading: true,
         movingSlot: '',
@@ -694,7 +688,7 @@
         }
       },
       log(e){
-        console.log("This is the currentProject: " + e)
+        //console.log("This is the currentProject: " + e)
       },
       selectedStage(item){    
         this.selectedTaskStage = item
@@ -739,7 +733,6 @@
         var time = moment(progressList.createdAt).format("hh:mm:ss a")
         return `${progressList.user.fullName} at ${date} ${time} `
       },
-      // RACI USERS commented out out here.....Awaiting backend work
       loadLesson(lesson) {
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
         this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
@@ -751,6 +744,30 @@
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
+        })
+      },
+      fetchLesson(){
+        var lessonId = this.$route.params.lessonId
+        var programId = this.$route.params.programId
+        let url = `/projects/${programId}/lessons/${lessonId}.json`
+        let method = "GET"
+
+        axios({
+          method: method,
+          url: url,
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').attributes['content'].value
+          }
+        })
+        .then((response) => {
+          this.DV_lesson = humps.camelizeKeys(response.data.lesson)
+          this.loadLesson(humps.camelizeKeys(response.data.lesson))
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
         })
       },
       addFile(files, append = true) {
@@ -796,19 +813,15 @@
         })
         .then((response) => {
           var lessonId = response.data.lesson.id
-          // this.currentProject.lessons = this.lessonsList
-
           _.remove(this.currentProject.lessons, lesson => lesson.id == lessonId)
 
           this.$message({
-            // message: `${response.data.task.text} was saved successfully.`,
              message: `Lesson was deleted successfully.`,
             type: "success",
             showClose: true,
           });
         })
         .catch((err) => {
-          // var errors = err.response.data.errors
           console.log(err)
         })
         .finally(() => {
@@ -901,12 +914,10 @@
           let callback = "task-created"
 
           if (this.lesson && this.lesson.id) {
-            // url = `/projects/${this.currentProject.id}/facilities/${this.task.facilityId}/tasks/${this.task.id}.json`
             url = `/projects/${this.currentProject.id}/lessons/${this.lesson.id}.json`
             method = "PUT"
             callback = "task-updated"
           }
-          // var beforesaveLesson = this.task
           axios({
             method: method,
             url: url,
@@ -916,12 +927,6 @@
             }
           })
           .then((response) => {
-            // if(beforesaveLesson.facilityId && beforesaveLesson.projectId )
-            //   this.$emit(callback, humps.camelizeKeys(beforesaveLesson))
-            // var responseTask = humps.camelizeKeys(response.data.task)
-            // this.loadTask(responseTask)
-            //this.$emit(callback, responseTask)
-            // this.updateTasksHash({task: responseTask})
 
             if (response.status === 200) {
               this.setLessonForManager({key: 'lesson', value: {}})
@@ -930,24 +935,14 @@
                 `/programs/${this.$route.params.programId}/lessons`
               );
               this.$message({
-                // message: `${response.data.task.text} was saved successfully.`,
                  message: `Lesson was saved successfully.`,
                 type: "success",
                 showClose: true,
               });
             }
-            //Route to newly created task form page
-            // if (this.$route.path.includes("sheet")) {
-            //   this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            // } else if (this.$route.path.includes("map")) {
-            //   this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            // } else {
-            //   this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${response.data.task.id}`);
-            // }
             
           })
           .catch((err) => {
-            // var errors = err.response.data.errors
             console.log(err)
           })
           .finally(() => {
@@ -986,61 +981,12 @@
         let url = window.location.origin + file.uri
         window.open(url, '_blank');
       },
-      destroyProgressList(check, progressList, index) {
-        let confirm = window.confirm(`Are you sure you want to delete this Progress List item?`)
-        if (!confirm) return;
-        let i = progressList.id ? check.progressLists.findIndex(c => c.id === progressList.id) : index
-        Vue.set(check.progressLists, i, {...progressList, _destroy: true})
-        this.saveLesson()
-      },
-      destroyCheck(check, index) {
-        let confirm = window.confirm(`Are you sure you want to delete this checklist item?`)
-        if (!confirm) return;
-        let i = check.id ? this.DV_lesson.checklists.findIndex(c => c.id === check.id) : index
-        Vue.set(this.DV_lesson.checklists, i, {...check, _destroy: true})
-        this.saveLesson()
-      },
-      disabledDueDate(date) {
-        date.setHours(0,0,0,0)
-        const startDate = new Date(this.DV_lesson.startDate)
-        startDate.setHours(0,0,0,0)
-        return date < startDate
-      },
-      calculateProgress(checks=null) {
-        try {
-          if (!checks) checks = this.DV_lesson.checklists
-          let checked = _.filter(checks, v => !v._destroy && v.checked && v.text.trim()).length
-          let total = _.filter(checks, v => !v._destroy && v.text.trim()).length
-          this.DV_lesson.progress = Number((((checked / total) * 100) || 0).toFixed(2))
-        } catch(err) {
-          this.DV_lesson.progress = 0
-        }
-      },
-      updateCheckItem(event, name, index) {
-        if (name === 'text') {
-          this.DV_lesson.checklists[index].text = event.target.value
-          if (!event.target.value) this.DV_lesson.checklists[index].checked = false
-        } else if (name === 'check' && this.DV_lesson.checklists[index].text) {
-          this.DV_lesson.checklists[index].checked = event.target.checked
-        } else if (name === 'dueDate' && this.DV_lesson.checklists[index].text) {
-          this.DV_lesson.checklists[index].dueDate = event.target.value
-        }
-      },
       updateFileLinkItem(event, name, input) {
         //var v = event.target.value
         //var valid = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/i/.test(v);
         if(event.target.value){
           input.name = event.target.value
         }
-      },
-      updateProgressListItem(event, name, progressList) {
-        progressList.body = event.target.value
-      },
-      isMyCheck(check) {
-        return this.C_myTasks && check.id ? (check.user && check.user.id == this.$currentUser.id) : true
-      },
-      allowDeleteNote(note) {
-        return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
       },
       allowEditNote(note) {
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
@@ -1140,18 +1086,15 @@
       projectNameLink() {
         if (this.$route.path.includes("lessons")) {
           return `/programs/${this.$route.params.programId}/${this.tab}`
-        // } else {
-        //   return `/programs/${this.$route.params.programId}/${this.tab}`
         }
       }
     },
     watch: {
       contentLoaded: {
         handler() {
-          if (this.contentLoaded && this.$route.params.lessonId !== "new") {
-            this.lesson = this.currentProject.lessons.find(
-              (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
-            );
+          if (this.contentLoaded && this.$route.params.lessonId && this.$route.params.lessonId !== "new") {
+            // This will call when edit lesson url will hit reload
+            this.fetchLesson()
           }
           if (!_.isEmpty(this.lesson)) {
             this.loadLesson(this.lesson)
@@ -1171,21 +1114,6 @@
       },
       "DV_lesson.startDate"(value) {
         if (this._ismounted && !value) this.DV_lesson.dueDate = ''
-      },
-      "DV_lesson.dueDate"(value) {
-        if (this._ismounted && this.facility.dueDate) {
-          if (moment(value).isAfter(this.facility.dueDate, 'day')) {
-            alert('Task Due Date is past Project Due Date!')
-          }
-        }
-      },
-      "DV_lesson.checklists": {
-        handler: function(value) {
-          if (this.DV_lesson.autoCalculate) this.calculateProgress(value)
-        }, deep: true
-      },
-      "DV_lesson.autoCalculate"(value) {
-        if (value) this.calculateProgress()
       },
       users: {
         handler: function(value) {
@@ -1211,11 +1139,6 @@
           if (value) this.DV_lesson.riskId = value.id
         }, deep: true
       },
-      relatedRisks: {
-        handler: function(value) {
-          if (value) this.DV_lesson.subRiskIds = _.uniq(_.map(value, 'id'))
-        }, deep: true
-      },
       selectedTaskType: {
         handler: function(value) {
           // console.log("SelectedTaskType: " + value)
@@ -1225,24 +1148,6 @@
       selectedTaskStage: {
         handler: function(value) {
           this.DV_lesson.taskStageId = value ? value.id : null
-        }, deep: true
-      },
-      filteredTasks: {
-        handler(value) {
-          let ids = _.map(value, 'id')
-          this.relatedTasks = _.filter(this.relatedTasks, t => ids.includes(t.id))
-        }, deep: true
-      },
-      filteredIssues: {
-        handler(value) {
-          let ids = _.map(value, 'id')
-          this.relatedIssues = _.filter(this.relatedIssues, t => ids.includes(t.id))
-        }, deep: true
-      },
-      filteredRisks: {
-        handler(value) {
-          let ids = _.map(value, 'id')
-          this.relatedRisks = _.filter(this.relatedRisks, t => ids.includes(t.id))
         }, deep: true
       },
       selectedFacilityProjects: {

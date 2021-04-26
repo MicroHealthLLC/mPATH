@@ -2,7 +2,8 @@ class LessonsController < AuthenticatedController
 
   def index
     project = Project.find(params[:project_id])
-    render json: {lessons: project.lessons.map(&:to_json)}, status: 200
+    lessons = project.lessons.includes([{lesson_files_attachments: :blob}, {lesson_users: [:users] }, {lesson_projects: [{facility_projects: :facilities}] }, :notes, :lesson_details, :task, :risk, :issue, :task_type, :issue_type, :project ])
+    render json: {lessons: lessons.map(&:to_json)}, status: 200
   end
 
   def create
@@ -13,13 +14,13 @@ class LessonsController < AuthenticatedController
 
   def update
     lesson = Lesson.find(params[:id]).create_or_update_lession(params, current_user)
-    render json: {lesson: lesson}, status: 200
+    render json: {lesson: lesson.to_json}, status: 200
   end
 
 
   def show
     lesson = Lesson.find(params[:id])
-    render json: {lesson: lesson}, status: 200
+    render json: {lesson: lesson.to_json}, status: 200
   end
 
   def destroy

@@ -5,6 +5,8 @@ class Lesson < ApplicationRecord
   belongs_to :issue, optional: true
   belongs_to :task_type, optional: true
   belongs_to :issue_type, optional: true
+  
+  # This is program is front end
   belongs_to :project
   
   has_many :lesson_users, dependent: :destroy
@@ -12,6 +14,7 @@ class Lesson < ApplicationRecord
   
   has_many :lesson_projects, dependent: :destroy
   has_many :facility_projects, through: :lesson_projects
+  has_many :facilities, through: :facility_projects
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -48,7 +51,10 @@ class Lesson < ApplicationRecord
         end
       end.compact.uniq
     end
-    fp = self.project
+    
+    facility_projects = self.facility_projects
+
+    f = self.facilities.pluck(:id, :facility_name)
 
     t_users = options[:all_task_users] || []
     all_users = options[:all_users] || []
@@ -78,6 +84,7 @@ class Lesson < ApplicationRecord
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
     self.as_json.merge(
       class_name: self.class.name,
+      facilities: f,
       facility_project_ids: self.facility_project_ids,
       attach_files: attach_files,
       user_ids: p_users.map(&:id).compact.uniq,
