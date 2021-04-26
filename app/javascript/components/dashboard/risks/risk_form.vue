@@ -2044,7 +2044,9 @@ export default {
       this.validateThenSave(e)
     },
     selectedStage(item){    
-      this.selectedRiskStage = item
+      if (this._isallowed('write')) {
+        this.selectedRiskStage = item
+      }
     },  
     clearStages() {
       this.selectedRiskStage = null

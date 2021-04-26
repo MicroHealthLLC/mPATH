@@ -1198,8 +1198,10 @@ export default {
         notes: [],
       };
     },
-    selectedStage(item){    
+    selectedStage(item){
+      if (this._isallowed('write')) {
         this.selectedIssueStage = item
+      }    
     },  
     clearStages() {
         this.selectedIssueStage = null
