@@ -401,7 +401,7 @@
             </div>
             <div class="mt-2">
               <label class="font-sm mb-0">Favorites Filter Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">             
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess">             
               <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
             </div>
           </div>
@@ -536,11 +536,12 @@ export default {
       },
       set(value) {
         this.favoriteFilterData = value
-        if(!this.favoriteFilterData.id){
-          this.resetFilters()
-        }else{
-          this.loadFavoriteFilter(this.favoriteFilterData)
-        }
+        this.loadFavoriteFilter(this.favoriteFilterData)
+        // if(!this.favoriteFilterData.id){
+        //   this.resetFilters()
+        // }else{
+        //   this.loadFavoriteFilter(this.favoriteFilterData)
+        // }
         
       }
     },
@@ -854,8 +855,11 @@ export default {
     loadFavoriteFilter(fav_filter){
       this.resetFilters()
       var res = fav_filter.query_filters
+
       if(fav_filter.shared){
         this.hasFilterAccess = (this.$currentUser.role == "superadmin" || this.$permissions.admin['write'] || fav_filter.userId == this.$currentUser.id )
+      }else{
+        this.hasFilterAccess = true
       }
       if(!res){
         return;
