@@ -6,162 +6,215 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row mt-1">
+      <div class="row my-2">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button> -->
+             <button class="btn btn-sm float-right d-inline-block font-sm btn-secondary py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button>
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
-
-      <!-- Next row for Facilities label with border div -->
+   <el-tabs type="border-card" @tab-click="handleClick">
+      <el-tab-pane label="Projects">
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h5 class="mb-0">Favorites</h5>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="mb-0">Projects</h5>
+            </div>
           </div>
-        </div>
 
-        <!-- FAVORITE FILTERS SECTION -->
-        <div class="row justify-content-between pb-2">
-          <div class="col-md-7">
-            <div>
+          <!-- Next row for two columns that will contain Facilities-related menus -->
+          <div class="row justify-content-between pb-2">
+            <div class="col-md-6">
+              <div>
+                <label class="font-sm mb-0">Project Groups</label>
                 <el-select 
-                  v-model="C_favoriteFilterSelectModel"                    
-                  class="w-100" 
-                  track-by="name" 
-                  filterable
-                  value-key="id"
-                  placeholder="Search and select Project Group"
-                >
+                    v-model="C_facilityGroupFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    filterable
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Search and select Project Group"
+                  >
                   <el-option 
-                    v-for="item in C_favoriteFilterSelectOptions"                                                     
+                    v-for="item in C_activeFacilityGroups"                                                     
                     :value="item"   
                     :key="item.id"
                     :label="item.name"                                                  
                     >
                   </el-option>
-                </el-select>
-              
-            </div>
-            <div>
-              <label class="font-sm mb-0">Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
-              Shared:
-              <input type="checkbox" style="" v-model="C_favoriteFilter.shared">
-              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
-              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
-              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Next row for Facilities label with border div -->
-      <div class="filter-border filter-sections px-3 pb-1 pt-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h5 class="mb-0">Projects</h5>
-          </div>
-        </div>
-
-        <!-- Next row for two columns that will contain Facilities-related menus -->
-        <div class="row justify-content-between pb-2">
-          <div class="col-md-6">
-            <div>
-              <label class="font-sm mb-0">Project Groups</label>
-               <el-select 
-                  v-model="C_facilityGroupFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  filterable
-                  value-key="id"
-                  multiple                                                                                                                                               
-                  placeholder="Search and select Project Group"
-                >
-                <el-option 
-                  v-for="item in C_activeFacilityGroups"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-                </el-select> 
-            </div>
-            <label class="font-sm mb-0">Project Names</label>
-                <el-select 
-                  v-model="C_facilityNameFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"
-                  data-cy="facility_name" 
-                  :loading="isLoading"
-                  multiple   
-                  filterable                                                                                                                                                        
-                  placeholder="Search and select Project Name"
-                  >
-                <el-option 
-                  v-for="item in C_activeProjectNames"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="projectNameShortener(item.facilityName, 35)"                                                     
-                  >
-                </el-option>
-              </el-select> 
-
-            <div>
-               <label class="font-sm mb-0">Project % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
-                </div>
+                  </el-select> 
               </div>
-              <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
-            </div>
-            </div>
-            <div class="">
+              <label class="font-sm mb-0">Project Names</label>
+                  <el-select 
+                    v-model="C_facilityNameFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    data-cy="facility_name" 
+                    :loading="isLoading"
+                    multiple   
+                    filterable                                                                                                                                                        
+                    placeholder="Search and select Project Name"
+                    >
+                  <el-option 
+                    v-for="item in C_activeProjectNames"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="projectNameShortener(item.facilityName, 35)"                                                     
+                    >
+                  </el-option>
+                </el-select> 
 
-          </div>
-          <div class="col-md-6">
-             <label class="font-sm mb-0">Project Statuses</label>
-              <el-select 
-                  v-model="C_projectStatusFilter"                    
+              <div>
+                <label class="font-sm mb-0">Project % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                  </div>
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                  </div>
+                </div>
+                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+              </div>
+              </div>
+              <div class="">
+
+            </div>
+            <div class="col-md-6">
+              <label class="font-sm mb-0">Project Statuses</label>
+                <el-select 
+                    v-model="C_projectStatusFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    data-cy="project_status"                
+                    multiple                                                                                                                                                         
+                    placeholder="Select Project Status"
+                    >
+                  <el-option 
+                    v-for="item in statuses"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                </el-select> 
+
+              <div>
+                <!-- Available row for filter -->
+              </div>
+              <div class="mt-1">
+                <label class="font-sm mb-0">Project Completion Date Range</label>
+                <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
+              </div>
+              <!-- To Do: Convert to multiselect to match other filter toggles -->
+              <div class="mt-1 d-flex flex-column">
+                <label class="font-sm mb-0">Map Boundary Filter</label>
+                <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
+              </div>
+            </div>
+          </div>         
+          <div class="row mt-3 pb-2">
+              <div class="col-md-4" style="border-right:solid lightgray .8px">
+                <div>
+                <label class="font-sm mb-1">Categories</label>
+                <el-select 
+                  v-model="C_taskTypeFilter"                    
                   class="w-100" 
                   track-by="name" 
-                  value-key="id"
-                  data-cy="project_status"                
+                  value-key="id"                  
+                  data-cy="task_category"       
                   multiple                                                                                                                                                         
-                  placeholder="Select Project Status"
+                  placeholder="Select Category"
                   >
                 <el-option 
-                  v-for="item in statuses"                                                     
+                  v-for="item in taskTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+                </el-select>                
+               </div>              
+               <div>
+                <label class="font-sm mb-0">Action Users</label>
+                <el-select 
+                  v-model="C_taskIssueUserFilter"                    
+                  class="w-100" 
+                  track-by="id" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Search and select names"
+                  >
+                <el-option 
+                  v-for="item in activeProjectUsers"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.fullName"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              </div>
+              </div>
+              <div class="col-md-4" style="border-right:solid lightgray .8px">
+                <div>
+                <label class="font-sm mb-0">Flags</label>
+                 <el-select 
+                  v-model="C_advancedFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id" 
+                  filterable                 
+                  data-cy="task_category"       
+                  multiple                                                                                                                                                         
+                  placeholder="Filter by Flags"
+                  >
+                <el-option 
+                  v-for="item in getAdvancedFilterOptions"                                                     
                   :value="item"   
                   :key="item.id"
                   :label="item.name"                                                  
                   >
                 </el-option>
               </el-select> 
-
-            <div>
-              <!-- Available row for filter -->
+              </div>
+              <div>
+                <label class="font-sm mb-0">Action % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
+                  </div>
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
+                  </div>
+                </div>
+                  <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
+              </div> 
+             </div>
+              <div class="col-md-4">
+                <div>
+              <label class="font-sm mb-0">Action Due Date Range</label>
+              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
             </div>
             <div>
-              <label class="font-sm mb-0">Project Completion Date Range</label>
-              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
+              <label class="font-sm mb-0">Updates Date Range</label>
+              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
-            <!-- To Do: Convert to multiselect to match other filter toggles -->
-            <div class="d-flex flex-column">
-              <label class="font-sm mb-0">Map Boundary Filter</label>
-              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
-            </div>
+              </div>
           </div>
-        </div>
+      
       </div>
-      <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
+
+ 
+      </el-tab-pane>
+
+      <el-tab-pane label="Tasks, Issues, Risks">
+  <!-- Put this top row/section into two tabs: Projects \ Favorites -->
+        <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
         <div class="row">
           <div class="col-md-4" style="border-right:solid lightgray .8px">
             <h5 class="mb-0">Tasks</h5>
@@ -311,105 +364,73 @@
             </div>             
           </div>
         </div>        
-      </div>
+      </div> 
 
-      <div class="filter-border filter-sections px-3 pb-1 mt-3 pt-0">
-            <div class="row">
-              <div class="col-md-12">
-                <h5 class="mb-0">Combined</h5>
-              </div>
-            </div>
-            <div class="row pb-2">
-              <div class="col-md-4" style="border-right:solid lightgray .8px">
-                <div>
-                <label class="font-sm mb-1">Categories</label>
-                <el-select 
-                  v-model="C_taskTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="task_category"       
-                  multiple                                                                                                                                                         
-                  placeholder="Select Category"
-                  >
-                <el-option 
-                  v-for="item in taskTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-                </el-select>                
-               </div>              
-               <div>
-                <label class="font-sm mb-0">Action Users</label>
-                <el-select 
-                  v-model="C_taskIssueUserFilter"                    
-                  class="w-100" 
-                  track-by="id" 
-                  value-key="id" 
-                  filterable                 
-                  data-cy="task_category"       
-                  multiple                                                                                                                                                         
-                  placeholder="Search and select names"
-                  >
-                <el-option 
-                  v-for="item in activeProjectUsers"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.fullName"                                                  
-                  >
-                </el-option>
-              </el-select> 
-              </div>
-              </div>
-              <div class="col-md-4" style="border-right:solid lightgray .8px">
-                <div>
-                <label class="font-sm mb-0">Flags</label>
-                 <el-select 
-                  v-model="C_advancedFilter"                   
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id" 
-                  filterable                 
-                  data-cy="task_category"       
-                  multiple                                                                                                                                                         
-                  placeholder="Filter by Flags"
-                  >
-                <el-option 
-                  v-for="item in getAdvancedFilterOptions"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-              </div>
-              <div>
-                <label class="font-sm mb-0">Action % Progress Range</label>
-                <div class="form-row">
-                  <div class="form-group col mb-0">
-                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'min'})" :value="C_taskIssueProgress.min">
-                  </div>
-                  <div class="form-group col mb-0">
-                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'taskIssue', type: 'max'})" :value="C_taskIssueProgress.max">
-                  </div>
-                </div>
-                  <span class="font-sm text-danger ml-1" v-if="C_taskIssueProgress.error">{{C_taskIssueProgress.error}}</span>
-              </div> 
-             </div>
-              <div class="col-md-4">
-                <div>
-              <label class="font-sm mb-0">Action Due Date Range</label>
-              <v2-date-picker v-model="C_taskIssueDueDateFilter" placeholder="Select Date Range" class="datepicker" @open="datePicker=true" range />
-            </div>
+      </el-tab-pane>   
+
+      <el-tab-pane label="Favorites">
+          <div class="fav-filter px-3 pb-1 pt-0 mt-3">
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <h5 class="my-1">Favorites</h5>
+          </div>
+        </div>
+
+        <!-- FAVORITE FILTERS SECTION -->
+        <div class="row justify-content-between pb-2">
+          <div class="col-md-5" style="border-right:solid lightgray .8px">
             <div>
-              <label class="font-sm mb-0">Updates Date Range</label>
-              <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
+                <el-select 
+                  v-model="C_favoriteFilterSelectModel"                    
+                  class="w-100" 
+                  track-by="name" 
+                  filterable
+                  value-key="id"
+                  placeholder="Search and select Project Group"
+                >
+                  <el-option 
+                    v-for="item in C_favoriteFilterSelectOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                </el-select>
+              
             </div>
-              </div>
+            <div class="mt-2">
+              <label class="font-sm mb-0">Favorites Filter Name</label>
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">             
+              <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
             </div>
-      </div>
+          </div>
+            <div class="col-md-7">              
+             <div class="btn-group-sm text-center">  
+              <button 
+                class="btn btn-sm font-sm btn-success text-light"
+                @click.prevent="saveFavoriteFilters" 
+                data-cy="save_favorite_filter"> 
+                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+                Save to Favorites
+              </button>            
+              <button 
+                class="btn btn-sm font-sm btn-danger text-light" 
+                @click.prevent="onClearFilter" data-cy="clear_filter">
+                <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
+                Remove
+              </button>   
+               <button 
+                class="btn btn-sm font-sm btn-light" >
+                Shared
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared">              
+              </button>                      
+             </div>
+          </div>
+        </div>
+       </div>
+      </el-tab-pane>
+      
+    </el-tabs>    
    
     </div>
     <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
@@ -427,6 +448,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      activeName: 'first',
       exporting: false,
       showFilters: false,
       datePicker: false,
@@ -807,6 +829,9 @@ export default {
     },
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id
+    },
+    handleClick(tab, event) {
+        console.log(tab, event);
     },
     // findFacility(query) {
     //   this.isLoading = true
@@ -1668,6 +1693,16 @@ a.disabled {
   border-radius: 5px;
   padding: 6px
 }
+.fav-filter {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+  border-radius: 5px;
+  background-color: #fff;
+  border-top: solid #41b883 3.5px;
+  padding: 6px
+}
+.btn-light, .btn-secondary {
+  box-shadow: 0 2px 2px rgba(56, 56, 56, 0.19), 0 1.5px 1.5px rgba(56, 56, 56, 0.23) !important;
+}
 .selected-opt {
   position: relative;
   display: inline-block;
@@ -1692,8 +1727,20 @@ a.disabled {
     border-color: #e8e8e8;
   }
   ::placeholder {
-    color: #adadad;
+    color: #bbb9b9;
   }
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #bbb9b9;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #bbb9b9;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #bbb9b9;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
