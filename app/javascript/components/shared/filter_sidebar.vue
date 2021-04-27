@@ -242,26 +242,6 @@
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
-              <label class="font-sm mb-0">Issue Types</label>
-              <el-select 
-                  v-model="C_issueTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="issue_type"            
-                  multiple                                                                                                                                                         
-                  placeholder="Select Issue Type"
-                  >
-                <el-option 
-                  v-for="item in issueTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select>            
-            </div>
-            <div>
               <label class="font-sm mb-0">Issue Stages</label>
               <el-select 
                   v-model="C_issueStageFilter"                    
@@ -282,6 +262,27 @@
               </el-select> 
           
             </div>
+            <div>
+              <label class="font-sm mb-0">Issue Types</label>
+              <el-select 
+                  v-model="C_issueTypeFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_type"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Type"
+                  >
+                <el-option 
+                  v-for="item in issueTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>            
+            </div>
+
             <div>
               <label class="font-sm mb-0">Issue Severities</label>
               <el-select 
