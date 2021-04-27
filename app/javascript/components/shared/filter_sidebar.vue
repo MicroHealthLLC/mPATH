@@ -406,7 +406,8 @@
           </div>
             <div class="col-md-7">              
              <div class="btn-group-sm text-center">  
-              <button 
+              <button
+                v-if="hasAdminAccess"
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
@@ -414,6 +415,7 @@
                 Save to Favorites
               </button>            
               <button 
+                v-if="hasAdminAccess"
                 class="btn btn-sm font-sm btn-danger text-light" 
                 @click.prevent="onClearFilter" data-cy="clear_filter">
                 <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
@@ -447,12 +449,13 @@ export default {
   name: 'FilterSidebar',
   data() {
     return {
+      hasFilterAccess: true,
       isLoading: false,
       activeName: 'first',
       exporting: false,
       showFilters: false,
       datePicker: false,
-      favoriteFilterData: {id: null, name: null},
+      favoriteFilterData: {id: null, name: null, shared: false},
       favoriteFilterOptions: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -523,7 +526,9 @@ export default {
       'getMapZoomFilter',
       'getUnfilteredFacilities'
     ]),
-
+    hasAdminAccess() {
+      return this.hasFilterAccess
+    },
     C_favoriteFilterSelectModel: {
       get() {
         return this.favoriteFilterData
@@ -848,6 +853,9 @@ export default {
     loadFavoriteFilter(fav_filter){
       this.resetFilters()
       var res = fav_filter.query_filters
+      if(fav_filter.shared){
+        this.hasFilterAccess = (this.$currentUser.role == "superadmin" || this.$permissions.admin['write'] || fav_filter.userId == this.$currentUser.id )
+      }
       for(var i = 0; i < res.length; i++){
 
         if(res[i].filter_key == "issueTypeFilter"){
@@ -938,14 +946,17 @@ export default {
 
     },
     saveFavoriteFilters(){
-
       let formData = new FormData()
 
       formData.append('favorite_filter[name]', this.favoriteFilterData.name)
       if(this.favoriteFilterData.id)
         formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
-      formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      if(this.favoriteFilterData.shared){
+        formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      }else{
+        formData.append('favorite_filter[shared]', false)
+      }
       
       // Categories Filter
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
@@ -1139,7 +1150,7 @@ export default {
         }
 
         let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter"})
+        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false})
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
@@ -1255,7 +1266,7 @@ export default {
           this.favoriteFilterData = this.favoriteFilterOptions[0]
           this.loadFavoriteFilter(this.favoriteFilterData)
         }else{
-          this.favoriteFilterData = {id: null, name: "New Filter"}
+          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
         }
         
         //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
