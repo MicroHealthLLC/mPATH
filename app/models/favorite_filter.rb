@@ -2,6 +2,8 @@ class FavoriteFilter < ApplicationRecord
   belongs_to :project
   belongs_to :user
   has_many :query_filters, dependent: :destroy
+  validates_uniqueness_of :name
+  validates_presence_of :name
 
   def to_json(options = {})
     {

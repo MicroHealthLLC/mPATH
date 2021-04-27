@@ -425,7 +425,7 @@
                <button 
                 class="btn btn-sm font-sm btn-light" >
                 Shared
-                <input type="checkbox" style="" v-model="C_favoriteFilter.shared">              
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess">              
               </button>                      
              </div>
           </div>
@@ -1205,7 +1205,11 @@ export default {
     resetFilters(){
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+      if(this.favoriteFilterData.id){
+        this.setAdvancedFilter([])
+      }else{
+        this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])        
+      }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
