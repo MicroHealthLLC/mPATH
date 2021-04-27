@@ -1706,7 +1706,7 @@
         </div>
       </div>
       <!-- TABBED OUT SECTION END HERE -->
-      <div ref="addUpdates" class="pt-0 mt-0 mb-4"></div>
+      <div ref="addUpdates" class="pt-0 mt-0"></div>
       <div></div>
     </form>
     <div
@@ -2866,12 +2866,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.risks-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 100px);
-  width: 100%;
-}
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;
