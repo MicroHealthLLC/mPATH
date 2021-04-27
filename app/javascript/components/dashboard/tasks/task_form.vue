@@ -1006,8 +1006,10 @@
       log(e){
         // console.log("This is the taskStages: " + e)
       },
-      selectedStage(item){    
-        this.selectedTaskStage = item
+      selectedStage(item){  
+        if (this._isallowed('write')) {
+          this.selectedTaskStage = item
+        }  
       },  
       clearStages() {
         this.selectedTaskStage = null
