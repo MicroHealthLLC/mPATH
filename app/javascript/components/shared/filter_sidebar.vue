@@ -547,7 +547,7 @@ export default {
       get() {
         let i = this.favoriteFilterOptions.findIndex(n => n.id === null)
         if(i == -1){
-          this.favoriteFilterOptions.push({id: null, name: "New Filter"})
+          this.favoriteFilterOptions.unshift({id: null, name: "New Filter", query_filter: [], shared: false})
         }
         return this.favoriteFilterOptions
       },
@@ -852,7 +852,7 @@ export default {
     // },
     loadFavoriteFilter(fav_filter){
       this.resetFilters()
-      var res = fav_filter.query_filters
+      var res = fav_filter.query_filters || []
       if(fav_filter.shared){
         this.hasFilterAccess = (this.$currentUser.role == "superadmin" || this.$permissions.admin['write'] || fav_filter.userId == this.$currentUser.id )
       }
@@ -1150,7 +1150,7 @@ export default {
         }
 
         let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false})
+        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false, query_filter: []})
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
@@ -1266,7 +1266,7 @@ export default {
           this.favoriteFilterData = this.favoriteFilterOptions[0]
           this.loadFavoriteFilter(this.favoriteFilterData)
         }else{
-          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
+          this.favoriteFilterData = {id: null, name: "New Filter", shared: false, query_filter: []}
         }
         
         //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
@@ -1280,11 +1280,14 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        this.$message({
-          message: err.response.data.error,
-          type: "error",
-          showClose: true,
-        });
+        if(err.response.data.error){
+          this.$message({
+            message: err.response.data.error,
+            type: "error",
+            showClose: true,
+          });
+        }
+
       })
       .finally(() => {
         // this.loading = false
