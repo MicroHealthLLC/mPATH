@@ -311,20 +311,19 @@ export default {
         position: "bottom-left",
       });
     }
-    if (this.contentLoaded) {
-      this.currentFacility = this.facilities.find(
-        (facility) => facility.id == this.$route.params.projectId
-      );
-      console.log("currentFac " + JSON.stringify(this.currentFacility))
-       this.setCurrentFacility(        
-          this.facilities.find(
-            (facility) => facility.facilityId == this.$route.params.projectId
-          )
-        );
-    }
-
     // Store the map route name for check when redirecting to other pages
     this.setPreviousRoute(this.$route.name);
+  },
+  beforeMount() {
+    if (this.contentLoaded && this.$route.params.projectId) {
+      this.setCurrentFacility(
+        this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        )
+      );
+      // Display tooltip for current project
+      this.toggleTooltip(this.currentFacility);
+    }
   },
   watch: {
     facilities: function() {
