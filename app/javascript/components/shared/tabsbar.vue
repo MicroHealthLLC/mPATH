@@ -2,7 +2,7 @@
   <div id="tabbar" data-cy="main_tab">
     <router-link
       v-if="permitted('map_view')"
-      :to="`/programs/${this.$route.params.programId}/map`"
+      :to="`/programs/${this.$route.params.programId}/map${this.projectId}`"
       tag="div"
     >
       <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
@@ -84,6 +84,13 @@ export default {
     },
     isMembersView() {
       return this.$route.name === "TeamMembersView";
+    },
+    projectId(){
+      if(this.$route.params.projectId){
+        return `/projects/${this.$route.params.projectId}`
+      } else {
+        return ''
+      }
     },
     permitted() {
       return (salut) =>
