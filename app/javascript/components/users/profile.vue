@@ -190,7 +190,7 @@
               filterable
               placeholder="Search and select Navigation"
               :disabled="!this.selectedProjectGroup"
-               @select="navigationSelectChane"
+               @change="navigationSelectChane"
             >
             <el-option
               v-for="item in navigationOptions"
@@ -292,7 +292,7 @@
       navigationSelectChane(value){
         this.selectedSubNavigation = ''
         if(value.id == "kanban"){
-          this.subNavigationOptions = allowed_sub_navigation_tabs
+          this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
         }else if(['gantt_chart', 'member_list'].includes(value.id) ){
           this.subNavigationOptions = []
         }
@@ -324,6 +324,15 @@
             }
             this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
             this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+
+            if(this.selectedNavigation){
+              if(this.selectedNavigation.id == "kanban"){
+                this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+              }else if(['gantt_chart', 'member_list'].includes(this.selectedNavigation.id) ){
+                this.subNavigationOptions = []
+              }              
+            }
+
 
             this.gmap_address.formatted_address = this.profile.address
             if (this.C_addressDrawn) {
@@ -389,7 +398,6 @@
             .post('/profile.json', {profile: data, preferences: preferences})
             .then((res) => {
               console.log("profile-updated")
-              debugger;
               var pref = res.data.preferences
               if(res.data.preferenceUrl){
                 window.location.pathname = res.data.preferenceUrl
