@@ -1,28 +1,18 @@
 <template>
   <div id="tabbar" data-cy="main_tab">
-    <router-link
-      v-if="permitted('map_view')"
-      :to="`/programs/${this.$route.params.programId}/map${this.projectId}`"
-      tag="div"
-    >
+    <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
       <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
         Map
       </div>
     </router-link>
-    <router-link
-      v-if="permitted('sheets_view')"
-      :to="`/programs/${this.$route.params.programId}/sheet${this.projectId}`"
-      tag="div"
-    >
+    <router-link v-if="permitted('sheets_view')" :to="routeSheetSwap" tag="div">
       <div class="badge" :class="{ active: isSheetsView }" data-cy="sheets_tab">
         Sheet
       </div>
     </router-link>
     <router-link
       v-if="permitted('kanban_view')"
-      :to="
-        `/programs/${this.$route.params.programId}/kanban${this.projectIdKanban}`
-      "
+      :to="routeKanbanSwap"
       tag="div"
     >
       <div class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
@@ -87,18 +77,62 @@ export default {
     isMembersView() {
       return this.$route.name === "TeamMembersView";
     },
-    projectId() {
-      if (this.$route.params.projectId) {
-        return `/projects/${this.$route.params.projectId}`;
+    routeSheetSwap() {
+      let route = this.$route.path;
+
+      if (this.isMapView) {
+        return route.replace("map", "sheet");
+      } else if (this.isKanbanView) {
+        return route.replace("kanban", "sheet");
+      } else if (this.isGanttView) {
+        return route.replace("gantt_view", "sheet");
       } else {
-        return "";
+        return route.replace("member_list", "sheet");
       }
     },
-    projectIdKanban() {
-      if (this.$route.params.projectId) {
-        return `/projects/${this.$route.params.projectId}/tasks`;
+    routeMapSwap() {
+      let route = this.$route.path;
+
+      if (this.isSheetsView) {
+        return route.replace("sheet", "map");
+      } else if (this.isKanbanView) {
+        return route.replace("kanban", "map");
+      } else if (this.isGanttView) {
+        return route.replace("gantt_view", "map");
       } else {
-        return "";
+        return route.replace("member_list", "map");
+      }
+    },
+    routeKanbanSwap() {
+      let route = this.$route.path;
+
+      if (
+        this.isSheetsView &&
+        (route.includes("tasks") ||
+          route.includes("issues") ||
+          route.includes("risks"))
+      ) {
+        return route.replace("sheet", "kanban");
+      } else if (this.isSheetsView && this.$route.params.projectId) {
+        return `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks`;
+      } else if (this.isSheetsView && !route.includes("notes")) {
+        return `/programs/${this.$route.params.programId}/kanban`;
+      }
+      if (
+        this.isMapView &&
+        (route.includes("tasks") ||
+          route.includes("issues") ||
+          route.includes("risks"))
+      ) {
+        return route.replace("map", "kanban");
+      } else if (this.isMapView && this.$route.params.projectId) {
+        return `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks`;
+      } else if (this.isMapView && !route.includes("notes")) {
+        return `/programs/${this.$route.params.programId}/kanban`;
+      } else if (this.isGanttView) {
+        return route.replace("gantt_view", "kanban");
+      } else {
+        return route.replace("member_list", "kanban");
       }
     },
     permitted() {
