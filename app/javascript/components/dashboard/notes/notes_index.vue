@@ -37,10 +37,14 @@
       </div>
       <hr/>
       <div v-if="_isallowed('read')" >
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes"  id="notesHover" :key="note.id" class="mb-1 notes">
+        <div v-if="filteredNotes.length > 0">
           <notes-show
+            v-for="note in filteredNotes.slice().reverse()"  
+             id="notesHover" 
+            :key="note.id" 
             :facility="DV_facility"
-            :note="note"           
+            :note="note"   
+            class="mb-1 notes"        
             :from="from"
             @note-updated="noteUpdated"
             @note-deleted="noteDeleted"           

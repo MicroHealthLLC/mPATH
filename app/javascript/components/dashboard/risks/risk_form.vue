@@ -1034,10 +1034,10 @@
             </div>
 
             <div
-              class="row form-group pl-2 mx-4 mb-0 w-50"
+              class="row form-group pl-2 mx-4 mb-0 w-80"
               style="background-color: #fafafa; border: solid 1px #ededed"
             >            
-              <div class="col-md-2 pl-1 py-2 mb-0">                    
+              <div class="col-md-3 pl-1 py-2 mb-0">                    
                   <label class="font-sm mb-0">Risk Approach</label>               
                   <span                   
                     class="d-block approver-pointer"
@@ -1058,7 +1058,7 @@
               </div>
                <div
                 v-show="DV_risk.approved"
-                class="col-md-8 pr-2 py-2 mb-0 simple-select form-group ml-0"
+                class="col-md-7 pr-2 py-2 mb-0 simple-select form-group ml-0"
               >
                 <label class="font-sm mb-0"
                   >Date/Time Risk Approach Approved:</label
