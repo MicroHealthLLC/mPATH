@@ -242,26 +242,6 @@
           <div class="col-md-4" style="border-right:solid lightgray .8px">
            <h5 class="mb-0">Issues</h5>
             <div>
-              <label class="font-sm mb-0">Issue Types</label>
-              <el-select 
-                  v-model="C_issueTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="issue_type"            
-                  multiple                                                                                                                                                         
-                  placeholder="Select Issue Type"
-                  >
-                <el-option 
-                  v-for="item in issueTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select>            
-            </div>
-            <div>
               <label class="font-sm mb-0">Issue Stages</label>
               <el-select 
                   v-model="C_issueStageFilter"                    
@@ -282,6 +262,27 @@
               </el-select> 
           
             </div>
+            <div>
+              <label class="font-sm mb-0">Issue Types</label>
+              <el-select 
+                  v-model="C_issueTypeFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_type"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Type"
+                  >
+                <el-option 
+                  v-for="item in issueTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>            
+            </div>
+
             <div>
               <label class="font-sm mb-0">Issue Severities</label>
               <el-select 
@@ -400,13 +401,14 @@
             </div>
             <div class="mt-2">
               <label class="font-sm mb-0">Favorites Filter Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">             
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess">             
               <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
             </div>
           </div>
             <div class="col-md-7">              
              <div class="btn-group-sm text-center">  
-              <button 
+              <button
+                v-if="hasAdminAccess"
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
@@ -414,6 +416,7 @@
                 Save to Favorites
               </button>            
               <button 
+                v-if="hasAdminAccess"
                 class="btn btn-sm font-sm btn-danger text-light" 
                 @click.prevent="onClearFilter" data-cy="clear_filter">
                 <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
@@ -422,7 +425,7 @@
                <button 
                 class="btn btn-sm font-sm btn-light" >
                 Shared
-                <input type="checkbox" style="" v-model="C_favoriteFilter.shared">              
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess">              
               </button>                      
              </div>
           </div>
@@ -447,12 +450,13 @@ export default {
   name: 'FilterSidebar',
   data() {
     return {
+      hasFilterAccess: true,
       isLoading: false,
       activeName: 'first',
       exporting: false,
       showFilters: false,
       datePicker: false,
-      favoriteFilterData: {id: null, name: null},
+      favoriteFilterData: {id: null, name: null, shared: false},
       favoriteFilterOptions: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -523,18 +527,21 @@ export default {
       'getMapZoomFilter',
       'getUnfilteredFacilities'
     ]),
-
+    hasAdminAccess() {
+      return this.hasFilterAccess
+    },
     C_favoriteFilterSelectModel: {
       get() {
         return this.favoriteFilterData
       },
       set(value) {
         this.favoriteFilterData = value
-        if(!this.favoriteFilterData.id){
-          this.resetFilters()
-        }else{
-          this.loadFavoriteFilter(this.favoriteFilterData)
-        }
+        this.loadFavoriteFilter(this.favoriteFilterData)
+        // if(!this.favoriteFilterData.id){
+        //   this.resetFilters()
+        // }else{
+        //   this.loadFavoriteFilter(this.favoriteFilterData)
+        // }
         
       }
     },
@@ -542,7 +549,7 @@ export default {
       get() {
         let i = this.favoriteFilterOptions.findIndex(n => n.id === null)
         if(i == -1){
-          this.favoriteFilterOptions.push({id: null, name: "New Filter"})
+          this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false})
         }
         return this.favoriteFilterOptions
       },
@@ -848,6 +855,15 @@ export default {
     loadFavoriteFilter(fav_filter){
       this.resetFilters()
       var res = fav_filter.query_filters
+
+      if(fav_filter.shared){
+        this.hasFilterAccess = (this.$currentUser.role == "superadmin" || this.$permissions.admin['write'] || fav_filter.userId == this.$currentUser.id )
+      }else{
+        this.hasFilterAccess = true
+      }
+      if(!res){
+        return;
+      }
       for(var i = 0; i < res.length; i++){
 
         if(res[i].filter_key == "issueTypeFilter"){
@@ -938,21 +954,26 @@ export default {
 
     },
     saveFavoriteFilters(){
-
       let formData = new FormData()
 
       formData.append('favorite_filter[name]', this.favoriteFilterData.name)
       if(this.favoriteFilterData.id)
         formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
-      formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      if(this.favoriteFilterData.shared){
+        formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      }else{
+        formData.append('favorite_filter[shared]', false)
+      }
       
       // Categories Filter
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityGroupFilter")
         formData.append('query_filters[][name]', "Project Groups")
         // var v = JSON.stringify(this.facilityGroupFilter)
-        var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        // var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.facilityGroupFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -960,8 +981,10 @@ export default {
       if(this.projectStatusFilter && this.projectStatusFilter[0]){
         formData.append('query_filters[][filter_key]', "projectStatusFilter")
         formData.append('query_filters[][name]', "Project Statuses")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        
+        // var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.projectStatusFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -969,8 +992,11 @@ export default {
       if(this.facilityNameFilter && this.facilityNameFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityNameFilter")
         formData.append('query_filters[][name]', "Project Names")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, facilityName: val.facilityName}  }) );
+
+        // NOTE: this saving more data than required so not using this code
+        // var v = JSON.stringify(this.facilityNameFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }      
 
@@ -978,9 +1004,10 @@ export default {
       if(this.facilityProgressFilter && this.facilityProgressFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityProgressFilter")
         formData.append('query_filters[][name]', "Project % Progress Range")
-        // var v = JSON.stringify(this.taskTypeFilter)
 
-        var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        // var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        var v = JSON.stringify(this.facilityProgressFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -999,8 +1026,10 @@ export default {
       if(this.taskStageFilter && this.taskStageFilter[0]){
         formData.append('query_filters[][filter_key]', "taskStageFilter")
         formData.append('query_filters[][name]', "Task Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskStageFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1008,8 +1037,10 @@ export default {
       if(this.issueTypeFilter && this.issueTypeFilter[0]){
         formData.append('query_filters[][filter_key]', "issueTypeFilter")
         formData.append('query_filters[][name]', "Issue Types")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueTypeFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1017,8 +1048,10 @@ export default {
       if(this.issueSeverityFilter && this.issueSeverityFilter[0]){
         formData.append('query_filters[][filter_key]', "issueSeverityFilter")
         formData.append('query_filters[][name]', "Issue Severities")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueSeverityFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1026,8 +1059,9 @@ export default {
       if(this.issueStageFilter && this.issueStageFilter[0]){
         formData.append('query_filters[][filter_key]', "issueStageFilter")
         formData.append('query_filters[][name]', "Issue Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueStageFilter)
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1035,8 +1069,10 @@ export default {
       if(this.getRiskPriorityLevelFilter && this.getRiskPriorityLevelFilter[0]){
         formData.append('query_filters[][filter_key]', "riskPriorityLevelFilter")
         formData.append('query_filters[][name]', "Risk Priority Levels")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        
+        // var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.getRiskPriorityLevelFilter );
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1044,8 +1080,8 @@ export default {
       if(this.riskStageFilter && this.riskStageFilter[0]){
         formData.append('query_filters[][filter_key]', "riskStageFilter")
         formData.append('query_filters[][name]', "Risk Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        // var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.riskStageFilter );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1053,8 +1089,8 @@ export default {
       if(this.getRiskApproachFilter && this.getRiskApproachFilter[0]){
         formData.append('query_filters[][filter_key]', "riskApproachFilter")
         formData.append('query_filters[][name]', "Risk Approaches")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        // var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.getRiskApproachFilter );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1062,8 +1098,8 @@ export default {
       if(this.taskTypeFilter && this.taskTypeFilter[0]){
         formData.append('query_filters[][filter_key]', "taskTypeFilter")
         formData.append('query_filters[][name]', "Categories")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskTypeFilter)
+        // var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
         formData.append('query_filters[][filter_value]', v )        
       }
 
@@ -1071,8 +1107,10 @@ export default {
       if(this.getTaskIssueUserFilter && this.getTaskIssueUserFilter[0]){
         formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
         formData.append('query_filters[][name]', "Action Users")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, name: val.fullName}  }) );
+
+        // var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, fullName: val.fullName}  }) );
+        var v = JSON.stringify( this.getTaskIssueUserFilter );
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1080,8 +1118,11 @@ export default {
       if(this.getAdvancedFilter && this.getAdvancedFilter[0]){
         formData.append('query_filters[][filter_key]', "getAdvancedFilter")
         formData.append('query_filters[][name]', "Flags")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskTypeFilter)
+        
+        // var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.getAdvancedFilter);
+        
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1089,8 +1130,8 @@ export default {
       if(this.taskIssueProgressFilter && this.taskIssueProgressFilter[0]){
         formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
         formData.append('query_filters[][name]', "Action % Progress Range")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        var v = JSON.stringify(this.taskIssueProgressFilter)
+        // var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
       
@@ -1139,7 +1180,7 @@ export default {
         }
 
         let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter"})
+        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false, })
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
@@ -1164,7 +1205,11 @@ export default {
     resetFilters(){
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+      if(this.favoriteFilterData.id){
+        this.setAdvancedFilter([])
+      }else{
+        this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])        
+      }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1255,7 +1300,7 @@ export default {
           this.favoriteFilterData = this.favoriteFilterOptions[0]
           this.loadFavoriteFilter(this.favoriteFilterData)
         }else{
-          this.favoriteFilterData = {id: null, name: "New Filter"}
+          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
         }
         
         //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
@@ -1269,11 +1314,14 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        this.$message({
-          message: err.response.data.error,
-          type: "error",
-          showClose: true,
-        });
+        if(err.response.data.error){
+          this.$message({
+            message: err.response.data.error,
+            type: "error",
+            showClose: true,
+          });
+        }
+
       })
       .finally(() => {
         // this.loading = false
