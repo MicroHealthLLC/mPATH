@@ -1143,8 +1143,12 @@ export default new Vuex.Store({
       let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
       return _.filter(state.facilities, (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
     },
-    activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
-      return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
+    // activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
+    //   return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
+    // },
+
+    activeFacilityGroups: (state, getters) => (id) => {
+      return _.filter(getters.facilityGroups, f => f.status === 'active')     
     },
     getTaskIssueOverdueOptions: (state, getters) => {
       return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "notOverdue",name: "not overdue", value: "not overdue"}]
