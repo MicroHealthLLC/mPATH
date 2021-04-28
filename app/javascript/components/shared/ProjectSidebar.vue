@@ -1,5 +1,10 @@
 <template>
-  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+  <div
+    id="facility_sidebar"
+    class="pl-0"
+    @click="deselectProject"
+    data-cy="facility_list"
+  >
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
@@ -82,10 +87,10 @@ export default {
       let url = this.$route.path;
 
       if (url.includes("sheet")) {
-        return "sheet";        
-      } 
-       if (url.includes("calendar")) {
-        return "calendar";        
+        return "sheet";
+      }
+      if (url.includes("calendar")) {
+        return "calendar";
       } else {
         return "kanban";
       }
@@ -114,6 +119,13 @@ export default {
     },
     showFacility(facility) {
       this.$emit("on-expand-facility", facility);
+    },
+    deselectProject(e) {
+      if (e.target.id === "facility_sidebar") {
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/${this.tab}`
+        );
+      }
     },
   },
 };
