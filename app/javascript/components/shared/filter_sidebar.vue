@@ -612,6 +612,7 @@ export default {
       return this.filterFacilitiesWithActiveFacilityGroups.length > 0
     },
     C_activeFacilityGroups() {
+      // What if no project is selected e.g. URL http://localhost:3000/programs/1/map
       let id = Number(this.$route.params.projectId)
       return this.activeFacilityGroups(id)
     },
@@ -876,6 +877,7 @@ export default {
           this.setAdvancedFilter(res[i].filter_value)
 
         }else if(res[i].filter_key == "facilityGroupFilter"){
+
           this.setFacilityGroupFilter(res[i].filter_value)
 
         }else if(res[i].filter_key == "projectStatusFilter"){
@@ -971,8 +973,8 @@ export default {
         formData.append('query_filters[][filter_key]', "facilityGroupFilter")
         formData.append('query_filters[][name]', "Project Groups")
         // var v = JSON.stringify(this.facilityGroupFilter)
-        // var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
-        var v = JSON.stringify(this.facilityGroupFilter)
+        var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        //var v = JSON.stringify(this.facilityGroupFilter)
 
         formData.append('query_filters[][filter_value]', v )       
       }
