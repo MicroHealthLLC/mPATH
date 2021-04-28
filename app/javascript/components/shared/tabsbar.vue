@@ -85,7 +85,7 @@ export default {
       } else if (this.isKanbanView) {
         return route.replace("kanban", "sheet");
       } else if (this.isGanttView) {
-        return route.replace("gantt_view", "sheet");
+        return route.replace("gantt_chart", "sheet");
       } else {
         return route.replace("member_list", "sheet");
       }
@@ -98,7 +98,7 @@ export default {
       } else if (this.isKanbanView) {
         return route.replace("kanban", "map");
       } else if (this.isGanttView) {
-        return route.replace("gantt_view", "map");
+        return route.replace("gantt_chart", "map");
       } else {
         return route.replace("member_list", "map");
       }
@@ -130,7 +130,7 @@ export default {
       } else if (this.isMapView && !route.includes("notes")) {
         return `/programs/${this.$route.params.programId}/kanban`;
       } else if (this.isGanttView) {
-        return route.replace("gantt_view", "kanban");
+        return route.replace("gantt_chart", "kanban");
       } else {
         return route.replace("member_list", "kanban");
       }
