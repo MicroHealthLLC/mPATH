@@ -2,7 +2,7 @@
   <div id="tabbar" data-cy="main_tab">
     <router-link
       v-if="permitted('map_view')"
-      :to="`/programs/${this.$route.params.programId}/map`"
+      :to="`/programs/${this.$route.params.programId}/map${this.projectId}`"
       tag="div"
     >
       <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
@@ -11,7 +11,7 @@
     </router-link>
     <router-link
       v-if="permitted('sheets_view')"
-      :to="`/programs/${this.$route.params.programId}/sheet`"
+      :to="`/programs/${this.$route.params.programId}/sheet${this.projectId}`"
       tag="div"
     >
       <div class="badge" :class="{ active: isSheetsView }" data-cy="sheets_tab">
@@ -20,7 +20,9 @@
     </router-link>
     <router-link
       v-if="permitted('kanban_view')"
-      :to="`/programs/${this.$route.params.programId}/kanban`"
+      :to="
+        `/programs/${this.$route.params.programId}/kanban${this.projectIdKanban}`
+      "
       tag="div"
     >
       <div class="badge" :class="{ active: isKanbanView }" data-cy="kanban_tab">
@@ -84,6 +86,20 @@ export default {
     },
     isMembersView() {
       return this.$route.name === "TeamMembersView";
+    },
+    projectId() {
+      if (this.$route.params.projectId) {
+        return `/projects/${this.$route.params.projectId}`;
+      } else {
+        return "";
+      }
+    },
+    projectIdKanban() {
+      if (this.$route.params.projectId) {
+        return `/projects/${this.$route.params.projectId}/tasks`;
+      } else {
+        return "";
+      }
     },
     permitted() {
       return (salut) =>
