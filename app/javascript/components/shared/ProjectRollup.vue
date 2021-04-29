@@ -2,12 +2,17 @@
 <template>
   <div class="container-fluid m-2" data-cy="facility_rollup">
     <div class="row">
-      <div class="col pl-0">
-        <h3 class="d-inline mr-2"><span v-if="projects.length > 0"><b>{{ projects[0].name }}</b></span></h3>
+      <div class="col-9 pl-0">
+        <span v-if="projects.length > 0">
+          <h4 v-if="isMapView" class="d-inline mr-2">{{ currentProject.name }}</h4>          
+          <h3 v-else class="d-inline mr-2">{{ currentProject.name }}</h3>        
+        </span>      
+      </div>
+      <div class="col-3 pl-0">        
         <h3 v-if="contentLoaded" class="d-inline float-right">
            <el-popover
             placement="top-start"
-            title="Total projects"
+            title="Projects #"
             width="200"
             trigger="hover"
             content="This is the total number of projects in this program.">
@@ -47,7 +52,7 @@
                 </div>
                 <div class="col-5">
                   <span
-                    class="w-100 progress pg-content"
+                    class="w-100 mt-1 ml-2 progress pg-content"
                     :class="{
                       'font-sm': isMapView,
                       'progress-0': status.progress <= 0,
@@ -116,7 +121,7 @@
               </div>
               <div class="col-5">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 mt-1 ml-2 progress pg-content"
                   :class="{
                     'font-sm': isMapView,
                     'progress-0': facilityGroupProgress(facilityGroup) <= 0,
@@ -171,7 +176,7 @@
               </div>
               <div class="col-5">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 mt-1 ml-2 progress pg-content"
                   :class="{
                     'progress-0': taskVariation.completed.percentage <= 0,
                   }"
@@ -198,7 +203,7 @@
               </div>
               <div class="col-5 mt-1">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 mt-1 ml-2 progress pg-content"
                   :class="{
                     'font-sm': isMapView,
                     'progress-0': taskVariation.overdue.percentage <= 0,
@@ -237,7 +242,7 @@
 
                       <div class="col-5">
                         <span
-                          class="w-100 my-1 progress pg-content"
+                          class="w-100 my-1 ml-2progress pg-content"
                           :class="{ 'progress-0': task.progress <= 0 }"
                         >
                           <div
@@ -293,7 +298,7 @@
               </div>
               <div class="col-5" :class="{ 'font-sm': !isMapView }">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 progress ml-2 pg-content"
                   :class="{
                     'progress-0': issueVariation.completed.percentage <= 0,
                   }"
@@ -319,7 +324,7 @@
               </div>
               <div class="col-5 mt-1">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 progress ml-2 pg-content"
                   :class="{
                     'font-sm': !isMapView,
                     'progress-0': issueVariation.overdue.percentage <= 0,
@@ -362,7 +367,7 @@
                       </div>
                       <div class="col-5">
                         <span
-                          class="w-100 my-1 progress pg-content"
+                          class="w-100 my-1 progress ml-2 pg-content"
                           :class="{ 'progress-0': issue.progress <= 0 }"
                         >
                           <div
@@ -392,7 +397,7 @@
                       </div>
                       <div class="col-5">
                         <span
-                          class="w-100 my-1 progress pg-content"
+                          class="w-100 my-1 progress ml-2 pg-content"
                           :class="{ 'progress-0': issue.progress <= 0 }"
                         >
                           <div
@@ -442,7 +447,7 @@
             </div>
             <div class="col-5">
               <span
-                class="w-100 progress pg-content"
+                class="w-100 progress ml-2 pg-content"
                 :class="{
                   'progress-0': riskVariation.completed.percentage <= 0,
                 }"
@@ -467,7 +472,7 @@
             </div>
             <div class="col-5">
               <span
-                class="w-100 progress pg-content"
+                class="w-100 progress ml-2 pg-content"
                 :class="{ 'progress-0': riskVariation.overdue.percentage <= 0 }"
               >
                 <div
@@ -502,7 +507,7 @@
                     </div>
                     <div class="col-5">
                       <span
-                        class="w-100 my-1 progress pg-content"
+                        class="w-100 my-1 ml-2 progress pg-content"
                         :class="{ 'progress-0': risk.progress <= 0 }"
                       >
                         <div
