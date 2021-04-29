@@ -1237,6 +1237,10 @@ export default {
       //this.setFacilities(this.getUnfilteredFacilities)
     },
     onClearFilter() {
+      var decision = window.confirm("Are you sure you want to remove this favorite filter?")
+      if(!decision){
+        return
+      }
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
