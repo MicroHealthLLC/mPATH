@@ -443,7 +443,6 @@ export default {
       'filterDataForAdvancedFilter',
       'taskTypes',
       'getAllFilterNames',
-      'getAllFilterNames',
       'getFilterValue',
       'contentLoaded',
       'facilities',

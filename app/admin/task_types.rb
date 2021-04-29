@@ -26,6 +26,15 @@ ActiveAdmin.register TaskType do
     end
   end
 
+
+  form(html: {autocomplete: :off}) do |f|
+    f.semantic_errors *f.object.errors.keys
+    f.inputs do
+      f.input :name
+    end
+    actions
+  end
+
   controller do
     before_action :check_readability, only: [:index, :show]
     before_action :check_order, only: [:index]

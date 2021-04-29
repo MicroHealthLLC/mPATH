@@ -8,7 +8,7 @@ body {
   font-style: normal;
   font-weight: 300;
   overflow-x: hidden;
-  // overflow-y: hidden;
+  overflow-y: hidden;
   letter-spacing: .035em; 
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
@@ -36,6 +36,9 @@ input[type=button]:focus {
 .body-wrapper {
   border-top: 1px solid #dee2e6;
   padding: 7px 70px;
+  overflow-y:scroll;
+  max-height: calc(100vh - 70px) !important;
+  padding-bottom: 50px;
 }
 .form-control:focus {
   outline: none;
@@ -262,16 +265,6 @@ td.col-issue_type, td.col-issue_severity {
   margin-top: -15px;
   margin-left: -34px;
  } 
- .tasks-form, .issues-form, .notes-form {
-  background-color: #fff;
-  position:fixed;
-  height: 100vh;
-}
-.risks-form {
-  z-index: 10;
-  width: 83.1%;
- }
-
 // This prevents the text overflow in all tables
  td {
   overflow-wrap: break-word !important;
@@ -299,11 +292,22 @@ td.col-issue_type, td.col-issue_severity {
 .pac-container {
   z-index: 100000;
 }
+.signin-section {
+  // Signin page main container 
 
+  overflow-y: auto;
+  max-height: calc(100vh - 120px) !important;
+}
+.form-signin {
+  position: absolute;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .signup-section,
 .signin-section {
-  .form-signin {
-    margin-top: 10vh;
+  .form-signin {  
     width: 450px;
     display: block;
     background-color: #f7f7f7;
@@ -597,8 +601,6 @@ body /deep/ .mx-input.disabled {
   border: 1px solid #dee2e6 !important;
   margin-bottom: 20px;
 }
-
-
 // CSS for datatables
 .scroll {
   cursor:pointer !important;
@@ -830,17 +832,6 @@ i.el-tag__close.el-icon-close {
   width:33%;
 }
 
-.risks-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 100px);
-  background-color: #fff;
-  position: absolute;
-  width: 100%;
-  top: 0;
-  z-index: 100;
-}
-
 i.el-icon-circle-close {
   // For el-select dropdown clear icon
   color: #dc3545 !important;
@@ -853,3 +844,10 @@ i.el-icon-circle-close {
 .el-slider__runway.disabled .el-slider__bar {
   background-color: #409EFF;
 }
+
+.mpath-logo {
+  margin-bottom: -25px;
+  margin-right: 85px;
+}
+
+// Recommitting message to accept change.  Discovered this file missing from QA branch on 24 Apr 2021.  This message can be deleted 

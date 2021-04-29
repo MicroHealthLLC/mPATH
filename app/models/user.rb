@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :risks
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
+  has_many :query_filters, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
@@ -21,7 +22,7 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
   PREFERENCES_HASH =  {
-      navigation_menu: nil, 
+      navigation_menu: 'map', 
       sub_navigation_menu: nil,
       program_id: nil, 
       project_id: nil,
@@ -32,7 +33,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["map_view", "gantt_view", "sheets_view", "kanban_view"]
+    nagivation_tabs = ["member_list", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view", "gantt_view"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
   end
 
@@ -40,13 +41,19 @@ class User < ApplicationRecord
     n = []
     allowed_navigation_tabs.each do |t|
       name = "map" if t == "map_view"
-      name = "gantt_chart" if t == "gantt_view"
       name = "kanban" if t == "kanban_view"
       name = "sheet" if t == "sheets_view"
+      name = "member_list" if t == "member_list"
+      
+      #NOTE: Once front end routes are working, uncomment it.
+      #name = "gantt_chart" if t == "gantt_view"      
+
+      # name = "calendar" if t == "calendar_view"
 
       n << {id: name.downcase, name: name.humanize, value: name.downcase}
     end
-    n << {id: 'member_list', name: 'Team', value: 'member_list'}
+    n
+    #n << {id: 'member_list', name: 'Team', value: 'member_list'}
   end
 
   def allowed_sub_navigation_tabs(right = 'R')
@@ -61,11 +68,17 @@ class User < ApplicationRecord
   def preference_url
     p = self.get_preferences
     url = "/"
-    if p.program_id.present? && p.navigation_menu.present?
-
-      url = "/projects/#{p.program_id}/#{p.navigation_menu}"
-    elsif p.program_id.present?
-      url = "/projects/#{p.program_id}"
+    if p.program_id.present?
+      url = "/programs/#{p.program_id}/sheet" # map must be  
+      if p.navigation_menu.present?        
+        url = "/programs/#{p.program_id}/#{p.navigation_menu}"
+        if p.project_id.present?
+          url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}"
+          if p.sub_navigation_menu.present?
+            url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+          end
+        end
+      end
     end
     url
   end

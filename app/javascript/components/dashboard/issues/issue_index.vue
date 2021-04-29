@@ -252,12 +252,11 @@ export default {
       this.newIssue = true
     },
     addNewIssue() {
-      if (this.from == "manager_view") {
-        this.setTaskForManager({key: 'issue', value: {}})
-      } else {
-        this.currentIssue = null
-        this.newIssue = true
-      }
+      this.setTaskForManager({key: 'issue', value: {}})
+      // Route to new issue form page
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/issues/new`
+      );
     }
   },
 computed: {

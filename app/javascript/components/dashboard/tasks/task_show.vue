@@ -75,28 +75,7 @@
           </ol>
         </div>
       </div>
-    </div>
-
-      <div v-if="has_task" class="w-100 action-form-overlay">
-        <task-form
-          v-if="Object.entries(DV_edit_task).length"
-          :facility="facility"
-          :task="DV_edit_task"
-          title="Edit Task"
-          @task-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal action-form-overlay"
-        ></task-form>
-
-        <issue-form
-          v-if="Object.entries(DV_edit_issue).length"
-          :facility="facility"
-          :issue="DV_edit_issue"
-          @issue-updated="updateRelatedTaskIssue"
-          @on-close-form="onCloseForm"
-          class="form-inside-modal"
-        ></issue-form>
-      </div>   
+    </div>  
     <!-- The context-menu appears only if table row is right-clicked -->
     <ContextMenu
         :facilities="facilities"
@@ -111,19 +90,12 @@
 
 <script>
   import {mapGetters, mapMutations, mapActions} from "vuex"
-  import {SweetModal} from 'sweet-modal-vue'
-  import TaskForm from "./task_form"
-  import IssueForm from "./../issues/issue_form"
   import ContextMenu from "../../shared/ContextMenu"
 
   export default {
     name: 'TaskShow',
     components: {
-      TaskForm,
-      IssueForm,
-      SweetModal,
       ContextMenu
-        
     },
     props: {
       fromView: {
@@ -177,16 +149,11 @@
         this.$refs.taskFormModal && this.$refs.taskFormModal.open()
       },
       editTask() {
-        if (this.fromView == 'map_view') {
-          this.$emit('edit-task', this.DV_task)
-        }
-        else if (this.fromView == 'manager_view') {
-          this.setTaskForManager({key: 'task', value: this.DV_task})
-        }
-        else {
-          this.has_task = Object.entries(this.DV_task).length > 0
-          this.DV_edit_task = this.DV_task
-          this.$refs.taskFormModal && this.$refs.taskFormModal.open()
+        this.DV_edit_task = this.DV_task
+        if (this.$route.path.includes("kanban")) {
+          this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
+        } else {
+          this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/tasks/${this.DV_edit_task.id}`)
         }
       },
       onCloseForm() {

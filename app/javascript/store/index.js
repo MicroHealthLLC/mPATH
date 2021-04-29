@@ -284,6 +284,7 @@ export default new Vuex.Store({
       }
     },
     updateNotesHash: (state, {note, facilityId, action}) => {
+      console.log(JSON.stringify(note))
       let facility_i = state.facilities.findIndex(f => f.id == facilityId)
       if (facility_i > -1) {
         let facility = Object.assign({}, state.facilities[facility_i])
@@ -291,7 +292,11 @@ export default new Vuex.Store({
         if (action === 'delete') {
           Vue.delete(facility.notes, note_i)
         }
-        else if (note_i > -1) Vue.set(facility.notes, note_i, note)
+        else if (note_i > -1) {
+          Vue.set(facility.notes, note_i, note)
+        } else if (note_i == -1){
+          facility.notes.push(note)
+        }
         Vue.set(state.facilities, facility_i, facility)
       }
     },
@@ -1138,8 +1143,12 @@ export default new Vuex.Store({
       let ids = _.map(_.filter(state.facilityGroups, fg => fg.status === 'active'), 'id')
       return _.filter(state.facilities, (f) => ids.includes(f.facilityGroupId) && f.status === 'active')
     },
-    activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
-      return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
+    // activeFacilityGroups: (state, getters) => (id=getters.currentProject.id) => {
+    //   return _.filter(getters.facilityGroups, f => f.status === 'active' && f.projectIds.includes(id))
+    // },
+
+    activeFacilityGroups: (state, getters) => (id) => {
+      return _.filter(getters.facilityGroups, f => f.status === 'active')     
     },
     getTaskIssueOverdueOptions: (state, getters) => {
       return [{id: "overdue",name: "overdue", value: "overdue"}, {id: "notOverdue",name: "not overdue", value: "not overdue"}]
@@ -1678,7 +1687,7 @@ export default new Vuex.Store({
             let facility = Object.assign({}, {...res.data, ...res.data.facility})
             let index = getters.facilities.findIndex(f => f.id == facility.id)
             if (index > -1) commit('updateFacilities', {index, facility})
-            return resolve(facility)
+            return resolve(res)
           })
           .catch((err) => {
             console.error(err)

@@ -2,17 +2,24 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_17_174756) do
+ActiveRecord::Schema.define(version: 2021_04_16_210508) do
 
-  create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_accountable_users_on_project_id"
+    t.index ["user_id"], name: "index_accountable_users_on_user_id"
+  end
+
+  create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
     t.string "resource_type"
@@ -26,7 +33,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -37,7 +44,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -45,10 +52,17 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "admin_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "admin_users", charset: "utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -65,7 +79,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "checklists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "checklists", charset: "utf8", force: :cascade do |t|
     t.string "listable_type"
     t.integer "listable_id"
     t.boolean "checked"
@@ -81,7 +95,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_id"], name: "index_checklists_on_user_id"
   end
 
-  create_table "facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
     t.string "address"
     t.string "point_of_contact"
@@ -100,7 +114,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["status"], name: "index_facilities_on_status"
   end
 
-  create_table "facility_groups", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "facility_groups", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -113,7 +127,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
   end
 
-  create_table "facility_projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "facility_projects", charset: "utf8", force: :cascade do |t|
     t.bigint "facility_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -127,26 +141,37 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["status_id"], name: "index_facility_projects_on_status_id"
   end
 
-  create_table "issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "favorite_filters", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "project_id"
+    t.integer "user_id"
+    t.boolean "is_default", default: false
+    t.boolean "shared"
+    t.boolean "private"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "issue_severities", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "issue_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "issue_stages", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "percentage", default: 0
   end
 
-  create_table "issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "issue_types", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "issue_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "issue_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "issue_id"
     t.datetime "created_at", null: false
@@ -157,9 +182,9 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_type"], name: "index_issue_users_on_user_type"
   end
 
-  create_table "issues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "issues", charset: "utf8", force: :cascade do |t|
     t.string "title"
-    t.text "description", limit: 4294967295
+    t.text "description", size: :long
     t.bigint "issue_type_id"
     t.bigint "issue_severity_id"
     t.bigint "facility_project_id"
@@ -181,11 +206,11 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["task_type_id"], name: "index_issues_on_task_type_id"
   end
 
-  create_table "notes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "notes", charset: "utf8", force: :cascade do |t|
     t.string "noteable_type"
     t.integer "noteable_id"
     t.bigint "user_id"
-    t.text "body", limit: 4294967295
+    t.text "body", size: :long
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_notes_on_created_at"
@@ -194,13 +219,13 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
-  create_table "organizations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "organizations", charset: "utf8", force: :cascade do |t|
     t.string "title", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "privileges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "privileges", charset: "utf8", force: :cascade do |t|
     t.string "overview", default: "R"
     t.string "tasks", default: "R"
     t.string "notes", default: "R"
@@ -218,10 +243,11 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.string "sheets_view", default: "R"
     t.string "kanban_view", default: "R"
     t.string "risks", default: "R"
+    t.string "calendar_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
-  create_table "progress_lists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "progress_lists", charset: "utf8", force: :cascade do |t|
     t.text "body"
     t.integer "user_id"
     t.integer "checklist_id"
@@ -231,7 +257,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_id"], name: "index_progress_lists_on_user_id"
   end
 
-  create_table "project_issue_severities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_issue_severities", charset: "utf8", force: :cascade do |t|
     t.bigint "issue_severity_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -240,7 +266,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["project_id"], name: "index_project_issue_severities_on_project_id"
   end
 
-  create_table "project_issue_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_issue_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "issue_stage_id"
     t.datetime "created_at", null: false
@@ -249,7 +275,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["project_id"], name: "index_project_issue_stages_on_project_id"
   end
 
-  create_table "project_issue_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_issue_types", charset: "utf8", force: :cascade do |t|
     t.bigint "issue_type_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -258,7 +284,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["project_id"], name: "index_project_issue_types_on_project_id"
   end
 
-  create_table "project_risk_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "risk_stage_id"
     t.datetime "created_at", null: false
@@ -267,7 +293,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["risk_stage_id"], name: "index_project_risk_stages_on_risk_stage_id"
   end
 
-  create_table "project_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_statuses", charset: "utf8", force: :cascade do |t|
     t.bigint "status_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -276,7 +302,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["status_id"], name: "index_project_statuses_on_status_id"
   end
 
-  create_table "project_task_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_task_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "task_stage_id"
     t.datetime "created_at", null: false
@@ -285,7 +311,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["task_stage_id"], name: "index_project_task_stages_on_task_stage_id"
   end
 
-  create_table "project_task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_task_types", charset: "utf8", force: :cascade do |t|
     t.bigint "task_type_id"
     t.bigint "project_id"
     t.datetime "created_at", null: false
@@ -294,13 +320,13 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["task_type_id"], name: "index_project_task_types_on_task_type_id"
   end
 
-  create_table "project_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_types", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "project_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "project_users", charset: "utf8", force: :cascade do |t|
     t.bigint "project_id"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -309,9 +335,9 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_id"], name: "index_project_users_on_user_id"
   end
 
-  create_table "projects", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "projects", charset: "utf8", force: :cascade do |t|
     t.string "name"
-    t.text "description", limit: 4294967295
+    t.text "description", size: :long
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
@@ -322,7 +348,19 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["uuid"], name: "index_projects_on_uuid", unique: true
   end
 
-  create_table "rails_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "query_filters", charset: "utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "filter_key"
+    t.text "filter_value"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.integer "favorite_filter_id"
+    t.index ["user_id"], name: "index_query_filters_on_user_id"
+  end
+
+  create_table "rails_settings", id: :integer, charset: "utf8", force: :cascade do |t|
     t.string "var", null: false
     t.text "value"
     t.string "target_type", null: false
@@ -333,7 +371,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
   end
 
-  create_table "region_states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "region_states", charset: "utf8", force: :cascade do |t|
     t.bigint "facility_group_id"
     t.bigint "state_id"
     t.datetime "created_at", null: false
@@ -342,7 +380,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["state_id"], name: "index_region_states_on_state_id"
   end
 
-  create_table "related_issues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "related_issues", charset: "utf8", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "issue_id"
@@ -353,7 +391,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["relatable_type"], name: "index_related_issues_on_relatable_type"
   end
 
-  create_table "related_risks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "related_risks", charset: "utf8", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "risk_id"
@@ -364,7 +402,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["risk_id"], name: "index_related_risks_on_risk_id"
   end
 
-  create_table "related_tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "related_tasks", charset: "utf8", force: :cascade do |t|
     t.string "relatable_type"
     t.integer "relatable_id"
     t.bigint "task_id"
@@ -375,14 +413,14 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["task_id"], name: "index_related_tasks_on_task_id"
   end
 
-  create_table "risk_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "risk_stages", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.integer "percentage", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "risk_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "risk_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "risk_id"
     t.string "timestamps"
@@ -392,7 +430,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_type"], name: "index_risk_users_on_user_type"
   end
 
-  create_table "risks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "risks", charset: "utf8", force: :cascade do |t|
     t.text "risk_description"
     t.text "impact_description"
     t.date "start_date"
@@ -412,22 +450,23 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
-    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
+    t.text "type"
     t.text "probability_description"
+    t.datetime "approved_at"
+    t.boolean "approved"
     t.string "approval_time"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
   end
 
-  create_table "settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "settings", charset: "utf8", force: :cascade do |t|
     t.text "office365_key"
     t.text "office365_secret"
     t.text "google_map_key"
@@ -438,7 +477,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.text "passwords_key"
   end
 
-  create_table "sorts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sorts", charset: "utf8", force: :cascade do |t|
     t.string "relation"
     t.string "column", default: "id"
     t.string "order", default: "asc"
@@ -449,7 +488,7 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["relation"], name: "index_sorts_on_relation"
   end
 
-  create_table "states", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "states", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "code"
     t.string "center", default: "[]"
@@ -457,28 +496,28 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "statuses", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
   end
 
-  create_table "task_stages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "task_stages", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "percentage", default: 0
   end
 
-  create_table "task_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "task_types", charset: "utf8", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "progress", default: 0
   end
 
-  create_table "task_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "task_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "task_id"
     t.datetime "created_at", null: false
@@ -489,9 +528,9 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["user_type"], name: "index_task_users_on_user_type"
   end
 
-  create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "tasks", charset: "utf8", force: :cascade do |t|
     t.string "text"
-    t.text "description", limit: 4294967295
+    t.text "description", size: :long
     t.date "due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -504,13 +543,14 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
+    t.datetime "calendar_start_date"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
     t.index ["task_type_id"], name: "index_tasks_on_task_type_id"
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users", charset: "utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -544,7 +584,10 @@ ActiveRecord::Schema.define(version: 2021_03_17_174756) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accountable_users", "projects"
+  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"
   add_foreign_key "facilities", "users", column: "creator_id"
   add_foreign_key "facility_groups", "projects"

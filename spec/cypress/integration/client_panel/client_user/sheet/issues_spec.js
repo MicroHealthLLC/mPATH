@@ -4,7 +4,7 @@ describe('Sheets Issues View', function() {
     cy.appScenario('basic')
     cy.login('client@test.com', 'T3$tClient')
     cy.openFacilitySheet()
-    cy.get('[data-cy=facility_tabs]').contains('Issues').should('be.visible').click()
+    cy.get('#customtabs > :nth-child(3) > .badge').contains('Issues').should('be.visible').click()
   })
 
   it('Open Sheets issues in a facility', function() {
@@ -63,8 +63,9 @@ describe('Sheets Issues View', function() {
   })
 
   it('Sort Issue according to Start Date', function() {
-    const new_start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-    const test_start_date = Cypress.moment().format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const new_start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+    const test_start_date = dayjs().format('DD MMM YYYY')
     cy.get('[data-cy=issue_row]').first().contains(new_start_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(4)').click()
     cy.get('[data-cy=issue_row]').first().contains(test_start_date).should('be.visible')
@@ -74,8 +75,9 @@ describe('Sheets Issues View', function() {
   })
 
   it('Sort Issue according to Due Date', function() {
-    const new_due_date = Cypress.moment().add(6, 'day').format('DD MMM YYYY')
-    const test_due_date = Cypress.moment().add(5, 'day').format('DD MMM YYYY')
+    var dayjs = require('dayjs')
+    const new_due_date = dayjs().add(6, 'day').format('DD MMM YYYY')
+    const test_due_date = dayjs().add(5, 'day').format('DD MMM YYYY')
     cy.get('[data-cy=issue_row]').first().contains(new_due_date).should('be.visible')
     cy.get('.mt-3 > tr > :nth-child(5)').click()
     cy.get('[data-cy=issue_row]').first().contains(test_due_date).should('be.visible')
@@ -85,11 +87,11 @@ describe('Sheets Issues View', function() {
   })
 
   it('Sort Issue according to Assigned User', function() {
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test2 Client').should('be.visible')
-    cy.get('.mt-3 > tr > :nth-child(6)').click()
+    cy.get('[data-cy=responsibleUsers]').click()
     cy.get('[data-cy=issue_row]').first().contains('Test1 Admin').should('be.visible')
     cy.logout()
   })

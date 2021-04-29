@@ -40,6 +40,7 @@ ActiveAdmin.register User do
         :kanban_view,
         :documents,
         :facility_manager_view,
+        # :calendar_view,
         :sheets_view,
         :members,
         :risks
@@ -71,28 +72,29 @@ ActiveAdmin.register User do
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, input_html: {class: "select2"}, include_blank: true
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-            p.input :facility_manager_view
-            p.input :sheets_view
-            p.input :map_view
-            p.input :gantt_view
-            p.input :watch_view
-            p.input :kanban_view
-            p.input :overview
-            p.input :tasks
-            p.input :issues
-            p.input :risks
-            p.input :notes
-            p.input :documents
-            p.input :members
-            p.input :admin
+            p.input :facility_manager_view, as: :hidden
+            p.input :sheets_view, as: :hidden
+            # p.input :calendar_view, as: :hidden
+            p.input :map_view, as: :hidden
+            p.input :gantt_view, as: :hidden
+            p.input :watch_view, as: :hidden
+            p.input :kanban_view, as: :hidden
+            p.input :overview, as: :hidden
+            p.input :tasks, as: :hidden
+            p.input :issues, as: :hidden
+            p.input :risks, as: :hidden
+            p.input :notes, as: :hidden
+            p.input :documents, as: :hidden
+            p.input :members, as: :hidden
+            p.input :admin, as: :hidden
           end
         end
         div id: 'user-role_privilege-tab'
         div id: 'user-password__tab'
       end
 
-      tab 'Programs' do
-        f.inputs 'Programs Details' do
+      tab 'Advanced' do
+        f.inputs 'Assign Programs' do
           # f.input :projects, label: 'Programs', as: :select, include_blank: false
           input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
 

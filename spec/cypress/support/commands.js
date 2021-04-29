@@ -3,11 +3,10 @@ import '@4tw/cypress-drag-drop'
 // Login command
 Cypress.Commands.add("login", (email, password) => {
   cy.visit('/')
-  cy.get('[data-cy=user_email]').type(email).should('have.value', email)
-  cy.get('[data-cy=user_password]').type(password).should('have.value', password)
-  cy.get('[data-cy=user_remember_me]').click()
-  cy.get('[data-cy=submit]').click()
-  cy.contains('Welcome to MicroHealth Geographic Information System')
+  cy.get('[data-cy=user_email]').type(email, {force: true}).should('have.value', email)
+  cy.get('[data-cy=user_password]').type(password, {force: true}).should('have.value', password)
+  cy.get('[data-cy=user_remember_me]').click({force: true})
+  cy.get('[data-cy=submit]').click({force: true})
 })
 
 // Logout Command
@@ -43,6 +42,7 @@ Cypress.Commands.add("openTeam", () => {
 Cypress.Commands.add("openKanban", () => {
   cy.openProject()
   cy.get('[data-cy=kanban_tab]').contains('Kanban').should('be.visible').click()
+  cy.facilityUnderGroup()
 })
 
 // Open Sheet view of a project
@@ -208,4 +208,12 @@ Cypress.Commands.add("openSettingAP", () => {
   cy.get('[data-cy=admin_panel]').click()
   cy.get('#settings').click()
   cy.get('#page_title').contains('App configurations').should('be.visible')
+})
+
+// Open Category from Admin panel
+Cypress.Commands.add("openCategoryAP", () => {
+  cy.get('[data-cy=admin_panel]').click()
+  cy.get('#tabs').within(() => {
+    cy.get('#task_types').contains('Categories').click({force: true})
+  })
 })

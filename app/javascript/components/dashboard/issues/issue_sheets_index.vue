@@ -1,99 +1,99 @@
 <template>
   <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
-    <div v-if="_isallowed('read')">         
+    <div v-if="_isallowed('read')">
       <div class="d-flex align-item-center w-100">
         <div class="input-group mb-2 mr-1 task-search-bar w-100">
           <div class="input-group-prepend">
             <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
           </div>
-          <input type="search" 
-            class="form-control form-control-sm" 
-            placeholder="Search by Issue Name, Type, Severity or Assigned User" 
-            aria-label="Search" 
-            aria-describedby="search-addon" 
+          <input type="search"
+            class="form-control form-control-sm"
+            placeholder="Search by Issue Name, Type, Severity or Assigned User"
+            aria-label="Search"
+            aria-describedby="search-addon"
             v-model="issuesQuery"
             data-cy="search_issues"
             >
         </div>
         <div class="mr-1 font-sm w-100">
-          <el-select 
-           v-model="C_taskTypeFilter"                    
-           class="w-100" 
-           track-by="name" 
+          <el-select
+           v-model="C_taskTypeFilter"
+           class="w-100"
+           track-by="name"
            value-key="id"
-           multiple                                                                                                                                               
+           multiple
            placeholder="Select Category"
            >
-          <el-option 
-            v-for="item in taskTypes"                                                     
-            :value="item"   
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
             :key="item.id"
-            :label="item.name"                                                  
+            :label="item.name"
             >
           </el-option>
-          </el-select>      
+          </el-select>
          </div>
         <div class="mr-1 w-100">
-          <el-select 
-           v-model="C_sheetsIssueFilter"                    
-           class="w-100" 
-           track-by="name" 
+          <el-select
+           v-model="C_sheetsIssueFilter"
+           class="w-100"
+           track-by="name"
            value-key="id"
-           multiple                                                                                                                                               
+           multiple
            placeholder="Filter by Flags"
            >
-          <el-option 
-            v-for="item in getAdvancedFilterOptions"                                                     
-            :value="item"   
+          <el-option
+            v-for="item in getAdvancedFilterOptions"
+            :value="item"
             :key="item.id"
-            :label="item.name"                                                  
+            :label="item.name"
             >
           </el-option>
-          </el-select>      
-        </div>  
+          </el-select>
+        </div>
        </div>
-      <div class="d-flex align-item-center justify-content-start filter-second-row">          
-       <div class="simple-select mr-1 d-inline w-100">    
-         <el-select 
-           v-model="C_issueTypeFilter"                    
-           class="w-100" 
-           track-by="name" 
+      <div class="d-flex align-item-center justify-content-start filter-second-row">
+       <div class="simple-select mr-1 d-inline w-100">
+         <el-select
+           v-model="C_issueTypeFilter"
+           class="w-100"
+           track-by="name"
            value-key="id"
-           multiple                                                                                                                                               
+           multiple
            placeholder="Filter by Issue Types"
            >
-          <el-option 
-            v-for="item in issueTypes"                                                     
-            :value="item"   
+          <el-option
+            v-for="item in issueTypes"
+            :value="item"
             :key="item.id"
-            :label="item.name"                                                  
+            :label="item.name"
             >
           </el-option>
-          </el-select>       
+          </el-select>
         </div>
         <div class="mr-1 d-flex w-100">
-          <el-select 
-           v-model="C_issueSeverityFilter"                    
-           class="w-100" 
-           track-by="name" 
+          <el-select
+           v-model="C_issueSeverityFilter"
+           class="w-100"
+           track-by="name"
            value-key="id"
-           multiple                                                                                                                                               
+           multiple
            placeholder="Filter by Issue Severities"
            >
-          <el-option 
-            v-for="item in issueSeverities"                                                     
-            :value="item"   
+          <el-option
+            v-for="item in issueSeverities"
+            :value="item"
             :key="item.id"
-            :label="item.name"                                                  
+            :label="item.name"
             >
           </el-option>
-          </el-select>        
-        </div>  
-    </div>  
-     <div class="wrapper mt-2 p-3">    
+          </el-select>
+        </div>
+    </div>
+     <div class="wrapper mt-2 p-3">
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
-          @click.prevent="reportNew" data-cy="add_issue">
+          @click.prevent="addNewIssue" data-cy="add_issue">
           <i class="fas fa-plus-circle mr-2"></i>
           Add Issue
         </button>
@@ -102,31 +102,31 @@
            v-tooltip="`Export to PDF`"
            @click.prevent="exportToPdf"
            class="btn btn-md mr-1 exportBtns text-light">
-           <font-awesome-icon icon="file-pdf" />        
+           <font-awesome-icon icon="file-pdf" />
          </button>
          <button
           v-tooltip="`Export to Excel`"
           @click.prevent="exportToExcel('table', 'Issue Log')"
           class="btn btn-md mr-1 exportBtns text-light">
-          <font-awesome-icon icon="file-excel"/>         
+          <font-awesome-icon icon="file-excel"/>
         </button>
          <button
           v-tooltip="`Show More/Show Less`"
           @click.prevent="showAllToggle"
           class="btn btn-md mr-1 showAll text-light"          >
           <span v-if="getToggleRACI">
-          <font-awesome-icon icon="user" />      
+          <font-awesome-icon icon="user" />
           </span>
            <span v-else>
           <font-awesome-icon icon="users"/>
-           </span>    
+           </span>
          </button>
          <button class="btn btn-md btn-info ml-2 total-table-btns" data-cy="issue_total">
           Total: {{filteredIssues.length}}
          </button>
       </div>
-     
-          <div v-if="filteredIssues.length > 0">      
+
+          <div v-if="filteredIssues.length > 0">
             <div style="margin-bottom:50px" data-cy="issues_table">
               <table class="table table-sm table-bordered stickyTableHeader mt-3">
                 <colgroup>
@@ -143,215 +143,216 @@
                 </colgroup>
                 <tr class="thead" style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'title'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'title'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'title'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">                
-                  <font-awesome-icon icon="sort-down" /></span>  
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">                
-                  <font-awesome-icon icon="sort-down" /></span>    
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'title'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'title'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
-                  <th class="sort-th" @click="sort('issueType')">Issue Type 
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueType'">                
+                  <th class="sort-th" @click="sort('issueType')">Issue Type
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueType'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueType'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueType'">
                   <font-awesome-icon icon="sort-up" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueType'">                
+                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueType'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueType'">                
-                  <font-awesome-icon icon="sort-down" /></span>  
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueType'">                
-                  <font-awesome-icon icon="sort-down" /></span>  
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueType'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueType'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
                   <th class="sort-th" @click="sort('issueSeverity')">Issue Severity
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueSeverity'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'issueSeverity'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueSeverity'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'issueSeverity'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueSeverity'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'issueSeverity'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueSeverity'">                
-                  <font-awesome-icon icon="sort-down" /></span>   
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueSeverity'">                
-                  <font-awesome-icon icon="sort-down" /></span>     
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'issueSeverity'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'issueSeverity'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
                   <th class="pl-1 sort-th" @click="sort('startDate')">Start Date
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'startDate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'startDate'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'startDate'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'startDate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'startDate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'startDate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'startDate'">                
-                  <font-awesome-icon icon="sort-down" /></span>   
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'startDate'">                
-                  <font-awesome-icon icon="sort-down" /></span>    
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'startDate'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'startDate'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
                   <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDate'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDate'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDate'">                
-                  <font-awesome-icon icon="sort-down" /></span>    
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">                
-                  <font-awesome-icon icon="sort-down" /></span>             
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDate'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
              <th class="sort-th p-1 w-100">
-              <span class="py-2 d-inline-block">Assigned Users</span><br> 
+              <span class="py-2 d-inline-block">Assigned Users</span><br>
               <span class="btn-group">
-                 <button 
+                 <button
                 :class="{'activeFirstName': sortedResponsibleUser === 'responsibleUsersFirstName' || sortedAccountableUser === 'accountableUsersFirstName'}"
-                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"              
+                class="btn-group-btns outerLeftBtn first inactiveFirstName px-2"
                 @click.prevent="firstNameSort"
                 >First
-                </button> 
-              <button 
+                </button>
+              <button
                 :class="{'activeLastName': sortedResponsibleUser  === 'responsibleUsersLastName'  || sortedAccountableUser === 'accountableUsersLastName'}"
-                class="btn-group-btns inactiveLastName outerRightBtn last px-2"              
+                class="btn-group-btns inactiveLastName outerRightBtn last px-2"
                 @click.prevent="lastNameSort"
                 >Last
                 </button>
-            
+
               </span>
-                 <span class="btn-group">         
-              <button 
+                 <span class="btn-group">
+              <button
                 :class="{'activeResponsible':currentSort === sortedResponsibleUser }"
-                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"             
+                class="btn-group-btns outerLeftBtn inactiveResponsible px-2"
                 @click="sort(sortedResponsibleUser)"
+                data-cy="responsibleUsers"
                 >R
-                </button> 
-              <button 
+                </button>
+              <button
                 :class="{'activeAccountable':currentSort === sortedAccountableUser }"
-                class="btn-group-btns outerRightBtn inactiveAccountable px-2"            
+                class="btn-group-btns outerRightBtn inactiveAccountable px-2"
                 @click="sort(sortedAccountableUser)"
                 >A
                 </button>
               </span>
-               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser"> 
-              <font-awesome-icon icon="sort" /></span>  
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">                
+               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser">
+              <font-awesome-icon icon="sort" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">                
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">                
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">
                 <font-awesome-icon icon="sort-up" /></span>
-                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
-                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">                
-                <font-awesome-icon icon="sort-down" /></span>    
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">
+                <font-awesome-icon icon="sort-down" /></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">
+                <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
                   <th class="sort-th" @click="sort('progress')">Progress
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">                
-                  <font-awesome-icon icon="sort-down" /></span>    
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">                
-                  <font-awesome-icon icon="sort-down" /></span>    
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
                   <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">                
-                  <font-awesome-icon icon="sort-down" /></span>     
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">                
-                  <font-awesome-icon icon="sort-down" /></span>     
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
                   <th class="sort-th" @click="sort('watched')">Onwatch
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
                   <font-awesome-icon icon="sort-up" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">                
+                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">                
-                  <font-awesome-icon icon="sort-down" /></span> 
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">                
-                  <font-awesome-icon icon="sort-down" /></span> 
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
+                  <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
                   <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
                   <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">                
+                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">                
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
                   <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">                
-                  <font-awesome-icon icon="sort-down" /></span> 
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">                
-                  <font-awesome-icon icon="sort-down" /></span> 
-                  </th>               
+                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                  <font-awesome-icon icon="sort-down" /></span>
+                  </th>
                 </tr>
-              </table>            
+              </table>
                 <issue-sheets
-                  v-for="issue in sortedIssues"      
-                  id="issueHover"                     
+                  v-for="issue in sortedIssues"
+                  id="issueHover"
                   :key="issue.id"
                   :issue="issue"
-                  :from-view="from"                
+                  :from-view="from"
                   @toggle-watch-issue="toggleWatched"
                 />
                <div class="float-right mb-4 mt-2 font-sm">
-               <div class="simple-select d-inline-block text-right font-sm"> 
-                <span>Displaying </span>                      
-                   <el-select 
-                    v-model="C_issuesPerPage"                   
-                    class="w-33" 
-                    track-by="value" 
-                    value-key="id"                                                                                                                               
+               <div class="simple-select d-inline-block text-right font-sm">
+                <span>Displaying </span>
+                   <el-select
+                    v-model="C_issuesPerPage"
+                    class="w-33"
+                    track-by="value"
+                    value-key="id"
                     >
-                    <el-option 
-                    v-for="item in getIssuesPerPageFilterOptions"                                                     
-                    :value="item"   
+                    <el-option
+                    v-for="item in getIssuesPerPageFilterOptions"
+                    :value="item"
                     :key="item.id"
-                    :label="item.name"                                                  
+                    :label="item.name"
                     >
-                    </el-option>                
-                    </el-select>    
+                    </el-option>
+                    </el-select>
                 </div>
                 <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
                   <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
                   <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredIssues.length / this.C_issuesPerPage.value) }} </button>
                   <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
-         
-            </div>  
-                       
+
             </div>
-            
+
+            </div>
+
           </div>
            <h6 v-else class="text-danger alt-text" data-cy="no_issue_found">No Issues found...</h6>
-                         
+
      </div>
-     
+
       </div>
         <p v-else class="text-danger mx-2"> You don't have permissions to read!</p>
-  
- 
- 
+
+
+
       <table
         class="table table-sm table-bordered table-striped"
         ref="table" id="issueSheetsList1"
@@ -379,14 +380,14 @@
             <td>{{issue.issueSeverity}}</td>
             <td>{{formatDate(issue.startDate)}}</td>
             <td>{{formatDate(issue.dueDate)}}</td>
-            <td >    
-             <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> (R) {{issue.responsibleUsers[0].name}} <br></span> 
-              <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> (A) {{issue.accountableUsers[0].name}}<br></span>   
+            <td >
+             <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> (R) {{issue.responsibleUsers[0].name}} <br></span>
+              <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> (A) {{issue.accountableUsers[0].name}}<br></span>
           <!-- Consulted Users and Informed Users are toggle values         -->
-              <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(issue.consultedUsers.length > 0) &&  (issue.consultedUsers[0] !== null)"> (C) {{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
-             <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> (I) {{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
-         </span>        
+              <span :class="{'show-all': getToggleRACI }" >
+             <span v-if="(issue.consultedUsers.length > 0) &&  (issue.consultedUsers[0] !== null)"> (C) {{JSON.stringify(issue.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span>
+             <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> (I) {{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>
+         </span>
             </td>
             <td>{{issue.progress + "%"}}</td>
             <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
@@ -435,7 +436,7 @@
         now: new Date().toISOString(),
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
-        issuesQuery: '',     
+        issuesQuery: '',
         currentPage:1,
         currentSort:'title',
         currentSortDir:'asc',
@@ -462,7 +463,7 @@
         'updateFacilityHash',
         'setTaskForManager',
         'setOnWatchFilter'
-      ]), 
+      ]),
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -478,11 +479,11 @@
       },
       firstNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersFirstName'
-        this.sortedAccountableUser = 'accountableUsersFirstName'    
+        this.sortedAccountableUser = 'accountableUsersFirstName'
       },
       lastNameSort(){
         this.sortedResponsibleUser = 'responsibleUsersLastName'
-        this.sortedAccountableUser = 'accountableUsersLastName'      
+        this.sortedAccountableUser = 'accountableUsersLastName'
       },
       issueCreated(issue) {
         this.facility.issues.unshift(issue)
@@ -500,7 +501,7 @@
         }
       },
       showAllToggle() {
-         this.setToggleRACI(!this.getToggleRACI)  ;              
+         this.setToggleRACI(!this.getToggleRACI)  ;
       },
       toggleWatched(issue) {
         http
@@ -516,19 +517,18 @@
         doc.autoTable({html: "#issueSheetsList1"})
         doc.save("Issue_Log.pdf")
       },
-      exportToExcel(table, name){      
+      exportToExcel(table, name){
         if (!table.nodeType) table = this.$refs.table
         var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
         window.location.href = this.uri + this.base64(this.format(this.template, ctx))
-      },    
-      reportNew() {
-        if (this.from == "manager_view") {
-          this.setTaskForManager({key: 'issue', value: {}})
-        } else {
-          this.currentIssue = null
-          this.newIssue = true
-        }
-      }
+      },
+      addNewIssue() {
+        this.setTaskForManager({key: 'issue', value: {}})
+        // Route to new issue form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/new`
+        );
+      },
    },
     computed: {
       ...mapGetters([
@@ -558,7 +558,7 @@
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
-        'viewPermit', 
+        'viewPermit',
         'getToggleRACI'
       ]),
       _isallowed() {
@@ -578,7 +578,7 @@
         let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty('progress'))
           let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
-          if (taskIssueUsers.length > 0) {  
+          if (taskIssueUsers.length > 0) {
             if(taskIssueUsers.length > 0){
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
@@ -614,10 +614,10 @@
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          
-          if (search_query) valid = valid && search_query.test(resource.title) || 
-            valid && search_query.test(resource.issueType) || 
-            valid && search_query.test(resource.issueSeverity) || 
+
+          if (search_query) valid = valid && search_query.test(resource.title) ||
+            valid && search_query.test(resource.issueType) ||
+            valid && search_query.test(resource.issueSeverity) ||
             valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
@@ -766,7 +766,7 @@
   }
   #issueHover:hover {
     cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);   
+    background-color: rgba(91, 192, 222, 0.3);
   }
   .floatRight {
     text-align: right;
@@ -794,9 +794,9 @@
   .addIssueBtn, .exportBtns, .showAll {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
-  .exportBtns, .showAll  { 
-    transition: all .2s ease-in-out; 
-    background-color: #41b883; 
+  .exportBtns, .showAll  {
+    transition: all .2s ease-in-out;
+    background-color: #41b883;
   }
   .filter-second-row {
     width: 66.8%;
@@ -814,13 +814,13 @@
   }
   .outerLeftBtn {
     border-top-left-radius: .15rem;
-    border-bottom-left-radius: .15rem; 
+    border-bottom-left-radius: .15rem;
     // background-color:#383838;
     // color:#fff;
   }
   .outerRightBtn {
     border-top-right-radius: .15rem;
-    border-bottom-right-radius: .15rem;  
+    border-bottom-right-radius: .15rem;
   }
   .sort-btn-group {
     position: absolute;

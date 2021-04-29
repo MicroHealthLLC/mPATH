@@ -320,7 +320,8 @@ jQuery(function($) {
   }
 
   // task/issue form slider tab
-  if ($("#progress_slider-tab").is(":visible"))
+  // if ($("#progress_slider-tab").is(":visible"))
+  if ($("#progress_slider-tab").length > 0)
   {
     Vue.component('vue-slide-bar', vueSlideBar);
     $.Vue_task_slider = new Vue({
@@ -334,6 +335,8 @@ jQuery(function($) {
       },
       mounted() {
         this.tab_type = $('form').attr('id').split('_').pop();
+        console.log("this.tab_type")
+        console.log(this.tab_type)
         this.setAutoCalculate();
         this.progress = $(`#${this.tab_type}_progress`).val();
       },
@@ -503,6 +506,11 @@ jQuery(function($) {
             write: false,
             delete: false
           },
+          calendar_view: {
+            read: false,
+            write: false,
+            delete: false
+          },
           map_view: {
             read: false,
             write: false,
@@ -582,6 +590,7 @@ jQuery(function($) {
           let map_view = $("#user_privilege_attributes_map_view").val() || "";
           let facility_manager_view = $("#user_privilege_attributes_facility_manager_view").val() || "";
           let sheets_view = $("#user_privilege_attributes_sheets_view").val() || "";
+          let calendar_view = $("#user_privilege_attributes_calendar_view").val() || "";
           let gantt_view = $("#user_privilege_attributes_gantt_view").val() || "";
           let watch_view = $("#user_privilege_attributes_watch_view").val() || "";
           let kanban_view = $("#user_privilege_attributes_kanban_view").val() || "";
@@ -631,6 +640,11 @@ jQuery(function($) {
             read: sheets_view.includes("R"),
             write: sheets_view.includes("W"),
             delete: sheets_view.includes("D")
+          }
+          this.calendar_view = {
+            read: calendar_view.includes("R"),
+            write: calendar_view.includes("W"),
+            delete: calendar_view.includes("D")
           }
           this.gantt_view = {
             read: gantt_view.includes("R"),
@@ -905,6 +919,30 @@ jQuery(function($) {
           if (value) this.sheets_view.read = value;
           $("#user_privilege_attributes_sheets_view").val(v);
         },
+        "sheets_view.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_sheets_view").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.sheets_view.write = false;
+            this.sheets_view.delete = false;
+          }
+          $("#user_privilege_attributes_sheets_view").val(v);
+        },
+        "calendar_view.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_calendar_view").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.calendar_view.read = value;
+          $("#user_privilege_attributes_calendar_view").val(v);
+        },
+        "calendar_view.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_calendar_view").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.calendar_view.read = value;
+          $("#user_privilege_attributes_calendar_view").val(v);
+        },
         "watch_view.read"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_watch_view").val();
@@ -1005,11 +1043,7 @@ jQuery(function($) {
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
         <fieldset v-if="!loading" class="inputs">
           <legend><span>Privileges</span></legend>
-          <ol class="choices-group">
-            <li class="choice d-flex">
-              <label>Facility Manager</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="facility_manager_view.read">Read</label>
-            </li>
+          <ol class="choices-group">           
             <li class="choice d-flex">
             <label>Sheets</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
@@ -1021,11 +1055,7 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-            </li>
-            <li class="choice d-flex">
-              <label>On Watch</label>
-              <label class="d-flex align-center"><input type="checkbox" v-model="watch_view.read">Read</label>
-            </li>
+            </li>               
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
@@ -1844,7 +1874,8 @@ jQuery(function($) {
       });
     }
 
-    if ($(".checklist_user").is(":visible"))
+    //if ($(".checklist_user").is(":visible"))
+    if($(".checklist_user").length > 0)
     {
       $(".checklist_user").each(function(i) {
         $.build_user_select_vue(this);
@@ -1865,10 +1896,14 @@ jQuery(function($) {
     });
 
     // task/issues files handling
-    if ($('#uploaded-task-files').is(':visible'))
+
+    //if ($('#uploaded-task-files').is(':visible'))
+    if($('#uploaded-task-files').length > 0)
     {
+
       let upload_type = $('form').attr('id').split('_').pop();
       $(`#${upload_type}_${upload_type}_files`).after("<div id='vue-uploaded-task-files'></div>");
+      $(`#${upload_type}_${upload_type}_files`).hide()
       $.Vue_uploadedTaskFiles = new Vue({
         el: "#vue-uploaded-task-files",
         data() {
@@ -1887,7 +1922,7 @@ jQuery(function($) {
           },
           downloadFile(file) {
             if (file.uri) {
-              let url = window.location.origin + file.uri
+              let url = window.location.origin +"/"+ file.uri
               window.open(url, '_blank');
             }
           },
@@ -2047,7 +2082,7 @@ jQuery(function($) {
       parent.append("<div id='__checklist_users_filters_multiselect'></div>");
       let email_select = $("#__users_filter_emails").siblings()[1];
       email_select.id = "__users_filter_emails_select";
-
+      
       Vue.component('multiselect', VueMultiselect.Multiselect);
       $.Vue_users_filter_select = new Vue({
         el: "#__checklist_users_filters_multiselect",

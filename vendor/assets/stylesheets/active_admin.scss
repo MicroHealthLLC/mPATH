@@ -201,6 +201,7 @@ td.col-issue_type, td.col-issue_severity {
   #user_privilege_attributes_map_view_input,
   #user_privilege_attributes_gantt_view_input,
   #user_privilege_attributes_watch_view_input,
+  #user_privilege_attributes_calendar_view_input,
   #user_privilege_attributes_kanban_view_input,
   #user_privilege_attributes_documents_input,
   #user_privilege_attributes_members_input,
@@ -218,8 +219,8 @@ td.col-issue_type, td.col-issue_severity {
   #task_task_files,
   #risk_risk_files,
   #issue_issue_files {
-    display: none;
-    width: 0;
+    /* display: block;
+    width: 0; */
   }
   input[type=tel]:focus {
     border: none;

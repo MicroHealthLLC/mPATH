@@ -1,7 +1,7 @@
 <template>
   <div id="kanban" data-cy="kanban">
-    <div class="overflow-x-auto">
-      <div class="d-flex" v-if="!loading">
+    <div>
+      <div class="d-flex">
         <div
           v-for="column in columns"
           :key="column.title"
@@ -124,7 +124,17 @@ export default {
             }            
           }
         }
-        this.updateKanbanTaskIssues({projectId, facilityId, data, type: this.kanbanType})
+        this.updateKanbanTaskIssues({ projectId, facilityId, data, type: this.kanbanType, })
+          .then((res) => {
+            if (res.status === 200 && item.added) {
+              this.$message({
+                message: 'Stage was updated successfully.',
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+
         this.movingSlot = ''
       }
     },
@@ -170,7 +180,7 @@ export default {
   .task-card { cursor: move;}
   .read-only-card { cursor: pointer;}
   .kanban-draggable {
-    height: 71vh;
+    height: 65vh;
     overflow-wrap: break-word;
   }
   .ghost-card {
@@ -178,14 +188,8 @@ export default {
     background: #F7FAFC;
     border: 1px solid #4299e1;
   }
-  .overflow-x-auto {
-    overflow-x: hidden; 
-    margin-right: -100px;
-    overflow-y: hidden !important;
-  }
   .unset {
-    position: unset !important;
-    margin-top:6rem;
+    
   }
   .kan-col {
     background-color: #ededed;
@@ -201,7 +205,6 @@ export default {
      max-width: 18.5rem;
   }
   .kan-body {
-    max-height: 71vh;
     overflow-y: auto;
   }
   .badge {

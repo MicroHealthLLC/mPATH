@@ -8,8 +8,9 @@ Cypress.Commands.add('issueList', () => {
 
 // Create new issue under a facility
 Cypress.Commands.add("createNewIssue", () => {
-  const start_date = Cypress.moment().add(1, 'day').format('DD MMM YYYY')
-  const due_date = Cypress.moment().add(7, 'day').format('DD MMM YYYY')
+  var dayjs = require('dayjs')
+  const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+  const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
 
   cy.get('[data-cy=new_issue]').click()
   cy.contains('Issue Name:')
@@ -31,8 +32,31 @@ Cypress.Commands.add("createNewIssue", () => {
 // Open Kanban Isuues
 Cypress.Commands.add("openKanbanIssue", () => {
   cy.openKanban()
-  cy.get('[data-cy=facility_tabs]').within(() => {
+  cy.get('[data-cy=issue_link]').within(() => {
     cy.contains('Issues').should('be.visible').click()
   })
-  cy.facilityUnderGroup()
+  // cy.facilityUnderGroup()
+})
+
+// Fill Issue form
+Cypress.Commands.add("fillKanbanIssueForm", () => {
+  var dayjs = require('dayjs')
+  const start_date = dayjs().add(1, 'day').format('DD MMM YYYY')
+  const due_date = dayjs().add(7, 'day').format('DD MMM YYYY')
+
+  cy.get('[data-cy=kanban]').within(() => {
+    cy.get('[data-cy=kanban_col]').eq(1).within(() => {
+      cy.get('[data-cy=kanban_add_btn]').should('be.visible').click()
+    })
+  })
+
+  cy.get('[data-cy=issue_title]').type('New test issue in kanban').should('have.value', 'New test issue in kanban')
+  cy.get('[data-cy=issue_description]').type('Kanban Issue brief description').should('have.value', 'Kanban Issue brief description')
+
+  cy.get('[data-cy=task_type]').click().type('{downarrow}{enter}')
+  cy.get('[data-cy=issue_type_field]').click().type('{downarrow}{enter}')
+  cy.get('[data-cy=issue_severity]').click().type('{downarrow}{enter}')
+
+  cy.get('[data-cy=issue_start_date]').type(`${start_date}{enter}`)
+  cy.get('[data-cy=issue_due_date]').type(`${due_date}{enter}`)
 })

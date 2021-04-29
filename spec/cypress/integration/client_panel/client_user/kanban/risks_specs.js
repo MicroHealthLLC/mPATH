@@ -20,9 +20,9 @@ describe('Kanban Risks View', function() {
       cy.get('[data-cy=kanban_col]').eq(1).within(() => {
         cy.get('[data-cy=risks]').first().click()
       })
-      cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
-      cy.get('[data-cy=risk_close_btn]').click({force: true})
     })
+    cy.get('[data-cy=risk_read_only_btn]').should('be.disabled')
+    cy.get('[data-cy=risk_close_btn]').click({force: true})
     cy.logout()
   })
 

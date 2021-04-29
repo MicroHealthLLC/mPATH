@@ -33,6 +33,8 @@ class Project < SortableRecord
   has_many :project_issue_stages, dependent: :destroy
   has_many :issue_stages, through: :project_issue_stages
 
+  has_many :favorite_filters, dependent: :destroy
+  has_many :query_filters, dependent: :destroy
 
   enum status: [:inactive, :active].freeze
 
@@ -230,7 +232,8 @@ class Project < SortableRecord
       h2[:project_ids] = []
       fg.facility_projects.each do |fp|
         h2[:facilities] << facility_projects_hash2[fp.id] if facility_projects_hash2[fp.id]
-        h2[:project_ids] << fp.project_id
+        # h2[:project_ids] << fp.project_id
+        h2[:project_ids] << fp.facility_id
       end
       h2[:project_ids] = h2[:project_ids].compact.uniq
       facility_groups_hash << h2
