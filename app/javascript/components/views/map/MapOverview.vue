@@ -105,13 +105,15 @@
               </div>
             </div>
             <div class="row">
-              <div class="col">
-                <span>Complete</span>
+              <div class="col-5 pr-0">
+                <span>Complete</span>              
+              </div>
+               <div class="col-2 pl-0">               
                 <span class="badge badge-secondary badge-pill">{{
                   taskVariation.completed.count
                 }}</span>
               </div>
-              <div class="col mb-1">
+              <div class="col-5 mb-1">
                 <span
                   class="w-100 progress pg-content"
                   :class="{
@@ -128,15 +130,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="col">
-                <span>Overdue</span>
+              <div class="col-5 pr-0">
+                <span>Overdue</span>              
+              </div>
+               <div class="col-2 pl-0">            
                 <span class="badge badge-secondary badge-pill">{{
                   taskVariation.overdue.count
                 }}</span>
               </div>
-              <div class="col mb-1">
+              <div class="col-5 mt-1">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 progress mb-2 pg-content"
                   :class="{
                     'progress-0': taskVariation.overdue.percentage <= 0,
                   }"
@@ -154,23 +158,24 @@
               <el-collapse>
                 <el-collapse-item title="Details" name="1">
                   <div data-cy="task_categories" class="row">
-                    <div class="col text-center">
+                    <div class="col underline">
                       CATEGORIES
                     </div>
                   </div>
                   <div
-                    class="row font-sm"
+                    class="row"
                     v-for="(task, index) in taskStats"
                     :key="index"
                   >
-                    <div class="col">
-                      <span> {{ task.name }}</span>
+                    <div class="col-5 font-sm pr-0">
+                      <span> {{ task.name }}</span>                  
+                    </div>
+                     <div class="col-2 pl-0">                     
                       <span class="badge badge-secondary badge-pill">{{
                         task.count
                       }}</span>
                     </div>
-
-                    <div class="col mb-1">
+                    <div class="col-5 mb-1">
                       <span
                         class="w-100 progress pg-content"
                         :class="{ 'progress-0': task.progress <= 0 }"
@@ -204,15 +209,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="col">
-                <span>Complete</span>
+              <div class="col-5 pr-0">
+                <span>Complete</span>               
+              </div>
+              <div class="col-2 pl-0">             
                 <span class="badge badge-secondary badge-pill">{{
                   issueVariation.completed.count
                 }}</span>
               </div>
-              <div class="col mb-1">
+              <div class="col-5 mt-1">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 mb-2 progress pg-content"
                   :class="{
                     'progress-0': issueVariation.completed.percentage <= 0,
                   }"
@@ -227,15 +234,17 @@
               </div>
             </div>
             <div class="row">
-              <div class="col">
-                <span>Overdue</span>
+              <div class="col-5 pr-0">
+                <span>Overdue</span>                
+              </div>
+               <div class="col-2 pl-0">               
                 <span class="badge badge-secondary badge-pill">{{
                   issueVariation.overdue.count
                 }}</span>
               </div>
-              <div class="col mb-1">
+              <div class="col-5 mt-1">
                 <span
-                  class="w-100 progress pg-content"
+                  class="w-100 mb-2 progress pg-content"
                   :class="{
                     'progress-0': issueVariation.overdue.percentage <= 0,
                   }"
@@ -255,7 +264,7 @@
                 <el-collapse-item title="Details" name="1">
                   <div v-if="contentLoaded">
                     <div class="row">
-                      <div class="col mt-1 mb-2 text-center">
+                      <div class="col mt-1 underline">
                         CATEGORIES
                       </div>
                     </div>
@@ -264,15 +273,17 @@
                       v-for="(issue, index) in issueTaskCATEGORIES"
                       :key="index"
                     >
-                      <div class="col">
-                        <span> {{ issue.name }}</span>
+                      <div class="col-5 pr-0">
+                        <span> {{ issue.name }}</span>                        
+                      </div>
+                      <div class="col-2 pl-0">                     
                         <span class="badge badge-secondary badge-pill">{{
                           issue.count
                         }}</span>
                       </div>
-                      <div class="col mb-1">
+                      <div class="col-5 mt-1">
                         <span
-                          class="w-100 progress pg-content"
+                          class="w-100 mb-2 progress pg-content"
                           :class="{ 'progress-0': issue.progress <= 0 }"
                         >
                           <div
@@ -286,22 +297,24 @@
                     </div>
                   </div>
                   <div data-cy="issue_types">
-                    <div class="col mt-1 mb-2 text-center">
+                    <div class="col pl-0 mt-1 underline">
                       ISSUE TYPES
                     </div>
                   </div>
                   <div
-                    class="row font-sm"
+                    class="row"
                     v-for="issue in issueStats"
                     :key="issue.id"
                   >
-                    <div class="col">
+                    <div class="col-5 font-sm pr-0">
                       <span> {{ issue.name }}</span>
+                    </div>
+                      <div class="col pl-0">                     
                       <span class="badge badge-secondary badge-pill">{{
                         issue.count
                       }}</span>
                     </div>
-                    <div class="col mb-1">
+                    <div class="col-5 mb-1">
                       <span
                         class="w-100 progress pg-content"
                         :class="{ 'progress-0': issue.progress <= 0 }"
@@ -336,15 +349,17 @@
             </div>
             <div v-if="contentLoaded">
               <div class="row">
-                <div class="col">
-                  <span class="risk-card-title">Complete</span>
+                <div class="col-5 pr-0">
+                  <span class="risk-card-title">Complete</span>                
+                </div>
+                 <div class="col-2 pl-0">                 
                   <span class="badge badge-secondary badge-pill font-12">{{
                     riskVariation.completed.count
                   }}</span>
                 </div>
-                <div class="col">
+                <div class="col-5 mt-1">
                   <span
-                    class="w-100 progress pg-content"
+                    class="w-100 mb-2 progress pg-content"
                     :class="{
                       'progress-0': riskVariation.completed.percentage <= 0,
                     }"
@@ -359,15 +374,17 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col mt-1">
-                  <span class="risk-card-title">Overdue</span>
+                <div class="col-5 pr-0">
+                  <span class="risk-card-title">Overdue</span>                 
+                </div>
+                 <div class="col-2 pl-0">               
                   <span class="badge badge-secondary badge-pill font-12">{{
                     riskVariation.overdue.count
                   }}</span>
                 </div>
-                <div class="col mt-1">
+                <div class="col-5 mt-1">
                   <span
-                    class="w-100 progress pg-content"
+                    class="w-100 mb-2 progress pg-content"
                     :class="{
                       'progress-0': riskVariation.overdue.percentage <= 0,
                     }"
@@ -387,21 +404,23 @@
               <el-collapse>
                 <el-collapse-item title="Details" name="1">
                   <div class="row">
-                    <div class="col mt-1 mb-1 text-center">
+                    <div class="col mt-1 underline">
                       CATEGORIES
                     </div>
                   </div>
                   <div v-for="(risk, index) in currentRiskTypes" :key="index">
                     <div class="row" v-if="risk._display">
-                      <div class="col">
-                        <span> {{ risk.name }}</span>
+                      <div class="col-5 pr-0">
+                        <span> {{ risk.name }}</span>                      
+                      </div>
+                       <div class="col-2 pl-0">                  
                         <span class="badge badge-secondary badge-pill">{{
                           risk.length
                         }}</span>
                       </div>
-                      <div class="col mb-1">
+                      <div class="col-5 mt-1">
                         <span
-                          class="w-100 progress pg-content"
+                          class="w-100 mb-2 progress pg-content"
                           :class="{ 'progress-0': risk.progress <= 0 }"
                         >
                           <div
@@ -414,8 +433,8 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row mt-3 mb-1">
-                    <div class="col text-center">
+                  <div class="row mt-3 mb-2">
+                    <div class="col underline">
                       RISK PRIORITY LEVELS
                     </div>
                   </div>
@@ -966,5 +985,8 @@ export default {
 }
 .font-12 {
   font-size: 12px;
+}
+.underline {
+  text-decoration: underline;
 }
 </style>

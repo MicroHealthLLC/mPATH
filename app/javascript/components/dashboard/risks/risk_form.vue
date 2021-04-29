@@ -214,8 +214,7 @@
                   >         
                 <el-step
                   v-for="item in riskStages"
-                  :key="item.id"              
-                  :load="log(riskStages)" 
+                  :key="item.id"                  
                   :value="item"
                   style="cursor:pointer"
                   @click.native="selectedStage(item)"        
@@ -239,8 +238,7 @@
                   >         
                 <el-step
                   v-for="item in riskStages"
-                  :key="item.id"              
-                  :load="log(riskStages)" 
+                  :key="item.id"                  
                   :value="item"
                   style="cursor:pointer"
                   @click.native="selectedStage(item)"        
@@ -1881,9 +1879,6 @@ export default {
         checklists: [],
         notes: [],
       };
-    },
-    log(e) {
-      // console.log("this is the riskStages object: " + e)
     },
     urlShortener(str, length, ending) {
       if (length == null) {
