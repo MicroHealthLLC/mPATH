@@ -1619,7 +1619,7 @@ export default {
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
       const startDate = new Date(this.DV_issue.startDate);
-      startDate.setHours(0, 0, 0, 0);
+      startDate.setHours(48, 0, 0, 0);
       return date < startDate;
     },
      addChecks() {

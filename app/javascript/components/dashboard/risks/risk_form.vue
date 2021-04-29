@@ -2306,8 +2306,9 @@ export default {
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_risk.startDate);
-      startDate.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.DV_risk.startDate);  
+      startDate.setHours(48, 0, 0, 0);
+      // console.log(startDate)
       return date < startDate;
     },
     destroyNote(note) {
@@ -2413,7 +2414,8 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date",   
+        "Identified Date", 
+        "Risk Approach Due Date",  
       ];
 
       var tooltipMessage = "Field is located on Prioritize";
