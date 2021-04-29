@@ -535,7 +535,12 @@ export default {
         return this.favoriteFilterData
       },
       set(value) {
-        this.favoriteFilterData = value
+        if(!value.id){
+          this.favoriteFilterData = {id: null, name: null, shared: false}  
+        }else{
+          this.favoriteFilterData = value  
+        }
+        
         this.loadFavoriteFilter(this.favoriteFilterData)
         // if(!this.favoriteFilterData.id){
         //   this.resetFilters()
@@ -854,6 +859,7 @@ export default {
     //   }
     // },
     loadFavoriteFilter(fav_filter){
+
       this.resetFilters()
       var res = fav_filter.query_filters
 
@@ -1170,14 +1176,14 @@ export default {
         var favorite_filter =  response.data.favorite_filter
         this.favoriteFilterData = favorite_filter
         let i = this.favoriteFilterOptions.findIndex(n => n.id === favorite_filter.id)
+
         if(i == -1){
           this.favoriteFilterOptions.unshift(favorite_filter) 
         }else{
           Vue.set(this.favoriteFilterOptions, i, favorite_filter)
         }
-
-        let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false })
+        _.remove(this.favoriteFilterOptions, (t) => t.id === null)
+        this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
