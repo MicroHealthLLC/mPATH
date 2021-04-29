@@ -134,6 +134,7 @@ export default {
 <style lang="scss" scoped>
 #facility_sidebar {
   background: #ededed;
+  cursor: pointer;
   max-height: calc(100vh - 94px);
   height: calc(100vh - 94px);
   overflow-y: auto;

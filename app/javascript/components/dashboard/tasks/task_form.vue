@@ -200,8 +200,7 @@
       v-for="item in taskStages"
       :key="item.id"            
       :value="item"
-      style="cursor:pointer"     
-      :load="log( taskStages.length )"
+      style="cursor:pointer"        
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -1002,10 +1001,7 @@
           checklists: [],
           notes: []
         }
-      },
-      log(e){
-        // console.log("This is the taskStages: " + e)
-      },
+      },  
       selectedStage(item){  
         if (this._isallowed('write')) {
           this.selectedTaskStage = item

@@ -141,8 +141,7 @@
       },
       loadNote(note) {
         this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}     
-        this.DV_note.facilityProjectId = this.facility.id
-        console.log(this.DV_note.facilityProjectId)
+        this.DV_note.facilityProjectId = this.facility.id       
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_note.facilityProjectId)
         if (this.DV_note.attachFiles) this.addFile(this.DV_note.attachFiles, false)
         this.$nextTick(() => {

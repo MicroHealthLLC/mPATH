@@ -86,10 +86,7 @@
           // this.$refs.notesFormModal && this.$refs.notesFormModal.open() 
           this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${this.DV_note.id}`)
         }
-      },
-      log(fac){
-        console.log(fac)
-      },
+      }, 
       noteUpdated(note) {
         this.show = true
         this.$emit('note-updated', note)
