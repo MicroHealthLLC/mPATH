@@ -229,8 +229,8 @@
                       </div>
                        <div class="col-1 pl-0">                      
                         <span
-                          class="badge badge-secondary badge-pill"
-                          :class="{ 'font-sm': !isMapView }"
+                          class="badge badge-secondary  font-sm badge-pill"
+                    
                           >{{ task.length }}</span
                         >
                       </div>
@@ -355,9 +355,8 @@
                       </div>
                        <div class="col-1 pl-0">    
                                             
-                        <span 
-                        :class="{ 'font-sm': !isMapView }"
-                        class="badge badge-secondary badge-pill">{{
+                        <span                       
+                        class="badge badge-secondary font-sm badge-pill">{{
                           issue.count
                         }}</span>
                       </div>
@@ -386,9 +385,8 @@
                         <span> {{ issue.name }}</span>                        
                       </div>
                       <div class="col-1 pl-0">                        
-                        <span 
-                         :class="{ 'font-sm': !isMapView }"
-                          class="badge badge-secondary badge-pill">{{
+                        <span                          
+                          class="badge badge-secondary  font-sm badge-pill">{{
                           issue.length
                         }}</span>
                       </div>
@@ -497,9 +495,8 @@
                       <span> {{ risk.name }}</span>                    
                     </div>
                      <div class="col-1 pl-0">                 
-                      <span 
-                       :class="{ 'font-sm': !isMapView }"
-                       class="badge badge-secondary badge-pill">{{
+                      <span                       
+                       class="badge badge-secondary  font-sm badge-pill">{{
                         risk.length
                       }}</span>
                     </div>

@@ -171,7 +171,7 @@
                       <span> {{ task.name }}</span>                  
                     </div>
                      <div class="col-2 pl-0">                     
-                      <span class="badge badge-secondary badge-pill">{{
+                      <span class="badge badge-secondary font-sm badge-pill">{{
                         task.count
                       }}</span>
                     </div>
@@ -277,7 +277,7 @@
                         <span> {{ issue.name }}</span>                        
                       </div>
                       <div class="col-2 pl-0">                     
-                        <span class="badge badge-secondary badge-pill">{{
+                        <span class="badge badge-secondary font-md badge-pill">{{
                           issue.count
                         }}</span>
                       </div>
@@ -309,8 +309,8 @@
                     <div class="col-5 font-sm pr-0">
                       <span> {{ issue.name }}</span>
                     </div>
-                      <div class="col pl-0">                     
-                      <span class="badge badge-secondary badge-pill">{{
+                      <div class="col-2 pl-0">                     
+                      <span class="badge badge-secondary font-sm badge-pill">{{
                         issue.count
                       }}</span>
                     </div>
@@ -414,7 +414,7 @@
                         <span> {{ risk.name }}</span>                      
                       </div>
                        <div class="col-2 pl-0">                  
-                        <span class="badge badge-secondary badge-pill">{{
+                        <span class="badge badge-secondary font-sm  badge-pill">{{
                           risk.length
                         }}</span>
                       </div>
