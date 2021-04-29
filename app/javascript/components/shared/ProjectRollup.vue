@@ -3,7 +3,7 @@
   <div class="container-fluid m-2" data-cy="facility_rollup">
     <div class="row">
       <div class="col-9 pl-0">
-        <span v-if="projects.length > 0">
+        <span v-if="contentLoaded">
           <h4 v-if="isMapView" class="d-inline mr-2">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2">{{ currentProject.name }}</h3>        
         </span>      
