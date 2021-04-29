@@ -8,11 +8,11 @@ class QueryFiltersController < AuthenticatedController
 
   # TODO: improve this function
   def create
-    p_params = query_filters_params[:query_filters]
+    p_params = query_filters_params[:query_filters] || []
     fav_params = favorite_filter_params #query_filters_params[:favorite_filter]
 
 
-    if p_params.nil? || fav_params.nil?
+    if fav_params.nil? # || p_params.nil? 
       render json: {error: "No filter found"}, status: 403
       return
     end
@@ -61,10 +61,10 @@ class QueryFiltersController < AuthenticatedController
       end
       QueryFilter.import(query_filters) if query_filters.any?
 
-      render json: {favorite_filter: favorite_filter.to_json}
+      render json: {favorite_filter: favorite_filter.to_json }
 
     rescue Exception => e
-      render json: {errors: e.message }, status: 500
+      render json: {error: e.message }, status: 500
     end
   end
 

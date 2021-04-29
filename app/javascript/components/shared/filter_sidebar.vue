@@ -401,14 +401,14 @@
             </div>
             <div class="mt-2">
               <label class="font-sm mb-0">Favorites Filter Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess">             
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess('write')">             
               <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
             </div>
           </div>
             <div class="col-md-7">              
              <div class="btn-group-sm text-center">  
               <button
-                v-if="hasAdminAccess"
+                v-if="hasAdminAccess('write')"
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
@@ -416,7 +416,7 @@
                 Save to Favorites
               </button>            
               <button 
-                v-if="hasAdminAccess"
+                v-if="C_favoriteFilter.id ? hasAdminAccess('delete') : false "
                 class="btn btn-sm font-sm btn-danger text-light" 
                 @click.prevent="onClearFilter" data-cy="clear_filter">
                 <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
@@ -425,7 +425,7 @@
                <button 
                 class="btn btn-sm font-sm btn-light" >
                 Shared
-                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess">              
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess('write')">              
               </button>                      
              </div>
           </div>
@@ -528,14 +528,19 @@ export default {
       'getUnfilteredFacilities'
     ]),
     hasAdminAccess() {
-      return this.hasFilterAccess
+      return salut => this.$currentUser.role == "superadmin" || this.$permissions.admin[salut] || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
     },
     C_favoriteFilterSelectModel: {
       get() {
         return this.favoriteFilterData
       },
       set(value) {
-        this.favoriteFilterData = value
+        if(!value.id){
+          this.favoriteFilterData = {id: null, name: null, shared: false}  
+        }else{
+          this.favoriteFilterData = value  
+        }
+        
         this.loadFavoriteFilter(this.favoriteFilterData)
         // if(!this.favoriteFilterData.id){
         //   this.resetFilters()
@@ -854,14 +859,10 @@ export default {
     //   }
     // },
     loadFavoriteFilter(fav_filter){
+
       this.resetFilters()
       var res = fav_filter.query_filters
 
-      if(fav_filter.shared){
-        this.hasFilterAccess = (this.$currentUser.role == "superadmin" || this.$permissions.admin['write'] || fav_filter.userId == this.$currentUser.id )
-      }else{
-        this.hasFilterAccess = true
-      }
       if(!res){
         return;
       }
@@ -1172,17 +1173,17 @@ export default {
         }
       })
       .then((response) => {
-        var favorite_filter = response.data.favorite_filter
+        var favorite_filter =  response.data.favorite_filter
         this.favoriteFilterData = favorite_filter
         let i = this.favoriteFilterOptions.findIndex(n => n.id === favorite_filter.id)
+
         if(i == -1){
           this.favoriteFilterOptions.unshift(favorite_filter) 
         }else{
           Vue.set(this.favoriteFilterOptions, i, favorite_filter)
         }
-
-        let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter", shared: false, })
+        _.remove(this.favoriteFilterOptions, (t) => t.id === null)
+        this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
@@ -1241,6 +1242,10 @@ export default {
       this.setMembersPerPageFilter(null)
     },
     onClearFilter() {
+      var decision = window.confirm("Are you sure you want to remove this favorite filter?")
+      if(!decision){
+        return
+      }
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])

@@ -2,7 +2,7 @@ class FavoriteFilter < ApplicationRecord
   belongs_to :project
   belongs_to :user
   has_many :query_filters, dependent: :destroy
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, scope: :project
   validates_presence_of :name
 
   def to_json(options = {})
@@ -18,7 +18,7 @@ class FavoriteFilter < ApplicationRecord
   end
 
   def can_update?(user)
-    self.user_id == user.id
+    self.user_id == user.id || user.privilege.admin.include?("W") || user.privilege.admin.include?("D")
   end
 
 end
