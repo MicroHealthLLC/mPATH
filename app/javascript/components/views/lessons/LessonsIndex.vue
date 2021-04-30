@@ -246,6 +246,11 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
+        this.$message({
+          message: err.response.data.error ,
+          type: "error",
+          showClose: true,
+        });
       })
       .finally(() => {
         this.loading = false

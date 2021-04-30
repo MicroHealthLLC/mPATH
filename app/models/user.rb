@@ -220,6 +220,6 @@ class User < ApplicationRecord
   end
 
   def allowed?(view)
-    self.privilege.send(view)&.include?("R")
+    privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
   end
 end
