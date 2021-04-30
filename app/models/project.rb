@@ -130,7 +130,7 @@ class Project < SortableRecord
   end
 
   def build_json_response
-    all_facility_projects = FacilityProject.includes(:tasks, :status).where(project_id: self.id)
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
 
@@ -167,6 +167,8 @@ class Project < SortableRecord
     all_facility_projects.each do |fp|
 
       facility = all_facilities.detect{|f| f.id == fp.facility_id}
+
+      next if !facility
 
       h = fp.attributes.merge({
         class: fp.class.name,
