@@ -38,7 +38,7 @@
           >
             Read Only
           </button>
-          <button
+          <button            
             class="btn btn-sm sticky-btn btn-outline-secondary"
             @click.prevent="cancelSave"
             data-cy="task_close_btn"
@@ -46,7 +46,7 @@
             Close
           </button>
           <button
-            v-if="DV_lesson.id"
+            v-if="DV_lesson.id && _isallowed('delete')"
             class="btn btn-sm sticky-btn btn-outline-secondary"
             @click.prevent="deleteLesson"
             data-cy="task_close_btn"
@@ -513,7 +513,7 @@
         <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailFailure.length : 1">
           <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
             <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
-              <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
+              <span v-if="_isallowed('delete')" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
                 <i class="fas fa-trash-alt"></i>
               </span>
             </span>
@@ -689,6 +689,12 @@
       },
       log(e){
         //console.log("This is the currentProject: " + e)
+      },
+      allowDeleteNote(note) {
+        return this._isallowed('delete') && note.guid || (note.userId == this.$currentUser.id)
+      },
+      allowEditNote(note) {
+        return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       },
       selectedStage(item){    
         this.selectedTaskStage = item
@@ -965,14 +971,22 @@
       destroyNote(note) {
         let confirm = window.confirm(`Are you sure you want to delete this update note?`)
         if (!confirm) return;
-        let i = note.id ? this.DV_lesson.notes.findIndex(n => n.id === note.id) : this.DV_lesson.notes.findIndex(n => n.guid === note.guid)
-        Vue.set(this.DV_lesson.notes, i, {...note, _destroy: true})
+        if(note.id){
+          let i = this.DV_lesson.notes.findIndex(n => n.id === note.id)
+          Vue.set(this.DV_lesson.notes, i, {...note, _destroy: true})
+        }else{
+          this.DV_lesson.notes = _.filter(this.DV_lesson.notes, (n) => n.guid != note.guid) 
+        }
       },
       destroyLessonDetail(lessonDetail) {
         let confirm = window.confirm(`Are you sure you want to delete?`)
         if (!confirm) return;
-        let i = lessonDetail.id ? this.DV_lesson.lessonDetails.findIndex(n => n.id === lessonDetail.id) : this.DV_lesson.lessonDetails.findIndex(n => n.guid === lessonDetail.guid)
-        Vue.set(this.DV_lesson.lessonDetails, i, {...lessonDetail, _destroy: true})
+        if(lessonDetail.id){
+          let i = this.DV_lesson.lessonDetails.findIndex(n => n.id === lessonDetail.id)
+          Vue.set(this.DV_lesson.lessonDetails, i, {...lessonDetail, _destroy: true})
+        }else{
+          this.DV_lesson.lessonDetails = _.filter(this.DV_lesson.lessonDetails, (n) => n.guid != lessonDetail.guid) 
+        }
       },
       noteBy(note) {
         return note.user ? `${note.user.fullName} at ${new Date(note.createdAt).toLocaleString()}` : `${this.$currentUser.full_name} at (Now)`
