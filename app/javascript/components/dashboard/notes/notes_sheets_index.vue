@@ -41,8 +41,10 @@
       
       <div class="notes-container row justify-content-center pt-2">
       <div v-if="_isallowed('read')" class="notes-rows pr-0 col-md-11" > 
-        <div v-if="filteredNotes.length > 0" v-for="note in filteredNotes" :key="note.id" class="mb-3">
+        <div v-if="filteredNotes.length > 0" class="mb-3">
           <notes-sheets
+            v-for="note in filteredNotes.slice().reverse()" 
+            :key="note.id" 
             :facility="DV_facility"
             :note="note"
             id="notesHover"
@@ -87,23 +89,35 @@
     methods: {
       ...mapMutations([
         'setTaskForManager',
-        'setMyActionsFilter'
+        'setMyActionsFilter',
+        'updateFacilityHash'
       ]),
-      addNewNote() {
-        if (this.from == "manager_view") {         
-          this.setTaskForManager({key: 'note', value: {}})
-        } else {
-          this.newNote = true        
-        }
-      }, 
+     addNewNote() {
+        this.setTaskForManager({key: 'note', value: {}})
+        // Route to new task form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/new`
+        );
+      },
       noteCreated(note) {
+        this.$emit('refresh-facility')
         this.newNote = false
-        this.DV_facility.notes.unshift(note)
+        this.facility.notes.unshift(note)
       },
-      noteUpdated(note) {
-        let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
-        if (index > -1) Vue.set(this.DV_facility.notes, index, note)
+      noteUpdated(note, refresh=true) {
+        let index = this.facility.notes.findIndex((t) => t.id == note.id)
+        if (index > -1) Vue.set(this.facility.notes, index, note)
+        if (refresh) {
+          this.newNote = false
+          this.$emit('refresh-facility')
+        } else {
+          this.updateFacilityHash(this.facility)
+        }
       },
+      // noteUpdated(note) {
+      //   let index = this.DV_facility.notes.findIndex(n => n.id == note.id)
+      //   if (index > -1) Vue.set(this.DV_facility.notes, index, note)
+      // },
       noteDeleted(note) {
         this.DV_facility.notes.splice(this.DV_facility.notes.findIndex(n => n.id == note.id), 1)
       }

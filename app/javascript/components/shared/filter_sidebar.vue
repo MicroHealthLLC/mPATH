@@ -6,319 +6,117 @@
     <div id="filter_bar" class="container shadow-sm" data-cy="filter_info">
 
       <!-- First row: Filter View Title/Header -->
-      <div class="row mt-1">
+      <div class="row my-2">
         <div class="col-md-12">
            <h5 class="d-inline"><i class="fas fa-sliders-h pr-2"></i>ADVANCED FILTERS</h5>
-             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button> -->
+             <button class="btn btn-sm float-right d-inline-block font-sm btn-secondary py-0 ml-1 mb-1" @click.prevent="resetFilters();resetMapFilter()" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button>
             <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFilters1" data-cy="save_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Filter Settings</button> -->
          </div>
       </div>
-
-      <!-- Next row for Facilities label with border div -->
+   <el-tabs type="border-card" @tab-click="handleClick">
+      <el-tab-pane label="Projects">
       <div class="filter-border filter-sections px-3 pb-1 pt-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h5 class="mb-0">Favorites</h5>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="mb-0">Projects</h5>
+            </div>
           </div>
-        </div>
 
-        <!-- FAVORITE FILTERS SECTION -->
-        <div class="row justify-content-between pb-2">
-          <div class="col-md-6">
-            <div>
+          <!-- Next row for two columns that will contain Facilities-related menus -->
+          <div class="row justify-content-between pb-2">
+            <div class="col-md-6">
+              <div>
+                <label class="font-sm mb-0">Project Groups</label>
                 <el-select 
-                  v-model="C_favoriteFilterSelectModel"                    
-                  class="w-100" 
-                  track-by="name" 
-                  filterable
-                  value-key="id"
-                  placeholder="Search and select Project Group"
-                >
+                    v-model="C_facilityGroupFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    filterable
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Search and select Project Group"
+                  >
                   <el-option 
-                    v-for="item in C_favoriteFilterSelectOptions"                                                     
+                    v-for="item in C_activeFacilityGroups"                                                     
                     :value="item"   
                     :key="item.id"
                     :label="item.name"                                                  
                     >
                   </el-option>
-                </el-select>
-              
-            </div>
-            <div>
-              <label class="font-sm mb-0">Name</label>
-              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name">
-              Shared:
-              <input type="checkbox" style="" v-model="C_favoriteFilter.shared">
-              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-success text-light py-0 mb-1" @click.prevent="saveFavoriteFilters" data-cy="save_favorite_filter"> <font-awesome-icon icon="save" class="text-light clickable mr-1" />Save Favorite Filter</button>
-              <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="onClearFilter" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Clear</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Next row for Facilities label with border div -->
-      <div class="filter-border filter-sections px-3 pb-1 pt-0">
-        <div class="row">
-          <div class="col-md-12">
-            <h5 class="mb-0">Projects</h5>
-          </div>
-        </div>
-
-        <!-- Next row for two columns that will contain Facilities-related menus -->
-        <div class="row justify-content-between pb-2">
-          <div class="col-md-6">
-            <div>
-              <label class="font-sm mb-0">Project Groups</label>
-               <el-select 
-                  v-model="C_facilityGroupFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  filterable
-                  value-key="id"
-                  multiple                                                                                                                                               
-                  placeholder="Search and select Project Group"
-                >
-                <el-option 
-                  v-for="item in C_activeFacilityGroups"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
+                  </el-select> 
+              </div>
+              <label class="font-sm mb-0">Project Names</label>
+                  <el-select 
+                    v-model="C_facilityNameFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    data-cy="facility_name" 
+                    :loading="isLoading"
+                    multiple   
+                    filterable                                                                                                                                                        
+                    placeholder="Search and select Project Name"
+                    >
+                  <el-option 
+                    v-for="item in C_activeProjectNames"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="projectNameShortener(item.facilityName, 35)"                                                     
+                    >
+                  </el-option>
                 </el-select> 
+
+              <div>
+                <label class="font-sm mb-0">Project % Progress Range</label>
+                <div class="form-row">
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
+                  </div>
+                  <div class="form-group col mb-0">
+                    <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
+                  </div>
+                </div>
+                <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
+              </div>
+              </div>
+              <div class="">
+
             </div>
-            <label class="font-sm mb-0">Project Names</label>
+            <div class="col-md-6">
+              <label class="font-sm mb-0">Project Statuses</label>
                 <el-select 
-                  v-model="C_facilityNameFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"
-                  data-cy="facility_name" 
-                  :loading="isLoading"
-                  multiple   
-                  filterable                                                                                                                                                        
-                  placeholder="Search and select Project Name"
-                  >
-                <el-option 
-                  v-for="item in C_activeProjectNames"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="projectNameShortener(item.facilityName, 35)"                                                     
-                  >
-                </el-option>
-              </el-select> 
+                    v-model="C_projectStatusFilter"                    
+                    class="w-100" 
+                    track-by="name" 
+                    value-key="id"
+                    data-cy="project_status"                
+                    multiple                                                                                                                                                         
+                    placeholder="Select Project Status"
+                    >
+                  <el-option 
+                    v-for="item in statuses"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                </el-select> 
 
-            <div>
-               <label class="font-sm mb-0">Project % Progress Range</label>
-              <div class="form-row">
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Min." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'min'})" :value="C_facilityProgress.min">
-                </div>
-                <div class="form-group col mb-0">
-                  <input type="number" class="form-control" placeholder="Max." min="0" max="100" @input="onChangeProgress($event, {variable: 'facility', type: 'max'})" :value="C_facilityProgress.max">
-                </div>
+              <div>
+                <!-- Available row for filter -->
               </div>
-              <span class="font-sm text-danger ml-1" v-if="C_facilityProgress.error">{{C_facilityProgress.error}}</span>
-            </div>
-            </div>
-            <div class="">
-
-          </div>
-          <div class="col-md-6">
-             <label class="font-sm mb-0">Project Statuses</label>
-              <el-select 
-                  v-model="C_projectStatusFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"
-                  data-cy="project_status"                
-                  multiple                                                                                                                                                         
-                  placeholder="Select Project Status"
-                  >
-                <el-option 
-                  v-for="item in statuses"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-
-            <div>
-              <!-- Available row for filter -->
-            </div>
-            <div>
-              <label class="font-sm mb-0">Project Completion Date Range</label>
-              <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
-            </div>
-            <!-- To Do: Convert to multiselect to match other filter toggles -->
-            <div class="d-flex flex-column">
-              <label class="font-sm mb-0">Map Boundary Filter</label>
-              <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Next Set of Rows for Tasks and Issues Columns -->
-      <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
-        <div class="row">
-          <div class="col-md-4" style="border-right:solid lightgray .8px">
-            <h5 class="mb-0">Tasks</h5>
-            <div>
-              <label class="font-sm mb-0">Task Stages</label>
-               <el-select 
-                  v-model="C_taskStageFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="task_stage"             
-                  multiple                                                                                                                                                         
-                  placeholder="Select Task Stage"
-                  >
-                <el-option 
-                  v-for="item in taskStages"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-            </div>
-          </div>
-          <div class="col-md-4" style="border-right:solid lightgray .8px">
-           <h5 class="mb-0">Issues</h5>
-            <div>
-              <label class="font-sm mb-0">Issue Types</label>
-              <el-select 
-                  v-model="C_issueTypeFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="issue_type"            
-                  multiple                                                                                                                                                         
-                  placeholder="Select Issue Type"
-                  >
-                <el-option 
-                  v-for="item in issueTypes"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select>            
-            </div>
-            <div>
-              <label class="font-sm mb-0">Issue Stages</label>
-              <el-select 
-                  v-model="C_issueStageFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="issue_stage"            
-                  multiple                                                                                                                                                         
-                  placeholder="Select Issue Stage"
-                  >
-                <el-option 
-                  v-for="item in issueStages"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-          
-            </div>
-            <div>
-              <label class="font-sm mb-0">Issue Severities</label>
-              <el-select 
-                  v-model="C_issueSeverityFilter"                    
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="issue_stage"            
-                  multiple                                                                                                                                                         
-                  placeholder="Select Issue Severity"
-                  >
-                <el-option 
-                  v-for="item in issueSeverities"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select>             
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <h5 class="mb-0 pt-1">Risks</h5>
-            <div>
-              <label class="font-sm mb-0">Risk Stages</label>
-               <el-select 
-                  v-model="C_riskStageFilter"                   
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="risk_stage"           
-                  multiple                                                                                                                                                         
-                  placeholder="Select Risk Stage"
-                  >
-                <el-option 
-                  v-for="item in riskStages"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select>               
-              <label class="font-sm mb-0">Risk Approaches</label>
-              <el-select 
-                  v-model="C_riskApproachFilter"                   
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="risk_stage"           
-                  multiple                                                                                                                                                         
-                  placeholder="Select Risk Approach"
-                  >
-                <el-option 
-                  v-for="item in getRiskApproachFilterOptions"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-              <label class="font-sm mb-0">Risk Priority Levels</label>
-               <el-select 
-                  v-model="C_riskPriorityLevelFilter"          
-                  class="w-100" 
-                  track-by="name" 
-                  value-key="id"                  
-                  data-cy="risk_stage"           
-                  multiple                                                                                                                                                         
-                  placeholder="Select Risk Priority Level"
-                  >
-                <el-option 
-                  v-for="item in getRiskPriorityLevelFilterOptions"                                                     
-                  :value="item"   
-                  :key="item.id"
-                  :label="item.name"                                                  
-                  >
-                </el-option>
-              </el-select> 
-            </div>             
-          </div>
-        </div>        
-      </div>
-
-      <div class="filter-border filter-sections px-3 pb-1 mt-3 pt-0">
-            <div class="row">
-              <div class="col-md-12">
-                <h5 class="mb-0">Combined</h5>
+              <div class="mt-1">
+                <label class="font-sm mb-0">Project Completion Date Range</label>
+                <v2-date-picker v-model="C_facilityDueDateFilter" class="datepicker dp" placeholder="Select Date Range" @open="datePicker=true" range />
+              </div>
+              <!-- To Do: Convert to multiselect to match other filter toggles -->
+              <div class="mt-1 d-flex flex-column">
+                <label class="font-sm mb-0">Map Boundary Filter</label>
+                <el-button @click="resetMapFilter" size="small" :disabled="mapFilterApplied" class="text-primary">Reset Map Filter <i class="el-icon-refresh"></i></el-button>
               </div>
             </div>
-            <div class="row pb-2">
+          </div>         
+          <div class="row mt-3 pb-2">
               <div class="col-md-4" style="border-right:solid lightgray .8px">
                 <div>
                 <label class="font-sm mb-1">Categories</label>
@@ -407,8 +205,235 @@
               <v2-date-picker v-model="C_noteDateFilter" class="datepicker" placeholder="Select Date Range" @open="datePicker=true" range />
             </div>
               </div>
-            </div>
+          </div>
+      
       </div>
+
+ 
+      </el-tab-pane>
+
+      <el-tab-pane label="Tasks, Issues, Risks">
+  <!-- Put this top row/section into two tabs: Projects \ Favorites -->
+        <div class="filter-sections filter-border px-3 pt-1 pb-2 my-3">
+        <div class="row">
+          <div class="col-md-4" style="border-right:solid lightgray .8px">
+            <h5 class="mb-0">Tasks</h5>
+            <div>
+              <label class="font-sm mb-0">Task Stages</label>
+               <el-select 
+                  v-model="C_taskStageFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="task_stage"             
+                  multiple                                                                                                                                                         
+                  placeholder="Select Task Stage"
+                  >
+                <el-option 
+                  v-for="item in taskStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+            </div>
+          </div>
+          <div class="col-md-4" style="border-right:solid lightgray .8px">
+           <h5 class="mb-0">Issues</h5>
+            <div>
+              <label class="font-sm mb-0">Issue Stages</label>
+              <el-select 
+                  v-model="C_issueStageFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_stage"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Stage"
+                  >
+                <el-option 
+                  v-for="item in issueStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+          
+            </div>
+            <div>
+              <label class="font-sm mb-0">Issue Types</label>
+              <el-select 
+                  v-model="C_issueTypeFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_type"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Type"
+                  >
+                <el-option 
+                  v-for="item in issueTypes"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>            
+            </div>
+
+            <div>
+              <label class="font-sm mb-0">Issue Severities</label>
+              <el-select 
+                  v-model="C_issueSeverityFilter"                    
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="issue_stage"            
+                  multiple                                                                                                                                                         
+                  placeholder="Select Issue Severity"
+                  >
+                <el-option 
+                  v-for="item in issueSeverities"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>             
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <h5 class="mb-0 pt-1">Risks</h5>
+            <div>
+              <label class="font-sm mb-0">Risk Stages</label>
+               <el-select 
+                  v-model="C_riskStageFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Stage"
+                  >
+                <el-option 
+                  v-for="item in riskStages"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select>               
+              <label class="font-sm mb-0">Risk Approaches</label>
+              <el-select 
+                  v-model="C_riskApproachFilter"                   
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Approach"
+                  >
+                <el-option 
+                  v-for="item in getRiskApproachFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+              <label class="font-sm mb-0">Risk Priority Levels</label>
+               <el-select 
+                  v-model="C_riskPriorityLevelFilter"          
+                  class="w-100" 
+                  track-by="name" 
+                  value-key="id"                  
+                  data-cy="risk_stage"           
+                  multiple                                                                                                                                                         
+                  placeholder="Select Risk Priority Level"
+                  >
+                <el-option 
+                  v-for="item in getRiskPriorityLevelFilterOptions"                                                     
+                  :value="item"   
+                  :key="item.id"
+                  :label="item.name"                                                  
+                  >
+                </el-option>
+              </el-select> 
+            </div>             
+          </div>
+        </div>        
+      </div> 
+
+      </el-tab-pane>   
+
+      <el-tab-pane label="Favorites">
+          <div class="fav-filter px-3 pb-1 pt-0 mt-3">
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <h5 class="my-1">Favorites</h5>
+          </div>
+        </div>
+
+        <!-- FAVORITE FILTERS SECTION -->
+        <div class="row justify-content-between pb-2">
+          <div class="col-md-5" style="border-right:solid lightgray .8px">
+            <div>
+                <el-select 
+                  v-model="C_favoriteFilterSelectModel"                    
+                  class="w-100" 
+                  track-by="name" 
+                  filterable
+                  value-key="id"
+                  placeholder="Search and select Project Group"
+                >
+                  <el-option 
+                    v-for="item in C_favoriteFilterSelectOptions"                                                     
+                    :value="item"   
+                    :key="item.id"
+                    :label="item.name"                                                  
+                    >
+                  </el-option>
+                </el-select>
+              
+            </div>
+            <div class="mt-2">
+              <label class="font-sm mb-0">Favorites Filter Name</label>
+              <input type="text" class="form-control" placeholder="Enter Name" v-model="C_favoriteFilter.name" :readonly="!hasAdminAccess('write')">             
+              <!-- <button class="btn btn-sm btn-link float-right d-inline-block font-sm btn-danger text-light py-0 ml-1 mb-1" @click.prevent="resetFilters" data-cy="clear_filter"><font-awesome-icon icon="redo" class="text-light clickable mr-1" />Reset</button> -->
+            </div>
+          </div>
+            <div class="col-md-7">              
+             <div class="btn-group-sm text-center">  
+              <button
+                v-if="hasAdminAccess('write')"
+                class="btn btn-sm font-sm btn-success text-light"
+                @click.prevent="saveFavoriteFilters" 
+                data-cy="save_favorite_filter"> 
+                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+                Save to Favorites
+              </button>            
+              <button 
+                v-if="C_favoriteFilter.id ? hasAdminAccess('delete') : false "
+                class="btn btn-sm font-sm btn-danger text-light" 
+                @click.prevent="onClearFilter" data-cy="clear_filter">
+                <font-awesome-icon icon="trash" class="text-light clickable mr-1" />
+                Remove
+              </button>   
+               <button 
+                class="btn btn-sm font-sm btn-light" >
+                Shared
+                <input type="checkbox" style="" v-model="C_favoriteFilter.shared" :disabled="!hasAdminAccess('write')">              
+              </button>                      
+             </div>
+          </div>
+        </div>
+       </div>
+      </el-tab-pane>
+      
+    </el-tabs>    
    
     </div>
     <div class="knocker" @click.prevent="toggleFilters" data-cy="advanced_filter">
@@ -425,11 +450,13 @@ export default {
   name: 'FilterSidebar',
   data() {
     return {
+      hasFilterAccess: true,
       isLoading: false,
+      activeName: 'first',
       exporting: false,
       showFilters: false,
       datePicker: false,
-      favoriteFilterData: {id: null, name: null},
+      favoriteFilterData: {id: null, name: null, shared: false},
       favoriteFilterOptions: [],
       myActions: [
         { name: 'My Tasks', value: 'tasks' },
@@ -500,18 +527,26 @@ export default {
       'getMapZoomFilter',
       'getUnfilteredFacilities'
     ]),
-
+    hasAdminAccess() {
+      return salut => this.$currentUser.role == "superadmin" || this.$permissions.admin[salut] || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+    },
     C_favoriteFilterSelectModel: {
       get() {
         return this.favoriteFilterData
       },
       set(value) {
-        this.favoriteFilterData = value
-        if(!this.favoriteFilterData.id){
-          this.resetFilters()
+        if(!value.id){
+          this.favoriteFilterData = {id: null, name: null, shared: false}  
         }else{
-          this.loadFavoriteFilter(this.favoriteFilterData)
+          this.favoriteFilterData = value  
         }
+        
+        this.loadFavoriteFilter(this.favoriteFilterData)
+        // if(!this.favoriteFilterData.id){
+        //   this.resetFilters()
+        // }else{
+        //   this.loadFavoriteFilter(this.favoriteFilterData)
+        // }
         
       }
     },
@@ -519,7 +554,7 @@ export default {
       get() {
         let i = this.favoriteFilterOptions.findIndex(n => n.id === null)
         if(i == -1){
-          this.favoriteFilterOptions.push({id: null, name: "New Filter"})
+          this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false})
         }
         return this.favoriteFilterOptions
       },
@@ -582,6 +617,7 @@ export default {
       return this.filterFacilitiesWithActiveFacilityGroups.length > 0
     },
     C_activeFacilityGroups() {
+      // What if no project is selected e.g. URL http://localhost:3000/programs/1/map
       let id = Number(this.$route.params.projectId)
       return this.activeFacilityGroups(id)
     },
@@ -807,6 +843,9 @@ export default {
     updateProjectQuery(selected, index) {
       window.location.pathname = "/projects/" + selected.id
     },
+    handleClick(tab, event) {
+        console.log(tab, event);
+    },
     // findFacility(query) {
     //   this.isLoading = true
     //   if (query) {
@@ -820,8 +859,13 @@ export default {
     //   }
     // },
     loadFavoriteFilter(fav_filter){
+
       this.resetFilters()
       var res = fav_filter.query_filters
+
+      if(!res){
+        return;
+      }
       for(var i = 0; i < res.length; i++){
 
         if(res[i].filter_key == "issueTypeFilter"){
@@ -834,6 +878,7 @@ export default {
           this.setAdvancedFilter(res[i].filter_value)
 
         }else if(res[i].filter_key == "facilityGroupFilter"){
+
           this.setFacilityGroupFilter(res[i].filter_value)
 
         }else if(res[i].filter_key == "projectStatusFilter"){
@@ -912,14 +957,17 @@ export default {
 
     },
     saveFavoriteFilters(){
-
       let formData = new FormData()
 
       formData.append('favorite_filter[name]', this.favoriteFilterData.name)
       if(this.favoriteFilterData.id)
         formData.append('favorite_filter[id]', this.favoriteFilterData.id)
 
-      formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      if(this.favoriteFilterData.shared){
+        formData.append('favorite_filter[shared]', this.favoriteFilterData.shared)
+      }else{
+        formData.append('favorite_filter[shared]', false)
+      }
       
       // Categories Filter
       if(this.facilityGroupFilter && this.facilityGroupFilter[0]){
@@ -927,6 +975,8 @@ export default {
         formData.append('query_filters[][name]', "Project Groups")
         // var v = JSON.stringify(this.facilityGroupFilter)
         var v = JSON.stringify( _.map(this.facilityGroupFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        //var v = JSON.stringify(this.facilityGroupFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -934,8 +984,10 @@ export default {
       if(this.projectStatusFilter && this.projectStatusFilter[0]){
         formData.append('query_filters[][filter_key]', "projectStatusFilter")
         formData.append('query_filters[][name]', "Project Statuses")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        
+        // var v = JSON.stringify( _.map(this.projectStatusFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.projectStatusFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -943,8 +995,11 @@ export default {
       if(this.facilityNameFilter && this.facilityNameFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityNameFilter")
         formData.append('query_filters[][name]', "Project Names")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( _.map(this.facilityNameFilter, function(val) {  return {id: val.id, facilityName: val.facilityName}  }) );
+
+        // NOTE: this saving more data than required so not using this code
+        // var v = JSON.stringify(this.facilityNameFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }      
 
@@ -952,9 +1007,10 @@ export default {
       if(this.facilityProgressFilter && this.facilityProgressFilter[0]){
         formData.append('query_filters[][filter_key]', "facilityProgressFilter")
         formData.append('query_filters[][name]', "Project % Progress Range")
-        // var v = JSON.stringify(this.taskTypeFilter)
 
-        var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        // var v = JSON.stringify( _.map(this.facilityProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        var v = JSON.stringify(this.facilityProgressFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -973,8 +1029,10 @@ export default {
       if(this.taskStageFilter && this.taskStageFilter[0]){
         formData.append('query_filters[][filter_key]', "taskStageFilter")
         formData.append('query_filters[][name]', "Task Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.taskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskStageFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -982,8 +1040,10 @@ export default {
       if(this.issueTypeFilter && this.issueTypeFilter[0]){
         formData.append('query_filters[][filter_key]', "issueTypeFilter")
         formData.append('query_filters[][name]', "Issue Types")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueTypeFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -991,8 +1051,10 @@ export default {
       if(this.issueSeverityFilter && this.issueSeverityFilter[0]){
         formData.append('query_filters[][filter_key]', "issueSeverityFilter")
         formData.append('query_filters[][name]', "Issue Severities")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueSeverityFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueSeverityFilter)
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1000,8 +1062,9 @@ export default {
       if(this.issueStageFilter && this.issueStageFilter[0]){
         formData.append('query_filters[][filter_key]', "issueStageFilter")
         formData.append('query_filters[][name]', "Issue Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+
+        // var v = JSON.stringify( _.map(this.issueStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.issueStageFilter)
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1009,8 +1072,10 @@ export default {
       if(this.getRiskPriorityLevelFilter && this.getRiskPriorityLevelFilter[0]){
         formData.append('query_filters[][filter_key]', "riskPriorityLevelFilter")
         formData.append('query_filters[][name]', "Risk Priority Levels")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        
+        // var v = JSON.stringify( _.map(this.getRiskPriorityLevelFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.getRiskPriorityLevelFilter );
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1018,8 +1083,8 @@ export default {
       if(this.riskStageFilter && this.riskStageFilter[0]){
         formData.append('query_filters[][filter_key]', "riskStageFilter")
         formData.append('query_filters[][name]', "Risk Stages")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        // var v = JSON.stringify( _.map(this.riskStageFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.riskStageFilter );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1027,8 +1092,8 @@ export default {
       if(this.getRiskApproachFilter && this.getRiskApproachFilter[0]){
         formData.append('query_filters[][filter_key]', "riskApproachFilter")
         formData.append('query_filters[][name]', "Risk Approaches")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        // var v = JSON.stringify( _.map(this.getRiskApproachFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify( this.getRiskApproachFilter );
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1036,8 +1101,8 @@ export default {
       if(this.taskTypeFilter && this.taskTypeFilter[0]){
         formData.append('query_filters[][filter_key]', "taskTypeFilter")
         formData.append('query_filters[][name]', "Categories")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskTypeFilter)
+        // var v = JSON.stringify( _.map(this.taskTypeFilter, function(val) {  return {id: val.id, name: val.name}  }) );
         formData.append('query_filters[][filter_value]', v )        
       }
 
@@ -1045,8 +1110,10 @@ export default {
       if(this.getTaskIssueUserFilter && this.getTaskIssueUserFilter[0]){
         formData.append('query_filters[][filter_key]', "taskIssueUserFilter")
         formData.append('query_filters[][name]', "Action Users")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, name: val.fullName}  }) );
+
+        // var v = JSON.stringify( _.map(this.getTaskIssueUserFilter, function(val) {  return {id: val.id, fullName: val.fullName}  }) );
+        var v = JSON.stringify( this.getTaskIssueUserFilter );
+
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1054,8 +1121,11 @@ export default {
       if(this.getAdvancedFilter && this.getAdvancedFilter[0]){
         formData.append('query_filters[][filter_key]', "getAdvancedFilter")
         formData.append('query_filters[][name]', "Flags")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.taskTypeFilter)
+        
+        // var v = JSON.stringify( _.map(this.getAdvancedFilter, function(val) {  return {id: val.id, name: val.name}  }) );
+        var v = JSON.stringify(this.getAdvancedFilter);
+        
         formData.append('query_filters[][filter_value]', v )       
       }
 
@@ -1063,8 +1133,8 @@ export default {
       if(this.taskIssueProgressFilter && this.taskIssueProgressFilter[0]){
         formData.append('query_filters[][filter_key]', "taskIssueProgressFilter")
         formData.append('query_filters[][name]', "Action % Progress Range")
-        // var v = JSON.stringify(this.taskTypeFilter)
-        var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
+        var v = JSON.stringify(this.taskIssueProgressFilter)
+        // var v = JSON.stringify( _.map(this.taskIssueProgressFilter, function(val) {  return {name: val.name, value: val.value}  }) );
         formData.append('query_filters[][filter_value]', v )       
       }
       
@@ -1103,17 +1173,17 @@ export default {
         }
       })
       .then((response) => {
-        var favorite_filter = response.data.favorite_filter
+        var favorite_filter =  response.data.favorite_filter
         this.favoriteFilterData = favorite_filter
         let i = this.favoriteFilterOptions.findIndex(n => n.id === favorite_filter.id)
+
         if(i == -1){
           this.favoriteFilterOptions.unshift(favorite_filter) 
         }else{
           Vue.set(this.favoriteFilterOptions, i, favorite_filter)
         }
-
-        let ii = this.favoriteFilterOptions.findIndex(n => n.id === null)
-        Vue.set(this.favoriteFilterOptions, ii, {id: null, name: "New Filter"})
+        _.remove(this.favoriteFilterOptions, (t) => t.id === null)
+        this.favoriteFilterOptions.unshift({id: null, name: "New Filter", shared: false }) 
         
         this.$message({
           message: `Favorite Filter is saved successfully.`,
@@ -1138,7 +1208,11 @@ export default {
     resetFilters(){
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
-      this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
+      if(this.favoriteFilterData.id){
+        this.setAdvancedFilter([])
+      }else{
+        this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])        
+      }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])
       this.setTaskTypeFilter(null)
@@ -1166,9 +1240,12 @@ export default {
       this.setRisksPerPageFilter(null)
       this.setIssuesPerPageFilter(null)
       this.setMembersPerPageFilter(null)
-      //this.setFacilities(this.getUnfilteredFacilities)
     },
     onClearFilter() {
+      var decision = window.confirm("Are you sure you want to remove this favorite filter?")
+      if(!decision){
+        return
+      }
       this.setTaskIssueUserFilter([])
       this.setTaskIssueProgressStatusFilter([])
       this.setAdvancedFilter([])
@@ -1229,7 +1306,7 @@ export default {
           this.favoriteFilterData = this.favoriteFilterOptions[0]
           this.loadFavoriteFilter(this.favoriteFilterData)
         }else{
-          this.favoriteFilterData = {id: null, name: "New Filter"}
+          this.favoriteFilterData = {id: null, name: "New Filter", shared: false}
         }
         
         //let i = this.favoriteFilterOptions.findIndex(n => n.id === id)
@@ -1243,11 +1320,14 @@ export default {
       .catch((err) => {
         // var errors = err.response.data.errors
         console.log(err)
-        this.$message({
-          message: err.response.data.error,
-          type: "error",
-          showClose: true,
-        });
+        if(err.response.data.error){
+          this.$message({
+            message: err.response.data.error,
+            type: "error",
+            showClose: true,
+          });
+        }
+
       })
       .finally(() => {
         // this.loading = false
@@ -1667,6 +1747,16 @@ a.disabled {
   border-radius: 5px;
   padding: 6px
 }
+.fav-filter {
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19), 0 3px 3px rgba(56, 56, 56, 0.23);
+  border-radius: 5px;
+  background-color: #fff;
+  border-top: solid #41b883 3.5px;
+  padding: 6px
+}
+.btn-light, .btn-secondary {
+  box-shadow: 0 2px 2px rgba(56, 56, 56, 0.19), 0 1.5px 1.5px rgba(56, 56, 56, 0.23) !important;
+}
 .selected-opt {
   position: relative;
   display: inline-block;
@@ -1691,8 +1781,20 @@ a.disabled {
     border-color: #e8e8e8;
   }
   ::placeholder {
-    color: #adadad;
+    color: #bbb9b9;
   }
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #bbb9b9;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #bbb9b9;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #bbb9b9;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -35,9 +35,11 @@ class ApplicationController < ActionController::Base
     @message = arg[:message]
     @message = @message if @message.is_a?(Symbol)
     @status = arg[:status] || 500
+    arg[:status] ||= 500
 
     respond_to do |format|
-      format.any {head @status}
+      #format.any {head @status}
+      format.any { render(json: arg,  status: @status) }
     end
   end
 

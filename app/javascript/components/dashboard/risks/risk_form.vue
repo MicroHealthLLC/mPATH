@@ -214,8 +214,7 @@
                   >         
                 <el-step
                   v-for="item in riskStages"
-                  :key="item.id"              
-                  :load="log(riskStages)" 
+                  :key="item.id"                  
                   :value="item"
                   style="cursor:pointer"
                   @click.native="selectedStage(item)"        
@@ -239,8 +238,7 @@
                   >         
                 <el-step
                   v-for="item in riskStages"
-                  :key="item.id"              
-                  :load="log(riskStages)" 
+                  :key="item.id"                  
                   :value="item"
                   style="cursor:pointer"
                   @click.native="selectedStage(item)"        
@@ -1034,10 +1032,10 @@
             </div>
 
             <div
-              class="row form-group pl-2 mx-4 mb-0 w-50"
+              class="row form-group pl-2 mx-4 mb-0 w-80"
               style="background-color: #fafafa; border: solid 1px #ededed"
             >            
-              <div class="col-md-2 pl-1 py-2 mb-0">                    
+              <div class="col-md-3 pl-1 py-2 mb-0">                    
                   <label class="font-sm mb-0">Risk Approach</label>               
                   <span                   
                     class="d-block approver-pointer"
@@ -1058,7 +1056,7 @@
               </div>
                <div
                 v-show="DV_risk.approved"
-                class="col-md-8 pr-2 py-2 mb-0 simple-select form-group ml-0"
+                class="col-md-7 pr-2 py-2 mb-0 simple-select form-group ml-0"
               >
                 <label class="font-sm mb-0"
                   >Date/Time Risk Approach Approved:</label
@@ -1706,7 +1704,7 @@
         </div>
       </div>
       <!-- TABBED OUT SECTION END HERE -->
-      <div ref="addUpdates" class="pt-0 mt-0 mb-4"></div>
+      <div ref="addUpdates" class="pt-0 mt-0"></div>
       <div></div>
     </form>
     <div
@@ -1882,9 +1880,6 @@ export default {
         notes: [],
       };
     },
-    log(e) {
-      // console.log("this is the riskStages object: " + e)
-    },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2044,7 +2039,9 @@ export default {
       this.validateThenSave(e)
     },
     selectedStage(item){    
-      this.selectedRiskStage = item
+      if (this._isallowed('write')) {
+        this.selectedRiskStage = item
+      }
     },  
     clearStages() {
       this.selectedRiskStage = null
@@ -2304,8 +2301,9 @@ export default {
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_risk.startDate);
-      startDate.setHours(0, 0, 0, 0);
+      const startDate = new Date(this.DV_risk.startDate);  
+      startDate.setHours(48, 0, 0, 0);
+      // console.log(startDate)
       return date < startDate;
     },
     destroyNote(note) {
@@ -2411,7 +2409,8 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date",   
+        "Identified Date", 
+        "Risk Approach Due Date",  
       ];
 
       var tooltipMessage = "Field is located on Prioritize";
@@ -2864,12 +2863,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.risks-form {
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: calc(100vh - 100px);
-  width: 100%;
-}
 .fixed-form {
   overflow-y: auto;
   overflow-x: hidden;

@@ -200,8 +200,7 @@
       v-for="item in taskStages"
       :key="item.id"            
       :value="item"
-      style="cursor:pointer"     
-      :load="log( taskStages.length )"
+      style="cursor:pointer"        
       @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
@@ -1002,12 +1001,11 @@
           checklists: [],
           notes: []
         }
-      },
-      log(e){
-        // console.log("This is the taskStages: " + e)
-      },
-      selectedStage(item){    
-        this.selectedTaskStage = item
+      },  
+      selectedStage(item){  
+        if (this._isallowed('write')) {
+          this.selectedTaskStage = item
+        }  
       },  
       clearStages() {
         this.selectedTaskStage = null
@@ -1348,7 +1346,7 @@
       disabledDueDate(date) {
         date.setHours(0,0,0,0)
         const startDate = new Date(this.DV_task.startDate)
-        startDate.setHours(0,0,0,0)
+        startDate.setHours(48, 0, 0, 0);
         return date < startDate
       },
       calculateProgress(checks=null) {

@@ -119,31 +119,35 @@
     mounted() {
       if (!_.isEmpty(this.note)) {
         this.loadNote(this.note)
+      } else {
+        this.loading = false
+        this.loadNote(this.DV_note)
       }
-      this.loading = false
     },
     methods: {
       ...mapMutations([
-        'setTaskForManager'
+        'setTaskForManager',
+        'updateNotesHash'
       ]),
       ...mapActions([
         'noteDeleted'
       ]),
       INITIAL_NOTE_STATE() {
         return {
-          facilityProjectId: '',
+          facilityProjectId: this.facility.id,
           body: '',
           noteFiles: []
         }
       },
       loadNote(note) {
-        this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}
-        this.DV_note.facilityProjectId = note.noteableId
+        this.DV_note = {...this.DV_note, ..._.cloneDeep(note)}     
+        this.DV_note.facilityProjectId = this.facility.id       
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_note.facilityProjectId)
-        if (note.attachFiles) this.addFile(note.attachFiles)
+        if (this.DV_note.attachFiles) this.addFile(this.DV_note.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
+          this.loading = false;
         })
       },
       addFile(files) {
@@ -188,7 +192,7 @@
             }
           }
 
-          var url = `/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes.json`
+          var url = `/projects/${this.currentProject.id}/facilities/${this.$route.params.projectId}/notes.json`
           var method = "POST"
           var callback = "note-created"
 
@@ -207,7 +211,22 @@
             }
           })
           .then((response) => {
-            this.$emit(callback, humps.camelizeKeys(response.data))
+            // this.$emit(callback, humps.camelizeKeys(response.data))
+             var responseNote = humps.camelizeKeys(response.data)
+            this.loadNote(responseNote)   
+            this.updateNotesHash({ note: responseNote, facilityId: this.facility.id})
+            if (response.status === 200) {
+              this.$message({
+                message: `${response.data.body} was saved successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+            if (this.$route.path.includes("sheet")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/notes/${response.data.id}`);
+            } else if (this.$route.path.includes("map")) {
+              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/notes/${response.data.id}`);           
+            }
           })
           .catch((err) => {
             console.log(err)
@@ -277,9 +296,6 @@
 </script>
 
 <style scoped lang="scss">
-  .notes-form {
-    
-  }
   .notes_input {
     border: 1px solid #ccc;
     border-radius: 5px;
