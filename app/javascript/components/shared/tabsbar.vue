@@ -98,7 +98,9 @@ export default {
         return route.replace("kanban", "sheet");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "sheet");
-      } else {
+      } else if(this.isLessonsView){
+        return route.replace("lessons", "sheet");
+      }else {
         return route.replace("member_list", "sheet");
       }
     },
@@ -111,7 +113,9 @@ export default {
         return route.replace("kanban", "map");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "map");
-      } else {
+      } else if(this.isLessonsView){
+        return route.replace("lessons", "map");
+      }else {
         return route.replace("member_list", "map");
       }
     },
