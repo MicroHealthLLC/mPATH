@@ -618,10 +618,12 @@
       }
     },
     mounted() {
-      if (this.contentLoaded && this.$route.params.lessonId !== "new") {
-        this.lesson = this.currentProject.lessons.find(
-          (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
-        );
+      if (this.contentLoaded) {
+        if(this.$route.params.lessonId !== "new"){
+          this.lesson = this.currentProject.lessons.find(
+            (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
+          );
+        }
         this.activeFacilityProjects = _.flatten(_.map(this.currentProject.facilities, f => [{id: f.facilityProjectId, name: f.facilityName}] ) )
         this.lessonStages = this.currentProject.lessonStages
       }
@@ -720,8 +722,7 @@
       },
       loadLesson(lesson) {
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
-        this.users = _.filter(this.activeProjectUsers, (u) => 
-        this.DV_lesson.userIds.includes(u.id))[0];   
+        this.users = _.filter(this.activeProjectUsers, (u) => this.DV_lesson.userIds.includes(u.id))[0];   
         this.selectedFacilityProjects = _.filter(this.activeFacilityProjects, u => this.DV_lesson.facilityProjectIds.includes(u.id) )
         this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
         this.selectedTask = _.filter(this.filteredTasks, u => this.DV_lesson.taskId == u.id)[0]
@@ -834,7 +835,7 @@
             formData.append('lesson[id]', this.DV_lesson.id)
 
           formData.append('lesson[title]', this.DV_lesson.title)
-          formData.append("lesson[task_stage_id]", this.DV_lesson.taskStageId);
+          formData.append("lesson[lesson_stage_id]", this.DV_lesson.lessonStageId);
           formData.append('lesson[description]',  this.DV_lesson.description)
           formData.append('lesson[date]',  this.DV_lesson.date)
 
@@ -1119,7 +1120,7 @@
           if (value){
               this.DV_lesson.userIds = _.uniq(_.map( _.flatten([value]) , 'id'))
           }else{
-            this.DV_lesson.userIds = null
+            this.DV_lesson.userIds = []
           }
         }, deep: true
       },
@@ -1144,9 +1145,9 @@
           this.DV_lesson.taskTypeId = value ? value.id : null
         }, deep: true
       },
-      selectedTaskStage: {
+      selectedLessonStage: {
         handler: function(value) {
-          this.DV_lesson.taskStageId = value ? value.id : null
+          this.DV_lesson.lessonStageId = value ? value.id : null
         }, deep: true
       },
       selectedFacilityProjects: {

@@ -114,6 +114,7 @@ class Lesson < ApplicationRecord
       :issue_type_id, 
       :user_id, 
       :project_id,
+      :lesson_stage_id,
       lesson_files: [],
       user_ids: [],
       facility_project_ids: [],
