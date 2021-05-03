@@ -52,6 +52,15 @@
         Team
       </div>
     </router-link>
+    <router-link
+      v-if="permitted('lessons')"
+      :to="`/programs/${this.$route.params.programId}/lessons`"
+      tag="div"
+    >
+      <div class="badge" :class="{ active: isLessonsView }" data-cy="lesson_tab">
+        Lessons
+      </div>
+    </router-link>
   </div>
 </template>
 
@@ -77,6 +86,9 @@ export default {
     isMembersView() {
       return this.$route.name === "TeamMembersView";
     },
+    isLessonsView() {
+      return this.$route.name === "LessonsIndex";
+    },
     routeSheetSwap() {
       let route = this.$route.path;
 
@@ -86,7 +98,9 @@ export default {
         return route.replace("kanban", "sheet");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "sheet");
-      } else {
+      } else if(this.isLessonsView){
+        return route.replace("lessons", "sheet");
+      }else {
         return route.replace("member_list", "sheet");
       }
     },
@@ -99,7 +113,9 @@ export default {
         return route.replace("kanban", "map");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "map");
-      } else {
+      } else if(this.isLessonsView){
+        return route.replace("lessons", "map");
+      }else {
         return route.replace("member_list", "map");
       }
     },

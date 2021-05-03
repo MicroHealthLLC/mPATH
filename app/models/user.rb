@@ -32,6 +32,18 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def encrypted_authentication_token
+    self.save unless self.authentication_token.present?
+    crypt = ActiveSupport::MessageEncryptor.new([ENV["MESSAGE_ENCRYPTOR_KEY"]].pack("H*"))
+    return crypt.encrypt_and_sign(self.authentication_token)
+  end
+  
+  def valid_encrypted_authentication_token?(token)
+    return false unless self.authentication_token.present?
+    crypt = ActiveSupport::MessageEncryptor.new([ENV["MESSAGE_ENCRYPTOR_KEY"]].pack("H*"))
+    return crypt.decrypt_and_verify(token) == self.authentication_token rescue false
+  end
+
   def allowed_navigation_tabs(right = 'R')
     nagivation_tabs = ["member_list", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view", "gantt_view"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
@@ -208,6 +220,6 @@ class User < ApplicationRecord
   end
 
   def allowed?(view)
-    self.privilege.send(view)&.include?("R")
+    privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
   end
 end
