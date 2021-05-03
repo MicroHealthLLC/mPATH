@@ -74,13 +74,13 @@ ActiveAdmin.register Facility do
         f.inputs 'Basic Details' do
           f.input :facility_name, label: "Project Name"
           f.input :facility_group, include_blank: false, include_hidden: false, label: "Project Group"
-          f.input :address
+          f.input :address, as: :hidden
           f.input :lat
           f.input :lng
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'gmaps-tab'
           f.input :point_of_contact
-          f.input :phone_number
+          f.input :phone_number, as: :hidden
           f.input :country_code
           div id: 'f_phone_number-tab'
           f.input :email
