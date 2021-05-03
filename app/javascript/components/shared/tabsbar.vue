@@ -87,7 +87,7 @@ export default {
       return this.$route.name === "TeamMembersView";
     },
     isLessonsView() {
-      return this.$route.name === "LessonsIndex";
+      return ["LessonsIndex", "LessonForm"].includes(this.$route.name);
     },
     routeSheetSwap() {
       let route = this.$route.path;

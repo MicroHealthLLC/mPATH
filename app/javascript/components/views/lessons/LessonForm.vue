@@ -95,30 +95,36 @@
     <div class="form-group pt-3 mx-4">
       <label class="font-md">Lesson Name <span style="color: #dc3545">*</span></label>
           <input
-            name="Lesson Name"
+            name="Name"
             v-validate="'required'"
             type="text"
             class="form-control form-control-sm"
             v-model="DV_lesson.title"
-            placeholder="Lesson Name"
+            placeholder="Name"
             :readonly="!_isallowed('write')"
-            :class="{'form-control': true, 'error': errors.has('Lesson Name') }"
+            :class="{'form-control': true, 'error': errors.has('Name') }"
             data-cy="task_name"
           />
-      <div v-show="errors.has('Lesson Name')" class="text-danger" data-cy="task_name_error">
-        {{errors.first('Lesson Name')}}
+      <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
+        {{errors.first('Name')}}
       </div>
     </div>
         <div class="form-group mx-4">
         <label class="font-md">Description</label>
         <textarea
+          name="Description"
           class="form-control"
-          placeholder="Lesson brief description"
+          placeholder="Brief Description"
+          v-validate="'required'"
           v-model="DV_lesson.description"
           rows="4"
           :readonly="!_isallowed('write')"
+          :class="{'form-control': true, 'error': errors.has('Description') }"
           data-cy="task_description"
         />
+      <div v-show="errors.has('Description')" class="text-danger" data-cy="task_description_error">
+        {{errors.first('Description')}}
+      </div>
       </div>
 
     <!-- Stages Row ends -->
@@ -200,7 +206,7 @@
         <div class="form-group col-md-6 pl-3">
          <label class="font-md" >Stage</label>
           <el-select 
-          v-model="selectedTaskStage"                    
+          v-model="selectedLessonStage"                    
           class="w-100" 
           clearable
           track-by="id" 
@@ -210,7 +216,7 @@
           placeholder="Select Stage"
         >
           <el-option
-            v-for="item in taskStages"
+            v-for="item in lessonStages"
             :value="item"
             :key="item.id"
             :label="item.name"
@@ -221,61 +227,6 @@
         </div>
       </div>
     
-
-
-    <!-- <div class="mx-4 mt-2 mb-4" v-if='false'>
-      <div v-if="selectedTaskStage !== undefined">       
-      <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
-      </div>    
-    <el-steps 
-      class="exampleOne mt-3" 
-      :active="selectedTaskStage.id - 1"                      
-      finish-status="success"  
-      :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :disabled="!_isallowed('write') || !!fixedStage"
-      v-model="selectedTaskStage"
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"             
-      :value="item"
-      style="cursor:pointer"
-      v-if="_isallowed('write')"
-      @click.native="selectedStage(item)"
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>          
-    </div>
-  </div>
-
-  <div class="mx-4 mt-2 mb-4"  v-if='false'>
-    <label class="font-md">Select Stage</label>                           
-    <el-steps 
-      class="exampleOne"              
-      finish-status="success"
-      :class="{'overSixSteps': taskStages.length >= 6 }"   
-      :disabled="!_isallowed('write') || !!fixedStage"
-      v-model="selectedTaskStage"  
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"            
-      :value="item"
-      style="cursor:pointer"     
-      :load="log( taskStages.length )"
-      v-if="_isallowed('write')"
-      @click.native="selectedStage(item)"        
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>
-  </div> -->
 </div>
 
 
@@ -605,12 +556,14 @@
         selectedTask: null,
         selectedIssue: null,
         selectedRisk: null,
+        selectedLessonStage: null,
         selectedFacilityProjects: [],
         users: null,
         activeFacilityProjects: [],
         showErrors: false,
         loading: true,
         movingSlot: '',
+        lessonStages: [],
         currentTab: 'tab1',
         tabs: [
           {
@@ -670,6 +623,7 @@
           (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
         );
         this.activeFacilityProjects = _.flatten(_.map(this.currentProject.facilities, f => [{id: f.facilityProjectId, name: f.facilityName}] ) )
+        this.lessonStages = this.currentProject.lessonStages
       }
       if (!_.isEmpty(this.lesson)) {
         this.loadLesson(this.lesson)
@@ -705,6 +659,7 @@
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
+          lessonStages: [],
           description: '',
           lessonFiles: [],
           notes: [],
@@ -721,7 +676,7 @@
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       },
       selectedStage(item){    
-        this.selectedTaskStage = item
+        this.selectedLessonStage = item
       },  
       clearStages() {
         this.selectedTaskStage = null
@@ -771,8 +726,8 @@
         this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
         this.selectedTask = _.filter(this.filteredTasks, u => this.DV_lesson.taskId == u.id)[0]
         this.selectedRisk = _.filter(this.filteredRisks, u => this.DV_lesson.riskId == u.id)[0]
-        this.selectedTaskStage = this.taskStages.find(
-        (t) => t.id === this.DV_lesson.taskStageId
+        this.selectedLessonStage = this.lessonStages.find(
+        (t) => t.id === this.DV_lesson.lessonStageId
          );
         if (this.DV_lesson.attachFiles) this.addFile(this.DV_lesson.attachFiles, false)
         this.$nextTick(() => {

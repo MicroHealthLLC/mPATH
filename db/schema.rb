@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_21_055825) do
+ActiveRecord::Schema.define(version: 2021_05_03_185839) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -209,6 +209,19 @@ ActiveRecord::Schema.define(version: 2021_04_21_055825) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "lesson_projects", charset: "utf8", force: :cascade do |t|
+    t.integer "lesson_id"
+    t.integer "facility_project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "lesson_stages", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "lesson_users", charset: "utf8", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "lesson_id", null: false
@@ -232,6 +245,7 @@ ActiveRecord::Schema.define(version: 2021_04_21_055825) do
     t.integer "project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "lesson_stage_id"
   end
 
   create_table "notes", charset: "utf8", force: :cascade do |t|
@@ -311,6 +325,13 @@ ActiveRecord::Schema.define(version: 2021_04_21_055825) do
     t.datetime "updated_at", null: false
     t.index ["issue_type_id"], name: "index_project_issue_types_on_issue_type_id"
     t.index ["project_id"], name: "index_project_issue_types_on_project_id"
+  end
+
+  create_table "project_lesson_stages", charset: "utf8", force: :cascade do |t|
+    t.integer "project_id"
+    t.integer "lesson_stage_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
@@ -486,6 +507,7 @@ ActiveRecord::Schema.define(version: 2021_04_21_055825) do
     t.string "impact_level_name"
     t.text "probability_description"
     t.string "approval_time"
+    t.boolean "approved"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_id"], name: "index_risks_on_risk_id"
