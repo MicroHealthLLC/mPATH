@@ -402,27 +402,6 @@ div.MCBreadcrumbsBox_0
 	margin-bottom: 10px;
 }
 
-.img
-{
-	border: none;
-}
-
-.img.imgThumbnail400
-{
-	align: left;
-	display: block;
-	max-width: 1200px;
-	padding: 10px 0;
-}
-
-.img.imgThumbnail200
-{
-	align: left;
-	display: block;
-	max-width: 1200px;
-	padding: 10px 0;
-}
-
 .dropDown
 {
 	margin: 5px 0px;
@@ -484,6 +463,27 @@ div.MCBreadcrumbsBox_0
 	border-left: 2px solid #d3e7fa;
 	border-top: none;
 	background-color: #ffffff;
+}
+
+.img
+{
+	border: none;
+}
+
+.img.imgThumbnail400
+{
+	align: left;
+	display: block;
+	max-width: 1200px;
+	padding: 10px 0;
+}
+
+.img.imgThumbnail200
+{
+	align: left;
+	display: block;
+	max-width: 1200px;
+	padding: 10px 0;
 }
 
 .MCWebHelpFramesetLink a
