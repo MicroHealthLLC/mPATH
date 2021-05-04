@@ -132,7 +132,7 @@
             </tr>
           </tbody>
         </table>
-         <div class="float-right mb-4 mt-1 font-sm">     
+        <div v-if="tableData.length > 0" class="float-right mb-4 mt-1 font-sm">     
          <div class="simple-select my-1 text-right d-inline-block font-sm">   
           <span class="mr-2">Displaying </span>        
           <el-select 
@@ -153,8 +153,11 @@
             
           <span class="mr-1 ml-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
           <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_membersPerPage.value) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil( tableData.length / this.C_membersPerPage.value) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>
+        <div v-else class="float-right mb-4 mt-2 font-md mr-1">
+         No Team Members to Display
         </div>
            </div>       
      </div>

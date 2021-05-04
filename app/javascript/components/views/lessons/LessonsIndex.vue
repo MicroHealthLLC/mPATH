@@ -1,7 +1,7 @@
 <template>
   <div id="members" data-cy="members_view" class="mt-5">
     <div class="container my-2 px-4 pt-2 wrapper" style="border-radius:3px">
-      <h2 class="mt-1 mb-1"><span> <font-awesome-icon icon="file" class="mr-2 text-dark"/></span>Lessons Learned</h2>
+      <h2 class="mt-1 mb-1"><span> <font-awesome-icon icon="clipboard" class="mr-2 text-dark"/></span>Lessons Learned</h2>
       <div class="mb-0 p-b-0">
         <el-row>
           <el-col :span="9">
@@ -101,7 +101,7 @@
             </tr>
           </tbody>
         </table>
-        <div class="float-right mb-4 mt-1 font-sm">
+        <div v-if="tableData.length > 0" class="float-right mb-4 mt-1 font-sm">
           <div class="simple-select my-1 text-right d-inline-block font-sm">
             <span class="mr-2">Displaying </span>
             <el-select v-model="C_lessonsPerPage" class="w-33" track-by="value" value-key="id">
@@ -111,8 +111,11 @@
           </div>
           <span class="mr-1 ml-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
           <button class="btn btn-sm page-btns ml-2" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tableData.length / this.C_lessonsPerPage.value) }} </button>
+          <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil( tableData.length / this.C_lessonsPerPage.value) }} </button>
           <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>
+        <div v-else class="float-right mb-4 mt-2 font-md mr-1">
+         No Lessons Learned to Display
         </div>
       </div>
     </div>
