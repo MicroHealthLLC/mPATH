@@ -13,7 +13,7 @@
             <span style="font-size: 16px; margin-right: 10px"
               ><i class="fas fa-building"></i
             ></span>
-            <router-link :to="projectNameLink" :load="log(projectNameLink)">{{ currentProject.name  }}</router-link>
+            <router-link v-if="contentLoaded" :to="projectNameLink">{{ currentProject.name  }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
