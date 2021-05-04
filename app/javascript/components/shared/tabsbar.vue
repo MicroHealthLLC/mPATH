@@ -53,10 +53,7 @@
       </div>
     </router-link>
     <router-link
-      v-if="permitted('lessons')"
-      :to="`/programs/${this.$route.params.programId}/lessons`"
-      tag="div"
-    >
+      v-if="permitted('lessons')" :to="routeLessonSwap" tag="div">
       <div class="badge" :class="{ active: isLessonsView }" data-cy="lesson_tab">
         Lessons
       </div>
@@ -91,17 +88,28 @@ export default {
     },
     routeSheetSwap() {
       let route = this.$route.path;
-
       if (this.isMapView) {
         return route.replace("map", "sheet");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "sheet");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "sheet");
-      } else if(this.isLessonsView){
-        return route.replace("lessons", "sheet");
+      } else if (this.isLessonsView) {
+        return `/programs/${this.$route.params.programId}/sheet`;
       }else {
         return route.replace("member_list", "sheet");
+      }
+    },
+    routeLessonSwap() {
+      let route = this.$route.path;
+      if (this.isMapView || this.isKanbanView || this.isSheetsView) {
+        return `/programs/${this.$route.params.programId}/lessons`;
+    
+      } else if (this.isGanttView) {
+        return route.replace("gantt_chart", "lessons");
+     
+      } else {
+        return route.replace("member_list", "lessons");
       }
     },
     routeMapSwap() {
@@ -114,14 +122,13 @@ export default {
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "map");
       } else if(this.isLessonsView){
-        return route.replace("lessons", "map");
+        return `/programs/${this.$route.params.programId}/map`;
       }else {
         return route.replace("member_list", "map");
       }
     },
     routeKanbanSwap() {
       let route = this.$route.path;
-
       if (
         this.isSheetsView &&
         (route.includes("tasks") ||
@@ -145,8 +152,12 @@ export default {
         return `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks`;
       } else if (this.isMapView && !route.includes("notes")) {
         return `/programs/${this.$route.params.programId}/kanban`;
+      } else if (this.isLessonsView) {
+        return `/programs/${this.$route.params.programId}/kanban`;
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "kanban");
+      // } else if (this.isLessonsView) {
+      //   return route.replace("lessons", "kanban");
       } else {
         return route.replace("member_list", "kanban");
       }
