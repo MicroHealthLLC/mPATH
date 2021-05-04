@@ -164,10 +164,10 @@
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
-      :active="selectedTaskStage.id - 1"                      
-      finish-status="success"  
       :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :disabled="!_isallowed('write') || !!fixedStage"
+      :active="selectedTaskStage.id - 1"                      
+      finish-status="success"        
+      :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
       v-model="selectedTaskStage"
       track-by="id" 
       value-key="id"
@@ -188,10 +188,10 @@
   <div class="mx-4 mt-2 mb-4" v-if="(selectedTaskStage == null) || selectedTaskStage == undefined">
     <label class="font-md">Select Stage</label>                           
     <el-steps 
-      class="exampleOne"              
-      finish-status="success"
-      :class="{'overSixSteps': taskStages.length >= 6 }"   
-      :disabled="!_isallowed('write') || !!fixedStage"
+      class="exampleOne"    
+      :class="{'overSixSteps': taskStages.length >= 6 }"            
+      finish-status="success"      
+      :disabled="!_isallowed('write') || fixedStage && isKanbanView"
       v-model="selectedTaskStage"  
       track-by="id" 
       value-key="id"
@@ -1075,7 +1075,7 @@
         this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
         this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
-        this.selectedTaskStage = this.taskStages.find(t => t.id === this.DV_task.taskStageId)
+        this.selectedTaskStage = this.taskStages.find( (t) => t.id === this.DV_task.taskStageId)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
         this.$nextTick(() => {
@@ -1557,7 +1557,8 @@
       selectedTaskStage: {
         handler: function(value) {
           this.DV_task.taskStageId = value ? value.id : null
-        }, deep: true
+        }, 
+        deep: true
       },
       filteredTasks: {
         handler(value) {
