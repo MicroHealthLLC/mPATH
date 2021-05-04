@@ -242,7 +242,7 @@
 
                       <div class="col-5">
                         <span
-                          class="w-100 my-1 ml-2progress pg-content"
+                          class="w-100 my-1 progress ml-2 pg-content"
                           :class="{ 'progress-0': task.progress <= 0 }"
                         >
                           <div
