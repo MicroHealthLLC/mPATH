@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_03_185839) do
+ActiveRecord::Schema.define(version: 2021_05_04_174424) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -118,6 +118,20 @@ ActiveRecord::Schema.define(version: 2021_05_03_185839) do
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
+  end
+
+  create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "R"
+    t.string "tasks", default: "R"
+    t.string "notes", default: "R"
+    t.string "issues", default: "R"
+    t.string "admin", default: "R"
+    t.string "risks", default: "R"
+    t.integer "user_id"
+    t.integer "facility_project_id"
+    t.integer "facility_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|

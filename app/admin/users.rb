@@ -45,6 +45,16 @@ ActiveAdmin.register User do
         :members,
         :risks,
         :lessons
+      ],
+      facility_privileges_attributes: [
+        :id,
+        :overview,
+        :tasks,
+        :issues,
+        :notes,
+        :admin,
+        :user_id,
+        :facility_project_id
       ]
     ]
   end
@@ -89,6 +99,17 @@ ActiveAdmin.register User do
             p.input :members, as: :hidden
             p.input :admin, as: :hidden
             p.input :lessons, as: :hidden
+          end
+          f.inputs do
+            f.has_many :facility_privileges,
+              heading: 'Project Privilege',
+              new_record: 'Project Privilege',
+              remove_record: 'Remove Project Privilege',
+              allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+
+              b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  current_user.active_admin_facility_project_select_options, f.object.facility_privilege_ids )
+              
+            end
           end
         end
         div id: 'user-role_privilege-tab'

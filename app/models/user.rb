@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_one :privilege, dependent: :destroy
   belongs_to :organization, optional: true
   has_many :query_filters, dependent: :destroy
+  has_many :facility_privileges, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
@@ -21,6 +22,8 @@ class User < ApplicationRecord
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
+  accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank
+
   PREFERENCES_HASH =  {
       navigation_menu: 'map', 
       sub_navigation_menu: nil,
@@ -30,6 +33,12 @@ class User < ApplicationRecord
     }
   has_settings do |s|
     s.key :preferences, defaults: PREFERENCES_HASH
+  end
+
+  def active_admin_facility_project_select_options
+    fps = FacilityProject.includes(:facility).where(project_id: self.project_ids).select('distinct(facility_id)') #projects.incldues([ {facility_projects: [:facility] } ] )
+    fp = self.facility_privileges.map(&:facility_project_id).uniq
+    fps.map{|f| [f.facility.facility_name, f.id, (fp.include?(f.id) ? 'selected' : nil)  ]}
   end
 
   def encrypted_authentication_token
