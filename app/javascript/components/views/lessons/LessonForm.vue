@@ -95,36 +95,64 @@
     <div class="form-group pt-3 mx-4">
       <label class="font-md">Lesson Name <span style="color: #dc3545">*</span></label>
           <input
-            name="Lesson Name"
+            name="Name"
             v-validate="'required'"
             type="text"
             class="form-control form-control-sm"
             v-model="DV_lesson.title"
-            placeholder="Lesson Name"
+            placeholder="Name"
             :readonly="!_isallowed('write')"
-            :class="{'form-control': true, 'error': errors.has('Lesson Name') }"
+            :class="{'form-control': true, 'error': errors.has('Name') }"
             data-cy="task_name"
           />
-      <div v-show="errors.has('Lesson Name')" class="text-danger" data-cy="task_name_error">
-        {{errors.first('Lesson Name')}}
+      <div v-show="errors.has('Name')" class="text-danger" data-cy="task_name_error">
+        {{errors.first('Name')}}
       </div>
     </div>
         <div class="form-group mx-4">
         <label class="font-md">Description</label>
         <textarea
+          name="Description"
           class="form-control"
-          placeholder="Lesson brief description"
+          placeholder="Brief Description"
+          v-validate="'required'"
           v-model="DV_lesson.description"
           rows="4"
           :readonly="!_isallowed('write')"
+          :class="{'form-control': true, 'error': errors.has('Description') }"
           data-cy="task_description"
         />
+      <div v-show="errors.has('Description')" class="text-danger" data-cy="task_description_error">
+        {{errors.first('Description')}}
+      </div>
       </div>
 
     <!-- Stages Row ends -->
 
     <div class="form-row mx-4">
-        <div class="form-group col-md-6 pl-0">
+        <div class="form-group col-md-6 pr-3">    
+          <label class="font-md">Submitted by:</label>
+          <el-select 
+            v-model="users" 
+            class="w-100"                
+            track-by="id"   
+            clearable   
+            filterable  
+            value-key="id"                                                                                                                                                          
+            placeholder="Search and select user"
+            :disabled="!_isallowed('write')"
+            data-cy="risk_owner"
+          >
+            <el-option
+              v-for="item in activeProjectUsers"
+              :value="item"
+              :key="item.id"
+              :label="item.fullName"
+            >
+            </el-option>
+          </el-select>
+        </div>
+        <div class="form-group col-md-6 pl-3">
           <label class="font-md" >Date <span style="color: #dc3545">*</span></label>
           <div :class="{ 'error-border': errors.has('Date') }">
             <v2-date-picker
@@ -143,87 +171,70 @@
           </div>
         </div>
       </div>
-               
-    <div class="mx-4 mt-2 mb-4" v-if='false'>
-      <div v-if="selectedTaskStage !== undefined">       
-      <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button v-if="_isallowed('write')" @click.prevent="clearStages" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
-      </div>    
-    <el-steps 
-      class="exampleOne mt-3" 
-      :active="selectedTaskStage.id - 1"                      
-      finish-status="success"  
-      :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :disabled="!_isallowed('write') || !!fixedStage"
-      v-model="selectedTaskStage"
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"             
-      :value="item"
-      style="cursor:pointer"
-      v-if="_isallowed('write')"
-      @click.native="selectedStage(item)"
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>          
-    </div>
-  </div>
 
-  <div class="mx-4 mt-2 mb-4"  v-if='false'>
-    <label class="font-md">Select Stage</label>                           
-    <el-steps 
-      class="exampleOne"              
-      finish-status="success"
-      :class="{'overSixSteps': taskStages.length >= 6 }"   
-      :disabled="!_isallowed('write') || !!fixedStage"
-      v-model="selectedTaskStage"  
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"            
-      :value="item"
-      style="cursor:pointer"     
-      :load="log( taskStages.length )"
-      v-if="_isallowed('write')"
-      @click.native="selectedStage(item)"        
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>
-  </div>
-</div>
-
-  <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
-  <div class="form-group mb-0 pt-3 d-flex w-100">
-        <div class="form-group user-select ml-4 mr-1 w-100">
-          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-          <label class="font-md mb-0">Assign To:</label>
-          <el-select
-           v-model="users"
-           class="w-100"
-           filterable
-           clearable
-           track-by="id"
-           value-key="id"
-           placeholder="Search and select User"
-           :disabled="!_isallowed('write')"
-           multiple
-           data-cy="task_owner"
+      <div class="form-row mx-4">
+        <div class="form-group col-md-6 pr-3">         
+        <label class="font-md" >Category</label >
+        <el-select
+          v-model="selectedTaskType"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          :disabled="!_isallowed('write')"
+          data-cy="task_type"
+          name="Category"
+          :class="{ 'error-border': errors.has('Category') }"
+          placeholder="Select Category"
            >
           <el-option
-            v-for="item in activeProjectUsers"
+            v-for="item in taskTypes"
             :value="item"
             :key="item.id"
-            :label="item.fullName"
+            :label="item.name"
             >
           </el-option>
           </el-select>
+          <div
+          v-show="errors.has('Category')"
+          class="text-danger"
+          data-cy="task_category_error"
+        >
+          {{ errors.first("Category") }}
+        </div>
+        </div>
+       
+        <div class="form-group col-md-6 pl-3">
+         <label class="font-md" >Stage</label>
+          <el-select 
+          v-model="selectedLessonStage"                    
+          class="w-100" 
+          clearable
+          track-by="id" 
+          value-key="id"    
+          :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+          data-cy="task_stage"         
+          placeholder="Select Stage"
+        >
+          <el-option
+            v-for="item in lessonStages"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+          >
+          </el-option>
+        </el-select>
+    
+        </div>
+      </div>
+    
+</div>
+
+
+ <!-- RELATED TAB #2 -->
+<div v-show="currentTab == 'tab2'" class="paperLookTab tab5">  
+  <div class="form-group user-select pt-3 mx-4">
+          <!-- 'Responsible' field was formally known as 'Assign Users' field -->
+         
 
           <label class="font-md mb-0">Projects:</label>
           <el-select
@@ -248,13 +259,130 @@
           </el-select>
 
         </div>
+
+      <div class="form-group user-select pt-3 mx-4">
+        <label class="font-md mb-0">Related Task</label>
+         <el-select
+          v-model="selectedTask"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          filterable
+         :disabled="!_isallowed('write')"
+          placeholder="Search and select Related-tasks"
+
+          >
+         <el-option
+          v-for="item in filteredTasks"
+          :value="item"
+          :key="item.id"
+          :label="item.text"
+           >
+          </el-option>
+          </el-select>
+
+      </div>
+
+      <div class="form-group user-select mx-4">
+        <label class="font-md mb-0">Related Issue</label>
+          <el-select
+          v-model="selectedIssue"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          filterable
+          :disabled="!_isallowed('write')"
+          placeholder="Search and select Related-issues"
+
+          >
+         <el-option
+          v-for="item in filteredIssues"
+          :value="item"
+          :key="item.id"
+          :label="item.title"
+           >
+          </el-option>
+          </el-select>
+
+      </div>
+        <div class="form-group user-select mx-4">
+        <label class="font-md mb-0">Related Risk</label>
+         <el-select
+          v-model="selectedRisk"
+          class="w-100"
+          track-by="id"
+          value-key="id"
+          filterable
+         :disabled="!_isallowed('write')"
+          placeholder="Search and select Related-risks"
+
+          >
+         <el-option
+          v-for="item in filteredRisks"
+          :value="item"
+          :key="item.id"
+          :label="item.text"
+           >
+          </el-option>
+          </el-select>
+      </div>
+
+
+    <!-- closing div for tab4 -->
+ </div>
+
+
+  <!-- Successes TAB 3 -->
+  <div v-show="currentTab == 'tab3'" class="paperLookTab tab5">
+
+
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Successes:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addSuccess">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess"  class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filterLessonDetailSuccess" :list="filterLessonDetailSuccess" :per="5" class="paginate-list" :key="filterLessonDetailSuccess ? filterLessonDetailSuccess.length : 1">
+          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Success by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
+              <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
+          </div>
+        </paginate>
+      </div>
   </div>
 
+  <!-- UPDATE TAB 4 -->
+  <div v-show="currentTab == 'tab4'" class="paperLookTab tab6">
+
+
+     <div class="form-group mx-4 paginated-updates">
+        <label class="font-sm">Failures:</label>
+        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFailure">
+          <i class="fas fa-plus-circle"></i>
+        </span>
+        <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
+        <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailFailure.length : 1">
+          <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
+            <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
+              <span v-if="_isallowed('delete')" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </span>
+            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
+            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
+          </div>
+        </paginate>
+      </div>
   </div>
 
 
-   <!-- FILES TAB # 4-->
-<div v-show="currentTab == 'tab3'" class="paperLookTab tab4">
+     <!-- FILES & LINKS TAB # 5-->
+<div v-show="currentTab == 'tab5'" class="paperLookTab tab4">
           <div class="container-fluid mx-4 mt-2">
            <div class="row">
                <div class="col-5 pr-4 links-col">
@@ -367,165 +495,11 @@
             </div>
 
 </div>
-<!-- closing div for tab4 -->
+<!-- closing div for tab5 -->
 </div>
 
-
- <!-- RELATED TAB #5 -->
-<div v-show="currentTab == 'tab4'" class="paperLookTab tab5">
-
-      <div class="form-group user-select pt-3 mx-4">
-        <label class="font-md" >Category</span></label >
-        <el-select
-          v-model="selectedTaskType"
-          class="w-100"
-          track-by="id"
-          value-key="id"
-          :disabled="!_isallowed('write')"
-          data-cy="task_type"
-          name="Category"
-          :class="{ 'error-border': errors.has('Category') }"
-          placeholder="Select Category"
-           >
-          <el-option
-            v-for="item in taskTypes"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-          <div
-          v-show="errors.has('Category')"
-          class="text-danger"
-          data-cy="task_category_error"
-        >
-          {{ errors.first("Category") }}
-        </div>
-      </div>
-
-      <div class="form-group user-select pt-3 mx-4">
-        <label class="font-md mb-0">Related Task</label>
-         <el-select
-          v-model="selectedTask"
-          class="w-100"
-          track-by="id"
-          value-key="id"
-          filterable
-         :disabled="!_isallowed('write')"
-          placeholder="Search and select Related-tasks"
-
-          >
-         <el-option
-          v-for="item in filteredTasks"
-          :value="item"
-          :key="item.id"
-          :label="item.text"
-           >
-          </el-option>
-          </el-select>
-
-      </div>
-
-      <div class="form-group user-select mx-4">
-        <label class="font-md mb-0">Related Issue</label>
-          <el-select
-          v-model="selectedIssue"
-          class="w-100"
-          track-by="id"
-          value-key="id"
-          filterable
-          :disabled="!_isallowed('write')"
-          placeholder="Search and select Related-issues"
-
-          >
-         <el-option
-          v-for="item in filteredIssues"
-          :value="item"
-          :key="item.id"
-          :label="item.title"
-           >
-          </el-option>
-          </el-select>
-
-      </div>
-        <div class="form-group user-select mx-4">
-        <label class="font-md mb-0">Related Risk</label>
-         <el-select
-          v-model="selectedRisk"
-          class="w-100"
-          track-by="id"
-          value-key="id"
-          filterable
-         :disabled="!_isallowed('write')"
-          placeholder="Search and select Related-risks"
-
-          >
-         <el-option
-          v-for="item in filteredRisks"
-          :value="item"
-          :key="item.id"
-          :label="item.text"
-           >
-          </el-option>
-          </el-select>
-      </div>
-
-
-    <!-- closing div for tab4 -->
- </div>
-
-
-  <!-- UPDATE TAB 5 -->
-  <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
-
-
-     <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Successes:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addSuccess">
-          <i class="fas fa-plus-circle"></i>
-        </span>
-        <paginate-links v-if="filterLessonDetailSuccess.length" for="filterLessonDetailSuccess"  class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
-        <paginate ref="paginator" name="filterLessonDetailSuccess" :list="filterLessonDetailSuccess" :per="5" class="paginate-list" :key="filterLessonDetailSuccess ? filterLessonDetailSuccess.length : 1">
-          <div v-for="lessonDetail in paginated('filterLessonDetailSuccess')" class="form-group">
-            <span class="d-inline-block w-100"><label class="badge badge-secondary">Success by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
-              <span v-if="allowDeleteNote(lessonDetail)" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-            </span>
-            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
-            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
-          </div>
-        </paginate>
-      </div>
-  </div>
-
   <!-- UPDATE TAB 6 -->
-  <div v-show="currentTab == 'tab6'" class="paperLookTab tab6">
-
-
-     <div class="form-group mx-4 paginated-updates">
-        <label class="font-sm">Failures:</label>
-        <span class="ml-2 clickable" v-if="_isallowed('write')" @click.prevent="addFailure">
-          <i class="fas fa-plus-circle"></i>
-        </span>
-        <paginate-links v-if="filterLessonDetailFailure.length" for="filterLessonDetailFailure" class="paginate float-right" :show-step-links="true" :limit="2"></paginate-links>
-        <paginate ref="paginator" name="filterLessonDetailFailure" :list="filterLessonDetailFailure" :per="5" class="paginate-list" :key="filterLessonDetailFailure ? filterLessonDetailFailure.length : 1">
-          <div v-for="lessonDetail in paginated('filterLessonDetailFailure')" class="form-group">
-            <span class="d-inline-block w-100"><label class="badge badge-secondary">Failure by</label> <span class="font-sm text-muted">{{noteBy(lessonDetail)}}</span>
-              <span v-if="_isallowed('delete')" class="clickable font-sm delete-action float-right" @click.prevent.stop="destroyLessonDetail(lessonDetail)">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-            </span>
-            <textarea class="form-control mb-2" v-model="lessonDetail.finding" rows="3" placeholder="Enter findings..."></textarea>
-            <textarea class="form-control" v-model="lessonDetail.recommendation" rows="3" placeholder="Enter recommendations.."></textarea>
-          </div>
-        </paginate>
-      </div>
-  </div>
-
-  <!-- UPDATE TAB 7 -->
-  <div v-show="currentTab == 'tab7'" class="paperLookTab tab5">
+  <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
 
 
      <div class="form-group mx-4 paginated-updates">
@@ -577,17 +551,19 @@
         DV_lesson: this.INITIAL_LESSON_STATE(),
         paginate: ['filteredNotes', 'filterLessonDetailSuccess', 'filterLessonDetailFailure'],
         destroyedFiles: [],
-        selectedTaskType: null,
+        selectedTaskType: null,     
         selectedTaskStage: null,
         selectedTask: null,
         selectedIssue: null,
         selectedRisk: null,
+        selectedLessonStage: null,
         selectedFacilityProjects: [],
-        users: [],
+        users: null,
         activeFacilityProjects: [],
         showErrors: false,
         loading: true,
         movingSlot: '',
+        lessonStages: [],
         currentTab: 'tab1',
         tabs: [
           {
@@ -602,39 +578,39 @@
               "Stage"
             ],
           },
-          {
-            label: "Assignments",
-            key: "tab2",
-            closable: false,
-            form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
-          },
-          {
-            label: "Files & Links",
-            key: "tab3",
-            closable: false,
-            form_fields: ["Files"],
-          },
+          // {
+          //   label: "Assignments",
+          //   key: "tab2",
+          //   closable: false,
+          //   form_fields: ["Responsible", "Accountable", "Consulted", "Informed"],
+          // },         
           {
             label: "Related",
-            key: "tab4",
+            key: "tab2",
             closable: false,
             form_fields: ["Related Task", "Related Issue", "Related Risk"],
           },
           {
             label: "Successes",
-            key: "tab5",
+            key: "tab3",
             closable: false,
             form_fields: ["Files"],
           },
           {
             label: "Failures",
-            key: "tab6",
+            key: "tab4",
+            closable: false,
+            form_fields: ["Files"],
+          },
+           {
+            label: "Files & Links",
+            key: "tab5",
             closable: false,
             form_fields: ["Files"],
           },
           {
             label: "Updates",
-            key: "tab7",
+            key: "tab6",
             closable: false,
             form_fields: ["Progress", "Updates"],
           }
@@ -642,11 +618,14 @@
       }
     },
     mounted() {
-      if (this.contentLoaded && this.$route.params.lessonId !== "new") {
-        this.lesson = this.currentProject.lessons.find(
-          (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
-        );
+      if (this.contentLoaded) {
+        if(this.$route.params.lessonId !== "new"){
+          this.lesson = this.currentProject.lessons.find(
+            (lesson) => lesson.id == parseInt(this.$route.params.lessonId)
+          );
+        }
         this.activeFacilityProjects = _.flatten(_.map(this.currentProject.facilities, f => [{id: f.facilityProjectId, name: f.facilityName}] ) )
+        this.lessonStages = this.currentProject.lessonStages
       }
       if (!_.isEmpty(this.lesson)) {
         this.loadLesson(this.lesson)
@@ -677,10 +656,12 @@
           issueId: '',
           issueTypeId: '',
           userIds: [],
-          facilityProjectIds: [],
+          taskStageId: "",
+          facilityProjectIds: [],     
           subTaskIds: [],
           subIssueIds: [],
           subRiskIds: [],
+          lessonStages: [],
           description: '',
           lessonFiles: [],
           notes: [],
@@ -697,7 +678,7 @@
         return this._isallowed('write') && note.guid || (note.userId == this.$currentUser.id)
       },
       selectedStage(item){    
-        this.selectedTaskStage = item
+        this.selectedLessonStage = item
       },  
       clearStages() {
         this.selectedTaskStage = null
@@ -741,11 +722,14 @@
       },
       loadLesson(lesson) {
         this.DV_lesson = {...this.DV_lesson, ..._.cloneDeep(lesson)}
-        this.users = _.filter(this.activeProjectUsers, u => this.DV_lesson.userIds.includes(u.id))
+        this.users = _.filter(this.activeProjectUsers, (u) => this.DV_lesson.userIds.includes(u.id))[0];   
         this.selectedFacilityProjects = _.filter(this.activeFacilityProjects, u => this.DV_lesson.facilityProjectIds.includes(u.id) )
         this.selectedIssue = _.filter(this.filteredIssues, u => this.DV_lesson.issueId = u.id)[0]
         this.selectedTask = _.filter(this.filteredTasks, u => this.DV_lesson.taskId == u.id)[0]
         this.selectedRisk = _.filter(this.filteredRisks, u => this.DV_lesson.riskId == u.id)[0]
+        this.selectedLessonStage = this.lessonStages.find(
+        (t) => t.id === this.DV_lesson.lessonStageId
+         );
         if (this.DV_lesson.attachFiles) this.addFile(this.DV_lesson.attachFiles, false)
         this.$nextTick(() => {
           this.errors.clear()
@@ -851,6 +835,7 @@
             formData.append('lesson[id]', this.DV_lesson.id)
 
           formData.append('lesson[title]', this.DV_lesson.title)
+          formData.append("lesson[lesson_stage_id]", this.DV_lesson.lessonStageId);
           formData.append('lesson[description]',  this.DV_lesson.description)
           formData.append('lesson[date]',  this.DV_lesson.date)
 
@@ -1135,7 +1120,7 @@
           if (value){
               this.DV_lesson.userIds = _.uniq(_.map( _.flatten([value]) , 'id'))
           }else{
-            this.DV_lesson.userIds = null
+            this.DV_lesson.userIds = []
           }
         }, deep: true
       },
@@ -1160,9 +1145,9 @@
           this.DV_lesson.taskTypeId = value ? value.id : null
         }, deep: true
       },
-      selectedTaskStage: {
+      selectedLessonStage: {
         handler: function(value) {
-          this.DV_lesson.taskStageId = value ? value.id : null
+          this.DV_lesson.lessonStageId = value ? value.id : null
         }, deep: true
       },
       selectedFacilityProjects: {

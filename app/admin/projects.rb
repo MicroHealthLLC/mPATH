@@ -17,6 +17,7 @@ ActiveAdmin.register Project do
       task_stage_ids: [],
       issue_stage_ids: [],
       risk_stage_ids: [],
+      lesson_stage_ids: [],
       comments_attributes: [
         :id,
         :namespace,
@@ -80,6 +81,7 @@ ActiveAdmin.register Project do
           input :issue_severities, label: 'Issue Severities in Program', as: :select, collection: options_for_select( IssueSeverity.all.map{|u| [u.name, u.id]}, f.object.issue_severity_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :issue_stages, label: 'Issue Stages in Program', as: :select, collection: options_for_select( IssueStage.all.map{|u| [u.name, u.id]}, f.object.issue_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
           input :risk_stages, label: 'Risk Stages in Program', as: :select, collection: options_for_select( RiskStage.all.map{|u| [u.name, u.id]}, f.object.risk_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+          input :lesson_stages, label: 'Lesson Stages in Program', as: :select, collection: options_for_select( LessonStage.all.map{|u| [u.name, u.id]}, f.object.lesson_stage_ids), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
 
         end
       end

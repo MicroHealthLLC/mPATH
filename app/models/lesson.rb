@@ -5,6 +5,8 @@ class Lesson < ApplicationRecord
   belongs_to :issue, optional: true
   belongs_to :task_type, optional: true
   belongs_to :issue_type, optional: true
+
+  belongs_to :lesson_stage, optional: true
   
   # This is program is front end
   belongs_to :project
@@ -21,7 +23,7 @@ class Lesson < ApplicationRecord
 
   has_many :lesson_details, dependent: :destroy
 
-  validates :title, :description, presence: true
+  validates :title, :description, :date, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   def to_json(options = {})
@@ -91,6 +93,7 @@ class Lesson < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       lesson_details: self.lesson_details.map(&:to_json),
+      lesson_stage_id: self.lesson_stage_id,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
 
@@ -111,6 +114,7 @@ class Lesson < ApplicationRecord
       :issue_type_id, 
       :user_id, 
       :project_id,
+      :lesson_stage_id,
       lesson_files: [],
       user_ids: [],
       facility_project_ids: [],
