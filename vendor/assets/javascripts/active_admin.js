@@ -15,28 +15,9 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
-function updateFacilityPrivileges(element){
-  var v = $(element).val()
-  var moduleName = $(element).attr("data-module-name")
-
-  var moduleElement = $(element).closest("fieldset").find("input[type='hidden']:first")
-  var moduleElementValue = $(moduleElement).val()
-  if( $(element).is(":checked") ){
-    if( !(moduleElementValue).includes(v) ){
-      (moduleElement).val(moduleElementValue + v)
-    }
-
-  }else {
-    if( (moduleElementValue).includes(v) ){
-      (moduleElement).val(moduleElementValue.replace(v , ''))
-    }
-
-  }
-}
-
 jQuery(function($) {
 
-  
+
 
   // Add placeholder to for organization select
   $("#user_organization_input .select2").select2({

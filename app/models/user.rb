@@ -22,7 +22,7 @@ class User < ApplicationRecord
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
-  accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank
+  accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank, allow_destroy: true
 
   PREFERENCES_HASH =  {
       navigation_menu: 'map', 
@@ -37,7 +37,6 @@ class User < ApplicationRecord
 
   def active_admin_facility_project_select_options
     fps_hash = FacilityProject.includes(:facility, :project).where(project_id: self.projects.active).group_by(&:project)
-
     options = []
     fps_hash.each do |project, fps|
       options << [project.name, project.id, {disabled: true}]

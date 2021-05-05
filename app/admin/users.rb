@@ -48,15 +48,15 @@ ActiveAdmin.register User do
       ],
       facility_privileges_attributes: [
         :id,
-        :overview,
-        :tasks,
-        :risks,
-        :issues,
-        :notes,
-        :admin,
         :user_id,
         :_destroy,
-        :facility_project_id
+        :facility_project_id,
+        overview: [],
+        tasks: [],
+        risks: [],
+        issues: [],
+        notes: [],
+        admin: []
       ]
     ]
   end
@@ -109,9 +109,8 @@ ActiveAdmin.register User do
               remove_record: 'Remove Project Privilege',
               allow_destroy: -> (c) { current_user.superadmin?  } do |b|
 
-              b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  current_user.active_admin_facility_project_select_options, f.object.facility_privilege_ids )
-              # b.input :overview, as: :check_boxes, input_name: "overview_checkbox",:collection => [["Read", "R", {checked: b.object.overview.include?("R") ,onchange: "updateFacilityPrivileges(this)", name: "", "data-module-name" => "overview" }], ["Write", "W", {checked: b.object.overview.include?("W") , onchange: "updateFacilityPrivileges(this)", name: "", "data-module-name" => "overview" }], ["Delete", "D", {checked: b.object.overview.include?("D") , onchange: "updateFacilityPrivileges(this)", name: "", "data-module-name" => "overview" }]]
-              b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "overview"), hidden_fields: false
+              b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  current_user.active_admin_facility_project_select_options, b.object.facility_project_id ), input_html: {disabled: !b.object.new_record? }
+              b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "overview")
               b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "admin")
               b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "tasks")
               b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "issues")
