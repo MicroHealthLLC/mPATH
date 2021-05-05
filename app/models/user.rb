@@ -36,9 +36,19 @@ class User < ApplicationRecord
   end
 
   def active_admin_facility_project_select_options
-    fps = FacilityProject.includes(:facility).where(project_id: self.project_ids).select('distinct(facility_id)') #projects.incldues([ {facility_projects: [:facility] } ] )
-    fp = self.facility_privileges.map(&:facility_project_id).uniq
-    fps.map{|f| [f.facility.facility_name, f.id, (fp.include?(f.id) ? 'selected' : nil)  ]}
+    fps_hash = FacilityProject.includes(:facility, :project).where(project_id: self.projects.active).group_by(&:project)
+
+    options = []
+    fps_hash.each do |project, fps|
+      options << [project.name, project.id, {disabled: true}]
+      fps.each do |f|
+        options << ["&nbsp;#{f.facility.facility_name}".html_safe, f.id]
+      end
+    end    
+    options
+    # fps = FacilityProject.includes(:facility, :project).where(project_id: self.project_ids).select('distinct(facility_id)') #projects.incldues([ {facility_projects: [:facility] } ] )
+    # fp = self.facility_privileges.map(&:facility_project_id).uniq
+    # fps.map{|f| [f.facility.facility_name, f.id  ]}
   end
 
   def encrypted_authentication_token
