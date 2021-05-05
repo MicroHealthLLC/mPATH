@@ -17,5 +17,19 @@ class FacilityPrivilege < ApplicationRecord
       f = self.facility_project
       self.update(facility_id: f.facility_id)
     end
-  end  
+  end 
+
+  def to_json
+    {
+      overview: self.overview.join(""),
+      admin: self.admin.join(""),
+      tasks: self.tasks.join(""),
+      issues: self.issues.join(""),
+      risks: self.risks.join(""),
+      notes: self.notes.join(""),
+      facility_project_id: self.facility_project_id,
+      project_id: self.facility_id 
+    }
+  end
+
 end

@@ -45,9 +45,6 @@ class User < ApplicationRecord
       end
     end    
     options
-    # fps = FacilityProject.includes(:facility, :project).where(project_id: self.project_ids).select('distinct(facility_id)') #projects.incldues([ {facility_projects: [:facility] } ] )
-    # fp = self.facility_privileges.map(&:facility_project_id).uniq
-    # fps.map{|f| [f.facility.facility_name, f.id  ]}
   end
 
   def encrypted_authentication_token

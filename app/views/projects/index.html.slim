@@ -6,6 +6,7 @@
 
 = javascript_tag nonce: true do
   |var current_user = "#{JSON.generate(current_user.as_json(include: :privilege, methods: :full_name))}";
+  |var project_privileges = "#{JSON.generate(current_user.facility_privileges.map(&:to_json))}";
   |var preferences = "#{JSON.generate(current_user.get_preferences.value )}";
   |var google_api_key = "#{Setting['GOOGLE_MAP_KEY']}";
 
