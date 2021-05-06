@@ -17,6 +17,8 @@ function checkRiskProbabilityImpactNumber(element){
 
 jQuery(function($) {
 
+
+
   // Add placeholder to for organization select
   $("#user_organization_input .select2").select2({
     placeholder: "Search and select an organization",

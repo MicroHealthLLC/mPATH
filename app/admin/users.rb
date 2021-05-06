@@ -45,6 +45,18 @@ ActiveAdmin.register User do
         :members,
         :risks,
         :lessons
+      ],
+      facility_privileges_attributes: [
+        :id,
+        :user_id,
+        :_destroy,
+        :facility_project_id,
+        overview: [],
+        tasks: [],
+        risks: [],
+        issues: [],
+        notes: [],
+        admin: []
       ]
     ]
   end
@@ -89,6 +101,22 @@ ActiveAdmin.register User do
             p.input :members, as: :hidden
             p.input :admin, as: :hidden
             p.input :lessons, as: :hidden
+          end
+          f.inputs do
+            f.has_many :facility_privileges,
+              heading: 'Project Privilege',
+              new_record: 'Project Privilege',
+              remove_record: 'Remove Project Privilege',
+              allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+
+              b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  current_user.active_admin_facility_project_select_options, b.object.facility_project_id ), input_html: {disabled: !b.object.new_record? }
+              b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "overview")
+              b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "admin")
+              b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "tasks")
+              b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "issues")
+              b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "risks")
+              b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, "notes")
+            end
           end
         end
         div id: 'user-role_privilege-tab'
