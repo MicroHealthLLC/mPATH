@@ -8,10 +8,10 @@
     @mouseleave="close"
   >
     <div>
-      <div class="menu-subwindow-title">Select Related Task(s)</div>
+      <div class="menu-subwindow-title">Select Related {{ item }}s</div>
       <el-input
         class="filter-input"
-        placeholder="Filter Tasks..."
+        :placeholder="`Filter ${item}s...`"
         v-model="filterTree"
       ></el-input>
       <el-tree
@@ -20,14 +20,14 @@
         :filter-node-method="filterNode"
         @check-change="toggleSubmitBtn"
         show-checkbox
-        ref="tasktree"
+        ref="relatedtree"
         node-key="id"
       >
       </el-tree>
       <div class="context-menu-btns">
         <button
           class="btn btn-sm btn-primary ml-2"
-          @click.prevent="addRelatedTasks"
+          @click.prevent="addRelatedItems"
           :disabled="submitDisabled"
         >
           Submit
@@ -57,6 +57,7 @@ export default {
     facilityGroups: Array,
     task: Object,
     relatedTasks: Array,
+    relatedIssues: Array,
   },
   data() {
     return {
@@ -70,6 +71,7 @@ export default {
       },
       filterTree: "",
       submitted: false,
+      item: "",
     };
   },
   computed: {
@@ -84,6 +86,7 @@ export default {
     treeFormattedData() {
       var data = [];
       var relatedTaskIds = this.relatedTasks.map((task) => task.id);
+      var relatedIssueIds = this.relatedIssues.map((issue) => issue.id);
 
       this.facilityGroups.forEach((group, index) => {
         data.push({
@@ -94,23 +97,41 @@ export default {
               .filter(
                 (facility) => facility.facility.id !== this.task.facilityId
               )
-              .filter((facility) => facility.tasks.length > 0)
+              .filter((facility) => this.item && facility[this.item + "s"].length > 0)
               .map((facility) => {
-                return {
-                  id: facility.facilityProjectId,
-                  label: facility.facilityName,
-                  children: [
-                    ...facility.tasks
-                      .filter((task) => !relatedTaskIds.includes(task.id))
-                      .map((task) => {
-                        return {
-                          id: task.id,
-                          label: task.text,
-                          task: task,
-                        };
-                      }),
-                  ],
-                };
+                if (this.item == "task") {
+                  return {
+                    id: facility.facilityProjectId,
+                    label: facility.facilityName,
+                    children: [
+                      ...facility.tasks
+                        .filter((task) => !relatedTaskIds.includes(task.id))
+                        .map((task) => {
+                          return {
+                            id: task.id,
+                            label: task.text,
+                            task: task,
+                          };
+                        }),
+                    ],
+                  };
+                } else {
+                  return {
+                    id: facility.facilityProjectId,
+                    label: facility.facilityName,
+                    children: [
+                      ...facility.issues
+                        .filter((issue) => !relatedIssueIds.includes(issue.id))
+                        .map((issue) => {
+                          return {
+                            id: issue.id,
+                            label: issue.title,
+                            issue: issue,
+                          };
+                        }),
+                    ],
+                  };
+                }
               }),
           ],
         });
@@ -119,9 +140,10 @@ export default {
       return [...data];
     },
     submitDisabled() {
-      if (this.$refs.tasktree) {
+      if (this.$refs.relatedtree) {
         return (
-          this.$refs.tasktree.getCheckedNodes().length === 0 || this.submitted
+          this.$refs.relatedtree.getCheckedNodes().length === 0 ||
+          this.submitted
         );
       } else {
         return this.submitted;
@@ -134,14 +156,17 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["updateTasksHash"]),
     // closes context menu
     close() {
+      this.clearAllNodes();
+      this.item = "";
       this.show = false;
       this.left = 0;
       this.top = 0;
     },
-    open(evt) {
+    open(evt, item) {
+      console.log(item);
+      this.item = item;
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
       this.top = evt.pageY || evt.clientY;
@@ -159,18 +184,22 @@ export default {
       this.show = true;
     },
     clearAllNodes() {
-      this.$refs.tasktree.setCheckedNodes([]);
+      this.$refs.relatedtree.setCheckedNodes([]);
     },
-    addRelatedTasks() {
+    addRelatedItems() {
       this.submitted = true;
 
-      var taskNodes = this.$refs.tasktree
+      var nodes = this.$refs.relatedtree
         .getCheckedNodes()
         .filter((item) => !item.hasOwnProperty("children"));
 
-      var tasks = taskNodes.map((task) => task.task);
-
-      this.$emit("related-tasks", tasks);
+      if (this.item == "task") {
+        var tasks = nodes.map((task) => task.task);
+        this.$emit("add-related-tasks", tasks);
+      } else {
+        var issues = nodes.map((issue) => issue.issue);
+        this.$emit("add-related-issues", issues);
+      }
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -182,7 +211,7 @@ export default {
   },
   watch: {
     filterTree(value) {
-      this.$refs.tasktree.filter(value);
+      this.$refs.relatedtree.filter(value);
     },
   },
 };

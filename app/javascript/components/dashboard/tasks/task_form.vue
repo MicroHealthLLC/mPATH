@@ -905,7 +905,7 @@
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
-                @click="openContextMenu"
+                @click="openContextMenu($event, 'task')"
                 @contextmenu.prevent=""
               >
                 <i class="fas fa-plus-circle"></i>
@@ -946,8 +946,13 @@
             <!-- RELATED ISSUES -->
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
-              <span class="ml-2 clickable" v-if="_isallowed('write')">
-                <i class="fas fa-plus-circle"></i>
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click="openContextMenu($event, 'issue')"
+                @contextmenu.prevent=""
+              >
+                <i id="issue-add-btn" class="fas fa-plus-circle"></i>
               </span>
 
               <hr class="mt-0" />
@@ -955,52 +960,29 @@
               <ul class="text-smaller">
                 <li
                   class="d-flex justify-content-between align-items-center my-2"
+                  v-for="(issue, index) in relatedIssues"
+                  :key="index"
                 >
-                  <a href="">Issue 009</a
-                  ><el-button
+                  <el-popover placement="right" width="200" trigger="hover">
+                    <div>
+                      <p class="m-0 text-left">
+                        <el-tag size="mini">Project Name</el-tag>
+                        {{ issue.facilityName }}
+                      </p>
+                    </div>
+                    <router-link
+                      :to="
+                        `/programs/${$route.params.programId}/sheet/projects/${issue.facilityId}/issues/${issue.id}`
+                      "
+                      slot="reference"
+                      >{{ issue.title }}</router-link
+                    ></el-popover
+                  >
+                  <el-button
                     size="mini"
                     icon="el-icon-delete"
-                    title="Remove Related Task"
-                  ></el-button>
-                </li>
-                <li
-                  class="d-flex justify-content-between align-items-center my-2"
-                >
-                  <a href="">Issue 019</a
-                  ><el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    title="Remove Related Task"
-                  ></el-button>
-                </li>
-                <li
-                  class="d-flex justify-content-between align-items-center my-2"
-                >
-                  <a href="">Issue 0045</a
-                  ><el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    title="Remove Related Task"
-                  ></el-button>
-                </li>
-                <li
-                  class="d-flex justify-content-between align-items-center my-2"
-                >
-                  <a href="">Issue 099</a
-                  ><el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    title="Remove Related Task"
-                  ></el-button>
-                </li>
-                <li
-                  class="d-flex justify-content-between align-items-center my-2"
-                >
-                  <a href="">Issue 103</a
-                  ><el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    title="Remove Related Task"
+                    title="Remove Related Issue"
+                    @click.prevent="removeRelatedIssue(issue)"
                   ></el-button>
                 </li>
               </ul>
@@ -1009,7 +991,7 @@
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
               <span class="ml-2 clickable" v-if="_isallowed('write')">
-                <i class="fas fa-plus-circle"></i>
+                <i id="risk-add-btn" class="fas fa-plus-circle"></i>
               </span>
 
               <hr class="mt-0" />
@@ -1097,7 +1079,9 @@
       :facilityGroups="facilityGroups"
       :task="task"
       :relatedTasks="relatedTasks"
-      @related-tasks="addRelatedTasks"
+      :relatedIssues="relatedIssues"
+      @add-related-tasks="addRelatedTasks"
+      @add-related-issues="addRelatedIssues"
       ref="menu"
     >
     </RelatedContextMenu>
@@ -1210,9 +1194,11 @@ export default {
     this._ismounted = true;
   },
   methods: {
-    openContextMenu(e) {
+    openContextMenu(e, item) {
+      console.log(e);
+      console.log(item);
       e.preventDefault();
-      this.$refs.menu.open(e);
+      this.$refs.menu.open(e, item);
     },
     addRelatedTasks(tasks) {
       console.log(tasks);
@@ -1223,6 +1209,18 @@ export default {
 
       this.relatedTasks.splice(
         this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
+    },
+    addRelatedIssues(issues) {
+      console.log(issues);
+      issues.forEach((issue) => this.relatedIssues.push(issue));
+    },
+    removeRelatedIssue({ id }) {
+      console.log("REMOVE");
+
+      this.relatedIssues.splice(
+        this.relatedIssues.findIndex((issue) => issue.id == id),
         1
       );
     },
