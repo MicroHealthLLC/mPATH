@@ -898,8 +898,9 @@
 
         <!-- RELATED TAB #5 -->
         <div v-show="currentTab == 'tab5'" class="paperLookTab tab5">
-          <div class="row mx-3">
-            <div class="col">
+          <div class="row mx-3 mt-2">
+            <!-- RELATED TASKS -->
+            <div :class="[isMapView ? 'col-12' : 'col']">
               Related Tasks
               <span
                 class="ml-2 clickable"
@@ -909,34 +910,122 @@
               >
                 <i class="fas fa-plus-circle"></i>
               </span>
-              
-              <RelatedContextMenu
-                :facilities="facilities"
-                :facilityGroups="facilityGroups"
-                :task="task"
-                ref="menu"
-              >
-              </RelatedContextMenu>
 
-              <ul>
-                <li><a href="">Task 001</a></li>
-                <li><a href="">Task 002</a></li>
-                <li><a href="">Task 003</a></li>
-                <li><a href="">Task 004</a></li>
-                <li><a href="">Task 005</a></li>
+              <hr class="mt-0" />
+
+              <ul class="text-smaller">
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                  v-for="(task, index) in relatedTasks"
+                  :key="index"
+                >
+                  <el-popover placement="right" width="200" trigger="hover">
+                    <div>
+                      <p class="m-0 text-left">
+                        <el-tag size="mini">Project Name</el-tag>
+                        {{ task.facilityName }}
+                      </p>
+                    </div>
+                    <router-link
+                      :to="
+                        `/programs/${$route.params.programId}/sheet/projects/${task.facilityId}/tasks/${task.id}`
+                      "
+                      slot="reference"
+                      >{{ task.text }}</router-link
+                    ></el-popover
+                  >
+                  <el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                    @click.prevent="removeRelatedTask(task)"
+                  ></el-button>
+                </li>
               </ul>
             </div>
-            <div class="col">
+            <!-- RELATED ISSUES -->
+            <div :class="[isMapView ? 'col-12' : 'col']">
               Related Issues
               <span class="ml-2 clickable" v-if="_isallowed('write')">
                 <i class="fas fa-plus-circle"></i>
               </span>
+
+              <hr class="mt-0" />
+
+              <ul class="text-smaller">
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Issue 009</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Issue 019</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Issue 0045</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Issue 099</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Issue 103</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+              </ul>
             </div>
-            <div class="col">
+            <!-- RELATED RISKS -->
+            <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
               <span class="ml-2 clickable" v-if="_isallowed('write')">
                 <i class="fas fa-plus-circle"></i>
               </span>
+
+              <hr class="mt-0" />
+
+              <ul class="text-smaller">
+                <li
+                  class="d-flex justify-content-between align-items-center my-2"
+                >
+                  <a href="">Risk 204</a
+                  ><el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    title="Remove Related Task"
+                  ></el-button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -1002,6 +1091,16 @@
       class="load-spinner spinner-border text-dark"
       role="status"
     ></div>
+
+    <RelatedContextMenu
+      :facilities="facilities"
+      :facilityGroups="facilityGroups"
+      :task="task"
+      :relatedTasks="relatedTasks"
+      @related-tasks="addRelatedTasks"
+      ref="menu"
+    >
+    </RelatedContextMenu>
   </div>
 </template>
 
@@ -1023,7 +1122,7 @@ export default {
     AttachmentInput,
     Draggable,
     FormTabs,
-    RelatedContextMenu
+    RelatedContextMenu,
   },
   data() {
     return {
@@ -1114,6 +1213,18 @@ export default {
     openContextMenu(e) {
       e.preventDefault();
       this.$refs.menu.open(e);
+    },
+    addRelatedTasks(tasks) {
+      console.log(tasks);
+      tasks.forEach((task) => this.relatedTasks.push(task));
+    },
+    removeRelatedTask({ id }) {
+      console.log("REMOVE");
+
+      this.relatedTasks.splice(
+        this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
     },
     ...mapMutations(["setTaskForManager", "updateTasksHash"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
@@ -2108,5 +2219,8 @@ a {
 }
 a:hover {
   text-decoration: unset;
+}
+.text-smaller {
+  font-size: smaller;
 }
 </style>

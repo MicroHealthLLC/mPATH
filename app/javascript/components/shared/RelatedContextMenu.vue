@@ -20,24 +20,21 @@
         :filter-node-method="filterNode"
         @check-change="toggleSubmitBtn"
         show-checkbox
-        ref="duplicatetree"
+        ref="tasktree"
         node-key="id"
       >
       </el-tree>
       <div class="context-menu-btns">
         <button
-          class="btn btn-sm btn-success ml-2"
+          class="btn btn-sm btn-primary ml-2"
           @click.prevent="addRelatedTasks"
           :disabled="submitDisabled"
         >
           Submit
         </button>
-        <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">
-          Select All
-        </button>
         <button
           class="btn btn-sm btn-outline-secondary ml-2"
-          @click="clearAllNodes"
+          @click.prevent="clearAllNodes"
         >
           Clear All
         </button>
@@ -59,6 +56,7 @@ export default {
     facilities: Array,
     facilityGroups: Array,
     task: Object,
+    relatedTasks: Array,
   },
   data() {
     return {
@@ -85,6 +83,7 @@ export default {
     },
     treeFormattedData() {
       var data = [];
+      var relatedTaskIds = this.relatedTasks.map((task) => task.id);
 
       this.facilityGroups.forEach((group, index) => {
         data.push({
@@ -95,17 +94,21 @@ export default {
               .filter(
                 (facility) => facility.facility.id !== this.task.facilityId
               )
+              .filter((facility) => facility.tasks.length > 0)
               .map((facility) => {
                 return {
                   id: facility.facilityProjectId,
                   label: facility.facilityName,
                   children: [
-                    ...facility.tasks.map((task) => {
-                      return {
-                        id: task.id,
-                        label: task.text,
-                      };
-                    }),
+                    ...facility.tasks
+                      .filter((task) => !relatedTaskIds.includes(task.id))
+                      .map((task) => {
+                        return {
+                          id: task.id,
+                          label: task.text,
+                          task: task,
+                        };
+                      }),
                   ],
                 };
               }),
@@ -116,10 +119,9 @@ export default {
       return [...data];
     },
     submitDisabled() {
-      if (this.$refs.duplicatetree) {
+      if (this.$refs.tasktree) {
         return (
-          this.$refs.duplicatetree.getCheckedNodes().length === 0 ||
-          this.submitted
+          this.$refs.tasktree.getCheckedNodes().length === 0 || this.submitted
         );
       } else {
         return this.submitted;
@@ -156,22 +158,19 @@ export default {
       Vue.nextTick(() => this.$el.focus());
       this.show = true;
     },
-    selectAllNodes() {
-      this.$refs.duplicatetree.setCheckedNodes(this.treeFormattedData);
-    },
     clearAllNodes() {
-      this.$refs.duplicatetree.setCheckedNodes([]);
+      this.$refs.tasktree.setCheckedNodes([]);
     },
     addRelatedTasks() {
       this.submitted = true;
 
-      var facilityNodes = this.$refs.duplicatetree
+      var taskNodes = this.$refs.tasktree
         .getCheckedNodes()
         .filter((item) => !item.hasOwnProperty("children"));
 
-      var ids = facilityNodes.map((facility) => facility.id);
+      var tasks = taskNodes.map((task) => task.task);
 
-      console.log(facilityNodes);
+      this.$emit("related-tasks", tasks);
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -183,8 +182,7 @@ export default {
   },
   watch: {
     filterTree(value) {
-      this.$refs.duplicatetree.filter(value);
-      this.$refs.movetree.filter(value);
+      this.$refs.tasktree.filter(value);
     },
   },
 };
