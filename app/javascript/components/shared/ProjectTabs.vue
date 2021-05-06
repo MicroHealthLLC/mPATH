@@ -58,14 +58,17 @@ export default {
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId
     var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-
-    for(var i = 0; i < this.tabs.length; i++){
-      var t = this.tabs[i]
-      var tName = t.key
-      if( fPrivilege[t.key].hide ){
-        t.hidden = true
-      }
+    
+    if(fPrivilege){
+      for(var i = 0; i < this.tabs.length; i++){
+        var t = this.tabs[i]
+        var tName = t.key
+        if( fPrivilege[t.key].hide ){
+          t.hidden = true
+        }
+      }      
     }
+
   },
   methods: {
     changeTab(tab) {
@@ -74,14 +77,6 @@ export default {
       } else {
         this.$router.push(this.path + `/${tab.key}`);
       }
-    },
-    hasProjectPrivilege(permission, tab) {
-      console.log(this.$currentUser.role)
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-
-      var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-      return fPrivilege[tab.key].include(permission)
     }
   },
   computed: {
