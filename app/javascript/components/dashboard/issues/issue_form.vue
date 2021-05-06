@@ -338,7 +338,7 @@
     <el-steps 
       class="exampleOne mt-3" 
       :class="{'overSixSteps': issueStages.length >= 6 }"   
-      :active="selectedIssueStage.id - 1"                      
+      :active="DV_issue.issueStagesIndex"                      
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"
@@ -346,11 +346,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="item in issueStages"
-      :key="item.id"             
-      :value="item"
+      v-for="(item, index) in issueStages"
+      :key="index"             
+      :value="index"
       style="cursor:pointer"
-      @click.native="selectedStage(item)"        
+      @click.native="selectedStage(item, index)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -370,11 +370,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="item in issueStages"
-      :key="item.id"            
-      :value="item"
+      v-for="(item, index) in issueStages"
+      :key="index"            
+      :value="index"
       style="cursor:pointer"
-      @click.native="selectedStage(item)"        
+      @click.native="selectedStage(item, index)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -1179,6 +1179,7 @@ export default {
         startDate: "",
         dueDate: "",
         facilityProjectId: this.facility.id,
+        issueStagesIndex: 0,      
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,
@@ -1198,7 +1199,8 @@ export default {
         notes: [],
       };
     },
-    selectedStage(item){
+    selectedStage(item, index){
+     this.DV_issue.issueStagesIndex = index    
       if (this._isallowed('write')) {
         this.selectedIssueStage = item
       }    
@@ -1381,6 +1383,7 @@ export default {
         formData.append("issue[description]", this.DV_issue.description);
         formData.append("issue[auto_calculate]", this.DV_issue.autoCalculate);
         formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
+        formData.append("issue[issue_stages_index]", this.DV_issue.issueStagesIndex);
 
 
   // RACI USERS HERE Awaiting backend work

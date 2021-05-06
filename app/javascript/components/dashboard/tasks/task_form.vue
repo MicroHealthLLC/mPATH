@@ -164,20 +164,20 @@
       </div>    
     <el-steps 
       class="exampleOne mt-3" 
+      finish-status="success"  
       :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :active="selectedTaskStage.id - 1"                      
-      finish-status="success"        
+      :active="DV_task.taskStagesIndex"      
       :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
       v-model="selectedTaskStage"
       track-by="id" 
       value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"             
-      :value="item"
+      >    
+     <el-step
+      v-for="(item, index) in taskStages"
+      :key="index"                       
+      :value="index"        
       style="cursor:pointer"
-      @click.native="selectedStage(item)"        
+      @click.native="selectedStage(item, index)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -197,11 +197,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="item in taskStages"
-      :key="item.id"            
-      :value="item"
+      v-for="(item, index) in taskStages"
+      :key="index"            
+      :value="index"
       style="cursor:pointer"        
-      @click.native="selectedStage(item)"        
+      @click.native="selectedStage(item, index)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -890,8 +890,10 @@
         paginate: ['filteredNotes'],
         destroyedFiles: [],
         editTimeLive:"",
+        stageId: this.taskStageId,       
         selectedTaskType: null,
         selectedTaskStage: null,
+        activeStage: 0,
         responsibleUsers: null,
         accountableTaskUsers:null,
         consultedTaskUsers:[],
@@ -986,7 +988,8 @@
           facilityProjectId: this.facility.id,
           checklistDueDate: '',
           taskTypeId: '',
-          taskStageId: '',
+          taskStagesId: "",  
+          taskStagesIndex: 0,      
           responsibleUserIds: [],
           accountableUserIds:[],
           consultedUserIds:[],
@@ -1002,12 +1005,16 @@
           notes: []
         }
       },  
-      selectedStage(item){  
+      selectedStage(item, index){           
+        this.DV_task.taskStagesIndex = index    
         if (this._isallowed('write')) {
           this.selectedTaskStage = item
-        }  
+        }               
       },  
-      clearStages() {
+      log(e){
+        console.log(e)
+      },
+    clearStages() {
         this.selectedTaskStage = null
         this.taskStageId = ""   
       },
@@ -1047,6 +1054,13 @@
           count++
         }
       },
+      //     activeStage() {
+      //    for  (i = 0; i < this.taskStages.length; i++) {
+              
+      //       }
+      // },
+
+
       editProgress() {
        this.editToggle = !this.editToggle
        //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
@@ -1081,6 +1095,7 @@
         this.$nextTick(() => {
           this.errors.clear()
           this.$validator.reset()
+          this.loading = false;
         })
       },
       addFile(files, append = true) {
@@ -1140,6 +1155,7 @@
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
           formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
+          formData.append("task[task_stages_index]", this.DV_task.taskStagesIndex);
           // RACI USERS START HERE Awaiting backend work
 
           //Responsible USer Id
@@ -1359,6 +1375,7 @@
           this.DV_task.progress = 0
         }
       },
+  
       updateCheckItem(event, name, index) {
         if (name === 'text') {
           this.DV_task.checklists[index].text = event.target.value
@@ -1433,6 +1450,9 @@
       filteredFiles() {
         return _.filter(this.DV_task.taskFiles, f => !f._destroy)
       },
+      // stageId() {
+      //   return  this.DV_task.taskStageId
+      // },
       C_myTasks() {
         return _.map(this.myActionsFilter, 'value').includes('tasks')
       },
@@ -1454,6 +1474,7 @@
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"
       },
+ 
       tab() {
         if (this.$route.path.includes("map")) {
           return "map";

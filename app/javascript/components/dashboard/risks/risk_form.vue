@@ -205,7 +205,7 @@
                 <el-steps 
                   class="exampleOne mt-3" 
                   :class="{'overSixSteps': riskStages.length >= 6 }" 
-                  :active="selectedRiskStage.id - 1"                      
+                  :active="DV_risk.riskStagesIndex"                      
                   finish-status="success"  
                   :disabled="!_isallowed('write') || fixedStage && isKanbanView"
                   v-model="selectedRiskStage"
@@ -213,11 +213,11 @@
                   value-key="id"
                   >         
                 <el-step
-                  v-for="item in riskStages"
-                  :key="item.id"                  
-                  :value="item"
+                  v-for="(item, index) in riskStages"
+                  :key="index"                        
+                  :value="index"
                   style="cursor:pointer"
-                  @click.native="selectedStage(item)"        
+                  @click.native="selectedStage(item, index)"        
                   :title="item.name"   
                   description=""                    
                 ></el-step>          
@@ -237,11 +237,11 @@
                   value-key="id"
                   >         
                 <el-step
-                  v-for="item in riskStages"
-                  :key="item.id"                  
-                  :value="item"
+                  v-for="(item, index) in riskStages"
+                  :key="index"                  
+                  :value="index"
                   style="cursor:pointer"
-                  @click.native="selectedStage(item)"        
+                  @click.native="selectedStage(item, index)"        
                   :title="item.name"   
                   description=""                    
                 ></el-step>          
@@ -1853,9 +1853,9 @@ export default {
         probabilityDescription: "",
         riskApproach: "avoid",
         approvalTime: "",
+        riskStagesIndex: 0,    
         riskApproachDescription: "",
         riskTypeId: "",
-        // riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
@@ -1880,6 +1880,9 @@ export default {
         notes: [],
       };
     },
+       log(e){
+          console.log("This is the riskStages item: " + e)
+      },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -1889,10 +1892,16 @@ export default {
       }
       if (str.length > length) {
         return str.substring(0, length - ending.length) + ending;
-      } else {
+       } else {
         return str;
-      }
+       }
       },
+    selectedStage(item, index){    
+       this.DV_risk.riskStagesIndex = index    
+      if (this._isallowed('write')) {
+        this.selectedRiskStage = item
+      }
+    },  
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
         behavior: "smooth",
@@ -2038,11 +2047,6 @@ export default {
       this.updateApprovedRisks(this.DV_risk);
       this.validateThenSave(e)
     },
-    selectedStage(item){    
-      if (this._isallowed('write')) {
-        this.selectedRiskStage = item
-      }
-    },  
     clearStages() {
       this.selectedRiskStage = null
       this.riskStageId = ""
@@ -2097,6 +2101,7 @@ export default {
           this.DV_risk.riskApproachDescription
         );
         formData.append("risk[approval_time]", this.DV_risk.approvalTime);
+        formData.append("risk[risk_stages_index]", this.DV_risk.riskStagesIndex);
         formData.append("risk[task_type_id]", this.DV_risk.taskTypeId);
         formData.append("risk[risk_stage_id]", this.DV_risk.riskStageId);
         formData.append("risk[progress]", this.DV_risk.progress);
