@@ -61,11 +61,7 @@ export default {
     
     if(fPrivilege){
       for(var i = 0; i < this.tabs.length; i++){
-        var t = this.tabs[i]
-        var tName = t.key
-        if( fPrivilege[t.key].hide ){
-          t.hidden = true
-        }
+        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
       }      
     }
 
