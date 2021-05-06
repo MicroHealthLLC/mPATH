@@ -103,6 +103,7 @@ class TasksController < AuthenticatedController
       :text,
       :task_type_id,
       :task_stage_id,
+      :task_stages_index,
       :facility_project_id,
       :due_date,
       :start_date,
