@@ -1,8 +1,8 @@
 // check facility rollup
 Cypress.Commands.add("facilityRollup", () => {
   cy.get('[data-cy=facility_rollup]').within(() => {
-    cy.get('.mr-2 > b').should('contain', 'PROJECTS')
-    cy.get('.float-right > .badge').should('contain', '4')
+    cy.get('span > .d-inline').should('contain', 'Test Project')
+    cy.get('.col-3 .badge').should('contain', '4')
     cy.contains('Projects Status').should('be.visible')
 
     // cy.get('[data-cy=date_set_filter]').within(() => {
