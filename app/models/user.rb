@@ -47,6 +47,10 @@ class User < ApplicationRecord
     options
   end
 
+  def facility_privileges_hash
+    self.facility_privileges.includes(:facility, :facility_project)
+  end
+
   def encrypted_authentication_token
     self.save unless self.authentication_token.present?
     crypt = ActiveSupport::MessageEncryptor.new([ENV["MESSAGE_ENCRYPTOR_KEY"]].pack("H*"))

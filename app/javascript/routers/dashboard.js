@@ -151,11 +151,40 @@ export default new VueRouter({
           name: "SheetOverview",
           path: "projects/:projectId",
           component: SheetOverview,
+          beforeEnter: (to, from, next) => {
+
+            var programId = to.params.programId;
+            var projectId = to.params.projectId
+            var fPrivilege = _.filter(Vue.prototype.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+
+            if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
+              alert("You don't have access to see any tabs. Please contact administrator")
+            }
+            if( !fPrivilege["overview"].hide ){
+              next()  
+            
+            }else if( !fPrivilege["tasks"].hide ){
+              next({ name: 'SheetTasks', params: { programId: programId, projectId: projectId } });
+            
+            }else if( !fPrivilege["issues"].hide ){
+              next({ name: 'SheetIssues', params: { programId: programId, projectId: projectId } });
+            
+            }else if( !fPrivilege["risks"].hide ){
+              next({ name: 'SheetRisks', params: { programId: programId, projectId: projectId } });
+            
+            }else if( !fPrivilege["notes"].hide ){
+              next({ name: 'SheetNotes', params: { programId: programId, projectId: projectId } });
+
+            }
+          }
         },
         {
           name: "SheetTasks",
           path: "projects/:projectId/tasks",
           component: SheetTasks,
+          beforeEnter: (to, from, next) => {            
+            next()
+          }
         },
         {
           name: "SheetTaskForm",

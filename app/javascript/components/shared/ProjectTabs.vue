@@ -2,6 +2,7 @@
   <div id="customtabs" class="d-flex align-items-center">
     <div v-for="tab in tabs" :key="tab.key">
       <div
+        v-if="!tab.hidden"
         class="badge"
         :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
         @click="changeTab(tab)"
@@ -13,38 +14,58 @@
 </template>
 
 <script>
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 export default {
   name: "ProjectTabs",
   data() {
     return {
+      canSeeTab: true,
       tabs: [
         {
           label: "Overview",
           key: "overview",
           closable: false,
+          hidden: false
         },
         {
           label: "Tasks",
           key: "tasks",
           closable: false,
+          hidden: false
         },
         {
           label: "Issues",
           key: "issues",
           closable: false,
+          hidden: false
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
+          hidden: false
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
+          hidden: false
         },
       ],
     };
+  },
+  mounted() {
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+
+    for(var i = 0; i < this.tabs.length; i++){
+      var t = this.tabs[i]
+      var tName = t.key
+      if( fPrivilege[t.key].hide ){
+        t.hidden = true
+      }
+    }
   },
   methods: {
     changeTab(tab) {
@@ -54,8 +75,20 @@ export default {
         this.$router.push(this.path + `/${tab.key}`);
       }
     },
+    hasProjectPrivilege(permission, tab) {
+      console.log(this.$currentUser.role)
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+
+      var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+      return fPrivilege[tab.key].include(permission)
+    }
   },
   computed: {
+    ...mapGetters([
+      'contentLoaded',
+      'currentProject',   
+    ]),
     currentTab() {
       return this.tabs
         .map((tab) => tab.key)
