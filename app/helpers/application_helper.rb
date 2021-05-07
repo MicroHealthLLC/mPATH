@@ -7,4 +7,5 @@ module ApplicationHelper
     end
     link_to text, "tel:#{groups.join '-'}"
   end
+
 end
