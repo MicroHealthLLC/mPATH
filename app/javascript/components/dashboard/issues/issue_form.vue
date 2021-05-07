@@ -602,6 +602,7 @@ Tab 1 Row Begins here -->
           </span>
           <el-slider
             v-model="DV_issue.progress"
+            :input="removeFromWatch()"        
             :disabled="!_isallowed('write') || DV_issue.autoCalculate"
             :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
             :format-tooltip="(value) => value + '%'"
@@ -1357,6 +1358,13 @@ export default {
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
       this.updateWatchedIssues(this.DV_issue);
     },
+    removeFromWatch() {
+      if (this.DV_issue.progress == 100) {
+        // this.toggleWatched()
+        console.log("yes")
+      }
+      return true
+    },
     cancelIssueSave() {
       this.$emit("on-close-form");
       this.setTaskForManager({ key: "issue", value: null });
@@ -1367,6 +1375,9 @@ export default {
           this.showErrors = !success;
           return;
         }
+        if (this.DV_issue.watched == true && this.removeFromWatch) {
+          this.toggleWatched()
+         }
         this.editToggle = !this.editToggle
         this.loading = true;
         let formData = new FormData();
@@ -1501,11 +1512,6 @@ export default {
                 }
               }
         }
-
-
-
-
-
 
         for (let i in this.DV_issue.notes) {
           let note = this.DV_issue.notes[i];
