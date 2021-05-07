@@ -11,11 +11,14 @@
          - url = @preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
          =link_to(url, data: { cy: "project_list_items" }) do
           li.list-group-item.pb-0.portfolio-page
-                h4
-                  .d-inline-block.justify-content-between data-cy="project_name"
-                      span.font-lg
+              
+                .row.program-row                
+                 .col-12
+                  .welcome-page-program-name data-cy="project_name"
+                      span.absolute-center
+                      h4
                         ="#{project.name} "
-                hr
+                hr.program-row
                  .row.justify-content-between data-cy="project_count"
                       .col-6.bg-dark.text-light
                         ="PROJECTS: #{project.facilities.size}"

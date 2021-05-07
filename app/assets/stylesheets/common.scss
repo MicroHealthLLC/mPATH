@@ -25,6 +25,16 @@ body {
     border-radius: 4px;
   }
 }
+.program-row {
+  height: 60px;
+}
+hr.program-row {
+  margin-top: 0.5rem;
+}
+.welcome-page-program-name {
+  display: table-cell;
+  vertical-align:middle;
+}
 p {
   word-break: break-word;
 }
