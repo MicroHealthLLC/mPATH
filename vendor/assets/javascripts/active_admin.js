@@ -15,6 +15,56 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
+
+
+//https://github.com/select2/select2/issues/3106#issuecomment-539469984
+/**
+ * select2_renderselections
+ * @param  {jQuery Select2 object}
+ * @return {null}
+ */
+function select2_renderSelections($select2){
+  const order      = $select2.data('preserved-order') || [];
+  const $container = $select2.next('.select2-container');
+  const $tags      = $container.find('li.select2-selection__choice');
+  const $input     = $tags.last().next();
+
+  // apply tag order
+  order.forEach(val=>{
+    let $el = $tags.filter(function(i,tag){
+      //return $(tag).data('data').id === val;
+      return $(tag).clone().children().remove().end().text() === val;
+    });
+    $input.before( $el );
+  });
+}
+
+
+/**
+ * selectionHandler
+ * @param  {Select2 Event Object}
+ * @return {null}
+ */
+function selectionHandler(e){
+  const $select2  = $(this);
+  //const val       = e.params.data.id;
+  const val       = e.params.data.text;
+  const order     = $select2.data('preserved-order') || [];
+  
+  switch (e.type){
+    case 'select2:select':      
+      order[ order.length ] = val;
+      break;
+    case 'select2:unselect':
+      let found_index = order.indexOf(val);
+      if (found_index >= 0 )
+        order.splice(found_index,1);
+      break;
+  }
+  $select2.data('preserved-order', order); // store it for later
+  select2_renderSelections($select2);
+}
+
 jQuery(function($) {
 
   // Add placeholder to for organization select
@@ -26,24 +76,33 @@ jQuery(function($) {
   // if( $("#task_stages_div").length > 0){
   //   var selected_values = JSON.parse( $("#task_stages_div").attr("data-selected-values") )
   //   var task_stage_data = JSON.parse( $("#task_stages_div").attr("data-data") )
-  //   var task_stage_input = $("<input>", {type: "text", id: "task_task_stage_input", class: ".select2", name: "project[task_stage_ids][]"})
+  //   var task_stage_input = $("<input>", {type: "text", id: "task_task_stage_input", class: "", name: "project[task_stage_ids][]"})
   //   $("#task_stages_div").append(task_stage_input)
-  //   $(task_stage_input).select2({
+  //   let $select2 = $(task_stage_input).select2({
   //     placeholder: "Search and select a Stage",
   //     allowClear: true,
   //     data: task_stage_data,
   //     multiple: true,
-  //     tags: true,
-  //     tokenSeparators: [',', ' ']
+  //     tags: true
   //   }).val([6, 7, 8, 9, 10, 11, 4] ).trigger('change');
+
+    // let defaults = $select2.select2('data');
+    // defaults.forEach(obj=>{
+    //   let order = $select2.data('preserved-order') || [];
+    //   order[ order.length ] = obj.id;
+    //   order[ order.length ] = obj.text;
+    //   $select2.data('preserved-order', order)
+    // });
+
+  //   $(task_stage_input).on("select2:select select2:unselect", selectionHandler) ;
   // }
 
-  $("#task_task_stage_input .select2").select2({
+  let $taskStageSelect2 = $("#project_task_stage_ids").select2({
     placeholder: "Search and select a Stage",
     allowClear: true
   })
-  $("#task_task_stage_input").on("select2:open", function (evt) {
-    debugger;
+
+  $("#project_task_stage_ids").on("select2:select", function (evt) {
     var element = evt.params.data.element;
     var $element = $(element);
 

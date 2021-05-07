@@ -166,7 +166,7 @@
       class="exampleOne mt-3" 
       finish-status="success"  
       :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :active="DV_task.taskStagesIndex"      
+      :active="selectedTaskStageIndex"      
       :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
       v-model="selectedTaskStage"
       track-by="id" 
@@ -174,8 +174,8 @@
       >    
      <el-step
       v-for="(item, index) in taskStages"
-      :key="index"                       
-      :value="index"        
+      :key="item.id"                       
+      :value="item.id"        
       style="cursor:pointer"
       @click.native="selectedStage(item, index)"        
       :title="item.name"   
@@ -198,8 +198,8 @@
       >         
       <el-step
       v-for="(item, index) in taskStages"
-      :key="index"            
-      :value="index"
+      :key="item.id"            
+      :value="item.id"
       style="cursor:pointer"        
       @click.native="selectedStage(item, index)"        
       :title="item.name"   
@@ -893,6 +893,7 @@
         stageId: this.taskStageId,       
         selectedTaskType: null,
         selectedTaskStage: null,
+        selectedTaskStageIndex: 0,
         activeStage: 0,
         responsibleUsers: null,
         accountableTaskUsers:null,
@@ -1090,6 +1091,7 @@
         this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
         this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
         this.selectedTaskStage = this.taskStages.find( (t) => t.id === this.DV_task.taskStageId)
+        this.selectedTaskStageIndex =_.findIndex(this.taskStages,(t) => t.id  == this.selectedTaskStage.id)
         this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
         if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
         this.$nextTick(() => {

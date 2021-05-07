@@ -45,6 +45,12 @@ class Project < SortableRecord
   after_save :grant_access_to_admins
   after_save :add_not_started_status
 
+  def options_for_task_stage
+    existing_stage_ids = self.project_task_stages.map(&:task_stage_id)
+    existing_stages = TaskStage.where(id: existing_stage_ids).sort_by{|item| existing_stage_ids.index(item.id) }
+    (existing_stages + (TaskStage.where.not(id: existing_stages.pluck(:id) )) ).map{|t| [t.name , t.id] }
+  end
+
   def as_json(options=nil)
     json = super(options)
     json.merge(
