@@ -1218,37 +1218,6 @@ export default {
     this._ismounted = true;
   },
   methods: {
-    openContextMenu(e, item) {
-      e.preventDefault();
-      this.$refs.menu.open(e, item);
-    },
-    addRelatedTasks(tasks) {
-      tasks.forEach((task) => this.relatedTasks.push(task));
-    },
-    removeRelatedTask({ id }) {
-      this.relatedTasks.splice(
-        this.relatedTasks.findIndex((task) => task.id == id),
-        1
-      );
-    },
-    addRelatedIssues(issues) {
-      issues.forEach((issue) => this.relatedIssues.push(issue));
-    },
-    removeRelatedIssue({ id }) {
-      this.relatedIssues.splice(
-        this.relatedIssues.findIndex((issue) => issue.id == id),
-        1
-      );
-    },
-    addRelatedRisks(risks) {
-      risks.forEach((risk) => this.relatedRisks.push(risk));
-    },
-    removeRelatedRisk({ id }) {
-      this.relatedRisks.splice(
-        this.relatedRisks.findIndex((risk) => risk.id == id),
-        1
-      );
-    },
     ...mapMutations(["setTaskForManager", "updateTasksHash"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
     INITIAL_TASK_STATE() {
@@ -1778,6 +1747,37 @@ export default {
       var dueDate = new Date(this.DV_task.dueDate);
       dueDate.setDate(dueDate.getDate() + 1);
       return date < new Date(this.DV_task.startDate) || date > dueDate;
+    },
+    openContextMenu(e, item) {
+      e.preventDefault();
+      this.$refs.menu.open(e, item);
+    },
+    addRelatedTasks(tasks) {
+      tasks.forEach((task) => this.relatedTasks.push(task));
+    },
+    removeRelatedTask({ id }) {
+      this.relatedTasks.splice(
+        this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
+    },
+    addRelatedIssues(issues) {
+      issues.forEach((issue) => this.relatedIssues.push(issue));
+    },
+    removeRelatedIssue({ id }) {
+      this.relatedIssues.splice(
+        this.relatedIssues.findIndex((issue) => issue.id == id),
+        1
+      );
+    },
+    addRelatedRisks(risks) {
+      risks.forEach((risk) => this.relatedRisks.push(risk));
+    },
+    removeRelatedRisk({ id }) {
+      this.relatedRisks.splice(
+        this.relatedRisks.findIndex((risk) => risk.id == id),
+        1
+      );
     },
   },
   computed: {
