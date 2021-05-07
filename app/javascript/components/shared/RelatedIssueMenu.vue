@@ -184,6 +184,7 @@ export default {
     close() {
       this.clearAllNodes();
       this.item = "";
+      this.filterTree = "";
       this.show = false;
       this.left = 0;
       this.top = 0;
