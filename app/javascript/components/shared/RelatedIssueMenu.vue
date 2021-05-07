@@ -50,12 +50,12 @@
 import Vue from "vue";
 
 export default {
-  name: "RelatedContextMenu",
+  name: "RelatedIssueMenu",
   props: {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
     facilityGroups: Array,
-    task: Object,
+    issue: Object,
     relatedTasks: Array,
     relatedIssues: Array,
     relatedRisks: Array,
@@ -98,7 +98,7 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
+                (facility) => facility.facility.id !== this.issue.facilityId
               )
               .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
@@ -176,7 +176,7 @@ export default {
     isAllowed() {
       return (salut) =>
         this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
+        this.$permissions.issues[salut];
     },
   },
   methods: {
