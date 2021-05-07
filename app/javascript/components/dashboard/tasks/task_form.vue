@@ -928,7 +928,7 @@
                     </div>
                     <router-link
                       :to="
-                        `/programs/${$route.params.programId}/sheet/projects/${task.facilityId}/tasks/${task.id}`
+                        `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
                       "
                       slot="reference"
                       >{{ task.text }}</router-link
@@ -972,7 +972,7 @@
                     </div>
                     <router-link
                       :to="
-                        `/programs/${$route.params.programId}/sheet/projects/${issue.facilityId}/issues/${issue.id}`
+                        `/programs/${$route.params.programId}/${tab}/projects/${issue.facilityId}/issues/${issue.id}`
                       "
                       slot="reference"
                       >{{ issue.title }}</router-link
@@ -990,7 +990,12 @@
             <!-- RELATED RISKS -->
             <div :class="[isMapView ? 'col-12' : 'col']">
               Related Risks
-              <span class="ml-2 clickable" v-if="_isallowed('write')">
+              <span
+                class="ml-2 clickable"
+                v-if="_isallowed('write')"
+                @click="openContextMenu($event, 'risk')"
+                @contextmenu.prevent=""
+              >
                 <i id="risk-add-btn" class="fas fa-plus-circle"></i>
               </span>
 
@@ -999,12 +1004,29 @@
               <ul class="text-smaller">
                 <li
                   class="d-flex justify-content-between align-items-center my-2"
+                  v-for="(risk, index) in relatedRisks"
+                  :key="index"
                 >
-                  <a href="">Risk 204</a
-                  ><el-button
+                  <el-popover placement="right" width="200" trigger="hover">
+                    <div>
+                      <p class="m-0 text-left">
+                        <el-tag size="mini">Project Name</el-tag>
+                        {{ risk.facilityName }}
+                      </p>
+                    </div>
+                    <router-link
+                      :to="
+                        `/programs/${$route.params.programId}/${tab}/projects/${risk.facilityId}/risks/${risk.id}`
+                      "
+                      slot="reference"
+                      >{{ risk.text }}</router-link
+                    ></el-popover
+                  >
+                  <el-button
                     size="mini"
                     icon="el-icon-delete"
-                    title="Remove Related Task"
+                    title="Remove Related Risk"
+                    @click.prevent="removeRelatedRisk(risk)"
                   ></el-button>
                 </li>
               </ul>
@@ -1080,8 +1102,10 @@
       :task="task"
       :relatedTasks="relatedTasks"
       :relatedIssues="relatedIssues"
+      :relatedRisks="relatedRisks"
       @add-related-tasks="addRelatedTasks"
       @add-related-issues="addRelatedIssues"
+      @add-related-risks="addRelatedRisks"
       ref="menu"
     >
     </RelatedContextMenu>
@@ -1195,32 +1219,33 @@ export default {
   },
   methods: {
     openContextMenu(e, item) {
-      console.log(e);
-      console.log(item);
       e.preventDefault();
       this.$refs.menu.open(e, item);
     },
     addRelatedTasks(tasks) {
-      console.log(tasks);
       tasks.forEach((task) => this.relatedTasks.push(task));
     },
     removeRelatedTask({ id }) {
-      console.log("REMOVE");
-
       this.relatedTasks.splice(
         this.relatedTasks.findIndex((task) => task.id == id),
         1
       );
     },
     addRelatedIssues(issues) {
-      console.log(issues);
       issues.forEach((issue) => this.relatedIssues.push(issue));
     },
     removeRelatedIssue({ id }) {
-      console.log("REMOVE");
-
       this.relatedIssues.splice(
         this.relatedIssues.findIndex((issue) => issue.id == id),
+        1
+      );
+    },
+    addRelatedRisks(risks) {
+      risks.forEach((risk) => this.relatedRisks.push(risk));
+    },
+    removeRelatedRisk({ id }) {
+      this.relatedRisks.splice(
+        this.relatedRisks.findIndex((risk) => risk.id == id),
         1
       );
     },
@@ -1933,7 +1958,6 @@ export default {
     },
     selectedTaskType: {
       handler: function(value) {
-        // console.log("SelectedTaskType: " + value)
         this.DV_task.taskTypeId = value ? value.id : null;
       },
       deep: true,

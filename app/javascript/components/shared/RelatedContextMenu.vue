@@ -8,19 +8,22 @@
     @mouseleave="close"
   >
     <div>
-      <div class="menu-subwindow-title">Select Related {{ item }}s</div>
+      <div class="menu-subwindow-title">
+        Select Related {{ item }}s
+      </div>
       <el-input
         class="filter-input"
-        :placeholder="`Filter ${item}s...`"
+        :placeholder="`Filter ${item.charAt(0).toUpperCase() + item.slice(1)}s...`"
         v-model="filterTree"
       ></el-input>
       <el-tree
+        ref="relatedtree"
         :data="treeFormattedData"
         :props="defaultProps"
         :filter-node-method="filterNode"
+        :expand-on-click-node="true"
         @check-change="toggleSubmitBtn"
         show-checkbox
-        ref="relatedtree"
         node-key="id"
       >
       </el-tree>
@@ -45,9 +48,6 @@
 
 <script>
 import Vue from "vue";
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import axios from "axios";
-import humps from "humps";
 
 export default {
   name: "RelatedContextMenu",
@@ -58,6 +58,7 @@ export default {
     task: Object,
     relatedTasks: Array,
     relatedIssues: Array,
+    relatedRisks: Array,
   },
   data() {
     return {
@@ -75,7 +76,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentProject", "getUnfilteredFacilities"]),
     // get position of context menu
     style() {
       return {
@@ -87,23 +87,29 @@ export default {
       var data = [];
       var relatedTaskIds = this.relatedTasks.map((task) => task.id);
       var relatedIssueIds = this.relatedIssues.map((issue) => issue.id);
+      var relatedRiskIds = this.relatedRisks.map((risk) => risk.id);
 
       this.facilityGroups.forEach((group, index) => {
         data.push({
+          // Project Groups
           id: index,
           label: group.name,
           children: [
+            //Projects
             ...group.facilities
               .filter(
                 (facility) => facility.facility.id !== this.task.facilityId
               )
-              .filter((facility) => this.item && facility[this.item + "s"].length > 0)
+              .filter(
+                (facility) => this.item && facility[this.item + "s"].length > 0
+              )
               .map((facility) => {
                 if (this.item == "task") {
                   return {
                     id: facility.facilityProjectId,
                     label: facility.facilityName,
                     children: [
+                      // Project Tasks
                       ...facility.tasks
                         .filter((task) => !relatedTaskIds.includes(task.id))
                         .map((task) => {
@@ -115,11 +121,12 @@ export default {
                         }),
                     ],
                   };
-                } else {
+                } else if (this.item == "issue") {
                   return {
                     id: facility.facilityProjectId,
                     label: facility.facilityName,
                     children: [
+                      // Project Issues
                       ...facility.issues
                         .filter((issue) => !relatedIssueIds.includes(issue.id))
                         .map((issue) => {
@@ -127,6 +134,23 @@ export default {
                             id: issue.id,
                             label: issue.title,
                             issue: issue,
+                          };
+                        }),
+                    ],
+                  };
+                } else {
+                  return {
+                    id: facility.facilityProjectId,
+                    label: facility.facilityName,
+                    children: [
+                      // Project Risks
+                      ...facility.risks
+                        .filter((risk) => !relatedRiskIds.includes(risk.id))
+                        .map((risk) => {
+                          return {
+                            id: risk.id,
+                            label: risk.text,
+                            risk: risk,
                           };
                         }),
                     ],
@@ -165,7 +189,6 @@ export default {
       this.top = 0;
     },
     open(evt, item) {
-      console.log(item);
       this.item = item;
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
@@ -196,9 +219,12 @@ export default {
       if (this.item == "task") {
         var tasks = nodes.map((task) => task.task);
         this.$emit("add-related-tasks", tasks);
-      } else {
+      } else if (this.item == "issue") {
         var issues = nodes.map((issue) => issue.issue);
         this.$emit("add-related-issues", issues);
+      } else {
+        var risks = nodes.map((risk) => risk.risk);
+        this.$emit("add-related-risks", risks);
       }
     },
     filterNode(value, data) {
@@ -255,6 +281,7 @@ hr {
   overflow-y: auto;
 }
 .menu-subwindow-title {
+  text-transform: capitalize;
   font-size: 14px;
   text-align: center;
   margin-top: 10px;
