@@ -1096,7 +1096,7 @@
       role="status"
     ></div>
 
-    <RelatedContextMenu
+    <RelatedTaskMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
       :task="task"
@@ -1108,7 +1108,7 @@
       @add-related-risks="addRelatedRisks"
       ref="menu"
     >
-    </RelatedContextMenu>
+    </RelatedTaskMenu>
   </div>
 </template>
 
@@ -1116,7 +1116,7 @@
 import axios from "axios";
 import Draggable from "vuedraggable";
 import FormTabs from "./../../shared/FormTabs";
-import RelatedContextMenu from "./../../shared/RelatedContextMenu";
+import RelatedTaskMenu from "./../../shared/RelatedTaskMenu";
 import humps from "humps";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
@@ -1130,7 +1130,7 @@ export default {
     AttachmentInput,
     Draggable,
     FormTabs,
-    RelatedContextMenu,
+    RelatedTaskMenu,
   },
   data() {
     return {

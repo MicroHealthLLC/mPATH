@@ -50,7 +50,7 @@
 import Vue from "vue";
 
 export default {
-  name: "RelatedContextMenu",
+  name: "RelatedTaskMenu",
   props: {
     display: Boolean, // prop detect if we should show context menu,
     facilities: Array,
