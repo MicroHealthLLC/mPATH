@@ -94,64 +94,6 @@
             </li>
           </ul>
         </div>
-<<<<<<< HEAD
-=======
-      </div>
-     </div>
-               
-    <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
-      <div v-if="selectedTaskStage !== undefined">       
-      <div style="position:relative"><label class="font-md mb-0">Stage</label>               
-        <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
-      </div>    
-    <el-steps 
-      class="exampleOne mt-3" 
-      :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :active="selectedTaskStage.id - 1"                      
-      finish-status="success"        
-      :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
-      v-model="selectedTaskStage"
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"             
-      :value="item"
-      style="cursor:pointer"
-      @click.native="selectedStage(item)"        
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>          
-    </div>
-  </div>
-
-  <div class="mx-4 mt-2 mb-4" v-if="(selectedTaskStage == null) || selectedTaskStage == undefined">
-    <label class="font-md">Select Stage</label>                           
-    <el-steps 
-      class="exampleOne"    
-      :class="{'overSixSteps': taskStages.length >= 6 }"            
-      finish-status="success"      
-      :disabled="!_isallowed('write') || fixedStage && isKanbanView"
-      v-model="selectedTaskStage"  
-      track-by="id" 
-      value-key="id"
-      >         
-      <el-step
-      v-for="item in taskStages"
-      :key="item.id"            
-      :value="item"
-      style="cursor:pointer"        
-      @click.native="selectedStage(item)"        
-      :title="item.name"   
-      description=""                    
-    ></el-step>          
-      </el-steps>
-  </div>
-
-    <!-- Stages Row ends -->
->>>>>>> 64f5b84578104e6ec47bec6088beee1e87d03837
 
         <!-- TASK INFO TAB #1 -->
         <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
@@ -1530,77 +1472,7 @@ export default {
             formData.append("responsible_user_ids[]", u_id);
           }
         } else {
-<<<<<<< HEAD
           formData.append("responsible_user_ids[]", []);
-=======
-          return str;
-        }
-      },
-      scrollToChecklist(){
-        this.$refs.addCheckItem.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-        this.DV_task.checklists.push({text: '', checked: false})
-      },
-      scrollToUpdates(){
-        this.$refs.addUpdates.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-        this.DV_task.notes.unshift({body: '', user_id: '', guid: this.guid()})
-      },
-      handleMove(item) {
-        this.movingSlot = item.relatedContext.component.$vnode.key
-        return true
-      },
-      onChangeTab(tab) {
-        this.currentTab = tab ? tab.key : 'tab1'
-      },
-      handleEnd(e, checklists){
-        var cc = this.DV_task.checklists
-        var count = 0
-        for(var checklist of cc){
-          checklist.position = count
-          count++
-        }
-      },
-      editProgress() {
-       this.editToggle = !this.editToggle
-       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
-
-      },
-      deleteTask() {
-        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
-        if (!confirm) {return}
-        this.taskDeleted(this.DV_task)
-        this.cancelSave()
-      },
-      progressListTitleText(progressList){
-        if(!progressList.id) return;
-        var date = moment(progressList.createdAt).format("MM/DD/YYYY")
-        var time = moment(progressList.createdAt).format("hh:mm:ss a")
-        return `${progressList.user.fullName} at ${date} ${time} `
-      },
-         // RACI USERS commented out out here.....Awaiting backend work
-      loadTask(task) {
-        this.DV_task = {...this.DV_task, ..._.cloneDeep(task)}
-        this.responsibleUsers = _.filter(this.activeProjectUsers, u => this.DV_task.responsibleUserIds.includes(u.id))[0]
-        this.accountableTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.accountableUserIds.includes(u.id))[0]
-        this.consultedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.consultedUserIds.includes(u.id))
-        this.informedTaskUsers = _.filter(this.activeProjectUsers, u => this.DV_task.informedUserIds.includes(u.id))
-        this.relatedIssues = _.filter(this.filteredIssues, u => this.DV_task.subIssueIds.includes(u.id))
-        this.relatedTasks = _.filter(this.filteredTasks, u => this.DV_task.subTaskIds.includes(u.id))
-        this.relatedRisks = _.filter(this.filteredRisks, u => this.DV_task.subRiskIds.includes(u.id))
-        this.selectedTaskType = this.taskTypes.find(t => t.id === this.DV_task.taskTypeId)
-        this.selectedTaskStage = this.taskStages.find( (t) => t.id === this.DV_task.taskStageId)
-        this.selectedFacilityProject = this.getFacilityProjectOptions.find(t => t.id === this.DV_task.facilityProjectId)
-        if (this.DV_task.attachFiles) this.addFile(this.DV_task.attachFiles, false)
-        this.$nextTick(() => {
-          this.errors.clear()
-          this.$validator.reset()
-        })
-      },
-      addFile(files, append = true) {
-        let _files = append ? [...this.DV_task.taskFiles] : []
-        for (let file of files) {
-          file.guid = this.guid()
-          _files.push(file)
->>>>>>> 64f5b84578104e6ec47bec6088beee1e87d03837
         }
         // Accountable UserId
         if (
@@ -2070,19 +1942,11 @@ export default {
       handler: function(value) {
         if (value) this.DV_task.subIssueIds = _.uniq(_.map(value, "id"));
       },
-<<<<<<< HEAD
       deep: true,
     },
     relatedTasks: {
       handler: function(value) {
         if (value) this.DV_task.subTaskIds = _.uniq(_.map(value, "id"));
-=======
-      selectedTaskStage: {
-        handler: function(value) {
-          this.DV_task.taskStageId = value ? value.id : null
-        }, 
-        deep: true
->>>>>>> 64f5b84578104e6ec47bec6088beee1e87d03837
       },
       deep: true,
     },
