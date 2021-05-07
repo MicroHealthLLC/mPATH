@@ -23,10 +23,35 @@ jQuery(function($) {
     allowClear: true
   });
 
+  // if( $("#task_stages_div").length > 0){
+  //   var selected_values = JSON.parse( $("#task_stages_div").attr("data-selected-values") )
+  //   var task_stage_data = JSON.parse( $("#task_stages_div").attr("data-data") )
+  //   var task_stage_input = $("<input>", {type: "text", id: "task_task_stage_input", class: ".select2", name: "project[task_stage_ids][]"})
+  //   $("#task_stages_div").append(task_stage_input)
+  //   $(task_stage_input).select2({
+  //     placeholder: "Search and select a Stage",
+  //     allowClear: true,
+  //     data: task_stage_data,
+  //     multiple: true,
+  //     tags: true,
+  //     tokenSeparators: [',', ' ']
+  //   }).val([6, 7, 8, 9, 10, 11, 4] ).trigger('change');
+  // }
+
   $("#task_task_stage_input .select2").select2({
     placeholder: "Search and select a Stage",
     allowClear: true
+  })
+  $("#task_task_stage_input").on("select2:open", function (evt) {
+    debugger;
+    var element = evt.params.data.element;
+    var $element = $(element);
+
+    $element.detach();
+    $(this).append($element);
+    $(this).trigger("change");
   });
+
   $("#issue_issue_stage_input .select2").select2({
     placeholder: "Search and select a Stage",
     allowClear: true
