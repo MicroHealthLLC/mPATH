@@ -28,7 +28,7 @@
     "v-click-outside": "^3.1.2",
     "v-tooltip": "^2.0.3",
     "vee-validate": "2.1.7",
-    "vis-timeline": "^7.3.9",
+    "vis-timeline": "^7.4.4",
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
     "vue-content-loading": "^1.6.0",
@@ -55,6 +55,9 @@
     "vuex": "^3.1.2",
     "vuex-persistedstate": "^3.0.1",
     "xlsx": "^0.16.2"
+  },
+  "resolutions": {
+    "postcss-svgo/is-svg": "^4.2.2"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^1.4.0",
