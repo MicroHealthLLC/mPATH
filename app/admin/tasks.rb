@@ -121,7 +121,8 @@ ActiveAdmin.register Task do
             end
           end
           f.input :task_type, label: 'Category', include_blank: false
-          f.input :task_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
+          t_stages = f.object.new_record? ? TaskStage.all : f.object.facility_project.project.task_stages
+          f.input :task_stage, as: :select, collection: options_for_select( t_stages.map{|p| [p.name, p.id]}, f.object.task_stage_id ), label: 'Stage', input_html: {class: "select2"}, include_blank: true
           f.input :start_date, as: :datepicker
           f.input :due_date, as: :datepicker
         end
