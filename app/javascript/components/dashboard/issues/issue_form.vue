@@ -1347,23 +1347,34 @@ export default {
       }
     },
     toggleWatched() {
+      if (this.DV_issue.progress == 100 && !this.DV_issue.watched ) {
+         this.$message({
+            message: `Issues at 100% progress cannot be placed On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });      
+        return
+      } 
       if (this.DV_issue.watched) {
-        let confirm = window.confirm(
-          `Are you sure, you want to remove this issue from on-watch?`
-        );
-        if (!confirm) {
-          return;
-        }
+         this.$message({
+            message: `${this.DV_issue.title} has been removed from On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });
+      } else {
+         this.$message({
+            message: `${this.DV_issue.title} successfully placed On Watch status.`,
+            type: "success",
+            showClose: true,
+          });
       }
       this.DV_issue = { ...this.DV_issue, watched: !this.DV_issue.watched };
       this.updateWatchedIssues(this.DV_issue);
     },
     removeFromWatch() {
-      if (this.DV_issue.progress == 100) {
-        // this.toggleWatched()
-        console.log("yes")
+      if ( (this.DV_issue.progress == 100) && (this.DV_issue.watched == true) ) {         
+        this.toggleWatched()     
       }
-      return true
     },
     cancelIssueSave() {
       this.$emit("on-close-form");
@@ -1374,10 +1385,7 @@ export default {
         if (!success || this.loading) {
           this.showErrors = !success;
           return;
-        }
-        if (this.DV_issue.watched == true && this.removeFromWatch) {
-          this.toggleWatched()
-         }
+        } 
         this.editToggle = !this.editToggle
         this.loading = true;
         let formData = new FormData();

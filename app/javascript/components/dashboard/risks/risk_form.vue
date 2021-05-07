@@ -1092,7 +1092,8 @@
                 </label>
               </span>
               <el-slider
-                v-model="DV_risk.progress"   
+                v-model="DV_risk.progress" 
+                :input="removeFromWatch()"      
                 :disabled="!_isallowed('write') || DV_risk.autoCalculate"
                 :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
                 :format-tooltip="(value) => value + '%'"
@@ -2018,16 +2019,34 @@ export default {
       }
     },
     toggleWatched() {
+        if (this.DV_risk.progress == 100 && !this.DV_risk.watched ) {
+         this.$message({
+            message: `Risks at 100% progress cannot be placed On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });      
+        return
+      } 
       if (this.DV_risk.watched) {
-        let confirm = window.confirm(
-          `Are you sure, you want to remove this risk from on-watch?`
-        );
-        if (!confirm) {
-          return;
-        }
+         this.$message({
+            message: `${this.DV_risk.text} has been removed from On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });
+      } else {
+         this.$message({
+            message: `${this.DV_risk.text} successfully placed On Watch status.`,
+            type: "success",
+            showClose: true,
+          });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
       this.updateWatchedRisks(this.DV_risk);
+    },
+    removeFromWatch() {
+      if ( (this.DV_risk.progress == 100) && (this.DV_risk.watched == true) ) {         
+        this.toggleWatched()     
+      }
     },
     toggleApproved(e) {
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };    
