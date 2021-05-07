@@ -419,6 +419,7 @@
             </span>
             <el-slider
               v-model="DV_task.progress"
+              :input="removeFromWatch()"    
               :disabled="!_isallowed('write') || DV_task.autoCalculate"
               :marks="{ 0: '0%', 25: '25%', 50: '50%', 75: '75%', 100: '100%' }"
               :format-tooltip="(value) => value + '%'"
@@ -1392,16 +1393,34 @@ export default {
       }
     },
     toggleWatched() {
+       if (this.DV_task.progress == 100 && !this.DV_task.watched ) {
+         this.$message({
+            message: `Tasks at 100% progress cannot be placed On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });      
+        return
+      } 
       if (this.DV_task.watched) {
-        let confirm = window.confirm(
-          `Are you sure, you want to remove this task from on-watch?`
-        );
-        if (!confirm) {
-          return;
-        }
+         this.$message({
+            message: `${this.DV_task.text} has been removed from On Watch status.`,
+            type: "warning",
+            showClose: true,
+          });
+      } else {
+         this.$message({
+            message: `${this.DV_task.text} successfully placed On Watch status.`,
+            type: "success",
+            showClose: true,
+          });
       }
       this.DV_task = { ...this.DV_task, watched: !this.DV_task.watched };
       this.updateWatchedTasks(this.DV_task);
+    },
+    removeFromWatch() {
+      if ( (this.DV_task.progress == 100) && (this.DV_task.watched == true) ) {         
+        this.toggleWatched()     
+      }
     },
     cancelSave() {
       this.$emit("on-close-form");

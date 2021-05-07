@@ -13,7 +13,7 @@
             <span style="font-size: 16px; margin-right: 10px"
               ><i class="fas fa-building"></i
             ></span>
-            <router-link :to="projectNameLink" :load="log(projectNameLink)">{{ currentProject.name  }}</router-link>
+            <router-link v-if="contentLoaded" :to="projectNameLink">{{ currentProject.name  }}</router-link>
             <el-icon
               class="el-icon-arrow-right"
               style="font-size: 12px"
@@ -39,7 +39,7 @@
             Read Only
           </button>
           <button            
-            class="btn btn-sm sticky-btn btn-outline-secondary"
+            class="btn btn-sm sticky-btn btn-outline-secondary mr-1"
             @click.prevent="cancelSave"
             data-cy="task_close_btn"
           >
@@ -47,7 +47,7 @@
           </button>
           <button
             v-if="DV_lesson.id && _isallowed('delete')"
-            class="btn btn-sm sticky-btn btn-outline-secondary"
+            class="btn btn-sm sticky-btn btn-danger"
             @click.prevent="deleteLesson"
             data-cy="task_close_btn"
           >
@@ -110,7 +110,7 @@
       </div>
     </div>
         <div class="form-group mx-4">
-        <label class="font-md">Description</label>
+        <label class="font-md">Description <span style="color: #dc3545">*</span></label>
         <textarea
           name="Description"
           class="form-control"

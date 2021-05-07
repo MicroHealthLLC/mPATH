@@ -34,9 +34,9 @@ ActiveAdmin.register LessonStage do
     f.actions
   end
 
-  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Issue Stages?" do |ids|
-    deleted = IssueStage.where(id: ids).destroy_all
-    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Issue Stages"
+  batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Lesson Stages?" do |ids|
+    deleted = LessonStage.where(id: ids).destroy_all
+    redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lesson Stages"
   end
 
   controller do
@@ -61,7 +61,7 @@ ActiveAdmin.register LessonStage do
     end
 
     def check_order
-      order = IssueStage.sort_order?
+      order = LessonStage.sort_order?
       redirect_to admin_lesson_stages_path(order: order) and return unless params[:order] == order
     end
 
