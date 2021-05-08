@@ -166,18 +166,18 @@
       class="exampleOne mt-3" 
       finish-status="success"  
       :class="{'overSixSteps': taskStages.length >= 6 }" 
-      :active="DV_task.taskStagesIndex"      
+      :active="taskStages.findIndex(stage => stage.id == selectedTaskStage.id)"
       :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
       v-model="selectedTaskStage"
       track-by="id" 
       value-key="id"
       >    
      <el-step
-      v-for="(item, index) in taskStages"
-      :key="index"                       
-      :value="index"        
+      v-for="item in taskStages"
+      :key="item.id"                       
+      :value="item"        
       style="cursor:pointer"
-      @click.native="selectedStage(item, index)"        
+      @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -197,11 +197,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="(item, index) in taskStages"
-      :key="index"            
-      :value="index"
+      v-for="item in taskStages"
+      :key="item.id"            
+      :value="item"
       style="cursor:pointer"        
-      @click.native="selectedStage(item, index)"        
+      @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -725,25 +725,7 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedTasks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-tasks"
-          :options="filteredTasks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect> -->
+       
       </div>
 
       <div class="form-group user-select mx-4">
@@ -767,25 +749,7 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedIssues"
-          track-by="id"
-          label="title"
-          placeholder="Search and select Related-issues"
-          :options="filteredIssues"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.title}}</span>
-            </div>
-          </template>
-        </multiselect> -->
+       
       </div>
         <div class="form-group user-select mx-4">
         <label class="font-md mb-0">Related Risks</label>
@@ -808,29 +772,8 @@
            >
           </el-option>
           </el-select>
-        <!-- <multiselect
-          v-model="relatedRisks"
-          track-by="id"
-          label="text"
-          placeholder="Search and select Related-risks"
-          :options="filteredRisks"
-          :searchable="true"
-          :multiple="true"
-          select-label="Select"
-          deselect-label="Remove"
-          :close-on-select="false"
-          :disabled="!_isallowed('write')"
-          >
-          <template slot="singleLabel" slot-scope="{option}">
-            <div class="d-flex">
-              <span class='select__tag-name'>{{option.text}}</span>
-            </div>
-          </template>
-        </multiselect> -->
+      
       </div>
-
-
-    <!-- closing div for tab4 -->
  </div>
 
 
@@ -988,8 +931,7 @@
           facilityProjectId: this.facility.id,
           checklistDueDate: '',
           taskTypeId: '',
-          taskStagesId: "",  
-          taskStagesIndex: 0,      
+          taskStagesId: "",          
           responsibleUserIds: [],
           accountableUserIds:[],
           consultedUserIds:[],
@@ -1005,8 +947,7 @@
           notes: []
         }
       },  
-      selectedStage(item, index){           
-        this.DV_task.taskStagesIndex = index    
+      selectedStage(item){          
         if (this._isallowed('write')) {
           this.selectedTaskStage = item
         }               
@@ -1054,13 +995,6 @@
           count++
         }
       },
-      //     activeStage() {
-      //    for  (i = 0; i < this.taskStages.length; i++) {
-              
-      //       }
-      // },
-
-
       editProgress() {
        this.editToggle = !this.editToggle
        //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
@@ -1154,11 +1088,8 @@
           formData.append('task[progress]', this.DV_task.progress)
           formData.append('task[auto_calculate]', this.DV_task.autoCalculate)
           formData.append('task[description]', this.DV_task.description)
-          formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))
-          formData.append("task[task_stages_index]", this.DV_task.taskStagesIndex);
-          // RACI USERS START HERE Awaiting backend work
-
-          //Responsible USer Id
+          formData.append('task[destroy_file_ids]', _.map(this.destroyedFiles, 'id'))    
+           //Responsible USer Id
             //  formData.append('responsible_user_ids', this.DV_task.responsibleUserIds)
           if (this.DV_task.responsibleUserIds && this.DV_task.responsibleUserIds.length) {
             for (let u_id of this.DV_task.responsibleUserIds) {

@@ -121,7 +121,6 @@ class RisksController < AuthenticatedController
       :task_type_id,
       :task_type, 
       :risk_stage_id,
-      :risk_stages_index,
       :progress,
       :start_date,
       :due_date,
