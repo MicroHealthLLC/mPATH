@@ -188,7 +188,6 @@ class Issue < ApplicationRecord
       :description,
       :issue_type_id,
       :issue_stage_id,
-      :issue_stages_index,
       :issue_severity_id,
       :facility_project_id,
       :task_type_id,

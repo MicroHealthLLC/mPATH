@@ -3,8 +3,8 @@
     <div>
       <div class="d-flex">
         <div
-          v-for="column, i in columns"
-          :key="i"          
+          v-for="column in columns"
+          :key="column.title"          
           class="rounded-lg kan-col py-2 unset mb-2 mr-4"        
           :class="{'no-stage': column.stage.id == null}"
           :style="`${ column.stage.id == null ? 'width:1rem' : 'min-width:18.5rem'  }`"
@@ -26,7 +26,7 @@
            
           </div>
           <div class="kan-body">
-            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks, columns, i)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
+            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
               <div
                 :is="cardShow"
                 v-for="task in column.tasks"
@@ -74,10 +74,8 @@ export default {
   props: ['stages', 'cards', 'kanbanType'],
   data() {
     return {
-      loading: true,
-      kanbanStageIndex: "",
-      stageId: _.camelCase(`${this.kanbanType}tageId`),
-      stagesIndex: _.camelCase(`${this.kanbanType}tagesIndex`),
+      loading: true,     
+      stageId: _.camelCase(`${this.kanbanType}tageId`),     
       columns: [],
       movingSlot: ''
     };
@@ -91,8 +89,7 @@ export default {
       'updateKanbanTaskIssues'
     ]),   
     setupColumns(cards) {       
-      this.stageId = `${this.kanbanType.slice(0, -1)}StageId`
-      this.stagesIndex = `${this.kanbanType.slice(0, -1)}StagesIndex`
+      this.stageId = `${this.kanbanType.slice(0, -1)}StageId`    
       this.columns.push({
         stage: {id: null},
         title: "No stage",
@@ -102,7 +99,7 @@ export default {
         this.columns.push({
           stage: stage,
           title: stage.name,
-          tasks: _.filter(cards, c => c[this.stageId] == stage.id),        
+          tasks: _.filter(cards, c => c[this.stageId] == stage.id)       
         })
       }
     },
@@ -110,8 +107,7 @@ export default {
       this.movingSlot = item.relatedContext.component.$vnode.key
       return true
     },
-    handleChange(item, tasks, columns, i) {   
-                  
+    handleChange(item, tasks) {                     
         if (tasks.length > 0) {
         let projectId = tasks[0].projectId
         let facilityId = tasks[0].facilityId
@@ -123,8 +119,7 @@ export default {
             var s = this.stages.find(s => s.name == this.movingSlot)          
             if(s){
               data[this.kanbanType][task.id][this.stageId] = s.id
-              data[this.kanbanType][task.id][this.stagesIndex] = i - 1
-                       
+                                  
             }else{
               data[this.kanbanType][task.id][this.stageId] = null
             }            

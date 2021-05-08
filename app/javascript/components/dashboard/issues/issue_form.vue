@@ -289,45 +289,7 @@
             {{ errors.first("Issue Severity") }}
           </div>
         </div>
-        <!-- <div class="simple-select form-group w-100 mx-1">
-          <label class="font-md">Stage</label>
-          <el-select
-            v-model="selectedIssueStage"
-            class="w-100"
-            track-by="id"
-            clearable
-            value-key="id"
-            :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="task_stage"
-            placeholder="Select Stage"
-            >
-             <el-option
-              v-for="item in issueStages"
-              :value="item"
-              :key="item.id"
-              :label="item.name"
-              >
-            </el-option>
-           </el-select> -->
-          <!-- <multiselect
-            v-model="selectedIssueStage"
-            track-by="id"
-            label="name"
-            placeholder="Select Stage"
-            :options="issueStages"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="issue_stage"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
-              </div>
-            </template>
-          </multiselect> -->
-        <!-- </div> -->
+       
      </div>  
           
     <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
@@ -338,7 +300,7 @@
     <el-steps 
       class="exampleOne mt-3" 
       :class="{'overSixSteps': issueStages.length >= 6 }"   
-      :active="DV_issue.issueStagesIndex"                      
+      :active="issueStages.findIndex(stage => stage.id == selectedIssueStage.id)"                
       finish-status="success"  
       :disabled="!_isallowed('write') || !!fixedStage"
       v-model="selectedIssueStage"
@@ -346,11 +308,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="(item, index) in issueStages"
-      :key="index"             
-      :value="index"
+      v-for="item in issueStages"
+      :key="item.id"             
+      :value="item"
       style="cursor:pointer"
-      @click.native="selectedStage(item, index)"        
+      @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -370,11 +332,11 @@
       value-key="id"
       >         
       <el-step
-      v-for="(item, index) in issueStages"
-      :key="index"            
-      :value="index"
+      v-for="item in issueStages"
+      :key="item.id"            
+      :value="item"
       style="cursor:pointer"
-      @click.native="selectedStage(item, index)"        
+      @click.native="selectedStage(item)"        
       :title="item.name"   
       description=""                    
     ></el-step>          
@@ -1178,8 +1140,7 @@ export default {
         title: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.facility.id,
-        issueStagesIndex: 0,      
+        facilityProjectId: this.facility.id,       
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,
@@ -1199,8 +1160,7 @@ export default {
         notes: [],
       };
     },
-    selectedStage(item, index){
-     this.DV_issue.issueStagesIndex = index    
+    selectedStage(item){    
       if (this._isallowed('write')) {
         this.selectedIssueStage = item
       }    
@@ -1383,10 +1343,6 @@ export default {
         formData.append("issue[description]", this.DV_issue.description);
         formData.append("issue[auto_calculate]", this.DV_issue.autoCalculate);
         formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
-        formData.append("issue[issue_stages_index]", this.DV_issue.issueStagesIndex);
-
-
-  // RACI USERS HERE Awaiting backend work
 
      //Responsible USer Id
         if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {

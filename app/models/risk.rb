@@ -254,7 +254,6 @@ class Risk < ApplicationRecord
       :task_type,
       :risk_stage, 
       :risk_stage_id,
-      :risk_stages_index,
       :progress,
       :start_date,
       :due_date,
