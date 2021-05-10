@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form
+   <form
       id="tasks-form"
       @submit.prevent="saveTask"
       class="mx-auto tasks-form"
@@ -34,6 +34,7 @@
             <span v-else style="color: gray">(Task Name)</span>
           </h5>
         </div>
+       
         <div class="ml-auto d-flex" v-if="_isallowed('read')">
           <button
             v-if="_isallowed('write')"
@@ -58,6 +59,7 @@
             Close
           </button>
         </div>
+      
       </div>
 
       <hr class="mx-4 mb-6 mt-2" />
@@ -94,6 +96,7 @@
             </li>
           </ul>
         </div>
+      
 
         <!-- TASK INFO TAB #1 -->
         <div v-show="currentTab == 'tab1'" class="paperLookTab tab1">
@@ -183,41 +186,33 @@
             </div>
           </div>
 
-          <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
-            <div v-if="selectedTaskStage !== undefined">
-              <div style="position:relative">
-                <label class="font-md mb-0">Stage</label>
-                <button
-                  v-if="_isallowed('write')"
-                  @click.prevent="clearStages"
-                  :disabled="fixedStage"
-                  class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn"
-                >
-                  Clear Stages
-                </button>
-              </div>
-              <el-steps
-                class="exampleOne mt-3"
-                :active="selectedTaskStage.id - 1"
-                finish-status="success"
-                :class="{ overSixSteps: taskStages.length >= 6 }"
-                :disabled="!_isallowed('write') || !!fixedStage"
-                v-model="selectedTaskStage"
-                track-by="id"
-                value-key="id"
-              >
-                <el-step
-                  v-for="item in taskStages"
-                  :key="item.id"
-                  :value="item"
-                  style="cursor:pointer"
-                  @click.native="selectedStage(item)"
-                  :title="item.name"
-                  description=""
-                ></el-step>
-              </el-steps>
-            </div>
+         <div class="mx-4 mt-2 mb-4" v-if="selectedTaskStage !== null">
+          <div v-if="selectedTaskStage !== undefined">       
+          <div style="position:relative"><label class="font-md mb-0">Stage</label>               
+            <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger font-sm float-right d-inline-block clearStageBtn">Clear Stages</button>  
+            </div>    
+          <el-steps 
+            class="exampleOne mt-3" 
+            finish-status="success"  
+            :class="{'overSixSteps': taskStages.length >= 6 }" 
+            :active="taskStages.findIndex(stage => stage.id == selectedTaskStage.id)"
+            :disabled="!_isallowed('write') || fixedStage  && isKanbanView"
+            v-model="selectedTaskStage"
+            track-by="id" 
+            value-key="id"
+            >    
+          <el-step
+            v-for="item in taskStages"
+            :key="item.id"                       
+            :value="item"        
+            style="cursor:pointer"
+            @click.native="selectedStage(item)"        
+            :title="item.name"   
+            description=""                    
+          ></el-step>          
+            </el-steps>          
           </div>
+         </div>
 
           <div
             class="mx-4 mt-2 mb-4"
@@ -586,30 +581,9 @@
                                 >
                                 </el-option>
                               </el-select>
-
-                              <!-- <multiselect
-                  v-model="check.user"
-                  track-by="id"
-                  label="fullName"
-                  class="w-75"
-                  placeholder="Search and select users"
-                  :options="activeProjectUsers"
-                  :searchable="true"
-                  :disabled="!_isallowed('write') || !check.text"
-                  select-label="Select"
-                  deselect-label="Remove"
-                  >
-                  <template slot="singleLabel" slot-scope="{option}">
-                    <div class="d-flex">
-                      <span class='select__tag-name'>{{option.fullName}}</span>
-                    </div>
-                  </template>
-                </multiselect> -->
                             </div>
                           </div>
-                          <!-- <div class="simple-select form-group col mb-0">
-
-              </div> -->
+                         
                         </div>
 
                         <!-- Start Checkbox Progress List -->
@@ -779,6 +753,7 @@
           </div>
           <!-- closing div for tab2 -->
         </div>
+        
 
         <!-- FILES TAB # 4-->
         <div v-show="currentTab == 'tab4'" class="paperLookTab tab4">
@@ -1034,6 +1009,7 @@
             </div>
           </div>
         </div>
+        
 
         <!-- UPDATE TAB 6 -->
         <div v-show="currentTab == 'tab6'" class="paperLookTab tab5">
@@ -1063,6 +1039,7 @@
               <div
                 v-for="note in paginated('filteredNotes')"
                 class="form-group"
+                :key="note.id"
               >
                 <span class="d-inline-block w-100"
                   ><label class="badge badge-secondary">Update by</label>
@@ -1087,15 +1064,18 @@
           </div>
         </div>
         <!-- closing div for tab5 -->
+      
+    
       </div>
 
       <!-- TABBED OUT SECTION END HERE -->
-    </form>
+  </form>  
     <div
       v-if="loading"
       class="load-spinner spinner-border text-dark"
       role="status"
     ></div>
+ 
 
     <RelatedTaskMenu
       :facilities="facilities"
@@ -1111,6 +1091,8 @@
     >
     </RelatedTaskMenu>
   </div>
+
+   
 </template>
 
 <script>
@@ -2026,8 +2008,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.tasks-form {
-}
+// .tasks-form {
+// }
 td,
 th {
   border: solid 1px #ededed;

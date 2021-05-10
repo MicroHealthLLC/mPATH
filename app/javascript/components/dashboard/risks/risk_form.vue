@@ -204,41 +204,31 @@
               </div>
 
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
-                <div v-if="selectedRiskStage !== undefined">
-                  <div style="position:relative">
-                    <label class="font-sm mb-0">Stage</label>
-                    <button
-                      v-if="_isallowed('write')"
-                      @click.prevent="clearStages"
-                      :disabled="fixedStage"
-                      class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn"
-                    >
-                      Clear Stages
-                    </button>
-                  </div>
-                  <el-steps
-                    class="exampleOne mt-3"
-                    :class="{ overSixSteps: riskStages.length >= 6 }"
-                    :active="selectedRiskStage.id - 1"
-                    finish-status="success"
-                    :disabled="
-                      !_isallowed('write') || (fixedStage && isKanbanView)
-                    "
-                    v-model="selectedRiskStage"
-                    track-by="id"
-                    value-key="id"
-                  >
-                    <el-step
-                      v-for="item in riskStages"
-                      :key="item.id"
-                      :value="item"
-                      style="cursor:pointer"
-                      @click.native="selectedStage(item)"
-                      :title="item.name"
-                      description=""
-                    ></el-step>
-                  </el-steps>
-                </div>
+                <div v-if="selectedRiskStage !== undefined">       
+                  <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
+                    <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
+                  </div>    
+                <el-steps 
+                  class="exampleOne mt-3" 
+                  :class="{'overSixSteps': riskStages.length >= 6 }" 
+                  :active="riskStages.findIndex(stage => stage.id == selectedRiskStage.id)"                                  
+                  finish-status="success"  
+                  :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+                  v-model="selectedRiskStage"
+                  track-by="id" 
+                  value-key="id"
+                  >         
+                <el-step
+                  v-for="item in riskStages"
+                  :key="item.id"                        
+                  :value="item"
+                  style="cursor:pointer"
+                  @click.native="selectedStage(item)"        
+                  :title="item.name"   
+                  description=""                    
+                ></el-step>          
+                  </el-steps>          
+              </div>
               </div>
 
               <div
@@ -1968,7 +1958,6 @@ export default {
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
-        // riskApprover: [],
         me: "",
         riskStageId: "",
         probability: 1,
@@ -1993,6 +1982,9 @@ export default {
         notes: [],
       };
     },
+       log(e){
+          console.log("This is the riskStages item: " + e)
+      },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2002,7 +1994,7 @@ export default {
       }
       if (str.length > length) {
         return str.substring(0, length - ending.length) + ending;
-      } else {
+       } else {
         return str;
       }
     },
@@ -2231,7 +2223,7 @@ export default {
           "risk[risk_approach_description]",
           this.DV_risk.riskApproachDescription
         );
-        formData.append("risk[approval_time]", this.DV_risk.approvalTime);
+        formData.append("risk[approval_time]", this.DV_risk.approvalTime);     
         formData.append("risk[task_type_id]", this.DV_risk.taskTypeId);
         formData.append("risk[risk_stage_id]", this.DV_risk.riskStageId);
         formData.append("risk[progress]", this.DV_risk.progress);

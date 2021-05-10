@@ -24,6 +24,24 @@ body {
     background: lightgray;
     border-radius: 4px;
   }
+}    
+.el-step__head.is-success {
+  .el-step__line {
+    background-color: #67C23A;
+    color: #67C23A;
+    border-color: #67C23A;
+  }
+}
+    
+.program-row {
+  height: 60px;
+}
+.hr-program-row {
+  margin-top: 0.5rem;
+}
+.welcome-page-program-name {
+  display: table-cell;
+  vertical-align:middle;
 }
 .program-row {
   height: 60px;

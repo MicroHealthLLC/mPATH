@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form
+   <form
       id="issues-form"
       @submit.prevent="saveIssue"
       class="mx-auto issues-form"
@@ -8,7 +8,7 @@
       data-cy="issue_form"
       :class="{ _disabled: loading }"
     >
-      <div class="mt-2 mx-4 d-flex align-items-center">
+    <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 10px"
@@ -35,6 +35,7 @@
             <span v-else style="color: gray">(Issue Name)</span>
           </h5>
         </div>
+       
         <div class="ml-auto d-flex" v-if="_isallowed('read')">
           <button
             v-if="_isallowed('write')"
@@ -59,8 +60,8 @@
             Close
           </button>
         </div>
-      </div>
-
+    </div>
+    
       <hr class="mx-4 mb-6 mt-2" />
 
       <div
@@ -172,26 +173,7 @@
                 >
                 </el-option>
               </el-select>
-              <!--
-          <multiselect
-            v-model="selectedTaskType"
-            track-by="id"
-            label="name"
-            placeholder="Select Category"
-            :options="taskTypes"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!_isallowed('write')"
-            :class="{ error: errors.has('Task Category') }"
-            data-cy="task_type"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
-              </div>
-            </template>
-          </multiselect> -->
+            </div>
             </div>
 
             <div class="simple-select form-group w-100 mx-1">
@@ -218,27 +200,7 @@
                 >
                 </el-option>
               </el-select>
-              <!-- <multiselect
-            v-model="selectedIssueType"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Issue Type"
-            :options="issueTypes"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!_isallowed('write')"
-            :class="{ 'error-border': errors.has('Issue Type') }"
-            data-cy="issue_type"
-            name="Issue Type"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
-              </div>
-            </template>
-          </multiselect> -->
+      
               <div
                 v-show="errors.has('Issue Type')"
                 class="text-danger"
@@ -247,7 +209,7 @@
                 {{ errors.first("Issue Type") }}
               </div>
             </div>
-          </div>
+         
           <!-- Tab 1 Row ends here -->
           <!-- Tab 1 Row begins here -->
           <div class="d-flex mx-4">
@@ -275,112 +237,46 @@
                 >
                 </el-option>
               </el-select>
-              <!-- <multiselect
-            v-model="selectedIssueSeverity"
-            v-validate="'required'"
-            track-by="id"
-            label="name"
-            placeholder="Issue Severity"
-            :options="issueSeverities"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!_isallowed('write')"
-            :class="{ 'error-border': errors.has('Issue Severity') }"
-            data-cy="issue_severity"
-            name="Issue Severity"
+     
+          <div
+            v-show="errors.has('Issue Severity')"
+            class="text-danger"
+            data-cy="issue_severity_error"
           >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
-              </div>
-            </template>
-          </multiselect> -->
-              <div
-                v-show="errors.has('Issue Severity')"
-                class="text-danger"
-                data-cy="issue_severity_error"
-              >
-                {{ errors.first("Issue Severity") }}
-              </div>
-            </div>
-            <!-- <div class="simple-select form-group w-100 mx-1">
-          <label class="font-md">Stage</label>
-          <el-select
-            v-model="selectedIssueStage"
-            class="w-100"
-            track-by="id"
-            clearable
-            value-key="id"
-            :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="task_stage"
-            placeholder="Select Stage"
-            >
-             <el-option
+            {{ errors.first("Issue Severity") }}
+          </div>
+         </div>       
+        </div>  
+          
+            <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
+              <div v-if="selectedIssueStage !== undefined">       
+              <div style="position:relative"><label class="font-md mb-0">Stage</label>               
+                <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn">Clear Stages</button>  
+              </div>    
+            <el-steps 
+              class="exampleOne mt-3" 
+              :class="{'overSixSteps': issueStages.length >= 6 }"   
+              :active="issueStages.findIndex(stage => stage.id == selectedIssueStage.id)"                
+              finish-status="success"  
+              :disabled="!_isallowed('write') || !!fixedStage"
+              v-model="selectedIssueStage"
+              track-by="id" 
+              value-key="id"
+              >         
+              <el-step
               v-for="item in issueStages"
+              :key="item.id"             
               :value="item"
-              :key="item.id"
-              :label="item.name"
-              >
-            </el-option>
-           </el-select> -->
-            <!-- <multiselect
-            v-model="selectedIssueStage"
-            track-by="id"
-            label="name"
-            placeholder="Select Stage"
-            :options="issueStages"
-            :searchable="false"
-            select-label="Select"
-            deselect-label="Remove"
-            :disabled="!_isallowed('write') || !!fixedStage"
-            data-cy="issue_stage"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.name }}</span>
-              </div>
-            </template>
-          </multiselect> -->
-            <!-- </div> -->
-          </div>
-
-          <div class="mx-4 mt-2 mb-4" v-if="selectedIssueStage !== null">
-            <div v-if="selectedIssueStage !== undefined">
-              <div style="position:relative">
-                <label class="font-md mb-0">Stage</label>
-                <button
-                  v-if="_isallowed('write')"
-                  @click.prevent="clearStages"
-                  :disabled="fixedStage"
-                  class="btn btn-sm btn-danger d-inline-block font-sm float-right clearStageBtn"
-                >
-                  Clear Stages
-                </button>
-              </div>
-              <el-steps
-                class="exampleOne mt-3"
-                :class="{ overSixSteps: issueStages.length >= 6 }"
-                :active="selectedIssueStage.id - 1"
-                finish-status="success"
-                :disabled="!_isallowed('write') || !!fixedStage"
-                v-model="selectedIssueStage"
-                track-by="id"
-                value-key="id"
-              >
-                <el-step
-                  v-for="item in issueStages"
-                  :key="item.id"
-                  :value="item"
-                  style="cursor:pointer"
-                  @click.native="selectedStage(item)"
-                  :title="item.name"
-                  description=""
-                ></el-step>
-              </el-steps>
+              style="cursor:pointer"
+              @click.native="selectedStage(item)"        
+              :title="item.name"   
+              description=""                    
+            ></el-step>          
+              </el-steps>          
             </div>
           </div>
 
+     
           <div
             class="mx-4 mt-2 mb-4"
             v-if="selectedIssueStage == null || selectedIssueStage == undefined"
@@ -468,34 +364,7 @@ Tab 1 Row Begins here -->
             </div>
           </div>
 
-          <!-- Next Row in Tab 1 -->
-          <!--
-          <div class="form-group user-select mx-4">
-          <label class="font-sm mb-0">Assign Users:</label>
-          <multiselect
-            v-model="issueUsers"
-            track-by="id"
-            label="fullName"
-            placeholder="Search and select users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Enter to remove"
-            :close-on-select="false"
-            :disabled="!_isallowed('write')"
-            data-cy="issue_user"
-          >
-            <template slot="singleLabel" slot-scope="{ option }">
-              <div class="d-flex">
-                <span class="select__tag-name">{{ option.fullName }}</span>
-              </div>
-            </template>
-          </multiselect>
-        </div> -->
-          <!-- closing div for tab1 -->
         </div>
-
         <!-- ASSIGN USERS TAB # 2-->
         <div v-show="currentTab == 'tab2'" class="paperLookTab tab2">
           <div class="form-group mb-0 pt-3 d-flex w-100">
@@ -565,26 +434,7 @@ Tab 1 Row Begins here -->
                 >
                 </el-option>
               </el-select>
-              <!-- <multiselect
-            v-model="consultedIssueUsers"
-            track-by="id"
-            label="fullName"
-            placeholder="Search and select Consulted Users"
-            :options="activeProjectUsers"
-            :searchable="true"
-            :multiple="true"
-            select-label="Select"
-            deselect-label="Remove"
-            :close-on-select="false"
-
-            data-cy="risk_owner"
-            >
-            <template slot="singleLabel" slot-scope="{option}">
-              <div class="d-flex">
-                <span class='select__tag-name'>{{option.fullName}}</span>
-              </div>
-            </template>
-          </multiselect> -->
+        
             </div>
             <div class="form-group user-select ml-1 mr-4 w-100">
               <label class="font-md mb-0">Informed</label>
@@ -1251,6 +1101,7 @@ Tab 1 Row Begins here -->
               <div
                 v-for="note in paginated('filteredNotes')"
                 class="form-group"
+                :key="note.id"
               >
                 <span class="d-inline-block w-100"
                   ><label class="badge badge-secondary">Update by</label>
@@ -1275,7 +1126,9 @@ Tab 1 Row Begins here -->
           </div>
         </div>
         <!-- closing div for tab5 -->
+    
       </div>
+
       <div ref="addUpdates" class="pt-0 mt-0"></div>
     </form>
     <div
@@ -1406,7 +1259,7 @@ export default {
         title: "",
         startDate: "",
         dueDate: "",
-        facilityProjectId: this.facility.id,
+        facilityProjectId: this.facility.id,       
         issueTypeId: "",
         taskTypeId: "",
         progress: 0,
@@ -1643,18 +1496,10 @@ export default {
         formData.append("issue[progress]", this.DV_issue.progress);
         formData.append("issue[description]", this.DV_issue.description);
         formData.append("issue[auto_calculate]", this.DV_issue.autoCalculate);
-        formData.append(
-          "issue[destroy_file_ids]",
-          _.map(this.destroyedFiles, "id")
-        );
+        formData.append("issue[destroy_file_ids]",_.map(this.destroyedFiles, "id") );
 
-        // RACI USERS HERE Awaiting backend work
-
-        //Responsible USer Id
-        if (
-          this.DV_issue.responsibleUserIds &&
-          this.DV_issue.responsibleUserIds.length
-        ) {
+     //Responsible USer Id
+        if (this.DV_issue.responsibleUserIds && this.DV_issue.responsibleUserIds.length) {
           // console.log("this.DV_issue.responsibleUserIds.length")
           // console.log(this.DV_issue.responsibleUserIds.length)
           // console.log(this.DV_issue.responsibleUserIds)

@@ -116,6 +116,9 @@ li.has_many_container.facility_privileges {
   #risk_risk_approach_input, #risk_impact_level_input{
     margin-top:25px;
   }
+  .field-label {
+    width: auto !important;
+  }
   .comments.custom_made {
     label {
       width: 10%;

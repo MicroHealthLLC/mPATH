@@ -331,7 +331,7 @@ nav.title-bar .menu-icon
 	display: flex;
 	flex: 0 1 auto;
 	order: 1;
-	min-height: 79px;
+	min-height: 100px;
 	align-self: center;
 	justify-content: center;
 	flex-basis: 100%;
@@ -344,11 +344,11 @@ nav.title-bar .menu-icon
 	margin: 0;
 	z-index: 1;
 	display: block;
-	width: 401px;
-	height: 79px;
+	width: 294px;
+	height: 100px;
 	align-self: center;
-	background: transparent url('Images/mgis-logo.jpg') no-repeat center center;
-	-pie-background: transparent url('Skins/Fluid/Stylesheets/Images/mgis-logo.jpg') no-repeat center center;
+	background: transparent url('Images/mpath-logo_1.jpg') no-repeat center center;
+	-pie-background: transparent url('Skins/Fluid/Stylesheets/Images/mpath-logo_1.jpg') no-repeat center center;
 }
 
 .title-bar-container
@@ -773,7 +773,7 @@ div.central-dropdown-content > a:hover
 
 .menu-icon-container
 {
-	min-height: 79px;
+	min-height: 100px;
 }
 
 .off-canvas-wrapper-inner .outer-row

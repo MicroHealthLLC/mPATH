@@ -28,7 +28,8 @@ jQuery(function($) {
   $("#task_task_stage_input .select2").select2({
     placeholder: "Search and select a Stage",
     allowClear: true
-  });
+  })
+
   $("#issue_issue_stage_input .select2").select2({
     placeholder: "Search and select a Stage",
     allowClear: true

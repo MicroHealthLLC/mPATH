@@ -3564,6 +3564,11 @@ fast-json-stable-stringify@^2.0.0:
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.1.0.tgz#874bf69c6f404c2b5d99c481341399fd55892633"
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==
 
+fast-xml-parser@^3.19.0:
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-3.19.0.tgz#cb637ec3f3999f51406dd8ff0e6fc4d83e520d01"
+  integrity sha512-4pXwmBplsCPv8FOY1WRakF970TjNGnGnfbOnLqjlYvMiF1SR3yOHyxMR/YCXpPTOspNF5gwudqktIP4VsWkvBg==
+
 faye-websocket@^0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/faye-websocket/-/faye-websocket-0.10.0.tgz#4e492f8d04dfb6f89003507f6edbf2d501e7c6f4"
@@ -4731,6 +4736,13 @@ is-svg@^3.0.0:
   integrity sha512-gi4iHK53LR2ujhLVVj+37Ykh9GLqYHX6JOVXbLAucaG/Cqw9xwdFOjDM2qeifLs1sF1npXXFvDu0r5HNgCMrzQ==
   dependencies:
     html-comment-regex "^1.1.0"
+
+is-svg@^4.2.2:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/is-svg/-/is-svg-4.3.1.tgz#8c63ec8c67c8c7f0a8de0a71c8c7d58eccf4406b"
+  integrity sha512-h2CGs+yPUyvkgTJQS9cJzo9lYK06WgRiXUqBBHtglSzVKAuH4/oWsqk7LGfbSa1hGk9QcZ0SyQtVggvBA8LZXA==
+  dependencies:
+    fast-xml-parser "^3.19.0"
 
 is-symbol@^1.0.2:
   version "1.0.3"
@@ -6778,7 +6790,7 @@ postcss-svgo@^4.0.2:
   resolved "https://registry.yarnpkg.com/postcss-svgo/-/postcss-svgo-4.0.2.tgz#17b997bc711b333bab143aaed3b8d3d6e3d38258"
   integrity sha512-C6wyjo3VwFm0QgBy+Fu7gCYOkCmgmClghO+pjcxvrcBKtiKt0uCF+hvbMO1fyv5BMImRK90SMb+dwUnfbGd+jw==
   dependencies:
-    is-svg "^3.0.0"
+    is-svg "^4.2.2"
     postcss "^7.0.0"
     postcss-value-parser "^3.0.0"
     svgo "^1.0.0"
@@ -7783,9 +7795,9 @@ sshpk@^1.7.0:
     tweetnacl "~0.14.0"
 
 ssri@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.1.tgz#2a3c41b28dd45b62b63676ecb74001265ae9edd8"
-  integrity sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.2.tgz#157939134f20464e7301ddba3e90ffa8f7728ac5"
+  integrity sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==
   dependencies:
     figgy-pudding "^3.5.1"
 
@@ -8495,10 +8507,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vis-timeline@^7.3.9:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.0.tgz#65e95d580d446a080fe54c432fff247ddc44ebc0"
-  integrity sha512-ddJcOQR8iFVlnyCViibHVGtE1yf+USElFyE8Qtkf/OAuQwiNsCe0rNSWW9DRAuDmYqgTUl1o9C9VC0RGjDdtkg==
+vis-timeline@^7.4.4:
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.4.tgz#9d52885fa6e098f0860dd9a4f712691b7a222d98"
+  integrity sha512-L7SAIjMuccBl476ByskJbm4KLUIzxwflQ/zIL2WcaLgtdedyza+VLB+MVOv/RwavpdHCUY7ygLJ77cKe4dPzIg==
 
 vm-browserify@^1.0.1:
   version "1.1.2"

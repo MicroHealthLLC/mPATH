@@ -1,4 +1,4 @@
-# mGis
+# mPATH
 Project management for geographically separated sites
 
 
