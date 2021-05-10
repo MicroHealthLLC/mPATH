@@ -17,7 +17,10 @@ function checkRiskProbabilityImpactNumber(element){
 
 jQuery(function($) {
 
-
+  $(".project_privileges_select").select2({
+    placeholder: "Search and select Project",
+    allowClear: true
+  });
 
   // Add placeholder to for organization select
   $("#user_organization_input .select2").select2({
@@ -492,7 +495,8 @@ jQuery(function($) {
   }
 
   // user role previliges
-  if ($("#user-role_privilege-tab").is(":visible"))
+  //if ($("#user-role_privilege-tab").is(":visible"))
+  if(true)
   {
     let role_privilege = new Vue({
       el: "#user-role_privilege-tab",
