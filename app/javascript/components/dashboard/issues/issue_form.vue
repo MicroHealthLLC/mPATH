@@ -176,7 +176,7 @@
             </div>
             </div>
 
-            <div class="simple-select form-group w-100 mx-1">
+            <div class="simple-select form-group mx-4">
               <label class="font-md"
                 >Issue Type <span style="color: #dc3545">*</span></label
               >
@@ -213,7 +213,7 @@
           <!-- Tab 1 Row ends here -->
           <!-- Tab 1 Row begins here -->
           <div class="d-flex mx-4">
-            <div class="simple-select form-group w-100 mx-1">
+            <div class="simple-select form-group w-100">
               <label class="font-md"
                 >Issue Severity <span style="color: #dc3545">*</span></label
               >
