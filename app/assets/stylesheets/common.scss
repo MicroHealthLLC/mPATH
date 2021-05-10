@@ -890,3 +890,25 @@ i.el-icon-circle-close {
 .el-step__title.is-process {
   color: #67C23A;
 }
+
+.el-input.error {
+  input {
+    border-color: #e84444;
+  }
+}
+
+.el-select.error {
+  .el-input {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
+
+.error {
+  .vue2-datepicker {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
