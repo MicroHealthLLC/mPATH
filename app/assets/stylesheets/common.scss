@@ -878,4 +878,15 @@ i.el-icon-circle-close {
   margin-right: 85px;
 }
 
-// Recommitting message to accept change.  Discovered this file missing from QA branch on 24 Apr 2021.  This message can be deleted 
+.el-step__head.is-process {
+  .el-step__icon {
+    color: #67C23A;
+    border-color: #67C23A;
+    border-style: dotted;
+    transform: scale(1.5);
+  }
+}
+
+.el-step__title.is-process {
+  color: #67C23A;
+}
