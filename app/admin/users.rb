@@ -76,9 +76,9 @@ ActiveAdmin.register User do
           f.input :phone_number
           f.input :country_code
           div id: 'user_phone_number-tab'
-          f.input :address, input_html: {autocomplete: :off}
-          f.input :lat
-          f.input :lng
+          f.input :address, as: :hidden, input_html: {autocomplete: :off}
+          f.input :lat, as: :hidden
+          f.input :lng, as: :hidden
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
           div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
