@@ -1087,7 +1087,7 @@ jQuery(function($) {
           <legend><span>Privileges</span></legend>
           <ol class="choices-group">           
             <li class="choice d-flex">
-            <label>Sheets</label>
+            <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
             <li class="choice d-flex">
@@ -1101,6 +1101,10 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
+            </li>
+            <li class="choice d-flex">
+            <label>Calendar</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="calendar_view.read">Read</label>
             </li>
             <li class="choice d-flex">
             <label>Documents</label>
