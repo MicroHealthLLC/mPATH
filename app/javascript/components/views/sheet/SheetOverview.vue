@@ -183,7 +183,7 @@
               <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>TASKS</b></h5>
                       <h5 class="d-inline">
                         <b
@@ -195,16 +195,16 @@
                     </div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mb-2">
+                    <div class="col-5 py-1 pr-0">
                       <span>Complete</span>                    
                     </div>
-                     <div class="col-2 pl-0">                    
+                     <div class="col-2 py-1 pl-0">                    
                       <span class="badge badge-secondary badge-pill">{{
                         taskVariation.completed.count
                       }}</span>
                     </div>
-                    <div class="col-5 mb-1">
+                    <div class="col-5 py-1 mb-1">
                       <span
                         class="w-100 progress pg-content"
                         :class="{
@@ -222,16 +222,16 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mt-0">
+                    <div class="col-5 py-1 pr-0">
                       <span>Overdue</span>               
                     </div>
-                     <div class="col-2 pl-0">                   
+                     <div class="col-2 py-1 pl-0">                   
                       <span class="badge badge-secondary badge-pill">{{
                         taskVariation.overdue.count
                       }}</span>
                     </div>
-                    <div class="col-5 mt-1">
+                    <div class="col-5 mt-1 py-1">
                       <span
                         class="w-100 mb-2 progress pg-content"
                         :class="{
@@ -298,7 +298,7 @@
               >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>ISSUES</b></h5>
                       <h5 class="d-inline">
                         <b
@@ -310,16 +310,16 @@
                     </div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mb-2">
+                    <div class="col-5 py-1 pr-0">
                       <span>Complete</span>               
                     </div>
-                     <div class="col-2 pl-0">                    
+                     <div class="col-2 py-1 pl-0">                    
                       <span class="badge badge-secondary badge-pill">{{
                         issueVariation.completed.count
                       }}</span>
                     </div>
-                    <div class="col-5 mb-1">
+                    <div class="col-5 py-1 mb-1">
                       <span
                         class="w-100 progress pg-content"
                         :class="{
@@ -338,16 +338,16 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mt-0">
+                    <div class="col-5 py-1 pr-0">
                       <span>Overdue</span>                    
                     </div>
-                     <div class="col-2 pl-0">                     
+                     <div class="col-2 py-1 pl-0">                     
                       <span class="badge badge-secondary badge-pill">{{
                         issueVariation.overdue.count
                       }}</span>
                     </div>
-                    <div class="col-5 mt-1">
+                    <div class="col-5 py-1 mt-1">
                       <span
                         class="w-100 mb-2 progress pg-content"
                         :class="{
@@ -447,12 +447,12 @@
 
               <!-- Row 2, col-3 for Risks Card -->
               <div
-                class="col-md-4 col-lg-4 col-sm-12 mb-3"
+                class="col-md-4 col-lg-4 col-sm-12"
                 data-cy="facility_risks"
               >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>RISKS</b></h5>
                       <h5 v-if="contentLoaded" class="d-inline">
                         <b
@@ -465,17 +465,17 @@
                   </div>
 
                   <div v-if="contentLoaded">
-                    <div class="row">
-                      <div class="col-5 pr-0">
+                    <div class="row mb-2" style="margin-top:12px">
+                      <div class="col-5 py-1 pr-0">
                         <span class="risk-card-title">Complete</span>                        
                       </div>
-                      <div class="col-2 pl-0">                    
+                      <div class="col-2 py-1 pl-0">                    
                         <span
                           class="badge badge-secondary badge-pill font-12"
                           >{{ riskVariation.completed.count }}</span
                         >
                       </div>
-                      <div class="col-5">
+                      <div class="col-5 py-1 mb-1">
                         <span
                           class="w-100 progress pg-content"
                           :class="{
@@ -494,17 +494,17 @@
                         </span>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-5 pr-0 mt-1">
+                    <div class="row mt-0">
+                      <div class="col-5 pr-0 py-1">
                         <span class="risk-card-title">Overdue</span>                        
                       </div>
-                      <div class="col-2 mt-1 pl-0">                       
+                      <div class="col-2 mt-1 py-1 pl-0">                       
                         <span
                           class="badge badge-secondary badge-pill font-12"
                           >{{ riskVariation.overdue.count }}</span
                         >
                       </div>
-                      <div class="col-5 mt-1">
+                      <div class="col-5 py-1 mt-1">
                         <span
                           class="w-100 progress pg-content"
                           :class="{

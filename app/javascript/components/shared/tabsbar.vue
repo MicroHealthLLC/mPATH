@@ -28,15 +28,15 @@
         Gantt
       </div>
     </router-link>
-    <!-- <router-link
+    <router-link
       v-if="permitted('calendar_view')"
-      :to="`/programs/${this.$route.params.programId}/calendar`"
+      :to="routeCalendarSwap"
       tag="div"
     >
       <div class="badge" :class="{ active: isCalendarView }" data-cy="calendar_tab">
         Calendar
       </div>
-    </router-link> -->
+    </router-link>
     <div v-show="false" v-if="permitted('issues')" class="badge disabled">
       Mindmap (Coming Soon)
     </div>
@@ -74,9 +74,9 @@ export default {
     isGanttView() {
       return this.$route.name === "GanttChartView";
     },
-    // isCalendarView() {
-    //   return this.$route.name.includes("Calendar");
-    // },
+    isCalendarView() {
+      return this.$route.name.includes("Calendar");
+    },
     isKanbanView() {
       return this.$route.name.includes("Kanban");
     },
@@ -92,6 +92,8 @@ export default {
         return route.replace("map", "sheet");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "sheet");
+      } else if (this.isCalendarView) {
+        return route.replace("calendar", "sheet");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "sheet");
       } else if (this.isLessonsView) {
@@ -102,7 +104,7 @@ export default {
     },
     routeLessonSwap() {
       let route = this.$route.path;
-      if (this.isMapView || this.isKanbanView || this.isSheetsView) {
+      if (this.isMapView || this.isKanbanView || this.isSheetsView || this.isCalendarView) {
         return `/programs/${this.$route.params.programId}/lessons`;
     
       } else if (this.isGanttView) {
@@ -114,11 +116,12 @@ export default {
     },
     routeMapSwap() {
       let route = this.$route.path;
-
       if (this.isSheetsView) {
         return route.replace("sheet", "map");
       } else if (this.isKanbanView) {
         return route.replace("kanban", "map");
+      } else if (this.isCalendarView) {
+        return route.replace("calendar", "map");
       } else if (this.isGanttView) {
         return route.replace("gantt_chart", "map");
       } else if(this.isLessonsView){
@@ -140,6 +143,8 @@ export default {
         return `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/tasks`;
       } else if (this.isSheetsView && !route.includes("notes")) {
         return `/programs/${this.$route.params.programId}/kanban`;
+      } else if (this.isCalendarView) {
+        return route.replace("calendar", "kanban");
       }
       if (
         this.isMapView &&
@@ -160,6 +165,43 @@ export default {
       //   return route.replace("lessons", "kanban");
       } else {
         return route.replace("member_list", "kanban");
+      }
+    },
+      routeCalendarSwap() {
+      let route = this.$route.path;
+      if (
+        this.isSheetsView &&
+        (route.includes("tasks") ||
+          route.includes("issues") ||
+          route.includes("risks"))
+      ) {
+        return route.replace("sheet", "calendar");
+      } else if (this.isSheetsView && this.$route.params.projectId) {
+        return `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks`;
+      } else if (this.isSheetsView && !route.includes("notes")) {
+        return `/programs/${this.$route.params.programId}/calendar`;
+      } else if (this.isKanbanView) {
+        return route.replace("kanban", "calendar");
+      }
+      if (
+        this.isMapView &&
+        (route.includes("tasks") ||
+          route.includes("issues") ||
+          route.includes("risks"))
+      ) {
+        return route.replace("map", "calendar");
+      } else if (this.isMapView && this.$route.params.projectId) {
+        return `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks`;
+      } else if (this.isMapView && !route.includes("notes")) {
+        return `/programs/${this.$route.params.programId}/calendar`;
+      } else if (this.isLessonsView) {
+        return `/programs/${this.$route.params.programId}/calendar`;
+      } else if (this.isGanttView) {
+        return route.replace("gantt_chart", "calendar");
+      // } else if (this.isLessonsView) {
+      //   return route.replace("lessons", "kanban");
+      } else {
+        return route.replace("member_list", "calendar");
       }
     },
     permitted() {
