@@ -117,17 +117,14 @@
                 <label class="font-sm mt-3"
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
-                <textarea
+                <el-input
                   v-validate="'required'"
-                  class="form-control"
-                  placeholder="Risk title"
+                  placeholder="Risk Name"
                   v-model="DV_risk.text"
-                  rows="1"
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Name'),
                   }"
                 />
@@ -144,9 +141,9 @@
                 <label class="font-sm"
                   >Risk Description <span style="color: #dc3545">*</span></label
                 >
-                <textarea
+                <el-input
                   v-validate="'required'"
-                  class="form-control"
+                  type="textarea"
                   placeholder="Risk brief description"
                   v-model="DV_risk.riskDescription"
                   rows="3"
@@ -154,7 +151,6 @@
                   data-cy="risk_description"
                   name="Risk Description"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Description'),
                   }"
                 />
@@ -181,7 +177,7 @@
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"
                     name="Category"
-                    :class="{ 'error-border': errors.has('Category') }"
+                    :class="{ 'error': errors.has('Category') }"
                     placeholder="Select Category"
                   >
                     <el-option
@@ -275,7 +271,7 @@
                     placeholder="DD MM YYYY"
                     name="Identified Date"
                     class="w-100 vue2-datepicker"
-                    :class="{ 'error-border': errors.has('Identified Date') }"
+                    :class="{ 'error': errors.has('Identified Date') }"
                     :disabled="!_isallowed('write')"
                     data-cy="risk_start_date"
                   />
@@ -302,7 +298,7 @@
                     name="Risk Approach Due Date"
                     class="w-100 vue2-datepicker"
                     :class="{
-                      'error-border': errors.has('Risk Approach Due Date'),
+                      'error': errors.has('Risk Approach Due Date'),
                     }"
                     :disabled="
                       !_isallowed('write') ||
@@ -610,16 +606,15 @@
                 <div class="col-md-6 pl-1 pr-3">
                   <div class="form-group mx-1 mb-0">
                     <label class="font-sm">Probability Description </label>
-                    <textarea
-                      class="form-control"
+                    <el-input
+                      type="textarea"
                       placeholder="Risk Probability description"
                       v-model="DV_risk.probabilityDescription"
-                      rows="2"
+                      rows="3"
                       :readonly="!_isallowed('write')"
                       data-cy="probability_description"
                       name="Probability Description"
                       :class="{
-                        'form-control': true,
                         error: errors.has('Probability Description'),
                       }"
                     />
@@ -633,16 +628,15 @@
                   </div>
                   <div class="form-group mx-1">
                     <label class="font-sm mb-0">Impact Description </label>
-                    <textarea
-                      class="form-control"
+                    <el-input
+                      type="textarea"
                       placeholder="Risk impact description"
                       v-model="DV_risk.impactDescription"
-                      rows="2"
+                      rows="3"
                       :readonly="!_isallowed('write')"
                       data-cy="impact_description"
                       name="Impact Description"
                       :class="{
-                        'form-control': true,
                         error: errors.has('Impact Description'),
                       }"
                     />
@@ -1000,8 +994,8 @@
             <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
                 <label class="font-sm">Risk Approach Description </label>
-                <textarea
-                  class="form-control"
+                <el-input
+                  type="textarea"
                   placeholder="Describe how the Risk will be controlled"
                   v-model="DV_risk.riskApproachDescription"
                   rows="2"
@@ -1009,7 +1003,6 @@
                   data-cy="approach_description"
                   name="Risk Approach Description"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Approach Description'),
                   }"
                 />
@@ -3050,9 +3043,6 @@ export default {
   overflow-x: hidden;
   height: calc(100vh - 275px);
 }
-.form-control.error {
-  border-color: #e84444;
-}
 .title {
   font-size: 15px;
   margin-left: 65px;
@@ -3367,20 +3357,11 @@ ul {
 .text-danger {
   font-size: 13px;
 }
-.error-border {
-  border: 1px solid red;
-  border-radius: 4px;
-}
 .overflow-ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-
-// .links-col {
-//   border-right: double 2px lightgray;
-//   padding-bottom: 5px;
-// }
 .links-col {
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
