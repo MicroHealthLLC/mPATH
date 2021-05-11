@@ -891,8 +891,8 @@ i.el-icon-circle-close {
   color: #67C23A;
 }
 
-.el-input.error {
-  input {
+.el-input.error, .el-textarea.error {
+  input, textarea {
     border-color: #e84444;
   }
 }
