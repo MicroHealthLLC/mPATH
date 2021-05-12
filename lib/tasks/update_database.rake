@@ -22,3 +22,25 @@ task :remove_query_filters => :environment do
   QueryFilter.where(favorite_filter_id: nil).destroy_all
 
 end
+
+desc "Modify User privileges for array"
+task :modify_user_privileges => :environment do
+
+  puts "Modifying data type for privileges"
+  users = User.all
+  users.each do |user|
+    privilege = user.privilege
+    next if !privilege
+    h = privilege.attributes
+    update_att = {}
+    h.each do |k,v|
+      next if ["user_id", "created_at", "updated_at", "id"].include?(k) || privilege.send(k).is_a?(Array)
+      o = []
+      o << "R" if privilege.send(k).include?("R")
+      o << "W" if privilege.send(k).include?("W")
+      o << "D" if privilege.send(k).include?("D")
+      update_att[k] = o
+    end
+    privilege.update(update_att)
+  end
+end
