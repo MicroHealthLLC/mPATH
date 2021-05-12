@@ -10,7 +10,7 @@
 
            <!-- ROW 1 -->
         <div class="row">            
-              <div class=" col-md-9 mb-1 font-lg d-flex mb-1 kanban-text">
+              <div class=" col-md-9 font-lg d-flex pb-2 kanban-text">
                 {{issue.title}}
               </div>
               <div class="col-md-3">
@@ -30,7 +30,7 @@
 
 
          <div class="row my-2">
-                <div class="font-sm col-md-12">
+                <div class="font-sm col-md-12 pt-1 pb-0">
                   <span class="mr-2">
                   <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(issue.startDate)}}              
@@ -42,7 +42,7 @@
    <!-- ROW 3 -->
 
             <div class="row mb-0">
-                <div class="font-sm col-md-12" >
+                <div class="font-sm col-md-12 py-0" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                    <span v-tooltip="`Issue Type`">{{issue.issueType}}</span>
                 </div>
@@ -52,7 +52,7 @@
      
    <!-- ROW 4 -->
             <div class="row mb-1 d-flex">              
-                <div class="font-sm col-md-12">
+                <div class="font-sm col-md-12 py-0">
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                   <span v-tooltip="`Issue Severity`"> {{issue.issueSeverity}}</span>
                 </div>
@@ -62,8 +62,8 @@
 
            <!-- LAST/BOTTOM ROW  -->
 
-          <div class="row d-flex mt-2">
-            <div class="font-sm col">
+          <div class="row d-flex">
+            <div class="font-sm col pt-1 pb-3">
                   <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%
 

@@ -40,7 +40,7 @@ ActiveAdmin.register User do
         :kanban_view,
         :documents,
         :facility_manager_view,
-        # :calendar_view,
+        :calendar_view,
         :sheets_view,
         :members,
         :risks,

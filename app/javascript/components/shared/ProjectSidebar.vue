@@ -108,6 +108,8 @@ export default {
         return "/notes";
       } else if (url.includes("kanban")) {
         return "/tasks";
+      } else if (url.includes("calendar")) {
+        return "/tasks";
       } else {
         return "";
       }

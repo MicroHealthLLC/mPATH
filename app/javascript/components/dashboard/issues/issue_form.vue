@@ -118,15 +118,14 @@
               <span><i class="fas fa-eye mr-1"></i></span
               ><small style="vertical-align: text-top">On Watch</small>
             </span>
-            <input
+            <el-input
               name="Issue Name"
               v-validate="'required'"
               type="text"
-              class="form-control form-control-sm"
               v-model="DV_issue.title"
               placeholder="Issue Name"
               :readonly="!_isallowed('write')"
-              :class="{ 'form-control': true, error: errors.has('Issue Name') }"
+              :class="{ error: errors.has('Issue Name') }"
               data-cy="issue_title"
             />
             <div
@@ -140,8 +139,8 @@
 
           <div class="form-group mx-4">
             <label class="font-md">Description</label>
-            <textarea
-              class="form-control"
+            <el-input
+              type="textarea"
               placeholder="Issue brief description"
               v-model="DV_issue.description"
               rows="4"
@@ -186,7 +185,7 @@
                 class="w-100"
                 track-by="id"
                 value-key="id"
-                :class="{ 'error-border': errors.has('Issue Type') }"
+                :class="{ 'error': errors.has('Issue Type') }"
                 data-cy="issue_type_field"
                 name="Issue Type"
                 :disabled="!_isallowed('write')"
@@ -224,7 +223,7 @@
                 track-by="id"
                 value-key="id"
                 :disabled="!_isallowed('write')"
-                :class="{ 'error-border': errors.has('Issue Severity') }"
+                :class="{ 'error': errors.has('Issue Severity') }"
                 data-cy="issue_severity"
                 name="Issue Severity"
                 placeholder="Issue Severity"
@@ -318,7 +317,7 @@ Tab 1 Row Begins here -->
                 placeholder="DD MM YYYY"
                 name="Start Date"
                 class="w-100 vue2-datepicker"
-                :class="{ 'error-border': errors.has('Start Date') }"
+                :class="{ 'error': errors.has('Start Date') }"
                 :disabled="!_isallowed('write')"
                 data-cy="issue_start_date"
               />
@@ -344,7 +343,7 @@ Tab 1 Row Begins here -->
                 name="Estimated Completion Date"
                 class="w-100 vue2-datepicker"
                 :class="{
-                  'error-border': errors.has('Estimated Completion Date'),
+                  'error': errors.has('Estimated Completion Date'),
                 }"
                 :disabled="
                   !_isallowed('write') ||

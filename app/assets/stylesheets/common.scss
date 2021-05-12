@@ -34,7 +34,7 @@ body {
 }
     
 .program-row {
-  height: 60px;
+  height: 80px;
 }
 .hr-program-row {
   margin-top: 0.5rem;
@@ -42,9 +42,6 @@ body {
 .welcome-page-program-name {
   display: table-cell;
   vertical-align:middle;
-}
-.program-row {
-  height: 60px;
 }
 .hr-program-row {
   margin-top: 0.5rem;
@@ -889,4 +886,32 @@ i.el-icon-circle-close {
 
 .el-step__title.is-process {
   color: #67C23A;
+}
+
+.el-input.error, .el-textarea.error {
+  input, textarea {
+    border-color: #e84444;
+  }
+}
+
+.el-select.error {
+  .el-input {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
+
+.error {
+  .vue2-datepicker {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
+
+.error.vue2-datepicker {
+  input {
+    border-color: #e84444;
+  }
 }

@@ -9,7 +9,7 @@
      
      <!-- ROW 1 -->
      <div class="row">
-        <div class="col-md-9 font-lg d-flex mb-1 kanban-text">         
+        <div class="col-md-9 font-lg d-flex pb-2 kanban-text">         
            {{task.text}}       
         </div>
           <div class="col-md-3">
@@ -27,7 +27,7 @@
       
      <!-- ROW 2 -->
          <div class="row my-2">
-             <div class="font-sm col-md-12">
+             <div class="font-sm col-md-12 pt-1 pb-0">
                <span class="mr-2">
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(task.startDate)}}
@@ -40,15 +40,15 @@
              </div>
           </div>     
          
-          <div class="row d-flex mb-1">
-            <div class="font-sm col-md-12">
+          <div class="row d-flex my-1">
+            <div class="font-sm col-md-12 py-1">
               <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
               <span v-tooltip="`Category`">{{task.taskType}}</span>
             </div>
           </div>
 
-        <div class="row d-flex mt-2">
-            <div class="font-sm col">
+        <div class="row d-flex">
+            <div class="font-sm pt-1 pb-3 col">
            <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
             <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
           </div>
