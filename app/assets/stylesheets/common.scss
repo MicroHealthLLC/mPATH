@@ -32,7 +32,23 @@ body {
     border-color: #67C23A;
   }
 }
-    
+
+span.mpathLogo {
+  img {
+    width: 200px;
+  }
+}
+span.mhLogo {
+  img {
+    width: 250px;
+    height: 51px;
+  }
+}
+h4.mpath-logo {
+  color: #DD9036;
+  font-style: italic;
+  font-weight: 500;
+}
 .program-row {
   height: 80px;
 }
