@@ -129,8 +129,12 @@ export default {
     },
   },
   mounted() {
-    // Expand the project tree if there is only one project group on transition
-    if (this.filteredFacilityGroups.length === 1 && this.contentLoaded) {
+    // Expand the project tree if there is only one project group on tab transition
+    if (
+      this.filteredFacilityGroups.length === 1 &&
+      this.contentLoaded &&
+      !this.$route.params.projectId
+    ) {
       this.expandFacilityGroup(this.filteredFacilityGroups[0]);
     }
   },
@@ -138,7 +142,10 @@ export default {
     contentLoaded: {
       handler() {
         // Expand the project tree if there is only one project group on refresh
-        if (this.filteredFacilityGroups.length === 1) {
+        if (
+          this.filteredFacilityGroups.length === 1 &&
+          !this.$route.params.projectId
+        ) {
           this.expandFacilityGroup(this.filteredFacilityGroups[0]);
         }
       },
