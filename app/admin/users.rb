@@ -126,7 +126,7 @@ ActiveAdmin.register User do
 
             b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  project_select_options, b.object.facility_project_id ), include_blank: false, input_html: {class: "project_privileges_select"}
             b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "overview")
-            # b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
+            b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
             b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "tasks")
             b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
             b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
