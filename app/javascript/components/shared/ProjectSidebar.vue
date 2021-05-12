@@ -128,6 +128,22 @@ export default {
       }
     },
   },
+  mounted() {
+    // Expand the project tree if there is only one project group on transition
+    if (this.filteredFacilityGroups.length === 1 && this.contentLoaded) {
+      this.expandFacilityGroup(this.filteredFacilityGroups[0]);
+    }
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        // Expand the project tree if there is only one project group on refresh
+        if (this.filteredFacilityGroups.length === 1) {
+          this.expandFacilityGroup(this.filteredFacilityGroups[0]);
+        }
+      },
+    },
+  },
 };
 </script>
 
