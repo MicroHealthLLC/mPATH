@@ -28,7 +28,7 @@
 
          <!-- ROW 2 -->
            <div class="row my-2">
-                <div class="font-sm col-md-12">
+                <div class="font-sm col-md-12 py-0">
                   <span class="mr-2">
                   <span class="fbody-icon mr-0">
                     <i class="fas fa-calendar-alt"></i>
@@ -41,7 +41,7 @@
             </div>
 
               <div class="row mb-1 d-flex">
-                <div class="font-sm col" >
+                <div class="font-sm col py-0" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                  <span v-tooltip="`Category`">
                   {{DV_risk.taskType.name}}
@@ -50,25 +50,26 @@
               </div>
 
               <div class="row mb-2 d-flex">           
-                <div class="font-sm col">
-                  <span class="mr-1"><b>Approach:</b></span>
+                <div class="font-sm col-5 py-0 text-left">
+                    <font-awesome-icon
+                                  icon="exclamation-triangle"
+                                  class="mr-1"
+                                  v-tooltip="`Risk Approach`"
+                                />
                   <span class="upperCase">{{DV_risk.riskApproach}}</span>
                 </div>
-              </div>
-   
-               <div class="row mb-2 d-flex">    
-                    <div class="font-sm col-md-12">   
-                       <span v-tooltip="`Priority`">             
+
+                <div class="font-sm col-7 py-0">
+                  <span class="mr-1"><b>Priority:</b></span>
+                   <span v-tooltip="`Priority`">             
                       <span v-if="(DV_risk.priorityLevelName) == 'Very Low'" class="gray2">{{DV_risk.priorityLevelName}}</span>              
                       <span v-if="(DV_risk.priorityLevelName) == 'Low'" class="green1">{{DV_risk.priorityLevelName}}</span> 
                       <span v-if="(DV_risk.priorityLevelName) == 'Moderate'" class="yellow1"> {{DV_risk.priorityLevelName}} </span> 
                       <span v-if="(DV_risk.priorityLevelName) == 'High'" class="orange1"> {{DV_risk.priorityLevelName}} </span> 
                       <span v-if="(DV_risk.priorityLevelName) == 'Extreme'" class="red1"> {{DV_risk.priorityLevelName}}</span> 
                        </span>
-                    </div>
-                 </div>
-              
-            
+                </div>
+              </div>
           
         
          

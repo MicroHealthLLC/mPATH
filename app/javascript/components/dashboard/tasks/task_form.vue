@@ -119,15 +119,14 @@
               <span><i class="fas fa-eye"></i></span
               ><small style="vertical-align:text-top"> On Watch</small>
             </span>
-            <input
+            <el-input
               name="Task Name"
               v-validate="'required'"
               type="text"
-              class="form-control form-control-sm"
               v-model="DV_task.text"
               placeholder="Task Name"
               :readonly="!_isallowed('write')"
-              :class="{ 'form-control': true, error: errors.has('Task Name') }"
+              :class="{ error: errors.has('Task Name'), }"
               data-cy="task_name"
             />
             <div
@@ -140,8 +139,8 @@
           </div>
           <div class="form-group mx-4">
             <label class="font-md">Description</label>
-            <textarea
-              class="form-control"
+            <el-input
+              type="textarea"
               placeholder="Task brief description"
               v-model="DV_task.description"
               rows="4"
@@ -165,7 +164,7 @@
                 :disabled="!_isallowed('write')"
                 data-cy="task_type"
                 name="Category"
-                :class="{ 'error-border': errors.has('Category') }"
+                :class="{ 'error': errors.has('Category') }"
                 placeholder="Select Category"
               >
                 <el-option
@@ -247,7 +246,7 @@
               <label class="font-md"
                 >Start Date <span style="color: #dc3545">*</span></label
               >
-              <div :class="{ 'error-border': errors.has('Start Date') }">
+              <div :class="{ 'error': errors.has('Start Date') }">
                 <v2-date-picker
                   v-validate="'required'"
                   v-model="DV_task.startDate"
@@ -272,7 +271,7 @@
               <label class="font-md"
                 >Due Date <span style="color: #dc3545">*</span></label
               >
-              <div :class="{ 'error-border': errors.has('Due Date') }">
+              <div :class="{ 'error': errors.has('Due Date') }">
                 <v2-date-picker
                   v-validate="'required'"
                   v-model="DV_task.dueDate"
@@ -2024,7 +2023,7 @@ th {
   color: #383838;
   padding: 1px 3px;
 }
-.form-control.error {
+.error {
   border-color: #e84444;
 }
 .checklist-text {
@@ -2157,10 +2156,6 @@ ul {
 }
 .text-danger {
   font-size: 13px;
-}
-.error-border {
-  border: 1px solid red;
-  border-radius: 4px;
 }
 .overflow-ellipsis {
   white-space: nowrap;
