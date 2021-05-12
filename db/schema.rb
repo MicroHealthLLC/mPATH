@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_04_174424) do
+ActiveRecord::Schema.define(version: 2021_05_12_220200) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -121,12 +121,12 @@ ActiveRecord::Schema.define(version: 2021_05_04_174424) do
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
-    t.string "overview", default: "R"
-    t.string "tasks", default: "R"
-    t.string "notes", default: "R"
-    t.string "issues", default: "R"
-    t.string "admin", default: "R"
-    t.string "risks", default: "R"
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin", default: "---\n- R\n"
+    t.string "risks", default: "---\n- R\n"
     t.integer "user_id"
     t.integer "facility_project_id"
     t.integer "facility_id"
@@ -260,6 +260,15 @@ ActiveRecord::Schema.define(version: 2021_05_04_174424) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
+    t.integer "facility_project_id"
+    t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
+    t.index ["issue_id"], name: "index_lessons_on_issue_id"
+    t.index ["issue_type_id"], name: "index_lessons_on_issue_type_id"
+    t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
+    t.index ["risk_id"], name: "index_lessons_on_risk_id"
+    t.index ["task_id"], name: "index_lessons_on_task_id"
+    t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
+    t.index ["user_id"], name: "index_lessons_on_user_id"
   end
 
   create_table "notes", charset: "utf8", force: :cascade do |t|
@@ -475,6 +484,17 @@ ActiveRecord::Schema.define(version: 2021_05_04_174424) do
     t.index ["relatable_id"], name: "index_related_tasks_on_relatable_id"
     t.index ["relatable_type"], name: "index_related_tasks_on_relatable_type"
     t.index ["task_id"], name: "index_related_tasks_on_task_id"
+  end
+
+  create_table "resource_access_requests", charset: "utf8", force: :cascade do |t|
+    t.integer "resource_id", null: false
+    t.string "resource_type", null: false
+    t.integer "user_id", null: false
+    t.string "status", default: "pending"
+    t.integer "granted_by_id", null: false
+    t.string "permissions"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "risk_stages", charset: "utf8", force: :cascade do |t|
