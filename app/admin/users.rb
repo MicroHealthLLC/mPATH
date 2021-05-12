@@ -29,22 +29,22 @@ ActiveAdmin.register User do
       project_ids: [],
       privilege_attributes: [
         :id,
-        :overview,
-        :tasks,
-        :issues,
-        :notes,
-        :admin,
-        :map_view,
-        :gantt_view,
-        :watch_view,
-        :kanban_view,
-        :documents,
-        :facility_manager_view,
-        :calendar_view,
-        :sheets_view,
-        :members,
-        :risks,
-        :lessons
+        overview: [],
+        tasks: [],
+        issues: [],
+        notes: [],
+        admin: [],
+        map_view: [],
+        gantt_view: [],
+        watch_view: [],
+        kanban_view: [],
+        documents: [],
+        facility_manager_view: [],
+        calendar_view: [],
+        sheets_view: [],
+        members: [],
+        risks: [],
+        lessons: []
       ],
       facility_privileges_attributes: [
         :id,
@@ -71,8 +71,6 @@ ActiveAdmin.register User do
           f.input :first_name
           f.input :last_name
           f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
-          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
-          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :phone_number
           f.input :country_code
           div id: 'user_phone_number-tab'
@@ -80,41 +78,61 @@ ActiveAdmin.register User do
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
-          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, input_html: {class: "select2"}, include_blank: true
         end
+      end
+
+      tab 'Password' do
+        f.inputs 'Manage Password' do
+          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
+          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+        end
         div id: 'user-password__tab'
       end
       
+      tab 'Programs' do
+        # f.inputs 'Assign Programs' do
+        #   # f.input :projects, label: 'Programs', as: :select, include_blank: false
+        #   input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
+        # end
+        # div id: 'user-role_privilege-tab'
+        # f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+        #   p.input :facility_manager_view, as: :hidden
+        #   p.input :sheets_view, as: :hidden
+        #   p.input :calendar_view, as: :hidden
+        #   p.input :map_view, as: :hidden
+        #   p.input :gantt_view, as: :hidden
+        #   p.input :watch_view, as: :hidden
+        #   p.input :kanban_view, as: :hidden
+        #   p.input :overview, as: :hidden
+        #   p.input :tasks, as: :hidden
+        #   p.input :issues, as: :hidden
+        #   p.input :risks, as: :hidden
+        #   p.input :notes, as: :hidden
+        #   p.input :documents, as: :hidden
+        #   p.input :members, as: :hidden
+        #   p.input :admin, as: :hidden
+        #   p.input :lessons, as: :hidden
+        # end
+      end
+
       tab 'Advanced' do
-        f.inputs 'Assign Programs' do
-          # f.input :projects, label: 'Programs', as: :select, include_blank: false
-          input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
-        end
-        div id: 'user-role_privilege-tab'
+        f.inputs 'Access' do
         f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-          p.input :facility_manager_view, as: :hidden
-          p.input :sheets_view, as: :hidden
-          p.input :calendar_view, as: :hidden
-          p.input :map_view, as: :hidden
-          p.input :gantt_view, as: :hidden
-          p.input :watch_view, as: :hidden
-          p.input :kanban_view, as: :hidden
-          p.input :overview, as: :hidden
-          p.input :tasks, as: :hidden
-          p.input :issues, as: :hidden
-          p.input :risks, as: :hidden
-          p.input :notes, as: :hidden
-          p.input :documents, as: :hidden
-          p.input :members, as: :hidden
-          p.input :admin, as: :hidden
-          p.input :lessons, as: :hidden
+          p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
+          p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
+          p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
+          p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
+          p.input :calendar_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "calendar_view")
+          p.input :members, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "members")
+        end
         end
       end
 
-      tab 'Project privileges' do
+      tab 'Projects' do
         f.inputs 'Assign Project Privileges' do
           project_select_options = user.active_admin_facility_project_select_options
           user_privileges = f.object.privilege
