@@ -73,8 +73,8 @@ ActiveAdmin.register User do
           f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
           f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
-          f.input :phone_number
-          f.input :country_code
+          f.input :phone_number, as: :hidden
+          f.input :country_code, as: :hidden
           div id: 'user_phone_number-tab'
           f.input :address, as: :hidden, input_html: {autocomplete: :off}
           f.input :lat, as: :hidden
@@ -117,7 +117,7 @@ ActiveAdmin.register User do
       tab 'Project privileges' do
         f.inputs 'Assign Project Privileges' do
           project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege
+          user_privileges = f.object.privilege || Privilege.new
           f.has_many :facility_privileges,
             heading: '',
             new_record: 'Add Project Privilege',
