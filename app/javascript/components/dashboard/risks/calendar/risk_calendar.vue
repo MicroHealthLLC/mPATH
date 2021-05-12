@@ -72,6 +72,7 @@
           v-model="focus"
           color="primary"
           :events="events"
+          :key="componentKey"   
           :event-color="getEventColor"
           :type="type"      
           :risk="events"                   
@@ -118,7 +119,8 @@
       return {         
         focus: '',        
         type: 'month',       
-        riskNames: [],   
+        riskNames: [],  
+        componentKey: 0, 
         riskIds:[],       
         riskData: [],
         riskStartDates: [],
@@ -157,6 +159,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
+      reRenderCalendar() {
+        this.componentKey += 1;
+      },
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
@@ -243,9 +248,11 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
+         "contentLoaded",
         'getRiskApproachFilterOptions',
         'getRiskApproachFilter',
         'riskStageFilter',
+         "currentProject",
         'myActionsFilter',
         'onWatchFilter',
         'riskUserFilter',
@@ -304,11 +311,37 @@
    
     },
   watch: {
+   contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId && this.currentFacility.risks.length > 0) {
+          this.reRenderCalendar()
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+        }
+      },
+    },
+    currentFacility: {
+      handler() {
+        this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId
+        );
+
+        this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
+      },
+    },
+  },
     filterTree(value) {
       this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
     }
-  },
   }
 </script>
 

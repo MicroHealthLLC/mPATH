@@ -66,15 +66,16 @@
         </v-toolbar>
       </v-sheet>
     
-      <v-sheet height="600" >     
-         <v-calendar               
+      <v-sheet height="550"    >     
+         <v-calendar                      
           ref="calendar"
           v-model="focus"
           color="primary"
-          :events="events"
+          :events="events"         
           :event-color="getEventColor"
           :type="type"      
-          :task="events"                   
+          :task="events"   
+          :key="componentKey"                
           @click:event="editTask"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -89,10 +90,8 @@
         :task="calendarTask"
         ref="menu"
         @open-task="editTask">  
-       </ContextMenu>
-      
-        </v-calendar>  
-      
+       </ContextMenu>      
+        </v-calendar>   
              
       </v-sheet>
     </v-col>
@@ -112,16 +111,17 @@
         type: String,
         default: "map_view",
       },    
-      facility: Object,     
+      facility: Object, 
      },
     data() {
       return {         
         focus: '',        
         type: 'month',       
-        taskNames: [],   
+        taskNames: [],    
         taskIds:[],       
         taskData: [],
-        taskStartDates: [],
+        componentKey: 0,
+        taskStartDates: [],       
         taskEndDates: [],   
         selectedEventId: {},
         calendarTask: {},
@@ -139,7 +139,7 @@
       }
     },
     mounted () {   
-     this.$refs.calendar.checkChange();   
+    this.$refs.calendar.checkChange();
     },
     methods: {
      ...mapMutations([
@@ -156,6 +156,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
+       reRenderCalendar() {
+        this.componentKey += 1;
+      },
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
@@ -164,7 +167,7 @@
         return event.color
       },
       setToday () {
-        this.focus = ''
+        this.focus = ''  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -220,6 +223,7 @@
         return Math.floor((b - a + 1) * Math.random()) + a
       },    
     },
+
     computed: {
      ...mapGetters([
         "facilities",
@@ -243,6 +247,7 @@
         'myActionsFilter',
         'onWatchFilter',
         "currentTasks",
+        "contentLoaded",
         "currentIssues",
         "viewPermit",
         "currentProject",
@@ -298,10 +303,7 @@
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          // if (search_query) valid = valid && search_query.test(resource.text) ||
-          //   valid && search_query.test(resource.taskType) ||
-          //   valid && search_query.test(resource.userNames)
-          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
+     
           return valid
         }), ['dueDate'])
         return tasks    
@@ -316,15 +318,40 @@
         {id: '4day', name: '4 Days', value: '4day'}, 
       ]
       return options;
-      },       
-   
+      },      
     },
   watch: {
+   contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId && this.currentFacility.tasks.length > 0) {
+          this.reRenderCalendar()
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+        }
+      },
+    },
+    currentFacility: {
+      handler() {
+        this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId
+        );
+
+        this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
+      },
+    },
+  },
     filterTree(value) {
       this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
     }
-  },
   }
 </script>
 
