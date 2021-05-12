@@ -54,6 +54,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'cypress-on-rails', '~> 1.0'
+  gem 'rspec-rails', '~> 5.0.0'
   gem 'letter_opener'
   # gem 'bullet', '6.1.0'
   gem 'pry', '~> 0.13.1'
@@ -71,6 +72,10 @@ group :development do
   gem 'active_record_doctor'
   gem 'sql_tracker'
   gem 'fasterer'
+end
+
+group :test do
+  gem 'factory_bot_rails'
 end
 
 group :production do
