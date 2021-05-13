@@ -282,6 +282,11 @@ td.col-issue_type, td.col-issue_severity {
   font-size: 16px
 }
 
+// Items w/ "vuetify-" prefix can be deleted if vuetify is no longer used
+.vuetify-checkitem {
+  margin-top: 10px;
+}
+
 // Tabbed out form inside modals
 .tab2, .tab3, .tab4, .tab5, .tab6 {
   min-height: 400px;

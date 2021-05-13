@@ -587,7 +587,8 @@
 
                         <!-- Start Checkbox Progress List -->
                         <!-- Create component to manage progress list -->
-                        <div class="pt-5 pb-3" style="background-color:#fafafa">
+                        <div class="pt-5 vuetify-checkitem pb-3" style="background-color:#fafafa">
+                        <div class="font-md pt-3">
                           Progress Update
                           <span v-if="editToggle">
                             <span class="ml-2 clickable">
@@ -617,7 +618,7 @@
                           >
                             <thead>
                               <tr>
-                                <th style="width:60%">Progress</th>
+                                <th style="width:50%">Progress</th>
                                 <th>Last Updated</th>
                                 <th>By</th>
                                 <th
@@ -735,6 +736,7 @@
                           </div>
                           <!-- End Checkbox Progress List -->
                         </div>
+                      </div>
                       </el-collapse-item>
                     </el-collapse>
                   </div>
