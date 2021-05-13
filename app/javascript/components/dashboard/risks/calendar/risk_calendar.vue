@@ -49,14 +49,13 @@
             Today
           </el-button>
           <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+            v-model="C_calendarView"            
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"          
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
@@ -74,7 +73,7 @@
           :events="events"
           :key="componentKey"   
           :event-color="getEventColor"
-          :type="type"      
+          :type="C_calendarView.id"      
           :risk="events"                   
           @click:event="editRisk"
           @click:more="viewDay"
@@ -118,7 +117,7 @@
     data() {
       return {         
         focus: '',        
-        type: 'month',       
+        type: this.C_calendarView,       
         riskNames: [],  
         componentKey: 0, 
         riskIds:[],       
@@ -146,6 +145,7 @@
     methods: {
      ...mapMutations([
         'setAdvancedFilter',
+        'setCalendarViewFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -192,8 +192,7 @@
     editRisk(event) {   
       let eventObj = event
       this.selectedEventId = eventObj.event.riskId;
-      this.calendarRisk = eventObj.event.risk
-      console.log(this.selectedEventId)         
+      this.calendarRisk = eventObj.event.risk        
       this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${this.selectedEventId}`)
               
     },
@@ -231,7 +230,10 @@
      ...mapGetters([
         "facilities",
         "facilityGroups",
-       'getRiskPriorityLevelFilter',
+        'getCalendarViewFilterOptions',
+        'getCalendarViewFilter',
+        'calendarViewFilter',
+        'getRiskPriorityLevelFilter',
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
@@ -299,16 +301,14 @@
         })), ['dueDate'])
         return risks
       },
-      typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },       
-   
+    C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+       }
+      }      
     },
   watch: {
    contentLoaded: {

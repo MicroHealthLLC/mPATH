@@ -49,14 +49,15 @@
             Today
           </el-button>
           <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+            v-model="C_calendarView" 
+            :load="log(JSON.stringify(C_calendarView))"
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"
+              :load="log(JSON.stringify(getCalendarViewFilterOptions))"
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
@@ -73,7 +74,7 @@
           color="primary"
           :events="events"         
           :event-color="getEventColor"
-          :type="type"      
+          :type="C_calendarView.id"      
           :task="events"   
           :key="componentKey"                
           @click:event="editTask"
@@ -116,7 +117,7 @@
     data() {
       return {         
         focus: '',        
-        type: 'month',       
+        type: this.C_calendarView,       
         taskNames: [],    
         taskIds:[],       
         taskData: [],
@@ -145,13 +146,14 @@
      ...mapMutations([
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
+        'setCalendarViewFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',     
         'setTaskForManager'
       ]),
-      ...mapActions([
+       ...mapActions([
         'taskDeleted',
         'taskUpdated',
         'updateWatchedTasks'
@@ -189,8 +191,7 @@
       editTask(event) {   
         let eventObj = event
         this.selectedEventId = eventObj.event.taskId;
-        this.calendarTask = eventObj.event.task
-        console.log(this.selectedEventId)         
+        this.calendarTask = eventObj.event.task       
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`)        
       },
       updateRange ({ start, end }) {    
@@ -229,6 +230,9 @@
         "facilities",
         "facilityGroups",
         'getAdvancedFilterOptions',
+        'getCalendarViewFilterOptions',
+        'calendarViewFilter',
+        'getCalendarViewFilter',
         'filterDataForAdvancedFilter',
         'getTasksPerPageFilterOptions',
         'getTasksPerPageFilter',
@@ -254,6 +258,7 @@
         'taskUserFilter',
         'taskTypes',
         'viewPermit',
+     
        ]),
        _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
@@ -308,18 +313,16 @@
         }), ['dueDate'])
         return tasks    
 
-      },      
- 
-    typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },      
-    },
+      }, 
+    C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+      }
+     }
+    },   
   watch: {
    contentLoaded: {
       handler() {
