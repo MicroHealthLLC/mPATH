@@ -10,9 +10,9 @@
       <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 10px"
-              ><i class="fas fa-building"></i
-            ></span>
+            <span style="font-size: 16px; margin-right: 2.5px"
+              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+            </span>
             <router-link :to="projectNameLink">{{
               facility.facilityName
             }}</router-link>
@@ -1856,6 +1856,8 @@ export default {
         return "map";
       } else if (this.$route.path.includes("sheet")) {
         return "sheet";
+      } else if (this.$route.path.includes("calendar")) {
+        return "calendar";
       } else {
         return "kanban";
       }

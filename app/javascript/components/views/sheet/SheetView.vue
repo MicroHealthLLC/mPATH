@@ -27,7 +27,7 @@
           "
           class="d-flex align-items-center my-2"
         >
-          <span class="fbody-icon"><i class="fas fa-building"></i></span>
+          <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
           <h5 class="f-head mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
