@@ -49,14 +49,13 @@
             Today
           </el-button>
           <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+            v-model="C_calendarView"            
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"          
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
@@ -72,8 +71,9 @@
           v-model="focus"
           color="primary"
           :events="events"
+          :key="componentKey"   
           :event-color="getEventColor"
-          :type="type"      
+          :type="C_calendarView.id"      
           :risk="events"                   
           @click:event="editRisk"
           @click:more="viewDay"
@@ -117,8 +117,9 @@
     data() {
       return {         
         focus: '',        
-        type: 'month',       
-        riskNames: [],   
+        type: this.C_calendarView,       
+        riskNames: [],  
+        componentKey: 0, 
         riskIds:[],       
         riskData: [],
         riskStartDates: [],
@@ -144,6 +145,7 @@
     methods: {
      ...mapMutations([
         'setAdvancedFilter',
+        'setCalendarViewFilter',
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
@@ -157,6 +159,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
+      reRenderCalendar() {
+        this.componentKey += 1;
+      },
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
@@ -187,8 +192,7 @@
     editRisk(event) {   
       let eventObj = event
       this.selectedEventId = eventObj.event.riskId;
-      this.calendarRisk = eventObj.event.risk
-      console.log(this.selectedEventId)         
+      this.calendarRisk = eventObj.event.risk        
       this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${this.selectedEventId}`)
               
     },
@@ -226,7 +230,10 @@
      ...mapGetters([
         "facilities",
         "facilityGroups",
-       'getRiskPriorityLevelFilter',
+        'getCalendarViewFilterOptions',
+        'getCalendarViewFilter',
+        'calendarViewFilter',
+        'getRiskPriorityLevelFilter',
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
@@ -243,9 +250,11 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'taskTypeFilter',
+         "contentLoaded",
         'getRiskApproachFilterOptions',
         'getRiskApproachFilter',
         'riskStageFilter',
+         "currentProject",
         'myActionsFilter',
         'onWatchFilter',
         'riskUserFilter',
@@ -292,23 +301,47 @@
         })), ['dueDate'])
         return risks
       },
-      typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },       
-   
+    C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+       }
+      }      
     },
   watch: {
+   contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId && this.currentFacility.risks.length > 0) {
+          this.reRenderCalendar()
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+        }
+      },
+    },
+    currentFacility: {
+      handler() {
+        this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId
+        );
+
+        this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
+      },
+    },
+  },
     filterTree(value) {
       this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
     }
-  },
   }
 </script>
 

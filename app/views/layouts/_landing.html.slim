@@ -2,8 +2,9 @@
   .mt-2.container
     .container.mb-4.text-center.d-inline-block
       h4.mt-1.text-center.mpath-logo
-       | Welcome to     
-      =image_tag "mpath.png"
+       | Welcome to  
+      span.mpathLogo   
+        =image_tag "mpath.svg"
     br
     .grid-container.program-name
       -if @active_projects.size > 0

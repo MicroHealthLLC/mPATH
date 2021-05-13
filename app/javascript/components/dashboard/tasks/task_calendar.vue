@@ -49,14 +49,14 @@
             Today
           </el-button>
           <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+            v-model="C_calendarView" 
+        
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
@@ -66,15 +66,16 @@
         </v-toolbar>
       </v-sheet>
     
-      <v-sheet height="600" >     
-         <v-calendar               
+      <v-sheet height="550"    >     
+         <v-calendar                      
           ref="calendar"
           v-model="focus"
           color="primary"
-          :events="events"
+          :events="events"         
           :event-color="getEventColor"
-          :type="type"      
-          :task="events"                   
+          :type="C_calendarView.id"      
+          :task="events"   
+          :key="componentKey"                
           @click:event="editTask"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -89,10 +90,8 @@
         :task="calendarTask"
         ref="menu"
         @open-task="editTask">  
-       </ContextMenu>
-      
-        </v-calendar>  
-      
+       </ContextMenu>      
+        </v-calendar>   
              
       </v-sheet>
     </v-col>
@@ -112,16 +111,17 @@
         type: String,
         default: "map_view",
       },    
-      facility: Object,     
+      facility: Object, 
      },
     data() {
       return {         
         focus: '',        
-        type: 'month',       
-        taskNames: [],   
+        type: this.C_calendarView,       
+        taskNames: [],    
         taskIds:[],       
         taskData: [],
-        taskStartDates: [],
+        componentKey: 0,
+        taskStartDates: [],       
         taskEndDates: [],   
         selectedEventId: {},
         calendarTask: {},
@@ -139,23 +139,27 @@
       }
     },
     mounted () {   
-     this.$refs.calendar.checkChange();   
+    this.$refs.calendar.checkChange();
     },
     methods: {
      ...mapMutations([
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
+        'setCalendarViewFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',     
         'setTaskForManager'
       ]),
-      ...mapActions([
+       ...mapActions([
         'taskDeleted',
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
+       reRenderCalendar() {
+        this.componentKey += 1;
+      },
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
@@ -164,7 +168,7 @@
         return event.color
       },
       setToday () {
-        this.focus = ''
+        this.focus = ''  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -186,8 +190,7 @@
       editTask(event) {   
         let eventObj = event
         this.selectedEventId = eventObj.event.taskId;
-        this.calendarTask = eventObj.event.task
-        console.log(this.selectedEventId)         
+        this.calendarTask = eventObj.event.task       
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`)        
       },
       updateRange ({ start, end }) {    
@@ -220,11 +223,15 @@
         return Math.floor((b - a + 1) * Math.random()) + a
       },    
     },
+
     computed: {
      ...mapGetters([
         "facilities",
         "facilityGroups",
         'getAdvancedFilterOptions',
+        'getCalendarViewFilterOptions',
+        'calendarViewFilter',
+        'getCalendarViewFilter',
         'filterDataForAdvancedFilter',
         'getTasksPerPageFilterOptions',
         'getTasksPerPageFilter',
@@ -243,12 +250,14 @@
         'myActionsFilter',
         'onWatchFilter',
         "currentTasks",
+        "contentLoaded",
         "currentIssues",
         "viewPermit",
         "currentProject",
         'taskUserFilter',
         'taskTypes',
         'viewPermit',
+     
        ]),
        _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
@@ -298,33 +307,53 @@
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          // if (search_query) valid = valid && search_query.test(resource.text) ||
-          //   valid && search_query.test(resource.taskType) ||
-          //   valid && search_query.test(resource.userNames)
-          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
+     
           return valid
         }), ['dueDate'])
         return tasks    
 
-      },      
- 
-    typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },       
-   
-    },
+      }, 
+    C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+      }
+     }
+    },   
   watch: {
+   contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId && this.currentFacility.tasks.length > 0) {
+          this.reRenderCalendar()
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+        }
+      },
+    },
+    currentFacility: {
+      handler() {
+        this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId
+        );
+
+        this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
+      },
+    },
+  },
     filterTree(value) {
       this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
     }
-  },
   }
 </script>
 

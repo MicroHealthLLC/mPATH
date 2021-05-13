@@ -48,21 +48,19 @@
           >
             Today
           </el-button>
-          <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+           <el-select
+            v-model="C_calendarView"            
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"          
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
           </el-option>
           </el-select>
-
         </v-toolbar>
       </v-sheet>
     
@@ -73,8 +71,9 @@
           color="primary"
           :events="events"
           :event-color="getEventColor"
-          :type="type"      
-          :issue="events"                   
+          :type="C_calendarView.id"      
+          :issue="events"  
+          :key="componentKey"                    
           @click:event="editIssue"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -117,8 +116,9 @@
     data() {
        return {         
         focus: '',        
-        type: 'month',       
-        issueNames: [],   
+        type: this.C_calendarView,          
+        issueNames: [], 
+        componentKey: 0,  
         issueIds:[],       
         issueData: [],
         issueStartDates: [],
@@ -144,6 +144,7 @@
     methods: {
       ...mapMutations([
         'setAdvancedFilter',
+        'setCalendarViewFilter',
         'setTaskIssueProgressStatusFilter',
         'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
@@ -156,6 +157,9 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
+      reRenderCalendar() {
+        this.componentKey += 1;
+      },
       viewDay ({ date }) {
         this.focus = date
         this.type = 'day'
@@ -224,6 +228,9 @@
       ...mapGetters([
         "facilities",
         "facilityGroups",
+        'getCalendarViewFilterOptions',
+        'getCalendarViewFilter',
+        'calendarViewFilter',
         'getAdvancedFilterOptions',
         'getIssuesPerPageFilterOptions',
         'getIssuesPerPageFilter',
@@ -239,6 +246,7 @@
         'noteDateFilter',
         'taskIssueDueDateFilter',
         'currentProject',
+        "contentLoaded",
         'issueTypes',
         'taskTypes',
         'issueSeverities',
@@ -375,25 +383,48 @@
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
         }
       },
-      C_issuesPerPage: {
-        get() {
-          return this.getIssuesPerPageFilter || {id: 15, name: '15', value: 15}
-        },
-        set(value) {
-          this.setIssuesPerPageFilter(value)
-        }
-     },
-    typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },       
+     C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+       }
+      }    
    
-    }
+    },
+  watch: {
+   contentLoaded: {
+      handler() {
+        if (this.$route.params.projectId && this.currentFacility.issues.length > 0) {
+          this.reRenderCalendar()
+          this.currentFacility = this.facilities.find(
+            (facility) => facility.facilityId == this.$route.params.projectId
+          );
+        }
+      },
+    },
+    currentFacility: {
+      handler() {
+        this.currentFacilityGroup = this.facilityGroups.find(
+          (group) => group.id == this.currentFacility.facility.facilityGroupId
+        );
+
+        this.expanded.id = this.currentFacilityGroup.id;
+      },
+    },
+    facilities: {
+      handler() {
+        this.currentFacility = this.facilities.find(
+          (facility) => facility.facilityId == this.$route.params.projectId
+        );
+      },
+    },  
+  },
+  filterTree(value) {
+    this.$refs.duplicatetree.filter(value);
+    this.$refs.movetree.filter(value);
+  }
   }
 </script>
 

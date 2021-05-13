@@ -135,7 +135,7 @@ ActiveAdmin.register User do
       tab 'Projects' do
         f.inputs 'Assign Project Privileges' do
           project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege
+          user_privileges = f.object.privilege || Privilege.new
           f.has_many :facility_privileges,
             heading: '',
             new_record: 'Add Project Privilege',

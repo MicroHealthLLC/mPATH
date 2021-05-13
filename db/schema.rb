@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_11_210519) do
+ActiveRecord::Schema.define(version: 2021_05_12_220200) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -121,12 +121,12 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
-    t.string "overview", default: "R"
-    t.string "tasks", default: "R"
-    t.string "notes", default: "R"
-    t.string "issues", default: "R"
-    t.string "admin", default: "R"
-    t.string "risks", default: "R"
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin", default: "---\n- R\n"
+    t.string "risks", default: "---\n- R\n"
     t.integer "user_id"
     t.integer "facility_project_id"
     t.integer "facility_id"
