@@ -50,13 +50,12 @@
           </el-button>
           <el-select
             v-model="C_calendarView" 
-            :load="log(JSON.stringify(C_calendarView))"
+        
             track-by="value"
             value-key="id"            
           >
           <el-option
             v-for="item in getCalendarViewFilterOptions"
-              :load="log(JSON.stringify(getCalendarViewFilterOptions))"
             :value="item"
             :key="item.id"
             :label="item.name"
