@@ -48,21 +48,19 @@
           >
             Today
           </el-button>
-          <el-select
-            v-model="type" 
-
-            track-by="id"
-            value-key="id"     
+           <el-select
+            v-model="C_calendarView"            
+            track-by="value"
+            value-key="id"            
           >
           <el-option
-            v-for="item in typeToLabel"
-            :value="item.id"
+            v-for="item in getCalendarViewFilterOptions"          
+            :value="item"
             :key="item.id"
             :label="item.name"
             >
           </el-option>
           </el-select>
-
         </v-toolbar>
       </v-sheet>
     
@@ -73,7 +71,7 @@
           color="primary"
           :events="events"
           :event-color="getEventColor"
-          :type="type"      
+          :type="C_calendarView.id"      
           :issue="events"  
           :key="componentKey"                    
           @click:event="editIssue"
@@ -118,7 +116,7 @@
     data() {
        return {         
         focus: '',        
-        type: 'month',       
+        type: this.C_calendarView,          
         issueNames: [], 
         componentKey: 0,  
         issueIds:[],       
@@ -146,6 +144,7 @@
     methods: {
       ...mapMutations([
         'setAdvancedFilter',
+        'setCalendarViewFilter',
         'setTaskIssueProgressStatusFilter',
         'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
@@ -229,6 +228,9 @@
       ...mapGetters([
         "facilities",
         "facilityGroups",
+        'getCalendarViewFilterOptions',
+        'getCalendarViewFilter',
+        'calendarViewFilter',
         'getAdvancedFilterOptions',
         'getIssuesPerPageFilterOptions',
         'getIssuesPerPageFilter',
@@ -381,26 +383,17 @@
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
         }
       },
-      C_issuesPerPage: {
-        get() {
-          return this.getIssuesPerPageFilter || {id: 15, name: '15', value: 15}
-        },
-        set(value) {
-          this.setIssuesPerPageFilter(value)
-        }
-     },
-    typeToLabel () {  
-      var options = [
-        {id: 'month', name: 'Month', value: 'month'},
-        {id: 'week', name: 'Week', value: 'week'},
-        {id: 'day', name: 'Day', value: 'day'},
-        {id: '4day', name: '4 Days', value: '4day'}, 
-      ]
-      return options;
-      },       
+     C_calendarView: {
+      get() {
+        return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
+      },
+      set(value) {
+        this.setCalendarViewFilter(value)
+       }
+      }    
    
     },
- watch: {
+  watch: {
    contentLoaded: {
       handler() {
         if (this.$route.params.projectId && this.currentFacility.issues.length > 0) {

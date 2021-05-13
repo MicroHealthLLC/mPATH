@@ -80,6 +80,7 @@ export default new Vuex.Store({
     currentFacilityGroup: null,
     mapFilters: new Array,
     projectStatusFilter: null,
+    calendarViewFilter: null,
     facilityGroupFilter: null,
     facilityNameFilter: null,
     facilityProgressFilter: null,
@@ -201,6 +202,8 @@ export default new Vuex.Store({
     setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
     setRisksPerPageFilter: (state, filter) => state.risksPerPageFilter = filter,
 
+    setCalendarViewFilter: (state, filter) => state.calendarViewFilter = filter,
+
     setCurrentProject: (state, project) => state.currentProject = project,
     setProjectUsers: (state, users) => state.projectUsers = users,
     setAccountableUsers: (state, users) => state.accountableUsers = users,
@@ -305,7 +308,7 @@ export default new Vuex.Store({
     setTaskIssueOverdueFilter: (state, filter) => {
       state.taskIssueOverdueFilter = filter
     },
-
+  
     setFacilityGroupFilter: (state, filter) => state.facilityGroupFilter = filter,
     setFacilityNameFilter: (state, filter) => state.facilityNameFilter = filter,
     setFacilityProgressFilter: (state, filter) => state.facilityProgressFilter = filter,
@@ -374,6 +377,16 @@ export default new Vuex.Store({
 
       return options;
     },
+    getCalendarViewFilter: state => state.calendarViewFilter,
+    getCalendarViewFilterOptions: (state, getters) => {
+      var options = [
+        {id: 'month', name: 'Month', value: 'month'},
+        {id: 'week', name: 'Week', value: 'week'},
+        {id: 'day', name: 'Day', value: 'day'},
+        {id: '4day', name: '4 Days', value: '4day'}, 
+      ]
+      return options;
+    },
     //For Datatables items per page display only
     getMembersPerPageFilter: state => state.membersPerPageFilter,
     getMembersPerPageFilterOptions: (state, getters) => {
@@ -408,6 +421,7 @@ export default new Vuex.Store({
       ]
       return options;
     },
+
     getRisksPerPageFilter: state => state.risksPerPageFilter,
     getRisksPerPageFilterOptions: (state, getters) => {
       var options = [
@@ -526,6 +540,7 @@ export default new Vuex.Store({
         ['issueUserFilter', 'Issue Users'],
         ['taskStageFilter', 'Task Stages'],
         ['issueStageFilter', 'Issue Stages'],
+        ['calendarViewFilter', 'Calendar View'],
         ['membersPerPageFilter', 'Members Per Page'],
         ['tasksPerPageFilter', 'Tasks Per Page'],
         ['issuesPerPageFilter', 'Issues Per Page'],
@@ -760,6 +775,7 @@ export default new Vuex.Store({
     tasksPerPageFilter: state => state.tasksPerPageFilter,
     issuesPerPageFilter: state => state.issuesPerPageFilter,
     risksPerPageFilter: state => state.risksPerPageFilter,
+    calendarViewFilter: state => state.calendarViewFilter,
 
 
     currentProject: state => state.currentProject,
@@ -776,6 +792,7 @@ export default new Vuex.Store({
     currentFacilityGroup: state => state.currentFacilityGroup,
     projectStatusFilter: state => state.projectStatusFilter,
     taskIssueOverdueFilter: state => state.taskIssueOverdueFilter,
+   
 
     facilityGroupFilter: state => state.facilityGroupFilter,
     facilityNameFilter: state => state.facilityNameFilter,
@@ -1772,6 +1789,7 @@ export default new Vuex.Store({
         // 'advancedFilter',
         'taskIssueUserFilter',
         'projectStatusFilter',
+        'calendarViewFilter',
 
         'taskTypeFilter',
         'taskStageFilter',

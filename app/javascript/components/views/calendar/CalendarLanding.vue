@@ -10,7 +10,7 @@
         />
       <h4>Calendar View</h4>
       <p v-show="$route.name === 'CalendarLanding'" style="color:#9EC64C">
-        Please select a project.
+         Select a Project to get started!
       </p>
     </el-card>
   </div>
