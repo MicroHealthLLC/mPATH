@@ -11,6 +11,7 @@ class User < ApplicationRecord
   belongs_to :organization, optional: true
   has_many :query_filters, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
+  has_many :project_privileges, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
@@ -23,6 +24,7 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
   accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :project_privileges, reject_if: :all_blank, allow_destroy: true
 
   PREFERENCES_HASH =  {
       navigation_menu: 'map', 
@@ -37,6 +39,18 @@ class User < ApplicationRecord
 
   def active_admin_facility_project_select_options
     fps_hash = FacilityProject.includes(:facility, :project).where(project_id: self.projects.active).group_by(&:project)
+    options = []
+    fps_hash.each do |project, fps|
+      options << [project.name, project.id, {disabled: true}]
+      fps.each do |f|
+        options << ["&nbsp;#{f.facility.facility_name}".html_safe, f.id]
+      end
+    end    
+    options
+  end
+
+  def active_admin_project_privilege_select_options
+    fps_hash = self.projects.active
     options = []
     fps_hash.each do |project, fps|
       options << [project.name, project.id, {disabled: true}]

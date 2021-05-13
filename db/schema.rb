@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_12_220200) do
+ActiveRecord::Schema.define(version: 2021_05_13_213916) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -353,6 +353,20 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
   create_table "project_lesson_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "lesson_stage_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin"
+    t.string "risks", default: "---\n- R\n"
+    t.string "lessons", default: "---\n- R\n"
+    t.integer "user_id"
+    t.integer "project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

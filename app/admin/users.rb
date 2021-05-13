@@ -46,6 +46,19 @@ ActiveAdmin.register User do
         risks: [],
         lessons: []
       ],
+      project_privileges_attributes: [
+        :id,
+        :user_id,
+        :_destroy,
+        :project_id,
+        overview: [],
+        tasks: [],
+        risks: [],
+        issues: [],
+        notes: [],
+        admin: [],
+        lessons: []
+      ],
       facility_privileges_attributes: [
         :id,
         :user_id,
@@ -94,6 +107,27 @@ ActiveAdmin.register User do
       end
       
       tab 'Programs' do
+
+        f.inputs 'Assign Program Privileges' do
+          project_select_options = user.active_admin_facility_project_select_options
+          user_privileges = f.object.privilege || Privilege.new
+          f.has_many :project_privileges,
+            heading: '',
+            new_record: 'Add Project Privilege',
+            remove_record: 'Remove Project Privilege',
+            allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+
+            b.input :project, label: 'Program', as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]}, user.project_privileges.pluck(:project_id) ), include_blank: false, input_html: {class: "project_privileges_select"}
+            b.input :overview, as: :check_boxes, :collection =>  project_privileges_options(b.object, "overview")
+            b.input :admin, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "admin")
+            b.input :tasks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "tasks")
+            b.input :issues, as: :check_boxes, :collection =>  project_privileges_options(b.object, "issues")
+            b.input :risks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "risks")
+            b.input :notes, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "notes")
+            b.input :lessons, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "lessons")
+          end
+        end
+
         # f.inputs 'Assign Programs' do
         #   # f.input :projects, label: 'Programs', as: :select, include_blank: false
         #   input :projects, label: 'Programs', as: :select, collection: options_for_select(  Project.all.map{|p| [p.name, p.id]}, f.object.project_ids ), multiple: true, input_html: {class: "select2", "data-close-on-select" => false }
@@ -121,14 +155,19 @@ ActiveAdmin.register User do
 
       tab 'Advanced' do
         f.inputs 'Access' do
-        f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
-          p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
-          p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
-          p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
-          p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
-          p.input :calendar_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "calendar_view")
-          p.input :members, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "members")
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
+            p.input :map_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "map_view")
+            p.input :gantt_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "gantt_view")
+            p.input :kanban_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "kanban_view")
+            p.input :calendar_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "calendar_view")
+            p.input :members, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "members")
+          end
         end
+        f.inputs 'Portfolio Administrative Privilege' do
+          f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
+            p.input :admin, as: :check_boxes, :collection =>  admin_privileges_options(p.object, "admin")
+          end
         end
       end
 
