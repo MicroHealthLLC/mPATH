@@ -485,13 +485,13 @@
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -1816,6 +1816,9 @@ export default {
     isSheetsView() {
       return this.$route.name === "SheetTaskForm";
     },
+    isCalendarView() {
+      return this.$route.name === "CalendarTaskForm";
+    },
     filteredChecks() {
       return _.filter(this.DV_task.checklists, (c) => !c._destroy);
     },
@@ -1865,7 +1868,7 @@ export default {
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("kanban")) {
+      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar") ) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/tasks`;
       } else {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
