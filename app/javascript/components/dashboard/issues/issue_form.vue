@@ -11,9 +11,9 @@
     <div class="mt-2 mx-4 d-flex align-items-center">
         <div>
           <h5 class="mb-0">
-            <span style="font-size: 16px; margin-right: 10px"
-              ><i class="fas fa-building"></i
-            ></span>
+            <span style="font-size: 16px; margin-right: 2.5px"
+              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+            </span>
             <router-link :to="projectNameLink">{{
               facility.facilityName
             }}</router-link>
@@ -649,8 +649,11 @@ Tab 1 Row Begins here -->
 
                         <!-- Start Checkbox Progress List -->
                         <!-- Create component to manage progress list -->
-                        <div class="pt-5 pb-3" style="background-color:#fafafa">
+                        <div class="pt-5 vuetify-checkitem pb-3" style="background-color:#fafafa">
+                         
+                          <div class="font-md vuetify-mt pt-3">
                           Progress Update
+                        
                           <span v-if="editToggle">
                             <span class="ml-2 clickable">
                               <font-awesome-icon
@@ -659,6 +662,7 @@ Tab 1 Row Begins here -->
                               />
                             </span>
                           </span>
+                          
                           <span v-else>
                             <span
                               class="ml-2 clickable"
@@ -679,7 +683,7 @@ Tab 1 Row Begins here -->
                           >
                             <thead>
                               <tr>
-                                <th style="width:60%">Progress</th>
+                                <th style="width:50%">Progress</th>
                                 <th>Last Updated</th>
                                 <th>By</th>
                                 <th
@@ -797,6 +801,7 @@ Tab 1 Row Begins here -->
                           </div>
                           <!-- End Checkbox Progress List -->
                         </div>
+                          </div>
                       </el-collapse-item>
                     </el-collapse>
                   </div>
@@ -1943,6 +1948,8 @@ export default {
         return "map";
       } else if (this.$route.path.includes("sheet")) {
         return "sheet";
+      } else if (this.$route.path.includes("calendar")) {
+        return "calendar";
       } else {
         return "kanban";
       }
