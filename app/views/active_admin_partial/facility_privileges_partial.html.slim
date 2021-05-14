@@ -1,0 +1,10 @@
+label Select Project
+select
+  -facility_projects.each do |facility_project|
+    option{value="#{facility_project.id}"}= facility_project.facility.facility_name
+br
+- FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
+  label= m_name
+  - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+    input{type="checkbox" value="#{permission[1]}" checked="#{@user_project_privileg.send(m_name)}" }= permission[0]
+  br

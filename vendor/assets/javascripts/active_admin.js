@@ -15,11 +15,29 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
+function facilityProjectChange(element){
+  var project_id = $(element).val()
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  $.ajax({
+    url: '/active_admin_partial/facility_privileges_partial',
+    data: {project_id: project_id, user_id: user_id},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+
+    }
+  })
+}
+
 jQuery(function($) {
+
+
 
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
-    allowClear: true
+    allowClear: false
   });
 
   // Add placeholder to for organization select

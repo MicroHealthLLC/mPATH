@@ -1,0 +1,9 @@
+- active_projects = user.projects.active
+- user.facility_privileges.each do |fp|
+  - index = SecureRandom.hex(4)
+  
+  select{class="facility_project_select" onchange='facilityProjectChange(this)' data-div-id="project_section_#{index}" data-user-id="#{user.id}"}
+    - active_projects.each do |project|
+      option{value="#{project.id}"}= project.name
+
+  div{id="project_section_#{index}"}

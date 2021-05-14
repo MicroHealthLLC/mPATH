@@ -12,6 +12,11 @@ class FacilityPrivilege < ApplicationRecord
   serialize :risks, Array
   serialize :notes, Array
 
+  PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes"]
+  PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
+
+  attr_accessor :project_select
+
   def update_facility_id
     unless self.facility_id.present?
       f = self.facility_project
