@@ -15,11 +15,16 @@
        >
         <font-awesome-icon icon="plus-circle" />
         Add Task
-        </button>         
+        </button> 
+          <div
+          class="mr-3"
+          > 
+
           <v-btn
             fab
             text
             small
+            class="back-forth-btn"
             color="grey darken-2"
             @click="prev"
           >
@@ -30,6 +35,7 @@
           <v-btn
             fab
             text
+            class="back-forth-btn"
             small
             color="grey darken-2"
             @click="next"
@@ -38,30 +44,39 @@
               mdi-chevron-right
             </v-icon>
           </v-btn>
+            </div>   
+
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
-           <el-button         
-            class="todayBtn mr-4"          
+           <v-btn        
+            class="mr-4 todayBtn"          
             @click="setToday"
-          >
-            Today
-          </el-button>
-          <el-select
-            v-model="C_calendarView" 
-        
-            track-by="value"
-            value-key="id"            
-          >
-          <el-option
-            v-for="item in getCalendarViewFilterOptions"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
+            small
+            elevation="0"
             >
-          </el-option>
-          </el-select>
+            <font-awesome-icon icon="calendar-check" class="mr-1 today-icon"  />
+            Today
+            </v-btn>
+          
+           <v-btn-toggle
+            v-model="C_calendarView"          
+             >
+             <v-btn    
+              v-for="item in getCalendarViewFilterOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+              small
+            >
+            <span v-if="item.id == 'day'"><font-awesome-icon icon="calendar-day" class="mr-1"  /> Day</span>
+            <span v-if="item.id == 'week'"><font-awesome-icon icon="calendar-week" class="mr-1"  /> Week</span>
+            <span v-if="item.id == 'month'"><font-awesome-icon icon="calendar-alt" class="mr-1"  /> Month</span>
+            <span v-if="item.id == '4day'"><font-awesome-icon icon="calendar-minus" class="mr-1"  /> 4 Day</span>
+         
+            </v-btn>        
+           </v-btn-toggle>   
 
         </v-toolbar>
       </v-sheet>
@@ -73,7 +88,8 @@
           color="primary"
           :events="events"         
           :event-color="getEventColor"
-          :type="C_calendarView.id"      
+          :type="C_calendarView.id"   
+          :load="log(C_calendarView.id)"    
           :task="events"   
           :key="componentKey"                
           @click:event="editTask"
@@ -102,6 +118,14 @@
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
  import ContextMenu from "../../shared/ContextMenu";
+ import { library } from '@fortawesome/fontawesome-svg-core'
+ import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek  } from '@fortawesome/free-solid-svg-icons'
+//  import { faCalendarWeek } from '@fortawesome/free-solid-svg-icons'
+//  import { faCalendarDay } from '@fortawesome/free-solid-svg-icons'
+ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+ library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck)
+ Vue.component('font-awesome-icon', FontAwesomeIcon)
+
   export default {
     name: 'TaskCalendar',
     components: {ContextMenu},
@@ -120,6 +144,10 @@
         taskNames: [],    
         taskIds:[],       
         taskData: [],
+        dayViewMode: false,
+        weekViewMode: false,
+        monthViewMode: false,
+        todayView: false,
         componentKey: 0,
         taskStartDates: [],       
         taskEndDates: [],   
@@ -143,6 +171,9 @@
     },
     methods: {
      ...mapMutations([
+        'setDayView',
+        'setMonthView',
+        'setWeekView',
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setCalendarViewFilter',
@@ -157,6 +188,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
+      log(e){
+          console.log("THis is caledanViewOption: " + e)
+      },
        reRenderCalendar() {
         this.componentKey += 1;
       },
@@ -168,7 +202,8 @@
         return event.color
       },
       setToday () {
-        this.focus = ''  
+        this.todayView = true 
+        this.focus = ''       
       },
       prev () {
         this.$refs.calendar.prev()
@@ -231,6 +266,9 @@
         'getAdvancedFilterOptions',
         'getCalendarViewFilterOptions',
         'calendarViewFilter',
+        'getDayView',
+        'getMonthView',
+        'getWeekView',
         'getCalendarViewFilter',
         'filterDataForAdvancedFilter',
         'getTasksPerPageFilterOptions',
@@ -313,14 +351,15 @@
         return tasks    
 
       }, 
-    C_calendarView: {
+   C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
       set(value) {
         this.setCalendarViewFilter(value)
-      }
-     }
+       }
+      }     
+
     },   
   watch: {
    contentLoaded: {
@@ -365,7 +404,7 @@
 /deep/.v-event {
   color: #383838 !important;
 }
-.addTaskBtn, .exportBtns, .showAll, .todayBtn {
+.addTaskBtn, .exportBtns, .showAll {
    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
 </style> 

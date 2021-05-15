@@ -15,11 +15,15 @@
        >
         <font-awesome-icon icon="plus-circle" />
         Add Issue
-        </button>         
+        </button>  
+          <div    
+            class="mr-3"
+          >        
           <v-btn
             fab
             text
             small
+            class="back-forth-btn"
             color="grey darken-2"
             @click="prev"
           >
@@ -31,6 +35,7 @@
             fab
             text
             small
+            class="back-forth-btn"
             color="grey darken-2"
             @click="next"
           >
@@ -38,32 +43,39 @@
               mdi-chevron-right
             </v-icon>
           </v-btn>
+          </div>
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
-           <el-button         
-            class="todayBtn mr-4"          
+               <v-btn        
+            class="mr-4"          
             @click="setToday"
-          >
-            Today
-          </el-button>
-           <el-select
-            v-model="C_calendarView"            
-            track-by="value"
-            value-key="id"            
-          >
-          <el-option
-            v-for="item in getCalendarViewFilterOptions"          
-            :value="item"
-            :key="item.id"
-            :label="item.name"
+            small
+            elevation="0"
             >
-          </el-option>
-          </el-select>
+            <font-awesome-icon icon="calendar-check" class="mr-1 today-icon"  />
+            Today
+            </v-btn>          
+           <v-btn-toggle
+            v-model="C_calendarView"          
+             >
+             <v-btn    
+              v-for="item in getCalendarViewFilterOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+              small
+            >
+            <span v-if="item.id == 'day'"><font-awesome-icon icon="calendar-day" class="mr-1"  /> Day</span>
+            <span v-if="item.id == 'week'"><font-awesome-icon icon="calendar-week" class="mr-1"  /> Week</span>
+            <span v-if="item.id == 'month'"><font-awesome-icon icon="calendar-alt" class="mr-1"  /> Month</span>
+            <span v-if="item.id == '4day'"><font-awesome-icon icon="calendar-minus" class="mr-1"  /> 4 Day</span>
+         
+            </v-btn>        
+           </v-btn-toggle>        
         </v-toolbar>
-      </v-sheet>
-    
+      </v-sheet>    
       <v-sheet height="600" >     
          <v-calendar               
           ref="calendar"
