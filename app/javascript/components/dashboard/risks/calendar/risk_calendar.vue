@@ -48,7 +48,7 @@
           <v-spacer></v-spacer>
           
            <v-btn        
-            class="mr-4"          
+            class="mr-4 todayBtn"          
             @click="setToday"
             small
             elevation="0"
