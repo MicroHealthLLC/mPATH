@@ -1,10 +1,12 @@
 - index = SecureRandom.random_number(10000000)
 - active_projects = user.projects.active
+fieldset(class="inputs has_many_fields")
+  ol
+    li(class="select input required")
+      label Select Program
+      select{class="facility_project_select" onchange='programSelectChange(this)' name="user[facility_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
+        option{value="select_project"} Select project
+        - active_projects.each do |project|
+          option{value="#{project.id}"}= project.name
 
-label Select Program
-select{class="facility_project_select" onchange='facilityProjectChange(this)' name="user[facility_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
-  option{value="select_project"} Select project
-  - active_projects.each do |project|
-    option{value="#{project.id}"}= project.name
-
-div{id="project_section_#{index}"}
+    div{id="project_section_#{index}"}

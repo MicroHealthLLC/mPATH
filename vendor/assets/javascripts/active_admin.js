@@ -16,23 +16,19 @@ function checkRiskProbabilityImpactNumber(element){
 }
 
 function addFacilityPrivilegeForm(element){
-  var project_id = $(element).val()
-  var div_id = $(element).attr("data-div-id")
-  var user_id = $(element).attr("data-user-id")
   let url = $(element).attr("data-url")
   $.ajax({
     url: url,
-    data: {user_id: user_id},
     success: function(res, data){
       $("#facility_privilege_list").prepend(res.html)
     },
     errors: function(data){
-
+      alert("Error loading data. Please try again later")
     }
   })
 }
 
-function facilityProjectChange(element){
+function programSelectChange(element){
   var project_id = $(element).val()
   if(project_id == "select_project") return
   var div_id = $(element).attr("data-div-id")
@@ -45,7 +41,7 @@ function facilityProjectChange(element){
       $("#"+div_id).html(res.html)
     },
     errors: function(data){
-
+      alert("Error loading data. Please try again later")
     }
   })
 }

@@ -20,7 +20,6 @@ class FacilityPrivilegesController < AuthenticatedController
 
   def add_facility_privilege_form
     @user = User.find(params[:user_id])
-    project = Project.find(params[:project_id])    
     render json: { html: render_to_string(template: "admin/facility_privileges/facility_privilege_form", layout: false, :formats => [:html], locals: {user: @user}) }
   end
 

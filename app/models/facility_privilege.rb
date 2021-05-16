@@ -12,6 +12,8 @@ class FacilityPrivilege < ApplicationRecord
   serialize :notes, Array
   serialize :facility_project_ids, Array
 
+  validates_presence_of :project_id, :facility_project_ids
+
   PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 

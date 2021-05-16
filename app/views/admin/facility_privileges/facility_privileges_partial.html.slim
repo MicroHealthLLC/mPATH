@@ -1,16 +1,18 @@
 - if user_project_privileg
   - if @facilities.any?
-    label Select Project
-    select{id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" class="project_selection_input" multiple="true"}
-      - @facilities.each do |f|
-        option{value="#{f.id}" }= f.facility_name
+    ol
+      li(class="select input required")
+        label(class="label") Select Project
+        select(class="facility_project_select" id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" class="project_selection_input" multiple="true")
+          - @facilities.each do |f|
+            option{value="#{f.id}" }= f.facility_name
       
-    br
-    - FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
-      label= m_name
-      - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
-        input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked="#{user_project_privileg.send(m_name)}"}= permission[0]
-      br
+      - FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
+        li(class="select input required")
+          label(class="label")= m_name
+          - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+            input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if user_project_privileg.send(m_name).include?(permission[1]))}= permission[0]
+        
   - else
     p All projects are included in one of the project privileges.
     
