@@ -37,6 +37,13 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  def facility_privileges_group
+    g = user.facility_privileges.group_by(&:group_number)
+    h = []
+    
+    user.facility_privileges.group_by(&:group_number).transform_values{|fp| fp.group_by{|f| f.project_id } }
+  end
+
   def active_admin_facility_project_select_options
     fps_hash = FacilityProject.includes(:facility, :project).where(project_id: self.projects.active).group_by(&:project)
     options = []

@@ -15,13 +15,32 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
-function facilityProjectChange(element){
+function addFacilityPrivilegeForm(element){
   var project_id = $(element).val()
   var div_id = $(element).attr("data-div-id")
   var user_id = $(element).attr("data-user-id")
+  let url = $(element).attr("data-url")
   $.ajax({
-    url: '/active_admin_partial/facility_privileges_partial',
-    data: {project_id: project_id, user_id: user_id},
+    url: url,
+    data: {user_id: user_id},
+    success: function(res, data){
+      $("#facility_privilege_list").prepend(res.html)
+    },
+    errors: function(data){
+
+    }
+  })
+}
+
+function facilityProjectChange(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/facility_privileges/facility_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
     success: function(res, data){
       $("#"+div_id).html(res.html)
     },
@@ -31,9 +50,36 @@ function facilityProjectChange(element){
   })
 }
 
+function initializeProjectPrivilegeSelect2(){
+
+  $.map($(".project_selection_input"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))  
+    }    
+
+    $(element).select2({
+      placeholder: "Search and select Project",
+      allowClear: true,
+      tags: true      
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
 jQuery(function($) {
 
-
+  initializeProjectPrivilegeSelect2()
 
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",

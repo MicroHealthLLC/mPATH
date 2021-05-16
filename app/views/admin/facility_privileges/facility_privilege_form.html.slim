@@ -1,0 +1,10 @@
+- index = SecureRandom.random_number(10000000)
+- active_projects = user.projects.active
+
+label Select Program
+select{class="facility_project_select" onchange='facilityProjectChange(this)' name="user[facility_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
+  option{value="select_project"} Select project
+  - active_projects.each do |project|
+    option{value="#{project.id}"}= project.name
+
+div{id="project_section_#{index}"}

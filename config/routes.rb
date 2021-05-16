@@ -25,7 +25,9 @@ Rails.application.routes.draw do
     post '/sort-by', to: 'sorts#update'
   end
 
-  get '/active_admin_partial/facility_privileges_partial' => "active_admin_partial#facility_privileges_partial"
+  get '/facility_privileges/facility_privileges_partial' => "facility_privileges#facility_privileges_partial"
+  get '/facility_privileges/add_facility_privilege_form' => "facility_privileges#add_facility_privilege_form"
+
   ## New Routes for Vue
   get "/programs/:id/"  => "projects#show"
 

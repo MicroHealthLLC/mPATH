@@ -1,9 +1,8 @@
 class FacilityPrivilege < ApplicationRecord
   belongs_to :user
-  belongs_to :facility_project
-  belongs_to :facility, optional: true
-
-  after_create :update_facility_id
+  # belongs_to :facility_project
+  # belongs_to :facility, optional: true
+  belongs_to :project
 
   serialize :overview, Array
   serialize :admin, Array
@@ -11,18 +10,10 @@ class FacilityPrivilege < ApplicationRecord
   serialize :issues, Array
   serialize :risks, Array
   serialize :notes, Array
+  serialize :facility_project_ids, Array
 
   PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
-
-  attr_accessor :project_select
-
-  def update_facility_id
-    unless self.facility_id.present?
-      f = self.facility_project
-      self.update(facility_id: f.facility_id)
-    end
-  end 
 
   def get_permission_hash(permission_str)
     h = {read: false, write: false, delete: false, hide: true}

@@ -63,7 +63,8 @@ ActiveAdmin.register User do
         :id,
         :user_id,
         :_destroy,
-        :facility_project_id,
+        :project_id,
+        facility_project_ids: [],
         overview: [],
         tasks: [],
         risks: [],
@@ -75,7 +76,7 @@ ActiveAdmin.register User do
   end
 
   form(html: {autocomplete: :off}) do |f|
-    f.semantic_errors *f.object.errors.keys
+    f.semantic_errors *f.object.errors.attribute_names
 
     tabs do
       tab 'Basic' do
