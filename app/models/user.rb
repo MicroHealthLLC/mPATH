@@ -23,7 +23,7 @@ class User < ApplicationRecord
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
-  accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :facility_privileges, reject_if: proc { |attributes| attributes['facility_project_ids'].blank? }, allow_destroy: true
   accepts_nested_attributes_for :project_privileges, reject_if: :all_blank, allow_destroy: true
 
   PREFERENCES_HASH =  {

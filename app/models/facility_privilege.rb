@@ -13,9 +13,19 @@ class FacilityPrivilege < ApplicationRecord
   serialize :facility_project_ids, Array
 
   validates_presence_of :project_id, :facility_project_ids
+  before_save :remove_blank_string
 
   PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
+
+  def remove_blank_string
+    overview.delete("")
+    admin.delete("")
+    tasks.delete("")
+    issues.delete("")
+    risks.delete("")
+    notes.delete("")
+  end
 
   def get_permission_hash(permission_str)
     h = {read: false, write: false, delete: false, hide: true}

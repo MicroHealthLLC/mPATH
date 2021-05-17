@@ -3,8 +3,7 @@ class FacilityPrivilegesController < AuthenticatedController
     project = Project.find(params[:project_id])
     user = User.find(params[:user_id])
     facility_projects = FacilityProject.includes(:facility, :project).where(project_id: project.id)
-    user_project_privileg = ProjectPrivilege.where(user_id: user.id, project_ids: [project.id.to_s]).first
-
+    user_project_privileg = ProjectPrivilege.where(user_id: user.id).select{|s| s.project_ids.include?(project.id.to_s) }.first
     facility_privilege = FacilityPrivilege.where(project_id: project.id, user_id: user.id).first
     if facility_privilege
       facility_project_ids = facility_privilege.facility_project_ids
