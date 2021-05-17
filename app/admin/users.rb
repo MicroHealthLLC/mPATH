@@ -87,7 +87,7 @@ ActiveAdmin.register User do
         end
         div id: 'user-password__tab'
       end
-      
+
       tab 'Advanced' do
         f.inputs 'Assign Programs' do
           # f.input :projects, label: 'Programs', as: :select, include_blank: false
