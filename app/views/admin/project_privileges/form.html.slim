@@ -1,0 +1,26 @@
+- index = SecureRandom.random_number(10000000)
+
+fieldset(class="inputs has_many_fields")
+  ol
+    li(class="select input required")
+      div{id="project_privileges#{index}"}
+
+      label(class="label") Select Program
+      select{class="project_select" name="user[project_privileges_attributes][#{index}][project_ids][]"  data-user-id="#{user.id}"  data-selected=(@project_ids) multiple="true"}
+        - @projects_to_select.each do |project|
+          option{value=(project.id) }= project.name
+
+    - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
+      li(class="select input required")
+        label(class="label")= m_name
+
+        - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+          input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}= permission[0]
+
+    input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
+    
+
+javascript:
+  jQuery(function($) {
+    initializeProgramPrivilegeSelect2()
+  })

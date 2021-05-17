@@ -28,6 +28,19 @@ function addFacilityPrivilegeForm(element){
   })
 }
 
+function addProjectPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  $.ajax({
+    url: url,
+    success: function(res, data){
+      $("#project_privileges_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
 function programSelectChange(element){
   var project_id = $(element).val()
   if(project_id == "select_project") return
@@ -73,9 +86,36 @@ function initializeProjectPrivilegeSelect2(){
 
 }
 
+function initializeProgramPrivilegeSelect2(){
+  $.map($(".project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))  
+    }    
+
+    $(element).select2({
+      placeholder: "Search and select Programs",
+      allowClear: true,
+      tags: true      
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
 jQuery(function($) {
 
   initializeProjectPrivilegeSelect2()
+  initializeProgramPrivilegeSelect2()
 
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",

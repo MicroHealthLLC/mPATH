@@ -51,6 +51,7 @@ ActiveAdmin.register User do
         :user_id,
         :_destroy,
         :project_id,
+        project_ids: [],
         overview: [],
         tasks: [],
         risks: [],
@@ -110,23 +111,27 @@ ActiveAdmin.register User do
       tab 'Programs' do
 
         f.inputs 'Assign Program Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
-          f.has_many :project_privileges,
-            heading: '',
-            new_record: 'Add Project Privilege',
-            remove_record: 'Remove Project Privilege',
-            allow_destroy: -> (c) { current_user.superadmin?  } do |b|
 
-            b.input :project, label: 'Program', as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]}, user.project_privileges.pluck(:project_id) ), include_blank: false, input_html: {class: "project_privileges_select"}
-            b.input :overview, as: :check_boxes, :collection =>  project_privileges_options(b.object, "overview")
-            b.input :admin, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "admin")
-            b.input :tasks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "tasks")
-            b.input :issues, as: :check_boxes, :collection =>  project_privileges_options(b.object, "issues")
-            b.input :risks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "risks")
-            b.input :notes, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "notes")
-            b.input :lessons, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "lessons")
-          end
+          render(partial:'admin/project_privileges/index', locals: {user: user})
+          
+          project_select_options = user.active_admin_facility_project_select_options
+
+          # f.has_many :project_privileges,
+          #   heading: '',
+          #   new_record: 'Add Project Privilege',
+          #   remove_record: 'Remove Project Privilege',
+          #   allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+
+          #   b.input :project_ids, label: 'Program', as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]}, user.project_privileges.pluck(:project_id) ), include_blank: false, input_html: {multiple: true, class: "project_privileges_select"}
+          #   # b.input :project, label: 'Program', as: :select, collection: options_for_select( user.projects.active.map{|p| [p.name, p.id]}, user.project_privileges.pluck(:project_id) ), include_blank: false, input_html: {class: "project_privileges_select"}
+          #   b.input :overview, as: :check_boxes, :collection =>  project_privileges_options(b.object, "overview")
+          #   b.input :admin, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "admin")
+          #   b.input :tasks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "tasks")
+          #   b.input :issues, as: :check_boxes, :collection =>  project_privileges_options(b.object, "issues")
+          #   b.input :risks, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "risks")
+          #   b.input :notes, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "notes")
+          #   b.input :lessons, as: :check_boxes, :collection =>  project_privileges_options(b.object,  "lessons")
+          # end
         end
 
         # f.inputs 'Assign Programs' do
