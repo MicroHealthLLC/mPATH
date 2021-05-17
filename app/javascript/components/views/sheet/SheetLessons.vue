@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
@@ -153,6 +155,12 @@ export default {
       // Store active sort value
       this.activeSortValue = "date";
     },
+  },
+  computed: {
+    ...mapGetters(["lessonsLoaded"]),
+  },
+  mounted() {
+    console.log("Lessons Loaded: " + this.lessonsLoaded);
   },
 };
 </script>

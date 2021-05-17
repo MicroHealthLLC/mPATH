@@ -10,6 +10,7 @@ import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
+import lessonStore from "./modules/lesson-store";
 
 // utility function
 const getSimpleDate = (date) => {
@@ -27,7 +28,8 @@ export default new Vuex.Store({
     projectStore,
     taskStore,
     issueStore,
-    riskStore
+    riskStore,
+    lessonStore
   },
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
