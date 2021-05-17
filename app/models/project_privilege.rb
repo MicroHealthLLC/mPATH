@@ -8,6 +8,7 @@ class ProjectPrivilege < ApplicationRecord
   serialize :issues, Array
   serialize :risks, Array
   serialize :notes, Array
+  serialize :lessons, Array
 
   serialize :project_ids, Array
 

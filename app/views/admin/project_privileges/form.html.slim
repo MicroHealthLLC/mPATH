@@ -13,7 +13,8 @@ fieldset(class="inputs has_many_fields")
     - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
       li(class="select input required")
         label(class="label")= m_name
-
+        input{type="hidden" value="" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}
+        
         - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
           input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}= permission[0]
 

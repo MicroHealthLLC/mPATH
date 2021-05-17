@@ -60,8 +60,13 @@ if(!window.google){
 }
 
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
+// Format: {<program_id> : {
+    // <project_id>:{
+    //   modules: ["R", "W", "D"]
+    // }
+// }}
+var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
-var projectPrivileges = JSON.parse(window.project_privileges.replace(/&quot;/g,'"'))
 
 var permissions = {}
 for (var key in current_user.privilege) {

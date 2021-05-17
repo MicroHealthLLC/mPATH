@@ -37,11 +37,28 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
-  def facility_privileges_group
-    g = user.facility_privileges.group_by(&:group_number)
-    h = []
-    
-    user.facility_privileges.group_by(&:group_number).transform_values{|fp| fp.group_by{|f| f.project_id } }
+  def facility_privileges_hash
+    fp = self.facility_privileges
+    h = {}
+    fp.each do |f|
+      facility_project_ids = f.facility_project_ids
+      overview = f.overview
+      tasks = f.tasks
+      notes = f.notes
+      issues = f.issues
+      risks = f.risks
+      h[f.project_id] = {}
+      facility_project_ids.each do |fid|
+        h[f.project_id][fid] = {
+          overview: overview,
+          tasks: tasks,
+          notes: notes,
+          issues: issues,
+          risks: risks
+        }
+      end
+    end
+    h
   end
 
   def active_admin_facility_project_select_options
@@ -66,10 +83,6 @@ class User < ApplicationRecord
       end
     end    
     options
-  end
-
-  def facility_privileges_hash
-    self.facility_privileges.includes(:facility, :facility_project)
   end
 
   def encrypted_authentication_token
