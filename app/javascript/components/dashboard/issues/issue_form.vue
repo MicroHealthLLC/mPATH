@@ -1634,6 +1634,9 @@ export default {
                   ? note.user_id
                   : this.$currentUser.id
                 : note[key];
+            if ( key == 'body') {
+                  value = value.replace(/[^ -~]/g,'')
+                }  
             formData.append(`issue[notes_attributes][${i}][${key}]`, value);
           }
         }

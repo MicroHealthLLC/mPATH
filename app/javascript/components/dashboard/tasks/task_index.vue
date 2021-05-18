@@ -114,7 +114,7 @@
           <td v-else></td>
           <td v-if="(task.notes.length) > 0">
             By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>

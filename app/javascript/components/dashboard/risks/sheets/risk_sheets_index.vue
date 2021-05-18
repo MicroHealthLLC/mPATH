@@ -402,7 +402,7 @@
           <td v-else></td>
           <td v-if="(risk.notesUpdatedAt.length) > 0">
              By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
+            {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>
