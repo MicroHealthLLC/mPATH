@@ -55,26 +55,46 @@ class User < ApplicationRecord
     }
   end
 
-  def facility_privileges_hash
-    fp = self.facility_privileges
+  def project_privileges_hash
+    pv = self.project_privileges
     h = {}
+    pv.each do |p|
+      pids = p.project_ids
+      module_permissions = p.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+      pids.each do |pid|
+        h[pid] = module_permissions
+      end
+    end
+    h
+  end
+
+  def facility_privileges_hash
+    
+    fp = self.facility_privileges
+    pids = fp.pluck(:project_id)
+    
+    facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by(&:project_id).transform_values{|fp| fp.flatten.map(&:facility_id).compact.uniq }
+    facility_ids = []
+    
+    h = {}
+    
+    pp_hash = project_privileges_hash
+    
     fp.each do |f|
       facility_project_ids = f.facility_project_ids
-      overview = f.overview
-      tasks = f.tasks
-      notes = f.notes
-      issues = f.issues
-      risks = f.risks
+      facility_ids = ( facility_ids + facility_project_ids).compact.uniq
       h[f.project_id] = {}
       facility_project_ids.each do |fid|
-        h[f.project_id][fid] = {
-          overview: overview,
-          tasks: tasks,
-          notes: notes,
-          issues: issues,
-          risks: risks
-        }
+        h[f.project_id][fid] = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id")
       end
+    end
+    facility_ids = facility_ids.map(&:to_i)
+
+    facility_project_hash.each do |pid, fids|
+      f = fids - facility_ids
+      f.each do |ff|
+        h[pid][ff.to_s]  = pp_hash[pid.to_s]
+      end       
     end
     h
   end
