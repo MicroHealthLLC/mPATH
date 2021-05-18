@@ -6,7 +6,7 @@
       </el-input>
     </div>
     <div class="wrapper p-3">
-      <button class="btn btn-md btn-primary mr-3">
+      <button class="btn btn-md btn-primary mr-3" @click="addLesson">
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
@@ -87,6 +87,11 @@ export default {
     };
   },
   methods: {
+    addLesson() {
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
+      );
+    },
     openLesson() {
       console.log("OPENING LESSON");
     },
