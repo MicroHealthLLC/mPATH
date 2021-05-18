@@ -205,9 +205,7 @@ export default {
       }
     },
     permitted() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions[salut]["read"];
+      return (salut) => this.$topNavigationPermissions[salut] && this.$topNavigationPermissions[salut]["read"];
     },
   },
   watch: {

@@ -37,6 +37,24 @@ class User < ApplicationRecord
     s.key :preferences, defaults: PREFERENCES_HASH
   end
 
+  # NOTE: this function is used for top level navigation
+  # check javascript/packs/dashboard.js
+  def privilege_hash
+    p = self.privilege
+    h = {
+      map_view: p.map_view,
+      gantt_view: p.gantt_view,
+      members: p.members,
+      sheets_view: p.sheets_view,
+      kanban_view: p.kanban_view,
+      calendar_view: p.calendar_view,
+      #NOTE: hard coding because lesson will go under project level. 
+      # Once front end is working with project, do remove this permission.
+      # This is used in topLevelNavigation for now 
+      lessons: p.lessons
+    }
+  end
+
   def facility_privileges_hash
     fp = self.facility_privileges
     h = {}

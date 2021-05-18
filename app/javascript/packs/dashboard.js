@@ -68,11 +68,13 @@ var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 var projectPrivileges = JSON.parse(window.project_privilegs.replace(/&quot;/g,'"'))
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
 
-var permissions = {}
-for (var key in current_user.privilege) {
+var privilege = JSON.parse(window.privilege.replace(/&quot;/g,'"'))
+
+var topNavigationPermissions = {}
+for (var key in privilege) {
   if (['id', 'created_at', 'updated_at', 'user_id'].includes(key)) continue
-  var value = current_user.privilege[key]
-  permissions[key] = {
+  var value = privilege[key]
+  topNavigationPermissions[key] = {
     read: value.includes('R'),
     write: value.includes('W'),
     delete: value.includes('D')
@@ -80,7 +82,7 @@ for (var key in current_user.privilege) {
 }
 
 Vue.prototype.$currentUser = current_user
-Vue.prototype.$permissions = permissions
+Vue.prototype.$topNavigationPermissions = topNavigationPermissions
 Vue.prototype.$projectPrivileges = projectPrivileges
 
 Vue.prototype.$preferences = preferences

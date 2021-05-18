@@ -528,7 +528,7 @@ export default {
       'getUnfilteredFacilities'
     ]),
     hasAdminAccess() {
-      return salut => this.$currentUser.role == "superadmin" || this.$permissions.admin[salut] || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
+      return salut => this.$currentUser.role == "superadmin" || this.favoriteFilterData.user_id == this.$currentUser.id || !this.favoriteFilterData.id
     },
     C_favoriteFilterSelectModel: {
       get() {
