@@ -647,6 +647,16 @@ export default {
   },
   methods: {
     ...mapMutations(["setTaskTypeFilter", "updateFacilityHash"]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.overview.includes(s); 
+    },
     updateFacility(e) {
       if (e.target) e.target.blur();
       if (!this._isallowed("write") || !this.DV_updated) return;
@@ -1044,12 +1054,7 @@ export default {
         });
       }
       return taskTypes;
-    },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.overview[salut];
-    },
+    }
   },
   watch: {
     contentLoaded: {
