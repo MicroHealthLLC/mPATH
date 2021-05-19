@@ -1616,6 +1616,7 @@
                       icon="el-icon-delete"
                       title="Remove Related Risk"
                       @click.prevent="removeRelatedRisk(risk)"
+                      :disabled="!_isallowed('delete')"
                     ></el-button>
                   </li>
                 </ul>
@@ -1660,6 +1661,7 @@
                       icon="el-icon-delete"
                       title="Remove Related Task"
                       @click.prevent="removeRelatedTask(task)"
+                      :disabled="!_isallowed('delete')"
                     ></el-button>
                   </li>
                 </ul>
@@ -1704,6 +1706,7 @@
                       icon="el-icon-delete"
                       title="Remove Related Issue"
                       @click.prevent="removeRelatedIssue(issue)"
+                      :disabled="!_isallowed('delete')"
                     ></el-button>
                   </li>
                 </ul>
