@@ -57,7 +57,9 @@ export default {
   mounted() {
     var programId = this.$route.params.programId;
     var projectId = this.$route.params.projectId
+
     let fPrivilege = this.$projectPrivileges[programId][projectId]
+
     // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
 
     if(fPrivilege){

@@ -56,47 +56,87 @@ class User < ApplicationRecord
   end
 
   def project_privileges_hash
-    pv = self.project_privileges
-    h = {}
+    user = self
+    pv = user.project_privileges
+    ph = {}
+    project_ids_with_privileges = []
     pv.each do |p|
       pids = p.project_ids
-      module_permissions = p.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+      project_ids_with_privileges = project_ids_with_privileges + pids
+      module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
       pids.each do |pid|
-        h[pid] = module_permissions
+        ph[pid] = module_permissions
       end
     end
-    h
+
+    project_ids_with_privileges = project_ids_with_privileges.compact.uniq
+    user_project_ids = user.project_ids.map(&:to_s)
+    remaining_project_ids = user_project_ids - project_ids_with_privileges
+    user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
+
+    remaining_project_ids.each do |pid|
+      ph[pid] = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view", )
+    end
+
+    ph
   end
 
+  #This will build has like this
+  # {<project_id> : { <facility_id>: { <all_perissions> } }
   def facility_privileges_hash
+    user = self
+    fp = user.facility_privileges
     
-    fp = self.facility_privileges
-    pids = fp.pluck(:project_id)
+    pids = user.project_ids #fp.pluck(:project_id)    
     
-    facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by(&:project_id).transform_values{|fp| fp.flatten.map(&:facility_id).compact.uniq }
-    facility_ids = []
-    
-    h = {}
-    
-    pp_hash = project_privileges_hash
-    
+    fph = Hash.new{|h, (k,v)| h[k] = {} }
+    fph2 = Hash.new{|h, (k,v)| h[k] = [] }
+
+    # fp.each do |f|
+    #   facility_project_ids = f.facility_project_ids
+    #   f_permissions = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone
+
+    #   facility_project_ids.each do |fid|
+    #     fph2[f.project_id.to_s] << fid.to_s 
+    #     fph[f.project_id.to_s] << f_permissions.merge!({"facility_id" => fid})
+    #   end
+    # end
+
+    # pp_hash = user.project_privileges_hash
+
+    # facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
+
+    # facility_project_hash.each do |pid, fids|
+    #   fids2 = fids - ( fph2[pid] || [])
+    #   p_privilege = pp_hash[pid]
+    #   fids2.each do |ff|
+    #     fph[pid] << p_privilege.clone.merge!({"facility_id" => ff})
+    #   end       
+    # end
+
     fp.each do |f|
       facility_project_ids = f.facility_project_ids
-      facility_ids = ( facility_ids + facility_project_ids).compact.uniq
-      h[f.project_id] = {}
+      f_permissions = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone
+
       facility_project_ids.each do |fid|
-        h[f.project_id][fid] = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id")
+        fph2[f.project_id.to_s] << fid.to_s 
+        fph[f.project_id.to_s][fid] = f_permissions.merge!({"facility_id" => fid})
       end
     end
-    facility_ids = facility_ids.map(&:to_i)
+
+    pp_hash = user.project_privileges_hash
+
+    facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
 
     facility_project_hash.each do |pid, fids|
-      f = fids - facility_ids
-      f.each do |ff|
-        h[pid][ff.to_s]  = pp_hash[pid.to_s]
+      fids2 = fids - ( fph2[pid] || [])
+      p_privilege = pp_hash[pid]
+      fids2.each do |ff|
+        fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
       end       
     end
-    h
+
+    fph
   end
 
   def active_admin_facility_project_select_options
