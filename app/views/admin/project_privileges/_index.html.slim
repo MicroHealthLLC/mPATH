@@ -24,7 +24,8 @@ div{id="project_privileges_list"}
         - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
           li(class="select input required")
             label(class="label")= m_name
-
+            input{type="hidden" value="" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}
+            
             - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
               input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
 

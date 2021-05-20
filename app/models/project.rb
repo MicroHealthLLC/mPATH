@@ -133,14 +133,14 @@ class Project < SortableRecord
     hash
   end
 
-  def build_json_response
+  def build_json_response(user)
     all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
 
     all_users = []
     all_user_ids = []
-
+    
     all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort_by(&:due_date)
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
@@ -193,8 +193,11 @@ class Project < SortableRecord
       # Building Tasks
       # tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
       # h[:tasks] = tasks.map(&:to_json)
-      tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
-      tids = tasks.map(&:id)
+      tasks = []
+      if user.has_permission?(resource: 'tasks', program: fp.project_id, project: fp.facility_id)
+        tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+        tids = tasks.map(&:id)
+      end
 
       h[:tasks] = []
       tasks.each do |t| 
@@ -204,8 +207,11 @@ class Project < SortableRecord
       # Building Issues
       # issues = all_issues.select{|i| i.facility_project_id == fp.id}
       # h[:issues] = issues.map(&:to_json)
-      issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
-      iids = issues.map(&:id)
+      issues = []
+      if user.has_permission?(resource: 'issues', program: fp.project_id, project: fp.facility_id)
+        issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
+        iids = issues.map(&:id)
+      end
 
       h[:issues] = []
       issues.each do |i| 
@@ -215,8 +221,11 @@ class Project < SortableRecord
       # Building Risks
       # risks = all_risks.select{|r| r.facility_project_id == fp.id}
       # h[:risks] = risks.map(&:to_json)
-      risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
-      rids = risks.map(&:id)
+      risks = []
+      if user.has_permission?(resource: 'risks', program: fp.project_id, project: fp.facility_id)
+        risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+        rids = risks.map(&:id)
+      end
 
       h[:risks] = []
       risks.each do |r| 
@@ -224,7 +233,11 @@ class Project < SortableRecord
       end
 
       # Building Notes
-      notes = all_notes.select{|r| r.noteable_id == fp.id}
+      notes = []
+      if user.has_permission?(resource: 'notes', program: fp.project_id, project: fp.facility_id)
+        notes = all_notes.select{|r| r.noteable_id == fp.id}
+      end
+
       h[:notes] = notes.map(&:to_json)
 
       facility_projects_hash2[fp.id] = h
