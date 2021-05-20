@@ -2917,11 +2917,15 @@ export default {
   },
   watch: {
     risk: {
-      handler: function(value) {
-        if (!("id" in value)) this.DV_risk = this.INITIAL_RISK_STATE();
+      handler(risk) {
+        if (risk && risk.id) {
+          this.DV_risk = this.INITIAL_RISK_STATE();
+        } 
         this.DV_risk.riskFiles = [];
         this.destroyedFiles = [];
-        this.loadRisk(value);
+        if (risk) {
+          this.loadRisk(risk);
+        }
       },
       deep: true,
     },
