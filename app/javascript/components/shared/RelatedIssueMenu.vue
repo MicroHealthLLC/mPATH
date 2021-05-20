@@ -8,12 +8,12 @@
     @mouseleave="close"
   >
     <div>
-      <div class="menu-subwindow-title">
-        Select Related {{ item }}s
-      </div>
+      <div class="menu-subwindow-title">Select Related {{ item }}s</div>
       <el-input
         class="filter-input"
-        :placeholder="`Filter ${item.charAt(0).toUpperCase() + item.slice(1)}s...`"
+        :placeholder="
+          `Filter ${item.charAt(0).toUpperCase() + item.slice(1)}s...`
+        "
         v-model="filterTree"
       ></el-input>
       <el-tree
@@ -98,7 +98,8 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.issue.facilityId
+                (facility) =>
+                  facility.facility.id != this.$route.params.projectId
               )
               .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
