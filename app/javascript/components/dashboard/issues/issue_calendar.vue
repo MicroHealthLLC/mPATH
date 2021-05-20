@@ -1,5 +1,65 @@
 
 <template>
+<div>
+   <span class="filters-wrapper w-75">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+        <div class="input-group task-search-bar w-100">
+           <el-input
+            type="search"          
+            placeholder="Search Issues"
+            aria-label="Search"            
+            aria-describedby="search-addon"    
+            v-model="issuesQuery"     
+            data-cy="search_tasks"
+        >
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+        </div>
+        <div class="mx-1 w-100">
+         <!-- <label class="font-sm my-0">Category</label> -->
+          <el-select
+           v-model="C_taskTypeFilter"
+          :key="componentKey"   
+           class="w-100"          
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Select Category"
+           collapse-tags
+           >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+
+        <div class="w-100">
+          <!-- <label class="font-sm my-0">Flags</label> -->
+           <el-select
+           v-model="C_calendarIssueFilter"
+          :key="componentKey"   
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Filter by Flags"
+           collapse-tags
+           >
+          <el-option
+            v-for="item in getAdvancedFilterOptions"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+    </div>
+   </span>
   <v-app id="app" class="mt-4 mr-2">
   <v-row class="fill-height">
     <v-col class="pt-0">
@@ -44,7 +104,7 @@
             </v-icon>
           </v-btn>
           </div>
-          <v-toolbar-title v-if="$refs.calendar">
+          <v-toolbar-title v-if="$refs.calendar" class="monthTitle">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
@@ -93,22 +153,20 @@
           @mouseup.right="openContextMenu" 
           @contextmenu.prevent=""          
         >        
-         <ContextMenu
+         <!-- <ContextMenu
           :facilities="facilities"
           :facilityGroups="facilityGroups" 
           :display="showContextMenu"
           :issue="calendarIssue"
           ref="menu"
           @open-issue="editIssue">  
-       </ContextMenu>
-      
-        </v-calendar>  
-      
-             
+       </ContextMenu>       -->
+        </v-calendar>              
       </v-sheet>
     </v-col>
   </v-row>
   </v-app>
+</div>
 </template>
 
 <script>
@@ -128,7 +186,8 @@
     data() {
        return {         
         focus: '',        
-        type: this.C_calendarView,          
+        type: this.C_calendarView,   
+        issuesQuery: '',       
         issueNames: [], 
         componentKey: 0,  
         issueIds:[],       
@@ -142,12 +201,12 @@
         showContextMenu: false,
         events: [],
         names: [],      
-        colors: {
-          onScheduleColor: '#5cb85c',
-          defaultColor: 'rgba(214, 219, 223, .5)',
-          warningColor: '#f0ad4e',
-          pastDueColor: '#d9534f',
-        },        
+        // colors: {
+        //   onScheduleColor: '#5cb85c',
+        //   defaultColor: 'rgba(214, 219, 223, .5)',
+        //   warningColor: '#f0ad4e',
+        //   pastDueColor: '#d9534f',
+        // },        
       }
     },
     mounted () {   
@@ -202,28 +261,28 @@
      editIssue(event) {   
         let eventObj = event
         this.selectedEventId = eventObj.event.issueId;
-        this.calendarIssue = eventObj.event.issue
-        console.log(this.selectedEventId)         
+        this.calendarIssue = eventObj.event.issue          
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${this.selectedEventId}`)        
       },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
-       this.issueData = this.filteredIssues.map(issue => issue)  
-       this.issueNames = this.filteredIssues.map(issue=> issue.title)    
-       this.issueIds = this.filteredIssues.map(issue => issue.id)      
-       this.issueStartDates = this.filteredIssues.map(issue => issue.startDate)     
-       this.issueEndDates = this.filteredIssues.map(issue => issue.dueDate)              
+       if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
+       this.issueData = this.filteredCalendar.map(issue => issue)  
+       this.issueNames = this.filteredCalendar.map(issue=> issue.title)    
+       this.issueIds = this.filteredCalendar.map(issue => issue.id)      
+       this.issueStartDates = this.filteredCalendar.map(issue => issue.startDate)     
+       this.issueEndDates = this.filteredCalendar.map(issue => issue.dueDate)              
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
         const days = (max.getTime() - min.getTime()) / 86400000   
         // For loop to determine length of Tasks 
-        for (let i = 0; i < this.filteredIssues.length; i++) {
+        for (let i = 0; i < this.filteredCalendar.length; i++) {
             events.push({            
             name: this.issueNames[i],
             start: this.issueStartDates[i],
             end: this.issueEndDates[i],
-            color: this.colors.defaultColor,
+            // color: this.colors.defaultColor,
             issueId: this.issueIds[i],
             issue: this.issueData[i]     
             // timed: !allDay,            
@@ -231,6 +290,7 @@
         }
         // This is the main Events array pushed into Calendar
         this.events = events
+       }
       },     
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
@@ -270,73 +330,31 @@
         'myActionsFilter',
         'managerView',
         'onWatchFilter',
-        'viewPermit',
-        'getToggleRACI'
+        'viewPermit',     
       ]),
       _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
-      filteredIssues() {
-        let typeIds = _.map(this.C_issueTypeFilter, 'id')
-        let taskTypeIds = _.map(this.C_taskTypeFilter, 'id')
-        let severityIds = _.map(this.C_issueSeverityFilter, 'id')
-        let stageIds = _.map(this.issueStageFilter, 'id')
-        // const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
-        let noteDates = this.noteDateFilter
-        let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueProgress = this.taskIssueProgressFilter
-        let taskIssueUsers = this.getTaskIssueUserFilter
-        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let issues = _.sortBy(_.filter(this.facility.issues, ((resource) => {
-          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
-          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
-          if (taskIssueUsers.length > 0) {
-            if(taskIssueUsers.length > 0){
-              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-            }
-          }
-          //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsIssues')
-          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.issueTypeId)
-          if (taskTypeIds.length > 0) valid = valid && taskTypeIds.includes(resource.taskTypeId)
-          if (severityIds.length > 0) valid = valid && severityIds.includes(resource.issueSeverityId)
-          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.issueStageId)
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            var startDate = moment(noteDates[0], "YYYY-MM-DD")
-            var endDate = moment(noteDates[1], "YYYY-MM-DD")
-            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
-            var is_valid = resource.notes.length > 0
-            for (var createdAt of _notesCreatedAt) {
-              var nDate = moment(createdAt, "YYYY-MM-DD")
-              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-              if (is_valid) break
-            }
-            valid = valid && is_valid
-          }
-          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
-            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
-            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
-            var is_valid = true
-            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
-            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
-            valid = valid && is_valid
-          }
-          if (taskIssueProgress && taskIssueProgress[0]) {
-            var min = taskIssueProgress[0].value.split("-")[0]
-            var max = taskIssueProgress[0].value.split("-")[1]
-            valid = valid && (resource.progress >= min && resource.progress <= max)
-          }
+      filteredCalendar() {
+        const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
+        const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+        let issues = _.sortBy(_.filter(this.facility.issues, (resource) => {
+        let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
+        valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsIssues')
+         
+         if (search_query) valid = valid && search_query.test(resource.title)
+         
+          return valid
+        }), ['dueDate'])
 
-          // if (search_query) valid = valid && search_query.test(resource.title) ||
-          //   valid && search_query.test(resource.issueType) ||
-          //   valid && search_query.test(resource.issueSeverity) ||
-          //   valid && search_query.test(resource.userNames)
-          return valid;
-        })), ['dueDate'])
-        return issues
-      },
-      C_sheetsIssueFilter: {
+        if (search_query) {       
+         return issues  
+         
+        }      
+    }, 
+      C_calendarIssueFilter: {
         get() {
+          this.reRenderCalendar()
           return this.getAdvancedFilter
         },
         set(value) {
@@ -370,14 +388,6 @@
           this.setIssueTypeFilter(value)
         }
       },
-      C_taskTypeFilter: {
-        get() {
-          return this.taskTypeFilter
-        },
-        set(value) {
-          this.setTaskTypeFilter(value)
-        }
-      },
       C_issueSeverityFilter: {
         get() {
           return this.issueSeverityFilter
@@ -393,6 +403,15 @@
         set(value) {
           if (value) this.setMyActionsFilter([...this.myActionsFilter, {name: "My Issues", value: "issues"}])
           else this.setMyActionsFilter(this.myActionsFilter.filter(f => f.value !== "issues"))
+        }
+      },
+    C_taskTypeFilter: {
+        get() {           
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.reRenderCalendar()     
+          this.setTaskTypeFilter(value)
         }
       },
      C_calendarView: {
@@ -425,6 +444,15 @@
         this.expanded.id = this.currentFacilityGroup.id;
       },
     },
+    issuesQuery: {
+      handler() {
+       if(this.issuesQuery.length > 0) {
+         this.reRenderCalendar()
+       } else if (this.issuesQuery.length >= 0) {
+         this.events = [];
+       }
+      },
+    },
     facilities: {
       handler() {
         this.currentFacility = this.facilities.find(
@@ -449,7 +477,51 @@
 /deep/.v-event {
   color: #383838 !important;
 }
+/deep/.v-event-start {
+  border-left-color: #41b883 !important;
+  border-left-width: thick;
+  border-left-style: double;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 3px;
+}
+/deep/.v-event-end {
+  border-right-color: #d9534f !important;
+  border-right-width: thick;
+  border-right-style: double;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  text-align: right;
+  font-weight: 500;  
+  padding-right: 3px;
+}
 .addTaskBtn, .exportBtns, .showAll, .todayBtn {
    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
+  .filters-wrapper {
+  float: right;
+  margin-top: -55px;
+}
+/deep/.v-event {
+  visibility: hidden;
+}
+/deep/.v-event-more {
+  display: none;
+}
+/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+  visibility: visible !important;
+  font-weight: 500 !important;
+
+}
+.monthTitle {
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+ }
+
 </style>
