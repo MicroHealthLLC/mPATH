@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -87,6 +87,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["fetchProjectLessons"]),
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
@@ -165,7 +166,10 @@ export default {
     ...mapGetters(["lessonsLoaded"]),
   },
   mounted() {
+    console.log(this.$permissions)
     console.log("Lessons Loaded: " + this.lessonsLoaded);
+    
+    this.fetchProjectLessons(this.$route.params);
   },
 };
 </script>

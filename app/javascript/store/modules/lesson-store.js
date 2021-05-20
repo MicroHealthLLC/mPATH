@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const lessonModule = {
   state: () => ({
     project_lessons: [],
@@ -6,17 +8,18 @@ const lessonModule = {
   }),
 
   actions: {
-    fetchProjectLessons({ commit }, programId, projectId) {
+    fetchProjectLessons({ commit }, { programId, projectId }) {
       // Send GET request for all projects contained within a project
       axios({
-        method: `/programs/${programId}/projects/${projectId}/lessons`,
-        url: "GET",
+        method: "GET",
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
+          console.log(res);
           // Mutate state with response from back end
           commit("SET_PROJECT_LESSONS", res.data.lessons);
         })
@@ -30,10 +33,14 @@ const lessonModule = {
     fetchProgramLessons() {
       // Get all lessons for a single program
     },
-    addLesson({ commit }, lesson, programId, projectId) {
+    addLesson({ commit }, {lesson, programId, projectId}) {
+      console.log(lesson)
+      console.log(programId);
+      console.log(projectId);
+
       axios({
         method: "POST",
-        url: `/programs/${programId}/projects/${projectId}/lessons`,
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons`,
         data: lesson,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
