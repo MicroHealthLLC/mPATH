@@ -44,3 +44,16 @@ task :modify_user_privileges => :environment do
     privilege.update(update_att)
   end
 end
+
+desc "Add Project privileges for User"
+task :create_project_privileges => :environment do
+
+  puts "Adding Project privileges for User"
+  User.all.each do |user|
+    privilege = user.privilege
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
+
+    privilege_attr.merge!(user_id: user.id, project_ids: user.project_ids)
+    p = ProjectPrivilege.create(privilege_attr)
+  end
+end
