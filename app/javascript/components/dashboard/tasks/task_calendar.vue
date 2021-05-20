@@ -201,11 +201,7 @@
         tasksQuery: '',
         taskNames: [], 
         taskIds:[],       
-        taskData: [],
-        dayViewMode: false,
-        weekViewMode: false,
-        monthViewMode: false,
-        todayView: false,
+        taskData: [],     
         componentKey: 0,
         taskStartDates: [],       
         taskEndDates: [],   
@@ -229,9 +225,6 @@
     },
     methods: {
      ...mapMutations([
-        'setDayView',
-        'setMonthView',
-        'setWeekView',
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setCalendarViewFilter',
@@ -310,9 +303,7 @@
         }
           // This is the main Events array pushed into Calendar
          this.events = events
-      }
-      
-       
+       }      
       },     
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a

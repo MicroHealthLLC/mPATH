@@ -1,5 +1,65 @@
 
 <template>
+<div>
+   <span class="filters-wrapper w-75">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+        <div class="input-group task-search-bar w-100">
+           <el-input
+            type="search"          
+            placeholder="Search Risks"
+            aria-label="Search"            
+            aria-describedby="search-addon"    
+            v-model="risksQuery"     
+            data-cy="search_risks"
+        >
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
+        </div>
+        <div class="mx-1 w-100">
+         <!-- <label class="font-sm my-0">Category</label> -->
+          <el-select
+           v-model="C_taskTypeFilter"
+          :key="componentKey"   
+           class="w-100"          
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Select Category"
+           collapse-tags
+           >
+          <el-option
+            v-for="item in taskTypes"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+
+        <div class="w-100">
+          <!-- <label class="font-sm my-0">Flags</label> -->
+           <el-select
+           v-model="C_calendarRiskFilter"
+          :key="componentKey"   
+           class="w-100"
+           track-by="name"
+           value-key="id"
+           multiple
+           placeholder="Filter by Flags"
+           collapse-tags
+           >
+          <el-option
+            v-for="item in getAdvancedFilterOptions"
+            :value="item"
+            :key="item.id"
+            :label="item.name"
+            >
+          </el-option>
+          </el-select>
+        </div>
+    </div>
+   </span>
   <v-app id="app" class="mt-4 mr-2">
   <v-row class="fill-height">
     <v-col class="pt-0">
@@ -42,7 +102,7 @@
           </v-icon>
           </v-btn>
          </div>
-          <v-toolbar-title v-if="$refs.calendar">
+          <v-toolbar-title v-if="$refs.calendar" class="monthTitle">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
@@ -93,7 +153,7 @@
           @mouseup.right="openContextMenu" 
           @contextmenu.prevent=""          
         >        
-         <ContextMenu
+         <!-- <ContextMenu
           :facilities="facilities"
           :facilityGroups="facilityGroups" 
           :display="showContextMenu"
@@ -101,14 +161,13 @@
           ref="menu"
           @open-task="editRisk">  
         </ContextMenu>
-      
-        </v-calendar>  
-      
-             
+       -->
+        </v-calendar>              
       </v-sheet>
     </v-col>
   </v-row>
   </v-app>
+  </div>
 </template>
 
 <script>
@@ -128,7 +187,8 @@
     data() {
       return {         
         focus: '',        
-        type: this.C_calendarView,       
+        type: this.C_calendarView,   
+        risksQuery: '',    
         riskNames: [],  
         componentKey: 0, 
         riskIds:[],       
@@ -208,23 +268,24 @@
               
     },
     updateRange ({ start, end }) {    
-      // Mapping over Task Names, Start Dates, and Due Dates 
-      this.riskkData = this.filteredRisks.map(risk => risk)  
-      this.riskNames = this.filteredRisks.map(risk=> risk.text)    
-      this.riskIds = this.filteredRisks.map(risk => risk.id)      
-      this.riskStartDates = this.filteredRisks.map(risk =>risk.startDate)     
-      this.riskEndDates = this.filteredRisks.map(risk => risk.dueDate)              
+      // Mapping over Risk Names, Start Dates, and Due Dates 
+      if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
+      this.riskkData = this.filteredCalendar.map(risk => risk)  
+      this.riskNames = this.filteredCalendar.map(risk=> risk.text)    
+      this.riskIds = this.filteredCalendar.map(risk => risk.id)      
+      this.riskStartDates = this.filteredCalendar.map(risk =>risk.startDate)     
+      this.riskEndDates = this.filteredCalendar.map(risk => risk.dueDate)              
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
       const max = new Date(`${end.date}T23:59:59`)
       const days = (max.getTime() - min.getTime()) / 86400000   
       // For loop to determine length of Tasks 
-      for (let i = 0; i < this.filteredRisks.length; i++) {
+      for (let i = 0; i < this.filteredCalendar.length; i++) {
           events.push({            
           name: this.riskNames[i],
           start: this.riskStartDates[i],
           end: this.riskEndDates[i],
-          color: this.colors.defaultColor,
+          // color: this.colors.defaultColor,
           riskId: this.riskIds[i],
           risk: this.riskData[i]     
           // timed: !allDay,            
@@ -232,6 +293,7 @@
       }
       // This is the main Events array pushed into Calendar
       this.events = events
+      }
     },     
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
@@ -274,46 +336,62 @@
        _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
-        filteredRisks() {
-        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
-        let stageIds = _.map(this.riskStageFilter, 'id')
-        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
-        let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
-        let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter        
-        let noteDates = this.noteDateFilter
-        let taskIssueDueDates = this.taskIssueDueDateFilter
-        let taskIssueProgress = this.taskIssueProgressFilter
-        let taskIssueUsers = this.getTaskIssueUserFilter
-        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
-          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
-          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
-          if(taskIssueUsers.length > 0){
-            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
-          }
-          //TODO: For performance, send the whole tasks array instead of one by one
-          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
-          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
-          if (taskIssueProgress && taskIssueProgress[0]) {
-            var min = taskIssueProgress[0].value.split("-")[0]
-            var max = taskIssueProgress[0].value.split("-")[1]
-            valid = valid && (resource.progress >= min && resource.progress <= max)
-          }
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
-          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+      filteredCalendar() {
+        const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
+        const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+        let risks = _.sortBy(_.filter(this.facility.risks, (resource) => {
+        let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
+        valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
+         
+         if (search_query) valid = valid && search_query.test(resource.text)
+         
+          return valid
+        }), ['dueDate'])
 
-          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
-          // if (search_query) valid = valid && search_query.test(resource.text) ||
-          // valid && search_query.test(resource.text) ||
-          // valid && search_query.test(resource.riskApproach) ||
-          // valid && search_query.test(resource.priorityLevelName) ||
-          // valid && search_query.test(resource.userNames)
-          return valid;
-        })), ['dueDate'])
-        return risks
+        if (search_query) {       
+         return risks  
+         
+        }      
+    }, 
+     C_calendarRiskFilter: {           
+        get() {
+          this.reRenderCalendar()
+          return this.getAdvancedFilter
+        },
+        set(value) {
+          this.setAdvancedFilter(value)
+        }
       },
-    C_calendarView: {
-      get() {
+      C_taskIssueProgressStatusFilter: {
+        get() {
+          if (this.getTaskIssueProgressStatusFilter.length < 1) {
+            this.setTaskIssueProgressStatusFilter([{ id: 'active', name: 'active' }])
+          }
+          return this.getTaskIssueProgressStatusFilter
+        },
+        set(value) {
+          this.setTaskIssueProgressStatusFilter(value)
+        }
+      },
+      C_taskIssueOverdueFilter: {
+        get() {
+          return this.taskIssueOverdueFilter
+        },
+        set(value) {
+          this.setTaskIssueOverdueFilter(value)
+        }
+      },
+      C_taskTypeFilter: {
+        get() {           
+          return this.taskTypeFilter
+        },
+        set(value) {
+          this.reRenderCalendar()     
+          this.setTaskTypeFilter(value)
+        }
+      },
+    C_calendarView: {      
+      get() {      
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
       set(value) {
@@ -330,6 +408,15 @@
             (facility) => facility.facilityId == this.$route.params.projectId
           );
         }
+      },
+    },
+    risksQuery: {
+      handler() {
+       if(this.risksQuery.length > 0) {
+         this.reRenderCalendar()
+       } else if (this.risksQuery.length >= 0) {
+         this.events = [];
+       }
       },
     },
     currentFacility: {
@@ -364,7 +451,53 @@
 /deep/.v-event {
   color: #383838 !important;
 }
+/deep/.v-event-start {
+  border-left-color: #41b883 !important;
+  border-left-width: thick;
+  border-left-style: double;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 3px;
+  
+
+}
+/deep/.v-event-end {
+  border-right-color: #d9534f !important;
+  border-right-width: thick;
+  border-right-style: double;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  text-align: right;
+  font-weight: 500;  
+  padding-right: 3px;
+}
 .addRiskBtn, .showAll, .todayBtn {
    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
+  .filters-wrapper {
+  float: right;
+  margin-top: -55px;
+}
+/deep/.v-event {
+  visibility: hidden;
+}
+/deep/.v-event-more {
+  display: none;
+}
+/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+  visibility: visible !important;
+  font-weight: 500 !important;
+
+}
+.monthTitle {
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+input[type=search] {
+    color: #383838;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+ }
+
 </style> 
