@@ -1973,8 +1973,10 @@ export default {
   },
   watch: {
     issue: {
-      handler: function(value) {
-        this.loadIssue(this.issue);
+      handler() {
+        if (this.issue) {
+          this.loadIssue(this.issue);
+        }
       },
     },
     "DV_issue.startDate"(value) {
