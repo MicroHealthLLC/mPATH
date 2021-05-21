@@ -48,6 +48,18 @@ end
 desc "Add Project privileges for User"
 task :create_project_privileges => :environment do
 
+  Privilege.all.each do |privilege|
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number").clone
+    c = false
+    privilege_attr.each do |k,v|
+      if v.is_a?(String)
+        privilege_attr[k] = v.chars
+        c = true
+      end
+    end
+    privilege.update(privilege_attr) if c
+  end
+
   puts "Adding Project privileges for User"
   User.all.each do |user|
     privilege = user.privilege
