@@ -165,58 +165,55 @@
           :close-on-content-click="false"
           :activator="selectedElement"         
           class="actionSummary"  
-          max-width="330"          
+          max-width="265"          
         >
-       <v-card class="actionSummary p-2" max-width="330">       
-        <table class="w-100 text-center contextTable">
-          <!-- <thead class="p-2"> -->
-          <tr>
-            <th>
-           <h4>
-            {{ selectedEvent.name }}
-           </h4>
-             </th>  
-          </tr>        
-    
-          <!-- <body class="w-100 p-2 text-center"> -->
-          <tr>
-            <td class="bg-light p-1"><b>Category</b></td>           
-          </tr>
-          <tr>
-             <td>{{ selectedEvent.category }}</td>
-          </tr>
-
-          <tr>
-            <td class="bg-light p-1"><b>Start Date</b></td>           
-          </tr> 
-          <tr>
-             <td>{{ selectedEvent.start }}</td>    
-          </tr>
-          <tr>
-            <td class="bg-light p-1"><b>Due Date</b></td>           
-          </tr> 
-           <tr>           
-            <td>{{ selectedEvent.end }}</td>    
-          </tr> 
-         
-           <tr>
-            <td class="bg-light p-1"><b>Progress</b></td>         
-           </tr> 
-           <tr>           
-             <td>{{ selectedEvent.progess }}%</td>    
-           </tr> 
-          <tr>
-           <td class="bg-light p-1"><b>Flags</b></td>            
-          </tr> 
-          <tr>         
-           <td>
-             <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+       <v-card class="actionSummary p-2" max-width="265">       
+               <v-list>
+        <v-list-item>          
+          <v-list-item-title>
+            <span class="d-block"><small><b>Issue Name</b></small></span>
+             {{ selectedEvent.name }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>            
+            <span class="d-block"><small><b>Category</b></small></span>
+            {{ selectedEvent.category }}            
+          </v-list-item-title>
+        </v-list-item>
+         <v-list-item>
+          <v-list-item-title>          
+            <span class="d-block"><small><b>Start Date</b></small></span>            
+             {{ selectedEvent.start }}
+          </v-list-item-title>
+        </v-list-item>
+         <v-list-item>
+          <v-list-item-title> 
+           <span class="d-block"><small><b>Due Date</b></small></span>  
+            {{ selectedEvent.end }}
+          </v-list-item-title>
+        </v-list-item>
+         <v-list-item>
+           <v-list-item-title>
+            <span class="d-block"><small><b>Progress</b></small></span>  
+          {{ selectedEvent.progess }}%          
+          </v-list-item-title>
+        </v-list-item>
+         <v-list-item>
+          <v-list-item-title>
+           <span class="d-block"><small><b>Flags</b></small></span>  
+              <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>    
-           </td>
-          </tr> 
-     
-        </table>
+              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+               <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
+                 No flags at this time
+                </span>
+                
+          </v-list-item-title>
+        </v-list-item>
+        
+      </v-list>
+   
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -368,7 +365,7 @@
        this.issueIds = this.filteredCalendar.map(issue => issue.id)      
        this.issueStartDates = this.filteredCalendar.map(issue => issue.startDate)     
        this.issueEndDates = this.filteredCalendar.map(issue => issue.dueDate)  
-       this.categories = this.filteredCalendar.map(issue => issue.taskType) 
+       this.categories = this.filteredCalendar.map(issue => issue.taskTypeName) 
        this.onWatch = this.filteredCalendar.map(issue => issue.watched)   
        this.overdue = this.filteredCalendar.map(issue => issue.isOverdue) 
        this.percentage = this.filteredCalendar.map(issue => issue.progress)            
@@ -391,6 +388,7 @@
             // timed: !allDay,            
           })
         }
+        console.log(JSON.stringify(this.events))
         // This is the main Events array pushed into Calendar
         if (this.checkbox == false && !(this.issuesQuery.length > 0) ) {
            this.events = []
