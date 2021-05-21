@@ -88,6 +88,15 @@ export default {
     ...mapActions([
       'updateKanbanTaskIssues'
     ]),   
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+    },
     setupColumns(cards) {       
       this.stageId = `${this.kanbanType.slice(0, -1)}StageId`    
       this.columns.push({
@@ -150,9 +159,6 @@ export default {
     ...mapGetters([
       'viewPermit'
     ]),
-    _isallowed() {
-    return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-    },
     cardShow() {
       return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)
     },   

@@ -97,6 +97,15 @@
         'taskUpdated',
         'updateWatchedRisks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+    },
       deleteRisk() {
         var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
         if (!confirm) {return}
@@ -158,9 +167,6 @@
         'viewPermit',
         'getToggleRACI',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.risks[salut]
-      },
       is_overdue() {
         return this.DV_risk.progress !== 100 && new Date(this.DV_risk.dueDate).getTime() < new Date().getTime()
       },
