@@ -75,7 +75,12 @@
        >
         <font-awesome-icon icon="plus-circle" />
         Add Task
-        </button> 
+        </button>  
+        <div
+          class="mr-3"
+          >        
+      
+        </div>
           <div
           class="mr-3"
           > 
@@ -109,6 +114,13 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+           <v-checkbox
+            v-model="checkbox"
+            class="mr-5 mt-6 mb-0"
+            :key="componentKey"         
+            @click="showAllEvents"
+            :label="`Show All`"
+          ></v-checkbox>
            <v-btn        
             class="mr-4 todayBtn"          
             @click="setToday"
@@ -142,7 +154,7 @@
     
       <v-sheet height="550"    >     
          <v-calendar                      
-          ref="calendar"
+          ref="calendar"        
           v-model="focus"
           color="primary"            
           :events="events"         
@@ -153,20 +165,89 @@
           @click:event="editTask"
           @click:more="viewDay"
           @click:date="viewDay"
-          @change="updateRange"
-          @mouseup.right="openContextMenu" 
-          @contextmenu.prevent=""          
-        >        
-         <!-- <ContextMenu
-        :facilities="facilities"
-        :facilityGroups="facilityGroups" 
-        :display="showContextMenu"
-        :task="calendarTask"
-        ref="menu"
-        @open-task="editTask">  
-       </ContextMenu>       -->
-        </v-calendar>   
-             
+          @change="updateRange" 
+          @contextmenu:event="showSummary"         
+        >            
+        </v-calendar>  
+         <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"         
+          class="actionSummary"  
+          max-width="330"          
+        >
+       <v-card class="actionSummary p-2" max-width="330">       
+        <table class="w-100 text-center contextTable">
+          <!-- <thead class="p-2"> -->
+          <tr>
+            <th>
+           <h4>
+            {{ selectedEvent.name }}
+           </h4>
+             </th>  
+          </tr>        
+    
+          <!-- <body class="w-100 p-2 text-center"> -->
+          <tr>
+            <td class="bg-light p-1"><b>Category</b></td>           
+          </tr>
+          <tr>
+             <td>{{ selectedEvent.category }}</td>
+          </tr>
+
+          <tr>
+            <td class="bg-light p-1"><b>Start Date</b></td>           
+          </tr> 
+          <tr>
+             <td>{{ selectedEvent.start }}</td>    
+          </tr>
+          <tr>
+            <td class="bg-light p-1"><b>Due Date</b></td>           
+          </tr> 
+           <tr>           
+            <td>{{ selectedEvent.end }}</td>    
+          </tr> 
+         
+           <tr>
+            <td class="bg-light p-1"><b>Progress</b></td>         
+           </tr> 
+           <tr>           
+             <td>{{ selectedEvent.progess }}%</td>    
+           </tr> 
+          <tr>
+           <td class="bg-light p-1"><b>Flags</b></td>            
+          </tr> 
+          <tr>         
+           <td>
+            <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+              <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>    
+           </td>
+          </tr> 
+          <!-- </body> -->
+        </table>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+       
+
+          <!-- <v-btn
+            text
+            @click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="menu = false"
+          >
+            Save
+          </v-btn> -->
+        </v-card-actions>
+      </v-card>
+    </v-menu>  
+
       </v-sheet>
     </v-col>
   </v-row>
@@ -176,16 +257,14 @@
 
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
- import ContextMenu from "../../shared/ContextMenu";
  import { library } from '@fortawesome/fontawesome-svg-core'
- import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek  } from '@fortawesome/free-solid-svg-icons'
+ import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek, faEye, faCalendar, faClipboardCheck } from '@fortawesome/free-solid-svg-icons'
  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
- library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck)
+ library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck)
  Vue.component('font-awesome-icon', FontAwesomeIcon)
 
   export default {
     name: 'TaskCalendar',
-    components: {ContextMenu},
     props:
       {
       fromView: {
@@ -201,23 +280,18 @@
         tasksQuery: '',
         taskNames: [], 
         taskIds:[],       
+        checkbox: false,
         taskData: [],     
         componentKey: 0,
         taskStartDates: [],       
         taskEndDates: [],   
         selectedEventId: {},
+        selectedEvent: {},
         calendarTask: {},
         selectedElement: null,      
         selectedOpen: false,
-        showContextMenu: false,
         events: [],
-        names: [],      
-        // colors: {
-        //   onScheduleColor: '#5cb85c',
-        //   defaultColor: 'rgba(214, 219, 223, .5)',
-        //   warningColor: '#f0ad4e',
-        //   pastDueColor: '#d9534f',
-        // },        
+        names: [],          
       }
     },
     mounted () {   
@@ -248,7 +322,7 @@
       },
       getEventColor (event) {
         return event.color
-      },
+      },  
       setToday () {
         this.todayView = true 
         this.focus = ''       
@@ -259,10 +333,6 @@
       next () {
         this.$refs.calendar.next()
       }, 
-     openContextMenu(e) {
-      e.preventDefault();
-      this.$refs.menu.open(e);
-    },
       addNewTask() {
       this.setTaskForManager({key: 'task', value: {}})
       // Route to new task form page
@@ -276,6 +346,29 @@
         this.calendarTask = eventObj.event.task       
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`)        
       },
+      showAllEvents(){
+      this.checkbox == !this.checkbox
+        if (this.checkbox == true) {
+          this.reRenderCalendar()
+        } else if (this.checkbox == false){
+           this.reRenderCalendar()
+        }
+      },
+      showSummary ({ nativeEvent, event }) {        
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))         
+        }        
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          requestAnimationFrame(() => requestAnimationFrame(() => open()))
+        } else {
+          open()
+        }
+
+        nativeEvent.stopPropagation()
+      },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
       if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
@@ -283,7 +376,11 @@
         this.taskNames = this.filteredCalendar.map(task => task.text)    
         this.taskIds = this.filteredCalendar.map(task => task.id)      
         this.taskStartDates = this.filteredCalendar.map(task => task.startDate)     
-        this.taskEndDates = this.filteredCalendar.map(task => task.dueDate)   
+        this.taskEndDates = this.filteredCalendar.map(task => task.dueDate) 
+        this.categories = this.filteredCalendar.map(task => task.taskType) 
+        this.onWatch = this.filteredCalendar.map(task => task.watched)   
+        this.overdue = this.filteredCalendar.map(task => task.isOverdue) 
+        this.percentage = this.filteredCalendar.map(task => task.progress)
            
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
@@ -294,15 +391,22 @@
             events.push({            
             name: this.taskNames[i],
             start: this.taskStartDates[i],
-            end: this.taskEndDates[i],
-            // color: this.colors.defaultColor,
+            end: this.taskEndDates[i],         
             taskId: this.taskIds[i],
-            task: this.taskData[i]     
+            task: this.taskData[i] ,
+            category: this.categories[i],  
+            watch: this.onWatch[i],
+            pastDue: this.overdue[i], 
+            progess: this.percentage[i]  
             // timed: !allDay,            
           })
         }
           // This is the main Events array pushed into Calendar
-         this.events = events
+        //  this.events = events
+         if (this.checkbox == false && !(this.tasksQuery.length > 0) ) {
+           this.events = []
+         } else 
+          this.events = events
        }      
       },     
       rnd (a, b) {
@@ -346,7 +450,7 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredCalendar() {
-        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
         const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
         let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
@@ -354,13 +458,10 @@
          
          if (search_query) valid = valid && search_query.test(resource.text)
          
-          return valid
+        return valid
         }), ['dueDate'])
-
-        if (search_query) {       
-         return tasks  
-         
-        }      
+    
+        return tasks
     }, 
      C_calendarTaskFilter: {           
         get() {
@@ -424,9 +525,21 @@
     tasksQuery: {
       handler() {
        if(this.tasksQuery.length > 0) {
+         this.checkbox = false;
          this.reRenderCalendar()
-       } else if (this.tasksQuery.length >= 0) {
+       } else if (!(this.tasksQuery.length > 0) && this.checkbox == false) {
          this.events = [];
+         this.reRenderCalendar()
+       }
+      },
+    },
+    checkbox: {
+      handler() {
+       if(this.checkbox == false) {
+         this.reRenderCalendar()
+         this.events = [];
+       } else if (this.checkbox == true) {
+         this.tasksQuery = "";
        }
       },
     },
@@ -447,10 +560,7 @@
       },
     },
   },
-    filterTree(value) {
-      this.$refs.duplicatetree.filter(value);
-      this.$refs.movetree.filter(value);
-    }
+   
   }
 </script>
 
@@ -493,13 +603,22 @@
 /deep/.v-event {
   visibility: hidden;
 }
-/deep/.v-event-more {
-  display: none;
-}
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
+}
+/deep/.v-menu__content {
+  position: absolute !important;
+  z-index: 100;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+/deep/.v-input__slot {
+  .v-label {
+    margin-top: 0.5rem
+  }
 }
 .monthTitle {
   font-weight: 500;
@@ -510,6 +629,12 @@ input[type=search] {
     text-align: left;
     cursor: pointer;
     display: block;
+ }
+ .contextTable {
+   border: solid 1px lightgray;
+   td {
+    border: solid 1px lightgray;
+   }
  }
 
 </style> 
