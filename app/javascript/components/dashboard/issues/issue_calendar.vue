@@ -157,83 +157,66 @@
           @click:more="viewDay"
           @click:date="viewDay"
           @change="updateRange"
-          @contextmenu:event="showSummary"     
+          @contextmenu:event="showSummary"  
+          @mouseup.right="openContextMenu"    
         >         
         </v-calendar>
          <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          :activator="selectedElement"         
+          ref="menu"
           class="actionSummary"  
           max-width="265"          
         >
-       <v-card class="actionSummary p-2" max-width="265">       
-               <v-list>
-        <v-list-item>          
-          <v-list-item-title>
-            <span class="d-block"><small><b>Issue Name</b></small></span>
-             {{ selectedEvent.name }}
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>            
-            <span class="d-block"><small><b>Category</b></small></span>
-            {{ selectedEvent.category }}            
-          </v-list-item-title>
-        </v-list-item>
-         <v-list-item>
-          <v-list-item-title>          
-            <span class="d-block"><small><b>Start Date</b></small></span>            
-             {{ selectedEvent.start }}
-          </v-list-item-title>
-        </v-list-item>
-         <v-list-item>
-          <v-list-item-title> 
-           <span class="d-block"><small><b>Due Date</b></small></span>  
-            {{ selectedEvent.end }}
-          </v-list-item-title>
-        </v-list-item>
-         <v-list-item>
-           <v-list-item-title>
-            <span class="d-block"><small><b>Progress</b></small></span>  
-          {{ selectedEvent.progess }}%          
-          </v-list-item-title>
-        </v-list-item>
-         <v-list-item>
-          <v-list-item-title>
-           <span class="d-block"><small><b>Flags</b></small></span>  
-              <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
-              <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-               <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
-                 No flags at this time
-                </span>
-                
-          </v-list-item-title>
-        </v-list-item>
-        
-      </v-list>
-   
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-    
-          <!-- <v-btn
-            text
-            @click="menu = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="primary"
-            text
-            @click="menu = false"
-          >
-            Save
-          </v-btn> -->
-        </v-card-actions>
-      </v-card>
-    </v-menu>                
+          <v-card class="actionSummary p-2" max-width="265">       
+           <v-list>
+            <v-list-item>          
+              <v-list-item-title>
+                <span class="d-block"><small><b>Issue Name</b></small></span>
+                {{ selectedEvent.name }}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>            
+                <span class="d-block"><small><b>Category</b></small></span>
+                {{ selectedEvent.category }}            
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>          
+                <span class="d-block"><small><b>Start Date</b></small></span>            
+                {{ selectedEvent.start }}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title> 
+              <span class="d-block"><small><b>Due Date</b></small></span>  
+                {{ selectedEvent.end }}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <span class="d-block"><small><b>Progress</b></small></span>  
+              {{ selectedEvent.progess }}%          
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+              <span class="d-block"><small><b>Flags</b></small></span>  
+                  <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                  <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+                  <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                  <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
+                    No flags at this time
+                    </span>                    
+              </v-list-item-title>
+            </v-list-item>        
+           </v-list>
+          <v-card-actions>
+            <v-spacer></v-spacer>      
+          </v-card-actions>
+          </v-card>
+         </v-menu>                
       </v-sheet>
     </v-col>
   </v-row>
@@ -273,12 +256,6 @@
         showContextMenu: false,
         events: [],
         names: [],      
-        // colors: {
-        //   onScheduleColor: '#5cb85c',
-        //   defaultColor: 'rgba(214, 219, 223, .5)',
-        //   warningColor: '#f0ad4e',
-        //   pastDueColor: '#d9534f',
-        // },        
       }
     },
     mounted () {   
@@ -332,6 +309,10 @@
         this.calendarIssue = eventObj.event.issue          
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${this.selectedEventId}`)        
       },
+     openContextMenu(e) {
+      e.preventDefault();
+      this.$refs.menu.open(e);
+     },
      showAllEvents(){
       this.checkbox == !this.checkbox
        if (this.checkbox == true) {
@@ -387,8 +368,7 @@
             progess: this.percentage[i]      
             // timed: !allDay,            
           })
-        }
-        console.log(JSON.stringify(this.events))
+        }       
         // This is the main Events array pushed into Calendar
         if (this.checkbox == false && !(this.issuesQuery.length > 0) ) {
            this.events = []
@@ -440,13 +420,14 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
       },
       filteredCalendar() {
+        let typeIds = _.map(this.C_taskTypeFilter, 'id')
         const search_query = this.exists(this.issuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.issuesQuery.trim().toLowerCase()), 'i') : null
         const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let issues = _.sortBy(_.filter(this.facility.issues, (resource) => {
         let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
         valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsIssues')
-         
-         if (search_query) valid = valid && search_query.test(resource.title)
+        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)    
+        if (search_query) valid = valid && search_query.test(resource.title)
          
          return valid
          }), ['dueDate'])

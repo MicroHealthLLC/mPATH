@@ -157,13 +157,14 @@
           @click:more="viewDay"
           @click:date="viewDay"
           @change="updateRange"        
-          @contextmenu:event="showSummary"          
+          @contextmenu:event="showSummary"  
+          @mouseup.right="openContextMenu"             
         >           
         </v-calendar> 
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          :activator="selectedElement"         
+          ref="menu"            
           class="actionSummary"  
           max-width="265"          
         >
@@ -328,6 +329,10 @@
       this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${this.selectedEventId}`)
               
     },
+    openContextMenu(e) {
+      e.preventDefault();
+      this.$refs.menu.open(e);
+     },
     showAllEvents(){
      this.checkbox == !this.checkbox
         if (this.checkbox == true) {
@@ -348,7 +353,6 @@
         } else {
           open()
         }
-
         nativeEvent.stopPropagation()
       },
     updateRange ({ start, end }) {    
@@ -431,13 +435,14 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredCalendar() {
+        let typeIds = _.map(this.C_taskTypeFilter, 'id')
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
         const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
         let risks = _.sortBy(_.filter(this.facility.risks, (resource) => {
         let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
         valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
-         
-         if (search_query) valid = valid && search_query.test(resource.text)
+        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+        if (search_query) valid = valid && search_query.test(resource.text)
          
         return valid
         }), ['dueDate'])
