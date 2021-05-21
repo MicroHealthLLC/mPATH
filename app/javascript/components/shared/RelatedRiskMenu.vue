@@ -101,7 +101,7 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.risk.facilityId
+                (facility) => facility.facility.id != this.$route.params.projectId
               )
               .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
