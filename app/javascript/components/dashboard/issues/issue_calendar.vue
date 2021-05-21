@@ -108,6 +108,13 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-checkbox
+            v-model="checkbox"
+            class="mr-5 mt-6 mb-0"
+            :key="componentKey"         
+            @click="showAllEvents"
+            :label="`Show All`"
+          ></v-checkbox>
             <v-btn        
             class="mr-4 todayBtn"          
             @click="setToday"
@@ -150,18 +157,86 @@
           @click:more="viewDay"
           @click:date="viewDay"
           @change="updateRange"
-          @mouseup.right="openContextMenu" 
-          @contextmenu.prevent=""          
-        >        
-         <!-- <ContextMenu
-          :facilities="facilities"
-          :facilityGroups="facilityGroups" 
-          :display="showContextMenu"
-          :issue="calendarIssue"
-          ref="menu"
-          @open-issue="editIssue">  
-       </ContextMenu>       -->
-        </v-calendar>              
+          @contextmenu:event="showSummary"     
+        >         
+        </v-calendar>
+         <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"         
+          class="actionSummary"  
+          max-width="330"          
+        >
+       <v-card class="actionSummary p-2" max-width="330">       
+        <table class="w-100 text-center contextTable">
+          <!-- <thead class="p-2"> -->
+          <tr>
+            <th>
+           <h4>
+            {{ selectedEvent.name }}
+           </h4>
+             </th>  
+          </tr>        
+    
+          <!-- <body class="w-100 p-2 text-center"> -->
+          <tr>
+            <td class="bg-light p-1"><b>Category</b></td>           
+          </tr>
+          <tr>
+             <td>{{ selectedEvent.category }}</td>
+          </tr>
+
+          <tr>
+            <td class="bg-light p-1"><b>Start Date</b></td>           
+          </tr> 
+          <tr>
+             <td>{{ selectedEvent.start }}</td>    
+          </tr>
+          <tr>
+            <td class="bg-light p-1"><b>Due Date</b></td>           
+          </tr> 
+           <tr>           
+            <td>{{ selectedEvent.end }}</td>    
+          </tr> 
+         
+           <tr>
+            <td class="bg-light p-1"><b>Progress</b></td>         
+           </tr> 
+           <tr>           
+             <td>{{ selectedEvent.progess }}%</td>    
+           </tr> 
+          <tr>
+           <td class="bg-light p-1"><b>Flags</b></td>            
+          </tr> 
+          <tr>         
+           <td>
+             <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+              <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>    
+           </td>
+          </tr> 
+     
+        </table>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+    
+          <!-- <v-btn
+            text
+            @click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="menu = false"
+          >
+            Save
+          </v-btn> -->
+        </v-card-actions>
+      </v-card>
+    </v-menu>                
       </v-sheet>
     </v-col>
   </v-row>
@@ -171,10 +246,8 @@
 
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
- import ContextMenu from "../../shared/ContextMenu";
   export default {
     name: 'IssueCalendar',
-    components: {ContextMenu},
     props:
       {
       fromView: {
@@ -190,12 +263,14 @@
         issuesQuery: '',       
         issueNames: [], 
         componentKey: 0,  
-        issueIds:[],       
+        issueIds:[],  
+        checkbox: false,     
         issueData: [],
         issueStartDates: [],
         issueEndDates: [],   
         selectedEventId: {},
         calendarIssue: {},
+        selectedEvent: {},
         selectedElement: null,      
         selectedOpen: false,
         showContextMenu: false,
@@ -247,10 +322,6 @@
       next () {
         this.$refs.calendar.next()
       }, 
-     openContextMenu(e) {
-      e.preventDefault();
-      this.$refs.menu.open(e);
-    },
      addNewIssue() {
       this.setTaskForManager({key: 'issue', value: {}})
       // Route to new issue form page
@@ -264,6 +335,31 @@
         this.calendarIssue = eventObj.event.issue          
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${this.selectedEventId}`)        
       },
+     showAllEvents(){
+      this.checkbox == !this.checkbox
+       if (this.checkbox == true) {
+          this.reRenderCalendar()
+        } else if (this.checkbox == false){
+           this.reRenderCalendar()
+        }
+      },
+      showSummary ({ nativeEvent, event }) {        
+        const open = () => {
+          this.selectedEvent = event
+          this.selectedElement = nativeEvent.target
+          requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+        
+        }
+        
+        if (this.selectedOpen) {
+          this.selectedOpen = false
+          requestAnimationFrame(() => requestAnimationFrame(() => open()))
+        } else {
+          open()
+        }
+
+        nativeEvent.stopPropagation()
+      },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
        if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
@@ -271,7 +367,11 @@
        this.issueNames = this.filteredCalendar.map(issue=> issue.title)    
        this.issueIds = this.filteredCalendar.map(issue => issue.id)      
        this.issueStartDates = this.filteredCalendar.map(issue => issue.startDate)     
-       this.issueEndDates = this.filteredCalendar.map(issue => issue.dueDate)              
+       this.issueEndDates = this.filteredCalendar.map(issue => issue.dueDate)  
+       this.categories = this.filteredCalendar.map(issue => issue.taskType) 
+       this.onWatch = this.filteredCalendar.map(issue => issue.watched)   
+       this.overdue = this.filteredCalendar.map(issue => issue.isOverdue) 
+       this.percentage = this.filteredCalendar.map(issue => issue.progress)            
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -281,15 +381,21 @@
             events.push({            
             name: this.issueNames[i],
             start: this.issueStartDates[i],
-            end: this.issueEndDates[i],
-            // color: this.colors.defaultColor,
+            end: this.issueEndDates[i],         
             issueId: this.issueIds[i],
-            issue: this.issueData[i]     
+            issue: this.issueData[i],
+            category: this.categories[i],  
+            watch: this.onWatch[i],
+            pastDue: this.overdue[i], 
+            progess: this.percentage[i]      
             // timed: !allDay,            
           })
         }
         // This is the main Events array pushed into Calendar
-        this.events = events
+        if (this.checkbox == false && !(this.issuesQuery.length > 0) ) {
+           this.events = []
+         } else 
+          this.events = events
        }
       },     
       rnd (a, b) {
@@ -344,13 +450,10 @@
          
          if (search_query) valid = valid && search_query.test(resource.title)
          
-          return valid
-        }), ['dueDate'])
-
-        if (search_query) {       
-         return issues  
-         
-        }      
+         return valid
+         }), ['dueDate'])
+        
+         return issues        
     }, 
       C_calendarIssueFilter: {
         get() {
@@ -435,6 +538,27 @@
         }
       },
     },
+    issuesQuery: {
+      handler() {
+       if(this.issuesQuery.length > 0) {
+         this.checkbox = false;
+         this.reRenderCalendar()
+       } else if (!(this.issuesQuery.length > 0) && this.checkbox == false) {
+         this.events = [];
+         this.reRenderCalendar()
+       }
+      },
+    },
+    checkbox: {
+      handler() {
+       if(this.checkbox == false) {
+         this.reRenderCalendar()
+         this.events = [];
+       } else if (this.checkbox == true) {
+         this.issuesQuery = "";
+       }
+      },
+    },
     currentFacility: {
       handler() {
         this.currentFacilityGroup = this.facilityGroups.find(
@@ -442,15 +566,6 @@
         );
 
         this.expanded.id = this.currentFacilityGroup.id;
-      },
-    },
-    issuesQuery: {
-      handler() {
-       if(this.issuesQuery.length > 0) {
-         this.reRenderCalendar()
-       } else if (this.issuesQuery.length >= 0) {
-         this.events = [];
-       }
       },
     },
     facilities: {
@@ -461,10 +576,6 @@
       },
     },  
   },
-  filterTree(value) {
-    this.$refs.duplicatetree.filter(value);
-    this.$refs.movetree.filter(value);
-  }
   }
 </script>
 
@@ -505,13 +616,27 @@
 /deep/.v-event {
   visibility: hidden;
 }
-/deep/.v-event-more {
-  display: none;
+/deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
+  visibility: visible !important;
+  font-weight: 500 !important;
+
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
+}
+/deep/.v-menu__content {
+  position: absolute !important;
+  z-index: 100;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+/deep/.v-input__slot {
+  .v-label {
+    margin-top: 0.5rem
+  }
 }
 .monthTitle {
   font-weight: 500;
@@ -523,5 +648,11 @@ input[type=search] {
     cursor: pointer;
     display: block;
  }
+  .contextTable {
+   border: solid 1px lightgray;
+   td {
+    border: solid 1px lightgray;
+   }
+  }
 
 </style>
