@@ -16,7 +16,7 @@
         </el-input>
         </div>
         <div class="mx-1 w-100">
-         <!-- <label class="font-sm my-0">Category</label> -->
+
           <el-select
            v-model="C_taskTypeFilter"
           :key="componentKey"   
@@ -38,7 +38,7 @@
         </div>
 
         <div class="w-100">
-          <!-- <label class="font-sm my-0">Flags</label> -->
+ 
            <el-select
            v-model="C_calendarTaskFilter"
           :key="componentKey"   
@@ -152,20 +152,18 @@
         </v-toolbar>
       </v-sheet>
     
-      <v-sheet height="600"    >     
+      <v-sheet height="600">     
          <v-calendar                      
           ref="calendar"        
           v-model="focus"
           color="primary"            
           :events="events"         
           :event-color="getEventColor"
-          :type="C_calendarView.id"   
-          :task="events"      
-          :key="componentKey"                
+          :type="C_calendarView.id"    
+          :key="componentKey"                      
           @click:event="editTask"
           @click:more="viewDay"
-          @click:date="viewDay"
-          @click.prevent.native
+          @click:date="viewDay"   
           @change="updateRange"        
           @contextmenu:event="showSummary" 
           @mouseup.right="openContextMenu"        
@@ -271,6 +269,12 @@
         selectedEventId: {},
         selectedEvent: {},
         calendarTask: {},
+        colors: {
+          onScheduleColor: '#5cb85c',
+          defaultColor: 'rgba(214, 219, 223, .15)',
+          warningColor: '#f0ad4e',
+          pastDueColor: '#d9534f',
+        },        
         selectedElement: null,      
         selectedOpen: false,
         events: [],
@@ -299,15 +303,15 @@
       reRenderCalendar() {
         this.componentKey += 1;
       },   
-      viewDay ({ date }) {
-        this.focus = date
-        this.type = 'day'
+      viewDay ({ date }) {       
+        this.focus = date   
+        this.setCalendarViewFilter({id: 'day', name: 'Day', value: 'day'})
       },
       getEventColor (event) {
         return event.color
       },  
       setToday () {
-        this.todayView = true 
+        // this.todayView = true 
         this.focus = ''       
       },
       prev () {
@@ -323,11 +327,11 @@
         `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
-      editTask(event) {   
+      editTask(event) {           
         let eventObj = event
         this.selectedEventId = eventObj.event.taskId;
-        this.calendarTask = eventObj.event.task       
-        this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`)        
+        this.calendarTask = eventObj.event.task 
+        this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`) 
       },
      openContextMenu(e) {
       e.preventDefault();
@@ -384,8 +388,8 @@
             category: this.categories[i],  
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
-            progess: this.percentage[i]  
-            // timed: !allDay,            
+            progess: this.percentage[i],
+            color: this.colors.defaultColor,             
           })
         }
           // This is the main Events array pushed into Calendar
@@ -587,9 +591,6 @@
  .filters-wrapper {
   float: right;
   margin-top: -55px;
-}
-/deep/.v-event {
-  visibility: hidden;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;

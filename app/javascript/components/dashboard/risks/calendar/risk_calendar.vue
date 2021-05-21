@@ -267,6 +267,12 @@
         riskEndDates: [],   
         selectedEventId: {},
         calendarRisk: {},
+        colors: {
+          onScheduleColor: '#5cb85c',
+          defaultColor: 'rgba(214, 219, 223, .15)',
+          warningColor: '#f0ad4e',
+          pastDueColor: '#d9534f',
+        }, 
         selectedElement: null, 
         selectedEvent: {},     
         selectedOpen: false,
@@ -301,7 +307,7 @@
       },
       viewDay ({ date }) {
         this.focus = date
-        this.type = 'day'
+        this.setCalendarViewFilter({id: 'day', name: 'Day', value: 'day'})
       },
       getEventColor (event) {
         return event.color
@@ -382,8 +388,8 @@
           category: this.categories[i],  
           watch: this.onWatch[i],
           pastDue: this.overdue[i], 
-          progess: this.percentage[i]       
-        // timed: !allDay,            
+          progess: this.percentage[i],
+          color: this.colors.defaultColor,        
         })
       }
       // This is the main Events array pushed into Calendar
@@ -566,8 +572,6 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   padding-left: 3px;
-  
-
 }
 /deep/.v-event-end {
   border-right-color: #d9534f !important;
@@ -586,13 +590,9 @@
   float: right;
   margin-top: -55px;
 }
-/deep/.v-event {
-  visibility: hidden;
-}
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
-
 }
 /deep/.v-menu__content {
   position: absolute !important;
