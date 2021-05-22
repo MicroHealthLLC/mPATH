@@ -157,52 +157,51 @@
           @click:more="viewDay"
           @click:date="viewDay"
           @change="updateRange"
-          @contextmenu:event="showSummary"  
-          @mouseup.right="openContextMenu"    
+          @contextmenu:event="showSummary" 
+          @contextmenu.prevent=""  
+          @mouseup.right="openContextMenu" 
         >         
         </v-calendar>
          <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          ref="menu"
-          class="actionSummary"  
-          max-width="265"          
+          ref="menu"           
         >
           <v-card class="actionSummary p-2" max-width="265">       
            <v-list>
             <v-list-item>          
               <v-list-item-title>
-                <span class="d-block"><small><b>Issue Name</b></small></span>
+                <span class="d-inline mr-1"><small><b>Issue Name:</b></small></span>
                 {{ selectedEvent.name }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>            
-                <span class="d-block"><small><b>Category</b></small></span>
+                <span class="d-inline mr-1"><small><b>Category:</b></small></span>
                 {{ selectedEvent.category }}            
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>          
-                <span class="d-block"><small><b>Start Date</b></small></span>            
+                <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
                 {{ selectedEvent.start }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title> 
-              <span class="d-block"><small><b>Due Date</b></small></span>  
+              <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
                 {{ selectedEvent.end }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <span class="d-block"><small><b>Progress</b></small></span>  
+                <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
               {{ selectedEvent.progess }}%          
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-              <span class="d-block"><small><b>Flags</b></small></span>  
+              <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
                   <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                   <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                   <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
@@ -213,7 +212,21 @@
             </v-list-item>        
            </v-list>
           <v-card-actions>
-            <v-spacer></v-spacer>      
+            <v-spacer></v-spacer>               
+          <v-btn
+            small
+            color="primary"        
+          >
+            Another Action
+          </v-btn>
+           <v-btn
+            color="error"
+            small
+            @click.prevent="deleteIssue"           
+          >
+          <font-awesome-icon icon="trash" class="mr-1"  />
+            Delete
+          </v-btn>    
           </v-card-actions>
           </v-card>
          </v-menu>                
@@ -283,6 +296,7 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
+    ...mapActions(["issueDeleted"]),
       reRenderCalendar() {
         this.componentKey += 1;
       },
@@ -315,6 +329,32 @@
         this.calendarIssue = eventObj.event.issue          
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${this.selectedEventId}`)        
       },
+     deleteIssue() {
+      let issue = this.selectedEvent.issue
+      // (console.log(JSON.stringify(this.selectedEvent.risk)))          
+      this.$confirm(`Are you sure you want to delete ${issue.title}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(issue).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${issue.title} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+            this.reRenderCalendar()
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
+    },
      openContextMenu(e) {
       e.preventDefault();
       this.$refs.menu.open(e);
@@ -602,6 +642,9 @@
   visibility: visible !important;
   font-weight: 500 !important;
 
+}
+/deep/.v-list-item {
+  min-height: 30px;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;

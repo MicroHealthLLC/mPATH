@@ -166,51 +166,50 @@
           @click:date="viewDay"   
           @change="updateRange"        
           @contextmenu:event="showSummary" 
+          @contextmenu.prevent="" 
           @mouseup.right="openContextMenu"        
         >            
         </v-calendar>  
         <v-menu
           v-model="selectedOpen"
-          :close-on-content-click="false"       
-          ref="menu"             
-          class="actionSummary"  
-          max-width="265"          
+          :close-on-content-click="false"          
+          ref="menu"       
       >
-        <v-card class="actionSummary p-2" max-width="265">   
+        <v-card class="p-2" min-width="265">   
           <v-list>
           <v-list-item>          
             <v-list-item-title>
-              <span class="d-block"><small><b>Task Name</b></small></span>
+              <span class="d-inline mr-1"><small><b>Task Name:</b></small></span>
               {{ selectedEvent.name }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>            
-              <span class="d-block"><small><b>Category</b></small></span>
+              <span class="d-inline mr-1"><small><b>Category:</b></small></span>
               {{ selectedEvent.category }}            
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>          
-              <span class="d-block"><small><b>Start Date</b></small></span>            
+              <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
               {{ selectedEvent.start }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title> 
-            <span class="d-block"><small><b>Due Date</b></small></span>  
+            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
               {{ selectedEvent.end }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <span class="d-block"><small><b>Progress</b></small></span>  
+              <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
             {{ selectedEvent.progess }}%          
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-            <span class="d-block"><small><b>Flags</b></small></span>  
+            <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
                 <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
@@ -224,6 +223,21 @@
 
           <v-card-actions>
           <v-spacer></v-spacer>
+          
+          <v-btn
+            small
+            color="primary"        
+          >
+            Another Action
+          </v-btn>
+          <v-btn
+            color="error"
+            small
+            @click.prevent="deleteTask"           
+          >
+          <font-awesome-icon icon="trash" class="mr-1"  />
+            Delete
+          </v-btn>
      
           </v-card-actions>
         </v-card>
@@ -239,20 +253,16 @@
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
  import { library } from '@fortawesome/fontawesome-svg-core'
- import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek, faEye, faCalendar, faClipboardCheck } from '@fortawesome/free-solid-svg-icons'
+ import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek, faEye, faCalendar, faClipboardCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
- library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck)
+ library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck, faTrash)
  Vue.component('font-awesome-icon', FontAwesomeIcon)
 
   export default {
     name: 'TaskCalendar',
-    props:
-      {
-      fromView: {
-        type: String,
-        default: "map_view",
-      },    
+    props:{        
       facility: Object, 
+      task: Object,
      },
     data() {
       return {         
@@ -293,7 +303,8 @@
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',     
-        'setTaskForManager'
+        'setTaskForManager',
+        'updateTasksHash'
       ]),
        ...mapActions([
         'taskDeleted',
@@ -327,12 +338,37 @@
         `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
-      editTask(event) {           
-        let eventObj = event
+      editTask(event) {  
+        let eventObj = event     
         this.selectedEventId = eventObj.event.taskId;
         this.calendarTask = eventObj.event.task 
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`) 
       },
+      deleteTask() {
+      let task = this.selectedEvent.task             
+      this.$confirm(`Are you sure you want to delete ${task.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.taskDeleted(task).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${task.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+            this.reRenderCalendar()
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
+    },
      openContextMenu(e) {
       e.preventDefault();
       this.$refs.menu.open(e);
@@ -411,10 +447,7 @@
         "facilityGroups",
         'getAdvancedFilterOptions',
         'getCalendarViewFilterOptions',
-        'calendarViewFilter',
-        'getDayView',
-        'getMonthView',
-        'getWeekView',
+        'calendarViewFilter',  
         'getCalendarViewFilter',
         'filterDataForAdvancedFilter', 
         'getAdvancedFilter',     
@@ -596,6 +629,9 @@
   visibility: visible !important;
   font-weight: 500 !important;
 
+}
+/deep/.v-list-item {
+  min-height: 30px;
 }
 /deep/.v-menu__content {
   position: absolute !important;
