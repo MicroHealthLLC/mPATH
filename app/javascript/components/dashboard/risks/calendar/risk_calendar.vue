@@ -158,54 +158,59 @@
           @click:date="viewDay"
           @change="updateRange"        
           @contextmenu:event="showSummary"  
+          @contextmenu.prevent="" 
           @mouseup.right="openContextMenu"             
         >           
         </v-calendar> 
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          ref="menu"            
-          class="actionSummary"  
-          max-width="265"          
+          ref="menu"          
         >
        <v-card class="actionSummary p-2" max-width="265">       
         <v-list>
         <v-list-item>          
           <v-list-item-title>
-            <span class="d-block"><small><b>Risk Name</b></small></span>
+            <span class="d-inline mr-1"><small><b>Risk Name:</b></small></span>
              {{ selectedEvent.name }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
           <v-list-item-title>            
-            <span class="d-block"><small><b>Category</b></small></span>
+            <span class="d-inline mr-1"><small><b>Category:</b></small></span>
             {{ selectedEvent.category }}            
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
           <v-list-item-title>          
-            <span class="d-block"><small><b>Start Date</b></small></span>            
+            <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
              {{ selectedEvent.start }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
           <v-list-item-title> 
-           <span class="d-block"><small><b>Risk Approach Due Date</b></small></span>  
+           <span class="d-inline mr-1"><small><b>Risk Approach (RA):</b></small></span>  
+           <span class="upperCase"> {{ selectedEvent.ra }} </span>
+          </v-list-item-title>
+        </v-list-item>
+          <v-list-item>
+          <v-list-item-title> 
+           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>  
             {{ selectedEvent.end }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
            <v-list-item-title>
-            <span class="d-block"><small><b>Progress</b></small></span>  
+            <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
           {{ selectedEvent.progess }}%          
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
           <v-list-item-title>
-           <span class="d-block"><small><b>Flags</b></small></span>  
+           <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
               <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Risk`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
                 <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
                  No flags at this time
                 </span>    
@@ -213,25 +218,22 @@
         </v-list-item>
         
       </v-list>
-   
-
         <v-card-actions>
-          <v-spacer></v-spacer>
-       
-
-          <!-- <v-btn
-            text
-            @click="menu = false"
-          >
-            Cancel
-          </v-btn>
+          <v-spacer></v-spacer> 
           <v-btn
-            color="primary"
-            text
-            @click="menu = false"
+            small
+            color="primary"        
           >
-            Save
-          </v-btn> -->
+            Another Action
+          </v-btn>
+           <v-btn
+            color="error"
+            small
+            @click.prevent="deleteRisk"           
+          >
+          <font-awesome-icon icon="trash" class="mr-1"  />
+            Delete
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>               
@@ -298,7 +300,7 @@
         'setTaskForManager'
       ]),
       ...mapActions([
-        'taskDeleted',
+        'riskDeleted',
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
@@ -335,6 +337,31 @@
       this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${this.selectedEventId}`)
               
     },
+    deleteRisk() {
+      let risk = this.selectedEvent.risk
+      this.$confirm(`Are you sure you want to delete ${risk.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.riskDeleted(risk).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${risk.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+            this.reRenderCalendar()
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
+    },
     openContextMenu(e) {
       e.preventDefault();
       this.$refs.menu.open(e);
@@ -349,7 +376,7 @@
       },
      showSummary ({ nativeEvent, event }) {        
         const open = () => {
-          this.selectedEvent = event
+          this.selectedEvent = event   
           this.selectedElement = nativeEvent.target
           requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))         
         }        
@@ -364,7 +391,7 @@
     updateRange ({ start, end }) {    
       // Mapping over Risk Names, Start Dates, and Due Dates 
       if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
-      this.riskkData = this.filteredCalendar.map(risk => risk)  
+      this.riskData = this.filteredCalendar.map(risk => risk)  
       this.riskNames = this.filteredCalendar.map(risk=> risk.text)    
       this.riskIds = this.filteredCalendar.map(risk => risk.id)      
       this.riskStartDates = this.filteredCalendar.map(risk =>risk.startDate)     
@@ -372,7 +399,8 @@
       this.categories = this.filteredCalendar.map(risk => risk.taskType.name) 
       this.onWatch = this.filteredCalendar.map(risk => risk.watched)   
       this.overdue = this.filteredCalendar.map(risk => risk.isOverdue) 
-      this.percentage = this.filteredCalendar.map(risk => risk.progress)             
+      this.percentage = this.filteredCalendar.map(risk => risk.progress)  
+      this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)           
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
       const max = new Date(`${end.date}T23:59:59`)
@@ -387,6 +415,7 @@
           risk: this.riskData[i],
           category: this.categories[i],  
           watch: this.onWatch[i],
+          ra: this.riskApproach[i],    
           pastDue: this.overdue[i], 
           progess: this.percentage[i],
           color: this.colors.defaultColor,        
@@ -606,6 +635,9 @@
     margin-top: 0.5rem
   }
 }
+/deep/.v-list-item {
+  min-height: 30px;
+}
 .monthTitle {
   font-weight: 500;
   font-size: 1.5rem;
@@ -622,6 +654,8 @@ input[type=search] {
     border: solid 1px lightgray;
    }
  }
-
+ .upperCase {
+   text-transform: capitalize;
+ }
 
 </style> 
