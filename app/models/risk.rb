@@ -260,6 +260,7 @@ class Risk < ApplicationRecord
       :auto_calculate,
       :text,
       :watched,
+      :important,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],

@@ -129,7 +129,7 @@ class Task < ApplicationRecord
       checklists: checklists.as_json,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-
+      important: important,
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
@@ -176,6 +176,7 @@ class Task < ApplicationRecord
       :auto_calculate,
       :watched,
       :kanban_order,
+      :important,
       task_files: [],
       user_ids: [],
       sub_task_ids: [],

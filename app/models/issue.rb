@@ -197,6 +197,7 @@ class Issue < ApplicationRecord
       :auto_calculate,
       :watched,
       :kanban_order,
+      :important,
       issue_files: [],
       user_ids: [],
       sub_task_ids: [],
