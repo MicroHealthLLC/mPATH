@@ -8,11 +8,11 @@ class TasksController < AuthenticatedController
     if ["index", "show" ].include?(params[:action]) 
       action = "read"
     elsif ["create", "update", "create_duplicate", "create_bulk_duplicate", "batch_update"].include?(params[:action]) 
-      action == "write"
+      action = "write"
     elsif ["destroy"].include?(params[:action]) 
-      action == "delete"
+      action = "delete"
     end
-
+    binding.pry
     raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
 
   end

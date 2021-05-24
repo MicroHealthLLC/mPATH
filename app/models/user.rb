@@ -275,6 +275,8 @@ class User < ApplicationRecord
       pids = p.project_ids
       project_ids_with_privileges = project_ids_with_privileges + pids
       module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+      module_permissions.transform_values{|v| v.delete(""); v}
+
       pids.each do |pid|
         ph[pid] = module_permissions
       end
@@ -284,9 +286,11 @@ class User < ApplicationRecord
     user_project_ids = user.project_ids.map(&:to_s)
     remaining_project_ids = user_project_ids - project_ids_with_privileges
     user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
+    user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
+    user_privilege_attributes.transform_values{|v| v.delete(""); v}
 
     remaining_project_ids.each do |pid|
-      ph[pid] = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view", )
+      ph[pid] = user_privilege_attributes
     end
 
     ph
@@ -305,7 +309,8 @@ class User < ApplicationRecord
 
     fp.each do |f|
       facility_project_ids = f.facility_project_ids
-      f_permissions = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone
+      f_permissions = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
+      f_permissions.transform_values{|v| v.delete(""); v}
 
       facility_project_ids.each do |fid|
         fph2[f.project_id.to_s] << fid.to_s 
