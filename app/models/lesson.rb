@@ -9,21 +9,23 @@ class Lesson < ApplicationRecord
   belongs_to :lesson_stage, optional: true
   
   # This is program is front end
-  belongs_to :project
+  belongs_to :project, optional: true
   
   has_many :lesson_users, dependent: :destroy
   has_many :users, through: :lesson_users
   
   has_many :lesson_projects, dependent: :destroy
-  has_many :facility_projects, through: :lesson_projects
-  has_many :facilities, through: :facility_projects
+
+  belongs_to :facility_project
+  # has_many :facility_projects, through: :lesson_projects
+  # has_many :facilities, through: :facility_projects
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
 
   has_many :lesson_details, dependent: :destroy
 
-  validates :title, :description, :date, presence: true
+  validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   def to_json(options = {})
@@ -112,12 +114,13 @@ class Lesson < ApplicationRecord
       :risk_id, 
       :issue_id, 
       :issue_type_id, 
+      :facility_project_id,
       :user_id, 
-      :project_id,
+      # :project_id,
       :lesson_stage_id,
       lesson_files: [],
       user_ids: [],
-      facility_project_ids: [],
+      # facility_project_ids: [],
       notes_attributes: [
         :id,
         :_destroy,
@@ -139,6 +142,11 @@ class Lesson < ApplicationRecord
     t_params = lesson_params.dup
     notes_attributes = t_params.delete(:notes_attributes)
     params_lesson_details = t_params.delete(:lesson_details)
+
+    if params[:program_id] && params[:project_id]
+      fp = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
+      t_params[:facility_project_id] = fp.id
+    end
 
     lesson.attributes = t_params
     lesson.date ||= Date.today
