@@ -17,12 +17,17 @@
     </div>
    <div class="col-md-10">
      <div class="right-panel">  
-       <!-- <div class="d-flex align-items-center mt-1">
+       <div v-if="
+            $route.name === 'CalendarTasks' ||
+            $route.name === 'CalendarIssues' ||
+            $route.name === 'CalendarRisks'
+       
+       " class="d-flex align-items-center ml-1">
          <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
-          <h5 class="f-head mb-0">
+          <h5 class="f-head my-1 mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>   
-       </div>  -->
+       </div> 
         <div
           v-if="
              $route.name === 'CalendarProjectSelected' ||
@@ -30,7 +35,7 @@
               $route.name === 'CalendarIssues' ||
               $route.name === 'CalendarRisks'
           "
-          class="tabs mt-1 mr-3"
+          class="tabs mt-0 ml-1 mr-3 p-2"
         >
            
        <router-link
@@ -157,9 +162,8 @@ export default {
 .tabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
-  width: fit-content;
-  padding: 7px 10px;
-  display: inline-block;
+  width: min-content;
+  display: flex;
   box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
   .tab {
     cursor: pointer;

@@ -50,6 +50,52 @@ body {
   color:  #1976d2 !important
 }
 
+.mh-green {
+background-color: #9EC64C !important;
+}
+.mh-blue {
+//  dark blue
+ background-color: #1D336F !important;
+}
+
+.mh-orange {
+  background-color: #DD9036 !important;
+}
+
+
+// MORE FILTERS in Sheet View
+.issuesFilter, .risksFilter {
+  z-index: 100;
+.el-collapse-item__header {
+  color: #383838 !important;
+  // background-color: transparent !important;
+  border-radius: 4px !important;
+  border: 1px solid #DCDFE6 !important;
+  padding: 3px !important;
+  height: 32px !important;
+  justify-content: center !important;
+
+
+ }
+ .el-select__tags {
+    z-index: 95 !important;
+  }
+  .el-input--suffix {
+    z-index: 90 !important;
+  }
+  .el-collapse-item__wrap {
+    margin-top: 4px;
+    border-radius: 3px !important;
+    background-color: #fff !important;
+    border-bottom: none !important;
+    z-index: 100 !important;
+    box-shadow: 1px 1px 1px rgba(56,56, 56,0.19), 1px 1px 1px 2px rgba(56,56,56,0.23);
+    .el-collapse-item__content {
+      padding-bottom: 10px;
+    }
+  }
+}
+
 span.mpathLogo {
   img {
     width: 200px;

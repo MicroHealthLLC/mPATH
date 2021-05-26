@@ -1,9 +1,9 @@
 <template>
-  <div id="customtabs" class="d-flex align-items-center">
+  <div id="customtabs" class="d-flex align-items-center p-2">
     <div v-for="tab in tabs" :key="tab.key">
       <div
         v-if="!tab.hidden"
-        class="badge"
+        class="badge mx-0"
         :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
         @click="changeTab(tab)"
       >
@@ -111,8 +111,7 @@ export default {
 #customtabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
-  padding-left: 5px;
-  padding-right: 5px;
+  width: min-content;
   box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
   .badge {
     cursor: pointer;

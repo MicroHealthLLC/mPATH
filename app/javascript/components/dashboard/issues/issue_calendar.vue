@@ -3,7 +3,8 @@
 <div>
    <span class="filters-wrapper w-75">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
+        <div class="task-search-bar w-100">
+          <label class="font-sm mb-0"><span style="visibility:hidden">L</span></label>
            <el-input
             type="search"          
             placeholder="Search Issues"
@@ -16,7 +17,7 @@
         </el-input>
         </div>
         <div class="mx-1 w-100">
-         <!-- <label class="font-sm my-0">Category</label> -->
+         <label class="font-sm my-0">Category</label>
           <el-select
            v-model="C_taskTypeFilter"
           :key="componentKey"   
@@ -38,7 +39,7 @@
         </div>
 
         <div class="w-100">
-          <!-- <label class="font-sm my-0">Flags</label> -->
+          <label class="font-sm my-0">Flags</label>
            <el-select
            v-model="C_calendarIssueFilter"
           :key="componentKey"   
@@ -157,51 +158,52 @@
           @click:more="viewDay"
           @click:date="viewDay"
           @change="updateRange"
-          @contextmenu:event="showSummary" 
-          @contextmenu.prevent=""  
-          @mouseup.right="openContextMenu" 
+          @contextmenu:event="showSummary"  
+          @mouseup.right="openContextMenu"    
         >         
         </v-calendar>
          <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          ref="menu"           
+          ref="menu"
+          class="actionSummary"  
+          max-width="265"          
         >
           <v-card class="actionSummary p-2" max-width="265">       
            <v-list>
             <v-list-item>          
               <v-list-item-title>
-                <span class="d-inline mr-1"><small><b>Issue Name:</b></small></span>
+                <span class="d-block"><small><b>Issue Name</b></small></span>
                 {{ selectedEvent.name }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>            
-                <span class="d-inline mr-1"><small><b>Category:</b></small></span>
+                <span class="d-block"><small><b>Category</b></small></span>
                 {{ selectedEvent.category }}            
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>          
-                <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
+                <span class="d-block"><small><b>Start Date</b></small></span>            
                 {{ selectedEvent.start }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title> 
-              <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
+              <span class="d-block"><small><b>Due Date</b></small></span>  
                 {{ selectedEvent.end }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
+                <span class="d-block"><small><b>Progress</b></small></span>  
               {{ selectedEvent.progess }}%          
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-              <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
+              <span class="d-block"><small><b>Flags</b></small></span>  
                   <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                   <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                   <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
@@ -212,21 +214,7 @@
             </v-list-item>        
            </v-list>
           <v-card-actions>
-            <v-spacer></v-spacer>               
-          <v-btn
-            small
-            color="primary"        
-          >
-            Another Action
-          </v-btn>
-           <v-btn
-            color="error"
-            small
-            @click.prevent="deleteIssue"           
-          >
-          <font-awesome-icon icon="trash" class="mr-1"  />
-            Delete
-          </v-btn>    
+            <v-spacer></v-spacer>      
           </v-card-actions>
           </v-card>
          </v-menu>                
@@ -263,12 +251,6 @@
         issueEndDates: [],   
         selectedEventId: {},
         calendarIssue: {},
-        colors: {
-          onScheduleColor: '#5cb85c',
-          defaultColor: 'rgba(214, 219, 223, .15)',
-          warningColor: '#f0ad4e',
-          pastDueColor: '#d9534f',
-        },        
         selectedEvent: {},
         selectedElement: null,      
         selectedOpen: false,
@@ -296,13 +278,21 @@
         'setTaskForManager',
         'setOnWatchFilter'
       ]),
-    ...mapActions(["issueDeleted"]),
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      },
       reRenderCalendar() {
         this.componentKey += 1;
       },
       viewDay ({ date }) {
         this.focus = date
-        this.setCalendarViewFilter({id: 'day', name: 'Day', value: 'day'})
+        this.type = 'day'
       },
       getEventColor (event) {
         return event.color
@@ -329,32 +319,6 @@
         this.calendarIssue = eventObj.event.issue          
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/${this.selectedEventId}`)        
       },
-     deleteIssue() {
-      let issue = this.selectedEvent.issue
-      // (console.log(JSON.stringify(this.selectedEvent.risk)))          
-      this.$confirm(`Are you sure you want to delete ${issue.title}?`, 'Confirm Delete', {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          this.issueDeleted(issue).then((value) => {
-            if (value === 'Success') {
-              this.$message({
-                message: `${issue.title} was deleted successfully.`,
-                type: "success",
-                showClose: true,
-              });
-            }
-            this.reRenderCalendar()
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Delete canceled',
-            showClose: true
-          });          
-        });
-    },
      openContextMenu(e) {
       e.preventDefault();
       this.$refs.menu.open(e);
@@ -411,8 +375,8 @@
             category: this.categories[i],  
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
-            progess: this.percentage[i],
-            color: this.colors.defaultColor,             
+            progess: this.percentage[i]      
+            // timed: !allDay,            
           })
         }       
         // This is the main Events array pushed into Calendar
@@ -634,17 +598,17 @@
 .addTaskBtn, .exportBtns, .showAll, .todayBtn {
    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
  }
-  .filters-wrapper {
+.filters-wrapper {
   float: right;
-  margin-top: -55px;
+  margin-top: -83.5px;
+}
+/deep/.v-event {
+  visibility: hidden;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;
   font-weight: 500 !important;
 
-}
-/deep/.v-list-item {
-  min-height: 30px;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;

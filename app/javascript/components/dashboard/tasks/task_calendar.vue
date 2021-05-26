@@ -3,7 +3,8 @@
 <div>
    <span class="filters-wrapper w-75">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
+        <div class="task-search-bar w-100">
+          <label class="font-sm mb-0"><span style="visibility:hidden">L</span></label>
            <el-input
             type="search"          
             placeholder="Search Tasks"
@@ -16,6 +17,7 @@
         </el-input>
         </div>
         <div class="mx-1 w-100">
+         <label class="font-sm mb-0">Category</label>
 
           <el-select
            v-model="C_taskTypeFilter"
@@ -38,6 +40,7 @@
         </div>
 
         <div class="w-100">
+            <label class="font-sm mb-0">Flags</label>
  
            <el-select
            v-model="C_calendarTaskFilter"
@@ -219,24 +222,31 @@
             </v-list-item-title>
           </v-list-item>        
           </v-list>
-   
-
-          <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-card-actions>      
           
           <v-btn
             small
-            color="primary"        
+            class="mh-green text-light"
           >
-            Another Action
+            See More
           </v-btn>
+           <v-btn
+            small
+            :events="events"   
+             ref="calendar"      
+            @click:event="editTask"
+            color="primary"
+          >
+            Details
+          </v-btn>
+            <v-spacer></v-spacer>      
           <v-btn
             color="error"
             small
             @click.prevent="deleteTask"           
           >
-          <font-awesome-icon icon="trash" class="mr-1"  />
-            Delete
+          <font-awesome-icon icon="trash-alt" />
+          
           </v-btn>
      
           </v-card-actions>
@@ -253,9 +263,9 @@
 <script>
  import {mapGetters, mapMutations, mapActions} from "vuex"
  import { library } from '@fortawesome/fontawesome-svg-core'
- import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek, faEye, faCalendar, faClipboardCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
+ import { faCalendarAlt, faCalendarCheck, faCalendarDay, faCalendarWeek, faEye, faCalendar, faClipboardCheck, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
- library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck, faTrash)
+ library.add(faCalendarDay, faCalendarWeek, faCalendarAlt, faCalendarCheck, faEye, faCalendar, faClipboardCheck, faTrashAlt)
  Vue.component('font-awesome-icon', FontAwesomeIcon)
 
   export default {
@@ -339,11 +349,27 @@
         );
       },
       editTask(event) {  
+        console.log("IT WORKS")
         let eventObj = event     
         this.selectedEventId = eventObj.event.taskId;
         this.calendarTask = eventObj.event.task 
         this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/tasks/${this.selectedEventId}`) 
       },
+      // openTask({event, nativeEvent}) {  
+      //   const open = () => {
+      //     this.selectedEvent = event
+      //     this.selectedElement = nativeEvent.target
+      //     requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))         
+      //   }        
+      //   if (this.selectedOpen) {
+      //     this.selectedOpen = false
+      //     requestAnimationFrame(() => requestAnimationFrame(() => open()))
+      //   } else {
+      //     open()
+      //   }
+
+      //   nativeEvent.stopPropagation()    
+      // },
       deleteTask() {
       let task = this.selectedEvent.task             
       this.$confirm(`Are you sure you want to delete ${task.text}?`, 'Confirm Delete', {
@@ -380,6 +406,9 @@
         } else if (this.checkbox == false){
            this.reRenderCalendar()
         }
+      },
+      edi(){
+        console.log("It Wowe")
       },
       showSummary ({ nativeEvent, event }) {   
         const open = () => {
@@ -623,7 +652,7 @@
  }
  .filters-wrapper {
   float: right;
-  margin-top: -55px;
+  margin-top: -83.5px;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;
