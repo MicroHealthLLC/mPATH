@@ -56,10 +56,6 @@ class Lesson < ApplicationRecord
       end.compact.uniq
     end
     
-    facility_ids = self.facility_projects.pluck(&:facility_id)
-
-    f = self.facilities.pluck(:id, :facility_name)
-
     t_users = options[:all_task_users] || []
     all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :task_index].include?(options[:for])
@@ -88,8 +84,6 @@ class Lesson < ApplicationRecord
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
     self.as_json.merge(
       class_name: self.class.name,
-      facilities: f,
-      facility_project_ids: self.facility_project_ids,
       attach_files: attach_files,
       user_ids: p_users.map(&:id).compact.uniq,
       user_names: p_users.map(&:full_name).compact.join(", "),
@@ -98,11 +92,13 @@ class Lesson < ApplicationRecord
       lesson_stage_id: self.lesson_stage_id,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      program_id: facility_project.project_id,
+      project_id: facility_project.facility_id
 
     ).as_json
   end
 
-  def create_or_update_lession(params, user)
+  def create_or_update_lesson(params, user)
 
     lesson_params = params.require(:lesson).permit(
       :title, 
