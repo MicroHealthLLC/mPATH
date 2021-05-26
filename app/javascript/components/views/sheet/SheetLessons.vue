@@ -19,7 +19,11 @@
           <th>Added By</th>
           <th>Last Update</th>
         </tr>
-        <tr v-for="lesson in lessons" :key="lesson.id" @click="openLesson">
+        <tr
+          v-for="lesson in projectLessons"
+          :key="lesson.id"
+          @click="openLesson(lesson.id)"
+        >
           <td>{{ lesson.title }}</td>
           <td>{{ lesson.date }}</td>
           <td>{{ lesson.description }}</td>
@@ -93,8 +97,17 @@ export default {
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
       );
     },
-    openLesson() {
+    openLesson(id) {
       console.log("OPENING LESSON");
+      console.log(id);
+      this.$router.push({
+        name: "SheetLessonForm",
+        params: {
+          programId: this.$route.params.programId,
+          projectId: this.$route.params.projectId,
+          lessonId: id,
+        },
+      });
     },
     sortLessons(value) {
       // Determine whether to sort lessons ascending or descending
@@ -108,7 +121,7 @@ export default {
       if (this.sortAsc) {
         console.log(`Sorting by ${value}: Ascending`);
 
-        this.lessons = this.lessons.sort((lesson1, lesson2) => {
+        this.projectLessons.sort((lesson1, lesson2) => {
           if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
             return -1;
           } else if (
@@ -123,7 +136,7 @@ export default {
       } else {
         console.log(`Sorting by ${value}: Descending`);
 
-        this.lessons = this.lessons.sort((lesson1, lesson2) => {
+        this.projectLessons.sort((lesson1, lesson2) => {
           if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
             return 1;
           } else if (
@@ -147,13 +160,13 @@ export default {
       }
       // Sort ascending
       if (this.sortAsc) {
-        this.lessons = this.lessons.sort(
+        this.projectLessons.sort(
           (lesson1, lesson2) => new Date(lesson2.date) - new Date(lesson1.date)
         );
         console.log("Sorting by date: Ascending");
         // Sort descending
       } else {
-        this.lessons = this.lessons.sort(
+        this.projectLessons.sort(
           (lesson1, lesson2) => new Date(lesson1.date) - new Date(lesson2.date)
         );
         console.log("Sorting by date: Descending");
@@ -163,13 +176,14 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["lessonsLoaded"]),
+    ...mapGetters(["lessonsLoaded", "projectLessons"]),
   },
   mounted() {
-    console.log(this.$permissions)
     console.log("Lessons Loaded: " + this.lessonsLoaded);
-    
+
     this.fetchProjectLessons(this.$route.params);
+
+    console.log("Lessons Loaded: " + this.lessonsLoaded);
   },
 };
 </script>

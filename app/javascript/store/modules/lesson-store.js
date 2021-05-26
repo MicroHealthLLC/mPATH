@@ -2,6 +2,7 @@ import axios from "axios";
 
 const lessonModule = {
   state: () => ({
+    lesson: {}, // Current lesson loaded in form
     project_lessons: [],
     program_lessons: [],
     lessons_loaded: false,
@@ -9,7 +10,7 @@ const lessonModule = {
 
   actions: {
     fetchProjectLessons({ commit }, { programId, projectId }) {
-      // Send GET request for all projects contained within a project
+      // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
@@ -30,17 +31,59 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED");
         });
     },
-    fetchProgramLessons() {
-      // Get all lessons for a single program
+    fetchProgramLessons({ commit }, { programId }) {
+      // Send GET request for all lessons contained within a program
+      axios({
+        method: "GET",
+        url: `/api/v1/programs/${programId}/lessons.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          console.log(res);
+          // Mutate state with response from back end
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED");
+        });
     },
-    addLesson({ commit }, {lesson, programId, projectId}) {
-      console.log(lesson)
+    fetchLesson({ commit }, { id, programId, projectId }) {
+      console.log(id);
       console.log(programId);
       console.log(projectId);
-
+      // Retrieve lesson by id
+      axios({
+        method: "GET",
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          console.log(res);
+          // Mutate state with response from back end
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED");
+        });
+    },
+    addLesson({ commit }, { lesson, programId, projectId }) {
+      console.log(lesson);
+      console.log(programId);
+      console.log(projectId);
+      // Add new lesson
       axios({
         method: "POST",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons`,
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
         data: lesson,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -55,10 +98,11 @@ const lessonModule = {
         })
         .finally(() => {});
     },
-    updateLesson({ commit }, lesson, programId, projectId) {
+    updateLesson({ commit }, { lesson, programId, projectId }) {
+      // Update a lesson with changes
       axios({
         method: "PUT",
-        url: `/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
         data: lesson,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -73,10 +117,11 @@ const lessonModule = {
         })
         .finally(() => {});
     },
-    deleteLesson() {
+    deleteLesson({ commit }, { lesson, programId, projectId }) {
+      // Delete a single lesson
       axios({
         method: "DELETE",
-        url: `/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -98,6 +143,7 @@ const lessonModule = {
       (state.lessons_loaded = !state.lessons_loaded),
   },
   getters: {
+    lesson: (state) => state.lesson,
     projectLessons: (state) => state.project_lessons,
     programLessons: (state) => state.program_lessons,
     lessonsLoaded: (state) => state.lessons_loaded,

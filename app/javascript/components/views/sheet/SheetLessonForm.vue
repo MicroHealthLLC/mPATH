@@ -84,6 +84,7 @@
           <el-input
             name="Lesson Name"
             v-validate="'required'"
+            v-model="lesson.title"
             type="text"
             placeholder="Lesson Name"
             :class="{ error: errors.has('Lesson Name') }"
@@ -100,6 +101,7 @@
             name="Description"
             type="textarea"
             v-validate="'required'"
+            v-model="lesson.description"
             placeholder="Brief description..."
             rows="4"
             :class="{
@@ -119,6 +121,7 @@
             <v2-date-picker
               name="Date"
               v-validate="'required'"
+              v-model="lesson.date"
               value-type="YYYY-MM-DD"
               format="DD MMM YYYY"
               placeholder="DD MM YYYY"
@@ -277,31 +280,45 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson"]),
+    ...mapActions(["addLesson", "fetchLesson"]),
     saveLesson() {
       console.log("SAVE");
 
-      let formData = new FormData();
+      this.$validator.validate().then((success) => {
+        console.log(success);
+        if (!success) {
+          return;
+        }
 
-      formData.append("lesson[title]", "Lesson 1");
-      formData.append("lesson[description]", "I am the description");
-      formData.append("lesson[date]", new Date())
+        let formData = new FormData();
 
-      console.log(formData)
+        formData.append("lesson[title]", this.lesson.title);
+        formData.append("lesson[description]", this.lesson.description);
+        formData.append("lesson[date]", this.lesson.date);
+        formData.append("lesson[program_id]", this.$route.params.programId);
+        formData.append("lesson[project_id]", this.$route.params.projectId);
 
-      this.addLesson({lesson: formData, ...this.$route.params})
+        console.log(formData);
+
+        this.addLesson({ lesson: formData, ...this.$route.params });
+      });
     },
     close() {
       this.$router.push(
-          `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
-        );
+        `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+      );
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
     },
   },
   computed: {
-    ...mapGetters(["contentLoaded", "activeProjectUsers", "taskTypes"]),
+    ...mapGetters([
+      "activeProjectUsers",
+      "contentLoaded",
+      "lesson",
+      "taskTypes",
+    ]),
     tab() {
       if (this.$route.path.includes("map")) {
         return "map";
@@ -318,6 +335,12 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}`;
       }
     },
+  },
+  mounted() {
+    console.log({id: this.$route.params.lessonId, ...this.$route.params})
+    if (this.$route.params.lessonId) {
+      this.fetchLesson({id: this.$route.params.lessonId, ...this.$route.params});
+    }
   },
 };
 </script>

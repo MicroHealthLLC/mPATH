@@ -107,7 +107,7 @@ export default new VueRouter({
           component: MapLessons,
         },
         {
-          name: "SheetLessonForm",
+          name: "MapLessonForm",
           path: "projects/:projectId/lessons/:lessonId",
           component: MapLessonForm,
         },
