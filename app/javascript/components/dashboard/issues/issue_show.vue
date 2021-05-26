@@ -160,9 +160,27 @@
         }      
       },
       deleteIssue() {
-        let confirm = window.confirm(`Are you sure, you want to delete this issue?`)
-        if (!confirm) {return}
-        this.issueDeleted(this.DV_issue)
+        this.$confirm(`Are you sure you want to delete ${this.DV_issue.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.DV_issue).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_issue.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
       },
       openSubTask(subTask) {
         let task = this.currentTasks.find(t => t.id == subTask.id)

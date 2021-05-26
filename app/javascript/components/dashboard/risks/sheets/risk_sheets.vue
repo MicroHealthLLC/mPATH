@@ -98,9 +98,27 @@
         'updateWatchedRisks'
       ]),
       deleteRisk() {
-        var confirm = window.confirm(`Are you sure, you want to delete "${this.DV_risk.text}"?`)
-        if (!confirm) {return}
-        this.riskDeleted(this.DV_risk)
+        this.$confirm(`Are you sure you want to delete ${this.DV_risk.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.riskDeleted(this.DV_risk).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_risk.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
       },  
       openSubRisk(subRisk) {
         let risk = this.currentRisks.find(t => t.id == subRisk.id)

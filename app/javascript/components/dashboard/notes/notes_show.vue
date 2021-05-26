@@ -85,19 +85,33 @@
         this.$emit('note-updated', note)
       },
       deleteNote() {
-        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
-        if (!confirm) return;
-
-        http
+        this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          http
           .delete(`/projects/${this.currentProject.id}/facilities/${this.facility.id}/notes/${this.note.id}.json`)
           .then((res) => {
             this.loading = false
             this.$emit('note-deleted', this.note)
+            this.$message({
+              message: `Note was deleted successfully.`,
+              type: "success",
+              showClose: true,
+            });
           })
           .catch((err) => {
             this.loading = false
             console.error(err)
+            this.$message({
+              type: 'info',
+              message: 'Delete canceled',
+              showClose: true
+            });
           })
+          
+        });
       },
       downloadFile(file) {
         if (this._isallowed('write')) {

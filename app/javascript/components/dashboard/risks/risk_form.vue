@@ -2088,14 +2088,28 @@ export default {
       this.DV_risk.riskFiles = _files;
     },
     deleteRisk() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this risk?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.riskDeleted(this.DV_risk);
-      this.cancelRiskSave();
+      this.$confirm(`Are you sure you want to delete ${this.DV_risk.text}?`, ` Confirm Delete`, {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.DV_risk).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_risk.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+          this.cancelRiskSave();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+      });
     },
     deleteFile(file) {
       if (!file) return;
@@ -2930,6 +2944,16 @@ export default {
     },
     "DV_risk.startDate"(value) {
       if (!value) this.DV_risk.dueDate = "";
+    },
+    "DV_risk.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_risk.text} Due Date is past Project Due Date!`, `${this.DV_risk.text} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'info'
+        });
+        }
+      }
     },
     "DV_risk.checklists": {
       handler: function(value) {

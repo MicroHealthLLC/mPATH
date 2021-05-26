@@ -1411,14 +1411,29 @@ export default {
       this.DV_issue.issueFiles = _files;
     },
     deleteIssue() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete this issue?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.issueDeleted(this.DV_issue);
-      this.cancelIssueSave();
+      this.$confirm(`Are you sure you want to delete ${this.DV_issue.title}?`, ` Confirm Delete`, {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.issueDeleted(this.DV_issue).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_issue.title} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+          this.cancelIssueSave();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
+             
     },
     deleteFile(file) {
       if (!file) return;
@@ -1981,6 +1996,16 @@ export default {
     },
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
+    },
+    "DV_issue.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_issue.title} Due Date is past Project Due Date!`, `${this.DV_issue.title} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'info'
+        });
+        }
+      }
     },
     "DV_issue.checklists": {
       handler: function(value) {

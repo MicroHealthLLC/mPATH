@@ -1289,14 +1289,28 @@ export default {
       //this.editTimeLive = moment.format('DD MMM YYYY, h:mm a')
     },
     deleteTask() {
-      let confirm = window.confirm(
-        `Are you sure you want to delete "${this.DV_task.text}"?`
-      );
-      if (!confirm) {
-        return;
-      }
-      this.taskDeleted(this.DV_task);
-      this.cancelSave();
+      this.$confirm(`Are you sure you want to delete ${this.DV_task.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.taskDeleted(this.DV_task).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_task.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+          this.cancelSave();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
     },
     progressListTitleText(progressList) {
       if (!progressList.id) return;
@@ -1893,7 +1907,10 @@ export default {
     "DV_task.dueDate"(value) {
       if (this._ismounted && this.facility.dueDate) {
         if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          alert("Task Due Date is past Project Due Date!");
+          this.$alert(`${this.DV_task.text} Due Date is past Project Due Date!`, `${this.DV_task.text} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'info'
+        });
         }
       }
     },

@@ -237,9 +237,27 @@
         })
       },
       deleteNote() {
-        var confirm = window.confirm(`Are you sure, you want to delete this note?`)
-        if (!confirm) return;
-        this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() })
+        this.$confirm(`Are you sure you want to delete this note?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.noteDeleted({note: this.DV_note, facilityId: this.facility.id, projectId: this.currentProject.id, cb: () => this.cancelNoteSave() }).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `Note was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        }); 
       },
       cancelNoteSave() {
         this.$emit('close-note-input')

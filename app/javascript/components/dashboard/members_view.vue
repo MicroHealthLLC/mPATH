@@ -245,7 +245,11 @@ import 'jspdf-autotable'
           if(this.currentPage > 1) this.currentPage--;
         },
        clear: function(){
-            alert('this button works')
+          this.$alert('this button works',
+            {
+              confirmButtonText: 'OK',
+              type:'info'      
+            });
         // document.getElementsByClassName("searchbox").empty();
         },
        memberSearch() {

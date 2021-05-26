@@ -159,7 +159,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["overview"].hide ){
               next()  
@@ -192,7 +196,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["tasks"].hide ){
               next()  
@@ -225,7 +233,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["tasks"].hide ){
               next()  
@@ -258,7 +270,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["issues"].hide ){
               next()  
@@ -291,7 +307,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["issues"].hide ){
               next()  
@@ -324,7 +344,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["risks"].hide ){
               next()  
@@ -357,7 +381,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["risks"].hide ){
               next()  
@@ -390,7 +418,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["notes"].hide ){
               next()  
@@ -423,7 +455,11 @@ export default new VueRouter({
               return
             }
             if( fPrivilege["overview"].hide && fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide && fPrivilege["notes"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             if( !fPrivilege["notes"].hide ){
               next()  
@@ -523,7 +559,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["tasks"].hide ){
@@ -554,7 +594,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["tasks"].hide ){
@@ -584,7 +628,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["issues"].hide ){
@@ -615,7 +663,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["issues"].hide ){
@@ -645,7 +697,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["risks"].hide ){
@@ -676,7 +732,11 @@ export default new VueRouter({
             }
 
             if( fPrivilege["tasks"].hide && fPrivilege["issues"].hide && fPrivilege["risks"].hide){
-              alert("You don't have access to see any tabs. Please contact administrator")
+              this.$alert('You do not have access to see any tabs. Please contact an administrator',
+                {
+                  confirmButtonText: 'OK',
+                  type:'info'      
+                });
             }
             
             if( !fPrivilege["risks"].hide ){

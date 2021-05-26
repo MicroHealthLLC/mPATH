@@ -709,10 +709,28 @@
         this.currentTab = tab ? tab.key : 'tab1'
       },
       deleteTask() {
-        let confirm = window.confirm(`Are you sure you want to delete "${this.DV_lesson.title}"?`)
-        if (!confirm) {return}
-        this.taskDeleted(this.DV_lesson)
-        this.cancelSave()
+        this.$confirm(`Are you sure you want to delete ${this.DV_lesson.text}?`, 'Confirm Delete', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.taskDeleted(this.DV_lesson).then((value) => {
+            if (value === 'Success') {
+              this.$message({
+                message: `${this.DV_lesson.text} was deleted successfully.`,
+                type: "success",
+                showClose: true,
+              });
+            }
+          });
+          this.cancelSave();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled',
+            showClose: true
+          });          
+        });
       },
       progressListTitleText(progressList){
         if(!progressList.id) return;

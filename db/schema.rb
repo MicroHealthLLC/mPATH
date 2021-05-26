@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
@@ -260,15 +260,6 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.integer "facility_project_id"
-    t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
-    t.index ["issue_id"], name: "index_lessons_on_issue_id"
-    t.index ["issue_type_id"], name: "index_lessons_on_issue_type_id"
-    t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
-    t.index ["risk_id"], name: "index_lessons_on_risk_id"
-    t.index ["task_id"], name: "index_lessons_on_task_id"
-    t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
-    t.index ["user_id"], name: "index_lessons_on_user_id"
   end
 
   create_table "notes", charset: "utf8", force: :cascade do |t|
@@ -441,7 +432,7 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
-    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target"
   end
 
   create_table "region_states", charset: "utf8", force: :cascade do |t|
@@ -486,17 +477,6 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.index ["task_id"], name: "index_related_tasks_on_task_id"
   end
 
-  create_table "resource_access_requests", charset: "utf8", force: :cascade do |t|
-    t.integer "resource_id", null: false
-    t.string "resource_type", null: false
-    t.integer "user_id", null: false
-    t.string "status", default: "pending"
-    t.integer "granted_by_id", null: false
-    t.string "permissions"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "risk_stages", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.integer "percentage", default: 0
@@ -534,7 +514,6 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
-    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
     t.string "probability_name"
@@ -544,7 +523,6 @@ ActiveRecord::Schema.define(version: 2021_05_12_220200) do
     t.boolean "approved"
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
