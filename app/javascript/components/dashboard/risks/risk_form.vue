@@ -1841,7 +1841,6 @@ export default {
       now: new Date().toLocaleString(),
       destroyedFiles: [],
       responsibleUsers: null,
-      // riskApprover: null,
       accountableRiskUsers: null,
       consultedRiskUsers: [],
       informedRiskUsers: [],
