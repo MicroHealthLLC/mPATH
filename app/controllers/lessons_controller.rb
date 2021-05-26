@@ -28,7 +28,7 @@ class LessonsController < AuthenticatedController
   end
 
   def update
-    lesson = Lesson.find(params[:id])
+    lesson = Lesson.find(params[:lesson_id])
     # authorize!(:create, lesson)
     lesson.create_or_update_lesson(params, current_user)
     render json: {lesson: lesson.to_json}, status: 200
@@ -36,14 +36,14 @@ class LessonsController < AuthenticatedController
 
 
   def show
-    lesson = Lesson.find(params[:id])
+    lesson = Lesson.find(params[:lesson_id])
     # authorize!(:read, lesson)
     
     render json: {lesson: lesson.to_json}, status: 200
   end
 
   def destroy
-    lesson = Lesson.find(params[:id])
+    lesson = Lesson.find(params[:lesson_id])
     # authorize!(:destroy, lesson)
     if lesson.destroy
       render json: {lesson: lesson}, status: 200
