@@ -5,15 +5,18 @@
     :style="style"
     ref="context"
     tabindex="0"
-    @mouseleave="close"
+    @focusout="clickOutside"
   >
     <div>
-      <div class="menu-subwindow-title">
-        Select Related {{ item }}s
+      <div class="d-flex justify-content-end pt-2 pr-2">
+        <i class="el-icon-error" title="Close" @click="close"></i>
       </div>
+      <div class="menu-subwindow-title">Select Related {{ item }}s</div>
       <el-input
         class="filter-input"
-        :placeholder="`Filter ${item.charAt(0).toUpperCase() + item.slice(1)}s...`"
+        :placeholder="
+          `Filter ${item.charAt(0).toUpperCase() + item.slice(1)}s...`
+        "
         v-model="filterTree"
       ></el-input>
       <el-tree
@@ -98,7 +101,7 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.risk.facilityId
+                (facility) => facility.facility.id != this.$route.params.projectId
               )
               .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
@@ -234,6 +237,11 @@ export default {
     },
     toggleSubmitBtn() {
       this.submitted = false;
+    },
+    clickOutside(e) {
+      if (!e.relatedTarget) {
+        this.close();
+      }
     },
   },
   watch: {

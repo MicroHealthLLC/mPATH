@@ -1,20 +1,22 @@
 <template>
-  <div id="tasks-index" class="my-4" data-cy="task_sheet_index">
+  <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-          </div>
-            <input type="search"
-            class="form-control form-control-sm"
-            placeholder="Search by Task Name, Category, or Assigned User"
-            aria-label="Search"
-            aria-describedby="search-addon"
-            v-model="tasksQuery"
-            data-cy="search_tasks">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-75 filters-wrapper">
+         <div class="ml-2 task-search-bar w-100">
+          <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
+           <el-input
+            type="search"          
+            placeholder="Search by Task, Category, or Assigned User"
+            aria-label="Search"            
+            aria-describedby="search-addon"    
+            v-model="tasksQuery"     
+            data-cy="search_tasks"
+        >
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
         </div>
-        <div class="mx-1 w-100">
+        <div class="mx-1 w-75">
+          <label class="font-sm my-0">Category</label>
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
@@ -33,7 +35,8 @@
           </el-select>
         </div>
 
-        <div class="w-100">
+        <div class="w-75">
+          <label class="font-sm my-0">Flags</label>   
            <el-select
            v-model="C_sheetsTaskFilter"
            class="w-100"
@@ -340,7 +343,7 @@
           <td v-else></td>
           <td v-if="(task.notesUpdatedAt.length) > 0">
              By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+            {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -607,7 +610,7 @@
 
 
 
-<style lang="scss">
+<style scoped lang="scss">
 // Most datatable css located in app/assets/stylesheets/common.scss file
   #tasks-index {
     background-color: #ffffff;
@@ -747,5 +750,9 @@
   position: absolute;
   top: 2px;
   right: 1px;
+}
+.filters-wrapper {
+  float: right;
+  margin-top: -85px;
 }
 </style>

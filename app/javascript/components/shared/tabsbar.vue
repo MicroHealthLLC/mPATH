@@ -20,21 +20,21 @@
       </div>
     </router-link>
     <router-link
-      v-if="permitted('gantt_view')"
-      :to="`/programs/${this.$route.params.programId}/gantt_chart`"
-      tag="div"
-    >
-      <div class="badge" :class="{ active: isGanttView }" data-cy="gantt_tab">
-        Gantt
-      </div>
-    </router-link>
-    <router-link
       v-if="permitted('calendar_view')"
       :to="routeCalendarSwap"
       tag="div"
     >
       <div class="badge" :class="{ active: isCalendarView }" data-cy="calendar_tab">
         Calendar
+      </div>
+    </router-link>
+    <router-link
+      v-if="permitted('gantt_view')"
+      :to="`/programs/${this.$route.params.programId}/gantt_chart`"
+      tag="div"
+    >
+      <div class="badge" :class="{ active: isGanttView }" data-cy="gantt_tab">
+        Gantt
       </div>
     </router-link>
     <div v-show="false" v-if="permitted('issues')" class="badge disabled">

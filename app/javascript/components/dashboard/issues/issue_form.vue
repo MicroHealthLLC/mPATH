@@ -547,13 +547,13 @@ Tab 1 Row Begins here -->
                         />
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView"
                         class="col-1 pl-0 pr-0"
                       >
                         <span class="font-sm dueDate">Due Date:</span>
                       </div>
                       <div
-                        v-if="isSheetsView || isKanbanView"
+                        v-if="isSheetsView || isKanbanView || isCalendarView"
                         class="col-3 pl-0"
                         style="margin-left:-25px"
                       >
@@ -982,6 +982,7 @@ Tab 1 Row Begins here -->
                     icon="el-icon-delete"
                     title="Remove Related Issue"
                     @click.prevent="removeRelatedIssue(issue)"
+                    :disabled="!_isallowed('delete')"
                   ></el-button>
                 </li>
               </ul>
@@ -1026,6 +1027,7 @@ Tab 1 Row Begins here -->
                     icon="el-icon-delete"
                     title="Remove Related Task"
                     @click.prevent="removeRelatedTask(task)"
+                    :disabled="!_isallowed('delete')"
                   ></el-button>
                 </li>
               </ul>
@@ -1070,6 +1072,7 @@ Tab 1 Row Begins here -->
                     icon="el-icon-delete"
                     title="Remove Related Risk"
                     @click.prevent="removeRelatedRisk(risk)"
+                    :disabled="!_isallowed('delete')"
                   ></el-button>
                 </li>
               </ul>
@@ -1643,6 +1646,9 @@ export default {
                   ? note.user_id
                   : this.$currentUser.id
                 : note[key];
+            if ( key == 'body') {
+                  value = value.replace(/[^ -~]/g,'')
+                }  
             formData.append(`issue[notes_attributes][${i}][${key}]`, value);
           }
         }
@@ -1915,6 +1921,9 @@ export default {
     isKanbanView() {
       return this.$route.name === "KanbanIssueForm";
     },
+    isCalendarView() {
+      return this.$route.name === "CalendarIssueForm";
+    },
     filteredChecks() {
       return _.filter(this.DV_issue.checklists, (c) => !c._destroy);
     },
@@ -1959,7 +1968,7 @@ export default {
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("kanban")) {
+      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/issues`;
       } else {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
@@ -1968,8 +1977,10 @@ export default {
   },
   watch: {
     issue: {
-      handler: function(value) {
-        this.loadIssue(this.issue);
+      handler() {
+        if (this.issue) {
+          this.loadIssue(this.issue);
+        }
       },
     },
     "DV_issue.startDate"(value) {
