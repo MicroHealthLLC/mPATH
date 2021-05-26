@@ -1250,7 +1250,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$topNavigationPermissions['gantt_view'].read || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1277,7 +1277,8 @@ export default new Vuex.Store({
             }
           )
 
-          if (Vue.prototype.$permissions.tasks.read)
+          // if (Vue.prototype.$permissions.tasks.read)
+          if (f_read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')
@@ -1510,8 +1511,15 @@ export default new Vuex.Store({
       return {risks,  facilities}
     },
     viewPermit: () => (view, req) => {
-      if (Vue.prototype.$currentUser.role === "superadmin") return true;
-      return Vue.prototype.$permissions[view][req]
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[req]
+      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+
+      //if (Vue.prototype.$currentUser.role === "superadmin") return true;
+      //return Vue.prototype.$permissions[view][req]
     },
     riskApproaches: () => {
       return   ['avoid', 'mitigate', 'transfer', 'accept']
