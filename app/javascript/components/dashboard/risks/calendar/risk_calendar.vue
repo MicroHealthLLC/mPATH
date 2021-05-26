@@ -3,7 +3,8 @@
 <div>
    <span class="filters-wrapper w-75">
       <div class="d-flex align-item-center justify-content-between mb-2 w-100">
-        <div class="input-group task-search-bar w-100">
+        <div class="task-search-bar w-100">
+            <label class="font-sm mb-0"><span style="visibility:hidden">L</span></label>
            <el-input
             type="search"          
             placeholder="Search Risks"
@@ -16,7 +17,7 @@
         </el-input>
         </div>
         <div class="mx-1 w-100">
-         <!-- <label class="font-sm my-0">Category</label> -->
+         <label class="font-sm my-0">Category</label>
           <el-select
            v-model="C_taskTypeFilter"
           :key="componentKey"   
@@ -38,7 +39,7 @@
         </div>
 
         <div class="w-100">
-          <!-- <label class="font-sm my-0">Flags</label> -->
+          <label class="font-sm my-0">Flags</label>
            <el-select
            v-model="C_calendarRiskFilter"
           :key="componentKey"   
@@ -617,7 +618,7 @@
  }
   .filters-wrapper {
   float: right;
-  margin-top: -55px;
+  margin-top: -83.5px;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;

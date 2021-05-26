@@ -4,7 +4,7 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-0">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <div class="row row-1 mt-2">
               <div class="col-md-5 col-lg-5 col-sm-12">
                 <div class="box-card my-el-card p-3" style="position:relative">

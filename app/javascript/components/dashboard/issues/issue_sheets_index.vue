@@ -1,21 +1,20 @@
 <template>
-  <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
+  <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-100">
-        <div class="input-group mb-2 mr-1 task-search-bar w-100">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-          </div>
-          <input type="search"
-            class="form-control form-control-sm"
-            placeholder="Search by Issue Name, Type, Severity or Assigned User"
-            aria-label="Search"
-            aria-describedby="search-addon"
-            v-model="issuesQuery"
+      <div class="d-flex align-item-center w-75 float-right filters-wrapper">
+        <div class="ml-2 task-search-bar w-100">
+          <el-input
+            type="search"          
+            placeholder="Search by Issue, Category, or Assigned User"
+            aria-label="Search"            
+            aria-describedby="search-addon"    
+            v-model="issuesQuery"     
             data-cy="search_issues"
-            >
+        >
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
         </div>
-        <div class="mr-1 font-sm w-100">
+        <div class="mx-1 font-sm w-75">
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
@@ -33,10 +32,18 @@
           </el-option>
           </el-select>
          </div>
-        <div class="mr-1 w-100">
-          <el-select
+  <div class="w-75" style="position:relative">     
+  <el-collapse class="issuesFilter w-100"  style="position:absolute">
+  <el-collapse-item name="1">
+    <template slot="title" class="text-right">
+      <font-awesome-icon icon="sliders-h"  class="d-inline mr-2" />
+    MORE ISSUE FILTERS
+    </template>
+    <div class="mr-1 w-100 d-unset p-2">
+      <label class="mb-0">Flags</label>
+      <el-select
            v-model="C_sheetsIssueFilter"
-           class="w-100"
+           class="w-100 mb-1"
            track-by="name"
            value-key="id"
            multiple
@@ -50,47 +57,49 @@
             >
           </el-option>
           </el-select>
-        </div>
-       </div>
-      <div class="d-flex align-item-center justify-content-start filter-second-row">
-       <div class="simple-select mr-1 d-inline w-100">
-         <el-select
-           v-model="C_issueTypeFilter"
-           class="w-100"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Issue Types"
-           >
-          <el-option
-            v-for="item in issueTypes"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-        </div>
-        <div class="mr-1 d-flex w-100">
-          <el-select
-           v-model="C_issueSeverityFilter"
-           class="w-100"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Issue Severities"
-           >
-          <el-option
-            v-for="item in issueSeverities"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-        </div>
+           <label class="mb-0">Issue Types</label>
+      <el-select
+        v-model="C_issueTypeFilter"
+        class="w-100 mr-1 mb-1"
+        track-by="name"
+        value-key="id"
+        multiple
+        placeholder="Filter by Issue Types"
+      >
+      <el-option
+        v-for="item in issueTypes"
+        :value="item"
+        :key="item.id"
+        :label="item.name"
+        >
+      </el-option>
+      </el-select>
+       <label class="mb-0">Issue Severity</label>
+      <el-select
+        v-model="C_issueSeverityFilter"
+        class="w-100"
+        track-by="name"
+        value-key="id"
+        multiple
+        placeholder="Filter by Issue Severities"
+      >
+      <el-option
+        v-for="item in issueSeverities"
+        :value="item"
+        :key="item.id"
+        :label="item.name"
+        >
+      </el-option>
+      </el-select>
     </div>
-     <div class="wrapper mt-2 p-3">
+        </el-collapse-item>
+      </el-collapse>  
+            
+    </div>
+      
+       </div>
+  
+     <div class="wrapper mt-4 p-3">
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="addNewIssue" data-cy="add_issue">
@@ -791,7 +800,7 @@
     float: right !important;
     right: 0;
   }
-  .addIssueBtn, .exportBtns, .showAll {
+  .addIssueBtn, .exportBtns, .showAll  {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .exportBtns, .showAll  {
@@ -827,4 +836,13 @@
     top: 2px;
     right: 1px;
   }
+  .filters-wrapper {
+    float: right;
+    margin-top: -60px;
+  }
+/deep/.el-collapse   {
+  border-bottom: none !important;
+  }
+  
+  
 </style>

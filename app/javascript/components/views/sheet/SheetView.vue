@@ -25,14 +25,14 @@
               $route.name !== 'SheetRiskForm' &&
               $route.name !== 'SheetNoteForm'
           "
-          class="d-flex align-items-center my-2"
+          class="d-flex align-items-center my-1 ml-1"
         >
           <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
           <h5 class="f-head mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
-        <div class="pr-3">
+        <div class="pr-3 ml-1">
           <ProjectTabs
             v-if="
               $route.name !== 'SheetRollup' &&
