@@ -151,8 +151,7 @@
           color="primary"
           :events="events"
           :event-color="getEventColor"
-          :type="C_calendarView.id"      
-          :issue="events"  
+          :type="C_calendarView.id"        
           :key="componentKey"                    
           @click:event="editIssue"
           @click:more="viewDay"
@@ -270,6 +269,12 @@
         checkbox: false,     
         issueData: [],
         issueStartDates: [],
+          colors: {
+          onScheduleColor: '#5cb85c',
+          defaultColor: 'rgba(214, 219, 223, .15)',
+          warningColor: '#f0ad4e',
+          pastDueColor: '#d9534f',
+        },        
         issueEndDates: [],   
         selectedEventId: {},
         calendarIssue: {},
@@ -306,20 +311,20 @@
         'updateWatchedIssues'
       ]), 
       //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
-      },
+      // _isallowed(salut) {
+      //   var programId = this.$route.params.programId;
+      //   var projectId = this.$route.params.projectId
+      //   let fPrivilege = this.$projectPrivileges[programId][projectId]
+      //   let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      //   let s = permissionHash[salut]
+      //   return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      // },
       reRenderCalendar() {
         this.componentKey += 1;
       },
       viewDay ({ date }) {
         this.focus = date
-        this.type = 'day'
+        this.setCalendarViewFilter({id: 'day', name: 'Day', value: 'day'})
       },
       getEventColor (event) {
         return event.color
@@ -432,7 +437,8 @@
             category: this.categories[i],  
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
-            progess: this.percentage[i]      
+            progess: this.percentage[i],
+            color: this.colors.defaultColor,        
             // timed: !allDay,            
           })
         }       
@@ -634,6 +640,9 @@
 /deep/.v-event {
   color: #383838 !important;
 }
+/deep/.v-event:hover {
+  background-color: rgba(214, 219, 223, .45) !important;
+}
 /deep/.v-event-start {
   border-left-color: #41b883 !important;
   border-left-width: thick;
@@ -658,9 +667,6 @@
 .filters-wrapper {
   float: right;
   margin-top: -83.5px;
-}
-/deep/.v-event {
-  visibility: hidden;
 }
 /deep/.v-event.v-event-start, /deep/.v-event.v-event-end {
   visibility: visible !important;

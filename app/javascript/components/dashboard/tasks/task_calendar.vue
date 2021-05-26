@@ -397,9 +397,6 @@
            this.reRenderCalendar()
         }
       },
-      edi(){
-        console.log("It Wowe")
-      },
       showSummary ({ nativeEvent, event }) {   
         const open = () => {
           this.selectedEvent = event
@@ -615,7 +612,9 @@
 }
 /deep/.v-event {
   color: #383838 !important;
-
+}
+/deep/.v-event:hover {
+  background-color: rgba(214, 219, 223, .45) !important;
 }
 /deep/.v-event-start {
   border-left-color: #41b883 !important;
