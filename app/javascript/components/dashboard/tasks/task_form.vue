@@ -136,6 +136,24 @@
              
               <small style="vertical-align:text-top"> Important</small>
             </span>
+
+            <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOngoing"
+              data-cy="task_ongoing"
+            >
+              <span v-show="DV_task.ongoing">
+               <i class="fas fa-star text-warning"></i>
+              </span>
+              <span v-show="!DV_task.ongoing">
+               <i class="far fa-star"></i>
+              </span>
+             
+              <small style="vertical-align:text-top"> On Going</small>
+            </span>
+
+
             </div>
 
             <el-input
@@ -1236,6 +1254,7 @@ export default {
         taskTypeId: "",
         taskStageId: "",
         important: false,
+        ongoing: false,
         responsibleUserIds: [],
         accountableUserIds: [],
         consultedUserIds: [],
@@ -1431,6 +1450,9 @@ export default {
     toggleImportant() {
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
+    toggleOngoing() {
+      this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
+    },
     cancelSave() {
       this.$emit("on-close-form");
       this.setTaskForManager({ key: "task", value: null });
@@ -1454,6 +1476,7 @@ export default {
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
+        formData.append("task[ongoing]", this.DV_task.ongoing);
         formData.append(
           "task[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
