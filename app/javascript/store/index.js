@@ -33,6 +33,7 @@ export default new Vuex.Store({
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
     contentLoaded: false,
     toggleRACI: true,
+    showAllEventsToggle: false,
     mapLoading: true,
     sideLoading: true,
     projects: new Array,
@@ -168,6 +169,7 @@ export default new Vuex.Store({
     },
     setContentLoaded: (state, loading) => state.contentLoaded = loading,
     setToggleRACI: (state, raci) => state.toggleRACI = raci,
+    setShowAllEventsToggle: (state, showAll) => state.showAllEventsToggle = showAll,
     setMapLoading: (state, loading) => state.mapLoading = loading,
     setSideLoading: (state, loading) => state.sideLoading = loading,
     setProjects: (state, projects) => state.projects = projects,
@@ -740,6 +742,7 @@ export default new Vuex.Store({
     },
     contentLoaded: state => state.contentLoaded,
     getToggleRACI: state => state.toggleRACI,
+    getShowAllEventsToggle: state => state.showAllEventsToggle,
 
     mapLoading: state => state.mapLoading,
     sideLoading: state => state.sideLoading,

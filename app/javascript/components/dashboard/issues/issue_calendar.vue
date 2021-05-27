@@ -110,10 +110,10 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-checkbox
-            v-model="checkbox"
+            v-model="C_showAllEventsToggle"
             class="mr-5 mt-6 mb-0"
             :key="componentKey"         
-            @click="showAllEvents"
+            @click.prevent="showAllEvents"
             :label="`Show All`"
           ></v-checkbox>
             <v-btn        
@@ -266,7 +266,6 @@
         issueNames: [], 
         componentKey: 0,  
         issueIds:[],  
-        checkbox: false,     
         issueData: [],
         issueStartDates: [],
           colors: {
@@ -294,6 +293,7 @@
         'setAdvancedFilter',
         'setCalendarViewFilter',
         'setTaskIssueProgressStatusFilter',
+        'setShowAllEventsToggle',
         'setIssuesPerPageFilter',
         'setTaskIssueOverdueFilter',
         'setIssueTypeFilter',
@@ -355,11 +355,13 @@
       e.preventDefault();
       this.$refs.menu.open(e);
      },
-     showAllEvents(){
-      this.checkbox == !this.checkbox
-       if (this.checkbox == true) {
+    showAllEvents(){
+        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
+        console.log(this.getShowAllEventsToggle)
+        if (this.getShowAllEventsToggle == true) {
           this.reRenderCalendar()
-        } else if (this.checkbox == false){
+        } else if (this.getShowAllEventsToggle == false){
+           this.events = [];
            this.reRenderCalendar()
         }
       },
@@ -443,7 +445,7 @@
           })
         }       
         // This is the main Events array pushed into Calendar
-        if (this.checkbox == false && !(this.issuesQuery.length > 0) ) {
+        if (this.getShowAllEventsToggle == false && !(this.issuesQuery.length > 0) ) {
            this.events = []
          } else 
           this.events = events
@@ -460,6 +462,7 @@
         'getCalendarViewFilterOptions',
         'getCalendarViewFilter',
         'calendarViewFilter',
+        'getShowAllEventsToggle',
         'getAdvancedFilterOptions',
         'getIssuesPerPageFilterOptions',
         'getIssuesPerPageFilter',
@@ -569,6 +572,15 @@
           this.setTaskTypeFilter(value)
         }
       },
+    C_showAllEventsToggle: {                  
+        get() {
+         return this.getShowAllEventsToggle                 
+        },
+        set(value) {
+          this.setShowAllEventsToggle(value) ||  this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
+        }
+        
+      },
      C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
@@ -593,21 +605,10 @@
     issuesQuery: {
       handler() {
        if(this.issuesQuery.length > 0) {
-         this.checkbox = false;
-         this.reRenderCalendar()
+          this.reRenderCalendar()
        } else if (!(this.issuesQuery.length > 0) && this.checkbox == false) {
          this.events = [];
          this.reRenderCalendar()
-       }
-      },
-    },
-    checkbox: {
-      handler() {
-       if(this.checkbox == false) {
-         this.reRenderCalendar()
-         this.events = [];
-       } else if (this.checkbox == true) {
-         this.issuesQuery = "";
        }
       },
     },
