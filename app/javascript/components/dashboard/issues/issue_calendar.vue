@@ -203,6 +203,7 @@
               <v-list-item-title>
               <span class="d-block"><small><b>Flags</b></small></span>  
                   <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                   <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                   <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
                   <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
@@ -425,6 +426,7 @@
        this.categories = this.filteredCalendar.map(issue => issue.taskTypeName) 
        this.onWatch = this.filteredCalendar.map(issue => issue.watched)   
        this.overdue = this.filteredCalendar.map(issue => issue.isOverdue) 
+       this.star = this.filteredCalendar.map(issue => issue.important)
        this.percentage = this.filteredCalendar.map(issue => issue.progress)            
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
@@ -442,7 +444,8 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,        
+            color: this.colors.defaultColor,  
+            hasStar: this.star[i]          
             // timed: !allDay,            
           })
         }       

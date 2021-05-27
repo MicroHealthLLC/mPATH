@@ -216,6 +216,7 @@
             <v-list-item-title>
             <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
                 <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                 <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
                 <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
@@ -226,14 +227,14 @@
           </v-list>
           <v-card-actions>      
           
-          <v-btn
+          <!-- <v-btn
             small
             class="mh-green text-light"
             @click.prevent="showM"
           >
              <font-awesome-icon icon="clipboard-list" class="mr-1" />
             See More
-          </v-btn>
+          </v-btn> -->
            <v-btn
             small
             @click.prevent="detailsBtn"
@@ -440,6 +441,7 @@
         this.categories = this.filteredCalendar.map(task => task.taskType) 
         this.onWatch = this.filteredCalendar.map(task => task.watched)   
         this.overdue = this.filteredCalendar.map(task => task.isOverdue) 
+        this.star = this.filteredCalendar.map(task => task.important)
         this.percentage = this.filteredCalendar.map(task => task.progress)
            
         const events = []
@@ -458,7 +460,8 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,             
+            color: this.colors.defaultColor,  
+            hasStar: this.star[i]           
           })
         }
           // This is the main Events array pushed into Calendar
@@ -579,9 +582,8 @@
       set(value) {
         this.setLastFocusFilter(value) 
        }
-      },     
-
-   C_calendarView: {
+      },   
+     C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
