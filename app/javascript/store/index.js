@@ -464,6 +464,8 @@ export default new Vuex.Store({
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'important', name: 'Marked as Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'notImportant', name: 'Marked as Not Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
+        {id: 'onGoing', name: 'Marked as On Going', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
+        {id: 'notOnGoing', name: 'Marked as Not On Going', value: 'notOnGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
 
         // Priority Level is specific to Risk
         // {id: 'low', name: 'Low', value: 'low', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
@@ -564,6 +566,7 @@ export default new Vuex.Store({
         ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
+        ['onGoingFilter', 'On Going'],
         ['progressStatusFilter', 'Action Status']
 
       ]
@@ -579,7 +582,7 @@ export default new Vuex.Store({
         }
         return user_names
       // Advanced filters
-      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter'].includes(_filterValue) ){
+      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter'].includes(_filterValue) ){
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
@@ -829,6 +832,9 @@ export default new Vuex.Store({
       let taksIssueNotImportant = _.map(aFilter, 'id').includes("notImportant")
       let taskIssueImporant =  _.map(aFilter, 'id').includes("important")
 
+      let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
+      let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
+
       let taskIssueMyAction = _.map(aFilter, 'id').includes("myAction")
       let taksIssueNotMyAction = _.map(aFilter, 'id').includes("notMyAction")
 
@@ -851,6 +857,7 @@ export default new Vuex.Store({
         (taskIssueMyAction == true && taksIssueNotMyAction == true) ||
         (taskIssueOnWatch == true && taksIssueNotOnWatch == true) ||
         (taskIssueImporant == true && taksIssueNotImportant == true) ||
+        (taskIssueOnGoing == true && taksIssueNotOnGoing == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true)
         )  {
         valid = true
@@ -921,6 +928,22 @@ export default new Vuex.Store({
       if(taskIssueImporant == false && taksIssueNotImportant == true){
         valid = valid && importants.includes(false)
       }
+
+      // As per issue https://github.com/MicroHealthLLC/mPATH/issues/2649
+      // ongoing flat is just for Task and Risk so, we will filter it
+      // on Task or Risk resources
+      if(page_name.toLowerCase().includes("task") || page_name.toLowerCase().includes("risk")){
+        console.log("inside ongoing filter")
+        var onGoings = _.uniq(_.map(resources, 'ongoing'))
+        if(taskIssueOnGoing == true && taksIssueNotOnGoing == false){
+          valid = valid && onGoings.includes(true)
+        }
+
+        if(taskIssueOnGoing == false && taksIssueNotOnGoing == true){
+          valid = valid && onGoings.includes(false)
+        }
+      }
+
 
       // if(riskPriorityLevel == true){
       //   var pLevels = _.uniq(_.compact( _.map(resources, 'priorityLevelName') ) )
