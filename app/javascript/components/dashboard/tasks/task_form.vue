@@ -104,9 +104,10 @@
             <label class="font-md"
               >Task Name <span style="color: #dc3545">*</span></label
             >
+            <div class="toggleWrapper float-right">
             <span
               v-if="_isallowed('write')"
-              class="watch_action clickable float-right"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="task_on_watch"
             >
@@ -122,21 +123,20 @@
 
             <span
               v-if="_isallowed('write')"
-              class="watch_action clickable float-right"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
             >
-              <span v-show="DV_task.important" class="check_box mr-1">
-                <i class="far fa-check-square"></i>
+              <span v-show="DV_task.important">
+               <i class="fas fa-star text-warning"></i>
               </span>
-              <span v-show="!DV_task.important" class="empty_box mr-1">
-                <i class="far fa-square"></i>
+              <span v-show="!DV_task.important">
+               <i class="far fa-star"></i>
               </span>
-              <span>
-                <i class="fas fa-eye"></i>
-              </span>
+             
               <small style="vertical-align:text-top"> Important</small>
             </span>
+            </div>
 
             <el-input
               name="Task Name"
@@ -1408,7 +1408,7 @@ export default {
         return
       } 
       if (this.DV_task.watched) {
-         thiss.$message({
+         this.$message({
             message: `${this.DV_task.text} has been removed from On Watch status.`,
             type: "warning",
             showClose: true,
