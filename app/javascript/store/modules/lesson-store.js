@@ -9,28 +9,6 @@ const lessonModule = {
   }),
 
   actions: {
-    fetchProjectLessons({ commit }, { programId, projectId }) {
-      // Send GET request for all lessons contained within a project
-      axios({
-        method: "GET",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
-        headers: {
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .attributes["content"].value,
-        },
-      })
-        .then((res) => {
-          console.log(res);
-          // Mutate state with response from back end
-          commit("SET_PROJECT_LESSONS", res.data.lessons);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED");
-        });
-    },
     fetchProgramLessons({ commit }, { programId }) {
       // Send GET request for all lessons contained within a program
       axios({
@@ -52,10 +30,28 @@ const lessonModule = {
           commit("TOGGLE_LESSONS_LOADED");
         });
     },
+    fetchProjectLessons({ commit }, { programId, projectId }) {
+      // Send GET request for all lessons contained within a project
+      axios({
+        method: "GET",
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+            .attributes["content"].value,
+        },
+      })
+        .then((res) => {
+          // Mutate state with response from back end
+          commit("SET_PROJECT_LESSONS", res.data.lessons);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED");
+        });
+    },
     fetchLesson({ commit }, { id, programId, projectId }) {
-      console.log(id);
-      console.log(programId);
-      console.log(projectId);
       // Retrieve lesson by id
       axios({
         method: "GET",
@@ -66,8 +62,7 @@ const lessonModule = {
         },
       })
         .then((res) => {
-          console.log(res);
-          // Mutate state with response from back end
+          commit("SET_LESSON", res.data.lesson);
         })
         .catch((err) => {
           console.log(err);
@@ -77,9 +72,6 @@ const lessonModule = {
         });
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
-      console.log(lesson);
-      console.log(programId);
-      console.log(projectId);
       // Add new lesson
       axios({
         method: "POST",
@@ -98,11 +90,11 @@ const lessonModule = {
         })
         .finally(() => {});
     },
-    updateLesson({ commit }, { lesson, programId, projectId }) {
+    updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       // Update a lesson with changes
       axios({
-        method: "PUT",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
+        method: "PATCH",
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lessonId}`,
         data: lesson,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
@@ -110,25 +102,25 @@ const lessonModule = {
         },
       })
         .then((res) => {
-          // TODO: Write mutation code
+          commit("SET_LESSON", res.data.lesson);
         })
         .catch((err) => {
           console.log(err);
         })
         .finally(() => {});
     },
-    deleteLesson({ commit }, { lesson, programId, projectId }) {
+    deleteLesson({ commit }, { id, programId, projectId }) {
       // Delete a single lesson
       axios({
         method: "DELETE",
-        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lesson.id}`,
+        url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${id}.json`,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
         },
       })
         .then((res) => {
-          // TODO: Write mutation code
+          commit("DELETE_LESSON", id);
         })
         .catch((err) => {
           console.log(err);
@@ -137,8 +129,15 @@ const lessonModule = {
     },
   },
   mutations: {
-    SET_PROJECT_LESSONS: (state, lessons) => (state.project_lessons = lessons),
     SET_PROGRAM_LESSONS: (state, lessons) => (state.project_lessons = lessons),
+    SET_PROJECT_LESSONS: (state, lessons) => (state.project_lessons = lessons),
+    SET_LESSON: (state, lesson) => (state.lesson = lesson),
+    DELETE_LESSON: (state, id) => {
+      // Find index of lesson to delete
+      let index = state.project_lessons.findIndex((lesson) => lesson.id == id);
+      // Remove lesson from array
+      state.project_lessons.splice(index, 1);
+    },
     TOGGLE_LESSONS_LOADED: (state) =>
       (state.lessons_loaded = !state.lessons_loaded),
   },

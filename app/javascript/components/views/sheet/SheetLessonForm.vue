@@ -217,7 +217,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapMutations, mapGetters } from "vuex";
 import FormTabs from "./../../shared/FormTabs";
 
 export default {
@@ -280,12 +280,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addLesson", "fetchLesson"]),
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
+    ...mapMutations(["SET_LESSON"]),
     saveLesson() {
-      console.log("SAVE");
-
       this.$validator.validate().then((success) => {
-        console.log(success);
         if (!success) {
           return;
         }
@@ -298,9 +296,12 @@ export default {
         formData.append("lesson[program_id]", this.$route.params.programId);
         formData.append("lesson[project_id]", this.$route.params.projectId);
 
-        console.log(formData);
-
-        this.addLesson({ lesson: formData, ...this.$route.params });
+        if (this.lesson.id) {
+          formData.append("lesson[id]", this.lesson.id);
+          this.updateLesson({ lesson: formData, ...this.$route.params });
+        } else {
+          this.addLesson({ lesson: formData, ...this.$route.params });
+        }
       });
     },
     close() {
@@ -337,10 +338,16 @@ export default {
     },
   },
   mounted() {
-    console.log({id: this.$route.params.lessonId, ...this.$route.params})
-    if (this.$route.params.lessonId) {
-      this.fetchLesson({id: this.$route.params.lessonId, ...this.$route.params});
+    if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
+      this.fetchLesson({
+        id: this.$route.params.lessonId,
+        ...this.$route.params,
+      });
     }
+  },
+  beforeDestroy() {
+    // Clear current lesson in store
+    this.SET_LESSON({});
   },
 };
 </script>

@@ -23,6 +23,8 @@
           v-for="lesson in projectLessons"
           :key="lesson.id"
           @click="openLesson(lesson.id)"
+          @mouseup.right="openContextMenu($event, lesson)"
+          @contextmenu.prevent=""
         >
           <td>{{ lesson.title }}</td>
           <td>{{ lesson.date }}</td>
@@ -32,62 +34,30 @@
         </tr>
       </table>
     </div>
+    <!-- The context-menu appears only if table row is right-clicked -->
+    <LessonContextMenu
+      :lesson="clickedLesson"
+      :display="showContextMenu"
+      ref="menu"
+    >
+    </LessonContextMenu>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import LessonContextMenu from "./../../shared/LessonContextMenu";
 
 export default {
+  components: {
+    LessonContextMenu,
+  },
   data() {
     return {
-      lessons: [
-        {
-          id: 1,
-          title: "Z Lesson 1",
-          description:
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ipsa.",
-          date: "5/12/2021",
-          stage: "Stage 1",
-          assign_users: [],
-          successes: [],
-          failures: [],
-          best_practices: [],
-          files: [],
-          links: [],
-          update: [],
-        },
-        {
-          id: 2,
-          title: "Ultra Lesson 2",
-          description: "Amet consectetur, adipisicing elit. Quae, ipsa.",
-          date: "5/5/2021",
-          stage: "Stage 2",
-          assign_users: [],
-          successes: [],
-          failures: [],
-          best_practices: [],
-          files: [],
-          links: [],
-          update: [],
-        },
-        {
-          id: 3,
-          title: "Super Lesson 3",
-          description: "Dues adipisicing elit. Quae, ipsa.",
-          date: "11/20/2026",
-          stage: "Stage 2",
-          assign_users: [],
-          successes: [],
-          failures: [],
-          best_practices: [],
-          files: [],
-          links: [],
-          update: [],
-        },
-      ],
       activeSortValue: "",
       sortAsc: false,
+      showContextMenu: false,
+      clickedLesson: {},
     };
   },
   methods: {
@@ -98,8 +68,6 @@ export default {
       );
     },
     openLesson(id) {
-      console.log("OPENING LESSON");
-      console.log(id);
       this.$router.push({
         name: "SheetLessonForm",
         params: {
@@ -174,16 +142,17 @@ export default {
       // Store active sort value
       this.activeSortValue = "date";
     },
+    openContextMenu(e, lesson) {
+      this.clickedLesson = lesson;
+      e.preventDefault();
+      this.$refs.menu.open(e);
+    },
   },
   computed: {
     ...mapGetters(["lessonsLoaded", "projectLessons"]),
   },
   mounted() {
-    console.log("Lessons Loaded: " + this.lessonsLoaded);
-
     this.fetchProjectLessons(this.$route.params);
-
-    console.log("Lessons Loaded: " + this.lessonsLoaded);
   },
 };
 </script>
