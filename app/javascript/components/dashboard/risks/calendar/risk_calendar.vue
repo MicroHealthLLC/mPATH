@@ -210,6 +210,7 @@
           <v-list-item-title>
            <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
               <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                 <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
               <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Risk`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
                 <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
@@ -425,6 +426,7 @@
       this.onWatch = this.filteredCalendar.map(risk => risk.watched)   
       this.overdue = this.filteredCalendar.map(risk => risk.isOverdue) 
       this.percentage = this.filteredCalendar.map(risk => risk.progress)  
+      this.star = this.filteredCalendar.map(risk => risk.important)
       this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)           
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
@@ -443,7 +445,8 @@
           ra: this.riskApproach[i],    
           pastDue: this.overdue[i], 
           progess: this.percentage[i],
-          color: this.colors.defaultColor,        
+          color: this.colors.defaultColor,   
+          hasStar: this.star[i]         
         })
       }
       // This is the main Events array pushed into Calendar
