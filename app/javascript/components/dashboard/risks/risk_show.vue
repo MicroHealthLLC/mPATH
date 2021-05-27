@@ -13,13 +13,13 @@
           <div class="col-md-9 font-lg d-flex mb-1 kanban-text">                       
                <b>{{DV_risk.text}}</b>                      
           </div>
-          <div class="col-md-3">
-             <div class="t_actions float-left">
-                <span v-if="(DV_risk.watched) == true">
-                  <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
-                </span>
-              </div>
+          <div class="col-md-3">            
               <div class="t_actions float-right">
+                <span v-if="(DV_risk.watched) == true">
+                  <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>
+                </span>
+                 <span v-show="DV_risk.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+
                 <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
               </div>
            </div>

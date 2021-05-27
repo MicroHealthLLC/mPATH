@@ -226,14 +226,14 @@
           </v-list>
           <v-card-actions>      
           
-          <v-btn
+          <!-- <v-btn
             small
             class="mh-green text-light"
             @click.prevent="showM"
           >
              <font-awesome-icon icon="clipboard-list" class="mr-1" />
             See More
-          </v-btn>
+          </v-btn> -->
            <v-btn
             small
             @click.prevent="detailsBtn"
@@ -579,9 +579,8 @@
       set(value) {
         this.setLastFocusFilter(value) 
        }
-      },     
-
-   C_calendarView: {
+      },   
+     C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
