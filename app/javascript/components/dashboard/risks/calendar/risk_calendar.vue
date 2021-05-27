@@ -147,7 +147,7 @@
       <v-sheet height="600" >     
          <v-calendar               
           ref="calendar"
-          v-model="focus"
+          v-model="C_lastFocus"
           color="primary"
           :events="events"
           :key="componentKey"   
@@ -269,8 +269,8 @@
      },
     data() {
       return {         
-        focus: '',        
-        type: this.C_calendarView,   
+        type: this.C_calendarView,  
+        focus: this.C_lastFocus,    
         risksQuery: '',    
         riskNames: [],  
         componentKey: 0, 
@@ -306,6 +306,7 @@
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setShowAllEventsToggle',
+        'setLastFocusFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -329,7 +330,8 @@
         return event.color
       },
       setToday () {
-        this.focus = ''
+        this.todayView = true 
+        this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -467,6 +469,7 @@
         'getRiskPriorityLevelFilterOptions',
         'getRisksPerPageFilterOptions',
         'getRisksPerPageFilter',
+        'getLastFocusFilter',
         'getAdvancedFilterOptions',
         'filterDataForAdvancedFilter',
         'getTaskIssueUserFilter',
@@ -553,6 +556,15 @@
           this.setTaskTypeFilter(value)
         }
       },
+     C_lastFocus: {
+      get() {         
+        return this.getLastFocusFilter  || this.focus
+      
+      },
+      set(value) {
+        this.setLastFocusFilter(value) 
+       }
+      },   
     C_calendarView: {      
       get() {      
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
