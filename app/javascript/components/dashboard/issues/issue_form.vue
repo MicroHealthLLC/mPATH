@@ -103,9 +103,11 @@
             <label class="font-md"
               >Issue Name <span style="color: #dc3545">*</span></label
             >
+
+          <div class="toggleWrapper float-right">
             <span
               v-if="_isallowed('write')"
-              class="watch_action clickable float-right"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
             >
@@ -121,21 +123,19 @@
 
             <span
               v-if="_isallowed('write')"
-              class="watch_action clickable float-right"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
             >
-              <span v-show="DV_issue.important" class="check_box mr-1">
-                <i class="far fa-check-square"></i>
+               <span v-show="DV_issue.important">
+               <i class="fas fa-star text-warning"></i>
               </span>
-              <span v-show="!DV_issue.important" class="empty_box mr-1">
-                <i class="far fa-square"></i>
-              </span>
-              <span>
-                <i class="fas fa-eye"></i>
+              <span v-show="!DV_issue.important">
+               <i class="far fa-star"></i>
               </span>
               <small style="vertical-align:text-top"> Important</small>
             </span>
+          </div>
 
             <el-input
               name="Issue Name"
