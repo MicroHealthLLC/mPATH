@@ -67,6 +67,7 @@ class Risk < ApplicationRecord
       :text,
       :watched,
       :important,
+      :ongoing,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],

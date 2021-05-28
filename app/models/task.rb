@@ -50,6 +50,7 @@ class Task < ApplicationRecord
       :watched,    
       :kanban_order,
       :important,
+      :ongoing,
       task_files: [],
       user_ids: [],
       sub_task_ids: [],

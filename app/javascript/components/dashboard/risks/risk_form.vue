@@ -134,6 +134,22 @@
                 </span>
                   <small style="vertical-align:text-top"> Important</small>
                 </span>
+
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleOngoing"
+                  data-cy="issue_important"
+                >
+                <span v-show="DV_risk.ongoing">
+                <i class="fas fa-star text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.ongoing">
+                <i class="far fa-star"></i>
+                </span>
+                  <small style="vertical-align:text-top"> Ongoing</small>
+                </span>
+
               </div>
 
 
@@ -2171,6 +2187,9 @@ export default {
     toggleImportant() {
       this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
     },
+    toggleOngoing() {
+      this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
+    },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
@@ -2252,6 +2271,7 @@ export default {
         formData.append("risk[due_date]", this.DV_risk.dueDate);
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
         formData.append("risk[important]", this.DV_risk.important);
+        formData.append("risk[ongoing]", this.DV_risk.ongoing);
         formData.append(
           "risk[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
