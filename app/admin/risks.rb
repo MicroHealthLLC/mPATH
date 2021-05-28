@@ -218,7 +218,7 @@ ActiveAdmin.register Risk do
     end
 
     def scoped_collection
-      super.includes(:task_type, facility_project: [:project, :facility])
+      super.includes(:risk_stage, facility_project: [:project, :facility])
     end
   end
 
