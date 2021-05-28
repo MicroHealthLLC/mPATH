@@ -5,6 +5,7 @@ const lessonModule = {
     lesson: {}, // Current lesson loaded in form
     project_lessons: [],
     program_lessons: [],
+    lesson_stages: [],
     lessons_loaded: false,
   }),
 
@@ -138,6 +139,7 @@ const lessonModule = {
       // Remove lesson from array
       state.project_lessons.splice(index, 1);
     },
+    SET_LESSON_STAGES: (state, lessonStages) => state.lesson_stages = lessonStages,
     TOGGLE_LESSONS_LOADED: (state) =>
       (state.lessons_loaded = !state.lessons_loaded),
   },
@@ -145,6 +147,7 @@ const lessonModule = {
     lesson: (state) => state.lesson,
     projectLessons: (state) => state.project_lessons,
     programLessons: (state) => state.program_lessons,
+    lessonStages: (state) => state.lesson_stages,
     lessonsLoaded: (state) => state.lessons_loaded,
   },
 };

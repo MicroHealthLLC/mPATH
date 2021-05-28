@@ -1565,6 +1565,7 @@ export default new Vuex.Store({
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
             resolve()
           })
           .catch((err) => {
