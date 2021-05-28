@@ -111,14 +111,14 @@
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
             >
-              <span v-show="DV_issue.watched" class="check_box mx-1"
-                ><i class="far fa-check-square font-md"></i
+              <span v-show="DV_issue.watched" 
+                ><i class="fas fa-eye"></i
               ></span>
-              <span v-show="!DV_issue.watched" class="empty_box mr-1"
-                ><i class="far fa-square"></i
+              <span v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
               ></span>
-              <span><i class="fas fa-eye mr-1"></i></span
-              ><small style="vertical-align: text-top">On Watch</small>
+           
+              <small style="vertical-align:text-top"> On Watch</small>
             </span>
 
             <span

@@ -154,6 +154,27 @@
                 </span>
               </div>
             </div>
+             <div class="row mt-0">
+                  <div class="col-5 pr-0">
+                    <span>Ongoing</span>               
+                  </div>
+                    <div class="col-2 pl-0">                   
+                    <span class="badge badge-secondary badge-pill">{{
+                      taskVariation.ongoing.length
+                    }}</span>
+                  </div>
+                  <div class="col-5  pt-3">
+                    <span
+                        class="w-100 mt-1 progress progress-0 pg-content"
+                       
+                        >
+                        <div class="text-center pl-1" >
+                          <span v-tooltip="`Ongoing`" class="font-md" style="color:lightgray"> <i class="fas fa-retweet" style="color:lightgray" ></i></span>
+                        </div>
+                    </span>
+                  </div>
+                </div>
+
             <div v-if="taskStats.length > 0" data-cy="task_categories">
               <el-collapse>
                 <el-collapse-item title="Details" name="1">
@@ -398,6 +419,27 @@
                   </span>
                 </div>
               </div>
+                 <div class="row">
+                  <div class="col-5 pr-0">
+                    <span>Ongoing</span>               
+                  </div>
+                    <div class="col-2 pl-0">                   
+                    <span class="badge badge-secondary badge-pill">{{
+                      riskVariation.ongoing.length
+                    }}</span>
+                  </div>
+                  <div class="col-5 mt-1 py-2">
+                    <span
+                        class="w-100 mt-1 progress progress-0 pg-content"
+                       
+                        >
+                        <div class="text-center pl-1">
+                          <span v-tooltip="`Ongoing`" class="font-md"> <i class="fas fa-retweet" style="color:lightgray"></i></span>
+                        </div>
+                    </span>
+                  </div>
+                  </div>
+
             </div>
             <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
             <div v-if="filteredRisks.length">
@@ -693,6 +735,7 @@ export default {
         overdue.length,
         this.filteredTasks.length
       );
+      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
 
       return {
         completed: {
@@ -703,6 +746,7 @@ export default {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
         },
+        ongoing
       };
     },
     filteredIssues() {
@@ -877,6 +921,7 @@ export default {
         overdue.length,
         this.filteredRisks.length
       );
+      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
       return {
         completed: {
           count: completed.length,
@@ -886,6 +931,7 @@ export default {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
         },
+        ongoing
       };
     },
     currentRiskTypes() {

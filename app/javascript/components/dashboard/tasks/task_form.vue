@@ -111,14 +111,14 @@
               @click.prevent.stop="toggleWatched"
               data-cy="task_on_watch"
             >
-              <span v-show="DV_task.watched" class="check_box mr-1"
-                ><i class="far fa-check-square"></i
+              <span v-show="DV_task.watched" 
+                ><i class="fas fa-eye"></i
               ></span>
-              <span v-show="!DV_task.watched" class="empty_box mr-1"
-                ><i class="far fa-square"></i
+              <span v-show="!DV_task.watched" 
+                ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
               ></span>
-              <span><i class="fas fa-eye"></i></span
-              ><small style="vertical-align:text-top"> On Watch</small>
+           
+              <small style="vertical-align:text-top"> On Watch</small>
             </span>
 
             <span
@@ -131,7 +131,7 @@
                <i class="fas fa-star text-warning"></i>
               </span>
               <span v-show="!DV_task.important">
-               <i class="far fa-star"></i>
+               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>
              
               <small style="vertical-align:text-top"> Important</small>
@@ -144,10 +144,10 @@
               data-cy="task_ongoing"
             >
               <span v-show="DV_task.ongoing">
-               <i class="fas fa-star text-warning"></i>
+              <i class="fas fa-retweet text-success"></i>
               </span>
               <span v-show="!DV_task.ongoing">
-               <i class="far fa-star"></i>
+              <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
               </span>
              
               <small style="vertical-align:text-top"> On Going</small>
@@ -281,7 +281,7 @@
           <div class="form-row mx-4">
             <div class="form-group col-md-6 pl-0">
               <label class="font-md"
-                >Start Date <span style="color: #dc3545">*</span></label
+                >Date Identified <span style="color: #dc3545">*</span></label
               >
               <div :class="{ 'error': errors.has('Start Date') }">
                 <v2-date-picker
@@ -304,18 +304,19 @@
                 {{ errors.first("Start Date") }}
               </div>
             </div>
-            <div class="form-group col-md-6 pr-0">
-              <label class="font-md"
-                >Due Date <span style="color: #dc3545">*</span></label
+            <div class="form-group col-md-6 pr-0" :class="[DV_task.ongoing ? 'my-auto text-center pt-4' : '']">
+              <span v-if="!DV_task.ongoing ">           
+               <label class="font-md"
+                >Date Closed <span style="color: #dc3545">*</span></label
               >
-              <div :class="{ 'error': errors.has('Due Date') }">
+               <div :class="{ 'error': errors.has('Date Closed') }">
                 <v2-date-picker
                   v-validate="'required'"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
                   placeholder="DD MM YYYY"
-                  name="Due Date"
+                  name="Date Closed"
                   class="w-100 vue2-datepicker"
                   :disabled="
                     !_isallowed('write') ||
@@ -327,13 +328,19 @@
                 />
               </div>
               <div
-                v-show="errors.has('Due Date')"
+                v-show="errors.has('Date Closed')"
                 class="text-danger"
                 data-cy="task_due_date_error"
               >
-                {{ errors.first("Due Date") }}
+                {{ errors.first("Date Closed") }}
               </div>
+              
+              </span>
+            <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
+              THIS TASK IS ONGOING
+            </span>
             </div>
+               
           </div>
 
           <!-- closing div for tab1 -->
@@ -435,7 +442,7 @@
         <!-- CHECKLIST TAB #3-->
 
         <div v-show="currentTab == 'tab3'" class="paperLookTab tab3">
-          <div class="form-group pt-3 ml-4 mr-5">
+          <div v-show="!DV_task.ongoing" class="form-group pt-3 ml-4 mr-5">
             <label class="font-md mb-0">Progress (in %)</label>
             <span class="ml-3">
               <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -1190,7 +1197,7 @@ export default {
             "Category",
             "Stage",
             "Start Date",
-            "Due Date",
+            "Date Closed",
           ],
         },
         {
@@ -1855,8 +1862,8 @@ export default {
       return (
         this.DV_task &&
         this.exists(this.DV_task.text) &&
-        this.exists(this.DV_task.taskTypeId) &&
-        this.exists(this.DV_task.dueDate) &&
+        this.exists(this.DV_task.taskTypeId) && 
+        this.exists(this.DV_task.dueDate)  &&  
         this.exists(this.DV_task.startDate)
       );
     },

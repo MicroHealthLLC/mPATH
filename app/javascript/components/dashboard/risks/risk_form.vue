@@ -110,14 +110,14 @@
                   @click.prevent.stop="toggleWatched"
                   data-cy="risk_on_watch"
                 >
-                  <span v-show="DV_risk.watched" class="check_box mx-1"
-                    ><i class="far fa-check-square font-md"></i
-                  ></span>
-                  <span v-show="!DV_risk.watched" class="empty_box mr-1"
-                    ><i class="far fa-square"></i
-                  ></span>
-                  <span><i class="fas fa-eye mr-1"></i></span>
-                  <small style="vertical-align: text-top">On Watch</small>
+                  <span v-show="DV_risk.watched" 
+                ><i class="fas fa-eye"></i
+                 ></span>
+                 <span v-show="!DV_risk.watched" 
+                  ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
+                 ></span>
+           
+              <small style="vertical-align:text-top"> On Watch</small>
                 </span>
 
                 <span
@@ -135,21 +135,20 @@
                   <small style="vertical-align:text-top"> Important</small>
                 </span>
 
-                <span
+                 <span
                   v-if="_isallowed('write')"
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleOngoing"
-                  data-cy="issue_important"
-                >
-                <span v-show="DV_risk.ongoing">
-                <i class="fas fa-star text-warning"></i>
-                </span>
-                <span v-show="!DV_risk.ongoing">
-                <i class="far fa-star"></i>
-                </span>
-                  <small style="vertical-align:text-top"> Ongoing</small>
-                </span>
-
+                  data-cy="risk_ongoing"
+                   >
+                  <span v-show="DV_risk.ongoing">
+                  <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span v-show="!DV_risk.ongoing">
+                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>
+                      <small style="vertical-align:text-top"> Ongoing</small>
+                    </span>
               </div>
 
 
@@ -296,7 +295,7 @@
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
                   <label class="font-sm"
-                    >Identified Date
+                    >Date Identified
                     <span style="color: #dc3545">*</span></label
                   >
                   <v2-date-picker
@@ -305,18 +304,18 @@
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
                     placeholder="DD MM YYYY"
-                    name="Identified Date"
+                    name="Date Identified"
                     class="w-100 vue2-datepicker"
-                    :class="{ 'error': errors.has('Identified Date') }"
+                    :class="{ 'error': errors.has('Date Identified') }"
                     :disabled="!_isallowed('write')"
                     data-cy="risk_start_date"
                   />
                   <div
-                    v-show="errors.has('Identified Date')"
+                    v-show="errors.has('Date Identified')"
                     class="text-danger"
                     data-cy="risk_start_date_error"
                   >
-                    {{ errors.first("Identified Date") }}
+                    {{ errors.first(" Date Identified") }}
                   </div>
                 </div>
 
@@ -1104,7 +1103,7 @@
 
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
-            <div class="form-group pt-2 mb-3 ml-4 mr-5">
+            <div v-show="!DV_risk.ongoing"  class="form-group pt-2 mb-3 ml-4 mr-5">
               <label class="font-sm mb-0 mr-3">Progress (in %)</label>
               <span class="ml-3">
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -1902,7 +1901,7 @@ export default {
             "Risk Name",
             "Risk Description",
             "Category",
-            "Identified Date",
+            "Date Identified",
             "Risk Approach Due Date",
           ],
         },
@@ -2605,7 +2604,7 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date",
+        "Date Identified",
         "Risk Approach Due Date",
       ];
 
