@@ -25,6 +25,13 @@ class Lesson < ApplicationRecord
 
   has_many :lesson_details, dependent: :destroy
 
+  has_many :related_tasks, as: :relatable, dependent: :destroy
+  has_many :related_issues, as: :relatable, dependent: :destroy
+  has_many :related_risks, as: :relatable, dependent: :destroy
+  has_many :sub_tasks, through: :related_tasks
+  has_many :sub_issues, through: :related_issues
+  has_many :sub_risks, through: :related_risks
+
   validates :title, :description, :date, :facility_project_id, presence: true
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
@@ -93,8 +100,12 @@ class Lesson < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       program_id: facility_project.project_id,
-      project_id: facility_project.facility_id
-
+      project_id: facility_project.facility_id,
+      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
+      sub_issues: sub_issues.as_json(only: [:title, :id]),
+      sub_task_ids: sub_tasks.map(&:id),
+      sub_issue_ids: sub_issues.map(&:id),
+      sub_risk_ids: sub_risks.map(&:id)
     ).as_json
   end
 
@@ -114,6 +125,9 @@ class Lesson < ApplicationRecord
       :user_id, 
       # :project_id,
       :lesson_stage_id,
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
       lesson_files: [],
       user_ids: [],
       # facility_project_ids: [],
@@ -136,6 +150,9 @@ class Lesson < ApplicationRecord
     lesson = self
     lesson.user_id = user.id
     t_params = lesson_params.dup
+    sub_task_ids = t_params.delete(:sub_task_ids)
+    sub_issue_ids = t_params.delete(:sub_issue_ids)
+    sub_risk_ids = t_params.delete(:sub_risk_ids)
     notes_attributes = t_params.delete(:notes_attributes)
     params_lesson_details = t_params.delete(:lesson_details)
 
@@ -183,6 +200,39 @@ class Lesson < ApplicationRecord
           end
         end
         LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
+      end
+
+      if sub_task_ids && sub_task_ids.any?
+        related_task_objs = []
+        related_task_objs2 = []
+        sub_task_ids.each do |sid|
+          related_task_objs << RelatedTask.new(relatable_id: lesson.id, relatable_type: "Lesson", task_id: sid)
+          # related_task_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Task", task_id: task.id)
+        end
+        RelatedTask.import(related_task_objs) if related_task_objs.any?
+        RelatedTask.import(related_task_objs2) if related_task_objs2.any?
+      end
+
+      if sub_issue_ids && sub_issue_ids.any?
+        related_issue_objs = []
+        related_issue_objs2 = []
+        sub_issue_ids.each do |sid|
+          related_issue_objs << RelatedIssue.new(relatable_id: lesson.id, relatable_type: "Lesson", issue_id: sid)
+          # related_issue_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Issue", task_id: task.id)
+        end
+        RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
+        RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
+      end
+      
+      if sub_risk_ids && sub_risk_ids.any?
+        related_risk_objs = []
+        related_risk_objs2 = []
+        sub_risk_ids.each do |sid|
+          related_risk_objs << RelatedRisk.new(relatable_id: lesson.id, relatable_type: "Lesson", risk_id: sid)
+          # related_risk_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Risk", task_id: task.id)
+        end
+        RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
+        RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
       end
 
     end
