@@ -258,11 +258,10 @@
                   </div>
                   <div class="col-5  pt-3">
                     <span
-                        class="w-100 mt-1 progress progress-0 pg-content"
-                       
+                        class="w-100 mt-1 progress progress-0 pg-content"                       
                         >
                         <div class="text-center pl-1">
-                          <span v-tooltip="`Ongoing`" class="font-md" style="color:lightgray"> <i class="fas fa-retweet"></i></span>
+                          <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
                         </div>
                     </span>
                   </div>
@@ -558,7 +557,7 @@
                        
                         >
                         <div class="text-center pl-1">
-                          <span v-tooltip="`Ongoing`" class="font-md" style="color:lightgray"> <i class="fas fa-retweet"></i></span>
+                          <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
                         </div>
                     </span>
                   </div>

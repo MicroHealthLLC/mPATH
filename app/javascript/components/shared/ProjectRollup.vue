@@ -191,7 +191,7 @@
               </div>
             </div>
             
-            <div class="row mt-1">
+            <div class="row mt-2">
               <div class="col-6 pt-0">
                 <span :class="{ 'font-sm': isMapView }">Overdue</span>              
               </div>
@@ -219,7 +219,7 @@
                 </span>
               </div>
             </div>
-            <div class="row mt-1">
+            <div class="row mt-2">
               <div class="col-6 pt-0">
                 <span :class="{ 'font-sm': isMapView }">Ongoing</span>               
               </div>
@@ -235,7 +235,7 @@
                     'font-sm': isMapView}"
                 >
                   <div class="text-center pl-1">
-                  <span v-tooltip="`Ongoing`" class="font-md" style="color:lightgray"> <i class="fas fa-retweet"></i></span>
+                  <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
                   </div>
                 </span>
               </div>
@@ -334,7 +334,7 @@
                 </span>
               </div>
             </div>
-            <div class="row mt-1">
+            <div class="row mt-2">
               <div class="col-6 pt-0">
                 <span :class="{ 'font-sm': isMapView }">Overdue</span>
              
@@ -483,7 +483,7 @@
               </span>
             </div>
           </div>
-          <div class="row mt-1">
+          <div class="row mt-2">
             <div class="col-6 pt-0">
               <span :class="{ 'font-sm': isMapView }">Overdue</span>            
             </div>
@@ -506,7 +506,7 @@
               </span>
             </div>
           </div>
-          <div class="row mt-1">
+          <div class="row mt-2">
               <div class="col-6 pt-0">
                 <span :class="{ 'font-sm': isMapView }">Ongoing</span>               
               </div>
@@ -521,7 +521,7 @@
                   :class="{'font-sm': isMapView}"
                 >
                   <div class="text-center pl-1">
-                     <span v-tooltip="`Ongoing`" class="font-md" style="color:lightgray"> <i class="fas fa-retweet"></i></span>
+                     <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
                   </div>
                 </span>
               </div>

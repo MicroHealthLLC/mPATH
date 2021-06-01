@@ -280,9 +280,14 @@
 
           <div class="form-row mx-4">
             <div class="form-group col-md-6 pl-0">
+              <span v-if="DV_task.ongoing">
               <label class="font-md"
-                >Date Identified <span style="color: #dc3545">*</span></label
-              >
+                >Date Identified</label
+              ></span>
+               <span v-else>
+              <label class="font-md"
+                >Start Date <span style="color: #dc3545">*</span></label
+              ></span>
               <div :class="{ 'error': errors.has('Start Date') }">
                 <v2-date-picker
                   v-validate="'required'"
@@ -304,19 +309,23 @@
                 {{ errors.first("Start Date") }}
               </div>
             </div>
-            <div class="form-group col-md-6 pr-0" :class="[DV_task.ongoing ? 'my-auto text-center pt-4' : '']">
-              <span v-if="!DV_task.ongoing ">           
+            <div class="form-group col-md-6 pr-0">
+              <span v-if="DV_task.ongoing ">           
                <label class="font-md"
-                >Date Closed <span style="color: #dc3545">*</span></label
-              >
-               <div :class="{ 'error': errors.has('Date Closed') }">
+                ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
+              ></span>
+              <span v-else>           
+               <label class="font-md"
+                >Due Date <span style="color: #dc3545">*</span></label
+              ></span>
+               <div :class="{ 'error': errors.has('Due Date') }">
                 <v2-date-picker
-                  v-validate="'required'"
+                  v-validate="{ required: !DV_task.ongoing }"
                   v-model="DV_task.dueDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
                   placeholder="DD MM YYYY"
-                  name="Date Closed"
+                  name="Due Date"
                   class="w-100 vue2-datepicker"
                   :disabled="
                     !_isallowed('write') ||
@@ -328,17 +337,17 @@
                 />
               </div>
               <div
-                v-show="errors.has('Date Closed')"
+                v-show="errors.has('Due Date')"
                 class="text-danger"
                 data-cy="task_due_date_error"
               >
-                {{ errors.first("Date Closed") }}
+                {{ errors.first("Due Date") }}
               </div>
               
-              </span>
-            <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
+          
+            <!-- <span v-else class="text-center font-italic"><i class="fas fa-retweet text-success mr-1"></i>
               THIS TASK IS ONGOING
-            </span>
+            </span> -->
             </div>
                
           </div>

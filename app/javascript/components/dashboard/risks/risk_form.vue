@@ -296,7 +296,7 @@
                 <div class="form-group col-md-6 pl-0">
                   <label class="font-sm"
                     >Date Identified
-                    <span style="color: #dc3545">*</span></label
+                    <span v-show="!DV_risk.ongoing" style="color: #dc3545">*</span></label
                   >
                   <v2-date-picker
                     v-validate="'required'"
@@ -320,12 +320,17 @@
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
+                   <span v-if="DV_risk.ongoing ">           
+               <label class="font-md"
+                ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
+                  ></span>
+                  <span v-else>           
                   <label class="font-sm"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
-                  >
+                  ></span>
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
