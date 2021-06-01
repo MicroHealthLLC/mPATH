@@ -1399,13 +1399,24 @@ jQuery(function($) {
             fetchProgramCategories(){
               $.get(`/api/task_types.json?project_id=${this.project_id}`, (data) => {
                 $(".__batch_task_form select[name=Category]").html("")
-                debugger;
                 let task_types = data.task_types
                 for(var i = 0; i <= task_types.length; i++){
                   $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
                 }
                 
                 this.categories = data
+                this.loading = false;
+              });
+            },
+            fetchProgramStages(){
+              $.get(`/api/task_stages.json?project_id=${this.project_id}`, (data) => {
+                $(".__batch_task_form select[name=Stage]").html("")
+                let task_stages = data.task_stages
+                for(var i = 0; i <= task_stages.length; i++){
+                  $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
+                }
+                
+                this.stages = data
                 this.loading = false;
               });
             },
@@ -1549,6 +1560,7 @@ jQuery(function($) {
           if($.Vue_task_popup ){
             $.Vue_task_popup.setProjectConsts();
             $.Vue_task_popup.fetchProgramCategories();
+            $.Vue_task_popup.fetchProgramStages();
           }
           //$.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
         });
@@ -2083,6 +2095,7 @@ jQuery(function($) {
           }
         },
         created() {
+
           this.fetchUsers();
         },
         methods: {
