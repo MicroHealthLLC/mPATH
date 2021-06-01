@@ -15,7 +15,8 @@ class Risk < ApplicationRecord
 
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
-  validates_presence_of :risk_description, :start_date, :due_date
+  validates_presence_of :risk_description
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
@@ -232,6 +233,12 @@ class Risk < ApplicationRecord
     if(progress >= 100)
       progress_status = "completed"
     end
+
+    is_overdue = false
+    if !ongoing
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
     self.as_json.merge(
       priority_level_name: priority_level_name,
       # risk_approach: risk_approach.humanize,
@@ -241,7 +248,7 @@ class Risk < ApplicationRecord
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
-      is_overdue: progress < 100 && (due_date < Date.today),
+      is_overdue: is_overdue,
       progress_status: progress_status,
       checklists: checklists.as_json,  
       due_date_duplicate: due_date.as_json,
