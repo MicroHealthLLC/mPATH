@@ -299,7 +299,7 @@
                     <span v-show="!DV_risk.ongoing" style="color: #dc3545">*</span></label
                   >
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.startDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
@@ -320,9 +320,10 @@
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
-                   <span v-if="DV_risk.ongoing ">           
-               <label class="font-md"
-                ><i class="fas fa-retweet text-success mr-1"></i>Date Closed</label
+                <span v-if="DV_risk.ongoing ">           
+                <label class="font-md"><i class="fas fa-retweet text-success mr-1"></i>
+                 Date Closed
+                 </label
                   ></span>
                   <span v-else>           
                   <label class="font-sm"
@@ -2193,13 +2194,14 @@ export default {
     },
     toggleOngoing() {
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
+      this.DV_risk.dueDate = '';
     },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }
     },
-    toggleApproved(e) {
+    toggleApproved() {
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.DV_risk.approvalTime =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();

@@ -290,7 +290,7 @@
               ></span>
               <div :class="{ 'error': errors.has('Start Date') }">
                 <v2-date-picker
-                  v-validate="'required'"
+                  v-validate="{ required: !DV_task.ongoing }"
                   v-model="DV_task.startDate"
                   value-type="YYYY-MM-DD"
                   format="DD MMM YYYY"
@@ -1468,6 +1468,7 @@ export default {
     },
     toggleOngoing() {
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
+      this.DV_task.dueDate = '';
     },
     cancelSave() {
       this.$emit("on-close-form");
