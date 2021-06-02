@@ -573,7 +573,7 @@
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
