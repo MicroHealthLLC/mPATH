@@ -1826,7 +1826,7 @@
                     clearable               
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"                  
-                    placeholder="Nothing Selected"
+                    placeholder="Disposition Status"
                   >
                     <el-option
                       v-for="item in getRiskDispositionStatus"                 
@@ -1851,7 +1851,7 @@
                     clearable
                     track-by="name"                  
                     :disabled="!_isallowed('write')"                                 
-                    placeholder="Nothing Selected"
+                    placeholder="Disposition Duration"
                   >
                     <el-option
                       v-for="item in getRiskDispositionDuration"                 

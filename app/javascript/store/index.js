@@ -385,7 +385,7 @@ export default new Vuex.Store({
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
-        {id: 'draft', name: 'Draft', value: 'draft', filterCategoryId: 'draft', filterCategoryName: 'Draft'}
+        {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draft', filterCategoryName: 'Drafts'}
       ]
 
       return options;
@@ -474,7 +474,7 @@ export default new Vuex.Store({
         {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
-        {id: 'draft', name: 'Draft', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Draft'},
+        {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'},
         // {id: 'notDraft', name: 'Not Draft', value: 'notDraft', filterCategoryId: 'notDraftFilter', filterCategoryName: 'Not Draft'},
         {id: 'onGoing', name: 'Marked On Going', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
         {id: 'notOnGoing', name: 'Not Marked On Going', value: 'notOnGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
@@ -596,7 +596,7 @@ export default new Vuex.Store({
         ['importantFilter', 'Important'],
         ['onGoingFilter', 'On Going'],
         ['onHoldFilter', 'On Hold'],
-        ['draftFilter', 'Draft'],
+        ['draftFilter', 'Drafts'],
         ['progressStatusFilter', 'Action Status']
 
       ]
