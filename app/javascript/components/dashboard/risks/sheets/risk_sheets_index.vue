@@ -146,12 +146,11 @@
             <col class="eight" />
             <col class="eight" />
             <col class="eight" />
-            <col class="seven" />
+            <col class="eight" />
             <col class="twelve" />
-            <col class="eight" />
-            <col class="eight" />
-            <col class="eight" />
-            <col class="oneEight" />
+            <col class="seven" />
+            <col class="fort" />         
+            <col class="twenty" />
           </colgroup>
           <tr class="thead" style="background-color:#ededed;">
             <th class="sort-th" @click="sort('text')">Risk
@@ -279,29 +278,7 @@
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
               <font-awesome-icon icon="sort-down" /></span>
             </th>
-            <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort" /></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-up" /></span>
-              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-down" /></span>
-              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-down" /></span>
-            </th>
-            <th class="pl-1 sort-th" @click="sort('watched')">On Watch
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
-              <font-awesome-icon icon="sort" /></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-down" /></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-down" /></span>
+            <th class="non-sort-th">Flags               
             </th>
             <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
@@ -765,6 +742,9 @@
   .twelve {
     width: 12%;
   }
+  .fort {
+    width: 14%;
+  }
   .oneFive{
     width: 15%;
   }
@@ -773,6 +753,9 @@
   }
   .oneEight {
     width: 18%;
+  }
+  .twenty {
+    width: 20%;
   }
   .floatRight {
     text-align: right;
