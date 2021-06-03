@@ -164,49 +164,52 @@
          <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
-          ref="menu"
-          class="actionSummary"           
+          ref="menu"             
         >
-          <v-card class="actionSummary p-2" min-width="265">       
+          <v-card class="p-2" min-width="265">       
            <v-list>
             <v-list-item>          
               <v-list-item-title>
-                <span class="d-block"><small><b>Issue Name</b></small></span>
+                <span class="d-inline mr-1"><small><b>Issue Name:</b></small></span>
                 {{ selectedEvent.name }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>            
-                <span class="d-block"><small><b>Category</b></small></span>
-                {{ selectedEvent.category }}            
+                <span class="d-inline mr-1"><small><b>Category:</b></small></span>
+                <span v-if="selectedEvent.category">{{ selectedEvent.category }} </span>       
+                <span v-else>No Category Assigned </span>
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>          
-                <span class="d-block"><small><b>Start Date</b></small></span>            
+                <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
                 {{ selectedEvent.start }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title> 
-              <span class="d-block"><small><b>Due Date</b></small></span>  
+              <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
                 {{ selectedEvent.end }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <span class="d-block"><small><b>Progress</b></small></span>  
+                <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
               {{ selectedEvent.progess }}%          
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-              <span class="d-block"><small><b>Flags</b></small></span>  
+              <span class="d-inline mr-1"><small><b>Flags</b></small></span>  
                   <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                   <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                   <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                  <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                  <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>  
+                  <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
+                  <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>      
                   <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
+                    
                     No flags at this time
                     </span>                    
               </v-list-item-title>
@@ -427,7 +430,10 @@
        this.onWatch = this.filteredCalendar.map(issue => issue.watched)   
        this.overdue = this.filteredCalendar.map(issue => issue.isOverdue) 
        this.star = this.filteredCalendar.map(issue => issue.important)
-       this.percentage = this.filteredCalendar.map(issue => issue.progress)            
+       this.percentage = this.filteredCalendar.map(issue => issue.progress)
+       this.onhold = this.filteredCalendar.map(issue => issue.onHold)
+       this.draft = this.filteredCalendar.map(issue => issue.draft)
+                   
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
         const max = new Date(`${end.date}T23:59:59`)
@@ -445,7 +451,9 @@
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
             color: this.colors.defaultColor,  
-            hasStar: this.star[i]          
+            hasStar: this.star[i] , 
+            isDraft: this.draft[i],
+            isOnHold: this.onhold[i]              
             // timed: !allDay,            
           })
         }       
@@ -714,6 +722,9 @@
   .v-label {
     margin-top: 0.5rem
   }
+}
+/deep/.v-list-item {
+  min-height: 30px;
 }
 .monthTitle {
   font-weight: 500;

@@ -213,11 +213,15 @@
               <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
               <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
+              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span> 
+              <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
+              <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>     
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
                       selectedEvent.pastDue == false && 
+                      selectedEvent.isOnHold == false && 
+                      selectedEvent.isDraft == false && 
                       selectedEvent.hasStar == false && 
                       selectedEvent.progess < 100">
                  No flags at this time
@@ -433,8 +437,11 @@
       this.overdue = this.filteredCalendar.map(risk => risk.isOverdue) 
       this.percentage = this.filteredCalendar.map(risk => risk.progress)  
       this.star = this.filteredCalendar.map(risk => risk.important)
-      this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)   
-      this.ongoing = this.filteredCalendar.map(risk => risk.ongoing)            
+      this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)  
+      this.ongoing = this.filteredCalendar.map(risk => risk.ongoing)    
+      this.onhold = this.filteredCalendar.map(risk => risk.onHold)   
+      this.draft = this.filteredCalendar.map(risk => risk.draft)   
+
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
       const max = new Date(`${end.date}T23:59:59`)
@@ -454,7 +461,9 @@
           progess: this.percentage[i],
           color: this.colors.defaultColor,   
           hasStar: this.star[i], 
-          isOngoing: this.ongoing[i]             
+          isOngoing: this.ongoing[i],
+          isDraft: this.draft[i],
+          isOnHold: this.onhold[i],                    
         })
       }
       // This is the main Events array pushed into Calendar
