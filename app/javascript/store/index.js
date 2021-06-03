@@ -59,6 +59,9 @@ export default new Vuex.Store({
     riskPriorityLevelFilter: new Array,
     riskImpactLevelOptions: new Array,
 
+    riskDispositionStatus: new Array,
+    riskDispositionDuration: new Array,
+
     issueStages: new Array,
     issueTypes: new Array,
     issueSeverities: new Array,
@@ -193,6 +196,9 @@ export default new Vuex.Store({
     setRiskPriorityLevelFilter: (state, filter) =>  state.riskPriorityLevelFilter = filter,
     setRiskProbabilityOptions: (state, riskProbabilityOptions) => state.riskProbabilityOptions = riskProbabilityOptions,
     setRiskImpactLevelOptions: (state, riskImpactLevelOptions) => state.riskImpactLevelOptions = riskImpactLevelOptions,
+
+    setRiskDispositionDuration: (state, riskDispositionDuration) => state.riskDispositionDuration = riskDispositionDuration,
+    setRiskDispositionStatus: (state, riskDispositionStatus) => state.riskDispositionStatus = riskDispositionStatus,
 
     setIssueStages: (state, issueStages) => state.issueStages = issueStages,
     setIssueTypes: (state, issueTypes) => state.issueTypes = issueTypes,
@@ -508,6 +514,25 @@ export default new Vuex.Store({
         {id: 5, value: 5, name: "5 - Catastrophic"}
         // {value: 1, name: "1 - Rare"}, "2 - Unlikely", "3 - Possible", "4 - Likely", "5 - Almost Certain"
       ]
+      return options
+    },
+    getRiskDispositionStatusOptions: state => state.riskDispositionStatus,
+    getRiskDispositionStatus: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "Nothing Selected"},
+        {id: 2, value: 2, name: "Monitoring"},
+        {id: 3, value: 3, name: "Resolved"},
+        {id: 4, value: 4, name: "Closed"},
+      ]
+      return options
+    },
+    getRiskDispositionDurationOptions: state => state.riskDispositionDuration,
+    getRiskDispositionDuration: (state, getters) => {
+     var options = [
+        {id: 1, value: 1, name: "Nothing Selected"},
+        {id: 2, value: 2, name: "Temporary"},
+        {id: 3, value: 3, name: "Perpetual"},
+       ]
       return options
     },
     getRiskProbabilityOptions: state => state.riskProbabilityOptions,
@@ -1604,12 +1629,13 @@ export default new Vuex.Store({
     riskApproaches: () => {
       return   ['avoid', 'mitigate', 'transfer', 'accept']
     },
-    riskDispositionStatuses: () => {
-      return   ['nothing selected', 'monitoring', 'resolved', 'closed']    
-    },
-    riskDispositionDuration: () => {
-      return   ['nothing selected', 'temporary', 'perpetual']    
-    },
+    // riskDispositionStatuses: () => {
+    //   return   ['monitoring', 'resolved', 'closed']    
+    // },
+    // riskDispositionDuration: () => {
+    //   return   ['temporary', 'perpetual']   
+
+    // },
     probabilityNames: () => {
       return [
         {id: 1, value: 1, name: "1 - Rare"},
@@ -1904,8 +1930,8 @@ export default new Vuex.Store({
         'riskPriorityLevelFilter',
         'riskProbabilityOptions',
         'riskImpactLevelOptions',
-        'riskDispositionStatusOptions',
-        'riskDispositionDurationOptions',
+        'riskDispositionStatus',
+        'riskDispositionDuration',
 
         'taskIssueProgressFilter',
         'myActionsFilter',
