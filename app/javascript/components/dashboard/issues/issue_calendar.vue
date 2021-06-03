@@ -165,7 +165,7 @@
           v-model="selectedOpen"
           :close-on-content-click="false"
           ref="menu"
-          class="actionSummary"           
+          class="actionSummary" 
         >
           <v-card class="actionSummary p-2" min-width="265">       
            <v-list>
@@ -184,13 +184,13 @@
             <v-list-item>
               <v-list-item-title>          
                 <span class="d-block"><small><b>Start Date</b></small></span>            
-                {{ selectedEvent.start }}
+                {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title> 
               <span class="d-block"><small><b>Due Date</b></small></span>  
-                {{ selectedEvent.end }}
+                {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>

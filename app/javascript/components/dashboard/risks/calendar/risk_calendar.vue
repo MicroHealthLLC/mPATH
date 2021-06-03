@@ -185,7 +185,7 @@
          <v-list-item>
           <v-list-item-title>          
             <span class="d-inline mr-1"><small><b>Identified Date:</b></small></span>            
-             {{ selectedEvent.start }}
+             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
@@ -197,7 +197,7 @@
           <v-list-item>
           <v-list-item-title> 
            <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>  
-            {{ selectedEvent.end }}
+            {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item >
