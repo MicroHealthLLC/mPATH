@@ -155,7 +155,8 @@ class Risk < ApplicationRecord
   def status_name_hash
     {    
       1 => "Monitoring",
-      2 => "Resolved"    
+      2 => "Resolved", 
+      3 => "Closed"  
     }
   end
 
