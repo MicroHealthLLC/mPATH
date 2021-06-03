@@ -120,6 +120,22 @@
               <small style="vertical-align:text-top"> On Watch</small>
                 </span>
 
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOnhold"
+              data-cy="task_on_hold"
+            >
+              <span v-show="DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+              </span>
+              <span v-show="!DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              </span>
+             
+              <small style="vertical-align:text-top"> On Hold</small>
+            </span>
+
                 <span
                   v-if="_isallowed('write')"
                   class="watch_action clickable mx-2"
@@ -130,7 +146,7 @@
                 <i class="fas fa-star text-warning"></i>
                 </span>
                 <span v-show="!DV_risk.important">
-                <i class="far fa-star"></i>
+                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
                 </span>
                   <small style="vertical-align:text-top"> Important</small>
                 </span>
@@ -149,6 +165,24 @@
                   </span>
                       <small style="vertical-align:text-top"> Ongoing</small>
                     </span>
+
+
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleDraft"
+                data-cy="task_important"
+              >
+                <span v-show="DV_risk.draft">
+                <i class="fas fa-pencil-alt text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.draft">
+                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small style="vertical-align:text-top"> Draft</small>
+            </span>
+
               </div>
 
 
@@ -1762,14 +1796,76 @@
             style="min-height: 300px"
             class="paperLookTab"
           >
-            <div class="form-group mx-4">
-              <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
-              <!-- <textarea
-                class="form-control"
-                placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
-                rows="4"
-              >
-              </textarea> -->
+            <div class="form-group mt-3 mx-4">             
+                <div class="form-group mx-4">
+                <label class="font-md"
+                  >Explanation</label
+                >
+                <el-input
+                 
+                  type="textarea"
+                  placeholder="Disposition Explanation"
+                  v-model="DV_risk.explanation"
+                  rows="3"
+                  :readonly="!_isallowed('write')"
+                  data-cy="risk_description"
+                 
+                />
+              
+              </div>
+
+              <div class="d-flex mb-1 mx-4 form-group">
+                <div class="simple-select form-group w-50">
+                  <label class="font-md"
+                    >Status</label
+                  >
+                  <el-select
+                    v-model="DV_risk.status"                  
+                    class="w-100"
+                    track-by="name"                
+                    :disabled="!_isallowed('write')"
+                    data-cy="task_type"                  
+                    placeholder="Disposition Status"
+                  >
+                    <el-option
+                      v-for="item in riskDispositionStatuses"
+                       :load="log(item)"
+                      :value="item"
+                      :key="item.id"
+                      :label="item"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+                  <div class="simple-select form-group w-50 ml-4">
+                  <label class="font-md"
+                    >Duration</label
+                  >
+                  <el-select
+                    v-model="DV_risk.duration"                  
+                    class="w-100"
+                    track-by="name"                  
+                    :disabled="!_isallowed('write')"
+                    data-cy="task_type"                  
+                    placeholder="Disposition Duration"
+                  >
+                    <el-option
+                      v-for="item in riskDispositionDuration"
+                       :load="log(item)"
+                      :value="item"
+                      :key="item.id"
+                      :label="item"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+              </div>
             </div>
           </div>
           <!-- END RISK DISPOSITION SECTION TAB -->
@@ -1888,10 +1984,12 @@ export default {
       probability: [],
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
       selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },
-      selectedTaskType: null,
+      selectedTaskType: null,  
       selectedRiskStage: null,
       relatedIssues: [],
       editToggle: false,
+      onHold: false,
+      draft: false,
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
@@ -1953,7 +2051,7 @@ export default {
           label: "Disposition",
           key: "tab7",
           closable: false,
-          disabled: true,
+          disabled: false,
         },
       ],
     };
@@ -1976,6 +2074,8 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
+      'setRiskDispositionStatusOptions',
+      'setRiskDispositionDurationOptions',
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -1990,9 +2090,11 @@ export default {
         facilityProjectId: this.facility.id,
         text: "",
         riskDescription: "",
+        explanation: "",
         impactDescription: "",
         probabilityDescription: "",
         riskApproach: "avoid",
+        riskDispositionStatus: 'nothing selected',
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
@@ -2000,6 +2102,8 @@ export default {
         riskStageId: "",
         probability: 1,
         impactLevel: 1,
+        status: 1,
+        dispositionStatus: 1, 
         probabilityName: "1 - Rare",
         impactLevelName: "1 - Negligible",
         progress: 0,
@@ -2022,7 +2126,7 @@ export default {
       };
     },
        log(e){
-          console.log("This is the riskStages item: " + e)
+          console.log("This is the riskDispStatus item: " + e)
       },
     urlShortener(str, length, ending) {
       if (length == null) {
@@ -2196,6 +2300,12 @@ export default {
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.dueDate = '';
     },
+  toggleOnhold() {
+      this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+    },
+  toggleDraft() {
+      this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
+    },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
@@ -2246,6 +2356,7 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.riskDescription);
+        formData.append("risk[explanation]", this.DV_risk.explanation);
         formData.append(
           "risk[impact_description]",
           this.DV_risk.impactDescription
@@ -2263,6 +2374,9 @@ export default {
           "risk[impact_level_name]",
           this.selectedRiskImpactLevel.name
         );
+        
+        formData.append("risk[status]", this.DV_risk.status);
+        formData.append("risk[duration]", this.DV_risk.duration);
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
         formData.append("risk[risk_approach]", this.DV_risk.riskApproach);
         formData.append(
@@ -2278,6 +2392,8 @@ export default {
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
         formData.append("risk[important]", this.DV_risk.important);
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
+        formData.append("risk[on_hold]", this.DV_risk.onHold);
+        formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
@@ -2674,11 +2790,14 @@ export default {
       "getRiskProbabilityNames",
       "getRiskProbabilityOptions",
       "impactLevelNames",
+      'dispositionStatuses',
       "managerView",
       "myActionsFilter",
       "probabilityNames",
       "projectUsers",
       "riskApproaches",
+      'riskDispositionStatuses',
+      'riskDispositionDuration',
       "riskStages",
       "taskTypes",
     ]),
@@ -2691,8 +2810,7 @@ export default {
         // this.exists(this.DV_risk.probabilityDescription) &&
         this.exists(this.selectedRiskPossibility.id) &&
         this.exists(this.selectedRiskImpactLevel.id) &&
-        this.exists(this.selectedRiskPossibility.id) &&
-        this.exists(this.selectedRiskImpactLevel.id) &&
+        this.exists(this.selectedRiskPossibility.id) &&     
         this.exists(this.DV_risk.riskApproach) &&
         // this.exists(this.DV_risk.riskApproachDescription) &&
         this.exists(this.DV_risk.taskTypeId) &&
@@ -3410,6 +3528,9 @@ ul {
 }
 /deep/.el-collapse-item__header {
   background-color: #fafafa;
+}
+/deep/.el-input__inner {
+  text-transform: capitalize !important;
 }
 .fa-building {
   font-size: large !important;

@@ -120,6 +120,23 @@
            
               <small style="vertical-align:text-top"> On Watch</small>
             </span>
+            
+             <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOnhold"
+              data-cy="task_on_hold"
+            >
+              <span v-show="DV_task.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+              </span>
+              <span v-show="!DV_task.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              </span>
+             
+              <small style="vertical-align:text-top"> On Hold</small>
+            </span>
+           
 
             <span
               v-if="_isallowed('write')"
@@ -151,6 +168,21 @@
               </span>
              
               <small style="vertical-align:text-top"> On Going</small>
+            </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleDraft"
+              data-cy="task_important"
+            >
+              <span v-show="DV_task.draft">
+               <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
+              <span v-show="!DV_task.draft">
+               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small style="vertical-align:text-top"> Draft</small>
             </span>
 
 
@@ -1270,6 +1302,8 @@ export default {
         taskTypeId: "",
         taskStageId: "",
         important: false,
+        onHold: false,
+        draft: false,
         ongoing: false,
         responsibleUserIds: [],
         accountableUserIds: [],
@@ -1466,6 +1500,12 @@ export default {
     toggleImportant() {
       this.DV_task = { ...this.DV_task, important: !this.DV_task.important };
     },
+    toggleOnhold() {
+      this.DV_task = { ...this.DV_task, onHold: !this.DV_task.onHold };
+    },
+    toggleDraft() {
+      this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
+    },
     toggleOngoing() {
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.dueDate = '';
@@ -1493,6 +1533,8 @@ export default {
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
+        formData.append("task[on_hold]", this.DV_task.onHold);
+        formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);
         formData.append(
           "task[destroy_file_ids]",

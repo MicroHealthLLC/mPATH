@@ -51,6 +51,8 @@ class Task < ApplicationRecord
       :watched,    
       :kanban_order,
       :important,
+      :draft, 
+      :on_hold, 
       :ongoing,
       task_files: [],
       user_ids: [],
@@ -186,6 +188,8 @@ class Task < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       important: important,
+      draft: draft, 
+      on_hold: on_hold, 
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

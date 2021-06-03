@@ -11,6 +11,9 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
+  enum status: [:nothing_selected, :monitoring, :resolved, :closed]
+  enum duration: [:blank, :temporary, :perpetual]
+
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
@@ -57,6 +60,9 @@ class Risk < ApplicationRecord
       :impact_level,
       :impact_level_name,
       :risk_approach,
+      :status,
+      :duration,
+      :explanation,
       :risk_approach_description,
       :task_type_id,
       :task_type, 
@@ -68,6 +74,8 @@ class Risk < ApplicationRecord
       :text,
       :watched,
       :important,
+      :on_hold, 
+      :draft, 
       :ongoing,
       user_ids: [],
       risk_files: [],
@@ -259,6 +267,8 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
+      draft: draft, 
+      on_hold: on_hold, 
 
 
      # Add RACI user name
