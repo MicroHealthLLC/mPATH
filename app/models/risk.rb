@@ -11,11 +11,15 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
+  enum status: [:nothing_selected, :monitoring, :resolved, :closed]
+  enum duration: [:blank, :temporary, :perpetual]
+
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
-  validates_presence_of :risk_description, :start_date, :due_date
+  validates_presence_of :risk_description
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
@@ -56,6 +60,9 @@ class Risk < ApplicationRecord
       :impact_level,
       :impact_level_name,
       :risk_approach,
+      :status,
+      :duration,
+      :explanation,
       :risk_approach_description,
       :task_type_id,
       :task_type, 
@@ -67,6 +74,9 @@ class Risk < ApplicationRecord
       :text,
       :watched,
       :important,
+      :on_hold, 
+      :draft, 
+      :ongoing,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],
@@ -231,6 +241,12 @@ class Risk < ApplicationRecord
     if(progress >= 100)
       progress_status = "completed"
     end
+
+    is_overdue = false
+    if !ongoing
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
     self.as_json.merge(
       priority_level_name: priority_level_name,
       # risk_approach: risk_approach.humanize,
@@ -240,7 +256,7 @@ class Risk < ApplicationRecord
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
-      is_overdue: progress < 100 && (due_date < Date.today),
+      is_overdue: is_overdue,
       progress_status: progress_status,
       checklists: checklists.as_json,  
       due_date_duplicate: due_date.as_json,
@@ -251,6 +267,8 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
+      draft: draft, 
+      on_hold: on_hold, 
 
 
      # Add RACI user name

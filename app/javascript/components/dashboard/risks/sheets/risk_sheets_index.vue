@@ -322,6 +322,7 @@
             v-for="risk in sortedRisks"
             class="riskHover"
             href="#"
+            :load="log(risk)"
             :key="risk.id"
             :risk="risk"
             :from-view="from"
@@ -473,6 +474,9 @@
       }
         this.currentSort = s;
       },
+      log(e){
+        console.log(e)
+      },
       nextPage:function() {
         if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
       },
@@ -584,7 +588,15 @@
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
+     if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {           
         return risks
+        
+       } else  {
+        
+        risks  = risks.filter(t => t.draft == false && t.onHold == false)
+        return risks
+      
+       }   
       },
       C_riskPriorityLevelFilter: {
         get() {
