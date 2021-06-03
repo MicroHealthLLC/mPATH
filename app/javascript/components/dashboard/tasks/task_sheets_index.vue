@@ -41,12 +41,13 @@
            v-model="C_sheetsTaskFilter"
            class="w-100"
            track-by="name"
+        
            value-key="id"
            multiple
            placeholder="Filter by Flags"
            >
           <el-option
-            v-for="item in getAdvancedFilterOptions"
+            v-for="item in getAdvancedFilterOptions"      
             :value="item"
             :key="item.id"
             :label="item.name"
@@ -263,8 +264,8 @@
             </tr>
           </table>
              <task-sheets
-              v-for="task in sortedTasks"
-              class="taskHover"
+              v-for="task in sortedTasks"           
+              class="taskHover"        
               href="#"
               :key="task.id"
               :task="task"
@@ -432,6 +433,9 @@
           `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/tasks/new`
         );
       },
+      log(e){
+        console.log(e)
+      },
       showAllToggle() {
          this.setToggleRACI(!this.getToggleRACI)  ;
       },
@@ -476,6 +480,7 @@
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredTasks() {
+
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')
         const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
@@ -494,7 +499,9 @@
               valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
             }
           }
-          //TODO: For performance, send the whole tasks array instead of one by one
+
+      
+          // //TODO: For performance, send the whole tasks array instead of one by one
           valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
           if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId)
           if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
@@ -529,8 +536,18 @@
           // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
           return valid
         }), ['dueDate'])
+      
+  
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return tasks
-
+        
+       } else  {
+        
+        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
+        return tasks
+      
+       }       
       },
       C_sheetsTaskFilter: {
         get() {
@@ -744,6 +761,9 @@
   position: absolute;
   top: 2px;
   right: 1px;
+}
+.displayNone {
+  display: none;
 }
 .filters-wrapper {
   float: right;

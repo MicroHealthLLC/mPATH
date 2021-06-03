@@ -216,24 +216,31 @@
             <v-list-item-title>
             <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
                 <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                 <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
-                  No flags at this time
+                <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
+                <span v-if="
+                      selectedEvent.watch == false && 
+                      selectedEvent.isOngoing == false && 
+                      selectedEvent.pastDue == false &&     
+                      selectedEvent.hasStar == false && 
+                      selectedEvent.progess < 100">
+                      No flags at this time
                 </span> 
             </v-list-item-title>
           </v-list-item>        
           </v-list>
           <v-card-actions>      
           
-          <v-btn
+          <!-- <v-btn
             small
             class="mh-green text-light"
             @click.prevent="showM"
           >
              <font-awesome-icon icon="clipboard-list" class="mr-1" />
             See More
-          </v-btn>
+          </v-btn> -->
            <v-btn
             small
             @click.prevent="detailsBtn"
@@ -440,6 +447,8 @@
         this.categories = this.filteredCalendar.map(task => task.taskType) 
         this.onWatch = this.filteredCalendar.map(task => task.watched)   
         this.overdue = this.filteredCalendar.map(task => task.isOverdue) 
+        this.star = this.filteredCalendar.map(task => task.important)
+        this.ongoing = this.filteredCalendar.map(task => task.ongoing)
         this.percentage = this.filteredCalendar.map(task => task.progress)
            
         const events = []
@@ -458,7 +467,9 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,             
+            color: this.colors.defaultColor,  
+            hasStar: this.star[i], 
+            isOngoing: this.ongoing[i]           
           })
         }
           // This is the main Events array pushed into Calendar
@@ -522,8 +533,19 @@
          
         return valid
         }), ['dueDate'])
-    
+
+          if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return tasks
+        
+       } else  {
+        
+        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
+        return tasks
+      
+       }       
+    
+      
     }, 
      C_calendarTaskFilter: {           
         get() {
@@ -579,9 +601,8 @@
       set(value) {
         this.setLastFocusFilter(value) 
        }
-      },     
-
-   C_calendarView: {
+      },   
+     C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
