@@ -1801,11 +1801,11 @@
                 <label class="font-md"
                   >Explanation</label
                 >
-                <el-input
-                 
+                <el-input                
                   type="textarea"
                   placeholder="Disposition Explanation"
                   v-model="DV_risk.explanation"
+                  v-if="!null"
                   rows="3"
                   :readonly="!_isallowed('write')"
                   data-cy="risk_description"
@@ -1820,19 +1820,19 @@
                     >Status</label
                   >
                   <el-select
-                    v-model="DV_risk.status"                  
+                    v-model="selectedStatus"                  
                     class="w-100"
-                    track-by="name"                
+                    track-by="name" 
+                    clearable               
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"                  
-                    placeholder="Disposition Status"
+                    placeholder="Nothing Selected"
                   >
                     <el-option
-                      v-for="item in riskDispositionStatuses"
-                       :load="log(item)"
+                      v-for="item in getRiskDispositionStatus"                 
                       :value="item"
                       :key="item.id"
-                      :label="item"
+                      :label="item.name"
                       class="upperCase"
                     >
                     </el-option>
@@ -1845,19 +1845,19 @@
                     >Duration</label
                   >
                   <el-select
-                    v-model="DV_risk.duration"                  
+                    v-model="selectedDuration"  
+                   :load="log(DV_risk.duration)"                
                     class="w-100"
+                    clearable
                     track-by="name"                  
-                    :disabled="!_isallowed('write')"
-                    data-cy="task_type"                  
-                    placeholder="Disposition Duration"
+                    :disabled="!_isallowed('write')"                                 
+                    placeholder="Nothing Selected"
                   >
                     <el-option
-                      v-for="item in riskDispositionDuration"
-                       :load="log(item)"
+                      v-for="item in getRiskDispositionDuration"                 
                       :value="item"
                       :key="item.id"
-                      :label="item"
+                      :label="item.name"
                       class="upperCase"
                     >
                     </el-option>
@@ -1983,7 +1983,9 @@ export default {
       informedRiskUsers: [],
       probability: [],
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
-      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },
+      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
+      selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
+      selectedDuration: { id: 1, value: 1, name: "Nothing Selected" },   
       selectedTaskType: null,  
       selectedRiskStage: null,
       relatedIssues: [],
@@ -2074,8 +2076,9 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      'setRiskDispositionStatusOptions',
-      'setRiskDispositionDurationOptions',
+      'setRiskDispositionStatus',
+      'setRiskDispositionDuration',
+
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -2094,7 +2097,6 @@ export default {
         impactDescription: "",
         probabilityDescription: "",
         riskApproach: "avoid",
-        riskDispositionStatus: 'nothing selected',
         approvalTime: "",
         riskApproachDescription: "",
         riskTypeId: "",
@@ -2102,13 +2104,13 @@ export default {
         riskStageId: "",
         probability: 1,
         impactLevel: 1,
-        status: 1,
-        dispositionStatus: 1, 
         probabilityName: "1 - Rare",
         impactLevelName: "1 - Negligible",
         progress: 0,
         startDate: "",
         getRiskImpactLevelNames: "1 - Negligible",
+        getRiskDispositionDuration: "Nothing Selected",
+        getRiskDispositionStatus: "Nothing Selected",
         dueDate: "",
         autoCalculate: true,
         important: false,
@@ -2216,6 +2218,12 @@ export default {
       );
       this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(
         (t) => t.id === this.DV_risk.impactLevel
+      );
+        this.selectedDuration = this.getRiskDispositionDuration.find(
+        (t) => t.id === this.DV_risk.duration
+      );
+        this.selectedStatus = this.getRiskDispositionStatus.find(
+        (t) => t.id === this.DV_risk.status
       );
       if (this.DV_risk.attachFiles)
         this.addFile(this.DV_risk.attachFiles, false);
@@ -2356,7 +2364,11 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.riskDescription);
-        formData.append("risk[explanation]", this.DV_risk.explanation);
+        if (!this.DV_risk.explanation) {
+          formData.append("risk[explanation]",'')
+        } else {
+          formData.append("risk[explanation]", this.DV_risk.explanation);   
+        }      
         formData.append(
           "risk[impact_description]",
           this.DV_risk.impactDescription
@@ -2374,9 +2386,23 @@ export default {
           "risk[impact_level_name]",
           this.selectedRiskImpactLevel.name
         );
-        
-        formData.append("risk[status]", this.DV_risk.status);
-        formData.append("risk[duration]", this.DV_risk.duration);
+        if (this.selectedStatus) {        
+          formData.append("risk[status]", this.selectedStatus.id);
+          formData.append("risk[status_name]", this.selectedStatus.name);
+           
+        } else {
+           formData.append("risk[status]", null);
+           formData.append("risk[status_name]", '');
+        }
+                
+        if (this.selectedDuration) {
+          formData.append("risk[duration]", this.selectedDuration.id)
+          formData.append("risk[duration_name]", this.selectedDuration.name);
+              
+        } else {
+           formData.append("risk[duration_name]", '')
+           formData.append("risk[duration]", null);
+        }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
         formData.append("risk[risk_approach]", this.DV_risk.riskApproach);
         formData.append(
@@ -2786,6 +2812,8 @@ export default {
       "facilityGroups",
       "getFacilityProjectOptions",
       "getRiskImpactLevelNames",
+      "getRiskDispositionDuration",
+      "getRiskDispositionStatus",
       "getRiskImpactLevelOptions",
       "getRiskProbabilityNames",
       "getRiskProbabilityOptions",
@@ -3174,6 +3202,19 @@ export default {
     selectedTaskType: {
       handler: function(value) {
         this.DV_risk.taskTypeId = value ? value.id : null;
+      },
+      deep: true,
+    },
+    selectedStatus: {
+      handler: function(value) {
+        this.DV_risk.status = value ? value.id : null;
+      },
+      deep: true,
+    },
+   selectedDuration: {
+      handler: function(value) {
+        this.DV_risk.duration = value ? value.id : null;
+      
       },
       deep: true,
     },

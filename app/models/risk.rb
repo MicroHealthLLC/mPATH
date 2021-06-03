@@ -11,8 +11,9 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  enum status: [:nothing_selected, :monitoring, :resolved, :closed]
-  enum duration: [:blank, :temporary, :perpetual]
+  # enum status: [:monitoring, :resolved, :closed]
+  # enum status: [:temporary, :perpetual]
+  
 
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
@@ -62,6 +63,8 @@ class Risk < ApplicationRecord
       :risk_approach,
       :status,
       :duration,
+      :duration_name,
+      :status_name,
       :explanation,
       :risk_approach_description,
       :task_type_id,
@@ -149,6 +152,30 @@ class Risk < ApplicationRecord
 
   def impact_level_name
     impact_level_name_hash[impact_level] || impact_level_name_hash[1]
+  end
+
+  def status_name_hash
+    {
+      1 => "Nothing Selected",
+      2 => "Monitoring",
+      3 => "Resolved"    
+    }
+  end
+
+  def status_name
+    status_name_hash[status] || status_name_hash[1]
+  end
+
+  def duration_name_hash
+    {
+      1 => "Nothing Selected",
+      2 => "Temporary",
+      3 => "Perpetual"    
+    }
+  end
+
+  def duration_name
+    duration_name_hash[duration] || duration_name_hash[1]
   end
 
   def probability_name_hash
@@ -252,6 +279,8 @@ class Risk < ApplicationRecord
       # risk_approach: risk_approach.humanize,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
+      duration_name: duration_name,
+      status_name: status_name,
       task_type: task_type.as_json, 
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
@@ -543,6 +572,7 @@ class Risk < ApplicationRecord
   def cast_constants_to_i
     self.probability = self.probability.to_i
     self.impact_level = self.impact_level.to_i
+    self.duration = self.duration.to_i
     self.priority_level = self.probability * self.impact_level
   end
 end
