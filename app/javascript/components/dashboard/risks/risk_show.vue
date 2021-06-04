@@ -22,7 +22,17 @@
             <span v-show="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
             <span v-show="risk.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
             <span v-show="risk.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
-              </div>
+            <span v-if="                    
+                     risk.ongoing == false && 
+                     risk.isOverdue == false &&
+                     risk.onHold == false &&  
+                     risk.draft == false && 
+                     risk.progress < 100 "             
+                     class="text-secondary">
+                   <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>                
+            </span>          
+           
+            </div>
            </div>
          </div>
 

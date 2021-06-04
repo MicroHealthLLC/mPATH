@@ -24,8 +24,7 @@
             <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="issue.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
-            <span v-if="
-                  issue.watched == false &&
+            <span v-if="                 
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 

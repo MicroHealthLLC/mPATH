@@ -214,7 +214,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
-             <th class="sort-th p-1 w-100">
+             <th class="sort-th p-1">
               <span class="py-2 d-inline-block">Assigned Users</span><br>
               <span class="btn-group">
                  <button
