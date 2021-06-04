@@ -52,7 +52,7 @@ class Lesson < ApplicationRecord
       end.compact.uniq
     end
     
-    t_users = options[:all_task_users] || []
+    t_users = options[:all_lesson_users] || []
     all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :lesson_index].include?(options[:for])
       resource_users = t_users
@@ -133,28 +133,47 @@ class Lesson < ApplicationRecord
       :task_type_id,  
       :facility_project_id,
       :user_id, 
-      # :project_id,
       :lesson_stage_id,
       sub_task_ids: [],
       sub_issue_ids: [],
       sub_risk_ids: [],
       lesson_files: [],
       user_ids: [],
-      # facility_project_ids: [],
       notes_attributes: [
         :id,
         :_destroy,
         :user_id,
         :body
       ],
-      lesson_details: [
+      # lesson_details: [
+      #   :id,
+      #   :_destroy,
+      #   :user_id,
+      #   :finding,
+      #   :recommendation,
+      #   :detail_type
+      # ]
+      successes: [
         :id,
         :_destroy,
         :user_id,
         :finding,
-        :recommendation,
-        :detail_type
-      ]
+        :recommendation
+      ],
+      failures: [
+        :id,
+        :_destroy,
+        :user_id,
+        :finding,
+        :recommendation
+      ],
+      best_practices: [
+        :id,
+        :_destroy,
+        :user_id,
+        :finding,
+        :recommendation
+      ],
     )
 
     lesson = self
@@ -164,8 +183,37 @@ class Lesson < ApplicationRecord
     sub_issue_ids = t_params.delete(:sub_issue_ids)
     sub_risk_ids = t_params.delete(:sub_risk_ids)
     notes_attributes = t_params.delete(:notes_attributes)
-    params_lesson_details = t_params.delete(:lesson_details)
 
+    # params_lesson_details = t_params.delete(:lesson_details)
+    
+    # NOTE: This code is written  based on request to overcome confusion for front end.
+    # It can be simplify by sending lesson_details parameters from front end which is currently commented.
+    params_lesson_details = []
+    params_successes = t_params.delete(:successes)
+    params_failures = t_params.delete(:failures)
+    params_best_practices = t_params.delete(:best_practices)
+
+    if params_successes
+      params_successes.each do |h|
+        h[:detail_type] = "success"
+      end
+      params_lesson_details = ( params_lesson_details + params_successes ).compact
+    end
+
+    if params_failures
+      params_failures.each do |h|
+        h[:detail_type] = "failure"
+      end
+      params_lesson_details = ( params_lesson_details + params_failures ).compact
+    end
+
+    if params_best_practices
+      params_best_practices.each do |h|
+        h[:detail_type] = "best_practices"
+      end
+      params_lesson_details = ( params_lesson_details + params_best_practices ).compact
+    end
+    
     if params[:project_id] && params[:facility_id]
       fp = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
       t_params[:facility_project_id] = fp.id
@@ -248,6 +296,8 @@ class Lesson < ApplicationRecord
         RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
       end
 
+      lesson.assign_users(params)
+
     end
     lesson.persisted?  ? lesson.reload : lesson
   end
@@ -270,34 +320,70 @@ class Lesson < ApplicationRecord
   end
 
 
-  # def assign_users(params)
-  #   resource_users = []
+  def assign_users(params)
+    accountable_resource_users = []
+    responsible_resource_users = []
+    consulted_resource_users = []
+    informed_resource_users = []
 
-  #   resource = self
+    resource = self
+    resource_users = resource.lesson_users
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact
 
-  #   user_ids = resource.user_ids
+    users_to_delete = []
 
-  #   users_to_delete = []
+    if params[:accountable_user_ids].present?
+      params[:accountable_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !accountable_user_ids.include?(uid.to_i)
+          accountable_resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id, user_type: 'accountable')
+        end
+      end
+      users_to_delete += accountable_user_ids - params[:accountable_user_ids].map(&:to_i)
+    end
 
-  #   if params[:user_ids].present?
-  #     params[:user_ids].each do |uid|
-  #       next if uid == "undefined"
-  #       if !user_ids.include?(uid.to_i)
-  #         user_ids << uid
-  #         # resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id)
-  #       end
-  #     end
-  #   end
+    if params[:responsible_user_ids].present?
+      params[:responsible_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !responsible_user_ids.include?(uid.to_i)
+          responsible_resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id, user_type: 'responsible')
+        end
+      end
+      users_to_delete += responsible_user_ids - params[:responsible_user_ids].map(&:to_i)
+    end
+
+    if params[:consulted_user_ids].present?
+      params[:consulted_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !consulted_user_ids.include?(uid.to_i)
+          consulted_resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id, user_type: 'consulted')
+        end
+      end
+      users_to_delete += consulted_user_ids - params[:consulted_user_ids].map(&:to_i)
+    end
+
+    if params[:informed_user_ids].present?
+      params[:informed_user_ids].each do |uid|
+        next if uid == "undefined"
+        if !informed_user_ids.include?(uid.to_i)
+          informed_resource_users << LessonUser.new(user_id: uid, lesson_id: resource.id, user_type: 'informed')
+        end
+      end
+      users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
+    end
     
-  #   records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
+    records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
     
-  #   if users_to_delete.any?
-  #     resource_users.where(user_id: users_to_delete).destroy_all
-  #   end
+    if users_to_delete.any?
+      resource_users.where(user_id: users_to_delete).destroy_all
+    end
 
-  #   if records_to_import.any?
-  #     LessonUser.import(records_to_import)
-  #   end
-  # end
+    if records_to_import.any?
+      LessonUser.import(records_to_import)
+    end
+  end
 
 end
