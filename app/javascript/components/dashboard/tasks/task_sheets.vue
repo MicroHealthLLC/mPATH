@@ -34,7 +34,6 @@
             <span v-if="task.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
             <span v-if="
-                      task.watched == false &&
                       task.ongoing == false && 
                       task.isOverdue == false &&
                       task.onHold == false &&  
