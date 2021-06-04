@@ -195,7 +195,122 @@
     </div>
     <!-- Related Tab -->
     <div v-show="currentTab == 'tab2'">
-      <h1>RELATED</h1>
+      <div class="row mt-2">
+        <div class="col">
+          Related Tasks
+          <span class="clickable" @click="openContextMenu($event, 'task')">
+            <i class="fas fa-plus-circle"></i
+          ></span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(task, index) in relatedTasks"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ task.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
+                  "
+                  slot="reference"
+                  >{{ task.text }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Task"
+                @click.prevent="removeRelatedTask(task)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+        <div class="col">
+          Related Issues
+          <span class="clickable" @click="openContextMenu($event, 'issue')">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(issue, index) in relatedIssues"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ issue.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${$route.params.programId}/${tab}/projects/${issue.facilityId}/issues/${issue.id}`
+                  "
+                  slot="reference"
+                  >{{ issue.title }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Issue"
+                @click.prevent="removeRelatedIssue(issue)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+        <div class="col">
+          Related Risks
+          <span class="clickable" @click="openContextMenu($event, 'risk')">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(risk, index) in relatedRisks"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ risk.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${$route.params.programId}/${tab}/projects/${risk.facilityId}/risks/${risk.id}`
+                  "
+                  slot="reference"
+                  >{{ risk.text }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Risk"
+                @click.prevent="removeRelatedRisk(risk)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'">
@@ -213,11 +328,23 @@
     <div v-show="currentTab == 'tab6'">
       <h1>UPDATES</h1>
     </div>
+    <RelatedLessonMenu
+      :facilities="facilities"
+      :facilityGroups="facilityGroups"
+      :relatedTasks="[]"
+      :relatedIssues="[]"
+      :relatedRisks="[]"
+      @add-related-tasks="addRelatedTasks"
+      @add-related-issues="addRelatedIssues"
+      @add-related-risks="addRelatedRisks"
+      ref="menu"
+    />
   </form>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapGetters } from "vuex";
+import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
 
 export default {
@@ -225,9 +352,11 @@ export default {
   props: ["facility"],
   components: {
     FormTabs,
+    RelatedLessonMenu,
   },
   data() {
     return {
+      formLoaded: false,
       currentTab: "tab1",
       tabs: [
         {
@@ -282,6 +411,9 @@ export default {
       submittedBy: {},
       category: {},
       stage: {},
+      relatedTasks: [],
+      relatedIssues: [],
+      relatedRisks: [],
     };
   },
   methods: {
@@ -298,12 +430,48 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        formData.append("lesson[user_id]", this.submittedBy.id);
-        formData.append("lesson[task_type_id]", this.category.id);
-        formData.append("lesson[stage]", this.stage.id)
+        formData.append( "lesson[user_id]", this.submittedBy ? this.submittedBy.id : null );
+        formData.append( "lesson[task_type_id]", this.category ? this.category.id : null );
+        formData.append("lesson[stage]", this.stage ? this.stage.id : null);
         formData.append("lesson[program_id]", this.$route.params.programId);
         formData.append("lesson[project_id]", this.$route.params.projectId);
-
+        // Load related task ids
+        if (this.relatedTasks.length > 0 && this.lesson.sub_task_ids) {
+          this.relatedTasks.forEach((task) => {
+            formData.append("lesson[sub_task_ids][]", task.id);
+          });
+        } else if (this.relatedTasks.length > 0) {
+          this.relatedTasks.forEach((task) => {
+            formData.append("lesson[sub_task_ids][]", task.id);
+          });
+        } else {
+          formData.append("lesson[sub_task_ids][]", []);
+        }
+        // Load related issue ids
+        if (this.relatedIssues.length > 0 && this.lesson.sub_issue_ids) {
+          this.relatedIssues.forEach((issue) => {
+            formData.append("lesson[sub_issue_ids][]", issue.id);
+          });
+        } else if (this.relatedIssues.length > 0) {
+          this.relatedIssues.forEach((issue) => {
+            formData.append("lesson[sub_issue_ids][]", issue.id);
+          });
+        } else {
+          formData.append("lesson[sub_issue_ids][]", []);
+        }
+        // Load related risk ids
+        if (this.relatedRisks.length > 0 && this.lesson.sub_risk_ids) {
+          this.relatedRisks.forEach((risk) => {
+            formData.append("lesson[sub_risk_ids][]", risk.id);
+          });
+        } else if (this.relatedRisks.length > 0) {
+          this.relatedRisks.forEach((risk) => {
+            formData.append("lesson[sub_risk_ids][]", risk.id);
+          });
+        } else {
+          formData.append("lesson[sub_risk_ids][]", []);
+        }
+        // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
           formData.append("lesson[id]", this.lesson.id);
           this.updateLesson({ lesson: formData, ...this.$route.params });
@@ -329,11 +497,44 @@ export default {
     updateStage(stage) {
       this.stage = stage;
     },
+    openContextMenu(e, item) {
+      e.preventDefault();
+      this.$refs.menu.open(e, item);
+    },
+    addRelatedTasks(tasks) {
+      tasks.forEach((task) => this.relatedTasks.push(task));
+    },
+    removeRelatedTask({ id }) {
+      this.relatedTasks.splice(
+        this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
+    },
+    addRelatedIssues(issues) {
+      issues.forEach((issue) => this.relatedIssues.push(issue));
+    },
+    removeRelatedIssue({ id }) {
+      this.relatedIssues.splice(
+        this.relatedIssues.findIndex((issue) => issue.id == id),
+        1
+      );
+    },
+    addRelatedRisks(risks) {
+      risks.forEach((risk) => this.relatedRisks.push(risk));
+    },
+    removeRelatedRisk({ id }) {
+      this.relatedRisks.splice(
+        this.relatedRisks.findIndex((risk) => risk.id == id),
+        1
+      );
+    },
   },
   computed: {
     ...mapGetters([
       "activeProjectUsers",
       "contentLoaded",
+      "facilities",
+      "facilityGroups",
       "lesson",
       "lessonStages",
       "taskTypes",
@@ -369,8 +570,8 @@ export default {
   },
   watch: {
     lesson: {
-      handler() {
-        if (this.contentLoaded) {
+      handler(newValue, oldValue) {
+        if (this.contentLoaded && Object.keys(oldValue).length === 0) {
           this.updateSubmittedBy(
             this.activeProjectUsers.find(
               (user) => user.id == this.lesson.user_id
@@ -384,6 +585,11 @@ export default {
           this.updateStage(
             this.lessonStages.find((stage) => stage.id == this.lesson.stage)
           );
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
+          this.relatedRisks = this.lesson.sub_risk_ids.map((id) => {
+            return { id: id, text: "No Title Yet", facilityName: "N/A" };
+          });
         }
       },
     },
@@ -403,6 +609,11 @@ export default {
           this.updateStage(
             this.lessonStages.find((stage) => stage.id == this.lesson.stage)
           );
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
+          this.relatedRisks = this.lesson.sub_risk_ids.map((id) => {
+            return { id: id, text: "No Title Yet", facilityName: "N/A" };
+          });
         }
       },
     },
@@ -410,4 +621,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+a {
+  color: #007bff;
+}
+a:hover {
+  text-decoration: unset;
+}
+.text-smaller {
+  font-size: smaller;
+}
+</style>
