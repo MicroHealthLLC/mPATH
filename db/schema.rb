@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2021_05_11_210519) do
+=======
+ActiveRecord::Schema.define(version: 2021_05_27_163641) do
+
+  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_accountable_users_on_project_id"
+    t.index ["user_id"], name: "index_accountable_users_on_user_id"
+  end
+>>>>>>> b9a344e937330aac0fcd49095d5d1b95aacb9883
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -121,17 +132,20 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
   end
 
   create_table "facility_privileges", charset: "utf8", force: :cascade do |t|
-    t.string "overview", default: "R"
-    t.string "tasks", default: "R"
-    t.string "notes", default: "R"
-    t.string "issues", default: "R"
-    t.string "admin", default: "R"
-    t.string "risks", default: "R"
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin", default: "---\n- R\n"
+    t.string "risks", default: "---\n- R\n"
     t.integer "user_id"
     t.integer "facility_project_id"
     t.integer "facility_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "project_id"
+    t.integer "group_number", default: 0
+    t.string "facility_project_ids", default: "--- []\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -206,6 +220,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.bigint "issue_stage_id"
     t.integer "kanban_order", default: 0
     t.integer "task_type_id"
+    t.boolean "important", default: false
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -218,7 +233,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.text "recommendation"
     t.integer "user_id"
     t.integer "lesson_id"
-    t.string "detail_type", default: "success"
+    t.integer "detail_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -260,6 +275,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
+    t.boolean "important", default: false
     t.integer "facility_project_id"
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["issue_id"], name: "index_lessons_on_issue_id"
@@ -355,6 +371,21 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.integer "lesson_stage_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin"
+    t.string "risks", default: "---\n- R\n"
+    t.string "lessons", default: "---\n- R\n"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "project_ids", default: "--- []\n"
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
@@ -534,17 +565,19 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.datetime "updated_at", null: false
     t.bigint "task_type_id"
     t.string "text"
-    t.bigint "risk_id"
     t.integer "kanban_order", default: 0
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
+    t.text "type"
     t.text "probability_description"
+    t.datetime "approved_at"
     t.string "approval_time"
     t.boolean "approved"
+    t.boolean "important", default: false
+    t.boolean "ongoing", default: false
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
-    t.index ["risk_id"], name: "index_risks_on_risk_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
     t.index ["task_type_id"], name: "index_risks_on_task_type_id"
     t.index ["user_id"], name: "index_risks_on_user_id"
@@ -627,6 +660,9 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
+    t.datetime "calendar_start_date"
+    t.boolean "important", default: false
+    t.boolean "ongoing", default: false
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -667,6 +703,8 @@ ActiveRecord::Schema.define(version: 2021_05_11_210519) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "accountable_users", "projects"
+  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"

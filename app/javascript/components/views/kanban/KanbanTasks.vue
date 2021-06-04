@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <div class="d-flex mb-4">
-      <div class="w-25 mr-1 d-inline-flex align-items-end">
+<div>
+  <div class="w-75 filters-wrapper">
+    <div class="d-flex align-item-center justify-content-between mb-2 w-100">
+      <div class="task-search-bar w-100 mr-1">
+         <label class="font-sm mb-0"><span style="visibility:hidden">L</span></label>
         <el-input
           type="search"
           placeholder="Search Tasks"
@@ -14,7 +16,7 @@
         </el-input>
       </div>
 
-      <div class="simple-select w-25 d-inline mr-1">
+      <div class="w-100 mr-1">
         <label class="font-sm mb-0">Category</label>
         <el-select
           v-model="C_taskTypeFilter"
@@ -35,7 +37,7 @@
         </el-select>
       </div>
 
-      <div class="simple-select w-25 d-inline">
+      <div class="w-100">
         <label class="font-sm mb-0">Flags</label>
         <el-select
           v-model="C_kanbanTaskFilter"
@@ -56,6 +58,7 @@
         </el-select>
       </div>
     </div>
+  </div>
     <Kanban
       :stages="C_kanban.stages"
       :kanban-type="kanbanType"
@@ -249,4 +252,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+  .filters-wrapper {
+    float: right;
+    margin-top: -60px;
+  }
+</style>

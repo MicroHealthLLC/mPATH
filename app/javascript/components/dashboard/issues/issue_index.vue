@@ -154,7 +154,7 @@
           <td v-else></td>
           <td v-if="(issue.notes.length) > 0">
             By: {{ issue.notes[0].user.fullName}} on
-            {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
+            {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -360,7 +360,16 @@ computed: {
       return valid;
     })), ['dueDate'])
 
-    return issues
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
+        return issues
+        
+       } else  {
+        
+        issues  = issues.filter(t => t.draft == false && t.onHold == false)
+        return issues
+      
+       }   
   },
   C_facilityManagerIssueFilter: {
     get() {

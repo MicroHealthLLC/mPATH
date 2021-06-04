@@ -38,7 +38,54 @@ class Issue < ApplicationRecord
 
     append :title => " - Copy"
   end
-    
+  
+  def self.params_to_permit
+    [
+      :title,
+      :description,
+      :issue_type_id,
+      :issue_stage_id,
+      :issue_severity_id,
+      :facility_project_id,
+      :task_type_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :watched,
+      :kanban_order,
+      :important,
+      :on_hold, 
+      :draft, 
+      issue_files: [],
+      user_ids: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids:[],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :due_date,
+        :position,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+       ]
+    ]
+  end
+
   def to_json(options = {})
     attach_files = []
     i_files = self.issue_files
@@ -125,6 +172,9 @@ class Issue < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      on_hold: on_hold, 
+      draft: draft, 
+
       
 
       # Add RACI user name
@@ -183,47 +233,7 @@ class Issue < ApplicationRecord
   # In future we will use this method in background process
   def create_or_update_issue(params, user)
 
-    issue_params = params.require(:issue).permit(
-      :title,
-      :description,
-      :issue_type_id,
-      :issue_stage_id,
-      :issue_severity_id,
-      :facility_project_id,
-      :task_type_id,
-      :progress,
-      :start_date,
-      :due_date,
-      :auto_calculate,
-      :watched,
-      :kanban_order,
-      issue_files: [],
-      user_ids: [],
-      sub_task_ids: [],
-      sub_issue_ids: [],
-      sub_risk_ids:[],
-      checklists_attributes: [
-        :id,
-        :_destroy,
-        :text,
-        :user_id,
-        :checked,
-        :due_date,
-        :position,
-        progress_lists_attributes: [
-          :id,
-          :_destroy,
-          :body,
-          :checklist_id
-        ]
-      ],
-      notes_attributes: [
-        :id,
-        :_destroy,
-        :user_id,
-        :body
-       ]
-    )
+    issue_params = params.require(:issue).permit(Issue.params_to_permit)
 
 
     issue = self

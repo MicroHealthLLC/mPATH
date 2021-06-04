@@ -114,7 +114,7 @@
           <td v-else></td>
           <td v-if="(task.notes.length) > 0">
             By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body}}
+            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -274,7 +274,18 @@ computed: {
       return valid
     }), ['dueDate'])
 
-    return tasks
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
+        return tasks
+        
+       } else  {
+        
+        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
+        return tasks
+      
+       }       
+
+
   },
   C_facilityManagerTaskFilter: {
     get() {

@@ -23,24 +23,13 @@ task :remove_query_filters => :environment do
 
 end
 
-desc "Update Existing privileges"
-task :update_privileges => :environment do
 
-  users = User.all
-  users.each do |user|
-    privilege = user.privilege
-    next if !privilege
-    h = privilege.attributes
-    update_att = {}
-    h.each do |k,v|
-      next if ["user_id", "created_at", "updated_at", "id"].include?(k) || privilege.send(k).is_a?(Array)
-      o = []
-      o << "R" if privilege.send(k).include?("R")
-      o << "W" if privilege.send(k).include?("W")
-      o << "D" if privilege.send(k).include?("D")
-      update_att[k] = o
-    end
-    privilege.update(update_att)
-  end
+desc 'Removes schema_migration entries for removed migration files'
+task 'db:migrate:cleanup' => :environment do
+  migration_context = ActiveRecord::Base.connection.migration_context
+  versions_to_delete =migration_context.migrations_status.map { |_status, version, name| version if name.include?('NO FILE') }.compact.uniq
 
+  migration_context.schema_migration.delete_by(version: versions_to_delete)
+
+  puts "Cleaned up #{versions_to_delete.size} orphaned migrations."
 end

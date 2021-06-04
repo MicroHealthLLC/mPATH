@@ -1,21 +1,22 @@
 <template>
-  <div v-if="!loading" class="mt-4 issues-index" data-cy="issue_sheet_index">
+  <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-100">
-        <div class="input-group mb-2 mr-1 task-search-bar w-100">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="search-addon"><i class="fa fa-search"></i></span>
-          </div>
-          <input type="search"
-            class="form-control form-control-sm"
-            placeholder="Search by Issue Name, Type, Severity or Assigned User"
-            aria-label="Search"
-            aria-describedby="search-addon"
-            v-model="issuesQuery"
+      <div class="d-flex align-item-center w-75 float-right filters-wrapper">
+        <div class="ml-2 task-search-bar w-100">
+        <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
+          <el-input
+            type="search"          
+            placeholder="Search by Issue, Category, or Assigned User"
+            aria-label="Search"            
+            aria-describedby="search-addon"    
+            v-model="issuesQuery"     
             data-cy="search_issues"
-            >
+        >
+          <el-button slot="prepend" icon="el-icon-search"></el-button>
+        </el-input>
         </div>
-        <div class="mr-1 font-sm w-100">
+        <div class="mx-1 w-75">
+          <label class="font-sm my-0">Category</label>
           <el-select
            v-model="C_taskTypeFilter"
            class="w-100"
@@ -33,10 +34,19 @@
           </el-option>
           </el-select>
          </div>
-        <div class="mr-1 w-100">
-          <el-select
+  <div class="w-75" style="position:relative">  
+  <label class="font-sm my-0">Filters</label>      
+  <el-collapse class="issuesFilter w-100"  style="position:absolute">
+  <el-collapse-item name="1">
+    <template slot="title" class="text-right">
+      <font-awesome-icon icon="sliders-h"  class="d-inline mr-2" />
+    MORE ISSUE FILTERS
+    </template>
+    <div class="mr-1 w-100 d-unset p-2">
+      <label class="mb-0">Flags</label>
+      <el-select
            v-model="C_sheetsIssueFilter"
-           class="w-100"
+           class="w-100 mb-1"
            track-by="name"
            value-key="id"
            multiple
@@ -50,47 +60,49 @@
             >
           </el-option>
           </el-select>
-        </div>
-       </div>
-      <div class="d-flex align-item-center justify-content-start filter-second-row">
-       <div class="simple-select mr-1 d-inline w-100">
-         <el-select
-           v-model="C_issueTypeFilter"
-           class="w-100"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Issue Types"
-           >
-          <el-option
-            v-for="item in issueTypes"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-        </div>
-        <div class="mr-1 d-flex w-100">
-          <el-select
-           v-model="C_issueSeverityFilter"
-           class="w-100"
-           track-by="name"
-           value-key="id"
-           multiple
-           placeholder="Filter by Issue Severities"
-           >
-          <el-option
-            v-for="item in issueSeverities"
-            :value="item"
-            :key="item.id"
-            :label="item.name"
-            >
-          </el-option>
-          </el-select>
-        </div>
+           <label class="mb-0">Issue Types</label>
+      <el-select
+        v-model="C_issueTypeFilter"
+        class="w-100 mr-1 mb-1"
+        track-by="name"
+        value-key="id"
+        multiple
+        placeholder="Filter by Issue Types"
+      >
+      <el-option
+        v-for="item in issueTypes"
+        :value="item"
+        :key="item.id"
+        :label="item.name"
+        >
+      </el-option>
+      </el-select>
+       <label class="mb-0">Issue Severity</label>
+      <el-select
+        v-model="C_issueSeverityFilter"
+        class="w-100"
+        track-by="name"
+        value-key="id"
+        multiple
+        placeholder="Filter by Issue Severities"
+      >
+      <el-option
+        v-for="item in issueSeverities"
+        :value="item"
+        :key="item.id"
+        :label="item.name"
+        >
+      </el-option>
+      </el-select>
     </div>
-     <div class="wrapper mt-2 p-3">
+        </el-collapse-item>
+      </el-collapse>  
+            
+    </div>
+      
+       </div>
+  
+     <div class="wrapper mt-4 p-3">
         <button v-if="_isallowed('write')"
           class="addIssueBtn btn btn-md mr-3 btn-primary"
           @click.prevent="addNewIssue" data-cy="add_issue">
@@ -137,9 +149,8 @@
                   <col class="eight" />
                   <col class="oneThree" />
                   <col class="eight" />
-                  <col class="eight" />
-                  <col class="eight" />
-                  <col class="oneFive" />
+                  <col class="fort" />                
+                  <col class="oneSeven" />
                 </colgroup>
                 <tr class="thead" style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue
@@ -203,7 +214,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
-             <th class="sort-th p-1 w-100">
+             <th class="sort-th p-1">
               <span class="py-2 d-inline-block">Assigned Users</span><br>
               <span class="btn-group">
                  <button
@@ -268,30 +279,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
-                  <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                  </th>
-
-                  <th class="sort-th" @click="sort('watched')">Onwatch
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
-                  <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-down" /></span>
+                   <th class="non-sort-th">Flags               
                   </th>
 
                   <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
@@ -367,13 +355,12 @@
             <th>Due Date</th>
             <th>Assigned Users</th>
             <th>Progress</th>
-            <th>Overdue</th>
-            <th>On Watch</th>
+            <th>Flags</th>
             <th>Last Update</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(issue, i) in filteredIssues">
+          <tr v-for="(issue, i) in filteredIssues" :key="i">
             <td>{{issue.title}}</td>
             <td>{{issue.issueType}}</td>
             <td>{{issue.facilityName}}</td>
@@ -390,13 +377,25 @@
          </span>
             </td>
             <td>{{issue.progress + "%"}}</td>
-            <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-            <td v-else></td>
-            <td v-if="(issue.watched) <= now"><h5>X</h5></td>
-            <td v-else></td>
+            <td class="text-center" style="text-align:center">
+            <span v-if="issue.watched == true">Watched</span>
+            <span v-if="issue.important == true">Important</span>
+            <span v-if="issue.isOverdue">Overdue</span>
+            <span v-if="issue.progress == 100">Completed</span>   
+            <span v-if="issue.onHold == true">On Hold</span> 
+            <span v-if="issue.draft == true">Draft</span>   
+            <span v-if="
+                  issue.watched == false &&
+                  issue.isOverdue == false &&
+                  issue.onHold == false &&  
+                  issue.draft == false && 
+                  issue.progress < 100 "             
+            >                 
+            </span>  
+            </td>            
             <td v-if="(issue.notesUpdatedAt.length) > 0">
                By: {{ issue.notes[0].user.fullName}} on
-              {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body}}
+              {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
             </td>
             <td v-else>No Updates</td>
           </tr>
@@ -621,7 +620,16 @@
             valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return issues
+        
+       } else  {
+        
+        issues  = issues.filter(t => t.draft == false && t.onHold == false)
+        return issues
+      
+       }   
       },
       C_sheetsIssueFilter: {
         get() {
@@ -742,12 +750,19 @@
   .elev {
     width: 11%;
   }
-  .oneFive {
-    width: 15%;
-  }
   .oneThree {
     width: 13%;
   }
+  .fort {
+    width: 14%;
+  }
+  .oneFive {
+    width: 15%;
+  }
+  .oneSeven {
+    width: 17%;
+  }
+ 
   .floatRight {
     text-align: right;
     right: 0px;
@@ -791,7 +806,7 @@
     float: right !important;
     right: 0;
   }
-  .addIssueBtn, .exportBtns, .showAll {
+  .addIssueBtn, .exportBtns, .showAll  {
     box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
   }
   .exportBtns, .showAll  {
@@ -827,4 +842,13 @@
     top: 2px;
     right: 1px;
   }
+  .filters-wrapper {
+    float: right;
+    margin-top: -85px;
+  }
+/deep/.el-collapse   {
+  border-bottom: none !important;
+  }
+  
+  
 </style>

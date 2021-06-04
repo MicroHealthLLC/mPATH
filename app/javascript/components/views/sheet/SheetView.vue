@@ -26,14 +26,14 @@
               $route.name !== 'SheetNoteForm' &&
               $route.name !== 'SheetLessonForm'
           "
-          class="d-flex align-items-center my-2"
+          class="d-flex align-items-center my-1 ml-1"
         >
-          <span class="fbody-icon"><i class="fas fa-building"></i></span>
+          <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
           <h5 class="f-head mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
-        <div class="pr-3">
+        <div class="pr-3 ml-1">
           <ProjectTabs
             v-if="
               $route.name !== 'SheetRollup' &&

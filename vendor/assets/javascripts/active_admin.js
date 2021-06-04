@@ -467,7 +467,7 @@ jQuery(function($) {
             <form id="dialog_confirm" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 49.25px; max-height: none; height: auto;">
               <ul>
                 <li>
-                  <label>Project</label>
+                  <label>Program</label>
                   <input name="project" class="text" type="text" readOnly :value="project.project.name">
                 </li>
                 <li>
@@ -1374,7 +1374,9 @@ jQuery(function($) {
               auto_calculate: false,
               checklists: [],
               project_users: [],
-              task_users: []
+              task_users: [],
+              categories: [],
+              stages: []
             }
           },
           mounted() {
@@ -1387,11 +1389,35 @@ jQuery(function($) {
               $("input[name=Progress]").val(this.progress);
             },
             setProjectConsts() {
-              this.project_id = $("select[name=Project]").children("option:selected").val();
+              this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
               $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
+                this.loading = false;
+              });
+            },
+            fetchProgramCategories(){
+              $.get(`/api/task_types.json?project_id=${this.project_id}`, (data) => {
+                $(".__batch_task_form select[name=Category]").html("")
+                let task_types = data.task_types
+                for(var i = 0; i <= task_types.length; i++){
+                  $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
+                }
+                
+                this.categories = data
+                this.loading = false;
+              });
+            },
+            fetchProgramStages(){
+              $.get(`/api/task_stages.json?project_id=${this.project_id}`, (data) => {
+                $(".__batch_task_form select[name=Stage]").html("")
+                let task_stages = data.task_stages
+                for(var i = 0; i <= task_stages.length; i++){
+                  $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
+                }
+                
+                this.stages = data
                 this.loading = false;
               });
             },
@@ -1531,8 +1557,13 @@ jQuery(function($) {
         });
 
         // on change project
-        $("body").on('change', ".__batch_task_form select[name=Project]", function() {
-          $.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
+        $("body").on('change', ".__batch_task_form select[name=Program]", function() {
+          if($.Vue_task_popup ){
+            $.Vue_task_popup.setProjectConsts();
+            $.Vue_task_popup.fetchProgramCategories();
+            $.Vue_task_popup.fetchProgramStages();
+          }
+          //$.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
         });
 
         // upload file
@@ -2065,6 +2096,7 @@ jQuery(function($) {
           }
         },
         created() {
+
           this.fetchUsers();
         },
         methods: {
