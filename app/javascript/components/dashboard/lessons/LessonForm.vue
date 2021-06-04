@@ -132,26 +132,6 @@
         </div>
       </div>
 
-      <div class="col-6 pr-0">
-        <label class="font-md w-100">Submitted By</label>
-        <el-select
-          v-model="submittedBy"
-          class="w-100"
-          clearable
-          value-key="id"
-          placeholder="Search and Select User"
-          @change="updateSubmittedBy"
-        >
-          <el-option
-            v-for="user in activeProjectUsers"
-            :value="user"
-            :key="user.id"
-            :label="user.fullName"
-          >
-          </el-option>
-        </el-select>
-      </div>
-
       <div class="col-6 pl-0">
         <label class="font-md w-100">Category</label>
         <el-select
@@ -173,7 +153,7 @@
         </el-select>
       </div>
 
-      <div class="col-6 pr-0">
+      <div class="col-6 pl-0">
         <label class="font-md">Stage</label>
         <el-select
           v-model="stage"
@@ -438,7 +418,6 @@ export default {
           form_fields: [],
         },
       ],
-      submittedBy: {},
       category: {},
       stage: {},
       relatedTasks: [],
@@ -460,10 +439,6 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        // formData.append(
-        //   "lesson[user_id]",
-        //   this.submittedBy ? this.submittedBy.id : null
-        // );
         formData.append(
           "lesson[task_type_id]",
           this.category ? this.category.id : null
@@ -523,9 +498,6 @@ export default {
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
-    },
-    updateSubmittedBy(user) {
-      this.submittedBy = user;
     },
     updateCategory(category) {
       this.category = category;
@@ -608,11 +580,6 @@ export default {
     lesson: {
       handler(newValue, oldValue) {
         if (this.contentLoaded && Object.keys(oldValue).length === 0) {
-          this.updateSubmittedBy(
-            this.activeProjectUsers.find(
-              (user) => user.id == this.lesson.user_id
-            )
-          );
           this.updateCategory(
             this.taskTypes.find(
               (category) => category.id == this.lesson.task_type_id
@@ -632,11 +599,6 @@ export default {
     contentLoaded: {
       handler() {
         if (this.lesson) {
-          this.updateSubmittedBy(
-            this.activeProjectUsers.find(
-              (user) => user.id == this.lesson.user_id
-            )
-          );
           this.updateCategory(
             this.taskTypes.find(
               (category) => category.id == this.lesson.task_type_id
