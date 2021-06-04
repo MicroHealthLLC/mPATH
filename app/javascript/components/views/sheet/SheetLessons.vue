@@ -10,7 +10,7 @@
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
-      <table class="my-3">
+      <table class="my-3 w-100">
         <colgroup></colgroup>
         <tr class="table-head">
           <th @click="sortLessons('title')">Lesson</th>

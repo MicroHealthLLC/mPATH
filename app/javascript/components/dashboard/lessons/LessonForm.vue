@@ -439,10 +439,7 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        formData.append(
-          "lesson[task_type_id]",
-          this.category ? this.category.id : null
-        );
+        formData.append( "lesson[task_type_id]", this.category ? this.category.id : null );
         formData.append("lesson[stage]", this.stage ? this.stage.id : null);
         formData.append("project_id", this.$route.params.programId);
         formData.append("facility_id", this.$route.params.projectId);
