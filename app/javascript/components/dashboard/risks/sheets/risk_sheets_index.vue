@@ -148,7 +148,7 @@
             <col class="eight" />
             <col class="eight" />
             <col class="twelve" />
-            <col class="seven" />
+            <col class="eight" />
             <col class="fort" />         
             <col class="twenty" />
           </colgroup>

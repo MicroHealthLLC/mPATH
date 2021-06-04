@@ -9,7 +9,7 @@
       <div v-if="show">    
 
            <!-- ROW 1 -->
-        <div class="row">            
+        <div class="row">           
               <div class=" col-md-9 font-lg d-flex pb-2 kanban-text">
                 {{issue.title}}
               </div>

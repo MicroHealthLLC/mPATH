@@ -201,14 +201,21 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title> 
-            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
+
+            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span> 
+             <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+               <span v-else> 
               {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+               </span>
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <span class=d-inline mr-1 ><small><b>Progress:</b></small></span>    
-            {{ selectedEvent.progess }}%      
+              <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+               <span v-else>
+               {{ selectedEvent.progess }}%    
+               </span>   
             </v-list-item-title>
             <!-- class="d-none mr-1"  :class="{ 'd-inline mr-1': showMore}" -->
           </v-list-item>
@@ -463,6 +470,11 @@
         const days = (max.getTime() - min.getTime()) / 86400000   
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
+
+            if(this.taskData[i].ongoing) {
+            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"
+            this.taskEndDates[i] = '2099-01-01'
+            }
             events.push({            
             name: this.taskNames[i],
             start: this.taskStartDates[i],
@@ -482,11 +494,13 @@
         }
           // This is the main Events array pushed into Calendar
         //  this.events = events
+
          if (this.getShowAllEventsToggle == false && !(this.tasksQuery.length > 0) ) {
            this.events = []
          } else 
           this.events = events
        }      
+      
       },     
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
