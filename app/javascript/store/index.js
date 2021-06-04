@@ -518,20 +518,19 @@ export default new Vuex.Store({
     },
     getRiskDispositionStatusOptions: state => state.riskDispositionStatus,
     getRiskDispositionStatus: (state, getters) => {
-     var options = [
-        {id: 1, value: 1, name: "Nothing Selected"},
-        {id: 2, value: 2, name: "Monitoring"},
-        {id: 3, value: 3, name: "Resolved"},
-        {id: 4, value: 4, name: "Closed"},
+     var options = [      
+        {id: 1, value: 1, name: "Monitoring"},
+        {id: 2, value: 2, name: "Resolved"},
+        {id: 3, value: 3, name: "Closed"},
       ]
       return options
     },
     getRiskDispositionDurationOptions: state => state.riskDispositionDuration,
     getRiskDispositionDuration: (state, getters) => {
      var options = [
-        {id: 1, value: 1, name: "Nothing Selected"},
-        {id: 2, value: 2, name: "Temporary"},
-        {id: 3, value: 3, name: "Perpetual"},
+        {id: 1, value: 1, name: "Temporary"},
+        {id: 2, value: 2, name: "Perpetual"},
+      
        ]
       return options
     },
