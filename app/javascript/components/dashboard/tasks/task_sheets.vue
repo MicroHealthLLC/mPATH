@@ -5,7 +5,7 @@
       <tr v-if="!loading" class="mx-3 mb-3 mt-2 py-4 edit-action" @click.prevent="editTask" data-cy="task_row" @mouseup.right="openContextMenu" @contextmenu.prevent="">
         <td class="oneSix">{{task.text}}</td>
         <td class="ten">{{task.taskType}}</td>
-        <td class="eight">{{formatDate(task.startDate)}}</td>
+        <td class="eight text-center">{{formatDate(task.startDate)}}</td>
         <td class="eigth text-center">
          <span v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
         <span v-else>
@@ -21,9 +21,9 @@
              <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g,' ')}}</span>      
          </span>        
         </td>
-        <td>
-        <span class="eight text-center" v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
-        <span class="eight text-center" v-else>{{task.progress + "%"}}</span>
+        <td class="eight text-center">
+        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span v-else>{{task.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>

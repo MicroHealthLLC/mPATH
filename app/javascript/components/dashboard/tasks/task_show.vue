@@ -42,12 +42,13 @@
                <span class="mr-2">
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(task.startDate)}}
-               </span>
-              
-               <span >
-                <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
-                  {{formatDate(task.dueDate)}}
-               </span>
+               </span>              
+                <span  v-if="task.ongoing == false">
+                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                    {{formatDate(DV_task.dueDate)}}
+                </span>
+                <span v-else v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mx-2"  /></span>  
+                
              </div>
           </div>     
          
@@ -60,9 +61,13 @@
 
         <div class="row d-flex">
             <div class="font-sm pt-1 pb-3 col">
-           <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
-            <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
-          </div>
+          <span  v-if="task.ongoing == false">
+            <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
+              <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">
+                {{task.progress}}%
+              </div>          
+            </div>
+          </span>
         </div>
        </div>
       
