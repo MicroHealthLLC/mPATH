@@ -21,8 +21,11 @@
              <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g,' ')}}</span>      
          </span>        
         </td>
-        <td class="eight">{{task.progress + "%"}}</td>
-        <td class="fort">
+        <td>
+        <span class="eight text-center" v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span class="eight text-center" v-else>{{task.progress + "%"}}</span>
+        </td>
+        <td class="fort text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
@@ -37,9 +40,10 @@
                       task.onHold == false &&  
                       task.draft == false && 
                       task.progress < 100 "             
-                     class="text-secondary">
-                      No flags at this time
-                </span> 
+                    >
+                  <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+            </span>
+              
         </td>
         <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[0].user.fullName)">              
