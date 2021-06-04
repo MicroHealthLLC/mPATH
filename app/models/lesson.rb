@@ -1,24 +1,13 @@
 class Lesson < ApplicationRecord
   belongs_to :user
-  belongs_to :task, optional: true
-  belongs_to :risk, optional: true
-  belongs_to :issue, optional: true
   belongs_to :task_type, optional: true
-  belongs_to :issue_type, optional: true
 
   belongs_to :lesson_stage, optional: true
-  
-  # This is program is front end
-  belongs_to :project, optional: true
-  
+    
   has_many :lesson_users, dependent: :destroy
   has_many :users, through: :lesson_users
   
-  has_many :lesson_projects, dependent: :destroy
-
   belongs_to :facility_project
-  # has_many :facility_projects, through: :lesson_projects
-  # has_many :facilities, through: :facility_projects
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -65,7 +54,7 @@ class Lesson < ApplicationRecord
     
     t_users = options[:all_task_users] || []
     all_users = options[:all_users] || []
-    if options[:for].present? && [:project_build_response, :task_index].include?(options[:for])
+    if options[:for].present? && [:project_build_response, :lesson_index].include?(options[:for])
       resource_users = t_users
     else
       resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
@@ -99,7 +88,6 @@ class Lesson < ApplicationRecord
       lesson_stage_id: self.lesson_stage_id,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-      program_id: facility_project.project_id,
       project_id: facility_project.facility_id,
       sub_tasks: sub_tasks.as_json(only: [:text, :id]),
       sub_issues: sub_issues.as_json(only: [:title, :id]),
@@ -116,11 +104,7 @@ class Lesson < ApplicationRecord
       :description, 
       :date, 
       :stage, 
-      :task_type_id, 
-      :task_id, 
-      :risk_id, 
-      :issue_id, 
-      :issue_type_id, 
+      :task_type_id,  
       :facility_project_id,
       :user_id, 
       # :project_id,
@@ -207,6 +191,9 @@ class Lesson < ApplicationRecord
         related_task_objs2 = []
         sub_task_ids.each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: lesson.id, relatable_type: "Lesson", task_id: sid)
+          
+          # NOTE: As we are not going to show the related Lesson in Task, we don't need to create RelatedLesson
+
           # related_task_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Task", task_id: task.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
