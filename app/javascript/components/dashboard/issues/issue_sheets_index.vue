@@ -355,13 +355,12 @@
             <th>Due Date</th>
             <th>Assigned Users</th>
             <th>Progress</th>
-            <th>Overdue</th>
-            <th>On Watch</th>
+            <th>Flags</th>
             <th>Last Update</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(issue, i) in filteredIssues">
+          <tr v-for="(issue, i) in filteredIssues" :key="i">
             <td>{{issue.title}}</td>
             <td>{{issue.issueType}}</td>
             <td>{{issue.facilityName}}</td>
@@ -378,10 +377,22 @@
          </span>
             </td>
             <td>{{issue.progress + "%"}}</td>
-            <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-            <td v-else></td>
-            <td v-if="(issue.watched) <= now"><h5>X</h5></td>
-            <td v-else></td>
+            <td class="text-center" style="text-align:center">
+            <span v-if="issue.watched == true">Watched</span>
+            <span v-if="issue.important == true">Important</span>
+            <span v-if="issue.isOverdue">Overdue</span>
+            <span v-if="issue.progress == 100">Completed</span>   
+            <span v-if="issue.onHold == true">On Hold</span> 
+            <span v-if="issue.draft == true">Draft</span>   
+            <span v-if="
+                  issue.watched == false &&
+                  issue.isOverdue == false &&
+                  issue.onHold == false &&  
+                  issue.draft == false && 
+                  issue.progress < 100 "             
+            >                 
+            </span>  
+            </td>            
             <td v-if="(issue.notesUpdatedAt.length) > 0">
                By: {{ issue.notes[0].user.fullName}} on
               {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}

@@ -293,9 +293,8 @@
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
-          <th>Progress</th>
-          <th>Overdue</th>
-          <th>On Watch</th>
+          <th>Progress</th>        
+          <th>Flags</th>
           <th>Last Update</th>
         </tr>
       </thead>
@@ -305,7 +304,10 @@
           <td>{{task.taskType}}</td>
           <td>{{task.facilityName}}</td>
           <td>{{formatDate(task.startDate)}}</td>
-          <td>{{formatDate(task.dueDate)}}</td>
+          <td>
+            <span v-if="task.ongoing">Ongoing</span>
+            <span v-else>{{formatDate(task.dueDate)}}</span>
+          </td>
           <td>
           <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> (R) {{task.responsibleUsers[0].name}} <br></span>
           <span v-if="(task.accountableUsers.length > 0) && (task.accountableUsers[0] !== null)"> (A) {{task.accountableUsers[0].name}}<br></span>
@@ -315,11 +317,28 @@
              <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> (I) {{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>
           </span>
           </td>
-          <td>{{task.progress + "%"}}</td>
-          <td v-if="(task.dueDate) <= now"><h5>X</h5></td>
-          <td v-else></td>
-          <td v-if="(task.watched) == true"><h5>X</h5></td>
-          <td v-else></td>
+           <td>
+            <span v-if="task.ongoing">Ongoing</span>
+            <span v-else>{{task.progress + "%"}}</span>
+          </td>          
+          <td class="text-center" style="text-align:center">
+            <span v-if="task.watched == true">Watched</span>
+            <span v-if="task.important == true">Important</span>
+            <span v-if="task.isOverdue">Overdue</span>
+            <span v-if="task.progress == 100">Completed</span> 
+            <span v-if="task.ongoing == true">Ongoing</span>
+            <span v-if="task.onHold == true">On Hold</span> 
+            <span v-if="task.draft == true">Draft</span>   
+            <span v-if="
+                  task.watched == false &&
+                  task.ongoing == false && 
+                  task.isOverdue == false &&
+                  task.onHold == false &&  
+                  task.draft == false && 
+                  task.progress < 100 "             
+                  >                
+            </span>  
+          </td>
           <td v-if="(task.notesUpdatedAt.length) > 0">
              By: {{ task.notes[0].user.fullName}} on
             {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}

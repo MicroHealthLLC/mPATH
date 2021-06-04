@@ -16,8 +16,8 @@
              <span v-if="(issue.informedUsers.length > 0) &&  (issue.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(issue.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
          </span>        
         </td>
-        <td class="eight">{{issue.progress + "%"}}</td>     
-        <td class="fort" >
+        <td class="eight text-center">{{issue.progress + "%"}}</td>     
+        <td class="fort text-center" >
             <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="issue.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
@@ -30,8 +30,8 @@
                   issue.onHold == false &&  
                   issue.draft == false && 
                   issue.progress < 100 "             
-                  class="text-secondary">
-                  No flags at this time
+                >
+                <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
             </span>          
          </td>
          <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">

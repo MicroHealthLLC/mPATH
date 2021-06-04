@@ -299,7 +299,6 @@
             v-for="risk in sortedRisks"
             class="riskHover"
             href="#"
-            :load="log(risk)"
             :key="risk.id"
             :risk="risk"
             :from-view="from"
@@ -353,9 +352,8 @@
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
-          <th>Progress</th>
-          <th>Overdue</th>
-          <th>On Watch</th>
+          <th>Progress</th>    
+          <th style="width:50%">Flags</th>        
           <th>Last Update</th>
         </tr>
       </thead>
@@ -366,7 +364,10 @@
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
           <td>{{risk.priorityLevel}}</td>
           <td>{{formatDate(risk.startDate)}}</td>
-          <td>{{formatDate(risk.dueDate)}}</td>
+          <td>
+            <span v-if="risk.ongoing">Ongoing</span>
+            <span v-else>{{formatDate(risk.dueDate)}}</span>
+          </td>
           <td>
            <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)">(R) {{risk.responsibleUsers[0].name}} <br></span>
           <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)">(A) {{risk.accountableUsers[0].name}}<br></span>
@@ -376,11 +377,40 @@
              <span v-if="(risk.informedUsers.length > 0) && (risk.informedUsers[0] !== null)">(I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>
          </span>
           </td>
-          <td>{{risk.progress + "%"}}</td>
-          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
-          <td v-else></td>
-          <td v-if="(risk.watched) == true"><h5>X</h5></td>
-          <td v-else></td>
+           <td>
+            <span v-if="risk.ongoing">Ongoing</span>
+            <span v-else>{{risk.progress + "%"}}</span>
+          </td>            
+          <td class="text-center" style="text-align:center">
+            <span v-if="risk.watched == true">Watched
+            <!-- <span v-if="risk.important || risk.isOverdue || risk.ongoing || risk.onHold || risk.progress == 100">, </span>            -->
+            </span>
+            <span v-if="risk.important == true">Important
+             <!-- <span v-if="risk.isOverdue || risk.progress == 100 || risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.isOverdue">Overdue
+             <!-- <span v-if=" risk.progress == 100 || risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.progress == 100"> Completed
+             <!-- <span v-if="risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span> 
+            <span v-if="risk.ongoing == true">Ongoing
+             <!-- <span v-if="risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.onHold == true">On Hold
+             <!-- <span v-if="risk.draft">, </span>            -->
+            </span> 
+            <span v-if="risk.draft == true">Draft</span>   
+            <span v-if="
+                  risk.watched == false &&
+                  risk.ongoing == false && 
+                  risk.isOverdue == false &&
+                  risk.onHold == false &&  
+                  risk.draft == false && 
+                  risk.progress < 100 "             
+                  >                
+            </span>  
+          </td>
           <td v-if="(risk.notesUpdatedAt.length) > 0">
              By: {{ risk.notes[0].user.fullName}} on
             {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
@@ -417,6 +447,7 @@
         risks: Object,
         now: new Date().toISOString(),
         risksQuery: '',
+        comma: 'test',
         currentPage:1,
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
@@ -451,12 +482,15 @@
       }
         this.currentSort = s;
       },
-      log(e){
-        console.log(e)
-      },
+      // log(e){
+      //   console.log(e)
+      // },
       nextPage:function() {
         if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
       },
+      // commaFunction(){
+     
+      // },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
       },
@@ -489,6 +523,7 @@
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#riskSheetsList1"})
         doc.save("Risk Register.pdf")
+      
       },
       exportToExcel(table, name){
         if (!table.nodeType) table = this.$refs.table
