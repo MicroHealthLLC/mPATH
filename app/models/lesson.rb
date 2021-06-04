@@ -59,6 +59,12 @@ class Lesson < ApplicationRecord
     else
       resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
+ 
+    resource_user_ids = resource_users.to_a.map(&:user_id).compact.uniq
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
     
     p_users = []
 
@@ -89,8 +95,28 @@ class Lesson < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: facility_project.facility_id,
-      sub_tasks: sub_tasks.as_json(only: [:text, :id]),
-      sub_issues: sub_issues.as_json(only: [:title, :id]),
+
+      # Add RACI user names
+      # Last name values added for improved sorting in datatables
+      responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
+      responsible_users_last_name: responsible_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      responsible_users_first_name: responsible_user_ids.map{|id| users_first_name_hash[id] }.compact,
+      accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
+      accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
+      accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
+
+      # Add RACI user ids
+      responsible_user_ids: responsible_user_ids,
+      accountable_user_ids: accountable_user_ids,    
+      consulted_user_ids: consulted_user_ids,
+      informed_user_ids: informed_user_ids, 
+
+      sub_tasks: sub_tasks.includes(:facility).map(&:lesson_json),
+      sub_issues: sub_issues.includes(:facility).map(&:lesson_json),
+      sub_risks: sub_risks.includes(:facility).map(&:lesson_json),
+      
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
       sub_risk_ids: sub_risks.map(&:id)

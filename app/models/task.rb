@@ -46,6 +46,15 @@ class Task < ApplicationRecord
       FacilityGroup.where(project_id: p.id).map(&:update_progerss)
     end
   end
+  
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
 
   def to_json(options = {})
     attach_files = []
@@ -129,7 +138,6 @@ class Task < ApplicationRecord
       checklists: checklists.as_json,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables

@@ -38,7 +38,16 @@ class Issue < ApplicationRecord
 
     append :title => " - Copy"
   end
-    
+
+  def lesson_json
+    {
+      id: id,
+      title: title,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
+
   def to_json(options = {})
     attach_files = []
     i_files = self.issue_files

@@ -99,7 +99,15 @@ class Risk < ApplicationRecord
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
-
+  
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
   def to_json(options = {})
     attach_files = []
     rf = self.risk_files

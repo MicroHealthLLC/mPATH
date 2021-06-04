@@ -10,14 +10,17 @@ module Tasker
     scope :incomplete, -> {where("progress < ?", 100)}
 
     belongs_to :facility_project
+    has_one :facility, through: :facility_project
+    has_one :project, through: :facility_project
+
     has_many :checklists, as: :listable, dependent: :destroy
 
     has_many :related_tasks, as: :relatable, dependent: :destroy
     has_many :related_issues, as: :relatable, dependent: :destroy
     has_many :related_risks, as: :relatable, dependent: :destroy
-    has_many :sub_tasks, through: :related_tasks
-    has_many :sub_issues, through: :related_issues
-    has_many :sub_risks, through: :related_risks
+    has_many :sub_tasks, through: :related_tasks, class_name: "Task"
+    has_many :sub_issues, through: :related_issues, class_name: "Issue"
+    has_many :sub_risks, through: :related_risks, class_name: "Risk"
 
     accepts_nested_attributes_for :checklists, reject_if: :all_blank, allow_destroy: true
     accepts_nested_attributes_for :facility_project, reject_if: :all_blank
@@ -48,13 +51,13 @@ module Tasker
       self.watched_at = DateTime.now
     end
 
-    def project
-      facility_project.try(:project)
-    end
+    # def project
+    #   facility_project.try(:project)
+    # end
 
-    def facility
-      facility_project.try(:facility)
-    end
+    # def facility
+    #   facility_project.try(:facility)
+    # end
 
     def remove_on_watch
       if self.progress == 100 && self.watched == true
