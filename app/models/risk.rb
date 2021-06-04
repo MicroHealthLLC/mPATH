@@ -11,8 +11,6 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  # enum status: [:monitoring, :resolved, :closed]
-  # enum status: [:temporary, :perpetual]
   
 
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
@@ -155,10 +153,10 @@ class Risk < ApplicationRecord
   end
 
   def status_name_hash
-    {
-      1 => "Nothing Selected",
-      2 => "Monitoring",
-      3 => "Resolved"    
+    {    
+      1 => "Monitoring",
+      2 => "Resolved", 
+      3 => "Closed"  
     }
   end
 
@@ -167,10 +165,9 @@ class Risk < ApplicationRecord
   end
 
   def duration_name_hash
-    {
-      1 => "Nothing Selected",
-      2 => "Temporary",
-      3 => "Perpetual"    
+    { 
+      1 => "Temporary",
+      2 => "Perpetual"    
     }
   end
 
