@@ -460,17 +460,17 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        formData.append(
-          "lesson[user_id]",
-          this.submittedBy ? this.submittedBy.id : null
-        );
+        // formData.append(
+        //   "lesson[user_id]",
+        //   this.submittedBy ? this.submittedBy.id : null
+        // );
         formData.append(
           "lesson[task_type_id]",
           this.category ? this.category.id : null
         );
         formData.append("lesson[stage]", this.stage ? this.stage.id : null);
-        formData.append("lesson[program_id]", this.$route.params.programId);
-        formData.append("lesson[project_id]", this.$route.params.projectId);
+        formData.append("project_id", this.$route.params.programId);
+        formData.append("facility_id", this.$route.params.projectId);
         // Load related task ids
         if (this.relatedTasks.length > 0 && this.lesson.sub_task_ids) {
           this.relatedTasks.forEach((task) => {

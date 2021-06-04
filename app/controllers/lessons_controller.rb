@@ -5,7 +5,7 @@ class LessonsController < AuthenticatedController
     if params[:program_id] && params[:project_id]
       facility_project = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
       if facility_project
-        lessons = Lesson.where(facility_project_id: facility_project.id).includes([{lesson_files_attachments: :blob}, {lesson_users: [:user] }, {lesson_projects: [{facility_project: [:facility, :project]}] }, :users, :notes, :lesson_details, :task, :risk, :issue, :task_type, :issue_type ])
+        lessons = Lesson.where(facility_project_id: facility_project.id).includes([{lesson_files_attachments: :blob}, {lesson_users: [:user] }, :users, :notes, :lesson_details, :task_type ])
         response_hash = {lessons: lessons.map(&:to_json)}
         status_code = 200
       else
