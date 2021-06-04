@@ -314,7 +314,37 @@
     </div>
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'">
-      <h1>SUCCESSES</h1>
+      <label class="font-md">Successes</label>
+      <span class="clickable">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(i, index) in [1, 2, 3]"
+        :key="index"
+        class="success-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span> Someone at
+              10:30PM on 6/23/2021</el-tag
+            >
+            <i class="el-icon-delete ml-3"></i>
+          </div>
+        </div>
+
+        <el-input
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+        <label class="font-md">Recommendation</label>
+        <el-input
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'">
@@ -430,8 +460,14 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        formData.append( "lesson[user_id]", this.submittedBy ? this.submittedBy.id : null );
-        formData.append( "lesson[task_type_id]", this.category ? this.category.id : null );
+        formData.append(
+          "lesson[user_id]",
+          this.submittedBy ? this.submittedBy.id : null
+        );
+        formData.append(
+          "lesson[task_type_id]",
+          this.category ? this.category.id : null
+        );
         formData.append("lesson[stage]", this.stage ? this.stage.id : null);
         formData.append("lesson[program_id]", this.$route.params.programId);
         formData.append("lesson[project_id]", this.$route.params.projectId);
@@ -630,5 +666,9 @@ a:hover {
 }
 .text-smaller {
   font-size: smaller;
+}
+.success-card {
+  background-color: #ededed;
+  border-color: lightgray;
 }
 </style>
