@@ -194,12 +194,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ task.facilityName }}
+                    {{ task.project_name }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${task.project_id}/tasks/${task.id}`
                   "
                   slot="reference"
                   >{{ task.text }}</router-link
@@ -232,12 +232,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ issue.facilityName }}
+                    {{ issue.project_name }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${issue.facilityId}/issues/${issue.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${issue.project_id}/issues/${issue.id}`
                   "
                   slot="reference"
                   >{{ issue.title }}</router-link
@@ -270,12 +270,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ risk.facilityName }}
+                    {{ risk.project_name }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${risk.facilityId}/risks/${risk.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${risk.project_id}/risks/${risk.id}`
                   "
                   slot="reference"
                   >{{ risk.text }}</router-link
@@ -587,9 +587,7 @@ export default {
           );
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          this.relatedRisks = this.lesson.sub_risk_ids.map((id) => {
-            return { id: id, text: "No Title Yet", facilityName: "N/A" };
-          });
+          this.relatedRisks = this.lesson.sub_risks;
         }
       },
     },
@@ -606,9 +604,7 @@ export default {
           );
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          this.relatedRisks = this.lesson.sub_risk_ids.map((id) => {
-            return { id: id, text: "No Title Yet", facilityName: "N/A" };
-          });
+          this.relatedRisks = this.lesson.sub_risks;
         }
       },
     },
