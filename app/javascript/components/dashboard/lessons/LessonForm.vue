@@ -44,7 +44,7 @@
     </div>
     <hr class=" mb-6 mt-2" />
     <!-- Form Navigation Tabs -->
-    <div class="d-flex form-group pt-1 mb-1 justify-content-start">
+    <div class="d-flex pt-1 mb-1 justify-content-start">
       <FormTabs
         :current-tab="currentTab"
         :tabs="tabs"
@@ -295,12 +295,12 @@
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'">
       <label class="font-md">Successes</label>
-      <span class="clickable">
+      <span class="clickable" @click.prevent="addSuccess">
         <i class="fas fa-plus-circle"></i>
       </span>
 
       <el-card
-        v-for="(i, index) in [1, 2, 3]"
+        v-for="(success, index) in successes"
         :key="index"
         class="success-card mb-3"
       >
@@ -311,16 +311,22 @@
               ><span class="font-weight-bold">Submitted by:</span> Someone at
               10:30PM on 6/23/2021</el-tag
             >
-            <i class="el-icon-delete ml-3"></i>
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeSuccess(index)"
+            ></i>
           </div>
         </div>
 
         <el-input
+          v-model="success.findings"
           type="textarea"
           placeholder="Please enter findings here..."
         ></el-input>
+
         <label class="font-md">Recommendation</label>
         <el-input
+          v-model="success.recommendation"
           type="textarea"
           placeholder="Please recommendation here..."
         ></el-input>
@@ -328,14 +334,92 @@
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'">
-      <h1>FAILURES</h1>
+      <label class="font-md">Failures</label>
+      <span class="clickable" @click.prevent="addFailure">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(failure, index) in failures"
+        :key="index"
+        class="failure-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span> Someone at
+              10:30PM on 6/23/2021</el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeFailure(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="failure.findings"
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+
+        <label class="font-md">Recommendation</label>
+        <el-input
+          v-model="failure.recommendation"
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
     </div>
-    <!-- Files & Links -->
+
+    <!-- Best Practices Tab -->
     <div v-show="currentTab == 'tab5'">
+      <label class="font-md">Best Practicess</label>
+      <span class="clickable" @click.prevent="addBestPractice">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(bestPractice, index) in bestPractices"
+        :key="index"
+        class="best-practice-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span> Someone at
+              10:30PM on 6/23/2021</el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeBestPractice(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="bestPractice.findings"
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+
+        <label class="font-md">Recommendation</label>
+        <el-input
+          v-model="bestPractice.recommendation"
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
+    </div>
+
+    <!-- Files & Links Tab -->
+    <div v-show="currentTab == 'tab6'">
       <h1>FILES AND LINKS</h1>
     </div>
     <!-- Updates Tab -->
-    <div v-show="currentTab == 'tab6'">
+    <div v-show="currentTab == 'tab7'">
       <h1>UPDATES</h1>
     </div>
     <RelatedLessonMenu
@@ -406,14 +490,20 @@ export default {
           form_fields: [],
         },
         {
-          label: "Files & Links",
+          label: "Best Practices",
           key: "tab5",
+          closable: false,
+          form_fields: [],
+        },
+        {
+          label: "Files & Links",
+          key: "tab6",
           closable: false,
           form_fields: ["Files"],
         },
         {
           label: "Updates",
-          key: "tab6",
+          key: "tab7",
           closable: false,
           form_fields: [],
         },
@@ -423,6 +513,46 @@ export default {
       relatedTasks: [],
       relatedIssues: [],
       relatedRisks: [],
+      successes: [
+        {
+          id: 1,
+          findings:
+            "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          recommendation:
+            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+        {
+          id: 2,
+          findings:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          recommendation:
+            "Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+      ],
+      failures: [
+        {
+          id: 1,
+          findings:
+            "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+          recommendation:
+            "Reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+        {
+          id: 2,
+          findings:
+            "Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          recommendation:
+            "Sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+      ],
+      bestPractices: [
+        {
+          id: 1,
+          findings: "QLaboris nisi ut aliquip ex ea commodo consequat.",
+          recommendation:
+            "Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+      ],
     };
   },
   methods: {
@@ -439,7 +569,10 @@ export default {
         formData.append("lesson[title]", this.lesson.title);
         formData.append("lesson[description]", this.lesson.description);
         formData.append("lesson[date]", this.lesson.date);
-        formData.append( "lesson[task_type_id]", this.category ? this.category.id : null );
+        formData.append(
+          "lesson[task_type_id]",
+          this.category ? this.category.id : null
+        );
         formData.append("lesson[stage]", this.stage ? this.stage.id : null);
         formData.append("project_id", this.$route.params.programId);
         formData.append("facility_id", this.$route.params.projectId);
@@ -533,6 +666,60 @@ export default {
         1
       );
     },
+    addSuccess() {
+      this.successes.unshift({ findings: "", recommendation: "" });
+    },
+    removeSuccess(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Success?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.successes.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    addFailure() {
+      this.failures.unshift({ findings: "", recommendation: "" });
+    },
+    removeFailure(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Failure?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.failures.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    addBestPractice() {
+      this.bestPractices.unshift({ findings: "", recommendation: "" });
+    },
+    removeBestPractice(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Best Practice?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.bestPractices.splice(index, 1);
+        })
+        .catch(() => {});
+    },
   },
   computed: {
     ...mapGetters([
@@ -622,8 +809,11 @@ a:hover {
 .text-smaller {
   font-size: smaller;
 }
-.success-card {
+.success-card,
+.failure-card,
+.best-practice-card {
   background-color: #ededed;
   border-color: lightgray;
+  border-left: 10px solid #5aaaff;
 }
 </style>
