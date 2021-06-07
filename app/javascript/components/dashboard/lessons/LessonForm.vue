@@ -574,8 +574,7 @@ export default {
           this.category ? this.category.id : null
         );
         formData.append("lesson[stage]", this.stage ? this.stage.id : null);
-        formData.append("project_id", this.$route.params.programId);
-        formData.append("facility_id", this.$route.params.projectId);
+
         // Load related task ids
         if (this.relatedTasks.length > 0 && this.lesson.sub_task_ids) {
           this.relatedTasks.forEach((task) => {
