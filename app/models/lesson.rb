@@ -213,9 +213,9 @@ class Lesson < ApplicationRecord
       end
       params_lesson_details = ( params_lesson_details + params_best_practices ).compact
     end
-    
-    if params[:project_id] && params[:facility_id]
-      fp = FacilityProject.where(project_id: params[:project_id], facility_id: params[:facility_id]).first
+
+    if params[:project_id] && params[:program_id]
+      fp = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
       t_params[:facility_project_id] = fp.id
     end
 
