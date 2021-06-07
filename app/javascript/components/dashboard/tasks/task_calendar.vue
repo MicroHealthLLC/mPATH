@@ -761,6 +761,4 @@ input[type=search] {
 //  .show {
 //    display: block;
 //  }
-
->>>>>>> release
 </style> 
