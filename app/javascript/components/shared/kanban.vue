@@ -97,6 +97,17 @@ export default {
       let s = permissionHash[salut]
       return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
     },
+    viewPermit: () => (view, req) => {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[req]
+      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
+
+      //if (Vue.prototype.$currentUser.role === "superadmin") return true;
+      //return Vue.prototype.$permissions[view][req]
+    },
     setupColumns(cards) {       
       this.stageId = `${this.kanbanType.slice(0, -1)}StageId`    
       this.columns.push({
@@ -157,7 +168,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'viewPermit'
     ]),
     cardShow() {
       return _.upperFirst(`${this.kanbanType.slice(0, -1)}Show`)

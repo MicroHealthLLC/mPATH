@@ -11,7 +11,7 @@ div{id="facility_privilege_list"}
     - index = SecureRandom.random_number(10000000)
     - facility_project_ids = fp.facility_project_ids
     - project = active_projects.detect{|p| p.id == fp.project_id}
-
+    - next if !project
     fieldset(class="inputs has_many_fields")
       ol
         li(class="select input required")
