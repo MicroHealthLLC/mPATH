@@ -13,15 +13,26 @@
           <div class="col-md-9 font-lg d-flex mb-1 kanban-text">                       
                <b>{{DV_risk.text}}</b>                      
           </div>
-          <div class="col-md-3">
-             <div class="t_actions float-left">
-                <span v-if="(DV_risk.watched) == true">
-                  <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
-                </span>
-              </div>
+          <div class="col-md-3">            
               <div class="t_actions float-right">
-                <span v-show="is_overdue" v-tooltip="`overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              </div>
+            <span v-show="risk.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
+            <span v-show="risk.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+            <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+            <span v-show="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
+            <span v-show="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
+            <span v-show="risk.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
+            <span v-show="risk.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+            <span v-if="                    
+                     risk.ongoing == false && 
+                     risk.isOverdue == false &&
+                     risk.onHold == false &&  
+                     risk.draft == false && 
+                     risk.progress < 100 "             
+                     class="text-secondary">
+                   <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>                
+            </span>          
+           
+            </div>
            </div>
          </div>
 
@@ -35,8 +46,12 @@
                   </span>
                   {{formatDate(DV_risk.startDate)}}
                   </span>              
-                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
-                  {{formatDate(DV_risk.dueDate)}}
+                
+                  <span  v-if="risk.ongoing == false">
+                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                    {{formatDate(DV_risk.dueDate)}}
+                  </span>
+                  <span v-else v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mx-2"  /></span>  
                 </div>
             </div>
 
@@ -74,9 +89,13 @@
         
          
               <div class="font-sm col mt-3 p-0">
-                <div class="progress pg-content" :class="{'progress-0': DV_risk.progress <= 0}">
-                  <div class="progress-bar bg-info" :style="`width: ${DV_risk.progress}%`">{{DV_risk.progress}}%</div>
-                </div>
+                <span  v-if="risk.ongoing == false">
+                  <div class="progress pg-content" :class="{'progress-0': DV_risk.progress <= 0}">
+                    <div class="progress-bar bg-info" :style="`width: ${DV_risk.progress}%`">
+                      {{DV_risk.progress}}%
+                    </div>
+                  </div>
+                </span>
               </div>
         
       </div>

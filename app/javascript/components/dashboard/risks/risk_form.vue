@@ -99,24 +99,93 @@
             <div v-show="currentTab == 'risk'" class="paperLookTab">
               <!-- RISK OVERVIEW TAB -->
               <div class="form-group mx-4">
-                <span
-                  v-if="_isallowed('write')"
-                  class="watch_action mt-3 clickable float-right"
-                  @click.prevent.stop="toggleWatched"
-                  data-cy="risk_on_watch"
-                >
-                  <span v-show="DV_risk.watched" class="check_box mx-1"
-                    ><i class="far fa-check-square font-md"></i
-                  ></span>
-                  <span v-show="!DV_risk.watched" class="empty_box mr-1"
-                    ><i class="far fa-square"></i
-                  ></span>
-                  <span><i class="fas fa-eye mr-1"></i></span>
-                  <small style="vertical-align: text-top">On Watch</small>
-                </span>
                 <label class="font-sm mt-3"
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
+
+              <div class="toggleWrapper float-right" id="risk_toggles">
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action mt-3 clickable mx-2"
+                  @click.prevent.stop="toggleWatched"
+                  data-cy="risk_on_watch"
+                >
+                  <span v-show="DV_risk.watched" 
+                ><i class="fas fa-eye"></i
+                 ></span>
+                 <span v-show="!DV_risk.watched" 
+                  ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
+                 ></span>
+           
+              <small style="vertical-align:text-top"> On Watch</small>
+                </span>
+
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOnhold"
+              data-cy="task_on_hold"
+            >
+              <span v-show="DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+              </span>
+              <span v-show="!DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              </span>
+             
+              <small style="vertical-align:text-top"> On Hold</small>
+            </span>
+
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleImportant"
+                  data-cy="issue_important"
+                >
+                <span v-show="DV_risk.important">
+                <i class="fas fa-star text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.important">
+                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+                </span>
+                  <small style="vertical-align:text-top"> Important</small>
+                </span>
+
+                 <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleOngoing"
+                  data-cy="risk_ongoing"
+                   >
+                  <span v-show="DV_risk.ongoing">
+                  <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span v-show="!DV_risk.ongoing">
+                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>
+                      <small style="vertical-align:text-top"> Ongoing</small>
+                    </span>
+
+
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleDraft"
+                data-cy="task_important"
+              >
+                <span v-show="DV_risk.draft">
+                <i class="fas fa-pencil-alt text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.draft">
+                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small style="vertical-align:text-top"> Draft</small>
+            </span>
+
+              </div>
+
+
                 <el-input
                   v-validate="'required'"
                   placeholder="Risk Name"
@@ -260,37 +329,43 @@
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
                   <label class="font-sm"
-                    >Identified Date
-                    <span style="color: #dc3545">*</span></label
+                    >Date Identified
+                    <span v-show="!DV_risk.ongoing" style="color: #dc3545">*</span></label
                   >
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.startDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
                     placeholder="DD MM YYYY"
-                    name="Identified Date"
+                    name="Date Identified"
                     class="w-100 vue2-datepicker"
-                    :class="{ 'error': errors.has('Identified Date') }"
+                    :class="{ 'error': errors.has('Date Identified') }"
                     :disabled="!_isallowed('write')"
                     data-cy="risk_start_date"
                   />
                   <div
-                    v-show="errors.has('Identified Date')"
+                    v-show="errors.has('Date Identified')"
                     class="text-danger"
                     data-cy="risk_start_date_error"
                   >
-                    {{ errors.first("Identified Date") }}
+                    {{ errors.first(" Date Identified") }}
                   </div>
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
+                <span v-if="DV_risk.ongoing ">           
+                <label class="font-md"><i class="fas fa-retweet text-success mr-1"></i>
+                 Date Closed
+                 </label
+                  ></span>
+                  <span v-else>           
                   <label class="font-sm"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
-                  >
+                  ></span>
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
@@ -1068,7 +1143,7 @@
 
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
-            <div class="form-group pt-2 mb-3 ml-4 mr-5">
+            <div v-show="!DV_risk.ongoing"  class="form-group pt-2 mb-3 ml-4 mr-5">
               <label class="font-sm mb-0 mr-3">Progress (in %)</label>
               <span class="ml-3">
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -1721,14 +1796,76 @@
             style="min-height: 300px"
             class="paperLookTab"
           >
-            <div class="form-group mx-4">
-              <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
-              <!-- <textarea
-                class="form-control"
-                placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
-                rows="4"
-              >
-              </textarea> -->
+            <div class="form-group mt-3 mx-4">             
+                <div class="form-group mx-4">
+                <label class="font-md"
+                  >Explanation</label
+                >
+                <el-input                
+                  type="textarea"
+                  placeholder="Disposition Explanation"
+                  v-model="DV_risk.explanation"
+                  v-if="!null"
+                  rows="3"
+                  :readonly="!_isallowed('write')"
+                  data-cy="risk_description"
+                 
+                />
+              
+              </div>
+
+              <div class="d-flex mb-1 mx-4 form-group">
+                <div class="simple-select form-group w-50">
+                  <label class="font-md"
+                    >Status</label
+                  >
+                  <el-select
+                    v-model="selectedStatus"                  
+                    class="w-100"
+                    track-by="name" 
+                    clearable               
+                    :disabled="!_isallowed('write')"
+                    data-cy="task_type"                  
+                    placeholder="Risk Disposition Status"
+                  >
+                    <el-option
+                      v-for="item in getRiskDispositionStatus"                 
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+                  <div class="simple-select form-group w-50 ml-4">
+                  <label class="font-md"
+                    >Duration</label
+                  >
+                  <el-select
+                    v-model="selectedDuration"  
+                   :load="log(DV_risk.duration)"                
+                    class="w-100"
+                    clearable
+                    track-by="name"                  
+                    :disabled="!_isallowed('write')"                                 
+                    placeholder="Risk Disposition Duration"
+                  >
+                    <el-option
+                      v-for="item in getRiskDispositionDuration"                 
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+              </div>
             </div>
           </div>
           <!-- END RISK DISPOSITION SECTION TAB -->
@@ -1846,11 +1983,15 @@ export default {
       informedRiskUsers: [],
       probability: [],
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
-      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },
-      selectedTaskType: null,
+      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
+      selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
+      selectedDuration: { id: 1, value: 1, name: "Nothing Selected" },   
+      selectedTaskType: null,  
       selectedRiskStage: null,
       relatedIssues: [],
       editToggle: false,
+      onHold: false,
+      draft: false,
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
@@ -1866,7 +2007,7 @@ export default {
             "Risk Name",
             "Risk Description",
             "Category",
-            "Identified Date",
+            "Date Identified",
             "Risk Approach Due Date",
           ],
         },
@@ -1912,7 +2053,7 @@ export default {
           label: "Disposition",
           key: "tab7",
           closable: false,
-          disabled: true,
+          disabled: false,
         },
       ],
     };
@@ -1935,6 +2076,9 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
+      'setRiskDispositionStatus',
+      'setRiskDispositionDuration',
+
       "updateRisksHash",
     ]),
     ...mapActions([
@@ -1949,6 +2093,7 @@ export default {
         facilityProjectId: this.facility.id,
         text: "",
         riskDescription: "",
+        explanation: "",
         impactDescription: "",
         probabilityDescription: "",
         riskApproach: "avoid",
@@ -1964,8 +2109,11 @@ export default {
         progress: 0,
         startDate: "",
         getRiskImpactLevelNames: "1 - Negligible",
+        getRiskDispositionDuration: "Nothing Selected",
+        getRiskDispositionStatus: "Nothing Selected",
         dueDate: "",
         autoCalculate: true,
+        important: false,
         // riskApproverUserIds: [],
         responsibleUserIds: [],
         accountableUserIds: [],
@@ -1980,7 +2128,7 @@ export default {
       };
     },
        log(e){
-          console.log("This is the riskStages item: " + e)
+          console.log("This is the riskDispStatus item: " + e)
       },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
@@ -2080,6 +2228,12 @@ export default {
       this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(
         (t) => t.id === this.DV_risk.impactLevel
       );
+        this.selectedDuration = this.getRiskDispositionDuration.find(
+        (t) => t.id === this.DV_risk.duration
+      );
+        this.selectedStatus = this.getRiskDispositionStatus.find(
+        (t) => t.id === this.DV_risk.status
+      );
       if (this.DV_risk.attachFiles)
         this.addFile(this.DV_risk.attachFiles, false);
       this.$nextTick(() => {
@@ -2156,12 +2310,25 @@ export default {
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
       this.updateWatchedRisks(this.DV_risk);
     },
+    toggleImportant() {
+      this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
+    },
+    toggleOngoing() {
+      this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
+      this.DV_risk.dueDate = '';
+    },
+  toggleOnhold() {
+      this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+    },
+  toggleDraft() {
+      this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
+    },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
       }
     },
-    toggleApproved(e) {
+    toggleApproved() {
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.DV_risk.approvalTime =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();
@@ -2206,6 +2373,11 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.riskDescription);
+        if (!this.DV_risk.explanation) {
+          formData.append("risk[explanation]",'')
+        } else {
+          formData.append("risk[explanation]", this.DV_risk.explanation);   
+        }      
         formData.append(
           "risk[impact_description]",
           this.DV_risk.impactDescription
@@ -2223,6 +2395,23 @@ export default {
           "risk[impact_level_name]",
           this.selectedRiskImpactLevel.name
         );
+        if (this.selectedStatus) {        
+          formData.append("risk[status]", this.selectedStatus.id);
+          formData.append("risk[status_name]", this.selectedStatus.name);
+           
+        } else {
+           formData.append("risk[status]", null);
+           formData.append("risk[status_name]", '');
+        }
+                
+        if (this.selectedDuration) {
+          formData.append("risk[duration]", this.selectedDuration.id)
+          formData.append("risk[duration_name]", this.selectedDuration.name);
+              
+        } else {
+           formData.append("risk[duration_name]", '')
+           formData.append("risk[duration]", null);
+        }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
         formData.append("risk[risk_approach]", this.DV_risk.riskApproach);
         formData.append(
@@ -2236,6 +2425,10 @@ export default {
         formData.append("risk[start_date]", this.DV_risk.startDate);
         formData.append("risk[due_date]", this.DV_risk.dueDate);
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
+        formData.append("risk[important]", this.DV_risk.important);
+        formData.append("risk[ongoing]", this.DV_risk.ongoing);
+        formData.append("risk[on_hold]", this.DV_risk.onHold);
+        formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
@@ -2569,7 +2762,7 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date",
+        "Date Identified",
         "Risk Approach Due Date",
       ];
 
@@ -2628,15 +2821,20 @@ export default {
       "facilityGroups",
       "getFacilityProjectOptions",
       "getRiskImpactLevelNames",
+      "getRiskDispositionDuration",
+      "getRiskDispositionStatus",
       "getRiskImpactLevelOptions",
       "getRiskProbabilityNames",
       "getRiskProbabilityOptions",
       "impactLevelNames",
+      'dispositionStatuses',
       "managerView",
       "myActionsFilter",
       "probabilityNames",
       "projectUsers",
       "riskApproaches",
+      'riskDispositionStatuses',
+      'riskDispositionDuration',
       "riskStages",
       "taskTypes",
     ]),
@@ -2649,8 +2847,7 @@ export default {
         // this.exists(this.DV_risk.probabilityDescription) &&
         this.exists(this.selectedRiskPossibility.id) &&
         this.exists(this.selectedRiskImpactLevel.id) &&
-        this.exists(this.selectedRiskPossibility.id) &&
-        this.exists(this.selectedRiskImpactLevel.id) &&
+        this.exists(this.selectedRiskPossibility.id) &&     
         this.exists(this.DV_risk.riskApproach) &&
         // this.exists(this.DV_risk.riskApproachDescription) &&
         this.exists(this.DV_risk.taskTypeId) &&
@@ -3012,6 +3209,19 @@ export default {
       },
       deep: true,
     },
+    selectedStatus: {
+      handler: function(value) {
+        this.DV_risk.status = value ? value.id : null;
+      },
+      deep: true,
+    },
+   selectedDuration: {
+      handler: function(value) {
+        this.DV_risk.duration = value ? value.id : null;
+      
+      },
+      deep: true,
+    },
     selectedRiskStage: {
       handler: function(value) {
         // console.log("This is the watcher id value: " + value.id)
@@ -3363,6 +3573,9 @@ ul {
 }
 /deep/.el-collapse-item__header {
   background-color: #fafafa;
+}
+/deep/.el-input__inner {
+  text-transform: capitalize !important;
 }
 .fa-building {
   font-size: large !important;

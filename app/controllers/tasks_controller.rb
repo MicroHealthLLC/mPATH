@@ -40,7 +40,13 @@ class TasksController < AuthenticatedController
 
   def create
     @task = Task.new.create_or_update_task(params, current_user)
-    render json: {task: @task.to_json}
+
+    if @task.errors.any?
+      render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    else
+      render json: {task: @task.to_json}
+    end
+    
   end
 
   def update
@@ -60,7 +66,12 @@ class TasksController < AuthenticatedController
     @task.add_link_attachment(params)
     @task.reload
     # @task.create_or_update_task(params, current_user)
-    render json: {task: @task.to_json}
+
+    if @task.errors.any?
+      render json: {task: @task.to_json, errors: @task.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    else
+      render json: {task: @task.to_json}
+    end
   end
 
   def create_duplicate
@@ -114,49 +125,7 @@ class TasksController < AuthenticatedController
   end
 
   def task_params
-    params.require(:task).permit(
-      :text,
-      :task_type_id,
-      :task_stage_id,
-      :facility_project_id,
-      :due_date,
-      :start_date,
-      :description,
-      :progress,
-      :auto_calculate,
-      :watched,    
-      :kanban_order,
-      task_files: [],
-      user_ids: [],
-      sub_task_ids: [],
-      sub_issue_ids: [],
-      sub_risk_ids: [],
-      checklists_attributes: [
-        :id,
-        :_destroy,
-        :text,
-        :user_id,
-        :checked,
-        :position,
-        :due_date,
-        :listable_type,
-        :listable_id,
-        :position,
-        progress_lists_attributes: [
-          :id,
-          :_destroy,
-          :body,
-          :checklist_id,
-          :user_id
-        ]
-      ],
-      notes_attributes: [
-        :id,
-        :_destroy,
-        :user_id,
-        :body
-      ]
-    )
+    params.require(:task).permit(Task.params_to_permit)
   end
 
   def destroy_file_ids

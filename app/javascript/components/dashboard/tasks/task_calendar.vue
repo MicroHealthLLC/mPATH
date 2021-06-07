@@ -1,4 +1,3 @@
-
 <template>
 <div>
    <span class="filters-wrapper w-75">
@@ -117,11 +116,11 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
-           <v-checkbox
-            v-model="checkbox"
+           <v-checkbox     
+           v-model="C_showAllEventsToggle"     
             class="mr-5 mt-6 mb-0"
             :key="componentKey"         
-            @click="showAllEvents"
+            @click.prevent="showAllEvents"
             :label="`Show All`"
           ></v-checkbox>
            <v-btn        
@@ -158,7 +157,8 @@
       <v-sheet height="600">     
          <v-calendar                      
           ref="calendar"        
-          v-model="focus"
+          v-model="C_lastFocus"
+          :load="log(focus)"
           color="primary"            
           :events="events"         
           :event-color="getEventColor"
@@ -195,29 +195,48 @@
           <v-list-item>
             <v-list-item-title>          
               <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
-              {{ selectedEvent.start }}
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title> 
-            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
-              {{ selectedEvent.end }}
+
+            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span> 
+             <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+               <span v-else> 
+              {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+               </span>
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
-            {{ selectedEvent.progess }}%          
+              <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+               <span v-else>
+               {{ selectedEvent.progess }}%    
+               </span>   
             </v-list-item-title>
+            <!-- class="d-none mr-1"  :class="{ 'd-inline mr-1': showMore}" -->
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
             <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
                 <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+                 <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-                <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Task`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
-                  No flags at this time
+                <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
+                <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
+                <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+                <span v-if="
+                      selectedEvent.watch == false && 
+                      selectedEvent.isOngoing == false && 
+                      selectedEvent.pastDue == false &&     
+                      selectedEvent.hasStar == false && 
+                      selectedEvent.isOnHold == false && 
+                      selectedEvent.isDraft == false && 
+                      selectedEvent.progess < 100">
+                      No flags at this time
                 </span> 
             </v-list-item-title>
           </v-list-item>        
@@ -227,6 +246,7 @@
           <!-- <v-btn
             small
             class="mh-green text-light"
+            @click.prevent="showM"
           >
              <font-awesome-icon icon="clipboard-list" class="mr-1" />
             See More
@@ -276,12 +296,13 @@
      },
     data() {
       return {         
-        focus: '',        
+        focus: this.C_lastFocus,
+        showMore: false,    
         type: this.C_calendarView,     
         tasksQuery: '',
         taskNames: [], 
         taskIds:[],       
-        checkbox: false,
+        checkbox: this.C_showAllEventsToggle,
         taskData: [],     
         componentKey: 0,
         taskStartDates: [],       
@@ -309,8 +330,10 @@
         'setAdvancedFilter',
         'setTaskIssueProgressStatusFilter',
         'setCalendarViewFilter',
+        'setLastFocusFilter',
         'setTaskIssueOverdueFilter',
         'setTaskTypeFilter',
+        'setShowAllEventsToggle',
         'setMyActionsFilter',
         'setOnWatchFilter',     
         'setTaskForManager',
@@ -330,7 +353,10 @@
         let s = permissionHash[salut]
         return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
       },
-       reRenderCalendar() {
+      log(e){
+        console.log("Focus: " + e)
+      },
+      reRenderCalendar() {
         this.componentKey += 1;
       },   
       viewDay ({ date }) {       
@@ -339,10 +365,13 @@
       },
       getEventColor (event) {
         return event.color
-      },  
+      }, 
+      showM(){
+        this.showMore = !this.showMore
+      }, 
       setToday () {
-        // this.todayView = true 
-        this.focus = ''       
+        this.todayView = true 
+        this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -398,14 +427,7 @@
       e.preventDefault();
       this.$refs.menu.open(e);
       },
-      showAllEvents(){
-      this.checkbox == !this.checkbox
-        if (this.checkbox == true) {
-          this.reRenderCalendar()
-        } else if (this.checkbox == false){
-           this.reRenderCalendar()
-        }
-      },
+
       showSummary ({ nativeEvent, event }) {   
         const open = () => {
           this.selectedEvent = event
@@ -421,6 +443,18 @@
 
         nativeEvent.stopPropagation()    
       },
+    showAllEvents(){
+        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
+         console.log(this.getShowAllEventsToggle)
+        if (this.getShowAllEventsToggle == true) {
+        
+          this.reRenderCalendar()
+        } else if (this.getShowAllEventsToggle == false){
+           this.events = [];
+         
+           this.reRenderCalendar()
+        }
+      },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
       if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
@@ -432,7 +466,11 @@
         this.categories = this.filteredCalendar.map(task => task.taskType) 
         this.onWatch = this.filteredCalendar.map(task => task.watched)   
         this.overdue = this.filteredCalendar.map(task => task.isOverdue) 
+        this.star = this.filteredCalendar.map(task => task.important)
+        this.ongoing = this.filteredCalendar.map(task => task.ongoing)
         this.percentage = this.filteredCalendar.map(task => task.progress)
+        this.onhold = this.filteredCalendar.map(task => task.onHold)
+        this.draft = this.filteredCalendar.map(task => task.draft)
            
         const events = []
         const min = new Date(`${start.date}T00:00:00`)
@@ -440,6 +478,11 @@
         const days = (max.getTime() - min.getTime()) / 86400000   
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
+
+            if(this.taskData[i].ongoing) {
+            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"
+            this.taskEndDates[i] = '2099-01-01'
+            }
             events.push({            
             name: this.taskNames[i],
             start: this.taskStartDates[i],
@@ -450,16 +493,22 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,             
+            color: this.colors.defaultColor,  
+            hasStar: this.star[i], 
+            isOngoing: this.ongoing[i], 
+            isDraft: this.draft[i],
+            isOnHold: this.onhold[i]           
           })
         }
           // This is the main Events array pushed into Calendar
         //  this.events = events
-         if (this.checkbox == false && !(this.tasksQuery.length > 0) ) {
+
+         if (this.getShowAllEventsToggle == false && !(this.tasksQuery.length > 0) ) {
            this.events = []
          } else 
           this.events = events
        }      
+      
       },     
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
@@ -474,6 +523,9 @@
         'getCalendarViewFilterOptions',
         'calendarViewFilter',  
         'getCalendarViewFilter',
+        'getLastFocusFilter',
+         'getShowAllEventsToggle',
+        'getShowAllToggle',
         'filterDataForAdvancedFilter', 
         'getAdvancedFilter',     
         'getTaskIssueProgressStatusOptions',
@@ -494,10 +546,8 @@
         'taskUserFilter',
         'taskTypes',    
      
+     
        ]),
-       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
@@ -510,8 +560,19 @@
          
         return valid
         }), ['dueDate'])
-    
+
+          if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return tasks
+        
+       } else  {
+        
+        tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
+        return tasks
+      
+       }       
+    
+      
     }, 
      C_calendarTaskFilter: {           
         get() {
@@ -521,6 +582,15 @@
         set(value) {
           this.setAdvancedFilter(value)
         }
+      },
+     C_showAllEventsToggle: {                  
+        get() {
+         return this.getShowAllEventsToggle                 
+        },
+        set(value) {
+          this.setShowAllEventsToggle(value) ||  this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
+        }
+        
       },
       C_taskIssueProgressStatusFilter: {
         get() {
@@ -550,8 +620,16 @@
           this.setTaskTypeFilter(value)
         }
       },
-
-   C_calendarView: {
+      C_lastFocus: {
+      get() {         
+        return this.getLastFocusFilter  || this.focus
+      
+      },
+      set(value) {
+        this.setLastFocusFilter(value) 
+       }
+      },   
+     C_calendarView: {
       get() {
         return this.getCalendarViewFilter || {id: 'month', name: 'Month', value: 'month'}
       },
@@ -575,21 +653,10 @@
     tasksQuery: {
       handler() {
        if(this.tasksQuery.length > 0) {
-         this.checkbox = false;
          this.reRenderCalendar()
        } else if (!(this.tasksQuery.length > 0) && this.checkbox == false) {
          this.events = [];
          this.reRenderCalendar()
-       }
-      },
-    },
-    checkbox: {
-      handler() {
-       if(this.checkbox == false) {
-         this.reRenderCalendar()
-         this.events = [];
-       } else if (this.checkbox == true) {
-         this.tasksQuery = "";
        }
       },
     },
@@ -688,5 +755,12 @@ input[type=search] {
     border: solid 1px lightgray;
    }
  }
+//  .dontShow {
+//    display: none;
+//  }
+//  .show {
+//    display: block;
+//  }
 
+>>>>>>> release
 </style> 
