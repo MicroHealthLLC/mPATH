@@ -57,10 +57,10 @@
       <span style="color: #dc3545; font-size: 15px">*</span> Indicates required
       fields
     </h6>
-    <div class="fixed-form pt-1">
+    <div class="pt-1">
       <div v-if="errors.items.length > 0" class="text-danger ">
         Please fill the required fields before submitting
-        <ul class="error-list ">
+        <ul class="error-list mx-4">
           <li
             v-for="(error, index) in errors.all()"
             :key="index"
@@ -420,7 +420,36 @@
     </div>
     <!-- Updates Tab -->
     <div v-show="currentTab == 'tab7'">
-      <h1>UPDATES</h1>
+      <label class="font-md">Updates</label>
+      <span class="clickable" @click.prevent="addUpdate">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(update, index) in updates"
+        :key="index"
+        class="update-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Description</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span> Someone at
+              10:30PM on 6/23/2021</el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeUpdate(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="update.body"
+          type="textarea"
+          placeholder="Please enter Description here..."
+        ></el-input>
+      </el-card>
     </div>
     <RelatedLessonMenu
       :facilities="facilities"
@@ -551,6 +580,13 @@ export default {
           findings: "QLaboris nisi ut aliquip ex ea commodo consequat.",
           recommendation:
             "Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        },
+      ],
+      updates: [
+        {
+          id: 1,
+          body:
+            "In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui.",
         },
       ],
     };
@@ -719,6 +755,24 @@ export default {
         })
         .catch(() => {});
     },
+    addUpdate() {
+      this.updates.unshift({ body: "" });
+    },
+    removeUpdate(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Update?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.updates.splice(index, 1);
+        })
+        .catch(() => {});
+    },
   },
   computed: {
     ...mapGetters([
@@ -810,9 +864,19 @@ a:hover {
 }
 .success-card,
 .failure-card,
-.best-practice-card {
+.best-practice-card,
+.update-card {
   background-color: #ededed;
   border-color: lightgray;
   border-left: 10px solid #5aaaff;
+}
+.error-list {
+  list-style-type: circle;
+  li {
+    width: max-content;
+  }
+}
+.text-danger {
+  font-size: 13px;
 }
 </style>
