@@ -387,7 +387,7 @@
                   track-by="name" 
                   filterable
                   value-key="id"
-                  placeholder="Search and select Project Group"
+                  placeholder="Search and select Favorites"
                 >
                   <el-option 
                     v-for="item in C_favoriteFilterSelectOptions"                                                     
