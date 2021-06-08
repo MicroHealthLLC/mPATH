@@ -53,7 +53,7 @@
       </div>
     </router-link>
     <router-link
-      v-if="permitted('lessons')" :to="routeLessonSwap" tag="div">
+      v-if="false" :to="routeLessonSwap" tag="div">
       <div class="badge" :class="{ active: isLessonsView }" data-cy="lesson_tab">
         Lessons
       </div>
