@@ -231,39 +231,74 @@ class Lesson < ApplicationRecord
       lesson.save
       lesson.add_link_attachment(params)
 
+      # if notes_attributes.present?
+      #   existing_notes = self.notes
+      #   notes_objs = []
+      #   notes_attributes.each do |value|
+      #     if value[:_destroy].present?
+      #       n = existing_notes.detect{|e| e.id.to_s == value["id"]}.destroy
+      #       n.destroy if n
+      #     elsif value[:id].present?
+      #       n = existing_notes.detect{|e| e.id.to_s == value["id"]}
+      #       n.update(value) if n
+      #     else
+      #       notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+      #     end
+      #   end
+      #   Note.import(notes_objs) if notes_objs.any?
+      # end
+
       if notes_attributes.present?
-        existing_notes = self.notes
+        existing_note_ids = self.note_ids
+        notes_to_destroy = existing_note_ids
         notes_objs = []
         notes_attributes.each do |value|
-          if value[:_destroy].present?
-            n = existing_notes.detect{|e| e.id.to_s == value["id"]}.destroy
-            n.destroy if n
-          elsif value[:id].present?
-            n = existing_notes.detect{|e| e.id.to_s == value["id"]}
+          if value["id"].present?
+            notes_to_destroy.delete(value["id"].to_i)
+            n = existing_notes.detect{|e| e.id == value["id"].to_i}
             n.update(value) if n
           else
             notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
           end
         end
         Note.import(notes_objs) if notes_objs.any?
+        Note.where(id: notes_to_destroy).destroy_all if notes_to_destroy.any?
       end
 
+      # if params_lesson_details.present?
+      #   existing_lesson_details = self.lesson_details
+      #   lesson_detail_objs = []
+
+      #   params_lesson_details.each do |value|
+      #     if value[:_destroy].present?
+      #       l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}.destroy
+      #       l.destroy if l
+      #     elsif value[:id].present?
+      #       l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}
+      #       l.update(value) if l
+      #     else
+      #       lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id,user_id: user.id}) )
+      #     end
+      #   end
+      #   LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
+      # end
       if params_lesson_details.present?
-        existing_lesson_details = self.lesson_details
+        existing_lesson_detail_ids = self.lesson_detail_ids
+        lesson_details_to_destroy = existing_lesson_detail_ids
+
         lesson_detail_objs = []
 
         params_lesson_details.each do |value|
-          if value[:_destroy].present?
-            l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}.destroy
-            l.destroy if l
-          elsif value[:id].present?
-            l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}
+          if value["id"].present?
+            lesson_details_to_destroy.delete(value["id"].to_i)
+            l = existing_lesson_details.detect{|e| e.id == value["id"].to_i}
             l.update(value) if l
           else
             lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id,user_id: user.id}) )
           end
         end
         LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
+        LessonDetail.where(id: lesson_details_to_destroy).destroy_all if lesson_details_to_destroy.any?
       end
 
       if sub_task_ids && sub_task_ids.any?
@@ -277,7 +312,8 @@ class Lesson < ApplicationRecord
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
         RelatedTask.import(related_task_objs2) if related_task_objs2.any?
-        lesson.sub_task_ids = sub_task_ids # to remove records
+        ids_to_destroy = (existing_task_ids - sub_task_ids)
+        RelatedTask.where(relatable_id: lesson.id, relatable_type: "Lesson", task_id: ids_to_destroy ).destroy_all if ids_to_destroy.any?
       else
         lesson.sub_task_ids = []
       end
@@ -293,7 +329,8 @@ class Lesson < ApplicationRecord
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
         RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
-        lesson.sub_issue_ids = sub_issue_ids  # to remove records
+        ids_to_destroy = (existing_issue_ids - sub_issue_ids)
+        RelatedIssue.where(relatable_id: lesson.id, relatable_type: "Lesson", issue_id: ids_to_destroy ).destroy_all if ids_to_destroy.any?
       else
         lesson.sub_issue_ids = []
       end
@@ -309,7 +346,8 @@ class Lesson < ApplicationRecord
         end
         RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
         RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
-        lesson.sub_risk_ids = sub_risk_ids # to remove records
+        ids_to_destroy = (existing_risk_ids - sub_risk_ids)
+        RelatedIssue.where(relatable_id: lesson.id, relatable_type: "Lesson", risk_id: ids_to_destroy ).destroy_all if ids_to_destroy.any?
       else
         lesson.sub_risk_ids = []
       end
