@@ -770,6 +770,12 @@
 }
 .filters-wrapper {
   float: right;
-  margin-top: -85px;
+  margin-top: -85px;  
+}
+
+@media screen and (max-width: 1500px) {
+  .filters-wrapper {
+    width: 70% !important;
+  } 
 }
 </style>
