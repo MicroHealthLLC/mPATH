@@ -1043,7 +1043,7 @@
                   track-by="name"
                   v-validate="'required'"
                   placeholder="Risk Approach"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"
+                  :disabled="!_isallowed('write')"
                   :class="{ error: errors.has('Risk Approach') }"
                   data-cy="risk_approach"
                 >
