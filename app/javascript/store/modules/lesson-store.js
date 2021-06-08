@@ -7,6 +7,7 @@ const lessonModule = {
     program_lessons: [],
     lesson_stages: [],
     lessons_loaded: false,
+    lesson_status: 0,
   }),
 
   actions: {
@@ -74,6 +75,13 @@ const lessonModule = {
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
       // Add new lesson
+      console.log(lesson);
+      lesson = {
+        lesson: {
+          ...lesson,
+        },
+      };
+      console.log(lesson)
       axios({
         method: "POST",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
@@ -85,6 +93,7 @@ const lessonModule = {
       })
         .then((res) => {
           // TODO: Write mutation code
+          commit("SET_LESSON_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
@@ -104,6 +113,7 @@ const lessonModule = {
       })
         .then((res) => {
           commit("SET_LESSON", res.data.lesson);
+          commit("SET_LESSON_STATUS", res.status);
         })
         .catch((err) => {
           console.log(err);
@@ -139,9 +149,11 @@ const lessonModule = {
       // Remove lesson from array
       state.project_lessons.splice(index, 1);
     },
-    SET_LESSON_STAGES: (state, lessonStages) => state.lesson_stages = lessonStages,
+    SET_LESSON_STAGES: (state, lessonStages) =>
+      (state.lesson_stages = lessonStages),
     TOGGLE_LESSONS_LOADED: (state) =>
       (state.lessons_loaded = !state.lessons_loaded),
+    SET_LESSON_STATUS: (state, status) => (state.lesson_status = status),
   },
   getters: {
     lesson: (state) => state.lesson,
@@ -149,6 +161,7 @@ const lessonModule = {
     programLessons: (state) => state.program_lessons,
     lessonStages: (state) => state.lesson_stages,
     lessonsLoaded: (state) => state.lessons_loaded,
+    lessonStatus: (state) => state.lesson_status,
   },
 };
 

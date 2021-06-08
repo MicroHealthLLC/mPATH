@@ -155,7 +155,7 @@
       <div class="col-6 pl-0">
         <label class="font-md">Stage</label>
         <el-select
-          v-model="lesson.stage"
+          v-model="lesson.lesson_stage_id"
           class="w-100"
           clearable
           placeholder="Select Stage"
@@ -196,7 +196,10 @@
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${task.project_id || task.facilityId}/tasks/${task.id}`
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${task.project_id ||
+                      task.facilityId}/tasks/${task.id}`
                   "
                   slot="reference"
                   >{{ task.text }}</router-link
@@ -234,7 +237,10 @@
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${issue.project_id || issue.facilityId}/issues/${issue.id}`
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${issue.project_id ||
+                      issue.facilityId}/issues/${issue.id}`
                   "
                   slot="reference"
                   >{{ issue.title }}</router-link
@@ -272,7 +278,10 @@
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${risk.project_id || risk.facilityId}/risks/${risk.id}`
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${risk.project_id ||
+                      risk.facilityId}/risks/${risk.id}`
                   "
                   slot="reference"
                   >{{ risk.text }}</router-link
@@ -316,7 +325,7 @@
         </div>
 
         <el-input
-          v-model="success.findings"
+          v-model="success.finding"
           type="textarea"
           placeholder="Please enter findings here..."
         ></el-input>
@@ -356,7 +365,7 @@
         </div>
 
         <el-input
-          v-model="failure.findings"
+          v-model="failure.finding"
           type="textarea"
           placeholder="Please enter findings here..."
         ></el-input>
@@ -397,7 +406,7 @@
         </div>
 
         <el-input
-          v-model="bestPractice.findings"
+          v-model="bestPractice.finding"
           type="textarea"
           placeholder="Please enter findings here..."
         ></el-input>
@@ -551,33 +560,29 @@ export default {
         if (!success) {
           return;
         }
+
+        let lessonData = {
+          lesson: {
+            ...this.lesson,
+            sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
+            sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
+            sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
+            successes: [...this.successes],
+            failures: [...this.failures],
+            best_practices: [...this.bestPractices],
+            // updates: [...this.updates],
+          },
+        };
+
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
           this.updateLesson({
-            lesson: {
-              ...this.lesson,
-              sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
-              sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
-              sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
-              successes: [...this.successes],
-              failures: [...this.failures],
-              best_practices: [...this.bestPractices],
-              updates: [...this.updates],
-            },
+            ...lessonData,
             ...this.$route.params,
           });
         } else {
           this.addLesson({
-            lesson: {
-              ...this.lesson,
-              sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
-              sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
-              sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
-              successes: [...this.successes],
-              failures: [...this.failures],
-              best_practices: [...this.bestPractices],
-              updates: [...this.updates],
-            },
+            ...lessonData,
             ...this.$route.params,
           });
         }
@@ -623,7 +628,7 @@ export default {
       );
     },
     addSuccess() {
-      this.successes.unshift({ findings: "", recommendation: "" });
+      this.successes.unshift({ finding: "", recommendation: "" });
     },
     removeSuccess(index) {
       this.$confirm(
@@ -641,7 +646,7 @@ export default {
         .catch(() => {});
     },
     addFailure() {
-      this.failures.unshift({ findings: "", recommendation: "" });
+      this.failures.unshift({ finding: "", recommendation: "" });
     },
     removeFailure(index) {
       this.$confirm(
@@ -659,7 +664,7 @@ export default {
         .catch(() => {});
     },
     addBestPractice() {
-      this.bestPractices.unshift({ findings: "", recommendation: "" });
+      this.bestPractices.unshift({ finding: "", recommendation: "" });
     },
     removeBestPractice(index) {
       this.$confirm(
@@ -703,6 +708,7 @@ export default {
       "facilityGroups",
       "lesson",
       "lessonStages",
+      "lessonStatus",
       "taskTypes",
     ]),
     tab() {
@@ -750,6 +756,17 @@ export default {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
+        }
+      },
+    },
+    lessonStatus: {
+      handler() {
+        if (this.lessonStatus == 200) {
+          this.$message({
+            message: `${this.lesson.title} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
         }
       },
     },
