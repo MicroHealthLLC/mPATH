@@ -146,12 +146,11 @@
             <col class="eight" />
             <col class="eight" />
             <col class="eight" />
-            <col class="seven" />
+            <col class="eight" />
             <col class="twelve" />
             <col class="eight" />
-            <col class="eight" />
-            <col class="eight" />
-            <col class="oneEight" />
+            <col class="fort" />         
+            <col class="twenty" />
           </colgroup>
           <tr class="thead" style="background-color:#ededed;">
             <th class="sort-th" @click="sort('text')">Risk
@@ -215,7 +214,7 @@
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
               <font-awesome-icon icon="sort-down" /></span>
             </th>
-            <th class="sort-th p-1 w-100">
+            <th class="sort-th p-1">
                 <span class="py-2 d-inline-block">Assigned Users</span><br>
             <span class="btn-group">
                 <button
@@ -279,29 +278,7 @@
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
               <font-awesome-icon icon="sort-down" /></span>
             </th>
-            <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort" /></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-up" /></span>
-              <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-down" /></span>
-              <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
-              <font-awesome-icon icon="sort-down" /></span>
-            </th>
-            <th class="pl-1 sort-th" @click="sort('watched')">On Watch
-                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
-              <font-awesome-icon icon="sort" /></span>
-              <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-up" /></span>
-                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-down" /></span>
-                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
-              <font-awesome-icon icon="sort-down" /></span>
+            <th class="non-sort-th">Flags               
             </th>
             <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
@@ -375,9 +352,8 @@
           <th>Start Date</th>
           <th>Due Date</th>
           <th>Assigned Users</th>
-          <th>Progress</th>
-          <th>Overdue</th>
-          <th>On Watch</th>
+          <th>Progress</th>    
+          <th style="width:50%">Flags</th>        
           <th>Last Update</th>
         </tr>
       </thead>
@@ -388,7 +364,10 @@
           <td>{{risk.riskApproach.charAt(0).toUpperCase() + risk.riskApproach.slice(1)}}</td>
           <td>{{risk.priorityLevel}}</td>
           <td>{{formatDate(risk.startDate)}}</td>
-          <td>{{formatDate(risk.dueDate)}}</td>
+          <td>
+            <span v-if="risk.ongoing">Ongoing</span>
+            <span v-else>{{formatDate(risk.dueDate)}}</span>
+          </td>
           <td>
            <span v-if="(risk.responsibleUsers.length > 0) && (risk.responsibleUsers[0] !== null)">(R) {{risk.responsibleUsers[0].name}} <br></span>
           <span v-if="(risk.accountableUsers.length > 0) && (risk.accountableUsers[0] !== null)">(A) {{risk.accountableUsers[0].name}}<br></span>
@@ -398,11 +377,40 @@
              <span v-if="(risk.informedUsers.length > 0) && (risk.informedUsers[0] !== null)">(I) {{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>
          </span>
           </td>
-          <td>{{risk.progress + "%"}}</td>
-          <td v-if="(risk.dueDate) <= now"><h5>X</h5></td>
-          <td v-else></td>
-          <td v-if="(risk.watched) == true"><h5>X</h5></td>
-          <td v-else></td>
+           <td>
+            <span v-if="risk.ongoing">Ongoing</span>
+            <span v-else>{{risk.progress + "%"}}</span>
+          </td>            
+          <td class="text-center" style="text-align:center">
+            <span v-if="risk.watched == true">Watched
+            <!-- <span v-if="risk.important || risk.isOverdue || risk.ongoing || risk.onHold || risk.progress == 100">, </span>            -->
+            </span>
+            <span v-if="risk.important == true">Important
+             <!-- <span v-if="risk.isOverdue || risk.progress == 100 || risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.isOverdue">Overdue
+             <!-- <span v-if=" risk.progress == 100 || risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.progress == 100"> Completed
+             <!-- <span v-if="risk.ongoing || risk.onHold || risk.draft">, </span>            -->
+            </span> 
+            <span v-if="risk.ongoing == true">Ongoing
+             <!-- <span v-if="risk.onHold || risk.draft">, </span>            -->
+            </span>
+            <span v-if="risk.onHold == true">On Hold
+             <!-- <span v-if="risk.draft">, </span>            -->
+            </span> 
+            <span v-if="risk.draft == true">Draft</span>   
+            <span v-if="
+                  risk.watched == false &&
+                  risk.ongoing == false && 
+                  risk.isOverdue == false &&
+                  risk.onHold == false &&  
+                  risk.draft == false && 
+                  risk.progress < 100 "             
+                  >                
+            </span>  
+          </td>
           <td v-if="(risk.notesUpdatedAt.length) > 0">
              By: {{ risk.notes[0].user.fullName}} on
             {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
@@ -439,6 +447,7 @@
         risks: Object,
         now: new Date().toISOString(),
         risksQuery: '',
+        comma: 'test',
         currentPage:1,
         sortedResponsibleUser: 'responsibleUsersFirstName',
         sortedAccountableUser: 'accountableUsersFirstName',
@@ -473,9 +482,15 @@
       }
         this.currentSort = s;
       },
+      // log(e){
+      //   console.log(e)
+      // },
       nextPage:function() {
         if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
       },
+      // commaFunction(){
+     
+      // },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
       },
@@ -508,6 +523,7 @@
         const html =  this.$refs.table.innerHTML
         doc.autoTable({html: "#riskSheetsList1"})
         doc.save("Risk Register.pdf")
+      
       },
       exportToExcel(table, name){
         if (!table.nodeType) table = this.$refs.table
@@ -573,7 +589,7 @@
             var max = taskIssueProgress[0].value.split("-")[1]
             valid = valid && (resource.progress >= min && resource.progress <= max)
           }
-          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.riskTypeId)
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
           if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
 
           if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
@@ -584,7 +600,15 @@
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
+     if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {           
         return risks
+        
+       } else  {
+        
+        risks  = risks.filter(t => t.draft == false && t.onHold == false)
+        return risks
+      
+       }   
       },
       C_riskPriorityLevelFilter: {
         get() {
@@ -753,6 +777,9 @@
   .twelve {
     width: 12%;
   }
+  .fort {
+    width: 14%;
+  }
   .oneFive{
     width: 15%;
   }
@@ -761,6 +788,9 @@
   }
   .oneEight {
     width: 18%;
+  }
+  .twenty {
+    width: 20%;
   }
   .floatRight {
     text-align: right;

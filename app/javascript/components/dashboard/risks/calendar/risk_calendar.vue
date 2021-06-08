@@ -185,7 +185,7 @@
          <v-list-item>
           <v-list-item-title>          
             <span class="d-inline mr-1"><small><b>Identified Date:</b></small></span>            
-             {{ selectedEvent.start }}
+             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
@@ -196,24 +196,40 @@
         </v-list-item>
           <v-list-item>
           <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>  
-            {{ selectedEvent.end }}
+           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>           
+               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-else>  
+            {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+               </span>
           </v-list-item-title>
         </v-list-item>
          <v-list-item >
            <v-list-item-title>
-            <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
-          {{ selectedEvent.progess }}%          
+              <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-else>
+               {{ selectedEvent.progess }}%    
+               </span>   
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
           <v-list-item-title>
            <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
               <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
-                 <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+              <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
-              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed Risk`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-                <span v-if="selectedEvent.watch == false && selectedEvent.pastDue == false && selectedEvent.progess < 100">
+              <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span> 
+              <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
+              <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>     
+                <span v-if="
+                      selectedEvent.watch == false && 
+                      selectedEvent.isOngoing == false && 
+                      selectedEvent.pastDue == false && 
+                      selectedEvent.isOnHold == false && 
+                      selectedEvent.isDraft == false && 
+                      selectedEvent.hasStar == false && 
+                      selectedEvent.progess < 100">
                  No flags at this time
                 </span>    
           </v-list-item-title>
@@ -274,6 +290,7 @@
         focus: this.C_lastFocus,    
         risksQuery: '',    
         riskNames: [],  
+        retweet: 'f2b9',
         componentKey: 0, 
         riskIds:[], 
         seeLess: true,     
@@ -427,13 +444,22 @@
       this.overdue = this.filteredCalendar.map(risk => risk.isOverdue) 
       this.percentage = this.filteredCalendar.map(risk => risk.progress)  
       this.star = this.filteredCalendar.map(risk => risk.important)
-      this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)           
+      this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)  
+      this.ongoing = this.filteredCalendar.map(risk => risk.ongoing)    
+      this.onhold = this.filteredCalendar.map(risk => risk.onHold)   
+      this.draft = this.filteredCalendar.map(risk => risk.draft)       
+
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
       const max = new Date(`${end.date}T23:59:59`)
       const days = (max.getTime() - min.getTime()) / 86400000   
       // For loop to determine length of Tasks 
-      for (let i = 0; i < this.filteredCalendar.length; i++) {
+      for (let i = 0; i < this.filteredCalendar.length; i++) {    
+
+      if(this.riskData[i].ongoing) {
+       this.riskNames[i] = this.riskNames[i] + " (Ongoing)"
+       this.riskEndDates[i] = '2099-01-01'
+      }
           events.push({            
           name: this.riskNames[i],
           start: this.riskStartDates[i],
@@ -446,7 +472,11 @@
           pastDue: this.overdue[i], 
           progess: this.percentage[i],
           color: this.colors.defaultColor,   
-          hasStar: this.star[i]         
+          hasStar: this.star[i], 
+          isOngoing: this.ongoing[i],
+          isDraft: this.draft[i],
+          isOnHold: this.onhold[i], 
+                             
         })
       }
       // This is the main Events array pushed into Calendar
@@ -512,7 +542,16 @@
         return valid
         }), ['dueDate'])
      
-         return risks  
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
+        return risks
+        
+       } else  {
+        
+        risks  = risks.filter(t => t.draft == false && t.onHold == false)
+        return risks
+      
+       }       
     }, 
      C_calendarRiskFilter: {           
         get() {

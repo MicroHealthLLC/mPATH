@@ -149,9 +149,8 @@
                   <col class="eight" />
                   <col class="oneThree" />
                   <col class="eight" />
-                  <col class="eight" />
-                  <col class="eight" />
-                  <col class="oneFive" />
+                  <col class="fort" />                
+                  <col class="oneSeven" />
                 </colgroup>
                 <tr class="thead" style="background-color:#ededed">
                   <th class="sort-th" @click="sort('title')">Issue
@@ -215,7 +214,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
-             <th class="sort-th p-1 w-100">
+             <th class="sort-th p-1">
               <span class="py-2 d-inline-block">Assigned Users</span><br>
               <span class="btn-group">
                  <button
@@ -280,30 +279,7 @@
                   <font-awesome-icon icon="sort-down" /></span>
                   </th>
 
-                  <th class="sort-th" @click="sort('dueDateDuplicate')">Overdue
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                  <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDateDuplicate'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                  </th>
-
-                  <th class="sort-th" @click="sort('watched')">Onwatch
-                  <span class="inactive-sort-icon scroll" v-if="currentSort !== 'watched'">
-                  <font-awesome-icon icon="sort" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-up" /></span>
-                  <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-down" /></span>
-                   <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'watched'">
-                  <font-awesome-icon icon="sort-down" /></span>
+                   <th class="non-sort-th">Flags               
                   </th>
 
                   <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
@@ -379,13 +355,12 @@
             <th>Due Date</th>
             <th>Assigned Users</th>
             <th>Progress</th>
-            <th>Overdue</th>
-            <th>On Watch</th>
+            <th>Flags</th>
             <th>Last Update</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(issue, i) in filteredIssues">
+          <tr v-for="(issue, i) in filteredIssues" :key="i">
             <td>{{issue.title}}</td>
             <td>{{issue.issueType}}</td>
             <td>{{issue.facilityName}}</td>
@@ -402,10 +377,22 @@
          </span>
             </td>
             <td>{{issue.progress + "%"}}</td>
-            <td v-if="(issue.dueDate) <= now"><h5>X</h5></td>
-            <td v-else></td>
-            <td v-if="(issue.watched) <= now"><h5>X</h5></td>
-            <td v-else></td>
+            <td class="text-center" style="text-align:center">
+            <span v-if="issue.watched == true">Watched</span>
+            <span v-if="issue.important == true">Important</span>
+            <span v-if="issue.isOverdue">Overdue</span>
+            <span v-if="issue.progress == 100">Completed</span>   
+            <span v-if="issue.onHold == true">On Hold</span> 
+            <span v-if="issue.draft == true">Draft</span>   
+            <span v-if="
+                  issue.watched == false &&
+                  issue.isOverdue == false &&
+                  issue.onHold == false &&  
+                  issue.draft == false && 
+                  issue.progress < 100 "             
+            >                 
+            </span>  
+            </td>            
             <td v-if="(issue.notesUpdatedAt.length) > 0">
                By: {{ issue.notes[0].user.fullName}} on
               {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
@@ -633,7 +620,16 @@
             valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return issues
+        
+       } else  {
+        
+        issues  = issues.filter(t => t.draft == false && t.onHold == false)
+        return issues
+      
+       }   
       },
       C_sheetsIssueFilter: {
         get() {
@@ -754,12 +750,19 @@
   .elev {
     width: 11%;
   }
-  .oneFive {
-    width: 15%;
-  }
   .oneThree {
     width: 13%;
   }
+  .fort {
+    width: 14%;
+  }
+  .oneFive {
+    width: 15%;
+  }
+  .oneSeven {
+    width: 17%;
+  }
+ 
   .floatRight {
     text-align: right;
     right: 0px;

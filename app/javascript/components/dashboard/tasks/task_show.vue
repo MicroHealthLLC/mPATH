@@ -13,12 +13,24 @@
            {{task.text}}       
         </div>
           <div class="col-md-3">          
-          <div class="t_actions float-right">
-               <span v-if="(task.watched) == true">
-              <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>
+          <div class="t_actions float-right">          
+            <span v-show="task.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
+            <span v-show="task.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+            <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+            <span v-show="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
+            <span v-show="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
+            <span v-show="task.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
+            <span v-show="task.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+             <span v-if="                    
+                      task.ongoing == false && 
+                      task.isOverdue == false &&
+                      task.onHold == false &&  
+                      task.draft == false && 
+                      task.progress < 100 "             
+                    >
+                  <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
             </span>
-              <span v-show="task.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
-            <span v-show="is_overdue" v-tooltip="`Cverdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+               
           </div>
          
         </div>
@@ -30,12 +42,13 @@
                <span class="mr-2">
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(task.startDate)}}
-               </span>
-              
-               <span >
-                <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
-                  {{formatDate(task.dueDate)}}
-               </span>
+               </span>              
+                <span  v-if="task.ongoing == false">
+                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                    {{formatDate(DV_task.dueDate)}}
+                </span>
+                <span v-else v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mx-2"  /></span>  
+                
              </div>
           </div>     
          
@@ -48,9 +61,13 @@
 
         <div class="row d-flex">
             <div class="font-sm pt-1 pb-3 col">
-           <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
-            <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">{{task.progress}}%</div>
-          </div>
+          <span  v-if="task.ongoing == false">
+            <div class="progress pg-content" :class="{'progress-0': task.progress <= 0}">
+              <div class="progress-bar bg-info" :style="`width: ${task.progress}%`">
+                {{task.progress}}%
+              </div>          
+            </div>
+          </span>
         </div>
        </div>
       
