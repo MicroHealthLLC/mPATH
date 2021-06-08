@@ -1,4 +1,5 @@
 class Lesson < ApplicationRecord
+
   belongs_to :user
   belongs_to :task_type, optional: true
 
@@ -124,9 +125,8 @@ class Lesson < ApplicationRecord
     ).as_json
   end
 
-  def create_or_update_lesson(params, user)
-
-    lesson_params = params.require(:lesson).permit(
+  def self.params_to_permit
+    [
       :title, 
       :description, 
       :date, 
@@ -173,8 +173,13 @@ class Lesson < ApplicationRecord
         :user_id,
         :finding,
         :recommendation
-      ],
-    )
+      ]
+    ]
+  end
+
+  def create_or_update_lesson(params, user)
+
+    lesson_params = params.require(:lesson).permit(Lesson.params_to_permit)
 
     lesson = self
     lesson.user_id = user.id
@@ -195,21 +200,21 @@ class Lesson < ApplicationRecord
 
     if params_successes
       params_successes.each do |h|
-        h[:detail_type] = "success"
+        h[:detail_type] = 0
       end
       params_lesson_details = ( params_lesson_details + params_successes ).compact
     end
 
     if params_failures
       params_failures.each do |h|
-        h[:detail_type] = "failure"
+        h[:detail_type] = 1
       end
       params_lesson_details = ( params_lesson_details + params_failures ).compact
     end
 
     if params_best_practices
       params_best_practices.each do |h|
-        h[:detail_type] = "best_practices"
+        h[:detail_type] = 2
       end
       params_lesson_details = ( params_lesson_details + params_best_practices ).compact
     end
@@ -255,48 +260,60 @@ class Lesson < ApplicationRecord
             l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}
             l.update(value) if l
           else
-            lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id}) )
+            lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id,user_id: user.id}) )
           end
         end
         LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
       end
 
       if sub_task_ids && sub_task_ids.any?
+        sub_task_ids = sub_task_ids.map(&:to_i).uniq
+        existing_task_ids = self.sub_task_ids
         related_task_objs = []
         related_task_objs2 = []
-        sub_task_ids.each do |sid|
+        (sub_task_ids - existing_task_ids).each do |sid|
           related_task_objs << RelatedTask.new(relatable_id: lesson.id, relatable_type: "Lesson", task_id: sid)
-          
-          # NOTE: As we are not going to show the related Lesson in Task, we don't need to create RelatedLesson
-
           # related_task_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Task", task_id: task.id)
         end
         RelatedTask.import(related_task_objs) if related_task_objs.any?
         RelatedTask.import(related_task_objs2) if related_task_objs2.any?
+        lesson.sub_task_ids = sub_task_ids # to remove records
+      else
+        lesson.sub_task_ids = []
       end
 
       if sub_issue_ids && sub_issue_ids.any?
+        sub_issue_ids = sub_issue_ids.map(&:to_i).uniq
+        existing_issue_ids = self.sub_issue_ids
         related_issue_objs = []
         related_issue_objs2 = []
-        sub_issue_ids.each do |sid|
+        (sub_issue_ids - existing_issue_ids).each do |sid|
           related_issue_objs << RelatedIssue.new(relatable_id: lesson.id, relatable_type: "Lesson", issue_id: sid)
           # related_issue_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Issue", task_id: task.id)
         end
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
         RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
+        lesson.sub_issue_ids = sub_issue_ids  # to remove records
+      else
+        lesson.sub_issue_ids = []
       end
       
       if sub_risk_ids && sub_risk_ids.any?
+        sub_risk_ids = sub_risk_ids.map(&:to_i).uniq
+        existing_risk_ids = self.sub_risk_ids
         related_risk_objs = []
         related_risk_objs2 = []
-        sub_risk_ids.each do |sid|
+        (sub_risk_ids - existing_risk_ids).each do |sid|
           related_risk_objs << RelatedRisk.new(relatable_id: lesson.id, relatable_type: "Lesson", risk_id: sid)
           # related_risk_objs2 << RelatedTask.new(relatable_id: sid, relatable_type: "Risk", task_id: task.id)
         end
         RelatedRisk.import(related_risk_objs) if related_risk_objs.any?
         RelatedTask.import(related_risk_objs2) if related_risk_objs2.any?
+        lesson.sub_risk_ids = sub_risk_ids # to remove records
+      else
+        lesson.sub_risk_ids = []
       end
-
+      
       lesson.assign_users(params)
 
     end
