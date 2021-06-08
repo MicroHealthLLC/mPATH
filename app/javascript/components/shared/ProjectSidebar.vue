@@ -4,12 +4,15 @@
     class="pl-0"  
     data-cy="facility_list"
   >
+  <div class="stick">
   <div   
     @click="deselectProject"  
     id="program_name"
-    class="programNameDiv w-100 smallCaps pl-2"       
+    class="programNameDiv smallCaps pl-2 pr-1"       
   >   
   {{ programName }}   
+  </div>
+  
   </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 ml-2" style="margin-top:1.8rem">
@@ -231,7 +234,9 @@ export default {
   }
   .smallCaps {
     font-variant: small-caps;
-    font-size: 1.25rem;
+    // position: sticky;
+    // position: -webkit-sticky;
+    // top: 0;
   }
   a {
     color: unset;
