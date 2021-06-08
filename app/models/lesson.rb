@@ -229,7 +229,7 @@ class Lesson < ApplicationRecord
       if notes_attributes.present?
         existing_notes = self.notes
         notes_objs = []
-        notes_attributes.each do |key, value|
+        notes_attributes.each do |value|
           if value[:_destroy].present?
             n = existing_notes.detect{|e| e.id.to_s == value["id"]}.destroy
             n.destroy if n
@@ -246,7 +246,8 @@ class Lesson < ApplicationRecord
       if params_lesson_details.present?
         existing_lesson_details = self.lesson_details
         lesson_detail_objs = []
-        params_lesson_details.each do |key, value|
+
+        params_lesson_details.each do |value|
           if value[:_destroy].present?
             l = existing_lesson_details.detect{|e| e.id.to_s == value["id"]}.destroy
             l.destroy if l
