@@ -135,17 +135,16 @@
       <div class="col-6 pl-0">
         <label class="font-md w-100">Category</label>
         <el-select
-          v-model="category"
+          v-model="lesson.task_type_id"
           class="w-100"
           value-key="id"
           name="Category"
           placeholder="Select Category"
-          @change="updateCategory"
         >
-          <!-- taskTypes should be changed to categoryTypes -->
+          <!--TODO: Change taskTypes to categoryTypes -->
           <el-option
             v-for="category in taskTypes"
-            :value="category"
+            :value="category.id"
             :key="category.id"
             :label="category.name"
           >
@@ -156,16 +155,14 @@
       <div class="col-6 pl-0">
         <label class="font-md">Stage</label>
         <el-select
-          v-model="stage"
+          v-model="lesson.stage"
           class="w-100"
           clearable
-          value-key="id"
           placeholder="Select Stage"
-          @change="updateStage"
         >
           <el-option
             v-for="stage in lessonStages"
-            :value="stage"
+            :value="stage.id.toString()"
             :key="stage.id"
             :label="stage.name"
           >
@@ -194,12 +191,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ task.project_name }}
+                    {{ task.project_name || task.facilityName }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${task.project_id}/tasks/${task.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${task.project_id || task.facilityId}/tasks/${task.id}`
                   "
                   slot="reference"
                   >{{ task.text }}</router-link
@@ -232,12 +229,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ issue.project_name }}
+                    {{ issue.project_name || issue.facilityName }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${issue.project_id}/issues/${issue.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${issue.project_id || issue.facilityId}/issues/${issue.id}`
                   "
                   slot="reference"
                   >{{ issue.title }}</router-link
@@ -270,12 +267,12 @@
                 <div>
                   <p class="m-0 text-left">
                     <el-tag size="mini">Project Name</el-tag>
-                    {{ risk.project_name }}
+                    {{ risk.project_name || risk.facilityName }}
                   </p>
                 </div>
                 <router-link
                   :to="
-                    `/programs/${$route.params.programId}/${tab}/projects/${risk.project_id}/risks/${risk.id}`
+                    `/programs/${$route.params.programId}/${tab}/projects/${risk.project_id || risk.facilityId}/risks/${risk.id}`
                   "
                   slot="reference"
                   >{{ risk.text }}</router-link
@@ -537,58 +534,13 @@ export default {
           form_fields: [],
         },
       ],
-      category: {},
-      stage: {},
       relatedTasks: [],
       relatedIssues: [],
       relatedRisks: [],
-      successes: [
-        {
-          id: 1,
-          findings:
-            "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          recommendation:
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-        {
-          id: 2,
-          findings:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          recommendation:
-            "Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-      ],
-      failures: [
-        {
-          id: 1,
-          findings:
-            "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-          recommendation:
-            "Reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-        {
-          id: 2,
-          findings:
-            "Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          recommendation:
-            "Sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-      ],
-      bestPractices: [
-        {
-          id: 1,
-          findings: "QLaboris nisi ut aliquip ex ea commodo consequat.",
-          recommendation:
-            "Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        },
-      ],
-      updates: [
-        {
-          id: 1,
-          body:
-            "In voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui.",
-        },
-      ],
+      successes: [],
+      failures: [],
+      bestPractices: [],
+      updates: [],
     };
   },
   methods: {
@@ -599,60 +551,35 @@ export default {
         if (!success) {
           return;
         }
-
-        let formData = new FormData();
-
-        formData.append("lesson[title]", this.lesson.title);
-        formData.append("lesson[description]", this.lesson.description);
-        formData.append("lesson[date]", this.lesson.date);
-        formData.append(
-          "lesson[task_type_id]",
-          this.category ? this.category.id : null
-        );
-        formData.append("lesson[stage]", this.stage ? this.stage.id : null);
-
-        // Load related task ids
-        if (this.relatedTasks.length > 0 && this.lesson.sub_task_ids) {
-          this.relatedTasks.forEach((task) => {
-            formData.append("lesson[sub_task_ids][]", task.id);
-          });
-        } else if (this.relatedTasks.length > 0) {
-          this.relatedTasks.forEach((task) => {
-            formData.append("lesson[sub_task_ids][]", task.id);
-          });
-        } else {
-          formData.append("lesson[sub_task_ids][]", []);
-        }
-        // Load related issue ids
-        if (this.relatedIssues.length > 0 && this.lesson.sub_issue_ids) {
-          this.relatedIssues.forEach((issue) => {
-            formData.append("lesson[sub_issue_ids][]", issue.id);
-          });
-        } else if (this.relatedIssues.length > 0) {
-          this.relatedIssues.forEach((issue) => {
-            formData.append("lesson[sub_issue_ids][]", issue.id);
-          });
-        } else {
-          formData.append("lesson[sub_issue_ids][]", []);
-        }
-        // Load related risk ids
-        if (this.relatedRisks.length > 0 && this.lesson.sub_risk_ids) {
-          this.relatedRisks.forEach((risk) => {
-            formData.append("lesson[sub_risk_ids][]", risk.id);
-          });
-        } else if (this.relatedRisks.length > 0) {
-          this.relatedRisks.forEach((risk) => {
-            formData.append("lesson[sub_risk_ids][]", risk.id);
-          });
-        } else {
-          formData.append("lesson[sub_risk_ids][]", []);
-        }
         // Check to add or update existing lesson by confirming an id
         if (this.lesson.id) {
-          formData.append("lesson[id]", this.lesson.id);
-          this.updateLesson({ lesson: formData, ...this.$route.params });
+          this.updateLesson({
+            lesson: {
+              ...this.lesson,
+              sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
+              sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
+              sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
+              successes: [...this.successes],
+              failures: [...this.failures],
+              best_practices: [...this.bestPractices],
+              updates: [...this.updates],
+            },
+            ...this.$route.params,
+          });
         } else {
-          this.addLesson({ lesson: formData, ...this.$route.params });
+          this.addLesson({
+            lesson: {
+              ...this.lesson,
+              sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
+              sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
+              sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
+              successes: [...this.successes],
+              failures: [...this.failures],
+              best_practices: [...this.bestPractices],
+              updates: [...this.updates],
+            },
+            ...this.$route.params,
+          });
         }
       });
     },
@@ -663,12 +590,6 @@ export default {
     },
     onChangeTab(tab) {
       this.currentTab = tab ? tab.key : "tab1";
-    },
-    updateCategory(category) {
-      this.category = category;
-    },
-    updateStage(stage) {
-      this.stage = stage;
     },
     openContextMenu(e, item) {
       e.preventDefault();
@@ -817,14 +738,6 @@ export default {
     lesson: {
       handler(newValue, oldValue) {
         if (this.contentLoaded && Object.keys(oldValue).length === 0) {
-          this.updateCategory(
-            this.taskTypes.find(
-              (category) => category.id == this.lesson.task_type_id
-            )
-          );
-          this.updateStage(
-            this.lessonStages.find((stage) => stage.id == this.lesson.stage)
-          );
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
@@ -834,14 +747,6 @@ export default {
     contentLoaded: {
       handler() {
         if (this.lesson) {
-          this.updateCategory(
-            this.taskTypes.find(
-              (category) => category.id == this.lesson.task_type_id
-            )
-          );
-          this.updateStage(
-            this.lessonStages.find((stage) => stage.id == this.lesson.stage)
-          );
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
