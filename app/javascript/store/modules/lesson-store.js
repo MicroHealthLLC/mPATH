@@ -75,13 +75,11 @@ const lessonModule = {
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
       // Add new lesson
-      console.log(lesson);
       lesson = {
         lesson: {
           ...lesson,
         },
       };
-      console.log(lesson)
       axios({
         method: "POST",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
@@ -102,6 +100,11 @@ const lessonModule = {
     },
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       // Update a lesson with changes
+      lesson = {
+        lesson: {
+          ...lesson,
+        },
+      };
       axios({
         method: "PATCH",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lessonId}`,
