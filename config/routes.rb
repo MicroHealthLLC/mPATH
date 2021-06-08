@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     end
   end
 
+
   namespace :api, defaults: {format: :json} do
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]
