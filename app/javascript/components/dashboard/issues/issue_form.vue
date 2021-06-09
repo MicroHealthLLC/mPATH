@@ -69,6 +69,7 @@
         class="d-flex form-group pt-1 mb-1 justify-content-start"
       >
         <FormTabs
+          class="ml-4"
           :current-tab="currentTab"
           :tabs="tabs"
           :allErrors="errors"
