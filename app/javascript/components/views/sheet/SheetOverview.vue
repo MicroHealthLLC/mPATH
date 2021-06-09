@@ -112,7 +112,7 @@
 
                   <div
                     v-for="(filterArray, index) in getAllFilterNames"
-                    :key="index"
+                    :key="index"                  
                   >
                     <span v-if="getFilterValue(filterArray[0])">
                       <span
@@ -741,7 +741,7 @@ export default {
         this.facility.progress < 100
       );
     },
-    onChange() {
+   onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
       });

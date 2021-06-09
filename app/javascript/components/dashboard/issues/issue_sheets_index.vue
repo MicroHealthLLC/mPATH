@@ -498,6 +498,9 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
+    //  log(e){
+    //     console.log(e)
+    //   },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -623,6 +626,7 @@
           if (search_query) valid = valid && search_query.test(resource.title) ||
             valid && search_query.test(resource.issueType) ||
             valid && search_query.test(resource.issueSeverity) ||
+            valid && search_query.test(resource.taskTypeName) ||
             valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
@@ -852,6 +856,11 @@
     float: right;
     margin-top: -85px;
   }
+  @media screen and (max-width: 1500px) {
+  .filters-wrapper {
+    width: 70% !important;
+  } 
+}
 /deep/.el-collapse   {
   border-bottom: none !important;
   }

@@ -360,6 +360,7 @@ computed: {
       if (search_query) valid = valid && search_query.test(resource.title) || 
         valid && search_query.test(resource.issueType) || 
         valid && search_query.test(resource.issueSeverity) || 
+         valid && search_query.test(resource.taskTypeName) ||
         valid && search_query.test(resource.userNames)
 
 

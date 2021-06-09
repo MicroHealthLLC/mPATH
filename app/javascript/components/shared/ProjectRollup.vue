@@ -4,8 +4,8 @@
     <div class="row">
       <div class="col-9 pl-0">
         <span v-if="contentLoaded">
-          <h4 v-if="isMapView" class="d-inline mr-2">{{ currentProject.name }}</h4>          
-          <h3 v-else class="d-inline mr-2">{{ currentProject.name }}</h3>        
+          <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
+          <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>      
       </div>
       <div class="col-3 pl-0">        
@@ -85,12 +85,12 @@
           </div>
 
           <div v-for="(filterArray, index) in getAllFilterNames" :key="index">
-            <div class="row">
-              <div class="col" v-if="getFilterValue(filterArray[0])">
-                <b class="mr-1">{{ filterArray[1] }}:</b>
-                {{ getFilterValue(filterArray[0]) }}
-              </div>
-            </div>
+        <span v-if="getFilterValue(filterArray[0])">
+                      <span
+                        ><b class="mr-1">{{ filterArray[1] }}:</b>
+                        {{ getFilterValue(filterArray[0]) }}
+                      </span>
+                    </span>
           </div>
           <span v-show="facilities.length !== getUnfilteredFacilities.length"
             >Map Boundary Filter: Active</span
@@ -671,7 +671,6 @@ export default {
       "filteredFacilities",
       "filteredFacilityGroups",
       "getAllFilterNames",
-      "getAllFilterNames",
       "getFilterValue",
       "getTaskIssueUserFilter",
       "getUnfilteredFacilities",
@@ -1152,6 +1151,10 @@ ul > li {
   border-radius: 0.25rem;
   font-size: 0.75rem;
   height: 20px;
+}
+
+.programName {
+  font-variant: small-caps;
 }
 // .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {
 //  background-color: #fff;
