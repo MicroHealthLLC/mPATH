@@ -402,6 +402,27 @@
 	margin-bottom: 10px;
 }
 
+.micro-response .img
+{
+	border: none;
+}
+
+.micro-response .img.imgThumbnail200
+{
+	align: left;
+	display: block;
+	max-width: 1200px;
+	padding: 10px 0;
+}
+
+.micro-response .img.imgThumbnail400
+{
+	align: left;
+	display: block;
+	max-width: 1200px;
+	padding: 10px 0;
+}
+
 .micro-response .dropDown
 {
 	margin: 5px 0px;
@@ -463,27 +484,6 @@
 	border-left: 2px solid #d3e7fa;
 	border-top: none;
 	background-color: #ffffff;
-}
-
-.micro-response .img
-{
-	border: none;
-}
-
-.micro-response .img.imgThumbnail400
-{
-	align: left;
-	display: block;
-	max-width: 1200px;
-	padding: 10px 0;
-}
-
-.micro-response .img.imgThumbnail200
-{
-	align: left;
-	display: block;
-	max-width: 1200px;
-	padding: 10px 0;
 }
 
 .micro-response .MCWebHelpFramesetLink a
