@@ -260,7 +260,8 @@ class Lesson < ApplicationRecord
       # end
 
       if notes_attributes.present?
-        existing_note_ids = self.note_ids
+        existing_notes = self.notes
+        existing_note_ids = existing_notes.map(&:id)
         notes_to_destroy = existing_note_ids
         notes_objs = []
         notes_attributes.each do |value|
