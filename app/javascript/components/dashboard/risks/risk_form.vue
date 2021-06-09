@@ -103,7 +103,7 @@
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
 
-              <div class="toggleWrapper float-right" id="risk_toggles">
+              <div class="toggleWrapper float-right" id="risk_toggles" :class="{'font-sm': isMapView}">
                 <span
                   v-if="_isallowed('write')"
                   class="watch_action mt-3 clickable mx-2"
