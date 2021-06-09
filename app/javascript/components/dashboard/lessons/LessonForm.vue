@@ -439,8 +439,13 @@
     </div>
 
     <!-- Files & Links Tab -->
-    <div v-show="currentTab == 'tab6'" class="mt-2">
-      <h1>FILES AND LINKS</h1>
+    <div v-show="currentTab == 'tab6'" class="row mt-2">
+      <div class="col">
+        <AttachmentInput @input="addFile" />
+        <div v-for="(file, index) in files" :key="index">
+          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+        </div>
+      </div>
     </div>
     <!-- Updates Tab -->
     <div v-show="currentTab == 'tab7'" class="mt-2">
@@ -493,6 +498,7 @@
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
+import AttachmentInput from "./../../shared/attachment_input.vue";
 
 export default {
   name: "LessonForm",
@@ -500,6 +506,7 @@ export default {
   components: {
     FormTabs,
     RelatedLessonMenu,
+    AttachmentInput,
   },
   data() {
     return {
@@ -568,6 +575,7 @@ export default {
       failures: [],
       bestPractices: [],
       updates: [],
+      files: [],
     };
   },
   methods: {
@@ -726,6 +734,23 @@ export default {
     author(id) {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
+    addFile(files) {
+      console.log("Adding files...");
+      console.log(files);
+
+      let lessonFiles = [...this.lesson.attach_files];
+
+      files.forEach((file) => {
+        file.guid = this.guid();
+        lessonFiles.push(file);
+      });
+
+      this.files = lessonFiles;
+    },
+    downloadFile(file) {
+      let url = window.location.origin + file.uri;
+      window.open(url, "_blank");
+    },
   },
   computed: {
     ...mapGetters([
@@ -777,6 +802,7 @@ export default {
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
         }
       },
     },
@@ -789,6 +815,7 @@ export default {
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
         }
       },
     },
