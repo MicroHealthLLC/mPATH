@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex align-items-center mx-4"
+    class="d-flex align-items-center"
     :class="{
       'map-width': $route.name.includes('Map') && !$route.name.includes('Risk'),
       'map-risk-width':
