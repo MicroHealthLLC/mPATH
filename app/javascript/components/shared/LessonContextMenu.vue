@@ -8,77 +8,8 @@
     @mouseleave="close"
   >
     <el-menu collapse>
-      <!-- <el-menu-item @click="openLesson">Open</el-menu-item>
+      <el-menu-item @click="openLesson(lesson.id)">Open</el-menu-item>
       <hr />
-      <el-menu-item
-        @click="createDuplicate"
-        :disabled="!$permissions.lessons.write"
-        >Duplicate</el-menu-item
-      >
-      <el-submenu index="1" :disabled="!$permissions.lessons.write">
-        <template slot="title">
-          <span slot="title">Duplicate to...</span>
-        </template>
-        <div>
-          <div class="menu-subwindow-title">Duplicate to...</div>
-          <el-input
-            class="filter-input"
-            placeholder="Filter Projects..."
-            v-model="filterTree"
-          ></el-input>
-          <el-tree
-            :data="treeFormattedData"
-            :props="defaultProps"
-            :filter-node-method="filterNode"
-            @check-change="toggleSubmitBtn"
-            show-checkbox
-            ref="duplicatetree"
-            node-key="id"
-          >
-          </el-tree>
-          <div class="context-menu-btns">
-            <button
-              class="btn btn-sm btn-success ml-2"
-              @click="duplicateSelectedLessons"
-              :disabled="submitDisabled"
-            >
-              Submit
-            </button>
-            <button class="btn btn-sm btn-primary ml-2" @click="selectAllNodes">
-              Select All
-            </button>
-            <button
-              class="btn btn-sm btn-outline-secondary ml-2"
-              @click="clearAllNodes"
-            >
-              Clear All
-            </button>
-          </div>
-        </div>
-      </el-submenu>
-      <hr />
-      <el-submenu index="2" :disabled="!$permissions.lessons.write">
-        <template slot="title">
-          <span slot="title">Move to...</span>
-        </template>
-        <div>
-          <div class="menu-subwindow-title">Move to...</div>
-          <el-input
-            class="filter-input"
-            placeholder="Filter Projects..."
-            v-model="filterTree"
-          ></el-input>
-          <el-tree
-            :data="treeFormattedData"
-            :props="defaultProps"
-            :filter-node-method="filterNode"
-            ref="movetree"
-            @node-click="move"
-          >
-          </el-tree>
-        </div>
-      </el-submenu>
-      <hr /> -->
       <el-menu-item @click="deleteSelectedLesson">Delete</el-menu-item>
     </el-menu>
   </div>
@@ -142,8 +73,37 @@ export default {
       Vue.nextTick(() => this.$el.focus());
       this.show = true;
     },
+    openLesson(id) {
+      this.$router.push({
+        name: "SheetLessonForm",
+        params: {
+          programId: this.$route.params.programId,
+          projectId: this.$route.params.projectId,
+          lessonId: id,
+        },
+      });
+      this.close();
+    },
     deleteSelectedLesson() {
-      this.deleteLesson({ id: this.lesson.id, ...this.$route.params });
+      this.$confirm(
+        `Are you sure you want to delete ${this.lesson.title}?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.deleteLesson({ id: this.lesson.id, ...this.$route.params });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "Delete canceled",
+            showClose: true,
+          });
+        });
     },
   },
 };

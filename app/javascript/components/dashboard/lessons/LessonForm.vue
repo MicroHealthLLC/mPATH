@@ -1,11 +1,11 @@
 <template>
-  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
+  <form class="mx-4" @submit.prevent="saveLesson" accept-charset="UTF-8">
     <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div>
         <h5 class="mb-0">
           <span style="font-size: 16px; margin-right: 10px"
-            ><i class="fas fa-building"></i
+            ><i class="fas fa-suitcase"></i
           ></span>
           <router-link v-if="contentLoaded" :to="projectNameLink">{{
             facility.facilityName
@@ -75,7 +75,7 @@
       </div>
     </div>
     <!-- Lesson Info Tab -->
-    <div v-show="currentTab == 'tab1'" class="row mx-0">
+    <div v-show="currentTab == 'tab1'" class="row mt-2 mx-0">
       <div class="col-12 px-0">
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
@@ -172,7 +172,7 @@
     </div>
     <!-- Related Tab -->
     <div v-show="currentTab == 'tab2'">
-      <div class="row mt-2">
+      <div class="row mt-1">
         <div class="col">
           Related Tasks
           <span class="clickable" @click="openContextMenu($event, 'task')">
@@ -299,8 +299,8 @@
       </div>
     </div>
     <!-- Successes Tab -->
-    <div v-show="currentTab == 'tab3'">
-      <label class="font-md">Successes</label>
+    <div v-show="currentTab == 'tab3'" class="mt-2">
+      <label>Successes</label>
       <span class="clickable" @click.prevent="addSuccess">
         <i class="fas fa-plus-circle"></i>
       </span>
@@ -345,8 +345,8 @@
       </el-card>
     </div>
     <!-- Failures Tab -->
-    <div v-show="currentTab == 'tab4'">
-      <label class="font-md">Failures</label>
+    <div v-show="currentTab == 'tab4'" class="mt-2">
+      <label>Failures</label>
       <span class="clickable" @click.prevent="addFailure">
         <i class="fas fa-plus-circle"></i>
       </span>
@@ -392,8 +392,8 @@
     </div>
 
     <!-- Best Practices Tab -->
-    <div v-show="currentTab == 'tab5'">
-      <label class="font-md">Best Practicess</label>
+    <div v-show="currentTab == 'tab5'" class="mt-2">
+      <label>Best Practices</label>
       <span class="clickable" @click.prevent="addBestPractice">
         <i class="fas fa-plus-circle"></i>
       </span>
@@ -439,12 +439,12 @@
     </div>
 
     <!-- Files & Links Tab -->
-    <div v-show="currentTab == 'tab6'">
+    <div v-show="currentTab == 'tab6'" class="mt-2">
       <h1>FILES AND LINKS</h1>
     </div>
     <!-- Updates Tab -->
-    <div v-show="currentTab == 'tab7'">
-      <label class="font-md">Updates</label>
+    <div v-show="currentTab == 'tab7'" class="mt-2">
+      <label>Updates</label>
       <span class="clickable" @click.prevent="addUpdate">
         <i class="fas fa-plus-circle"></i>
       </span>
