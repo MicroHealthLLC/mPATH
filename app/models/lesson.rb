@@ -85,6 +85,12 @@ class Lesson < ApplicationRecord
     # First name values added for improved sorting in datatables
     users_first_name_hash = {} 
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
+
+    all_lesson_details = self.lesson_details
+    successes = all_lesson_details.select{|l| l.detail_type == 0}
+    failures = all_lesson_details.select{|l| l.detail_type == 1}
+    best_practices = all_lesson_details.select{|l| l.detail_type == 2}
+    
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -121,7 +127,12 @@ class Lesson < ApplicationRecord
       
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
-      sub_risk_ids: sub_risks.map(&:id)
+      sub_risk_ids: sub_risks.map(&:id),
+
+      successes: successes.map(&:to_json),
+      failures: failures.map(&:to_json),
+      best_practices: best_practices.map(&:to_json)
+
     ).as_json
   end
 
@@ -283,7 +294,8 @@ class Lesson < ApplicationRecord
       #   LessonDetail.import(lesson_detail_objs) if lesson_detail_objs.any?
       # end
       if params_lesson_details.present?
-        existing_lesson_detail_ids = self.lesson_detail_ids
+        existing_lesson_details = self.lesson_details
+        existing_lesson_detail_ids = existing_lesson_details.map(&:id)
         lesson_details_to_destroy = existing_lesson_detail_ids
 
         lesson_detail_objs = []
@@ -374,7 +386,6 @@ class Lesson < ApplicationRecord
       end
     end
   end
-
 
   def assign_users(params)
     accountable_resource_users = []
