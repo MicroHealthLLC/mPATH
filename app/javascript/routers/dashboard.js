@@ -520,6 +520,16 @@ export default new VueRouter({
           },
         },
         {
+          name: "SheetLessons",
+          path: "projects/:projectId/lessons",
+          component: SheetLessons,
+        },
+        {
+          name: "SheetLessonForm",
+          path: "projects/:projectId/lessons/:lessonId",
+          component: SheetLessonForm,
+        },
+        {
           name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,
