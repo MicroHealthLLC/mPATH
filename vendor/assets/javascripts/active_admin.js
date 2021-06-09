@@ -33,6 +33,10 @@ function addProjectPrivilegeForm(element){
   $.ajax({
     url: url,
     success: function(res, data){
+      if(!res.projects_avaialble){
+        alert("All program privileges are set.")
+        return
+      }
       $("#project_privileges_list").prepend(res.html)
     },
     errors: function(data){
@@ -596,7 +600,7 @@ jQuery(function($) {
 
   // user role previliges
   //if ($("#user-role_privilege-tab").is(":visible"))
-  if(true)
+  if($("#user-role_privilege-tab").length > 0)
   {
     let role_privilege = new Vue({
       el: "#user-role_privilege-tab",

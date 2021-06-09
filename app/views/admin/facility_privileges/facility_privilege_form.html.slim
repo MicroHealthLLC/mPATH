@@ -1,6 +1,9 @@
 - index = SecureRandom.random_number(10000000)
 - active_projects = user.projects.active
-fieldset(class="inputs has_many_fields")
+- fieldset_id = SecureRandom.hex(3)
+
+fieldset(class="inputs has_many_fields" id=(fieldset_id))
+  a{href="javascript:void(0)" class="button" onclick="$('##{fieldset_id}').remove()"} Remove
   ol
     li(class="select input required")
       label Select Program

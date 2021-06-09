@@ -1,5 +1,5 @@
 - active_projects = user.projects.active
-- facility_privileges = user.facility_privileges
+- facility_privileges = user.facility_privileges.order("created_at DESC")
 - project_privileges = user.project_privileges
 - facility_projects = FacilityProject.includes(:facility).where(project_id: active_projects.map(&:id) )
 - option_array = facility_projects.map{|fp| [fp.id, fp.facility.facility_name ] }

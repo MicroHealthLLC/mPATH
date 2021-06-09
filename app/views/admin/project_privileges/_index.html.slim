@@ -1,8 +1,10 @@
 - active_projects = user.projects.active
-- project_privileges = user.project_privileges
+- project_privileges = user.project_privileges.order("created_at DESC")
 - option_array = active_projects.map{|fp| [fp.id, fp.name ] }
 
-a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button has_many_add"}Add Program Privilege
+a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button"}Add Program Privilege
+
+div{id="message_div"}
 
 div{id="project_privileges_list"}
   - project_privileges.each do |fp|
