@@ -269,7 +269,7 @@ class Lesson < ApplicationRecord
             n = existing_notes.detect{|e| e.id == value["id"].to_i}
             n.update(value) if n
           else
-            notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+            notes_objs << Note.new(value.merge({user_id: user.id, noteable_id: lesson.id, noteable_type: "Lesson"}) )
           end
         end
         Note.import(notes_objs) if notes_objs.any?
