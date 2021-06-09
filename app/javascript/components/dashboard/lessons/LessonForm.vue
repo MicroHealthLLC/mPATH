@@ -774,15 +774,9 @@ export default {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.lesson_details.filter(
-            (success) => success.detail_type == 0
-          );
-          this.failures = this.lesson.lesson_details.filter(
-            (failure) => failure.detail_type == 1
-          );
-          this.bestPractices = this.lesson.lesson_details.filter(
-            (bestPractice) => bestPractice.detail_type == 2
-          );
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
         }
       },
     },
@@ -792,15 +786,9 @@ export default {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.lesson_details.filter(
-            (success) => success.detail_type == 0
-          );
-          this.failures = this.lesson.lesson_details.filter(
-            (failure) => failure.detail_type == 1
-          );
-          this.bestPractices = this.lesson.lesson_details.filter(
-            (bestPractice) => bestPractice.detail_type == 2
-          );
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
         }
       },
     },
