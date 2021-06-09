@@ -329,7 +329,8 @@
           if (search_query) valid = valid && search_query.test(resource.text) ||
           valid && search_query.test(resource.text) ||
           valid && search_query.test(resource.riskApproach) ||
-          valid && search_query.test(resource.priorityLevelName) ||   
+          valid && search_query.test(resource.priorityLevelName) ||  
+          valid && search_query.test(resource.taskType.name) || 
           valid && search_query.test(resource.userNames)
 
 

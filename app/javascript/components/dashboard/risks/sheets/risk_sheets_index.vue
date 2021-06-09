@@ -148,7 +148,7 @@
             <col class="eight" />
             <col class="eight" />
             <col class="twelve" />
-            <col class="seven" />
+            <col class="eight" />
             <col class="fort" />         
             <col class="twenty" />
           </colgroup>
@@ -488,9 +488,6 @@
       nextPage:function() {
         if((this.currentPage*this.C_risksPerPage.value) < this.filteredRisks.length) this.currentPage++;
       },
-      // commaFunction(){
-     
-      // },
       prevPage:function() {
         if(this.currentPage > 1) this.currentPage--;
       },
@@ -597,6 +594,7 @@
           valid && search_query.test(resource.text) ||
           valid && search_query.test(resource.riskApproach) ||
           valid && search_query.test(resource.priorityLevelName) ||
+          valid && search_query.test(resource.taskType.name) ||
           valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
@@ -840,5 +838,10 @@
 .filters-wrapper {
   float: right;
   margin-top: -85px;
+}
+@media screen and (max-width: 1500px) {
+  .filters-wrapper {
+    width: 70% !important;
+  } 
 }
 </style>

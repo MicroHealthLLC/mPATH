@@ -478,8 +478,8 @@ export default new Vuex.Store({
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
         {id: 'draft', name: 'Drafts', value: 'draft', filterCategoryId: 'draftFilter', filterCategoryName: 'Drafts'},
         // {id: 'notDraft', name: 'Not Draft', value: 'notDraft', filterCategoryId: 'notDraftFilter', filterCategoryName: 'Not Draft'},
-        {id: 'onGoing', name: 'Marked On Going', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
-        {id: 'notOnGoing', name: 'Not Marked On Going', value: 'notOnGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'On Going'},
+        {id: 'onGoing', name: 'Marked Ongoing', value: 'onGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'},
+        {id: 'notOnGoing', name: 'Not Marked Ongoing', value: 'notOnGoing', filterCategoryId: 'onGoingFilter', filterCategoryName: 'Ongoing'},
 
         // Priority Level is specific to Risk
         // {id: 'low', name: 'Low', value: 'low', filterCategoryId: 'riskPriorityLevelFilter', filterCategoryName: 'Priority Level'},
@@ -595,7 +595,7 @@ export default new Vuex.Store({
         ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
-        ['onGoingFilter', 'On Going'],
+        ['onGoingFilter', 'Ongoing'],
         ['onHoldFilter', 'On Hold'],
         ['draftFilter', 'Drafts'],
         ['progressStatusFilter', 'Action Status']

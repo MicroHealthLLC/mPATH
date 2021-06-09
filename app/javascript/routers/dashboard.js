@@ -136,16 +136,19 @@ export default new VueRouter({
     {
       name: "LessonsIndex",
       path: "/programs/:programId/lessons",
+      redirect: "/programs/:programId/map",
       component: LessonsIndex,
     },
     {
       name: "LessonForm",
       path: "/programs/:programId/lessons/new",
+      redirect: "/programs/:programId/map",
       component: LessonForm,
     },
     {
       name: "LessonForm",
       path: "/programs/:programId/lessons/:lessonId",
+      redirect: "/programs/:programId/map",
       component: LessonForm,
     },
     {
@@ -517,16 +520,6 @@ export default new VueRouter({
           },
         },
         {
-          name: "SheetLessons",
-          path: "projects/:projectId/lessons",
-          component: SheetLessons,
-        },
-        {
-          name: "SheetLessonForm",
-          path: "projects/:projectId/lessons/:lessonId",
-          component: SheetLessonForm,
-        },
-        {
           name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,
@@ -634,12 +627,12 @@ export default new VueRouter({
       name: "CalendarView",
       path: "/programs/:programId/calendar",
       component: CalendarView,
-      children: [     
+      children: [
         {
           name: "CalendarLanding",
           path: "",
           component: CalendarLanding,
-        }, 
+        },
         {
           name: "CalendarProjectSelected",
           path: "projects/:projectId",
@@ -649,7 +642,6 @@ export default new VueRouter({
           name: "CalendarTasks",
           path: "projects/:projectId/tasks",
           component: CalendarTasks,
-          
         },
         {
           name: "CalendarTaskForm",
@@ -675,7 +667,7 @@ export default new VueRouter({
           name: "CalendarRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: CalendarRiskForm,
-        },     
+        },
       ],
     },
     {

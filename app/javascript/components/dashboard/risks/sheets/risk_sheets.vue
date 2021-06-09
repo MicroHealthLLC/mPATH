@@ -12,7 +12,7 @@
             <span v-if="(risk.priorityLevelName) == 'High'" class="orange1"> {{risk.priorityLevelName}} </span> 
             <span v-if="(risk.priorityLevelName) == 'Extreme'" class="red1"> {{risk.priorityLevelName}}</span> 
        </td>
-       <td class="eight">{{formatDate(risk.startDate)}}</td>
+       <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
        <td class="eight text-center">
          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
         <span v-else>
@@ -28,9 +28,9 @@
              <span v-if="(risk.informedUsers.length > 0) && (risk.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(risk.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g, ' ')}}</span>      
          </span>        
         </td>
-         <td>
-        <span class="eight text-center" v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
-        <span class="eight text-center" v-else>{{risk.progress + "%"}}</span>
+        <td class="eight text-center" >
+        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span v-else>{{risk.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
                 <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>

@@ -196,14 +196,20 @@
         </v-list-item>
           <v-list-item>
           <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>  
+           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>           
+               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-else>  
             {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
+               </span>
           </v-list-item-title>
         </v-list-item>
          <v-list-item >
            <v-list-item-title>
-            <span class="d-inline mr-1"><small><b>Progress:</b></small></span>  
-          {{ selectedEvent.progess }}%          
+              <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-else>
+               {{ selectedEvent.progess }}%    
+               </span>   
           </v-list-item-title>
         </v-list-item>
          <v-list-item>
@@ -284,6 +290,7 @@
         focus: this.C_lastFocus,    
         risksQuery: '',    
         riskNames: [],  
+        retweet: 'f2b9',
         componentKey: 0, 
         riskIds:[], 
         seeLess: true,     
@@ -440,14 +447,19 @@
       this.riskApproach = this.filteredCalendar.map(risk => risk.riskApproach)  
       this.ongoing = this.filteredCalendar.map(risk => risk.ongoing)    
       this.onhold = this.filteredCalendar.map(risk => risk.onHold)   
-      this.draft = this.filteredCalendar.map(risk => risk.draft)   
+      this.draft = this.filteredCalendar.map(risk => risk.draft)       
 
       const events = []
       const min = new Date(`${start.date}T00:00:00`)
       const max = new Date(`${end.date}T23:59:59`)
       const days = (max.getTime() - min.getTime()) / 86400000   
       // For loop to determine length of Tasks 
-      for (let i = 0; i < this.filteredCalendar.length; i++) {
+      for (let i = 0; i < this.filteredCalendar.length; i++) {    
+
+      if(this.riskData[i].ongoing) {
+       this.riskNames[i] = this.riskNames[i] + " (Ongoing)"
+       this.riskEndDates[i] = '2099-01-01'
+      }
           events.push({            
           name: this.riskNames[i],
           start: this.riskStartDates[i],
@@ -463,7 +475,8 @@
           hasStar: this.star[i], 
           isOngoing: this.ongoing[i],
           isDraft: this.draft[i],
-          isOnHold: this.onhold[i],                    
+          isOnHold: this.onhold[i], 
+                             
         })
       }
       // This is the main Events array pushed into Calendar

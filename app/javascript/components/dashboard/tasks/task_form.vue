@@ -167,7 +167,7 @@
               <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
               </span>
              
-              <small style="vertical-align:text-top"> On Going</small>
+              <small style="vertical-align:text-top"> Ongoing</small>
             </span>
               <span
               v-if="_isallowed('write')"
