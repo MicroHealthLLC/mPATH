@@ -104,7 +104,7 @@
               >Issue Name <span style="color: #dc3545">*</span></label
             >
 
-          <div class="toggleWrapper float-right">
+          <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">
             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"

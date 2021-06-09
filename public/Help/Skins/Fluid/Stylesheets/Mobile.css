@@ -13,10 +13,10 @@
 
 	.title-bar-layout a.logo
 	{
-		width: 387px;
+		width: 100px;
 		height: 60px;
-		background: transparent url('Images/LogoSmall-Text.png') no-repeat center center;
-		-pie-background: transparent url('Skins/Fluid/Stylesheets/Images/LogoSmall-Text.png') no-repeat center center;
+		background: transparent url('Images/LogoCircles.png') no-repeat center center;
+		-pie-background: transparent url('Skins/Fluid/Stylesheets/Images/LogoCircles.png') no-repeat center center;
 	}
 
 	.search-bar .search-submit
