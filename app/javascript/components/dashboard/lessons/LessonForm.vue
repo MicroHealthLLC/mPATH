@@ -162,7 +162,7 @@
         >
           <el-option
             v-for="stage in lessonStages"
-            :value="stage.id.toString()"
+            :value="stage.id"
             :key="stage.id"
             :label="stage.name"
           >
@@ -314,8 +314,14 @@
           <label class="font-md">Findings</label>
           <div class="font-sm">
             <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span> Someone at
-              10:30PM on 6/23/2021</el-tag
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="success.updated_at"
+                >{{ author(success.user_id) }} on
+                {{ new Date(success.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
             >
             <i
               class="el-icon-delete clickable ml-3"
@@ -354,8 +360,14 @@
           <label class="font-md">Findings</label>
           <div class="font-sm">
             <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span> Someone at
-              10:30PM on 6/23/2021</el-tag
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="failure.updated_at"
+                >{{ author(failure.user_id) }} on
+                {{ new Date(failure.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
             >
             <i
               class="el-icon-delete clickable ml-3"
@@ -395,8 +407,14 @@
           <label class="font-md">Findings</label>
           <div class="font-sm">
             <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span> Someone at
-              10:30PM on 6/23/2021</el-tag
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="bestPractice.updated_at"
+                >{{ author(bestPractice.user_id) }} on
+                {{ new Date(bestPractice.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
             >
             <i
               class="el-icon-delete clickable ml-3"
@@ -460,9 +478,9 @@
     <RelatedLessonMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
-      :relatedTasks="[]"
-      :relatedIssues="[]"
-      :relatedRisks="[]"
+      :relatedTasks="relatedTasks"
+      :relatedIssues="relatedIssues"
+      :relatedRisks="relatedRisks"
       @add-related-tasks="addRelatedTasks"
       @add-related-issues="addRelatedIssues"
       @add-related-risks="addRelatedRisks"
@@ -554,7 +572,7 @@ export default {
   },
   methods: {
     ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
-    ...mapMutations(["SET_LESSON"]),
+    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
     saveLesson() {
       this.$validator.validate().then((success) => {
         if (!success) {
@@ -563,7 +581,13 @@ export default {
 
         let lessonData = {
           lesson: {
-            ...this.lesson,
+            title: this.lesson.title,
+            description: this.lesson.description,
+            date: this.lesson.date,
+            task_type_id: this.lesson.task_type_id,
+            user_id: this.lesson.user_id,
+            lesson_stage_id: this.lesson.lesson_stage_id,
+
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
@@ -699,6 +723,9 @@ export default {
         })
         .catch(() => {});
     },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+    },
   },
   computed: {
     ...mapGetters([
@@ -747,6 +774,15 @@ export default {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.lesson_details.filter(
+            (success) => success.detail_type == 0
+          );
+          this.failures = this.lesson.lesson_details.filter(
+            (failure) => failure.detail_type == 1
+          );
+          this.bestPractices = this.lesson.lesson_details.filter(
+            (bestPractice) => bestPractice.detail_type == 2
+          );
         }
       },
     },
@@ -756,6 +792,15 @@ export default {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.lesson_details.filter(
+            (success) => success.detail_type == 0
+          );
+          this.failures = this.lesson.lesson_details.filter(
+            (failure) => failure.detail_type == 1
+          );
+          this.bestPractices = this.lesson.lesson_details.filter(
+            (bestPractice) => bestPractice.detail_type == 2
+          );
         }
       },
     },
@@ -767,6 +812,7 @@ export default {
             type: "success",
             showClose: true,
           });
+          this.SET_LESSON_STATUS(0);
         }
       },
     },
