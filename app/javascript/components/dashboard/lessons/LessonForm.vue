@@ -587,14 +587,14 @@ export default {
             task_type_id: this.lesson.task_type_id,
             user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
-
+            // Array values below
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes],
             failures: [...this.failures],
             best_practices: [...this.bestPractices],
-            // updates: [...this.updates],
+            notes_attributes: [...this.updates],
           },
         };
 
