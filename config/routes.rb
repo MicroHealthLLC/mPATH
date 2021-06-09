@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   get "/programs/:id/"  => "projects#show"
 
   get "/programs/:program_id/:tab" => "projects#vue_js_route"
+  get "/programs/:program_id/:tab/new" => "projects#vue_js_route"
+  get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
 
   get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
@@ -48,13 +50,15 @@ Rails.application.routes.draw do
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
     get :gantt_chart, on: :member
-    get :watch_view, on: :member
+  ##  get :watch_view, on: :member
     get :sheet, on: :member
     get :member_list, on: :member
-    get :facility_manager, on: :member
+  ##  get :facility_manager, on: :member
     get :kanban, on: :member
-    get :map, on: :member
+    get :map, on: :member    
     get :calendar, on: :member
+
+    resources :lessons
 
     resources :query_filters do
       collection do
@@ -101,6 +105,7 @@ Rails.application.routes.draw do
       post :create_bulk_duplicate, on: :member
     end
   end
+
   get '/profile', to: 'profiles#index'
   post '/profile', to: 'profiles#update'
   get '/current_user', to: 'profiles#current_profile'

@@ -47,7 +47,7 @@
   import TaskForm from "./tasks/task_form"
   import IssueForm from "./issues/issue_form"
   import NotesForm from "./notes/notes_form"
-
+  import LessonForm from "./lessons/lesson_form"
 
   export default {
     name: "ProjectSheets",
@@ -57,6 +57,7 @@
       TaskForm,
       IssueForm,
       NotesForm,
+      LessonForm,
       FacilitySidebar,
       SweetModal
     },
@@ -177,7 +178,7 @@
       },     
       managerView: {
         handler(value) {
-          if (value.task || value.issue || value.note) {
+          if (value.task || value.issue || value.note || value.lesson) {
             this.$refs.formModals && this.$refs.formModals.open()
           } else {
             this.$refs.formModals && this.$refs.formModals.close()

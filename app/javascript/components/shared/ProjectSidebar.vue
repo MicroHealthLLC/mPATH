@@ -1,10 +1,19 @@
 <template>
   <div
     id="facility_sidebar"
-    class="pl-0"
-    @click="deselectProject"
+    class="pl-0"  
     data-cy="facility_list"
   >
+  <div class="stick">
+  <div   
+    @click="deselectProject"  
+    id="program_name"
+    class="programNameDiv smallCaps pl-2 pr-1"       
+  >   
+  {{ programName }}   
+  </div>
+  
+  </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
@@ -77,6 +86,11 @@ export default {
       "filteredFacilityGroups",
       "facilityGroupFacilities",
     ]),
+    programName() {
+      if (this.contentLoaded && (this.currentProject !== null || this.currentProject !== undefined)){
+        return this.currentProject.name
+      }
+    },
     sortedGroups() {
       // Sort groups by name
       return this.filteredFacilityGroups.sort((a, b) =>
@@ -108,24 +122,53 @@ export default {
         return "/notes";
       } else if (url.includes("kanban")) {
         return "/tasks";
+      } else if (url.includes("calendar")) {
+        return "/tasks";
       } else {
         return "";
       }
     },
   },
   methods: {
-    expandFacilityGroup(group) {
+    expandFacilityGroup(group) {     
       this.$emit("on-expand-facility-group", group);
     },
-    showFacility(facility) {
+    log(e){
+      console.log("This is the currentFac: " + e)
+    },
+    showFacility(facility) {    
       this.$emit("on-expand-facility", facility);
     },
     deselectProject(e) {
-      if (e.target.id === "facility_sidebar") {
+      if (e.target.id === "program_name") {
+        console.log("this works")
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
       }
+    },
+  },
+  mounted() {
+    // Expand the project tree if there is only one project group on tab transition
+    if (
+      this.filteredFacilityGroups.length === 1 &&
+      this.contentLoaded &&
+      !this.$route.params.projectId
+    ) {
+      this.expandFacilityGroup(this.filteredFacilityGroups[0]);
+    }
+  },
+  watch: {
+    contentLoaded: {
+      handler() {
+        // Expand the project tree if there is only one project group on refresh
+        if (
+          this.filteredFacilityGroups.length === 1 &&
+          !this.$route.params.projectId
+        ) {
+          this.expandFacilityGroup(this.filteredFacilityGroups[0]);
+        }
+      },
     },
   },
 };
@@ -134,7 +177,6 @@ export default {
 <style lang="scss" scoped>
 #facility_sidebar {
   background: #ededed;
-  cursor: pointer;
   max-height: calc(100vh - 94px);
   height: calc(100vh - 94px);
   overflow-y: auto;
@@ -145,11 +187,28 @@ export default {
       font-weight: bold;
     }
   }
+  .programNameDiv {
+    box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);    
+    cursor: pointer;
+      &.active {
+      background-color: red !important;
+      color: #007bff;
+    }
+  }
+  .programNameDiv:hover {
+    background-color: rgba(211, 211, 211, 10%);
+  }
   .fac-name {
     border-bottom: solid lightgray 0.5px;
     border-radius: 2px;
     margin: 1px;
     cursor: pointer;
+  }
+  .programNameBtn {
+     &.active {
+      background-color: red !important;
+      color: #007bff;
+    }
   }
   .programName {
     position: absolute;
@@ -172,6 +231,12 @@ export default {
         font-weight: 900 !important;
       }
     }
+  }
+  .smallCaps {
+    font-variant: small-caps;
+    // position: sticky;
+    // position: -webkit-sticky;
+    // top: 0;
   }
   a {
     color: unset;

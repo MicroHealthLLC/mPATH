@@ -17,6 +17,11 @@ function checkRiskProbabilityImpactNumber(element){
 
 jQuery(function($) {
 
+  $(".project_privileges_select").select2({
+    placeholder: "Search and select Project",
+    allowClear: true
+  });
+
   // Add placeholder to for organization select
   $("#user_organization_input .select2").select2({
     placeholder: "Search and select an organization",
@@ -462,7 +467,7 @@ jQuery(function($) {
             <form id="dialog_confirm" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 49.25px; max-height: none; height: auto;">
               <ul>
                 <li>
-                  <label>Project</label>
+                  <label>Program</label>
                   <input name="project" class="text" type="text" readOnly :value="project.project.name">
                 </li>
                 <li>
@@ -490,7 +495,8 @@ jQuery(function($) {
   }
 
   // user role previliges
-  if ($("#user-role_privilege-tab").is(":visible"))
+  //if ($("#user-role_privilege-tab").is(":visible"))
+  if(true)
   {
     let role_privilege = new Vue({
       el: "#user-role_privilege-tab",
@@ -571,6 +577,11 @@ jQuery(function($) {
             read: false,
             write: false,
             delete: false
+          },
+          lessons: {
+            read: false,
+            write: false,
+            delete: false
           }
         }
       },
@@ -597,6 +608,12 @@ jQuery(function($) {
           let kanban_view = $("#user_privilege_attributes_kanban_view").val() || "";
           let documents = $("#user_privilege_attributes_documents").val() || "";
           let members = $("#user_privilege_attributes_members").val() || "";
+          let lessons = $("#user_privilege_attributes_lessons").val() || "";
+          this.lessons = {
+            read: lessons.includes("R"),
+            write: lessons.includes("W"),
+            delete: lessons.includes("D")
+          }
           this.overview = {
             read: overview.includes("R"),
             write: overview.includes("W"),
@@ -1039,6 +1056,30 @@ jQuery(function($) {
           v = value ? v + "D" : v.replace("D", "")
           if (value) this.members.read = value;
           $("#user_privilege_attributes_members").val(v);
+        },
+        "lessons.read"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "R" : v.replace("R", "")
+          if (!value) {
+            this.lessons.write = false;
+            this.lessons.delete = false;
+          }
+          $("#user_privilege_attributes_lessons").val(v);
+        },
+        "lessons.write"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "W" : v.replace("W", "")
+          if (value) this.lessons.read = value;
+          $("#user_privilege_attributes_lessons").val(v);
+        },
+        "lessons.delete"(value) {
+          if (this.loading) return;
+          let v = $("#user_privilege_attributes_lessons").val();
+          v = value ? v + "D" : v.replace("D", "")
+          if (value) this.lessons.read = value;
+          $("#user_privilege_attributes_lessons").val(v);
         }
       },
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
@@ -1046,7 +1087,7 @@ jQuery(function($) {
           <legend><span>Privileges</span></legend>
           <ol class="choices-group">           
             <li class="choice d-flex">
-            <label>Sheets</label>
+            <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
            </li>
             <li class="choice d-flex">
@@ -1060,6 +1101,10 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
+            </li>
+            <li class="choice d-flex">
+            <label>Calendar</label>
+            <label class="d-flex align-center"><input type="checkbox" v-model="calendar_view.read">Read</label>
             </li>
             <li class="choice d-flex">
             <label>Documents</label>
@@ -1104,6 +1149,12 @@ jQuery(function($) {
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="admin.delete">Delete</label>
+            </li>
+            <li class="choice d-flex">
+              <label>Lessons</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.write">Write</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="lessons.delete">Delete</label>
             </li>
           </ol>
         </fieldset>
@@ -1322,7 +1373,9 @@ jQuery(function($) {
               auto_calculate: false,
               checklists: [],
               project_users: [],
-              task_users: []
+              task_users: [],
+              categories: [],
+              stages: []
             }
           },
           mounted() {
@@ -1335,11 +1388,35 @@ jQuery(function($) {
               $("input[name=Progress]").val(this.progress);
             },
             setProjectConsts() {
-              this.project_id = $("select[name=Project]").children("option:selected").val();
+              this.project_id = $("select[name=Program]").children("option:selected").val();
             },
             fetchProjectUsers() {
               $.get(`/api/users.json?project_id=${this.project_id}`, (data) => {
                 this.project_users = data.filter(u => u.status == "active");
+                this.loading = false;
+              });
+            },
+            fetchProgramCategories(){
+              $.get(`/api/task_types.json?project_id=${this.project_id}`, (data) => {
+                $(".__batch_task_form select[name=Category]").html("")
+                let task_types = data.task_types
+                for(var i = 0; i <= task_types.length; i++){
+                  $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
+                }
+                
+                this.categories = data
+                this.loading = false;
+              });
+            },
+            fetchProgramStages(){
+              $.get(`/api/task_stages.json?project_id=${this.project_id}`, (data) => {
+                $(".__batch_task_form select[name=Stage]").html("")
+                let task_stages = data.task_stages
+                for(var i = 0; i <= task_stages.length; i++){
+                  $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
+                }
+                
+                this.stages = data
                 this.loading = false;
               });
             },
@@ -1479,8 +1556,13 @@ jQuery(function($) {
         });
 
         // on change project
-        $("body").on('change', ".__batch_task_form select[name=Project]", function() {
-          $.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
+        $("body").on('change', ".__batch_task_form select[name=Program]", function() {
+          if($.Vue_task_popup ){
+            $.Vue_task_popup.setProjectConsts();
+            $.Vue_task_popup.fetchProgramCategories();
+            $.Vue_task_popup.fetchProgramStages();
+          }
+          //$.Vue_task_popup && $.Vue_task_popup.setProjectConsts();
         });
 
         // upload file
@@ -2013,6 +2095,7 @@ jQuery(function($) {
           }
         },
         created() {
+
           this.fetchUsers();
         },
         methods: {

@@ -2,15 +2,16 @@
   .mt-2.container
     .container.mb-4.text-center.d-inline-block
       h4.mt-1.text-center.mpath-logo
-       | Welcome to     
-      =image_tag "mpath.png"
+       | Welcome to  
+      span.mpathLogo   
+        =image_tag "mpath.svg"
     br
     .grid-container.program-name
       -if @active_projects.size > 0
         - @active_projects.each do |project|
          - url = @preferences.navigation_menu.present? ? "/programs/#{project.id}/#{@preferences.navigation_menu}" : "/programs/#{project.id}/map"
          =link_to(url, data: { cy: "project_list_items" }) do
-           li.list-group-item.pb-0.portfolio-page
+          li.list-group-item.pb-0.portfolio-page
               
                 .row.program-row                
                  .col-12
@@ -19,14 +20,15 @@
                       h4
                         ="#{project.name} "
                 hr.hr-program-row
-                 .row.justify-content-between data-cy="project_count"
-                      .col-6.bg-dark.text-light
+                 .row.mt-1.justify-content-between data-cy="project_count"
+                    .col-6.text-light
+                      span.project-count.bg-dark.p-2
                         ="PROJECTS: #{project.facilities.size}"
-
-                      .col-6.text-right.text-dark data-cy="user_count"
+                    .col-6.text-right data-cy="user_count"
+                      span.project-count.text-dark.p-2
                        ="USERS: #{project.users.size}"
                 br
-                    .row.mb-2.justify-content-between
+                    .row.mb-0.justify-content-between
                      .col-4.text-dark.font-sm data-cy="actions"
                         ="Actions"
                      .col-2.text-dark.font-sm.pl-1
@@ -34,7 +36,7 @@
                      .col-6.text-dark.font-sm.text-center data-cy="progress"
                         ="Progress"
 
-                    .row.font-md data-cy="tasks"
+                    .row.font-md.mt-0 data-cy="tasks"
                      .col-4.py-0
                       span.text-dark.mr-1
                        ="TASKS"
@@ -67,7 +69,7 @@
                             ="#{percentage} %"
 
 
-                    .row.font-md.mb-4 data-cy="risks"
+                    .row.font-md.mb-2 data-cy="risks"
                      .col-4.py-0
                       span.text-dark.mr-1
                        ="RISKS"
@@ -96,7 +98,7 @@
                     /      span.badge.badge-secondary.badge-pill
                     /        ="#{f.size}"
 
-                    .row.mb-0.pb-0.text-center data-cy="overall_progress"
+                    .row.mb-0.py-0.text-center data-cy="overall_progress"
                      .col-12.text-dark.font-sm.mb-0.pb-0
                         ="Overall Program Progress"
                     .row.mt-0.pt-0

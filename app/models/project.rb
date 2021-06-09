@@ -36,6 +36,10 @@ class Project < SortableRecord
   has_many :favorite_filters, dependent: :destroy
   has_many :query_filters, dependent: :destroy
 
+  has_many :lessons, dependent: :destroy
+  has_many :project_lesson_stages, dependent: :destroy
+  has_many :lesson_stages, through: :project_lesson_stages
+
   enum status: [:inactive, :active].freeze
 
   validates_uniqueness_of :name, case_sensitive: false
@@ -130,14 +134,14 @@ class Project < SortableRecord
   end
 
   def build_json_response
-    all_facility_projects = FacilityProject.includes(:tasks, :status).where(project_id: self.id)
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
     all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
 
     all_users = []
     all_user_ids = []
 
-    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort_by(&:due_date)
+    all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
     all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
     all_user_ids += all_task_users.values.flatten.map(&:user_id)
 
@@ -145,7 +149,7 @@ class Project < SortableRecord
     all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
     all_user_ids += all_issue_users.values.flatten.map(&:user_id)
 
-    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort_by(&:due_date)
+    all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
     all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
     all_user_ids += all_risk_users.values.flatten.map(&:user_id)
 
@@ -167,6 +171,8 @@ class Project < SortableRecord
     all_facility_projects.each do |fp|
 
       facility = all_facilities.detect{|f| f.id == fp.facility_id}
+
+      next if !facility
 
       h = fp.attributes.merge({
         class: fp.class.name,
@@ -252,7 +258,8 @@ class Project < SortableRecord
       issue_severities: issue_severities.as_json,
       task_stages: task_stages.as_json,
       issue_stages: issue_stages.as_json,
-      risk_stages: risk_stages.as_json
+      risk_stages: risk_stages.as_json,
+      lesson_stages: lesson_stages.as_json
     })
 
     hash

@@ -23,6 +23,14 @@ class Ability
       can [:read], "Admin" if user.privilege.admin.include?('R')
       can [:create, :update], "Admin" if user.privilege.admin.include?('W')
       can [:destroy], "Admin" if user.privilege.admin.include?('D')
+
+      can [:read], Lesson do |lesson|
+        user.privilege.lessons.include?('R')
+      end
+      can [:create, :update], Lesson if user.privilege.lessons.include?('W')
+      can [:destroy], Lesson if user.privilege.lessons.include?('D')
+
+
     end
   end
 end

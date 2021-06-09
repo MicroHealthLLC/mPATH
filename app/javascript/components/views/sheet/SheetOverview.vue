@@ -4,7 +4,7 @@
     <div v-if="contentLoaded" class="position-sticky">
       <div>
         <div>
-          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-0">
+          <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <div class="row row-1 mt-2">
               <div class="col-md-5 col-lg-5 col-sm-12">
                 <div class="box-card my-el-card p-3" style="position:relative">
@@ -112,7 +112,7 @@
 
                   <div
                     v-for="(filterArray, index) in getAllFilterNames"
-                    :key="index"
+                    :key="index"                  
                   >
                     <span v-if="getFilterValue(filterArray[0])">
                       <span
@@ -183,7 +183,7 @@
               <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>TASKS</b></h5>
                       <h5 class="d-inline">
                         <b
@@ -204,7 +204,7 @@
                         taskVariation.completed.count
                       }}</span>
                     </div>
-                    <div class="col-5 mb-1">
+                    <div class="col-5 pt-3">
                       <span
                         class="w-100 progress pg-content"
                         :class="{
@@ -222,7 +222,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row mt-0">
                     <div class="col-5 pr-0">
                       <span>Overdue</span>               
                     </div>
@@ -231,9 +231,9 @@
                         taskVariation.overdue.count
                       }}</span>
                     </div>
-                    <div class="col-5 mt-1">
+                    <div class="col-5 pt-3">
                       <span
-                        class="w-100 mb-2 progress pg-content"
+                        class="w-100 progress pg-content"
                         :class="{
                           'progress-0': taskVariation.overdue.percentage <= 0,
                         }"
@@ -247,6 +247,25 @@
                       </span>
                     </div>
                   </div>
+                <div class="row mt-0">
+                  <div class="col-5 pr-0">
+                    <span>Ongoing</span>               
+                  </div>
+                    <div class="col-2 pl-0">                   
+                    <span class="badge badge-secondary badge-pill">{{
+                      taskVariation.ongoing.length
+                    }}</span>
+                  </div>
+                  <div class="col-5  pt-3">
+                    <span
+                        class="w-100 mt-1 progress progress-0 pg-content"                       
+                        >
+                        <div class="text-center pl-1">
+                          <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
+                        </div>
+                    </span>
+                  </div>
+                </div>
 
                   <div v-if="taskStats.length > 0" data-cy="task_categories">
                     <el-collapse>
@@ -298,7 +317,7 @@
               >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>ISSUES</b></h5>
                       <h5 class="d-inline">
                         <b
@@ -310,16 +329,16 @@
                     </div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mb-2">
+                    <div class="col-5 py-1 pr-0">
                       <span>Complete</span>               
                     </div>
-                     <div class="col-2 pl-0">                    
+                     <div class="col-2 py-1 pl-0">                    
                       <span class="badge badge-secondary badge-pill">{{
                         issueVariation.completed.count
                       }}</span>
                     </div>
-                    <div class="col-5 mb-1">
+                    <div class="col-5 py-1 mb-1">
                       <span
                         class="w-100 progress pg-content"
                         :class="{
@@ -338,16 +357,16 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-5 pr-0">
+                  <div class="row mt-0">
+                    <div class="col-5 py-1 pr-0">
                       <span>Overdue</span>                    
                     </div>
-                     <div class="col-2 pl-0">                     
+                     <div class="col-2 py-1 pl-0">                     
                       <span class="badge badge-secondary badge-pill">{{
                         issueVariation.overdue.count
                       }}</span>
                     </div>
-                    <div class="col-5 mt-1">
+                    <div class="col-5 py-1 mt-1">
                       <span
                         class="w-100 mb-2 progress pg-content"
                         :class="{
@@ -447,12 +466,12 @@
 
               <!-- Row 2, col-3 for Risks Card -->
               <div
-                class="col-md-4 col-lg-4 col-sm-12 mb-3"
+                class="col-md-4 col-lg-4 col-sm-12"
                 data-cy="facility_risks"
               >
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
-                    <div class="col">
+                    <div class="col pb-0">
                       <h5 class="d-inline"><b>RISKS</b></h5>
                       <h5 v-if="contentLoaded" class="d-inline">
                         <b
@@ -466,7 +485,7 @@
 
                   <div v-if="contentLoaded">
                     <div class="row">
-                      <div class="col-5 pr-0">
+                      <div class="col-5">
                         <span class="risk-card-title">Complete</span>                        
                       </div>
                       <div class="col-2 pl-0">                    
@@ -494,17 +513,17 @@
                         </span>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-5 pr-0 mt-1">
+                    <div class="row mt-0">
+                      <div class="col-5 pr-0">
                         <span class="risk-card-title">Overdue</span>                        
                       </div>
-                      <div class="col-2 mt-1 pl-0">                       
+                      <div class="col-2 pl-0">                       
                         <span
                           class="badge badge-secondary badge-pill font-12"
                           >{{ riskVariation.overdue.count }}</span
                         >
                       </div>
-                      <div class="col-5 mt-1">
+                      <div class="col-5">
                         <span
                           class="w-100 progress pg-content"
                           :class="{
@@ -522,6 +541,26 @@
                         </span>
                       </div>
                     </div>
+                  </div>
+                  <div class="row">
+                  <div class="col-5 pr-0">
+                    <span>Ongoing</span>               
+                  </div>
+                    <div class="col-2 pl-0">                   
+                    <span class="badge badge-secondary badge-pill">{{
+                      riskVariation.ongoing.length
+                    }}</span>
+                  </div>
+                  <div class="col-5 mt-1 py-2">
+                    <span
+                        class="w-100 mt-1 progress progress-0 pg-content"
+                       
+                        >
+                        <div class="text-center pl-1">
+                          <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet"></i></span>
+                        </div>
+                    </span>
+                  </div>
                   </div>
 
                   <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
@@ -692,7 +731,7 @@ export default {
         this.facility.progress < 100
       );
     },
-    onChange() {
+   onChange() {
       this.$nextTick(() => {
         this.DV_updated = true;
       });
@@ -829,6 +868,7 @@ export default {
         overdue.length,
         this.filteredTasks.length
       );
+      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
 
       return {
         completed: {
@@ -839,6 +879,7 @@ export default {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
         },
+        ongoing
       };
     },
     filteredIssues() {
@@ -1013,6 +1054,7 @@ export default {
         overdue.length,
         this.filteredRisks.length
       );
+      let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
       return {
         completed: {
           count: completed.length,
@@ -1022,6 +1064,7 @@ export default {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
         },
+        ongoing
       };
     },
     currentRiskTypes() {

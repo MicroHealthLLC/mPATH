@@ -1,8 +1,9 @@
 <template>
-  <div id="customtabs" class="d-flex align-items-center">
+  <div id="customtabs" class="d-flex align-items-center p-2">
     <div v-for="tab in tabs" :key="tab.key">
       <div
-        class="badge"
+        v-if="!tab.hidden"
+        class="badge mx-0"
         :class="{ active: currentTab == tab.key, disabled: tab.disabled }"
         @click="changeTab(tab)"
       >
@@ -13,38 +14,57 @@
 </template>
 
 <script>
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 export default {
   name: "ProjectTabs",
   data() {
     return {
+      canSeeTab: true,
       tabs: [
         {
           label: "Overview",
           key: "overview",
           closable: false,
+          hidden: false
         },
         {
           label: "Tasks",
           key: "tasks",
           closable: false,
+          hidden: false
         },
         {
           label: "Issues",
           key: "issues",
           closable: false,
+          hidden: false
         },
         {
           label: "Risks",
           key: "risks",
           closable: false,
+          hidden: false
         },
         {
           label: "Notes",
           key: "notes",
           closable: false,
+          hidden: false
         },
       ],
     };
+  },
+  mounted() {
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+    
+    if(fPrivilege){
+      for(var i = 0; i < this.tabs.length; i++){
+        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+      }      
+    }
+
   },
   methods: {
     changeTab(tab) {
@@ -53,9 +73,13 @@ export default {
       } else {
         this.$router.push(this.path + `/${tab.key}`);
       }
-    },
+    }
   },
   computed: {
+    ...mapGetters([
+      'contentLoaded',
+      'currentProject',   
+    ]),
     currentTab() {
       return this.tabs
         .map((tab) => tab.key)
@@ -87,8 +111,7 @@ export default {
 #customtabs {
   background-color: #ededed;
   border-top: solid 0.3px #ededed;
-  padding-left: 5px;
-  padding-right: 5px;
+  width: min-content;
   box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
   .badge {
     cursor: pointer;

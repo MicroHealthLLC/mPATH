@@ -61,6 +61,7 @@ if(!window.google){
 
 var current_user = JSON.parse(window.current_user.replace(/&quot;/g,'"'))
 var preferences = JSON.parse(window.preferences.replace(/&quot;/g,'"'))
+var projectPrivileges = JSON.parse(window.project_privileges.replace(/&quot;/g,'"'))
 
 var permissions = {}
 for (var key in current_user.privilege) {
@@ -75,6 +76,7 @@ for (var key in current_user.privilege) {
 
 Vue.prototype.$currentUser = current_user
 Vue.prototype.$permissions = permissions
+Vue.prototype.$projectPrivileges = projectPrivileges
 
 Vue.prototype.$preferences = preferences
 
@@ -83,7 +85,7 @@ const dashboardApp = new Vue({
   router,
   store,
   el: '#dashboard',
-  // vuetify: new Vuetify(),
+  vuetify: new Vuetify(),
   template: '<Dashboard />',
   components: { Dashboard }
 })

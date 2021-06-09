@@ -22,6 +22,31 @@ td.col-issue_type, td.col-issue_severity {
   text-transform: capitalize !important;
   // color: #932419 !important;
 }
+
+//User Project Privilege CSS start
+li.has_many_container.facility_privileges {
+  a.button.has_many_remove {
+    margin: 25px auto;
+  }
+  fieldset.inputs.has_many_fields {
+    margin-bottom: 30px;
+  }
+  #user_facility_privileges_attributes_0_facility_project_input { 
+    margin-bottom: 35px;
+  }
+  legend.label {
+    label {
+      position: absolute;
+    }
+  }
+  ol.choices-group {
+    display: inline-flex;    
+    li.choice {
+      width: 15%;
+    }
+  }
+}
+//User Project Privilege CSS end
 .active_admin {
   #header {
     text-shadow: none;

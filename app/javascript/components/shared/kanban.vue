@@ -5,7 +5,7 @@
         <div
           v-for="column in columns"
           :key="column.title"          
-          class="rounded-lg kan-col py-2 unset mb-2 mr-4"        
+          class="rounded-lg kan-col py-2 unset mt-4 mb-2 mr-4"        
           :class="{'no-stage': column.stage.id == null}"
           :style="`${ column.stage.id == null ? 'width:1rem' : 'min-width:18.5rem'  }`"
           data-cy="kanban_col"
@@ -189,9 +189,7 @@ export default {
     background: #F7FAFC;
     border: 1px solid #4299e1;
   }
-  .unset {
-    
-  }
+
   .kan-col {
     background-color: #ededed;
     box-shadow: 0 5px 10px rgba(56,56, 56,0.19), 0 6px 6px rgba(56,56,56,0.23);
@@ -228,8 +226,10 @@ export default {
   .no-stage {
     background: #fff;
     border-right: dotted 1px #ededed;
-    margin-top: 0 !important;
+    margin-top: 24px !important;
     height: auto;
+    padding: 0 !important;
+    border-radius: 0 !important;
     box-shadow: none;
     width: .5rem !important;
     div.badge {

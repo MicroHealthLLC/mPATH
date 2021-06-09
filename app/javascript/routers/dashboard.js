@@ -1,5 +1,7 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
+import LessonsIndex from "./../components/views/lessons/LessonsIndex";
+import LessonForm from "./../components/views/lessons/LessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -34,17 +36,14 @@ import KanbanIssueForm from "./../components/views/kanban/KanbanIssueForm";
 import KanbanRisks from "./../components/views/kanban/KanbanRisks";
 import KanbanRiskForm from "./../components/views/kanban/KanbanRiskForm";
 //Calendar Routes Components
-// import CalendarView from "./../components/views/calendar/CalendarView";
-// import CalendarRollup from "./../components/shared/ProjectRollup";
-// import CalendarOverview from "./../components/views/calendar/CalendarOverview";
-// import CalendarTasks from "./../components/views/calendar/CalendarTasks";
-// import CalendarTaskForm from "./../components/views/calendar/CalendarTaskForm";
-// import CalendarIssues from "./../components/views/calendar/CalendarIssues";
-// import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm";
-// import CalendarRisks from "./../components/views/calendar/CalendarRisks";
-// import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
-// import CalendarNotes from "./../components/views/calendar/CalendarNotes";
-// import CalendarNoteForm from "./../components/views/calendar/CalendarNoteForm";
+import CalendarView from "./../components/views/calendar/CalendarView";
+import CalendarLanding from "./../components/views/calendar/CalendarLanding";
+import CalendarTasks from "./../components/views/calendar/CalendarTasks";
+import CalendarTaskForm from "./../components/views/calendar/CalendarTaskForm";
+import CalendarIssues from "./../components/views/calendar/CalendarIssues";
+import CalendarIssueForm from "./../components/views/calendar/CalendarIssueForm";
+import CalendarRisks from "./../components/views/calendar/CalendarRisks";
+import CalendarRiskForm from "./../components/views/calendar/CalendarRiskForm";
 
 export default new VueRouter({
   routes: [
@@ -121,6 +120,24 @@ export default new VueRouter({
       component: MembersView,
     },
     {
+      name: "LessonsIndex",
+      path: "/programs/:programId/lessons",
+      redirect: "/programs/:programId/map",
+      component: LessonsIndex,
+    },
+    {
+      name: "LessonForm",
+      path: "/programs/:programId/lessons/new",
+      redirect: "/programs/:programId/map",
+      component: LessonForm,
+    },
+    {
+      name: "LessonForm",
+      path: "/programs/:programId/lessons/:lessonId",
+      redirect: "/programs/:programId/map",
+      component: LessonForm,
+    },
+    {
       name: "SheetView",
       path: "/programs/:programId/sheet",
       component: SheetView,
@@ -134,106 +151,511 @@ export default new VueRouter({
           name: "SheetOverview",
           path: "projects/:projectId",
           component: SheetOverview,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["overview"].hide) {
+              next();
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetTasks",
           path: "projects/:projectId/tasks",
           component: SheetTasks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetTaskForm",
           path: "projects/:projectId/tasks/:taskId",
           component: SheetTaskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetIssues",
           path: "projects/:projectId/issues",
           component: SheetIssues,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetIssueForm",
           path: "projects/:projectId/issues/:issueId",
           component: SheetIssueForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetRisks",
           path: "projects/:projectId/risks",
           component: SheetRisks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: SheetRiskForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["notes"].hide) {
+              next({
+                name: "SheetNotes",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetNotes",
           path: "projects/:projectId/notes",
           component: SheetNotes,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "SheetNoteForm",
           path: "projects/:projectId/notes/:noteId",
           component: SheetNoteForm,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+            if (
+              fPrivilege["overview"].hide &&
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide &&
+              fPrivilege["notes"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+            if (!fPrivilege["notes"].hide) {
+              next();
+            } else if (!fPrivilege["overview"].hide) {
+              next({
+                name: "SheetOverview",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "SheetTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "SheetIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "SheetRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
       ],
     },
-    // {
-    //   name: "CalendarView",
-    //   path: "/programs/:programId/calendar",
-    //   component: CalendarView,
-    //   children: [
-    //     {
-    //       name: "CalendarRollup",
-    //       path: "",
-    //       component: CalendarRollup,
-    //     },
-    //     {
-    //       name: "CalendarOverview",
-    //       path: "projects/:projectId",
-    //       component: CalendarOverview,
-    //     },
-    //     {
-    //       name: "CalendarTasks",
-    //       path: "projects/:projectId/tasks",
-    //       component: CalendarTasks,
-    //     },
-    //     {
-    //       name: "CalendarTaskForm",
-    //       path: "projects/:projectId/tasks/:taskId",
-    //       component: CalendarTaskForm,
-    //     },
-    //     {
-    //       name: "CalendarIssues",
-    //       path: "projects/:projectId/issues",
-    //       component: CalendarIssues,
-    //     },
-    //     {
-    //       name: "CalendarIssueForm",
-    //       path: "projects/:projectId/issues/:issueId",
-    //       component: CalendarIssueForm,
-    //     },
-    //     {
-    //       name: "CalendarRisks",
-    //       path: "projects/:projectId/risks",
-    //       component: CalendarRisks,
-    //     },
-    //     {
-    //       name: "CalendarRiskForm",
-    //       path: "projects/:projectId/risks/:riskId",
-    //       component: CalendarRiskForm,
-    //     },
-    //     {
-    //       name: "CalendarNotes",
-    //       path: "projects/:projectId/notes",
-    //       component: CalendarNotes,
-    //     },
-    //     {
-    //       name: "CalendarNoteForm",
-    //       path: "projects/:projectId/notes/:noteId",
-    //       component: CalendarNoteForm,
-    //     },
-    //   ],
-    // },
+    {
+      name: "CalendarView",
+      path: "/programs/:programId/calendar",
+      component: CalendarView,
+      children: [
+        {
+          name: "CalendarLanding",
+          path: "",
+          component: CalendarLanding,
+        },
+        {
+          name: "CalendarProjectSelected",
+          path: "projects/:projectId",
+          component: CalendarLanding,
+        },
+        {
+          name: "CalendarTasks",
+          path: "projects/:projectId/tasks",
+          component: CalendarTasks,
+        },
+        {
+          name: "CalendarTaskForm",
+          path: "projects/:projectId/tasks/:taskId",
+          component: CalendarTaskForm,
+        },
+        {
+          name: "CalendarIssues",
+          path: "projects/:projectId/issues",
+          component: CalendarIssues,
+        },
+        {
+          name: "CalendarIssueForm",
+          path: "projects/:projectId/issues/:issueId",
+          component: CalendarIssueForm,
+        },
+        {
+          name: "CalendarRisks",
+          path: "projects/:projectId/risks",
+          component: CalendarRisks,
+        },
+        {
+          name: "CalendarRiskForm",
+          path: "projects/:projectId/risks/:riskId",
+          component: CalendarRiskForm,
+        },
+      ],
+    },
     {
       name: "KanbanView",
       path: "/programs/:programId/kanban",
@@ -253,34 +675,250 @@ export default new VueRouter({
           name: "KanbanTasks",
           path: "projects/:projectId/tasks",
           component: KanbanTasks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "KanbanIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "KanbanRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "KanbanTaskForm",
           path: "projects/:projectId/tasks/:taskId",
           component: KanbanTaskForm,
           props: true,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["tasks"].hide) {
+              next();
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "KanbanIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "KanbanRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "KanbanIssues",
           path: "projects/:projectId/issues",
           component: KanbanIssues,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "KanbanTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "KanbanRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "KanbanIssueForm",
           path: "projects/:projectId/issues/:issueId",
           component: KanbanIssueForm,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["issues"].hide) {
+              next();
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "KanbanTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["risks"].hide) {
+              next({
+                name: "KanbanRisks",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "KanbanRisks",
           path: "projects/:projectId/risks",
           component: KanbanRisks,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "KanbanTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "KanbanIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
         {
           name: "KanbanRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: KanbanRiskForm,
-          props: true
+          props: true,
+          beforeEnter: (to, from, next) => {
+            var programId = to.params.programId;
+            var projectId = to.params.projectId;
+            var fPrivilege = _.filter(
+              Vue.prototype.$projectPrivileges,
+              (f) => f.program_id == programId && f.project_id == projectId
+            )[0];
+            if (!fPrivilege) {
+              next();
+              return;
+            }
+
+            if (
+              fPrivilege["tasks"].hide &&
+              fPrivilege["issues"].hide &&
+              fPrivilege["risks"].hide
+            ) {
+              alert(
+                "You don't have access to see any tabs. Please contact administrator"
+              );
+            }
+
+            if (!fPrivilege["risks"].hide) {
+              next();
+            } else if (!fPrivilege["tasks"].hide) {
+              next({
+                name: "KanbanTasks",
+                params: { programId: programId, projectId: projectId },
+              });
+            } else if (!fPrivilege["issues"].hide) {
+              next({
+                name: "KanbanIssues",
+                params: { programId: programId, projectId: projectId },
+              });
+            }
+          },
         },
       ],
     },

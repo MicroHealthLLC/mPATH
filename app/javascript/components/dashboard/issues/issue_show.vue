@@ -9,18 +9,27 @@
       <div v-if="show">    
 
            <!-- ROW 1 -->
-        <div class="row">            
-              <div class=" col-md-9 mb-1 font-lg d-flex mb-1 kanban-text">
+        <div class="row">           
+              <div class=" col-md-9 font-lg d-flex pb-2 kanban-text">
                 {{issue.title}}
               </div>
-              <div class="col-md-3">
-                <div class="t_actions float-left">
-                    <span v-if="(issue.watched) == true">
-                    <span v-tooltip="`On Watch`"><i class="fas fa-eye text-md" data-cy="on_watch_icon"></i></span>
-                    </span>
-                </div>
+              <div class="col-md-3">                
                 <div class="t_actions float-right">
-                  <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><i class="fa fa-exclamation-triangle"></i></span>
+                  <span v-show="issue.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
+                  <span v-show="issue.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+                  <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+                  <span v-show="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>                  
+                  <span v-show="issue.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
+                  <span v-show="issue.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+                <span v-if="                 
+                  issue.isOverdue == false &&
+                  issue.onHold == false &&  
+                  issue.draft == false && 
+                  issue.progress < 100 "             
+                >                
+                <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+               </span>          
+                
                 </div>
              </div>        
          </div>
@@ -30,7 +39,7 @@
 
 
          <div class="row my-2">
-                <div class="font-sm col-md-12">
+                <div class="font-sm col-md-12 pt-1 pb-0">
                   <span class="mr-2">
                   <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(issue.startDate)}}              
@@ -42,7 +51,7 @@
    <!-- ROW 3 -->
 
             <div class="row mb-0">
-                <div class="font-sm col-md-12" >
+                <div class="font-sm col-md-12 py-0" >
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                    <span v-tooltip="`Issue Type`">{{issue.issueType}}</span>
                 </div>
@@ -52,7 +61,7 @@
      
    <!-- ROW 4 -->
             <div class="row mb-1 d-flex">              
-                <div class="font-sm col-md-12">
+                <div class="font-sm col-md-12 py-0">
                   <span class="fbody-icon"><i class="fas fa-tasks"></i></span>
                   <span v-tooltip="`Issue Severity`"> {{issue.issueSeverity}}</span>
                 </div>
@@ -62,8 +71,8 @@
 
            <!-- LAST/BOTTOM ROW  -->
 
-          <div class="row d-flex mt-2">
-            <div class="font-sm col">
+          <div class="row d-flex">
+            <div class="font-sm col pt-1 pb-3">
                   <div class="progress pg-content" :class="{'progress-0': issue.progress <= 0}">
                   <div class="progress-bar bg-info" :style="`width: ${issue.progress}%`">{{issue.progress}}%
 

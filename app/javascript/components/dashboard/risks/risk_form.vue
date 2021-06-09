@@ -1,11 +1,10 @@
 <template>
-<!-- Adding comment to resolve conflict -->
   <div>
     <form
       @submit.prevent="validateThenSave"
       class="risks-form mx-auto"
       :class="{
-        _disabled: loading
+        _disabled: loading,
       }"
       accept-charset="UTF-8"
     >
@@ -13,15 +12,22 @@
         <div class="mt-2 mx-4 d-flex align-items-center">
           <div>
             <h5 class="mb-0">
-              <span style="font-size: 16px; margin-right: 10px"
-                ><i class="fas fa-building"></i
-              ></span>
-              <router-link :to="projectNameLink">{{ facility.facilityName }}</router-link>
+               <span style="font-size: 16px; margin-right: 2.5px"
+              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+              </span>
+              <router-link :to="projectNameLink">{{
+                facility.facilityName
+              }}</router-link>
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
               ></el-icon>
-              <router-link :to="`/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/risks`">Risks</router-link>
+              <router-link
+                :to="
+                  `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/risks`
+                "
+                >Risks</router-link
+              >
               <el-icon
                 class="el-icon-arrow-right"
                 style="font-size: 12px"
@@ -93,35 +99,101 @@
             <div v-show="currentTab == 'risk'" class="paperLookTab">
               <!-- RISK OVERVIEW TAB -->
               <div class="form-group mx-4">
-                <span
-                  v-if="_isallowed('write')"
-                  class="watch_action mt-3 clickable float-right"
-                  @click.prevent.stop="toggleWatched"
-                  data-cy="risk_on_watch"
-                >
-                  <span v-show="DV_risk.watched" class="check_box mx-1"
-                    ><i class="far fa-check-square font-md"></i
-                  ></span>
-                  <span v-show="!DV_risk.watched" class="empty_box mr-1"
-                    ><i class="far fa-square"></i
-                  ></span>
-                  <span><i class="fas fa-eye mr-1"></i></span>
-                  <small style="vertical-align: text-top">On Watch</small>
-                </span>
                 <label class="font-sm mt-3"
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
-                <textarea
+
+              <div class="toggleWrapper float-right" id="risk_toggles">
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action mt-3 clickable mx-2"
+                  @click.prevent.stop="toggleWatched"
+                  data-cy="risk_on_watch"
+                >
+                  <span v-show="DV_risk.watched" 
+                ><i class="fas fa-eye"></i
+                 ></span>
+                 <span v-show="!DV_risk.watched" 
+                  ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
+                 ></span>
+           
+              <small style="vertical-align:text-top"> On Watch</small>
+                </span>
+
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleOnhold"
+              data-cy="task_on_hold"
+            >
+              <span v-show="DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+              </span>
+              <span v-show="!DV_risk.onHold">
+               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              </span>
+             
+              <small style="vertical-align:text-top"> On Hold</small>
+            </span>
+
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleImportant"
+                  data-cy="issue_important"
+                >
+                <span v-show="DV_risk.important">
+                <i class="fas fa-star text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.important">
+                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+                </span>
+                  <small style="vertical-align:text-top"> Important</small>
+                </span>
+
+                 <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleOngoing"
+                  data-cy="risk_ongoing"
+                   >
+                  <span v-show="DV_risk.ongoing">
+                  <i class="fas fa-retweet text-success"></i>
+                  </span>
+                  <span v-show="!DV_risk.ongoing">
+                  <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
+                  </span>
+                      <small style="vertical-align:text-top"> Ongoing</small>
+                    </span>
+
+
+              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleDraft"
+                data-cy="task_important"
+              >
+                <span v-show="DV_risk.draft">
+                <i class="fas fa-pencil-alt text-warning"></i>
+                </span>
+                <span v-show="!DV_risk.draft">
+                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small style="vertical-align:text-top"> Draft</small>
+            </span>
+
+              </div>
+
+
+                <el-input
                   v-validate="'required'"
-                  class="form-control"
-                  placeholder="Risk title"
+                  placeholder="Risk Name"
                   v-model="DV_risk.text"
-                  rows="1"
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Name'),
                   }"
                 />
@@ -138,9 +210,9 @@
                 <label class="font-sm"
                   >Risk Description <span style="color: #dc3545">*</span></label
                 >
-                <textarea
+                <el-input
                   v-validate="'required'"
-                  class="form-control"
+                  type="textarea"
                   placeholder="Risk brief description"
                   v-model="DV_risk.riskDescription"
                   rows="3"
@@ -148,7 +220,6 @@
                   data-cy="risk_description"
                   name="Risk Description"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Description'),
                   }"
                 />
@@ -175,7 +246,7 @@
                     :disabled="!_isallowed('write')"
                     data-cy="task_type"
                     name="Category"
-                    :class="{ 'error-border': errors.has('Category') }"
+                    :class="{ 'error': errors.has('Category') }"
                     placeholder="Select Category"
                   >
                     <el-option
@@ -186,7 +257,7 @@
                     >
                     </el-option>
                   </el-select>
-            
+
                   <div
                     v-show="errors.has('Category')"
                     class="text-danger"
@@ -194,9 +265,9 @@
                   >
                     {{ errors.first("Category") }}
                   </div>
-                </div>              
+                </div>
               </div>
-                 
+
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
                   <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
@@ -225,65 +296,76 @@
               </div>
               </div>
 
-              <div class="mx-4 mt-2 mb-4" v-if="(selectedRiskStage == null) || selectedRiskStage == undefined">
-                <label class="font-sm">Select Stage</label>                           
-                <el-steps 
-                  class="exampleOne"   
-                  :class="{'overSixSteps': riskStages.length >= 6 }"                           
-                  finish-status="success"  
-                  :disabled="!_isallowed('write') || fixedStage && isKanbanView"
+              <div
+                class="mx-4 mt-2 mb-4"
+                v-if="
+                  selectedRiskStage == null || selectedRiskStage == undefined
+                "
+              >
+                <label class="font-sm">Select Stage</label>
+                <el-steps
+                  class="exampleOne"
+                  :class="{ overSixSteps: riskStages.length >= 6 }"
+                  finish-status="success"
+                  :disabled="
+                    !_isallowed('write') || (fixedStage && isKanbanView)
+                  "
                   v-model="selectedRiskStage"
-                  track-by="id" 
+                  track-by="id"
                   value-key="id"
-                  >         
-                <el-step
-                  v-for="item in riskStages"
-                  :key="item.id"                  
-                  :value="item"
-                  style="cursor:pointer"
-                  @click.native="selectedStage(item)"        
-                  :title="item.name"   
-                  description=""                    
-                ></el-step>          
+                >
+                  <el-step
+                    v-for="item in riskStages"
+                    :key="item.id"
+                    :value="item"
+                    style="cursor:pointer"
+                    @click.native="selectedStage(item)"
+                    :title="item.name"
+                    description=""
+                  ></el-step>
                 </el-steps>
               </div>
-
-        
 
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
                   <label class="font-sm"
-                    >Identified Date
-                    <span style="color: #dc3545">*</span></label
+                    >Date Identified
+                    <span v-show="!DV_risk.ongoing" style="color: #dc3545">*</span></label
                   >
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.startDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
                     placeholder="DD MM YYYY"
-                    name="Identified Date"
+                    name="Date Identified"
                     class="w-100 vue2-datepicker"
-                    :class="{ 'error-border': errors.has('Identified Date') }"
+                    :class="{ 'error': errors.has('Date Identified') }"
                     :disabled="!_isallowed('write')"
                     data-cy="risk_start_date"
                   />
                   <div
-                    v-show="errors.has('Identified Date')"
+                    v-show="errors.has('Date Identified')"
                     class="text-danger"
                     data-cy="risk_start_date_error"
                   >
-                    {{ errors.first("Identified Date") }}
+                    {{ errors.first(" Date Identified") }}
                   </div>
                 </div>
 
-            <div class="form-group col-md-6 pr-0">
+                <div class="form-group col-md-6 pr-0">
+                <span v-if="DV_risk.ongoing ">           
+                <label class="font-md"><i class="fas fa-retweet text-success mr-1"></i>
+                 Date Closed
+                 </label
+                  ></span>
+                  <span v-else>           
                   <label class="font-sm"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
-                  >
+                  ></span>
                   <v2-date-picker
-                    v-validate="'required'"
+                    v-validate="{ required: !DV_risk.ongoing }"
                     v-model="DV_risk.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
@@ -291,7 +373,7 @@
                     name="Risk Approach Due Date"
                     class="w-100 vue2-datepicker"
                     :class="{
-                      'error-border': errors.has('Risk Approach Due Date'),
+                      'error': errors.has('Risk Approach Due Date'),
                     }"
                     :disabled="
                       !_isallowed('write') ||
@@ -321,13 +403,13 @@
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
                 <label class="font-sm mb-0">Responsible</label>
 
-                 <el-select 
-                  v-model="responsibleUsers" 
-                  class="w-100"                
-                  track-by="id"   
-                  clearable   
-                  filterable  
-                  value-key="id"                                                                                                                                                          
+                <el-select
+                  v-model="responsibleUsers"
+                  class="w-100"
+                  track-by="id"
+                  clearable
+                  filterable
+                  value-key="id"
                   placeholder="Search and select Responsible User"
                   :disabled="!_isallowed('write')"
                   data-cy="risk_owner"
@@ -344,12 +426,12 @@
               <div class="form-group user-select ml-1 mr-4 w-100">
                 <label class="font-sm mb-0">Accountable</label>
 
-                <el-select 
-                  v-model="accountableRiskUsers" 
-                  class="w-100"           
+                <el-select
+                  v-model="accountableRiskUsers"
+                  class="w-100"
                   track-by="id"
-                  clearable        
-                  value-key="id"                                                                                                                                                          
+                  clearable
+                  value-key="id"
                   placeholder="Search and select Accountable User"
                   :disabled="!_isallowed('write')"
                   filterable
@@ -533,12 +615,10 @@
 
                 <div class="col-md-3 p-0">
                   <div class="simple-select form-group mb-4">
-                    <label class="font-sm"
-                      >Probability</label
-                    >
+                    <label class="font-sm">Probability</label>
                     <el-select
                       v-model="selectedRiskPossibility"
-                      class="w-100"                   
+                      class="w-100"
                       track-by="value"
                       value-key="id"
                       placeholder="Risk Probablity"
@@ -554,7 +634,7 @@
                       >
                       </el-option>
                     </el-select>
-                
+
                     <div
                       v-show="errors.has('Risk Probability')"
                       class="text-danger"
@@ -566,12 +646,10 @@
 
                   <!-- COLUMN ROW 2 -->
                   <div class="simple-select form-group">
-                    <label class="font-sm mb-0"
-                      >Impact Level</label
-                    >
+                    <label class="font-sm mb-0">Impact Level</label>
                     <el-select
                       v-model="selectedRiskImpactLevel"
-                      class="w-100"                   
+                      class="w-100"
                       track-by="value"
                       value-key="id"
                       placeholder="Impact Level"
@@ -587,7 +665,7 @@
                       >
                       </el-option>
                     </el-select>
-            
+
                     <div
                       v-show="errors.has('Impact Level')"
                       class="text-danger"
@@ -600,22 +678,18 @@
                   <!-- COLUMN FOR TEXT FIELD            -->
                 </div>
 
-                 <div class="col-md-6 pl-1 pr-3">
+                <div class="col-md-6 pl-1 pr-3">
                   <div class="form-group mx-1 mb-0">
-                    <label class="font-sm"
-                      >Probability Description
-                     </label
-                    >
-                    <textarea                 
-                      class="form-control"
+                    <label class="font-sm">Probability Description </label>
+                    <el-input
+                      type="textarea"
                       placeholder="Risk Probability description"
                       v-model="DV_risk.probabilityDescription"
-                      rows="2"
+                      rows="3"
                       :readonly="!_isallowed('write')"
                       data-cy="probability_description"
                       name="Probability Description"
                       :class="{
-                        'form-control': true,
                         error: errors.has('Probability Description'),
                       }"
                     />
@@ -628,20 +702,16 @@
                     </div>
                   </div>
                   <div class="form-group mx-1">
-                    <label class="font-sm mb-0"
-                      >Impact Description
-                     </label
-                    >
-                    <textarea                   
-                      class="form-control"
+                    <label class="font-sm mb-0">Impact Description </label>
+                    <el-input
+                      type="textarea"
                       placeholder="Risk impact description"
                       v-model="DV_risk.impactDescription"
-                      rows="2"
+                      rows="3"
                       :readonly="!_isallowed('write')"
                       data-cy="impact_description"
                       name="Impact Description"
                       :class="{
-                        'form-control': true,
                         error: errors.has('Impact Description'),
                       }"
                     />
@@ -973,7 +1043,7 @@
                   track-by="name"
                   v-validate="'required'"
                   placeholder="Risk Approach"
-                  :disabled="!_isallowed('write') || this.DV_risk.approved"
+                  :disabled="!_isallowed('write')"
                   :class="{ error: errors.has('Risk Approach') }"
                   data-cy="risk_approach"
                 >
@@ -985,7 +1055,7 @@
                     :label="item"
                   >
                   </el-option>
-                </el-select>              
+                </el-select>
                 <div
                   v-show="errors.has('Risk Approach')"
                   class="text-danger"
@@ -996,14 +1066,11 @@
               </div>
             </div>
 
-      <div class="row form-group mx-4 mb-0">
+            <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
-                <label class="font-sm"
-                  >Risk Approach Description
-                </label
-                >
-                <textarea               
-                  class="form-control"
+                <label class="font-sm">Risk Approach Description </label>
+                <el-input
+                  type="textarea"
                   placeholder="Describe how the Risk will be controlled"
                   v-model="DV_risk.riskApproachDescription"
                   rows="2"
@@ -1011,7 +1078,6 @@
                   data-cy="approach_description"
                   name="Risk Approach Description"
                   :class="{
-                    'form-control': true,
                     error: errors.has('Risk Approach Description'),
                   }"
                 />
@@ -1027,40 +1093,40 @@
 
             <div class="row mx-4 mb-0">
               <div class="col-md-12 font-sm pt-3 pl-0">
-               Risk Approach Approval
+                Risk Approach Approval
               </div>
             </div>
 
             <div
               class="row form-group pl-2 mx-4 mb-0 w-80"
               style="background-color: #fafafa; border: solid 1px #ededed"
-            >            
-              <div class="col-md-3 pl-1 py-2 mb-0">                    
-                  <label class="font-sm mb-0">Risk Approach</label>               
-                  <span                   
-                    class="d-block approver-pointer"
-                    @click.prevent="toggleApproved"
-                  >
-                    <span
-                      v-show="DV_risk.approved"
-                      class="check_box mx-1 approver-pointer"
-                      ><i class="far fa-check-square"></i
-                    ></span>
-                    <span
-                      v-show="!DV_risk.approved"
-                      class="empty_box mr-1 approver-pointer"
-                      ><i class="far fa-square"></i
-                    ></span>
-                    <small style="vertical-align: text-top">Approved</small>
-                  </span>               
+            >
+              <div class="col-md-3 pl-1 py-2 mb-0">
+                <label class="font-sm mb-0">Risk Approach</label>
+                <span
+                  class="d-block approver-pointer"
+                  @click.prevent="toggleApproved"
+                >
+                  <span
+                    v-show="DV_risk.approved"
+                    class="check_box mx-1 approver-pointer"
+                    ><i class="far fa-check-square"></i
+                  ></span>
+                  <span
+                    v-show="!DV_risk.approved"
+                    class="empty_box mr-1 approver-pointer"
+                    ><i class="far fa-square"></i
+                  ></span>
+                  <small style="vertical-align: text-top">Approved</small>
+                </span>
               </div>
-               <div
+              <div
                 v-show="DV_risk.approved"
                 class="col-md-7 pr-2 py-2 mb-0 simple-select form-group ml-0"
               >
                 <label class="font-sm mb-0"
                   >Date/Time Risk Approach Approved:</label
-                >          
+                >
                 <input
                   class="form-control"
                   v-model="DV_risk.approvalTime"
@@ -1070,15 +1136,14 @@
                   name="Approval Time"
                   disabled
                 />
-
               </div>
-            </div>          
+            </div>
           </div>
           <!-- END RISK PRIORITIZE TAB SECTION -->
 
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
-            <div class="form-group pt-2 mb-3 ml-4 mr-5">
+            <div v-show="!DV_risk.ongoing"  class="form-group pt-2 mb-3 ml-4 mr-5">
               <label class="font-sm mb-0 mr-3">Progress (in %)</label>
               <span class="ml-3">
                 <label class="font-sm mb-0 d-inline-flex align-items-center">
@@ -1092,9 +1157,16 @@
                 </label>
               </span>
               <el-slider
-                v-model="DV_risk.progress"   
+                v-model="DV_risk.progress"
+                :input="removeFromWatch()"
                 :disabled="!_isallowed('write') || DV_risk.autoCalculate"
-                :marks="{0:'0%', 25:'25%', 50:'50%', 75:'75%', 100:'100%'}"
+                :marks="{
+                  0: '0%',
+                  25: '25%',
+                  50: '50%',
+                  75: '75%',
+                  100: '100%',
+                }"
                 :format-tooltip="(value) => value + '%'"
                 class="mx-2"
               ></el-slider>
@@ -1166,13 +1238,13 @@
                           />
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView"
                           class="col-1 pl-0 pr-0"
                         >
                           <span class="font-sm dueDate">Due Date:</span>
                         </div>
                         <div
-                          v-if="isSheetsView || isKanbanView"
+                          v-if="isSheetsView || isKanbanView || isCalendarView"
                           class="col-3 pl-0"
                           style="margin-left: -25px"
                         >
@@ -1251,15 +1323,16 @@
                                 <span class="font-sm pt-2 pr-2 m"
                                   >Assigned To:</span
                                 >
-                                 <el-select 
-                                  v-model="check.user" 
-                                  class="w-75"   
-                                  clearable        
-                                  track-by="id"    
-                                  value-key="id"                
-                                  filterable  
-                                  :disabled="!_isallowed('write') || !check.text"                                                                                                                                                    
-
+                                <el-select
+                                  v-model="check.user"
+                                  class="w-75"
+                                  clearable
+                                  track-by="id"
+                                  value-key="id"
+                                  filterable
+                                  :disabled="
+                                    !_isallowed('write') || !check.text
+                                  "
                                   placeholder="Search and select user"
                                 >
                                   <el-option
@@ -1280,9 +1353,10 @@
                           <!-- Start Checkbox Progress List -->
                           <!-- Create component to manage progress list -->
                           <div
-                            class="pt-5 pb-3"
+                            class="pt-5 vuetify-checkitem pb-3"
                             style="background-color: #fafafa"
                           >
+                          <div class="font-md pt-3">
                             Progress Update
                             <span v-if="editToggle">
                               <span class="ml-2 clickable">
@@ -1312,10 +1386,17 @@
                             >
                               <thead>
                                 <tr>
-                                  <th style="width: 60%">Progress</th>
+                                  <th style="width: 50%">Progress</th>
                                   <th>Last Updated</th>
                                   <th>By</th>
-                                  <th v-if="_isallowed('write') || _isallowed('delete')">Action</th>
+                                  <th
+                                    v-if="
+                                      _isallowed('write') ||
+                                        _isallowed('delete')
+                                    "
+                                  >
+                                    Action
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1371,7 +1452,12 @@
                                       {{ $currentUser.full_name }}
                                     </span>
                                   </td>
-                                  <td v-if="_isallowed('write') || _isallowed('delete')">
+                                  <td
+                                    v-if="
+                                      _isallowed('write') ||
+                                        _isallowed('delete')
+                                    "
+                                  >
                                     <span
                                       class="pl-2"
                                       v-tooltip="`Save`"
@@ -1422,6 +1508,7 @@
                             </div>
                             <!-- End Checkbox Progress List -->
                           </div>
+                          </div>
                         </el-collapse-item>
                       </el-collapse>
                     </div>
@@ -1436,100 +1523,98 @@
                 </draggable>
               </div>
               <p v-else class="text-danger font-sm">No checks..</p>
-            </div>          
+            </div>
           </div>
 
           <!-- END RISK CONTROL SECTION TAB -->
-  
+
           <!-- BEGIN RISK FILES TAB SECTION -->
-      <div v-show="currentTab == 'tab5'" class="paperLookTab">              
-          <div class="container-fluid mx-4 mt-2">          
-           <div class="row">           
-               <div class="col-5 pr-4 links-col">
+          <div v-show="currentTab == 'tab5'" class="paperLookTab">
+            <div class="container-fluid mx-4 mt-2">
+              <div class="row">
+                <div class="col-5 pr-4 links-col">
                   <div v-if="_isallowed('write')" class="form-group">
-                  <attachment-input
-                    @input="addFile"
-                    :show-label="true"
-                  ></attachment-input>
-                </div>
-             <div
-                  v-for="file in filteredFiles.slice().reverse()"                
-                  class="d-flex mb-2 w-100"
-                   v-if="!file.link"
-                  
-                >
-                <div
-                    class="input-group-text d-inline clickable px-1 w-100 hover"
-                    :class="{ 'btn-disabled': !file.uri }"
-                    @click.prevent="downloadFile(file)"
-                  >
-                  <span><font-awesome-icon icon="file" class="mr-1"/></span>                   
-                  <input
-                    readonly
-                    type="text"
-                    style="border:none; cursor:pointer; background-color:transparent"    
-                    class="w-100 mr-1 file-link"               
-                    :value="file.name || file.uri"                  
-                  />
-                 </div>             
-                  <span
-                    :class="{ _disabled: loading || !_isallowed('write') }"
-                    class="del-check mt-2 clickable"
-                    @click.prevent="deleteFile(file)"
-                  >
-                    <i class="fas fa-times"></i>
-                  </span>            
-               </div>
-              </div>
-              <div class="col-6 mb-2 pl-4 links-col">                   
-               
-                 <div class="input-group mb-1">
-                    <div v-if="_isallowed('write')" class="d-block mt-1">
-                    <label class="font-lg">Add link</label>
-                    <span
-                      class="ml-2 clickable"                    
-                      @click.prevent="addFilesInput"
-                    >
-                      <i class="fas fa-plus-circle"></i>
-                    </span>
-                   </div>
-        
+                    <attachment-input
+                      @input="addFile"
+                      :show-label="true"
+                    ></attachment-input>
+                  </div>
                   <div
-                    v-for="(file, index) in DV_risk.riskFiles.slice().reverse()"
-                    :key="index"
-                    class="d-flex mb-2 w-75"
-                    v-if="!file.id && file.link"
+                    v-for="file in filteredFiles.slice().reverse()"
+                    class="d-flex mb-2 w-100"
+                    v-if="!file.link"
                   >
-                    <div class="input-group-append" >
-                      <div
-                        class="input-group-text clickable"
-                        :class="{ 'btn-disabled': !file.uri }"
-                        @click.prevent="downloadFile(file)"
-                      >
-                        <!-- <i class="fas fa-link"></i> -->
-                      </div>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Enter link to a site or file"
-                      class="form-control form-control-sm mw-95"
-                      @input="updateFileLinkItem($event, 'text', file)"
-                    />
                     <div
+                      class="input-group-text d-inline clickable px-1 w-100 hover"
+                      :class="{ 'btn-disabled': !file.uri }"
+                      @click.prevent="downloadFile(file)"
+                    >
+                      <span><font-awesome-icon icon="file" class="mr-1"/></span>
+                      <input
+                        readonly
+                        type="text"
+                        style="border:none; cursor:pointer; background-color:transparent"
+                        class="w-100 mr-1 file-link"
+                        :value="file.name || file.uri"
+                      />
+                    </div>
+                    <span
                       :class="{ _disabled: loading || !_isallowed('write') }"
-                      class="del-check clickable"
+                      class="del-check mt-2 clickable"
                       @click.prevent="deleteFile(file)"
                     >
                       <i class="fas fa-times"></i>
-                    </div>
+                    </span>
                   </div>
-                  <div
-                    v-for="(file, index) in filteredFiles.slice().reverse()"
-                    :key="index"               
-                    class="d-flex mb-2 w-100 px-1 hover"                  
-                    v-if="file.link && file.id"
-                  >                  
-                  
+                </div>
+                <div class="col-6 mb-2 pl-4 links-col">
+                  <div class="input-group mb-1">
+                    <div v-if="_isallowed('write')" class="d-block mt-1">
+                      <label class="font-lg">Add link</label>
+                      <span
+                        class="ml-2 clickable"
+                        @click.prevent="addFilesInput"
+                      >
+                        <i class="fas fa-plus-circle"></i>
+                      </span>
+                    </div>
+
+                    <div
+                      v-for="(file,
+                      index) in DV_risk.riskFiles.slice().reverse()"
+                      :key="index"
+                      class="d-flex mb-2 w-75"
+                      v-if="!file.id && file.link"
+                    >
+                      <div class="input-group-append">
+                        <div
+                          class="input-group-text clickable"
+                          :class="{ 'btn-disabled': !file.uri }"
+                          @click.prevent="downloadFile(file)"
+                        >
+                          <!-- <i class="fas fa-link"></i> -->
+                        </div>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Enter link to a site or file"
+                        class="form-control form-control-sm mw-95"
+                        @input="updateFileLinkItem($event, 'text', file)"
+                      />
+                      <div
+                        :class="{ _disabled: loading || !_isallowed('write') }"
+                        class="del-check clickable"
+                        @click.prevent="deleteFile(file)"
+                      >
+                        <i class="fas fa-times"></i>
+                      </div>
+                    </div>
+                    <div
+                      v-for="(file, index) in filteredFiles.slice().reverse()"
+                      :key="index"
+                      class="d-flex mb-2 w-100 px-1 hover"
+                      v-if="file.link && file.id"
+                    >
                       <input
                         readonly
                         type="text"
@@ -1537,8 +1622,16 @@
                         :value="file.name || file.uri"
                         v-if="!file.link"
                       />
-                      <a :href="file.uri" target="_blank" v-if="file.link" class="no-text-decoration">
-                        <span v-if="file.link"> <i class="fas fa-link mr-1"></i></span>  {{ urlShortener(file.uri, 68) }}
+                      <a
+                        :href="file.uri"
+                        target="_blank"
+                        v-if="file.link"
+                        class="no-text-decoration"
+                      >
+                        <span v-if="file.link">
+                          <i class="fas fa-link mr-1"></i
+                        ></span>
+                        {{ urlShortener(file.uri, 68) }}
                       </a>
                       <div
                         :class="{ _disabled: loading || !_isallowed('write') }"
@@ -1547,87 +1640,155 @@
                       >
                         <i class="fas fa-times"></i>
                       </div>
+                    </div>
+                  </div>
                 </div>
-                </div>
-                  
               </div>
-            </div>          
-           </div>
-          </div> 
+            </div>
+          </div>
           <!-- END RISK CONTROL TAB SECTION -->
-                      
+
           <!-- BEGIN RISK RELATED TAB SECTION -->
-           <div v-show="currentTab == 'tab6'" class="paperLookTab">            
-              <div class="form-group user-select mx-4 mt-2">
-                <label class="font-sm mb-0">Related Issues</label>
+          <div v-show="currentTab == 'tab6'" class="paperLookTab">
+            <div class="row mx-3 mt-2">
+              <!-- RELATED RISKS -->
+              <div :class="[isMapView ? 'col-12' : 'col']">
+                Related Risks
+                <span
+                  class="ml-2 clickable"
+                  v-if="_isallowed('write')"
+                  @click="openContextMenu($event, 'risk')"
+                  @contextmenu.prevent=""
+                >
+                  <i id="risk-add-btn" class="fas fa-plus-circle"></i>
+                </span>
 
-                <el-select
-                  v-model="relatedIssues"
-                  class="w-100"
-                  track-by="id"
-                  value-key="id"
-                  filterable
-                  multiple
-                  :disabled="!_isallowed('write')"
-                  placeholder="Search and select Related-issues"
-                >
-                  <el-option
-                    v-for="item in filteredIssues"
-                    :value="item"
-                    :key="item.id"
-                    :label="item.title"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="form-group user-select mx-4">
-                <label class="font-sm mb-0">Related Tasks</label>
-                <el-select
-                  v-model="relatedTasks"
-                  class="w-100"
-                  track-by="id"
-                  value-key="id"
-                  filterable
-                  multiple
-                  :disabled="!_isallowed('write')"
-                  placeholder="Search and select Related-tasks"
-                >
-                  <el-option
-                    v-for="item in filteredTasks"
-                    :value="item"
-                    :key="item.id"
-                    :label="item.text"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
+                <hr class="mt-0" />
 
-              <div class="form-group user-select mx-4">
-                <label class="font-sm mb-0">Related Risks</label>
-                <el-select
-                  v-model="relatedRisks"
-                  class="w-100"
-                  track-by="id"
-                  value-key="id"
-                  filterable
-                  multiple
-                  :disabled="!_isallowed('write')"
-                  placeholder="Search and select Related-risks"
-                >
-                  <el-option
-                    v-for="item in filteredRisks"
-                    :value="item"
-                    :key="item.id"
-                    :label="item.text"
+                <ul class="text-smaller">
+                  <li
+                    class="d-flex justify-content-between align-items-center my-2"
+                    v-for="(risk, index) in relatedRisks"
+                    :key="index"
                   >
-                  </el-option>
-                </el-select>
+                    <el-popover placement="right" width="200" trigger="hover">
+                      <div>
+                        <p class="m-0 text-left">
+                          <el-tag size="mini">Project Name</el-tag>
+                          {{ risk.facilityName }}
+                        </p>
+                      </div>
+                      <router-link
+                        :to="
+                          `/programs/${$route.params.programId}/${tab}/projects/${risk.facilityId}/risks/${risk.id}`
+                        "
+                        slot="reference"
+                        >{{ risk.text }}</router-link
+                      ></el-popover
+                    >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-delete"
+                      title="Remove Related Risk"
+                      @click.prevent="removeRelatedRisk(risk)"
+                      :disabled="!_isallowed('delete')"
+                    ></el-button>
+                  </li>
+                </ul>
               </div>
-        
-           </div> 
+              <!-- RELATED TASKS -->
+              <div :class="[isMapView ? 'col-12' : 'col']">
+                Related Tasks
+                <span
+                  class="ml-2 clickable"
+                  v-if="_isallowed('write')"
+                  @click="openContextMenu($event, 'task')"
+                  @contextmenu.prevent=""
+                >
+                  <i class="fas fa-plus-circle"></i>
+                </span>
+
+                <hr class="mt-0" />
+
+                <ul class="text-smaller">
+                  <li
+                    class="d-flex justify-content-between align-items-center my-2"
+                    v-for="(task, index) in relatedTasks"
+                    :key="index"
+                  >
+                    <el-popover placement="right" width="200" trigger="hover">
+                      <div>
+                        <p class="m-0 text-left">
+                          <el-tag size="mini">Project Name</el-tag>
+                          {{ task.facilityName }}
+                        </p>
+                      </div>
+                      <router-link
+                        :to="
+                          `/programs/${$route.params.programId}/${tab}/projects/${task.facilityId}/tasks/${task.id}`
+                        "
+                        slot="reference"
+                        >{{ task.text }}</router-link
+                      ></el-popover
+                    >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-delete"
+                      title="Remove Related Task"
+                      @click.prevent="removeRelatedTask(task)"
+                      :disabled="!_isallowed('delete')"
+                    ></el-button>
+                  </li>
+                </ul>
+              </div>
+              <!-- RELATED ISSUES -->
+              <div :class="[isMapView ? 'col-12' : 'col']">
+                Related Issues
+                <span
+                  class="ml-2 clickable"
+                  v-if="_isallowed('write')"
+                  @click="openContextMenu($event, 'issue')"
+                  @contextmenu.prevent=""
+                >
+                  <i id="issue-add-btn" class="fas fa-plus-circle"></i>
+                </span>
+
+                <hr class="mt-0" />
+
+                <ul class="text-smaller">
+                  <li
+                    class="d-flex justify-content-between align-items-center my-2"
+                    v-for="(issue, index) in relatedIssues"
+                    :key="index"
+                  >
+                    <el-popover placement="right" width="200" trigger="hover">
+                      <div>
+                        <p class="m-0 text-left">
+                          <el-tag size="mini">Project Name</el-tag>
+                          {{ issue.facilityName }}
+                        </p>
+                      </div>
+                      <router-link
+                        :to="
+                          `/programs/${$route.params.programId}/${tab}/projects/${issue.facilityId}/issues/${issue.id}`
+                        "
+                        slot="reference"
+                        >{{ issue.title }}</router-link
+                      ></el-popover
+                    >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-delete"
+                      title="Remove Related Issue"
+                      @click.prevent="removeRelatedIssue(issue)"
+                      :disabled="!_isallowed('delete')"
+                    ></el-button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
           <!-- END RISK RELATED TAB SECTION -->
-
-
 
           <!-- BEGIN RISK DISPOSITION SECTION TAB -->
           <div
@@ -1635,23 +1796,83 @@
             style="min-height: 300px"
             class="paperLookTab"
           >
-            <div class="form-group mx-4">
-              <label class="font-sm mb-0"><h5>Disposition</h5></label><br />
-              <!-- <textarea
-                class="form-control"
-                placeholder="Coming Soon:  The ability to capture and perform Disposition activities will be included in the February 12th release."
-                rows="4"
-              >
-              </textarea> -->
-         
+            <div class="form-group mt-3 mx-4">             
+                <div class="form-group mx-4">
+                <label class="font-md"
+                  >Explanation</label
+                >
+                <el-input                
+                  type="textarea"
+                  placeholder="Disposition Explanation"
+                  v-model="DV_risk.explanation"
+                  v-if="!null"
+                  rows="3"
+                  :readonly="!_isallowed('write')"
+                  data-cy="risk_description"
+                 
+                />
+              
+              </div>
+
+              <div class="d-flex mb-1 mx-4 form-group">
+                <div class="simple-select form-group w-50">
+                  <label class="font-md"
+                    >Status</label
+                  >
+                  <el-select
+                    v-model="selectedStatus"                  
+                    class="w-100"
+                    track-by="name" 
+                    clearable               
+                    :disabled="!_isallowed('write')"
+                    data-cy="task_type"                  
+                    placeholder="Risk Disposition Status"
+                  >
+                    <el-option
+                      v-for="item in getRiskDispositionStatus"                 
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+                  <div class="simple-select form-group w-50 ml-4">
+                  <label class="font-md"
+                    >Duration</label
+                  >
+                  <el-select
+                    v-model="selectedDuration"  
+                   :load="log(DV_risk.duration)"                
+                    class="w-100"
+                    clearable
+                    track-by="name"                  
+                    :disabled="!_isallowed('write')"                                 
+                    placeholder="Risk Disposition Duration"
+                  >
+                    <el-option
+                      v-for="item in getRiskDispositionDuration"                 
+                      :value="item"
+                      :key="item.id"
+                      :label="item.name"
+                      class="upperCase"
+                    >
+                    </el-option>
+                  </el-select>
+
+                  
+                </div>
+              </div>
             </div>
           </div>
           <!-- END RISK DISPOSITION SECTION TAB -->
 
-            <!-- BEGIN RISK UPDATES TAB SECTION -->
-           <div v-show="currentTab == 'tab8'" class="paperLookTab">
-               <div class="form-group mt-2 mx-4 paginated-updates">
-            
+          <!-- BEGIN RISK UPDATES TAB SECTION -->
+          <div v-show="currentTab == 'tab8'" class="paperLookTab">
+            <div class="form-group mt-2 mx-4 paginated-updates">
               <label class="font-sm my-2">Updates</label>
               <span
                 class="ml-2 clickable"
@@ -1699,7 +1920,7 @@
                 </div>
               </paginate>
             </div>
-           </div> 
+          </div>
           <!-- END RISK UPDATES TAB SECTION -->
         </div>
       </div>
@@ -1712,6 +1933,20 @@
       class="load-spinner spinner-border text-dark"
       role="status"
     ></div>
+
+    <RelatedRiskMenu
+      :facilities="facilities"
+      :facilityGroups="facilityGroups"
+      :risk="risk"
+      :relatedTasks="relatedTasks"
+      :relatedIssues="relatedIssues"
+      :relatedRisks="relatedRisks"
+      @add-related-tasks="addRelatedTasks"
+      @add-related-issues="addRelatedIssues"
+      @add-related-risks="addRelatedRisks"
+      ref="menu"
+    >
+    </RelatedRiskMenu>
   </div>
 </template>
 
@@ -1723,6 +1958,8 @@ import FormTabs from "./../../shared/FormTabs";
 import * as Moment from "moment";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import AttachmentInput from "./../../shared/attachment_input";
+import RelatedRiskMenu from "./../../shared/RelatedRiskMenu";
+
 export default {
   name: "RiskForm",
   props: ["facility", "risk", "facilities", "fixedStage"],
@@ -1730,6 +1967,7 @@ export default {
     AttachmentInput,
     FormTabs,
     Draggable,
+    RelatedRiskMenu,
   },
 
   data() {
@@ -1740,23 +1978,26 @@ export default {
       now: new Date().toLocaleString(),
       destroyedFiles: [],
       responsibleUsers: null,
-      // riskApprover: null,
       accountableRiskUsers: null,
       consultedRiskUsers: [],
       informedRiskUsers: [],
       probability: [],
       selectedRiskPossibility: { id: 1, value: 1, name: "1 - Rare" },
-      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },
-      selectedTaskType: null,
+      selectedRiskImpactLevel: { id: 1, value: 1, name: "1 - Negligible" },   
+      selectedStatus: { id: 1, value: 1, name: "Nothing Selected" },   
+      selectedDuration: { id: 1, value: 1, name: "Nothing Selected" },   
+      selectedTaskType: null,  
       selectedRiskStage: null,
-      relatedIssues: [], 
+      relatedIssues: [],
       editToggle: false,
+      onHold: false,
+      draft: false,
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
       loading: true,
       movingSlot: "",
-      currentTab: "risk", 
+      currentTab: "risk",
       tabs: [
         {
           label: "Identify",
@@ -1766,7 +2007,7 @@ export default {
             "Risk Name",
             "Risk Description",
             "Category",
-            "Identified Date",
+            "Date Identified",
             "Risk Approach Due Date",
           ],
         },
@@ -1793,28 +2034,28 @@ export default {
           key: "tab4",
           closable: false,
         },
-          {
+        {
           label: "Files & Links",
           key: "tab5",
           closable: false,
         },
-          {
+        {
           label: "Related",
           key: "tab6",
           closable: false,
         },
-         {
+        {
           label: "Updates",
           key: "tab8",
-          closable: false,        
+          closable: false,
         },
         {
           label: "Disposition",
           key: "tab7",
           closable: false,
-          disabled: true,
+          disabled: false,
         },
-      ]
+      ],
     };
   },
   updated() {
@@ -1835,7 +2076,10 @@ export default {
       "setRiskForManager",
       "setRiskProbabilityOptions",
       "setRiskImpactLevelOptions",
-      "updateRisksHash"
+      'setRiskDispositionStatus',
+      'setRiskDispositionDuration',
+
+      "updateRisksHash",
     ]),
     ...mapActions([
       "riskDeleted",
@@ -1849,6 +2093,7 @@ export default {
         facilityProjectId: this.facility.id,
         text: "",
         riskDescription: "",
+        explanation: "",
         impactDescription: "",
         probabilityDescription: "",
         riskApproach: "avoid",
@@ -1864,8 +2109,11 @@ export default {
         progress: 0,
         startDate: "",
         getRiskImpactLevelNames: "1 - Negligible",
+        getRiskDispositionDuration: "Nothing Selected",
+        getRiskDispositionStatus: "Nothing Selected",
         dueDate: "",
         autoCalculate: true,
+        important: false,
         // riskApproverUserIds: [],
         responsibleUserIds: [],
         accountableUserIds: [],
@@ -1880,26 +2128,21 @@ export default {
       };
     },
        log(e){
-          console.log("This is the riskStages item: " + e)
+          console.log("This is the riskDispStatus item: " + e)
       },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
       }
       if (ending == null) {
-        ending = '...';
+        ending = "...";
       }
       if (str.length > length) {
         return str.substring(0, length - ending.length) + ending;
        } else {
         return str;
-       }
-      },
-    selectedStage(item){      
-      if (this._isallowed('write')) {
-        this.selectedRiskStage = item
       }
-    },  
+    },
     scrollToChecklist() {
       this.$refs.addCheckItem.scrollIntoView({
         behavior: "smooth",
@@ -1976,7 +2219,14 @@ export default {
       this.selectedRiskImpactLevel = this.getRiskImpactLevelNames.find(
         (t) => t.id === this.DV_risk.impactLevel
       );
-      if (this.DV_risk.attachFiles) this.addFile(this.DV_risk.attachFiles, false);
+        this.selectedDuration = this.getRiskDispositionDuration.find(
+        (t) => t.id === this.DV_risk.duration
+      );
+        this.selectedStatus = this.getRiskDispositionStatus.find(
+        (t) => t.id === this.DV_risk.status
+      );
+      if (this.DV_risk.attachFiles)
+        this.addFile(this.DV_risk.attachFiles, false);
       this.$nextTick(() => {
         this.errors.clear();
         this.$validator.reset();
@@ -2011,12 +2261,14 @@ export default {
         let index = this.DV_risk.riskFiles.findIndex(
           (f) => f.guid === file.guid
         );
-        if(file.id){
-          Vue.set(this.DV_risk.riskFiles, index, {...file, _destroy: true})
-          this.destroyedFiles.push(file)            
+        if (file.id) {
+          Vue.set(this.DV_risk.riskFiles, index, { ...file, _destroy: true });
+          this.destroyedFiles.push(file);
         }
-        this.DV_risk.riskFiles.splice(this.DV_risk.riskFiles.findIndex(f => f.guid === file.guid), 1)
-
+        this.DV_risk.riskFiles.splice(
+          this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
+          1
+        );
       } else if (file.name) {
         this.DV_risk.riskFiles.splice(
           this.DV_risk.riskFiles.findIndex((f) => f.guid === file.guid),
@@ -2025,29 +2277,66 @@ export default {
       }
     },
     toggleWatched() {
+      if (this.DV_risk.progress == 100 && !this.DV_risk.watched) {
+        this.$message({
+          message: `Risks at 100% progress cannot be placed On Watch status.`,
+          type: "warning",
+          showClose: true,
+        });
+        return;
+      }
       if (this.DV_risk.watched) {
-        let confirm = window.confirm(
-          `Are you sure, you want to remove this risk from on-watch?`
-        );
-        if (!confirm) {
-          return;
-        }
+        this.$message({
+          message: `${this.DV_risk.text} has been removed from On Watch status.`,
+          type: "warning",
+          showClose: true,
+        });
+      } else {
+        this.$message({
+          message: `${this.DV_risk.text} successfully placed On Watch status.`,
+          type: "success",
+          showClose: true,
+        });
       }
       this.DV_risk = { ...this.DV_risk, watched: !this.DV_risk.watched };
       this.updateWatchedRisks(this.DV_risk);
     },
-    toggleApproved(e) {
-      this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };    
-      this.DV_risk.approvalTime = this.$currentUser.full_name + " on " + new Date().toLocaleString() 
+    toggleImportant() {
+      this.DV_risk = { ...this.DV_risk, important: !this.DV_risk.important };
+    },
+    toggleOngoing() {
+      this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
+      this.DV_risk.dueDate = '';
+    },
+  toggleOnhold() {
+      this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+    },
+  toggleDraft() {
+      this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
+    },
+    removeFromWatch() {
+      if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
+        this.toggleWatched();
+      }
+    },
+    toggleApproved() {
+      this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
+      this.DV_risk.approvalTime =
+        this.$currentUser.full_name + " on " + new Date().toLocaleString();
       if (!this.DV_risk.approved) {
-        this.DV_risk.approvalTime = "";     
+        this.DV_risk.approvalTime = "";
       }
       this.updateApprovedRisks(this.DV_risk);
-      this.validateThenSave(e)
+      this.validateThenSave(e);
+    },
+    selectedStage(item) {
+      if (this._isallowed("write")) {
+        this.selectedRiskStage = item;
+      }
     },
     clearStages() {
-      this.selectedRiskStage = null
-      this.riskStageId = ""
+      this.selectedRiskStage = null;
+      this.riskStageId = "";
     },
     editProgress() {
       this.editToggle = !this.editToggle;
@@ -2064,7 +2353,7 @@ export default {
       this.setRiskForManager({ key: "risk", value: null });
     },
     validateThenSave(e) {
-      e.preventDefault();   
+      e.preventDefault();
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;
@@ -2075,6 +2364,11 @@ export default {
         let formData = new FormData();
         formData.append("risk[text]", this.DV_risk.text);
         formData.append("risk[risk_description]", this.DV_risk.riskDescription);
+        if (!this.DV_risk.explanation) {
+          formData.append("risk[explanation]",'')
+        } else {
+          formData.append("risk[explanation]", this.DV_risk.explanation);   
+        }      
         formData.append(
           "risk[impact_description]",
           this.DV_risk.impactDescription
@@ -2092,6 +2386,23 @@ export default {
           "risk[impact_level_name]",
           this.selectedRiskImpactLevel.name
         );
+        if (this.selectedStatus) {        
+          formData.append("risk[status]", this.selectedStatus.id);
+          formData.append("risk[status_name]", this.selectedStatus.name);
+           
+        } else {
+           formData.append("risk[status]", null);
+           formData.append("risk[status_name]", '');
+        }
+                
+        if (this.selectedDuration) {
+          formData.append("risk[duration]", this.selectedDuration.id)
+          formData.append("risk[duration_name]", this.selectedDuration.name);
+              
+        } else {
+           formData.append("risk[duration_name]", '')
+           formData.append("risk[duration]", null);
+        }
         formData.append("risk[impact_level]", this.selectedRiskImpactLevel.id);
         formData.append("risk[risk_approach]", this.DV_risk.riskApproach);
         formData.append(
@@ -2105,12 +2416,19 @@ export default {
         formData.append("risk[start_date]", this.DV_risk.startDate);
         formData.append("risk[due_date]", this.DV_risk.dueDate);
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
+        formData.append("risk[important]", this.DV_risk.important);
+        formData.append("risk[ongoing]", this.DV_risk.ongoing);
+        formData.append("risk[on_hold]", this.DV_risk.onHold);
+        formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
           "risk[destroy_file_ids]",
           _.map(this.destroyedFiles, "id")
         );
         // Responsible User id
-        if (this.DV_risk.responsibleUserIds && this.DV_risk.responsibleUserIds.length) {
+        if (
+          this.DV_risk.responsibleUserIds &&
+          this.DV_risk.responsibleUserIds.length
+        ) {
           for (let u_id of this.DV_risk.responsibleUserIds) {
             formData.append("responsible_user_ids[]", u_id);
           }
@@ -2118,7 +2436,10 @@ export default {
           formData.append("responsible_user_ids[]", []);
         }
         // Accountable UserId
-        if (this.DV_risk.accountableUserIds && this.DV_risk.accountableUserIds.length) {
+        if (
+          this.DV_risk.accountableUserIds &&
+          this.DV_risk.accountableUserIds.length
+        ) {
           for (let u_id of this.DV_risk.accountableUserIds) {
             formData.append("accountable_user_ids[]", u_id);
           }
@@ -2127,7 +2448,10 @@ export default {
         }
         // Consulted UserId
 
-        if (this.DV_risk.consultedUserIds && this.DV_risk.consultedUserIds.length) {
+        if (
+          this.DV_risk.consultedUserIds &&
+          this.DV_risk.consultedUserIds.length
+        ) {
           for (let u_id of this.DV_risk.consultedUserIds) {
             formData.append("consulted_user_ids[]", u_id);
           }
@@ -2136,14 +2460,16 @@ export default {
         }
         // Informed UserId
 
-        if (this.DV_risk.informedUserIds && this.DV_risk.informedUserIds.length) {
+        if (
+          this.DV_risk.informedUserIds &&
+          this.DV_risk.informedUserIds.length
+        ) {
           for (let u_id of this.DV_risk.informedUserIds) {
             formData.append("informed_user_ids[]", u_id);
           }
         } else {
           formData.append("informed_user_ids[]", []);
         }
-
 
         if (this.DV_risk.subTaskIds.length) {
           for (let u_id of this.DV_risk.subTaskIds) {
@@ -2217,6 +2543,9 @@ export default {
                   ? note.user_id
                   : this.$currentUser.id
                 : note[key];
+                if ( key == 'body') {
+                  value = value.replace(/[^ -~]/g,'')
+                }        
             formData.append(`risk[notes_attributes][${i}][${key}]`, value);
           }
         }
@@ -2261,13 +2590,21 @@ export default {
             }
             //Route to newly created task form page
             if (this.$route.path.includes("sheet")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+              );
             } else if (this.$route.path.includes("map")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+              );
             } else if (this.$route.path.includes("calendar")) {
-              this.$router.push(`/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+              );
             } else {
-              this.$router.push(`/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`);
+              this.$router.push(
+                `/programs/${this.$route.params.programId}/kanban/projects/${this.$route.params.projectId}/risks/${response.data.risk.id}`
+              );
             }
           })
           .catch((err) => {
@@ -2279,7 +2616,12 @@ export default {
       });
     },
     addFilesInput() {
-      this.DV_risk.riskFiles.push({ name: "", uri: "", link: true, guid: this.guid() });
+      this.DV_risk.riskFiles.push({
+        name: "",
+        uri: "",
+        link: true,
+        guid: this.guid(),
+      });
     },
     addProgressList(check) {
       var postion = check.progressLists.length;
@@ -2303,7 +2645,7 @@ export default {
     },
     disabledDueDate(date) {
       date.setHours(0, 0, 0, 0);
-      const startDate = new Date(this.DV_risk.startDate);  
+      const startDate = new Date(this.DV_risk.startDate);
       startDate.setHours(48, 0, 0, 0);
       // console.log(startDate)
       return date < startDate;
@@ -2317,7 +2659,7 @@ export default {
         ? this.DV_risk.notes.findIndex((n) => n.id === note.id)
         : this.DV_risk.notes.findIndex((n) => n.guid === note.guid);
       Vue.set(this.DV_risk.notes, i, { ...note, _destroy: true });
-    },  
+    },
     addChecks() {
       var postion = this.DV_risk.checklists.length;
       this.DV_risk.checklists.push({
@@ -2411,8 +2753,8 @@ export default {
         "Risk Name",
         "Risk Description",
         "Category",
-        "Identified Date", 
-        "Risk Approach Due Date",  
+        "Date Identified",
+        "Risk Approach Due Date",
       ];
 
       var tooltipMessage = "Field is located on Prioritize";
@@ -2428,27 +2770,64 @@ export default {
       });
       return tooltipMessage;
     },
+    openContextMenu(e, item) {
+      e.preventDefault();
+      this.$refs.menu.open(e, item);
+    },
+    addRelatedTasks(tasks) {
+      tasks.forEach((task) => this.relatedTasks.push(task));
+    },
+    removeRelatedTask({ id }) {
+      this.relatedTasks.splice(
+        this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
+    },
+    addRelatedIssues(issues) {
+      issues.forEach((issue) => this.relatedIssues.push(issue));
+    },
+    removeRelatedIssue({ id }) {
+      this.relatedIssues.splice(
+        this.relatedIssues.findIndex((issue) => issue.id == id),
+        1
+      );
+    },
+    addRelatedRisks(risks) {
+      risks.forEach((risk) => this.relatedRisks.push(risk));
+    },
+    removeRelatedRisk({ id }) {
+      this.relatedRisks.splice(
+        this.relatedRisks.findIndex((risk) => risk.id == id),
+        1
+      );
+    },
   },
   computed: {
     ...mapGetters([
-      "getFacilityProjectOptions",
-      "currentProject",
-      "projectUsers",
       "activeProjectUsers",
-      "myActionsFilter",
-      "taskTypes",
-      "riskStages",
-      "impactLevelNames",
-      "getRiskProbabilityOptions",
-      "getRiskProbabilityNames",
-      "getRiskImpactLevelOptions",
-      "getRiskImpactLevelNames",
-      "probabilityNames",
-      "riskApproaches",
-      "currentTasks",
       "currentIssues",
+      "currentProject",
       "currentRisks",
+      "currentTasks",
+      "facilityGroups",
+      "getFacilityProjectOptions",
+      "getRiskImpactLevelNames",
+      "getRiskDispositionDuration",
+      "getRiskDispositionStatus",
+      "getRiskImpactLevelOptions",
+      "getRiskProbabilityNames",
+      "getRiskProbabilityOptions",
+      "impactLevelNames",
+      'dispositionStatuses',
       "managerView",
+      "myActionsFilter",
+      "probabilityNames",
+      "projectUsers",
+      "riskApproaches",
+      'riskDispositionStatuses',
+      'riskDispositionDuration',
+      "riskStages",
+      "taskTypes",
     ]),
     readyToSave() {
       return (
@@ -2459,8 +2838,7 @@ export default {
         // this.exists(this.DV_risk.probabilityDescription) &&
         this.exists(this.selectedRiskPossibility.id) &&
         this.exists(this.selectedRiskImpactLevel.id) &&
-        this.exists(this.selectedRiskPossibility.id) &&
-        this.exists(this.selectedRiskImpactLevel.id) &&
+        this.exists(this.selectedRiskPossibility.id) &&     
         this.exists(this.DV_risk.riskApproach) &&
         // this.exists(this.DV_risk.riskApproachDescription) &&
         this.exists(this.DV_risk.taskTypeId) &&
@@ -2478,7 +2856,10 @@ export default {
       return this.$route.name === "SheetRiskForm";
     },
     isKanbanView() {
-      return this.$route.name === "KanbanRiskForm";;
+      return this.$route.name === "KanbanRiskForm";
+    },
+    isCalendarView() {
+      return this.$route.name === "CalendarRiskForm";
     },
     filteredChecks() {
       return _.filter(this.DV_risk.checklists, (c) => !c._destroy);
@@ -2716,25 +3097,31 @@ export default {
         return "map";
       } else if (this.$route.path.includes("sheet")) {
         return "sheet";
+      } else if (this.$route.path.includes("calendar")) {
+        return "calendar";
       } else {
         return "kanban";
       }
     },
     projectNameLink() {
-      if (this.$route.path.includes("kanban")) {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`
+      if (this.$route.path.includes("kanban") || this.$route.path.includes("calendar")) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/risks`;
       } else {
-        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
       }
-    }
+    },
   },
   watch: {
     risk: {
-      handler: function(value) {
-        if (!("id" in value)) this.DV_risk = this.INITIAL_RISK_STATE();
+      handler(risk) {
+        if (risk && risk.id) {
+          this.DV_risk = this.INITIAL_RISK_STATE();
+        } 
         this.DV_risk.riskFiles = [];
         this.destroyedFiles = [];
-        this.loadRisk(value);
+        if (risk) {
+          this.loadRisk(risk);
+        }
       },
       deep: true,
     },
@@ -2818,11 +3205,23 @@ export default {
       },
       deep: true,
     },
+    selectedStatus: {
+      handler: function(value) {
+        this.DV_risk.status = value ? value.id : null;
+      },
+      deep: true,
+    },
+   selectedDuration: {
+      handler: function(value) {
+        this.DV_risk.duration = value ? value.id : null;
+      
+      },
+      deep: true,
+    },
     selectedRiskStage: {
       handler: function(value) {
         // console.log("This is the watcher id value: " + value.id)
         this.DV_risk.riskStageId = value ? value.id : null;
-     
       },
       deep: true,
     },
@@ -2859,7 +3258,7 @@ export default {
           this.$refs.paginator.goToPage(1);
         }
       });
-    }
+    },
   },
 };
 </script>
@@ -2869,9 +3268,6 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: calc(100vh - 275px);
-}
-.form-control.error {
-  border-color: #e84444;
 }
 .title {
   font-size: 15px;
@@ -3174,6 +3570,9 @@ ul {
 /deep/.el-collapse-item__header {
   background-color: #fafafa;
 }
+/deep/.el-input__inner {
+  text-transform: capitalize !important;
+}
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
@@ -3187,22 +3586,12 @@ ul {
 .text-danger {
   font-size: 13px;
 }
-.error-border {
-  border: 1px solid red;
-  border-radius: 4px;
-}
 .overflow-ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
-
-// .links-col {
-//   border-right: double 2px lightgray;
-//   padding-bottom: 5px;
-// }
 .links-col {
-
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -3218,14 +3607,13 @@ ul {
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
-
 }
 .no-text-decoration:link {
   text-decoration: none;
   color: #495057;
   text-decoration-color: none;
 }
-.no-text-decoration:active{
+.no-text-decoration:active {
   text-decoration: none;
   color: #495057;
   text-decoration-color: none;
@@ -3235,36 +3623,41 @@ ul {
   color: #495057;
   text-decoration-color: none;
 }
- .hover {
-   background: transparent;
-   border-radius: 0 !important;
-  }
-  .hover:hover {
-    cursor: pointer;
-    background-color: rgba(91, 192, 222, 0.3);
-  }
-  input.file-link {
-    outline:0 none; 
-  }
+.hover {
+  background: transparent;
+  border-radius: 0 !important;
+}
+.hover:hover {
+  cursor: pointer;
+  background-color: rgba(91, 192, 222, 0.3);
+}
+input.file-link {
+  outline: 0 none;
+}
 
 .clearStageBtn {
-  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
 }
-.exampleTwo.el-steps, .exampleTwo.el-steps--simple {
-  border: 1px solid #DCDFE6;
-  background: #fff; 
+.exampleTwo.el-steps,
+.exampleTwo.el-steps--simple {
+  border: 1px solid #dcdfe6;
+  background: #fff;
 }
 .overSixSteps {
-/deep/.el-step__title {
-  font-size: 11px !important;
-  line-height: 23px !important;
-  margin: 5px !important;
- }
+  /deep/.el-step__title {
+    font-size: 11px !important;
+    line-height: 23px !important;
+    margin: 5px !important;
+  }
 }
 a {
-  color: #007bff
+  color: #007bff;
 }
 a:hover {
   text-decoration: unset;
+}
+.text-smaller {
+  font-size: smaller;
 }
 </style>

@@ -158,7 +158,7 @@
           <td v-else></td>
           <td v-if="(risk.notes.length) > 0">
              By: {{ risk.notes[0].user.fullName}} on
-            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body}}
+            {{moment(risk.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{risk.notes[0].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>
@@ -329,14 +329,24 @@
           if (search_query) valid = valid && search_query.test(resource.text) ||
           valid && search_query.test(resource.text) ||
           valid && search_query.test(resource.riskApproach) ||
-          valid && search_query.test(resource.priorityLevelName) ||   
+          valid && search_query.test(resource.priorityLevelName) ||  
+          valid && search_query.test(resource.taskType.name) || 
           valid && search_query.test(resource.userNames)
 
 
           return valid;
         })), ['dueDate'])
 
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
         return risks
+        
+       } else  {
+        
+        risks  = risks.filter(t => t.draft == false && t.onHold == false)
+        return risks
+      
+       }   
       },
       C_facilityManagerRiskFilter: {
         get() {

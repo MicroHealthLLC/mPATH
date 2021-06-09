@@ -32,9 +32,121 @@ body {
     border-color: #67C23A;
   }
 }
-    
+// Vuetify Calendar Props
+.v-present {
+  .v-btn {
+  border-radius: 3px !important;
+  height: 30px !important;
+  width: 30px !important;
+  } 
+}
+.todayBtn, .back-forth-btn {
+  border-radius: 4px;
+  border-style: solid;
+  border-width: thin;
+  border-color: rgba(0,0,0,.12)!important
+}   
+.today-icon {
+  color:  #1976d2 !important
+}
+
+.mh-green {
+background-color: #9EC64C !important;
+}
+.mh-blue {
+//  dark blue
+ background-color: #1D336F !important;
+}
+
+.mh-orange {
+  background-color: #DD9036 !important;
+}
+
+.generic-border {
+  // Generic border with Element UI dropdown border UI
+border: 1px solid #DCDFE6 !important;
+border-radius: 6px !important;
+background-color: #fafafa;
+padding: 3px !important;
+}
+
+.toggleWrapper#risk_toggles {
+  margin-top: 0 !important;
+}
+
+.toggleWrapper {
+  // Generic border with Element UI dropdown border UI
+  border: 1px solid #DCDFE6 !important;
+  border-radius: 6px !important;
+  background-color: #fafafa;
+  padding: 3px !important;
+  margin-top: -8px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+// MORE FILTERS in Sheet View
+.issuesFilter, .risksFilter {
+  z-index: 100;
+.el-collapse-item__header {
+  color: #383838 !important;
+  // background-color: transparent !important;
+  border-radius: 4px !important;
+  border: 1px solid #DCDFE6 !important;
+  padding: 3px !important;
+  height: 32px !important;
+  justify-content: center !important;
+
+
+ }
+ .el-select__tags {
+    z-index: 95 !important;
+  }
+  .el-input--suffix {
+    z-index: 90 !important;
+  }
+  .el-collapse-item__wrap {
+    margin-top: 4px;
+    border-radius: 3px !important;
+    background-color: #fff !important;
+    border-bottom: none !important;
+    z-index: 100 !important;
+    box-shadow: 1px 1px 1px rgba(56,56, 56,0.19), 1px 1px 1px 2px rgba(56,56,56,0.23);
+    .el-collapse-item__content {
+      padding-bottom: 10px;
+    }
+  }
+}
+
+span.mpathLogo {
+  img {
+    width: 200px;
+  }
+}
+span.mhLogo {
+  img {
+    width: 250px;
+    height: 51px;
+  }
+}
+h4.mpath-logo {
+  color: #DD9036;
+  font-style: italic;
+  font-weight: 500;
+}
 .program-row {
-  height: 60px;
+  height: 80px;
+}
+.hr-program-row {
+  margin-top: 0.5rem;
+}
+.welcome-page-program-name {
+  display: table-cell;
+  vertical-align:middle;
 }
 .hr-program-row {
   margin-top: 0.5rem;
@@ -88,7 +200,7 @@ td.col-issue_type, td.col-issue_severity {
   //  font-weight: bold;
   color: #0275d8;
  }
-.paginate-links.filteredNotes {
+.paginate-links.filteredNotes, .paginate {
   list-style: none !important;
   user-select: none;
   text-decoration-line: none !important;
@@ -255,9 +367,13 @@ td.col-issue_type, td.col-issue_severity {
   }
 }
 .fbody-icon {
-  font-size: 15px;
-  color: gray;
-  margin-right: 10px;
+  margin-right: 5px;
+  font-size: 16px
+}
+
+// Items w/ "vuetify-" prefix can be deleted if vuetify is no longer used
+.vuetify-checkitem {
+  margin-top: 10px;
 }
 
 // Tabbed out form inside modals
@@ -654,6 +770,13 @@ th {
   position: relative;
   vertical-align: middle !important;
 }
+.non-sort-th {    
+  font-family: 'FuturaPTBook';
+  text-align: center;
+  position: relative;
+  vertical-align: middle !important;
+}
+
 .sort-icon {
   color:#17a2b8 !important;
   font-size: .88rem !important;
@@ -868,4 +991,43 @@ i.el-icon-circle-close {
   margin-right: 85px;
 }
 
-// Recommitting message to accept change.  Discovered this file missing from QA branch on 24 Apr 2021.  This message can be deleted 
+.el-step__head.is-process {
+  .el-step__icon {
+    color: #67C23A;
+    border-color: #67C23A;
+    border-style: dotted;
+    transform: scale(1.5);
+  }
+}
+
+.el-step__title.is-process {
+  color: #67C23A;
+}
+
+.el-input.error, .el-textarea.error {
+  input, textarea {
+    border-color: #e84444;
+  }
+}
+
+.el-select.error {
+  .el-input {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
+
+.error {
+  .vue2-datepicker {
+    input {
+      border-color: #e84444;
+    }
+  }
+}
+
+.error.vue2-datepicker {
+  input {
+    border-color: #e84444;
+  }
+}
