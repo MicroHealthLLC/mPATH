@@ -40,6 +40,41 @@ body {
   width: 30px !important;
   } 
 }
+
+.v-calendar-daily_head-day {
+  .v-event.white--text {
+    visibility: visible !important;
+    background-color: rgba(214, 219, 223, .10) !important;
+  }
+}
+
+.v-event.white--text {
+  visibility: hidden;
+}
+.v-event.v-event-start {
+  visibility: visible !important; 
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+  
+}
+.v-event.v-event-end {
+  visibility: visible !important; 
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+
+}
+.v-event-start, .v-event-end {
+  background-color: rgba(214, 219, 223, .10) !important;
+  color: black !important;
+  width: 100% !important;
+ 
+}
+
+
 .todayBtn, .back-forth-btn {
   border-radius: 4px;
   border-style: solid;
