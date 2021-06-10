@@ -31,7 +31,10 @@
         <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
           Save Lesson
         </button>
-        <button disabled class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
+        <button
+          disabled
+          class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+        >
           Read Only
         </button>
         <button
@@ -173,7 +176,7 @@
     <!-- Related Tab -->
     <div v-show="currentTab == 'tab2'">
       <div class="row mt-1">
-        <div class="col">
+        <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
           <span class="clickable" @click="openContextMenu($event, 'task')">
             <i class="fas fa-plus-circle"></i
@@ -214,7 +217,7 @@
             </li>
           </ul>
         </div>
-        <div class="col">
+        <div :class="[isMapView ? 'col-12' : 'col']">
           Related Issues
           <span class="clickable" @click="openContextMenu($event, 'issue')">
             <i class="fas fa-plus-circle"></i>
@@ -255,7 +258,7 @@
             </li>
           </ul>
         </div>
-        <div class="col">
+        <div :class="[isMapView ? 'col-12' : 'col']">
           Related Risks
           <span class="clickable" @click="openContextMenu($event, 'risk')">
             <i class="fas fa-plus-circle"></i>
@@ -779,6 +782,9 @@ export default {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
       }
     },
+    isMapView() {
+      return this.$route.name === "MapLessonForm";
+    },
   },
   mounted() {
     if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
@@ -828,6 +834,16 @@ export default {
             showClose: true,
           });
           this.SET_LESSON_STATUS(0);
+          //Route to newly created task form page
+          if (this.$route.path.includes("sheet")) {
+            this.$router.push(
+              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+            );
+          } else {
+            this.$router.push(
+              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+            );
+          }
         }
       },
     },

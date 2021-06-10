@@ -90,7 +90,7 @@ const lessonModule = {
         },
       })
         .then((res) => {
-          // TODO: Write mutation code
+          commit("SET_LESSON", res.data.lesson);
           commit("SET_LESSON_STATUS", res.status);
         })
         .catch((err) => {
