@@ -32,6 +32,7 @@
           Save Lesson
         </button>
         <button
+          v-show="false"
           disabled
           class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
         >
@@ -466,8 +467,14 @@
           <label class="font-md">Description</label>
           <div class="font-sm">
             <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span> Someone at
-              10:30PM on 6/23/2021</el-tag
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="update.updated_at"
+                >{{ author(update.user_id) }} on
+                {{ new Date(update.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
             >
             <i
               class="el-icon-delete clickable ml-3"
@@ -608,8 +615,11 @@ export default {
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes, ...this.deleteSuccesses],
             failures: [...this.failures, ...this.deleteFailures],
-            best_practices: [...this.bestPractices, ...this.deleteBestPractices],
-            notes_attributes: [...this.updates, this.deleteUpdates],
+            best_practices: [
+              ...this.bestPractices,
+              ...this.deleteBestPractices,
+            ],
+            notes_attributes: [...this.updates, ...this.deleteUpdates],
             attach_files: [...this.files],
           },
         };
@@ -742,7 +752,7 @@ export default {
       )
         .then(() => {
           this.updates[index]._destroy = true;
-          this.deleteUpdates.push(this.successes[index]);
+          this.deleteUpdates.push(this.updates[index]);
           this.updates.splice(index, 1);
         })
         .catch(() => {});
