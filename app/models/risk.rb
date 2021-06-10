@@ -11,14 +11,11 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  
-
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
-  validates_presence_of :risk_description
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
+  validates_presence_of :risk_description, :start_date, :due_date
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!
@@ -43,69 +40,6 @@ class Risk < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
-  end
-
-  def self.params_to_permit
-    [
-      :approved,
-      :approved_at,
-      :approval_time,
-      :facility_project_id,
-      :risk_description,
-      :impact_description,
-      :probability_description,
-      :probability,
-      :probability_name,
-      :impact_level,
-      :impact_level_name,
-      :risk_approach,
-      :status,
-      :duration,
-      :duration_name,
-      :status_name,
-      :explanation,
-      :risk_approach_description,
-      :task_type_id,
-      :task_type, 
-      :risk_stage_id,
-      :progress,
-      :start_date,
-      :due_date,
-      :auto_calculate,
-      :text,
-      :watched,
-      :important,
-      :on_hold, 
-      :draft, 
-      :ongoing,
-      user_ids: [],
-      risk_files: [],
-      sub_task_ids: [],
-      sub_issue_ids: [],
-      sub_risk_ids: [],
-      checklists_attributes: [
-        :id,
-        :_destroy,
-        :text,
-        :user_id,
-        :checked,
-        :position,
-        :due_date,
-        progress_lists_attributes: [
-          :id,
-          :_destroy,
-          :body,
-          :checklist_id,
-          :user_id
-        ]
-      ],
-      notes_attributes: [
-        :id,
-        :_destroy,
-        :user_id,
-        :body
-      ]
-    ]
   end
 
   def files_as_json
@@ -152,29 +86,6 @@ class Risk < ApplicationRecord
     impact_level_name_hash[impact_level] || impact_level_name_hash[1]
   end
 
-  def status_name_hash
-    {    
-      1 => "Monitoring",
-      2 => "Resolved", 
-      3 => "Closed"  
-    }
-  end
-
-  def status_name
-    status_name_hash[status] || status_name_hash[1]
-  end
-
-  def duration_name_hash
-    { 
-      1 => "Temporary",
-      2 => "Perpetual"    
-    }
-  end
-
-  def duration_name
-    duration_name_hash[duration] || duration_name_hash[1]
-  end
-
   def probability_name_hash
     {
       1 => "1 - Rare",
@@ -188,7 +99,15 @@ class Risk < ApplicationRecord
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
-
+  
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
   def to_json(options = {})
     attach_files = []
     rf = self.risk_files
@@ -265,24 +184,16 @@ class Risk < ApplicationRecord
     if(progress >= 100)
       progress_status = "completed"
     end
-
-    is_overdue = false
-    if !ongoing
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
-    end
-
     self.as_json.merge(
       priority_level_name: priority_level_name,
       # risk_approach: risk_approach.humanize,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
-      duration_name: duration_name,
-      status_name: status_name,
       task_type: task_type.as_json, 
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
-      is_overdue: is_overdue,
+      is_overdue: progress < 100 && (due_date < Date.today),
       progress_status: progress_status,
       checklists: checklists.as_json,  
       due_date_duplicate: due_date.as_json,
@@ -293,8 +204,6 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
-      draft: draft, 
-      on_hold: on_hold, 
 
 
      # Add RACI user name
@@ -335,7 +244,59 @@ class Risk < ApplicationRecord
 
   # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
   def create_or_update_risk(params, user)
-    risk_params = params.require(:risk).permit(Risk.params_to_permit)
+    risk_params = params.require(:risk).permit(
+      :approved,
+      :approved_at,
+      :approval_time,
+      :facility_project_id,
+      :risk_description,
+      :impact_description,
+      :probability_description,
+      :probability,
+      :probability_name,
+      :impact_level,
+      :impact_level_name,
+      :risk_approach,
+      :risk_approach_description,
+      :task_type_id,
+      :task_type,
+      :risk_stage, 
+      :risk_stage_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :text,
+      :watched,
+      user_ids: [],
+      risk_files: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :due_date,
+        :listable_type,
+        :listable_id,
+        :position, 
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id
+        ]
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    )
 
 
     risk = self
@@ -569,7 +530,6 @@ class Risk < ApplicationRecord
   def cast_constants_to_i
     self.probability = self.probability.to_i
     self.impact_level = self.impact_level.to_i
-    self.duration = self.duration.to_i
     self.priority_level = self.probability * self.impact_level
   end
 end

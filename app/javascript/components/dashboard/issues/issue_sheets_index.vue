@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-75 float-right filters-wrapper">
+      <div class="d-flex align-item-center w-70 float-right filters-wrapper">
         <div class="ml-2 task-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
@@ -852,7 +852,7 @@
   }
   @media screen and (max-width: 1500px) {
   .filters-wrapper {
-    width: 70% !important;
+    width: 65% !important;
   } 
 }
 /deep/.el-collapse   {

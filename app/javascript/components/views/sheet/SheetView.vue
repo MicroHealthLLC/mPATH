@@ -23,7 +23,8 @@
               $route.name !== 'SheetTaskForm' &&
               $route.name !== 'SheetIssueForm' &&
               $route.name !== 'SheetRiskForm' &&
-              $route.name !== 'SheetNoteForm'
+              $route.name !== 'SheetNoteForm' &&
+              $route.name !== 'SheetLessonForm'
           "
           class="d-flex align-items-center my-1 ml-1"
         >
@@ -39,7 +40,8 @@
                 $route.name !== 'SheetTaskForm' &&
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
-                $route.name !== 'SheetNoteForm'
+                $route.name !== 'SheetNoteForm' &&
+                $route.name !== 'SheetLessonForm'
             "
           />
         </div>

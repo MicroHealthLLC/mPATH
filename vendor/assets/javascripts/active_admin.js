@@ -1187,7 +1187,8 @@ jQuery(function($) {
     }
 
     // settings page
-    if ($("#settings_container").is(":visible"))
+    //if ($("#settings_container").is(":visible"))
+    if ($("#settings_container").length > 0)
     {
       let settings = new Vue({
         el: "#settings_container",
@@ -2264,7 +2265,8 @@ jQuery(function($) {
   }());
 
   // password generator tab
-  if ($("#user-password__tab").is(":visible"))
+  //if ($("#user-password__tab").is(":visible"))
+  if ($("#user-password__tab").length > 0)
   {
     let settings = new Vue({
       el: "#user-password__tab",

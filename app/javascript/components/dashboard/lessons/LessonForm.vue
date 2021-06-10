@@ -1,0 +1,903 @@
+<template>
+  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
+    <div class="mt-2  d-flex align-items-center">
+      <!-- Breadcrumbs and form buttons -->
+      <div>
+        <h5 class="mb-0">
+          <span style="font-size: 16px; margin-right: 10px"
+            ><i class="fas fa-suitcase"></i
+          ></span>
+          <router-link v-if="contentLoaded" :to="projectNameLink">{{
+            facility.facilityName
+          }}</router-link>
+          <el-icon
+            class="el-icon-arrow-right"
+            style="font-size: 12px"
+          ></el-icon>
+          <router-link
+            :to="
+              `/programs/${this.$route.params.programId}/${tab}/projects/${this.$route.params.projectId}/lessons`
+            "
+            >Lessons</router-link
+          >
+          <el-icon
+            class="el-icon-arrow-right"
+            style="font-size: 12px"
+          ></el-icon>
+          <span>{{ lesson.title || "(Lesson Name)" }}</span>
+        </h5>
+      </div>
+      <div class="ml-auto d-flex align-items-center">
+        <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
+          Save Lesson
+        </button>
+        <button
+          v-show="false"
+          disabled
+          class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+        >
+          Read Only
+        </button>
+        <button
+          class="btn btn-sm sticky-btn btn-outline-secondary mr-1"
+          @click.prevent="close"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <hr class=" mb-6 mt-2" />
+    <!-- Form Navigation Tabs -->
+    <div class="d-flex pt-1 mb-1 justify-content-start">
+      <FormTabs
+        :current-tab="currentTab"
+        :tabs="tabs"
+        :allErrors="errors"
+        @on-change-tab="onChangeTab"
+      />
+    </div>
+    <!-- Required field errors -->
+    <h6 class=" mt-4 mb-0" style="color: gray; font-size: 13px">
+      <span style="color: #dc3545; font-size: 15px">*</span> Indicates required
+      fields
+    </h6>
+    <div class="pt-1">
+      <div v-if="errors.items.length > 0" class="text-danger ">
+        Please fill the required fields before submitting
+        <ul class="error-list mx-4">
+          <li
+            v-for="(error, index) in errors.all()"
+            :key="index"
+            v-tooltip="{
+              content: 'Field is located on Lesson Info',
+              placement: 'left',
+            }"
+          >
+            {{ error }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- Lesson Info Tab -->
+    <div v-show="currentTab == 'tab1'" class="row mt-2 mx-0">
+      <div class="col-12 px-0">
+        <label class="font-md"
+          >Lesson Name <span style="color: #dc3545">*</span></label
+        >
+        <el-input
+          name="Lesson Name"
+          v-validate="'required'"
+          v-model="lesson.title"
+          type="text"
+          placeholder="Lesson Name"
+          :class="{ error: errors.has('Lesson Name') }"
+        />
+        <div v-show="errors.has('Lesson Name')" class="text-danger">
+          {{ errors.first("Name") }}
+        </div>
+      </div>
+      <div class="col-12 px-0">
+        <label class="font-md"
+          >Description <span style="color: #dc3545">*</span></label
+        >
+        <el-input
+          name="Description"
+          type="textarea"
+          v-validate="'required'"
+          v-model="lesson.description"
+          placeholder="Brief description..."
+          rows="4"
+          :class="{
+            error: errors.has('Description'),
+          }"
+        ></el-input>
+        <div v-show="errors.has('Description')" class="text-danger">
+          {{ errors.first("Description") }}
+        </div>
+      </div>
+
+      <div class="col-6 pl-0">
+        <label class="font-md"
+          >Date <span style="color: #dc3545">*</span></label
+        >
+        <div :class="{ error: errors.has('Date') }">
+          <v2-date-picker
+            name="Date"
+            v-validate="'required'"
+            v-model="lesson.date"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            class="w-100"
+          />
+        </div>
+        <div v-show="errors.has('Date')" class="text-danger">
+          {{ errors.first("Date") }}
+        </div>
+      </div>
+
+      <div class="col-6 pl-0">
+        <label class="font-md w-100">Category</label>
+        <el-select
+          v-model="lesson.task_type_id"
+          class="w-100"
+          value-key="id"
+          name="Category"
+          placeholder="Select Category"
+        >
+          <!--TODO: Change taskTypes to categoryTypes -->
+          <el-option
+            v-for="category in taskTypes"
+            :value="category.id"
+            :key="category.id"
+            :label="category.name"
+          >
+          </el-option>
+        </el-select>
+      </div>
+
+      <div class="col-6 pl-0">
+        <label class="font-md">Stage</label>
+        <el-select
+          v-model="lesson.lesson_stage_id"
+          class="w-100"
+          clearable
+          placeholder="Select Stage"
+        >
+          <el-option
+            v-for="stage in lessonStages"
+            :value="stage.id"
+            :key="stage.id"
+            :label="stage.name"
+          >
+          </el-option>
+        </el-select>
+      </div>
+    </div>
+    <!-- Related Tab -->
+    <div v-show="currentTab == 'tab2'">
+      <div class="row mt-1">
+        <div :class="[isMapView ? 'col-12' : 'col']">
+          Related Tasks
+          <span class="clickable" @click="openContextMenu($event, 'task')">
+            <i class="fas fa-plus-circle"></i
+          ></span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(task, index) in relatedTasks"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ task.project_name || task.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${task.project_id ||
+                      task.facilityId}/tasks/${task.id}`
+                  "
+                  slot="reference"
+                  >{{ task.text }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Task"
+                @click.prevent="removeRelatedTask(task)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+        <div :class="[isMapView ? 'col-12' : 'col']">
+          Related Issues
+          <span class="clickable" @click="openContextMenu($event, 'issue')">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(issue, index) in relatedIssues"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ issue.project_name || issue.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${issue.project_id ||
+                      issue.facilityId}/issues/${issue.id}`
+                  "
+                  slot="reference"
+                  >{{ issue.title }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Issue"
+                @click.prevent="removeRelatedIssue(issue)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+        <div :class="[isMapView ? 'col-12' : 'col']">
+          Related Risks
+          <span class="clickable" @click="openContextMenu($event, 'risk')">
+            <i class="fas fa-plus-circle"></i>
+          </span>
+
+          <hr class="mt-0" />
+
+          <ul class="text-smaller">
+            <li
+              class="d-flex justify-content-between align-items-center my-2"
+              v-for="(risk, index) in relatedRisks"
+              :key="index"
+            >
+              <el-popover placement="right" width="200" trigger="hover">
+                <div>
+                  <p class="m-0 text-left">
+                    <el-tag size="mini">Project Name</el-tag>
+                    {{ risk.project_name || risk.facilityName }}
+                  </p>
+                </div>
+                <router-link
+                  :to="
+                    `/programs/${
+                      $route.params.programId
+                    }/${tab}/projects/${risk.project_id ||
+                      risk.facilityId}/risks/${risk.id}`
+                  "
+                  slot="reference"
+                  >{{ risk.text }}</router-link
+                ></el-popover
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                title="Remove Related Risk"
+                @click.prevent="removeRelatedRisk(risk)"
+              ></el-button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Successes Tab -->
+    <div v-show="currentTab == 'tab3'" class="mt-2">
+      <label>Successes</label>
+      <span class="clickable" @click.prevent="addSuccess">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(success, index) in successes"
+        :key="index"
+        class="success-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="success.updated_at"
+                >{{ author(success.user_id) }} on
+                {{ new Date(success.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeSuccess(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="success.finding"
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+
+        <label class="font-md">Recommendation</label>
+        <el-input
+          v-model="success.recommendation"
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
+    </div>
+    <!-- Failures Tab -->
+    <div v-show="currentTab == 'tab4'" class="mt-2">
+      <label>Failures</label>
+      <span class="clickable" @click.prevent="addFailure">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(failure, index) in failures"
+        :key="index"
+        class="failure-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="failure.updated_at"
+                >{{ author(failure.user_id) }} on
+                {{ new Date(failure.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeFailure(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="failure.finding"
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+
+        <label class="font-md">Recommendation</label>
+        <el-input
+          v-model="failure.recommendation"
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
+    </div>
+
+    <!-- Best Practices Tab -->
+    <div v-show="currentTab == 'tab5'" class="mt-2">
+      <label>Best Practices</label>
+      <span class="clickable" @click.prevent="addBestPractice">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(bestPractice, index) in bestPractices"
+        :key="index"
+        class="best-practice-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Findings</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="bestPractice.updated_at"
+                >{{ author(bestPractice.user_id) }} on
+                {{ new Date(bestPractice.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeBestPractice(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="bestPractice.finding"
+          type="textarea"
+          placeholder="Please enter findings here..."
+        ></el-input>
+
+        <label class="font-md">Recommendation</label>
+        <el-input
+          v-model="bestPractice.recommendation"
+          type="textarea"
+          placeholder="Please recommendation here..."
+        ></el-input>
+      </el-card>
+    </div>
+
+    <!-- Files & Links Tab -->
+    <div v-show="currentTab == 'tab6'" class="row mt-2">
+      <div class="col">
+        <AttachmentInput @input="addFile" />
+        <div v-for="(file, index) in files" :key="index">
+          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+        </div>
+      </div>
+    </div>
+    <!-- Updates Tab -->
+    <div v-show="currentTab == 'tab7'" class="mt-2">
+      <label>Updates</label>
+      <span class="clickable" @click.prevent="addUpdate">
+        <i class="fas fa-plus-circle"></i>
+      </span>
+
+      <el-card
+        v-for="(update, index) in updates"
+        :key="index"
+        class="update-card mb-3"
+      >
+        <div class="d-flex justify-content-between">
+          <label class="font-md">Description</label>
+          <div class="font-sm">
+            <el-tag size="mini"
+              ><span class="font-weight-bold">Submitted by:</span>
+              <span v-if="update.updated_at"
+                >{{ author(update.user_id) }} on
+                {{ new Date(update.updated_at).toLocaleString() }}</span
+              ><span v-else
+                >{{ $currentUser.full_name }} on
+                {{ new Date().toLocaleDateString() }}</span
+              ></el-tag
+            >
+            <i
+              class="el-icon-delete clickable ml-3"
+              @click="removeUpdate(index)"
+            ></i>
+          </div>
+        </div>
+
+        <el-input
+          v-model="update.body"
+          type="textarea"
+          placeholder="Please enter Description here..."
+        ></el-input>
+      </el-card>
+    </div>
+    <RelatedLessonMenu
+      :facilities="facilities"
+      :facilityGroups="facilityGroups"
+      :relatedTasks="relatedTasks"
+      :relatedIssues="relatedIssues"
+      :relatedRisks="relatedRisks"
+      @add-related-tasks="addRelatedTasks"
+      @add-related-issues="addRelatedIssues"
+      @add-related-risks="addRelatedRisks"
+      ref="menu"
+    />
+  </form>
+</template>
+
+<script>
+import { mapActions, mapMutations, mapGetters } from "vuex";
+import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
+import FormTabs from "./../../shared/FormTabs";
+import AttachmentInput from "./../../shared/attachment_input.vue";
+
+export default {
+  name: "LessonForm",
+  props: ["facility"],
+  components: {
+    FormTabs,
+    RelatedLessonMenu,
+    AttachmentInput,
+  },
+  data() {
+    return {
+      formLoaded: false,
+      currentTab: "tab1",
+      tabs: [
+        {
+          label: "Lesson Info",
+          key: "tab1",
+          closable: false,
+          form_fields: [
+            "Lesson Name",
+            "Description",
+            "Submitted By",
+            "Date",
+            "Category",
+            "Stage",
+          ],
+        },
+        {
+          label: "Related",
+          key: "tab2",
+          closable: false,
+          form_fields: [
+            "Projects",
+            "Related Task",
+            "Related Issue",
+            "Related Risk",
+          ],
+        },
+        {
+          label: "Successes",
+          key: "tab3",
+          closable: false,
+          form_fields: [],
+        },
+        {
+          label: "Failures",
+          key: "tab4",
+          closable: false,
+          form_fields: [],
+        },
+        {
+          label: "Best Practices",
+          key: "tab5",
+          closable: false,
+          form_fields: [],
+        },
+        // {
+        //   label: "Files & Links",
+        //   key: "tab6",
+        //   closable: false,
+        //   form_fields: ["Files"],
+        // },
+        {
+          label: "Updates",
+          key: "tab7",
+          closable: false,
+          form_fields: [],
+        },
+      ],
+      relatedTasks: [],
+      relatedIssues: [],
+      relatedRisks: [],
+      successes: [],
+      deleteSuccesses: [],
+      failures: [],
+      deleteFailures: [],
+      bestPractices: [],
+      deleteBestPractices: [],
+      updates: [],
+      deleteUpdates: [],
+      files: [],
+    };
+  },
+  methods: {
+    ...mapActions(["addLesson", "fetchLesson", "updateLesson"]),
+    ...mapMutations(["SET_LESSON", "SET_LESSON_STATUS"]),
+    saveLesson() {
+      this.$validator.validate().then((success) => {
+        if (!success) {
+          return;
+        }
+
+        let lessonData = {
+          lesson: {
+            title: this.lesson.title,
+            description: this.lesson.description,
+            date: this.lesson.date,
+            task_type_id: this.lesson.task_type_id,
+            user_id: this.lesson.user_id,
+            lesson_stage_id: this.lesson.lesson_stage_id,
+            // Array values below
+            sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
+            sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
+            sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
+            successes: [...this.successes, ...this.deleteSuccesses],
+            failures: [...this.failures, ...this.deleteFailures],
+            best_practices: [
+              ...this.bestPractices,
+              ...this.deleteBestPractices,
+            ],
+            notes_attributes: [...this.updates, ...this.deleteUpdates],
+            attach_files: [...this.files],
+          },
+        };
+
+        // Check to add or update existing lesson by confirming an id
+        if (this.lesson.id) {
+          this.updateLesson({
+            ...lessonData,
+            ...this.$route.params,
+          });
+        } else {
+          this.addLesson({
+            ...lessonData,
+            ...this.$route.params,
+          });
+        }
+      });
+    },
+    close() {
+      this.$router.push(
+        `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
+      );
+    },
+    onChangeTab(tab) {
+      this.currentTab = tab ? tab.key : "tab1";
+    },
+    openContextMenu(e, item) {
+      e.preventDefault();
+      this.$refs.menu.open(e, item);
+    },
+    addRelatedTasks(tasks) {
+      tasks.forEach((task) => this.relatedTasks.push(task));
+    },
+    removeRelatedTask({ id }) {
+      this.relatedTasks.splice(
+        this.relatedTasks.findIndex((task) => task.id == id),
+        1
+      );
+    },
+    addRelatedIssues(issues) {
+      issues.forEach((issue) => this.relatedIssues.push(issue));
+    },
+    removeRelatedIssue({ id }) {
+      this.relatedIssues.splice(
+        this.relatedIssues.findIndex((issue) => issue.id == id),
+        1
+      );
+    },
+    addRelatedRisks(risks) {
+      risks.forEach((risk) => this.relatedRisks.push(risk));
+    },
+    removeRelatedRisk({ id }) {
+      this.relatedRisks.splice(
+        this.relatedRisks.findIndex((risk) => risk.id == id),
+        1
+      );
+    },
+    addSuccess() {
+      this.successes.unshift({ finding: "", recommendation: "" });
+    },
+    removeSuccess(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Success?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.successes[index]._destroy = true;
+          this.deleteSuccesses.push(this.successes[index]);
+          this.successes.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    addFailure() {
+      this.failures.unshift({ finding: "", recommendation: "" });
+    },
+    removeFailure(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Failure?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.failures[index]._destroy = true;
+          this.deleteFailures.push(this.successes[index]);
+          this.failures.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    addBestPractice() {
+      this.bestPractices.unshift({ finding: "", recommendation: "" });
+    },
+    removeBestPractice(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Best Practice?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.bestPractices[index]._destroy = true;
+          this.deleteBestPractices.push(this.successes[index]);
+          this.bestPractices.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    addUpdate() {
+      this.updates.unshift({ body: "" });
+    },
+    removeUpdate(index) {
+      this.$confirm(
+        "Are you sure you want to remove the selected Update?",
+        "Warning",
+        {
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.updates[index]._destroy = true;
+          this.deleteUpdates.push(this.updates[index]);
+          this.updates.splice(index, 1);
+        })
+        .catch(() => {});
+    },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+    },
+    addFile(files) {
+      console.log("Adding files...");
+      console.log(files);
+
+      files.forEach((file) => {
+        file.guid = this.guid();
+      });
+
+      console.log(files);
+
+      this.files = files;
+    },
+    downloadFile(file) {
+      let url = window.location.origin + file.uri;
+      window.open(url, "_blank");
+    },
+  },
+  computed: {
+    ...mapGetters([
+      "activeProjectUsers",
+      "contentLoaded",
+      "facilities",
+      "facilityGroups",
+      "lesson",
+      "lessonStages",
+      "lessonStatus",
+      "taskTypes",
+    ]),
+    tab() {
+      if (this.$route.path.includes("map")) {
+        return "map";
+      } else if (this.$route.path.includes("sheet")) {
+        return "sheet";
+      } else if (this.$route.path.includes("lessons")) {
+        return "lessons";
+      } else {
+        return "kanban";
+      }
+    },
+    projectNameLink() {
+      if (this.$route.path.includes("lessons")) {
+        return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+      }
+    },
+    isMapView() {
+      return this.$route.name === "MapLessonForm";
+    },
+  },
+  mounted() {
+    if (this.$route.params.lessonId && this.$route.params.lessonId != "new") {
+      this.fetchLesson({
+        id: this.$route.params.lessonId,
+        ...this.$route.params,
+      });
+    }
+  },
+  beforeDestroy() {
+    // Clear current lesson in store
+    this.SET_LESSON({});
+  },
+  watch: {
+    lesson: {
+      handler(newValue, oldValue) {
+        if (this.contentLoaded && Object.keys(oldValue).length === 0) {
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
+          this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
+        }
+      },
+    },
+    contentLoaded: {
+      handler() {
+        if (this.lesson) {
+          this.relatedTasks = this.lesson.sub_tasks;
+          this.relatedIssues = this.lesson.sub_issues;
+          this.relatedRisks = this.lesson.sub_risks;
+          this.successes = this.lesson.successes;
+          this.failures = this.lesson.failures;
+          this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
+        }
+      },
+    },
+    lessonStatus: {
+      handler() {
+        if (this.lessonStatus == 200) {
+          this.$message({
+            message: `${this.lesson.title} was saved successfully.`,
+            type: "success",
+            showClose: true,
+          });
+          this.SET_LESSON_STATUS(0);
+          //Route to newly created task form page
+          if (this.$route.path.includes("sheet")) {
+            this.$router.push(
+              `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+            );
+          } else {
+            this.$router.push(
+              `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/${this.lesson.id}`
+            );
+          }
+        }
+      },
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+a {
+  color: #007bff;
+}
+a:hover {
+  text-decoration: unset;
+}
+.text-smaller {
+  font-size: smaller;
+}
+.success-card,
+.failure-card,
+.best-practice-card,
+.update-card {
+  background-color: #ededed;
+  border-color: lightgray;
+  border-left: 10px solid #5aaaff;
+}
+.error-list {
+  list-style-type: circle;
+  li {
+    width: max-content;
+  }
+}
+.text-danger {
+  font-size: 13px;
+}
+</style>

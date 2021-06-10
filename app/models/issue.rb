@@ -38,52 +38,14 @@ class Issue < ApplicationRecord
 
     append :title => " - Copy"
   end
-  
-  def self.params_to_permit
-    [
-      :title,
-      :description,
-      :issue_type_id,
-      :issue_stage_id,
-      :issue_severity_id,
-      :facility_project_id,
-      :task_type_id,
-      :progress,
-      :start_date,
-      :due_date,
-      :auto_calculate,
-      :watched,
-      :kanban_order,
-      :important,
-      :on_hold, 
-      :draft, 
-      issue_files: [],
-      user_ids: [],
-      sub_task_ids: [],
-      sub_issue_ids: [],
-      sub_risk_ids:[],
-      checklists_attributes: [
-        :id,
-        :_destroy,
-        :text,
-        :user_id,
-        :checked,
-        :due_date,
-        :position,
-        progress_lists_attributes: [
-          :id,
-          :_destroy,
-          :body,
-          :checklist_id
-        ]
-      ],
-      notes_attributes: [
-        :id,
-        :_destroy,
-        :user_id,
-        :body
-       ]
-    ]
+
+  def lesson_json
+    {
+      id: id,
+      title: title,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
   end
 
   def to_json(options = {})

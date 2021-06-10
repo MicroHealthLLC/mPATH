@@ -10,6 +10,7 @@ import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
+import lessonStore from "./modules/lesson-store";
 
 // utility function
 const getSimpleDate = (date) => {
@@ -27,7 +28,8 @@ export default new Vuex.Store({
     projectStore,
     taskStore,
     issueStore,
-    riskStore
+    riskStore,
+    lessonStore
   },
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
@@ -73,6 +75,7 @@ export default new Vuex.Store({
     // Datatable items per page filters
     tasksPerPageFilter: null,
     risksPerPageFilter: null,
+    lessonsPerPageFilter: null,
     issuesPerPageFilter: null,
     membersPerPageFilter:  null,
 
@@ -212,6 +215,7 @@ export default new Vuex.Store({
     setTasksPerPageFilter: (state, filter) => state.tasksPerPageFilter = filter,
     setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
     setRisksPerPageFilter: (state, filter) => state.risksPerPageFilter = filter,
+    setLessonsPerPageFilter: (state, filter) => state.lessonsPerPageFilter = filter,
 
     setCalendarViewFilter: (state, filter) => state.calendarViewFilter = filter,
 
@@ -446,6 +450,17 @@ export default new Vuex.Store({
       ]
       return options;
     },
+    getLessonsPerPageFilter: state => state.lessonsPerPageFilter,
+    getLessonsPerPageFilterOptions: (state, getters) => {
+      var options = [
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
+      ]
+      return options;
+    },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
         {id: 'active', name: 'Active'},
@@ -581,6 +596,7 @@ export default new Vuex.Store({
         ['tasksPerPageFilter', 'Tasks Per Page'],
         ['issuesPerPageFilter', 'Issues Per Page'],
         ['risksPerPageFilter', 'Risks Per Page'],
+        ['lessonsPerPageFilter', 'Lessons Per Page'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approaches'],
         ['riskStageFilter', 'Risk Stages'],
@@ -817,6 +833,7 @@ export default new Vuex.Store({
     tasksPerPageFilter: state => state.tasksPerPageFilter,
     issuesPerPageFilter: state => state.issuesPerPageFilter,
     risksPerPageFilter: state => state.risksPerPageFilter,
+    lessonsPerPageFilter: state => state.lessonsPerPageFilter,
     calendarViewFilter: state => state.calendarViewFilter,
 
 
@@ -1694,6 +1711,7 @@ export default new Vuex.Store({
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
             resolve()
           })
           .catch((err) => {
@@ -1923,6 +1941,7 @@ export default new Vuex.Store({
         'tasksPerPageFilter',
         'issuesPerPageFilter',
         'risksPerPageFilter',
+        'lessonsPerPageFilter',
 
         'riskStageFilter',
         'riskApproachFilter',
