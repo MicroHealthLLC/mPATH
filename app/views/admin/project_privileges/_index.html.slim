@@ -13,6 +13,7 @@ div{id="project_privileges_list"}
     - projects = active_projects.select{|p| project_ids.include?(p.id.to_s) }
 
     fieldset(class="inputs has_many_fields")
+      input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
       ol
         li(class="select input required")
           div{id="project_privileges#{index}"}
@@ -30,8 +31,3 @@ div{id="project_privileges_list"}
             
             - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
               input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
-
-        input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
-        
-
-

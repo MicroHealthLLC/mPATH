@@ -2,6 +2,9 @@
 - fieldset_id = SecureRandom.hex(3)
 
 fieldset(class="inputs has_many_fields" id=(fieldset_id))
+  a{href="javascript:void(0)" class="button" onclick="$('##{fieldset_id}').remove()"} Remove
+  - if false
+    input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
   ol
     li(class="select input required")
       div{id="project_privileges#{index}"}
@@ -19,9 +22,7 @@ fieldset(class="inputs has_many_fields" id=(fieldset_id))
         - ProjectPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
           input{type="checkbox" value="#{permission[1]}" name="user[project_privileges_attributes][#{index}][#{m_name}][]"}= permission[0]
 
-    a{href="javascript:void(0)" class="button" onclick="$('##{fieldset_id}').remove()"} Remove
-    - if false
-      input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
+
     
 
 javascript:

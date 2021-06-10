@@ -13,6 +13,7 @@ div{id="facility_privilege_list"}
     - project = active_projects.detect{|p| p.id == fp.project_id}
     - next if !project
     fieldset(class="inputs has_many_fields")
+      input(type="checkbox" value="true" name="user[facility_privileges_attributes][#{index}][_destroy]") Remove
       ol
         li(class="select input required")
           div{id="facility_privilege#{index}"}
@@ -39,8 +40,3 @@ div{id="facility_privilege_list"}
 
             - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
               input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
-
-        input(type="checkbox" value="true" name="user[facility_privileges_attributes][#{index}][_destroy]") Remove
-        
-
-
