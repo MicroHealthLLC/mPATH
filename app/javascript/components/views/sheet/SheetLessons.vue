@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="my-3">
       <el-input type="search" placeholder="Search Lessons">
         <el-button slot="prepend" icon="el-icon-search"></el-button>

@@ -1,5 +1,5 @@
 <template>
-  <form class="mx-4" @submit.prevent="saveLesson" accept-charset="UTF-8">
+  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
     <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div>
@@ -27,11 +27,11 @@
           <span>{{ lesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
-      <div class="ml-auto d-flex">
+      <div class="ml-auto d-flex align-items-center">
         <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
           Save Lesson
         </button>
-        <button disabled class="btn btn-sm sticky-btn btn-primary mr-2">
+        <button disabled class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
           Read Only
         </button>
         <button
@@ -603,6 +603,7 @@ export default {
             failures: [...this.failures],
             best_practices: [...this.bestPractices],
             notes_attributes: [...this.updates],
+            attach_files: [...this.files],
           },
         };
 
@@ -738,14 +739,13 @@ export default {
       console.log("Adding files...");
       console.log(files);
 
-      let lessonFiles = [...this.lesson.attach_files];
-
       files.forEach((file) => {
         file.guid = this.guid();
-        lessonFiles.push(file);
       });
 
-      this.files = lessonFiles;
+      console.log(files);
+
+      this.files = files;
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
