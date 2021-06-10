@@ -555,12 +555,12 @@ export default {
           closable: false,
           form_fields: [],
         },
-        {
-          label: "Files & Links",
-          key: "tab6",
-          closable: false,
-          form_fields: ["Files"],
-        },
+        // {
+        //   label: "Files & Links",
+        //   key: "tab6",
+        //   closable: false,
+        //   form_fields: ["Files"],
+        // },
         {
           label: "Updates",
           key: "tab7",
