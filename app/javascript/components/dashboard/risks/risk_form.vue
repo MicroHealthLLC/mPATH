@@ -1991,8 +1991,6 @@ export default {
       selectedRiskStage: null,
       relatedIssues: [],
       editToggle: false,
-      onHold: false,
-      draft: false,
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
@@ -2115,6 +2113,9 @@ export default {
         dueDate: "",
         autoCalculate: true,
         important: false,
+        onHold: false,
+        draft: false,
+        ongoing: false,
         // riskApproverUserIds: [],
         responsibleUserIds: [],
         accountableUserIds: [],
@@ -3128,6 +3129,16 @@ export default {
     },
     "DV_risk.startDate"(value) {
       if (!value) this.DV_risk.dueDate = "";
+    },
+    "DV_risk.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
+        }
+      }
     },
     "DV_risk.checklists": {
       handler: function(value) {

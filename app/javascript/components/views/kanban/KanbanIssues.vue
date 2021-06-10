@@ -164,7 +164,7 @@ export default {
 
       let taskIssueUsers = this.getTaskIssueUserFilter;
 
-      return _.orderBy(
+      let issues = _.orderBy(
         _.filter(this.facility.issues, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
 
@@ -192,6 +192,10 @@ export default {
             valid = valid && typeIds.includes(resource.issueTypeId);
           if (taskTypeIds.length > 0)
             valid = valid && taskTypeIds.includes(resource.taskTypeId);
+          if (severityIds.length > 0)
+            valid = valid && severityIds.includes(resource.issueSeverityId)
+          if (stageIds.length > 0) 
+            valid = valid && stageIds.includes(resource.issueStageId)
 
           if (noteDates && noteDates[0] && noteDates[1]) {
             let startDate = moment(noteDates[0], "YYYY-MM-DD");
@@ -226,25 +230,31 @@ export default {
               valid && resource.progress >= min && resource.progress <= max;
           }
 
-          if (
-            this.searchStageId &&
-            this.searchStageId == resource.issueStageId
-          ) {
-            if (search_query)
-              valid = valid && search_query.test(resource.title);
-          } else if (stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.issueStageId);
-          }
-          if (sidebar_search_query)
-            valid = valid && sidebar_search_query.test(resource.title);
-          if (severityIds.length > 0)
-            valid = valid && severityIds.includes(resource.issueSeverityId);
-
+          if (search_query) valid = valid && search_query.test(resource.title) ||
+            valid && search_query.test(resource.issueType) ||
+            valid && search_query.test(resource.issueSeverity) ||
+            valid && search_query.test(resource.userNames)
+          
+          if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title) ||
+            valid && sidebar_search_query.test(resource.issueType) ||
+            valid && sidebar_search_query.test(resource.issueSeverity) ||
+            valid && sidebar_search_query.test(resource.userNames) 
+          
           return valid;
         }),
         "kanbanOrder",
         "asc"
       );
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
+        
+        return issues
+        
+       } else  {
+        
+        issues  = issues.filter(t => t.draft == false && t.onHold == false)
+        return issues
+      
+       } 
     },
     C_taskTypeFilter: {
       get() {
