@@ -25,19 +25,13 @@ export default {
     facilities: Array,
     facilityGroups: Array,
     lesson: Object,
+    routeName: String
   },
   data() {
     return {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
-      defaultProps: {
-        children: "children",
-        label: "label",
-        disabled: "disabled",
-      },
-      filterTree: "",
-      submitted: false,
     };
   },
   computed: {
@@ -70,7 +64,7 @@ export default {
     },
     openLesson(id) {
       this.$router.push({
-        name: "SheetLessonForm",
+        name: this.routeName,
         params: {
           programId: this.$route.params.programId,
           projectId: this.$route.params.projectId,

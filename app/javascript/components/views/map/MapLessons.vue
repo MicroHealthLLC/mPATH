@@ -16,6 +16,8 @@
         :key="index"
         class="lesson-card my-1"
         @click.native="openLesson(lesson.id)"
+        @mouseup.right.native="openContextMenu($event, lesson)"
+        @contextmenu.prevent=""
       >
         <div class="font-lg card-title">{{ lesson.title }}</div>
         <div class="font-sm">
@@ -29,16 +31,30 @@
         </div>
       </el-card>
     </div>
+    <!-- The context-menu appears only if table row is right-clicked -->
+    <LessonContextMenu
+      :lesson="clickedLesson"
+      :display="showContextMenu"
+      routeName="MapLessonForm"
+      ref="menu"
+    >
+    </LessonContextMenu>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import LessonContextMenu from "./../../shared/LessonContextMenu";
 
 export default {
+  components: {
+    LessonContextMenu,
+  },
   data() {
     return {
       search: "",
+      clickedLesson: {},
+      showContextMenu: false,
     };
   },
   methods: {
@@ -64,6 +80,11 @@ export default {
       } else {
         return "N/A";
       }
+    },
+    openContextMenu(e, lesson) {
+      this.clickedLesson = lesson;
+      e.preventDefault();
+      this.$refs.menu.open(e);
     },
   },
   computed: {

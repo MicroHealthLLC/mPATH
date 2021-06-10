@@ -38,6 +38,7 @@
     <LessonContextMenu
       :lesson="clickedLesson"
       :display="showContextMenu"
+      routeName="SheetLessonForm"
       ref="menu"
     >
     </LessonContextMenu>
