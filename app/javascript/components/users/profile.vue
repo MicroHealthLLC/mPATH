@@ -330,7 +330,7 @@
             if(this.selectedNavigation){
               if(this.selectedNavigation.id == "kanban"){
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
-              }else if(value.id == "map" || value.id == "sheet"){
+              }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
                 this.subNavigationOptions = allowed_sub_navigation_tabs
               }else if(['gantt_chart', 'member_list'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
