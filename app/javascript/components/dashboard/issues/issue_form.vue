@@ -2048,6 +2048,16 @@ export default {
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
     },
+    "DV_issue.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
+        }
+      }
+    },
     "DV_issue.checklists": {
       handler: function(value) {
         if (this.DV_issue.autoCalculate) this.calculateProgress(value);

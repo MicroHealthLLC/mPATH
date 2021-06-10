@@ -2000,7 +2000,10 @@ export default {
     "DV_task.dueDate"(value) {
       if (this._ismounted && this.facility.dueDate) {
         if (moment(value).isAfter(this.facility.dueDate, "day")) {
-          alert("Task Due Date is past Project Due Date!");
+          this.$alert(`${this.DV_task.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_task.text} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
         }
       }
     },
