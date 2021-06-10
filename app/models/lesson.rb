@@ -247,10 +247,10 @@ class Lesson < ApplicationRecord
         notes_objs = []
         notes_attributes.each do |value|
           if value[:_destroy].present?
-            n = existing_notes.detect{|e| e.id.to_s == value["id"]}.destroy
+            n = existing_notes.detect{|e| e.id == value[:id]}
             n.destroy if n
           elsif value[:id].present?
-            n = existing_notes.detect{|e| e.id.to_s == value["id"]}
+            n = existing_notes.detect{|e| e.id == value[:id]}
             n.update(value) if n
           else
             notes_objs << Note.new(value.merge({user_id: user.id, noteable_id: lesson.id, noteable_type: "Lesson"}) )
@@ -265,10 +265,10 @@ class Lesson < ApplicationRecord
 
         params_lesson_details.each do |value|
           if value[:_destroy].present?
-            l = existing_lesson_details.detect{|e| e.id.to_s == value[:id]}
+            l = existing_lesson_details.detect{|e| e.id == value[:id]}
             l.destroy if l
           elsif value[:id].present?
-            l = existing_lesson_details.detect{|e| e.id.to_s == value[:id]}
+            l = existing_lesson_details.detect{|e| e.id == value[:id]}
             l.update(value) if l
           else
             lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id,user_id: user.id}) )
