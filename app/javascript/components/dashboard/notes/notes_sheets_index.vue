@@ -205,6 +205,11 @@
     float: right;
     margin-top: -50px;
 }
+  @media screen and (max-width: 1500px) {
+  .filters-wrapper {
+    width: 65% !important;
+  } 
+}
   // notes-rows creates a scroallable div within a container, preventing the need to scroll beyond the viewport height
   // .notes-rows {
   //   overflow-y: scroll;

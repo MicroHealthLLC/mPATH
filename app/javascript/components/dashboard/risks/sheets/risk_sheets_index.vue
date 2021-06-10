@@ -841,7 +841,7 @@
 }
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
-    width: 70% !important;
+    width: 65% !important;
   } 
 }
 </style>

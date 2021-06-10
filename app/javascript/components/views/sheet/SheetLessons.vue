@@ -315,4 +315,9 @@ td {
     float: right;
     margin-top: -50px;
  }
+   @media screen and (max-width: 1500px) {
+  .w-70 {
+    width: 65% !important;
+  } 
+}
 </style>
