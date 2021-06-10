@@ -450,7 +450,7 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,  
+            // color: this.colors.defaultColor,  
             hasStar: this.star[i] , 
             isDraft: this.draft[i],
             isOnHold: this.onhold[i]              

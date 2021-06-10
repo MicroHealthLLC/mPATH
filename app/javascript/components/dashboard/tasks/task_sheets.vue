@@ -34,13 +34,14 @@
             <span v-if="task.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
             <span v-if="
+                      task.important == false &&
                       task.ongoing == false && 
                       task.isOverdue == false &&
                       task.onHold == false &&  
                       task.draft == false && 
                       task.progress < 100 "             
                     >
-                  <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+                  No flags at this time         
             </span>
               
         </td>

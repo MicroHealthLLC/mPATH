@@ -21,14 +21,14 @@
             <span v-show="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
             <span v-show="task.onHold" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary  mr-1"  /></span>   
             <span v-show="task.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
-             <span v-if="                    
+             <span v-if="                                      
                       task.ongoing == false && 
                       task.isOverdue == false &&
                       task.onHold == false &&  
                       task.draft == false && 
                       task.progress < 100 "             
                     >
-                  <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+                        
             </span>
                
           </div>

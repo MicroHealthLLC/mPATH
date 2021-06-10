@@ -26,8 +26,7 @@
                   issue.onHold == false &&  
                   issue.draft == false && 
                   issue.progress < 100 "             
-                >                
-                <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+                >                       
                </span>          
                 
                 </div>
