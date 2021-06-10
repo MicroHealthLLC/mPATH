@@ -33,6 +33,29 @@
           <td>I am the last update</td>
         </tr>
       </table>
+       <div class="float-right mb-4 mt-2 font-sm">
+          <div class="simple-select d-inline-block text-right font-sm">
+              <span>Displaying </span>
+                  <el-select
+                  v-model="C_LessonsPerPage"
+                  class="w-33"
+                  track-by="value"
+                  value-key="id"
+                  >
+                  <el-option
+                  v-for="item in getLessonsPerPageFilterOptions"
+                  :value="item"
+                  :key="item.id"
+                  :label="item.name"
+                  >
+                  </el-option>
+                  </el-select>
+            </div>
+            <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+              <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+              <button class="btn btn-sm page-btns" :load="log( Math.ceil(this.projectLessons.length / this.C_LessonsPerPage.value))" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.projectLessons.length / this.C_LessonsPerPage.value) }} </button>
+              <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+          </div>
     </div>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu
@@ -45,7 +68,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import LessonContextMenu from "./../../shared/LessonContextMenu";
 
 export default {
@@ -57,11 +80,13 @@ export default {
       activeSortValue: "",
       sortAsc: false,
       showContextMenu: false,
+      currentPage:1,
       clickedLesson: {},
     };
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
+    ...mapMutations(['setLessonsPerPageFilter']),
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/lessons/new`
@@ -76,6 +101,9 @@ export default {
           lessonId: id,
         },
       });
+    },
+    log(e){
+      console.log("this is projectLesson: " + e)
     },
     sortLessons(value) {
       // Determine whether to sort lessons ascending or descending
@@ -119,6 +147,12 @@ export default {
       // Store active sort value
       this.activeSortValue = value;
     },
+    nextPage:function() {
+        if((this.currentPage*this.C_LessonsPerPage.value) < this.projectLessons.length) this.currentPage++;
+      },
+    prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+      },
     sortLessonsByDate() {
       // Determine whether to sort lessons ascending or descending
       if (this.activeSortValue !== "date" || !this.sortAsc) {
@@ -149,7 +183,20 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["lessonsLoaded", "projectLessons"]),
+    ...mapGetters([
+      "lessonsLoaded", 
+      "projectLessons",
+      "getLessonsPerPageFilterOptions",
+      "getLessonsPerPageFilter",
+    ]),
+     C_LessonsPerPage: {
+        get() {
+          return this.getLessonsPerPageFilter || {id: 3, name: '3', value: 3}
+        },
+        set(value) {
+          this.setLessonsPerPageFilter(value)
+        }
+     },
   },
   mounted() {
     this.fetchProjectLessons(this.$route.params);
@@ -172,4 +219,8 @@ export default {
 td {
   border: 1px solid #dee2e6;
 }
+.page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ }
 </style>
