@@ -25,6 +25,8 @@
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 
+                  issue.important == false &&
+                   issue.watched == false &&    
                   issue.progress < 100 "             
                 >                       
                </span>          

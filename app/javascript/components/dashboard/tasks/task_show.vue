@@ -24,6 +24,7 @@
              <span v-if="                                      
                       task.ongoing == false && 
                       task.isOverdue == false &&
+                      task.watched == false &&
                       task.onHold == false &&  
                       task.draft == false && 
                       task.progress < 100 "             

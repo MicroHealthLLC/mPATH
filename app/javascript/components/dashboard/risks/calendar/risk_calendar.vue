@@ -214,7 +214,7 @@
          <v-list-item >
            <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
-               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01' " class="mr-2"> 
+               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-2"> 
               <font-awesome-icon icon="retweet" class="text-success"  />   
               </span>   
                <span v-else>
