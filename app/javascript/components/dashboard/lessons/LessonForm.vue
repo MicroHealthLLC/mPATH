@@ -575,9 +575,13 @@ export default {
       relatedIssues: [],
       relatedRisks: [],
       successes: [],
+      deleteSuccesses: [],
       failures: [],
+      deleteFailures: [],
       bestPractices: [],
+      deleteBestPractices: [],
       updates: [],
+      deleteUpdates: [],
       files: [],
     };
   },
@@ -602,10 +606,10 @@ export default {
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
-            successes: [...this.successes],
-            failures: [...this.failures],
-            best_practices: [...this.bestPractices],
-            notes_attributes: [...this.updates],
+            successes: [...this.successes, ...this.deleteSuccesses],
+            failures: [...this.failures, ...this.deleteFailures],
+            best_practices: [...this.bestPractices, ...this.deleteBestPractices],
+            notes_attributes: [...this.updates, this.deleteUpdates],
             attach_files: [...this.files],
           },
         };
@@ -677,6 +681,8 @@ export default {
         }
       )
         .then(() => {
+          this.successes[index]._destroy = true;
+          this.deleteSuccesses.push(this.successes[index]);
           this.successes.splice(index, 1);
         })
         .catch(() => {});
@@ -695,6 +701,8 @@ export default {
         }
       )
         .then(() => {
+          this.failures[index]._destroy = true;
+          this.deleteFailures.push(this.successes[index]);
           this.failures.splice(index, 1);
         })
         .catch(() => {});
@@ -713,6 +721,8 @@ export default {
         }
       )
         .then(() => {
+          this.bestPractices[index]._destroy = true;
+          this.deleteBestPractices.push(this.successes[index]);
           this.bestPractices.splice(index, 1);
         })
         .catch(() => {});
@@ -731,6 +741,8 @@ export default {
         }
       )
         .then(() => {
+          this.updates[index]._destroy = true;
+          this.deleteUpdates.push(this.successes[index]);
           this.updates.splice(index, 1);
         })
         .catch(() => {});
