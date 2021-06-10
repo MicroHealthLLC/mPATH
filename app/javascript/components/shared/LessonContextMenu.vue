@@ -25,19 +25,13 @@ export default {
     facilities: Array,
     facilityGroups: Array,
     lesson: Object,
+    routeName: String
   },
   data() {
     return {
       left: 0, // left position
       top: 0, // top position
       show: false, // affect display of context menu
-      defaultProps: {
-        children: "children",
-        label: "label",
-        disabled: "disabled",
-      },
-      filterTree: "",
-      submitted: false,
     };
   },
   computed: {
@@ -60,22 +54,17 @@ export default {
       // updates position of context menu
       this.left = evt.pageX || evt.clientX;
       this.top = evt.pageY || evt.clientY;
-      //Prevents menu from getting clipped below window
-      if (evt.clientY > window.innerHeight / 2) {
-        this.top -= 200;
-      }
       //Prevents menu from getting clipped on right side of window
       if (evt.clientX > window.innerWidth / 2) {
         this.left -= 195;
       }
       // make element focused
-      // @ts-ignore
       Vue.nextTick(() => this.$el.focus());
       this.show = true;
     },
     openLesson(id) {
       this.$router.push({
-        name: "SheetLessonForm",
+        name: this.routeName,
         params: {
           programId: this.$route.params.programId,
           projectId: this.$route.params.projectId,

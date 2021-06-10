@@ -260,7 +260,8 @@ class Lesson < ApplicationRecord
       # end
 
       if notes_attributes.present?
-        existing_note_ids = self.note_ids
+        existing_notes = self.notes
+        existing_note_ids = existing_notes.map(&:id)
         notes_to_destroy = existing_note_ids
         notes_objs = []
         notes_attributes.each do |value|
@@ -269,7 +270,7 @@ class Lesson < ApplicationRecord
             n = existing_notes.detect{|e| e.id == value["id"].to_i}
             n.update(value) if n
           else
-            notes_objs << Note.new(value.merge({noteable_id: lesson.id, noteable_type: "Lesson"}) )
+            notes_objs << Note.new(value.merge({user_id: user.id, noteable_id: lesson.id, noteable_type: "Lesson"}) )
           end
         end
         Note.import(notes_objs) if notes_objs.any?

@@ -1,13 +1,19 @@
 <template>
-  <h1>MAP LESSON FORM</h1>
+  <div>
+    <LessonForm :facility="facility" />
+  </div>
 </template>
 
 <script>
-export default {
+import LessonForm from "./../../dashboard/lessons/LessonForm";
 
-}
+export default {
+  name: "SheetLessonForm",
+  props: ["facility"],
+  components: {
+    LessonForm,
+  },
+};
 </script>
 
-<style>
-
-</style>
+<style scoped></style>

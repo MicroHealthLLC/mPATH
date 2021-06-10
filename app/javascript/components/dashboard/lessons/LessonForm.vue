@@ -1,5 +1,5 @@
 <template>
-  <form class="mx-4" @submit.prevent="saveLesson" accept-charset="UTF-8">
+  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
     <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div>
@@ -27,11 +27,11 @@
           <span>{{ lesson.title || "(Lesson Name)" }}</span>
         </h5>
       </div>
-      <div class="ml-auto d-flex">
+      <div class="ml-auto d-flex align-items-center">
         <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
           Save Lesson
         </button>
-        <button disabled class="btn btn-sm sticky-btn btn-primary mr-2">
+        <button disabled class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
           Read Only
         </button>
         <button
@@ -439,8 +439,13 @@
     </div>
 
     <!-- Files & Links Tab -->
-    <div v-show="currentTab == 'tab6'" class="mt-2">
-      <h1>FILES AND LINKS</h1>
+    <div v-show="currentTab == 'tab6'" class="row mt-2">
+      <div class="col">
+        <AttachmentInput @input="addFile" />
+        <div v-for="(file, index) in files" :key="index">
+          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+        </div>
+      </div>
     </div>
     <!-- Updates Tab -->
     <div v-show="currentTab == 'tab7'" class="mt-2">
@@ -493,6 +498,7 @@
 import { mapActions, mapMutations, mapGetters } from "vuex";
 import RelatedLessonMenu from "../../shared/RelatedLessonMenu.vue";
 import FormTabs from "./../../shared/FormTabs";
+import AttachmentInput from "./../../shared/attachment_input.vue";
 
 export default {
   name: "LessonForm",
@@ -500,6 +506,7 @@ export default {
   components: {
     FormTabs,
     RelatedLessonMenu,
+    AttachmentInput,
   },
   data() {
     return {
@@ -568,6 +575,7 @@ export default {
       failures: [],
       bestPractices: [],
       updates: [],
+      files: [],
     };
   },
   methods: {
@@ -587,14 +595,15 @@ export default {
             task_type_id: this.lesson.task_type_id,
             user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
-
+            // Array values below
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes],
             failures: [...this.failures],
             best_practices: [...this.bestPractices],
-            // updates: [...this.updates],
+            notes_attributes: [...this.updates],
+            attach_files: [...this.files],
           },
         };
 
@@ -726,6 +735,22 @@ export default {
     author(id) {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
+    addFile(files) {
+      console.log("Adding files...");
+      console.log(files);
+
+      files.forEach((file) => {
+        file.guid = this.guid();
+      });
+
+      console.log(files);
+
+      this.files = files;
+    },
+    downloadFile(file) {
+      let url = window.location.origin + file.uri;
+      window.open(url, "_blank");
+    },
   },
   computed: {
     ...mapGetters([
@@ -777,6 +802,7 @@ export default {
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
         }
       },
     },
@@ -789,6 +815,7 @@ export default {
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
+          this.updates = this.lesson.notes;
         }
       },
     },

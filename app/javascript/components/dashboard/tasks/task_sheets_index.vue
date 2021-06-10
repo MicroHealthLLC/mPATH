@@ -1,7 +1,7 @@
 <template>
   <div id="tasks-index" class="my-4 ml-1" data-cy="task_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center justify-content-between mb-2 w-75 filters-wrapper">
+      <div class="d-flex align-item-center justify-content-between mb-2 w-70 filters-wrapper">
          <div class="ml-2 task-search-bar w-100">
           <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
            <el-input

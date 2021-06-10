@@ -78,6 +78,7 @@
             $route.name !== 'MapTaskForm' &&
             $route.name !== 'MapIssueForm' &&
             $route.name !== 'MapRiskForm' &&
+            $route.name !== 'MapLessonForm' &&
             $route.name !== 'MapNoteForm'
         "
         class="d-flex align-items-center my-2"
@@ -91,6 +92,7 @@
             $route.name !== 'MapTaskForm' &&
             $route.name !== 'MapIssueForm' &&
             $route.name !== 'MapRiskForm' &&
+            $route.name !== 'MapLessonForm' &&
             $route.name !== 'MapNoteForm'
         "
       />

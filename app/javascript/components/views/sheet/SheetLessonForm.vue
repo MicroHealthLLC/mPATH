@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LessonForm :facility="facility" />
+    <LessonForm class="mx-4" :facility="facility" />
   </div>
 </template>
 
