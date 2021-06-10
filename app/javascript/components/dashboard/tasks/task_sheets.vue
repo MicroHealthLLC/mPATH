@@ -35,6 +35,7 @@
             <span v-if="task.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
             <span v-if="
                       task.important == false &&
+                      task.watched == false &&
                       task.ongoing == false && 
                       task.isOverdue == false &&
                       task.onHold == false &&  

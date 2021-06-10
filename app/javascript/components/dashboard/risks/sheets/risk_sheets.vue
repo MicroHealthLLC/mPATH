@@ -42,12 +42,13 @@
                 <span v-if="risk.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
                 <span v-if="                   
                      risk.ongoing == false && 
+                     risk.watched == false &&
                      risk.isOverdue == false &&
                      risk.onHold == false &&  
                      risk.draft == false && 
                      risk.progress < 100 "             
                      class="text-secondary">
-                   <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>                
+                    No flags at this time           
                 </span>          
          </td>  
         <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
