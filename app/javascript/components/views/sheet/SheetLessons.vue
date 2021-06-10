@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="my-3">
-      <el-input type="search" placeholder="Search Lessons">
+      <el-input type="search" placeholder="Search Lessons" v-model="search">
         <el-button slot="prepend" icon="el-icon-search"></el-button>
       </el-input>
     </div>
@@ -10,7 +10,7 @@
         <font-awesome-icon icon="plus-circle" />
         Add Lesson
       </button>
-      <table class="my-3 w-100">
+      <table v-if="projectLessons.length > 0" class="my-3 w-100">
         <colgroup></colgroup>
         <tr class="table-head">
           <th @click="sortLessons('title')">Lesson</th>
@@ -20,19 +20,21 @@
           <th>Last Update</th>
         </tr>
         <tr
-          v-for="lesson in projectLessons"
+          v-for="lesson in filteredLessons"
           :key="lesson.id"
           @click="openLesson(lesson.id)"
           @mouseup.right="openContextMenu($event, lesson)"
           @contextmenu.prevent=""
         >
           <td>{{ lesson.title }}</td>
-          <td>{{ lesson.date }}</td>
+          <td>{{ formatDate(new Date(lesson.date)) }}</td>
           <td>{{ lesson.description }}</td>
-          <td>Someone</td>
+          <td>{{ author(lesson.user_id) }}</td>
           <td>I am the last update</td>
         </tr>
       </table>
+
+      <div v-else class="text-danger alt-text mt-4">No Lessons found...</div>
     </div>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu
@@ -59,6 +61,7 @@ export default {
       sortAsc: false,
       showContextMenu: false,
       clickedLesson: {},
+      search: "",
     };
   },
   methods: {
@@ -143,6 +146,9 @@ export default {
       // Store active sort value
       this.activeSortValue = "date";
     },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+    },
     openContextMenu(e, lesson) {
       this.clickedLesson = lesson;
       e.preventDefault();
@@ -150,7 +156,17 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["lessonsLoaded", "projectLessons"]),
+    ...mapGetters([
+      "activeProjectUsers",
+      "contentLoaded",
+      "lessonsLoaded",
+      "projectLessons",
+    ]),
+    filteredLessons() {
+      return this.projectLessons.filter((lesson) =>
+        lesson.title.toLowerCase().match(this.search.toLowerCase())
+      );
+    },
   },
   mounted() {
     this.fetchProjectLessons(this.$route.params);
