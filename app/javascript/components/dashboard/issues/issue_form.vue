@@ -1262,11 +1262,7 @@ export default {
       selectedIssueType: null,
       selectedTaskType: null,
       selectedIssueSeverity: null,
-<<<<<<< HEAD
       editToggle: false,  
-=======
-      editToggle: false,      
->>>>>>> 13b541b3ae726d511128e03e978a04dd32eb47bc
       selectedIssueStage: null,
       issueUsers: [],
       responsibleUsers: null,
