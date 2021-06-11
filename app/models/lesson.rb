@@ -87,9 +87,9 @@ class Lesson < ApplicationRecord
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
     all_lesson_details = self.lesson_details
-    successes = all_lesson_details.select{|l| l.detail_type == 0}
-    failures = all_lesson_details.select{|l| l.detail_type == 1}
-    best_practices = all_lesson_details.select{|l| l.detail_type == 2}
+    successes = all_lesson_details.select{|l| l.detail_type == "success"}
+    failures = all_lesson_details.select{|l| l.detail_type == "failure"}
+    best_practices = all_lesson_details.select{|l| l.detail_type == "best_practices"}
     
     self.as_json.merge(
       class_name: self.class.name,
@@ -211,21 +211,21 @@ class Lesson < ApplicationRecord
 
     if params_successes
       params_successes.each do |h|
-        h[:detail_type] = 0
+        h[:detail_type] = "success"
       end
       params_lesson_details = ( params_lesson_details + params_successes ).compact
     end
 
     if params_failures
       params_failures.each do |h|
-        h[:detail_type] = 1
+        h[:detail_type] = "failure"
       end
       params_lesson_details = ( params_lesson_details + params_failures ).compact
     end
 
     if params_best_practices
       params_best_practices.each do |h|
-        h[:detail_type] = 2
+        h[:detail_type] = "best_practices"
       end
       params_lesson_details = ( params_lesson_details + params_best_practices ).compact
     end
