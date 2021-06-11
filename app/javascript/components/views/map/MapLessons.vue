@@ -30,6 +30,9 @@
           >{{ category(lesson.task_type_id) }}
         </div>
       </el-card>
+      <div v-show="filteredLessons.length < 1" class="text-danger font-lg mt-4">
+        No Lessons found...
+      </div>
     </div>
     <!-- The context-menu appears only if table row is right-clicked -->
     <LessonContextMenu

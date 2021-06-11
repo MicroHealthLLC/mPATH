@@ -83,7 +83,7 @@
         "
         class="d-flex align-items-center my-2"
       >
-        <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
+        <span class="fbody-icon"><font-awesome-icon icon="suitcase"/></span>
         <h5 class="f-head mb-0">{{ currentFacility.facilityName }}</h5>
       </div>
       <ProjectTabs
@@ -167,6 +167,8 @@ export default {
         return "/issues";
       } else if (url.includes("risks")) {
         return "/risks";
+      } else if (url.includes("lessons")) {
+        return "/lessons";
       } else if (url.includes("notes")) {
         return "/notes";
       } else if (url.includes("kanban")) {
