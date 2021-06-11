@@ -679,7 +679,9 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
+    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
