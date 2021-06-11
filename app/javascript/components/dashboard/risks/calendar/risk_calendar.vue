@@ -182,22 +182,30 @@
             {{ selectedEvent.category }}            
           </v-list-item-title>
         </v-list-item>
-         <v-list-item>
-          <v-list-item-title>          
-            <span class="d-inline mr-1"><small><b>Identified Date:</b></small></span>            
-             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
-          </v-list-item-title>
-        </v-list-item>
+     
          <v-list-item>
           <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>Risk Approach (RA):</b></small></span>  
+           <span class="d-inline mr-1"><small><b>Risk Approach:</b></small></span>  
            <span class="upperCase"> {{ selectedEvent.ra }} </span>
           </v-list-item-title>
         </v-list-item>
           <v-list-item>
+          <v-list-item-title>          
+            <span class="d-inline mr-1"><small><b>Date Identified:</b></small></span>            
+             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
+          </v-list-item-title>
+        </v-list-item>
+          <v-list-item>
           <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>           
-               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+           <span class="d-inline mr-1">
+               <span v-if="selectedEvent.isOngoing == true">
+                 <small><b> Date Closed:</b></small>
+               </span>
+               <small v-else><b>RA Due Date:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true && 
+               selectedEvent.end == '2099-01-01'" class="mr-2">
+                <font-awesome-icon icon="retweet" class="text-success"  />
+                </span>   
                <span v-else>  
             {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
                </span>
@@ -206,7 +214,9 @@
          <v-list-item >
            <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
-               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-2"> 
+              <font-awesome-icon icon="retweet" class="text-success"  />   
+              </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   
@@ -456,7 +466,7 @@
       // For loop to determine length of Tasks 
       for (let i = 0; i < this.filteredCalendar.length; i++) {    
 
-      if(this.riskData[i].ongoing) {
+      if(this.riskData[i].ongoing && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){
        this.riskNames[i] = this.riskNames[i] + " (Ongoing)"
        this.riskEndDates[i] = '2099-01-01'
       }
@@ -471,7 +481,7 @@
           ra: this.riskApproach[i],    
           pastDue: this.overdue[i], 
           progess: this.percentage[i],
-          color: this.colors.defaultColor,   
+          // color: this.colors.defaultColor,   
           hasStar: this.star[i], 
           isOngoing: this.ongoing[i],
           isDraft: this.draft[i],

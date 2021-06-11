@@ -24,13 +24,16 @@
             <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="issue.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
-            <span v-if="                 
+            <span v-if="   
+                  issue.watched == false &&        
+                  issue.important == false &&     
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 
                   issue.progress < 100 "             
                 >
-                <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>          
+                No flags at this time
+                <!-- <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>           -->
             </span>          
          </td>
          <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">

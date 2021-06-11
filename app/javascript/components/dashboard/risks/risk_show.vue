@@ -28,8 +28,7 @@
                      risk.onHold == false &&  
                      risk.draft == false && 
                      risk.progress < 100 "             
-                     class="text-secondary">
-                   <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>                
+                     class="text-secondary">                    
             </span>          
            
             </div>
