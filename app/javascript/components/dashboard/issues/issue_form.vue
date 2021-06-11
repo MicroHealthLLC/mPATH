@@ -112,14 +112,20 @@
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
             >
-              <span v-show="DV_issue.watched" 
-                ><i class="fas fa-eye"></i
+              <span 
+                v-tooltip="`On Watch`" 
+                v-show="DV_issue.watched" 
+                ><i class="fas fa-eye mr-1"></i
               ></span>
-              <span v-show="!DV_issue.watched" 
-                ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
+              <span 
+                v-tooltip="`On Watch`" 
+                v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
               ></span>
            
-              <small style="vertical-align:text-top"> On Watch</small>
+              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
+                On Watch
+              </small>
             </span>
              <span
               v-if="_isallowed('write')"
@@ -127,14 +133,20 @@
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
             >
-              <span v-show="DV_issue.onHold">
+              <span 
+                v-tooltip="`On Hold`" 
+                v-show="DV_issue.onHold">
                <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
               </span>
-              <span v-show="!DV_issue.onHold">
+              <span 
+                v-tooltip="`On Hold`" 
+                v-show="!DV_issue.onHold">
                <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
               </span>
              
-              <small style="vertical-align:text-top"> On Hold</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> On Hold</small>
             </span>
            
 
@@ -144,13 +156,19 @@
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
             >
-               <span v-show="DV_issue.important">
+               <span 
+                v-tooltip="`Important`" 
+                v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
               </span>
-              <span v-show="!DV_issue.important">
+              <span 
+                v-tooltip="`Important`" 
+                v-show="!DV_issue.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>
-              <small style="vertical-align:text-top"> Important</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Important</small>
             </span>
              <span
               v-if="_isallowed('write')"
@@ -158,14 +176,20 @@
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
             >
-              <span v-show="DV_issue.draft">
+              <span 
+                v-tooltip="`Draft`" 
+                v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
-              <span v-show="!DV_issue.draft">
+              <span 
+                v-tooltip="`Draft`" 
+                v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
              
-              <small style="vertical-align:text-top"> Draft</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Draft</small>
             </span>
           </div>
 
