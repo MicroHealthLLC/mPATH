@@ -35,20 +35,36 @@
           Total: {{ projectLessons.length }}
         </button>
       </div>
+      <!-- Lessons Learned Table -->
       <div style="margin-bottom:50px" data-cy="lessons_table">
         <table
-          v-if="projectLessons.length > 0"
+          v-if="filteredLessons.length > 0"
           class="my-3 w-100"
           id="lessonsPdf"
           ref="table"
         >
           <tr class="table-head">
-            <th class="lesson-col" @click="sortLessons('title')">Lesson</th>
-            <th class="date-col" @click="sortLessonsByDate">Date</th>
-            <th class="desc-col" @click="sortLessons('description')">
-              Description
+            <th class="lesson-col" @click="sortLessons('title')">
+              Lesson
+              <span
+                v-show="activeSortValue == 'title'"
+                :class="{ 'move-down': sortAsc }"
+                ><font-awesome-icon :icon="sortIcon"
+              /></span>
+            </th>
+            <th class="date-col" @click="sortLessonsByDate">
+              Date
+              <span
+                v-show="activeSortValue == 'date'"
+                :class="{ 'move-down': sortAsc }"
+                ><font-awesome-icon :icon="sortIcon"
+              /></span>
             </th>
             <th class="added-by-col">Added By</th>
+            <th class="desc-col">
+              Description
+            </th>
+
             <th class="update-col">Last Update</th>
           </tr>
           <tr
@@ -60,19 +76,21 @@
           >
             <td>{{ lesson.title }}</td>
             <td>{{ formatDate(new Date(lesson.date)) }}</td>
-            <td>{{ lesson.description }}</td>
             <td>{{ author(lesson.user_id) }}</td>
+            <td>{{ lesson.description }}</td>
             <td>
               <span v-if="lesson.notes[0]">{{ lesson.notes[0].body }}</span>
             </td>
           </tr>
         </table>
 
+        <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
+        <!-- Lessons Per Page Toggle -->
         <div class="float-right mb-4 mt-2 font-sm">
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>
             <el-select
-              v-model="C_LessonsPerPage"
+              v-model="lessonsPerPage"
               class="w-33"
               track-by="value"
               value-key="id"
@@ -94,7 +112,7 @@
           </button>
           <button class="btn btn-sm page-btns" id="page-count">
             {{ currentPage }} of
-            {{ Math.ceil(projectLessons.length / C_LessonsPerPage.value) }}
+            {{ Math.ceil(projectLessons.length / lessonsPerPage.value) }}
           </button>
           <button class="btn btn-sm page-btns" @click="nextPage">
             <i class="fas fa-angle-right"></i>
@@ -134,10 +152,10 @@ export default {
       uri: "data:application/vnd.ms-excel;base64,",
       template:
         '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="https://www.w3.org/TR/2018/SPSD-html401-20180327/"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
-      base64: function(s) {
+      base64(s) {
         return window.btoa(unescape(encodeURIComponent(s)));
       },
-      format: function(s, c) {
+      format(s, c) {
         return s.replace(/{(\w+)}/g, function(m, p) {
           return c[p];
         });
@@ -181,7 +199,6 @@ export default {
       } else {
         this.sortAsc = false;
       }
-
       // Sort ascending
       if (this.sortAsc) {
         console.log(`Sorting by ${value}: Ascending`);
@@ -216,14 +233,14 @@ export default {
       // Store active sort value
       this.activeSortValue = value;
     },
-    nextPage: function() {
+    nextPage() {
       if (
-        this.currentPage * this.C_LessonsPerPage.value <
+        this.currentPage * this.lessonsPerPage.value <
         this.projectLessons.length
       )
         this.currentPage++;
     },
-    prevPage: function() {
+    prevPage() {
       if (this.currentPage > 1) this.currentPage--;
     },
     sortLessonsByDate() {
@@ -267,7 +284,7 @@ export default {
       "getLessonsPerPageFilterOptions",
       "getLessonsPerPageFilter",
     ]),
-    C_LessonsPerPage: {
+    lessonsPerPage: {
       get() {
         return this.getLessonsPerPageFilter || { id: 5, name: "5", value: 5 };
       },
@@ -276,20 +293,30 @@ export default {
       },
     },
     filteredLessons() {
+      // Returns filtered lessons based on search value from input
       return this.projectLessons
         .filter((lesson) =>
           lesson.title.toLowerCase().match(this.search.toLowerCase())
         )
-        .filter((row, index) => {
-          let start = (this.currentPage - 1) * this.C_LessonsPerPage.value;
-          let end = this.currentPage * this.C_LessonsPerPage.value;
+        .filter((lesson, index) => {
+          let start = (this.currentPage - 1) * this.lessonsPerPage.value;
+          let end = this.currentPage * this.lessonsPerPage.value;
           if (index >= start && index < end) return true;
           return this.end;
         });
     },
+    sortIcon() {
+      if (this.sortAsc) {
+        return "sort-up";
+      } else {
+        return "sort-down";
+      }
+    },
   },
   mounted() {
+    // GET request action to retrieve all lessons for project
     this.fetchProjectLessons(this.$route.params);
+    this.sortLessons("title");
   },
 };
 </script>
@@ -349,12 +376,23 @@ td {
     width: 65% !important;
   }
 }
-.lesson-col,
-.desc-col,
+.lesson-col {
+  width: 20%;
+}
+.date-col {
+  width: 15%;
+}
+.added-by-col {
+  width: 15%;
+}
+.desc-col {
+  width: 25%;
+}
 .last-update-col {
   width: 25%;
 }
-.date-col,
-.added-by-col {
+.move-down {
+  position: relative;
+  top: 4px;
 }
 </style>
