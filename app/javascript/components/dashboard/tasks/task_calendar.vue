@@ -158,8 +158,7 @@
       <v-sheet height="600">     
          <v-calendar                      
           ref="calendar"        
-          v-model="C_lastFocus"
-          :load="log(focus)"
+          v-model="C_lastFocus"      
           color="primary"            
           :events="events"         
           :event-color="getEventColor"
@@ -194,19 +193,16 @@
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>     
+            <v-list-item-title @click.prevent="scrollToStartDate" class="point">     
               <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
                 <small><b>Date Identified:</b></small>
               </span>                 
-              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
-             
-              
-              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
-              
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>              
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}              
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> 
+            <v-list-item-title @click.prevent="scrollToEndDate" class="point"> 
             <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
               <small><b>Date Closed:</b></small>
             </span> 
@@ -360,9 +356,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
-      log(e){
-        console.log("Focus: " + e)
-      },
+      // log(e){
+      //   console.log("Focus: " + e)
+      // },
       reRenderCalendar() {
         this.componentKey += 1;
       },   
@@ -376,9 +372,16 @@
       showM(){
         this.showMore = !this.showMore
       }, 
+      scrollToEndDate() {
+      if (this.selectedEvent.end !== '2099-01-01'){
+        this.setLastFocusFilter(this.selectedEvent.end)  
+       }
+     },
+      scrollToStartDate() {     
+        this.setLastFocusFilter(this.selectedEvent.start)    
+     },
       setToday () {
-        this.todayView = true 
-        this.setLastFocusFilter('')  
+       this.focus = '' || this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -451,8 +454,7 @@
         nativeEvent.stopPropagation()    
       },
     showAllEvents(){
-        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
-         console.log(this.getShowAllEventsToggle)
+        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)       
         if (this.getShowAllEventsToggle == true) {
         
           this.reRenderCalendar()
@@ -765,11 +767,10 @@ input[type=search] {
     border: solid 1px lightgray;
    }
  }
-//  .dontShow {
-//    display: none;
-//  }
-//  .show {
-//    display: block;
-//  }
-
+ .point{
+   cursor: pointer;
+ }
+ .point:hover {
+   background-color: rgba(214, 219, 223, .45);
+ }
 </style> 

@@ -190,13 +190,13 @@
           </v-list-item-title>
         </v-list-item>
           <v-list-item>
-          <v-list-item-title>          
+          <v-list-item-title @click.prevent="scrollToStartDate" class="point">          
             <span class="d-inline mr-1"><small><b>Date Identified:</b></small></span>            
              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
           </v-list-item-title>
         </v-list-item>
           <v-list-item>
-          <v-list-item-title> 
+          <v-list-item-title class="point" @click.prevent="scrollToEndDate"> 
            <span class="d-inline mr-1">
                <span v-if="selectedEvent.isOngoing == true">
                  <small><b> Date Closed:</b></small>
@@ -358,8 +358,9 @@
         return event.color
       },
       setToday () {
-        this.todayView = true 
-        this.setLastFocusFilter('')  
+        this.focus = '' || this.setLastFocusFilter('')  
+        // this.todayView = true 
+        // this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -367,12 +368,20 @@
       next () {
         this.$refs.calendar.next()
       }, 
-    addNewRisk() {
-      this.setRiskForManager({key: 'risk', value: {}})
-      // Route to new risk form page
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/new`
-      );
+       scrollToEndDate() {
+      if (this.selectedEvent.end !== '2099-01-01'){
+        this.setLastFocusFilter(this.selectedEvent.end)  
+       }
+     },
+      scrollToStartDate() {     
+        this.setLastFocusFilter(this.selectedEvent.start)    
+     },
+      addNewRisk() {
+        this.setRiskForManager({key: 'risk', value: {}})
+        // Route to new risk form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/new`
+        );
     },
     editRisk(event) {   
       let eventObj = event
@@ -748,5 +757,12 @@ input[type=search] {
  .seeLess {
    display: none;
  }
+ .point {
+   cursor: pointer;  
+ }
+  .point:hover {
+   background-color: rgba(214, 219, 223, .45);
+ }
+
 
 </style> 
