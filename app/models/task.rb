@@ -196,7 +196,10 @@ class Task < ApplicationRecord
       checklists: checklists.as_json,
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
-
+      important: important,
+      draft: draft, 
+      on_hold: on_hold, 
+      
       # Add RACI user names
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
