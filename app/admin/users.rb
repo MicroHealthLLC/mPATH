@@ -71,8 +71,8 @@ ActiveAdmin.register User do
           f.input :first_name
           f.input :last_name
           f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
-          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
-          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          # f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
+          # f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :phone_number, as: :hidden
           f.input :country_code, as: :hidden
           div id: 'user_phone_number-tab'
@@ -89,8 +89,8 @@ ActiveAdmin.register User do
       tab 'Password' do
         f.inputs 'Manage Password' do
           div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
-          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
-          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password, input_html: {readonly: true, autocomplete: :off}
+          f.input :password_confirmation, input_html: {readonly: true, autocomplete: :off}
         end
         div id: 'user-password__tab'
       end
