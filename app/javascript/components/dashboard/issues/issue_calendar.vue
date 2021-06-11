@@ -182,13 +182,13 @@
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-title>          
+              <v-list-item-title @click.prevent="scrollToStartDate" class="point">          
                 <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
                 {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <v-list-item-title> 
+              <v-list-item-title @click.prevent="scrollToEndDate" class="point"> 
               <span class="d-inline mr-1"><small><b>Due Date:</b></small></span>  
                 {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
               </v-list-item-title>
@@ -335,8 +335,7 @@
         return event.color
       },
       setToday () {
-        this.todayView = true 
-        this.setLastFocusFilter('')  
+        this.focus = '' || this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -351,6 +350,14 @@
         `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/issues/new`
         );
     },
+    scrollToEndDate() {
+      if (this.selectedEvent.end !== '2099-01-01'){
+        this.setLastFocusFilter(this.selectedEvent.end)  
+       }
+       },
+      scrollToStartDate() {     
+        this.setLastFocusFilter(this.selectedEvent.start)    
+     },
      editIssue(event) {   
         let eventObj = event
         this.selectedEventId = eventObj.event.issueId;
@@ -742,5 +749,12 @@ input[type=search] {
     border: solid 1px lightgray;
    }
   }
+ .point {
+   cursor: pointer;
+  }
+  .point:hover {
+   cursor: pointer;
+   background-color: rgba(214, 219, 223, .45);
+ }
 
 </style>
