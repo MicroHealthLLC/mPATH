@@ -44,12 +44,27 @@
           ref="table"
         >
           <tr class="table-head">
-            <th class="lesson-col" @click="sortLessons('title')">Lesson</th>
-            <th class="date-col" @click="sortLessonsByDate">Date</th>
-            <th class="desc-col" @click="sortLessons('description')">
-              Description
+            <th class="lesson-col" @click="sortLessons('title')">
+              Lesson
+              <span
+                v-show="activeSortValue == 'title'"
+                :class="{ 'move-down': sortAsc }"
+                ><font-awesome-icon :icon="sortIcon"
+              /></span>
+            </th>
+            <th class="date-col" @click="sortLessonsByDate">
+              Date
+              <span
+                v-show="activeSortValue == 'date'"
+                :class="{ 'move-down': sortAsc }"
+                ><font-awesome-icon :icon="sortIcon"
+              /></span>
             </th>
             <th class="added-by-col">Added By</th>
+            <th class="desc-col">
+              Description
+            </th>
+
             <th class="update-col">Last Update</th>
           </tr>
           <tr
@@ -61,8 +76,8 @@
           >
             <td>{{ lesson.title }}</td>
             <td>{{ formatDate(new Date(lesson.date)) }}</td>
-            <td>{{ lesson.description }}</td>
             <td>{{ author(lesson.user_id) }}</td>
+            <td>{{ lesson.description }}</td>
             <td>
               <span v-if="lesson.notes[0]">{{ lesson.notes[0].body }}</span>
             </td>
@@ -290,10 +305,18 @@ export default {
           return this.end;
         });
     },
+    sortIcon() {
+      if (this.sortAsc) {
+        return "sort-up";
+      } else {
+        return "sort-down";
+      }
+    },
   },
   mounted() {
     // GET request action to retrieve all lessons for project
     this.fetchProjectLessons(this.$route.params);
+    this.sortLessons("title");
   },
 };
 </script>
@@ -353,12 +376,23 @@ td {
     width: 65% !important;
   }
 }
-.lesson-col,
-.desc-col,
+.lesson-col {
+  width: 20%;
+}
+.date-col {
+  width: 15%;
+}
+.added-by-col {
+  width: 15%;
+}
+.desc-col {
+  width: 25%;
+}
 .last-update-col {
   width: 25%;
 }
-.date-col,
-.added-by-col {
+.move-down {
+  position: relative;
+  top: 4px;
 }
 </style>
