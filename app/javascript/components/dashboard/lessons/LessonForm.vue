@@ -615,10 +615,7 @@ export default {
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes, ...this.deleteSuccesses],
             failures: [...this.failures, ...this.deleteFailures],
-            best_practices: [
-              ...this.bestPractices,
-              ...this.deleteBestPractices,
-            ],
+            best_practices: [...this.bestPractices, ...this.deleteBestPractices],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
             attach_files: [...this.files],
           },
@@ -712,7 +709,7 @@ export default {
       )
         .then(() => {
           this.failures[index]._destroy = true;
-          this.deleteFailures.push(this.successes[index]);
+          this.deleteFailures.push(this.failures[index]);
           this.failures.splice(index, 1);
         })
         .catch(() => {});
@@ -732,7 +729,7 @@ export default {
       )
         .then(() => {
           this.bestPractices[index]._destroy = true;
-          this.deleteBestPractices.push(this.successes[index]);
+          this.deleteBestPractices.push(this.bestPractices[index]);
           this.bestPractices.splice(index, 1);
         })
         .catch(() => {});
