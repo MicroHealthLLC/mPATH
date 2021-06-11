@@ -1,5 +1,5 @@
 # mPATH
-Project management for geographically separated sites
+Agile portfolio management for large programs and projects including those geographically dispersed
 
 
 # update centos
