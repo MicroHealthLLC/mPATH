@@ -138,7 +138,7 @@
         </el-select>
       </div>
 
-      <div class="col-6 pl-0">
+      <div class="col-6 pl-0 pr-0">
         <label class="font-md"
           >Date <span style="color: #dc3545">*</span></label
         >
@@ -158,8 +158,8 @@
         </div>
       </div>
 
-      <div class="col-12">
-        <div class="d-flex justify-content-between mb-3">
+      <div class="col-12 p-0">
+        <div class="d-flex justify-content-between my-3">
           <label class="font-md">Select Stage</label
           ><button
             v-show="lesson.lesson_stage_id"
@@ -171,11 +171,7 @@
         </div>
 
         <el-steps
-          :active="
-            lessonStages.findIndex(
-              (stage) => stage.id == lesson.lesson_stage_id
-            )
-          "
+          :active="lessonStages.findIndex( (stage) => stage.id == lesson.lesson_stage_id )"
           finish-status="success"
           v-model="lesson.lesson_stage_id"
           value-key="id"
