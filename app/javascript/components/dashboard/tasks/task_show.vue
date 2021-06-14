@@ -16,6 +16,7 @@
           <div class="t_actions float-right">          
             <span v-show="task.watched" v-tooltip="`On Watch`"><i class="fas fa-eye text-md mr-1" data-cy="on_watch_icon"></i></span>          
             <span v-show="task.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+            <span v-if="task.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
             <span v-show="is_overdue" v-tooltip="`Overdue`" class="warning-icon"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-show="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
             <span v-show="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success mr-1"  /></span>   
@@ -24,6 +25,7 @@
              <span v-if="                                      
                       task.ongoing == false && 
                       task.isOverdue == false &&
+                      task.reportable == false &&
                       task.watched == false &&
                       task.onHold == false &&  
                       task.draft == false && 

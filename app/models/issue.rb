@@ -65,6 +65,7 @@ class Issue < ApplicationRecord
       :watched,
       :kanban_order,
       :important,
+      :reportable,
       :on_hold, 
       :draft, 
       issue_files: [],
