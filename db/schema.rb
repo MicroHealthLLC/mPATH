@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_201805) do
+ActiveRecord::Schema.define(version: 2021_06_14_153303) do
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -219,6 +219,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.boolean "important", default: false
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -231,7 +232,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.text "recommendation"
     t.integer "user_id"
     t.integer "lesson_id"
-    t.integer "detail_type"
+    t.string "detail_type", default: "success"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -264,6 +265,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.integer "lesson_stage_id"
     t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -555,6 +557,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.integer "status"
     t.string "duration_name"
     t.string "status_name"
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -644,6 +647,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.boolean "ongoing", default: false
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

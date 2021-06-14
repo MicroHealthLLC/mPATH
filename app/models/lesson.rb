@@ -9,6 +9,8 @@ class Lesson < ApplicationRecord
   has_many :users, through: :lesson_users
   
   belongs_to :facility_project
+  has_one :facility, through: :facility_project
+  has_one :project, through: :facility_project
 
   has_many :notes, as: :noteable, dependent: :destroy
   has_many_attached :lesson_files, dependent: :destroy
@@ -416,6 +418,26 @@ class Lesson < ApplicationRecord
     if records_to_import.any?
       LessonUser.import(records_to_import)
     end
+  end
+
+  def files_as_json
+    lesson_files.map do |file|
+      if file.blob.content_type == "text/plain"
+        {
+          id: file.id,
+          name: file.blob.filename.instance_variable_get("@filename"),
+          uri: file.blob.filename.instance_variable_get("@filename"),
+          link: true
+        }
+      else
+        {
+          id: file.id,
+          name: file.blob.filename,
+          uri: Rails.application.routes.url_helpers.rails_blob_path(file, only_path: true),
+          link: false
+        }
+      end
+    end.as_json
   end
 
 end
