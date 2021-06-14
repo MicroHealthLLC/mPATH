@@ -41,7 +41,7 @@ ActiveAdmin.register LessonStage do
 
   controller do
     before_action :check_readability, only: [:index, :show]
-    before_action :check_order, only: [:index]
+    # before_action :check_order, only: [:index]
     before_action :check_writeability, only: [:new, :edit, :update, :create]
 
     def check_readability
