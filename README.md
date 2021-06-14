@@ -72,7 +72,9 @@ Agile portfolio management for large programs and projects including those geogr
         yarn install
 
         bundle install
-
+        
+        bin/rails db:migrate
+        
         rake db:seed
 
         rake assets:precompile
