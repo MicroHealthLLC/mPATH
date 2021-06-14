@@ -615,7 +615,10 @@ export default {
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes, ...this.deleteSuccesses],
             failures: [...this.failures, ...this.deleteFailures],
-            best_practices: [...this.bestPractices, ...this.deleteBestPractices],
+            best_practices: [
+              ...this.bestPractices,
+              ...this.deleteBestPractices,
+            ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
             attach_files: [...this.files],
           },
@@ -896,5 +899,9 @@ a:hover {
 }
 .text-danger {
   font-size: 13px;
+}
+.sticky-btn {
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
+    0 1px 1px rgba(56, 56, 56, 0.23);
 }
 </style>
