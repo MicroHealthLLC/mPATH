@@ -20,13 +20,15 @@
         <td class="fort text-center" >
             <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="issue.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
             <span v-if="issue.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="issue.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
             <span v-if="issue.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
             <span v-if="   
                   issue.watched == false &&        
-                  issue.important == false &&     
+                  issue.important == false &&  
+                  issue.reportable == false &&        
                   issue.isOverdue == false &&
                   issue.onHold == false &&  
                   issue.draft == false && 

@@ -171,6 +171,29 @@
                 style="vertical-align:text-top"> Important</small>
             </span>
              <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleReportable"
+                data-cy="issue_reportable"
+              >
+                <span
+                  v-tooltip="`Briefings`" 
+                  v-show="DV_issue.reportable">
+                <i class="fas fa-flag text-primary"></i>
+                </span>
+                <span 
+                  v-tooltip="`Briefings`" 
+                  v-show="!DV_issue.reportable">
+                <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small 
+                  :class="{'d-none': isMapView }"
+                  style="vertical-align:text-top"> 
+               Briefings
+                </small>
+                </span>
+             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
@@ -1350,6 +1373,7 @@ export default {
         description: "",
         autoCalculate: true,
         important: false,
+        reportable: false, 
         onHold: false,
         draft: false,
         responsibleUserIds: [],
@@ -1559,6 +1583,9 @@ export default {
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
+   toggleReportable() {
+      this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
+    },
     removeFromWatch() {
       if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
         this.toggleWatched();
@@ -1583,6 +1610,7 @@ export default {
         formData.append("issue[issue_type_id]", this.DV_issue.issueTypeId);
         formData.append("issue[task_type_id]", this.DV_issue.taskTypeId);
         formData.append("issue[important]", this.DV_issue.important);
+        formData.append("issue[reportable]", this.DV_issue.reportable);
         formData.append(
           "issue[issue_severity_id]",
           this.DV_issue.issueSeverityId

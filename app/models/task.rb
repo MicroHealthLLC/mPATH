@@ -51,6 +51,7 @@ class Task < ApplicationRecord
       :watched,    
       :kanban_order,
       :important,
+      :reportable,
       :draft, 
       :on_hold, 
       :ongoing,
@@ -197,6 +198,7 @@ class Task < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       important: important,
+      reportable: reportable,
       draft: draft, 
       on_hold: on_hold, 
       

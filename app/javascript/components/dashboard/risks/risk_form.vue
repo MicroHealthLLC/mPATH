@@ -201,6 +201,29 @@
                      Ongoing
                     </small>
                     </span>
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleReportable"
+                  data-cy="risk_reportable"
+                >
+                  <span
+                    v-tooltip="`Briefings`" 
+                    v-show="DV_risk.reportable">
+                  <i class="fas fa-flag text-primary"></i>
+                  </span>
+                  <span 
+                    v-tooltip="`Briefings`" 
+                    v-show="!DV_risk.reportable">
+                  <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+                  </span>
+                
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                  Briefings
+                  </small>
+                </span>
 
 
               <span
@@ -2157,6 +2180,7 @@ export default {
         dueDate: "",
         autoCalculate: true,
         important: false,
+        reportable: false, 
         onHold: false,
         draft: false,
         ongoing: false,
@@ -2354,12 +2378,15 @@ export default {
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.dueDate = '';
     },
-  toggleOnhold() {
-      this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
-    },
-  toggleDraft() {
-      this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
-    },
+    toggleOnhold() {
+        this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+      },
+    toggleDraft() {
+        this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
+      },
+    toggleReportable() {
+        this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
+      },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
@@ -2464,6 +2491,7 @@ export default {
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
         formData.append("risk[important]", this.DV_risk.important);
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
+        formData.append("risk[reportable]", this.DV_risk.reportable);
         formData.append("risk[on_hold]", this.DV_risk.onHold);
         formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
