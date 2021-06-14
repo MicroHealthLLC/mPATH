@@ -41,8 +41,8 @@ Agile portfolio management for large programs and projects including those geogr
         mysql -u root -p
 
         create database mpath_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
-        
-        GRANT ALL PRIVILEGES ON mpath_dev.* TO root@localhost;
+      
+        GRANT ALL PRIVILEGES ON mpath_dev.* TO 'user'@'localhost';
 
         exit
 
