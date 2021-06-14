@@ -203,6 +203,29 @@
               <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleReportable"
+              data-cy="task_reportable"
+            >
+              <span
+                 v-tooltip="`Briefings`" 
+                 v-show="DV_task.reportable">
+               <i class="fas fa-flag text-primary"></i>
+              </span>
+              <span 
+                v-tooltip="`Briefings`" 
+                v-show="!DV_task.reportable">
+               <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+               Briefings
+              </small>
+            </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
             >
@@ -1341,6 +1364,7 @@ export default {
         taskTypeId: "",
         taskStageId: "",
         important: false,
+        reportable: false,
         onHold: false,
         draft: false,
         ongoing: false,
@@ -1545,6 +1569,9 @@ export default {
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
+   toggleReportable() {
+      this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
+    },
     toggleOngoing() {
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.dueDate = '';
@@ -1572,6 +1599,7 @@ export default {
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
+        formData.append("task[reportable]", this.DV_task.reportable);
         formData.append("task[on_hold]", this.DV_task.onHold);
         formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);

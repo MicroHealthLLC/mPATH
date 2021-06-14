@@ -486,6 +486,7 @@ export default new Vuex.Store({
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
+        {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'},
         {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
@@ -609,6 +610,7 @@ export default new Vuex.Store({
         ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
+        ['briefingsFilter', 'Briefings'],
         ['onGoingFilter', 'Ongoing'],
         ['onHoldFilter', 'On Hold'],
         ['draftFilter', 'Drafts'],
@@ -627,7 +629,7 @@ export default new Vuex.Store({
         }
         return user_names
       // Advanced filters
-      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter'].includes(_filterValue) ){
+      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter', 'briefingsFilter'].includes(_filterValue) ){
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
@@ -878,6 +880,9 @@ export default new Vuex.Store({
       let taksIssueNotImportant = _.map(aFilter, 'id').includes("notImportant")
       let taskIssueImporant =  _.map(aFilter, 'id').includes("important")
 
+      let taksIssueNotReportable = _.map(aFilter, 'id').includes("notReportable")
+      let taskIssueReportable =  _.map(aFilter, 'id').includes("reportable")
+
       let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
       let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
 
@@ -909,6 +914,7 @@ export default new Vuex.Store({
         (taskIssueMyAction == true && taksIssueNotMyAction == true) ||
         (taskIssueOnWatch == true && taksIssueNotOnWatch == true) ||
         (taskIssueImporant == true && taksIssueNotImportant == true) ||
+        (taskIssueReportable == true && taksIssueNotReportable == true) ||
         (taskIssueOnGoing == true && taksIssueNotOnGoing == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true) ||
         // (taskIssueRiskNotDraft == true && taskIssueRiskDraft == true) ||  
@@ -1000,10 +1006,19 @@ export default new Vuex.Store({
       if(taskIssueImporant == true && taksIssueNotImportant == false){
         valid = valid && importants.includes(true)
       }
-
+  
 
       if(taskIssueImporant == false && taksIssueNotImportant == true){
         valid = valid && importants.includes(false)
+      }
+
+      let reportables = _.uniq(_.map(resources, 'reportable'))
+      if(taskIssueReportable == true && taksIssueNotReportable == false){
+        valid = valid && reportables.includes(true)
+      }
+
+      if(taskIssueReportable == false && taksIssueNotReportable == true){
+        valid = valid && reportables.includes(false)
       }
 
       // As per issue https://github.com/MicroHealthLLC/mPATH/issues/2649

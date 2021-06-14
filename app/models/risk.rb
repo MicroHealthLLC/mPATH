@@ -131,6 +131,7 @@ class Risk < ApplicationRecord
       :text,
       :watched,
       :important,
+      :reportable,
       :on_hold, 
       :draft, 
       :ongoing,
