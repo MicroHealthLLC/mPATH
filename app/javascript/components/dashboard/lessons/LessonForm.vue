@@ -28,18 +28,20 @@
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
-        <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
+        <button
+          class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
+        >
           Save Lesson
         </button>
         <button
           v-show="false"
           disabled
-          class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+          class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Read Only
         </button>
         <button
-          class="btn btn-sm sticky-btn btn-outline-secondary mr-1"
+          class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
         >
           Close
@@ -161,7 +163,7 @@
           <label class="font-md">Select Stage</label
           ><button
             v-show="lesson.lesson_stage_id"
-            class="btn btn-sm btn-danger font-sm"
+            class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
           >
             Clear Stages
@@ -930,5 +932,9 @@ a:hover {
     line-height: 23px !important;
     margin: 5px !important;
   }
+}
+.btn-shadow {
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
+    0 1px 1px rgba(56, 56, 56, 0.23);
 }
 </style>

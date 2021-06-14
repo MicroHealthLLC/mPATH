@@ -10,14 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_201805) do
-
-  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
-    t.bigint "user_id"
-    t.bigint "project_id"
-    t.index ["project_id"], name: "index_accountable_users_on_project_id"
-    t.index ["user_id"], name: "index_accountable_users_on_user_id"
-  end
+ActiveRecord::Schema.define(version: 2021_06_14_153303) do
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -219,6 +212,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.boolean "important", default: false
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -262,8 +256,9 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
+    t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
@@ -541,9 +536,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
-    t.text "type"
     t.text "probability_description"
-    t.datetime "approved_at"
     t.string "approval_time"
     t.boolean "approved"
     t.boolean "important", default: false
@@ -555,6 +548,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.integer "status"
     t.string "duration_name"
     t.string "status_name"
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -639,11 +633,11 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
-    t.datetime "calendar_start_date"
     t.boolean "important", default: false
     t.boolean "ongoing", default: false
     t.boolean "draft", default: false
     t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"
@@ -679,15 +673,11 @@ ActiveRecord::Schema.define(version: 2021_06_04_201805) do
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
-    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "accountable_users", "projects"
-  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"

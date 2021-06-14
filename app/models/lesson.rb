@@ -144,6 +144,7 @@ class Lesson < ApplicationRecord
       :task_type_id,  
       :facility_project_id,
       :user_id, 
+      :reportable, 
       :lesson_stage_id,
       sub_task_ids: [],
       sub_issue_ids: [],

@@ -35,6 +35,7 @@
         <td class="fort text-center">
                 <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+                <span v-if="risk.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
                 <span v-if="risk.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
                 <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
@@ -43,6 +44,7 @@
                 <span v-if="                   
                      risk.ongoing == false && 
                      risk.watched == false &&
+                     risk.reportable == false &&
                      risk.isOverdue == false &&
                      risk.onHold == false &&  
                      risk.draft == false && 

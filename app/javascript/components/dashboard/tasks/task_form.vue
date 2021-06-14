@@ -203,6 +203,29 @@
               <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleReportable"
+              data-cy="task_reportable"
+            >
+              <span
+                 v-tooltip="`Briefings`" 
+                 v-show="DV_task.reportable">
+               <i class="fas fa-flag text-primary"></i>
+              </span>
+              <span 
+                v-tooltip="`Briefings`" 
+                v-show="!DV_task.reportable">
+               <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+               Briefings
+              </small>
+            </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
             >
@@ -1164,30 +1187,40 @@
               class="paginate-list"
               :key="filteredNotes ? filteredNotes.length : 1"
             >
-              <div
+              <el-card
                 v-for="note in paginated('filteredNotes')"
-                class="form-group"
                 :key="note.id"
+                class="update-card mb-3"
               >
-                <span class="d-inline-block w-100"
-                  ><label class="badge badge-secondary">Update by</label>
-                  <span class="font-sm text-muted">{{ noteBy(note) }}</span>
-                  <span
-                    v-if="allowDeleteNote(note)"
-                    class="clickable font-sm delete-action float-right"
-                    @click.prevent.stop="destroyNote(note)"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </span>
-                </span>
-                <textarea
-                  class="form-control"
+                <div class="d-flex justify-content-between">
+                  <label class="font-md">Description</label>
+                  <div class="font-sm">
+                    <el-tag size="mini"
+                      ><span class="font-weight-bold">Submitted by:</span>
+                      <span v-if="note.updatedAt"
+                        >{{ author(note.userId) }} on
+                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      ><span v-else
+                        >{{ $currentUser.full_name }} on
+                        {{ new Date().toLocaleDateString() }}</span
+                      ></el-tag
+                    >
+                    <i
+                      v-if="allowDeleteNote(note)"
+                      class="el-icon-delete clickable ml-3"
+                      @click.prevent.stop="destroyNote(note)"
+                    ></i>
+                  </div>
+                </div>
+
+                <el-input
                   v-model="note.body"
-                  rows="3"
+                  type="textarea"
+                  :rows="3"
                   placeholder="Enter your update here..."
                   :readonly="!allowEditNote(note)"
-                ></textarea>
-              </div>
+                ></el-input>
+              </el-card>
             </paginate>
           </div>
         </div>
@@ -1341,6 +1374,7 @@ export default {
         taskTypeId: "",
         taskStageId: "",
         important: false,
+        reportable: false,
         onHold: false,
         draft: false,
         ongoing: false,
@@ -1545,6 +1579,9 @@ export default {
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };
     },
+   toggleReportable() {
+      this.DV_task = { ...this.DV_task, reportable: !this.DV_task.reportable };
+    },
     toggleOngoing() {
       this.DV_task = { ...this.DV_task, ongoing: !this.DV_task.ongoing };
       this.DV_task.dueDate = '';
@@ -1572,6 +1609,7 @@ export default {
         formData.append("task[auto_calculate]", this.DV_task.autoCalculate);
         formData.append("task[description]", this.DV_task.description);
         formData.append("task[important]", this.DV_task.important);
+        formData.append("task[reportable]", this.DV_task.reportable);
         formData.append("task[on_hold]", this.DV_task.onHold);
         formData.append("task[draft]", this.DV_task.draft);
         formData.append("task[ongoing]", this.DV_task.ongoing);
@@ -1931,6 +1969,9 @@ export default {
         this.relatedRisks.findIndex((risk) => risk.id == id),
         1
       );
+    },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
   },
   computed: {
@@ -2401,5 +2442,10 @@ a:hover {
 }
 .text-smaller {
   font-size: smaller;
+}
+.update-card {
+  background-color: #ededed;
+  border-color: lightgray;
+  border-left: 10px solid #5aaaff;
 }
 </style>
