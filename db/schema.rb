@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_153303) do
+ActiveRecord::Schema.define(version: 2021_06_14_224438) do
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -232,9 +232,9 @@ ActiveRecord::Schema.define(version: 2021_06_14_153303) do
     t.text "recommendation"
     t.integer "user_id"
     t.integer "lesson_id"
-    t.string "detail_type", default: "success"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "detail_type", default: "success"
   end
 
   create_table "lesson_stages", charset: "utf8", force: :cascade do |t|
@@ -263,8 +263,8 @@ ActiveRecord::Schema.define(version: 2021_06_14_153303) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
     t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
@@ -683,9 +683,7 @@ ActiveRecord::Schema.define(version: 2021_06_14_153303) do
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
-    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
