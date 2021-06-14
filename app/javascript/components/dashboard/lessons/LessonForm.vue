@@ -28,18 +28,20 @@
         </h5>
       </div>
       <div class="ml-auto d-flex align-items-center">
-        <button class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2">
+        <button
+          class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
+        >
           Save Lesson
         </button>
         <button
           v-show="false"
           disabled
-          class="btn btn-sm sticky-btn btn-primary text-nowrap mr-2"
+          class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Read Only
         </button>
         <button
-          class="btn btn-sm sticky-btn btn-outline-secondary mr-1"
+          class="btn btn-sm sticky-btn btn-outline-secondary btn-shadow mr-1"
           @click.prevent="close"
         >
           Close
@@ -117,26 +119,6 @@
       </div>
 
       <div class="col-6 pl-0">
-        <label class="font-md"
-          >Date <span style="color: #dc3545">*</span></label
-        >
-        <div :class="{ error: errors.has('Date') }">
-          <v2-date-picker
-            name="Date"
-            v-validate="'required'"
-            v-model="lesson.date"
-            value-type="YYYY-MM-DD"
-            format="DD MMM YYYY"
-            placeholder="DD MM YYYY"
-            class="w-100"
-          />
-        </div>
-        <div v-show="errors.has('Date')" class="text-danger">
-          {{ errors.first("Date") }}
-        </div>
-      </div>
-
-      <div class="col-6 pl-0">
         <label class="font-md w-100">Category</label>
         <el-select
           v-model="lesson.task_type_id"
@@ -156,22 +138,56 @@
         </el-select>
       </div>
 
-      <div class="col-6 pl-0">
-        <label class="font-md">Stage</label>
-        <el-select
-          v-model="lesson.lesson_stage_id"
-          class="w-100"
-          clearable
-          placeholder="Select Stage"
+      <div class="col-6 pl-0 pr-0">
+        <label class="font-md"
+          >Date <span style="color: #dc3545">*</span></label
         >
-          <el-option
-            v-for="stage in lessonStages"
-            :value="stage.id"
-            :key="stage.id"
-            :label="stage.name"
+        <div :class="{ error: errors.has('Date') }">
+          <v2-date-picker
+            name="Date"
+            v-validate="'required'"
+            v-model="lesson.date"
+            value-type="YYYY-MM-DD"
+            format="DD MMM YYYY"
+            placeholder="DD MM YYYY"
+            class="w-100"
+          />
+        </div>
+        <div v-show="errors.has('Date')" class="text-danger">
+          {{ errors.first("Date") }}
+        </div>
+      </div>
+
+      <div class="col-12 p-0">
+        <div class="d-flex justify-content-between my-3">
+          <label class="font-md">Select Stage</label
+          ><button
+            v-show="lesson.lesson_stage_id"
+            class="btn btn-sm btn-danger btn-shadow font-sm"
+            @click.prevent="clearStage"
           >
-          </el-option>
-        </el-select>
+            Clear Stages
+          </button>
+        </div>
+
+        <el-steps
+          :active="lessonStages.findIndex( (stage) => stage.id == lesson.lesson_stage_id )"
+          finish-status="success"
+          v-model="lesson.lesson_stage_id"
+          value-key="id"
+          track-by="id"
+          :class="{ 'over-six-steps': lessonStages.length >= 6 }"
+        >
+          <el-step
+            v-for="stage in lessonStages"
+            :key="stage.id"
+            :value="stage"
+            :title="stage.name"
+            @click.native="changeStage(stage)"
+            class="clickable"
+          >
+          </el-step>
+        </el-steps>
       </div>
     </div>
     <!-- Related Tab -->
@@ -615,7 +631,10 @@ export default {
             sub_risk_ids: [...this.relatedRisks.map((risk) => risk.id)],
             successes: [...this.successes, ...this.deleteSuccesses],
             failures: [...this.failures, ...this.deleteFailures],
-            best_practices: [...this.bestPractices, ...this.deleteBestPractices],
+            best_practices: [
+              ...this.bestPractices,
+              ...this.deleteBestPractices,
+            ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
             attach_files: [...this.files],
           },
@@ -773,6 +792,12 @@ export default {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
     },
+    changeStage(stage) {
+      this.lesson.lesson_stage_id = stage.id;
+    },
+    clearStage() {
+      this.lesson.lesson_stage_id = null;
+    },
   },
   computed: {
     ...mapGetters([
@@ -896,5 +921,16 @@ a:hover {
 }
 .text-danger {
   font-size: 13px;
+}
+.over-six-steps {
+  /deep/.el-step__title {
+    font-size: 11px !important;
+    line-height: 23px !important;
+    margin: 5px !important;
+  }
+}
+.btn-shadow {
+  box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
+    0 1px 1px rgba(56, 56, 56, 0.23);
 }
 </style>
