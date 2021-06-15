@@ -151,6 +151,9 @@
          
             </v-btn>        
            </v-btn-toggle>   
+          <button class="btn btn-sm btn-info ml-3 total-table-btns">
+          Total: {{filteredCalendar.length}}
+         </button>
 
         </v-toolbar>
       </v-sheet>
@@ -489,9 +492,11 @@
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
 
-            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {
-            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"
+            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
             this.taskEndDates[i] = '2099-01-01'
+            }
+            if(this.taskData[i].ongoing) {
+            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"          
             }
             events.push({            
             name: this.taskNames[i],
@@ -703,6 +708,15 @@
             (facility) => facility.facilityId == this.$route.params.projectId
           );
         }
+      },
+    },
+   filteredCalendar: {
+      handler(value) {
+        if (value) {
+          this.reRenderCalendar()        
+        } if (value && this.filteredCalendar.length == 0)   {
+          this.events = []
+        }           
       },
     },
     tasksQuery: {
