@@ -86,6 +86,80 @@
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
         >
+        <!-- Flags bar UI complete....Still need to work on logic 
+        <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">             
+
+            <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleImportant"
+              data-cy="task_important"
+            >
+              <span 
+                v-tooltip="`Important`" 
+                v-show="lesson.important">
+               <i class="fas fa-star text-warning"></i>
+              </span>
+              <span 
+                v-tooltip="`Important`" 
+                v-show="!lesson.important">
+               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+              </span>             
+              <small 
+               :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Important
+              </small>
+            </span>
+
+             <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleReportable"
+              data-cy="task_reportable"
+            >
+              <span
+                 v-tooltip="`Briefings`" 
+                 v-show="lesson.reportable">
+               <i class="fas fa-flag text-primary"></i>
+              </span>
+              <span 
+                v-tooltip="`Briefings`" 
+                v-show="!lesson.reportable">
+               <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+               Briefings
+              </small>
+            </span>
+              <span
+              v-if="_isallowed('write')"
+              class="watch_action clickable mx-2"
+              @click.prevent.stop="toggleDraft"
+              data-cy="task_important"
+            >
+              <span
+                 v-tooltip="`Draft`" 
+                 v-show="lesson.draft">
+               <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
+              <span 
+                v-tooltip="`Draft`" 
+                v-show="!lesson.draft">
+               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
+              </span>
+             
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> 
+                Draft
+              </small>
+            </span>
+        </div> -->
+
         <el-input
           name="Lesson Name"
           v-validate="'required'"
@@ -324,9 +398,22 @@
       <span class="clickable" @click.prevent="addSuccess">
         <i class="fas fa-plus-circle"></i>
       </span>
-
+       <paginate-links
+        v-if="successes.length"
+        for="successes"
+        class="paginate"
+        :show-step-links="true"
+        :limit="2"
+      ></paginate-links>
+      <paginate
+        ref="paginator"
+        name="successes"
+        :list="successes"
+        :per="4"
+        :key="successes ? successes.length : 1"
+        >
       <el-card
-        v-for="(success, index) in successes"
+        v-for="(success, index) in paginated('successes')"
         :key="index"
         class="success-card mb-3"
       >
@@ -363,6 +450,7 @@
           placeholder="Please recommendation here..."
         ></el-input>
       </el-card>
+       </paginate>
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'" class="mt-2">
@@ -370,9 +458,22 @@
       <span class="clickable" @click.prevent="addFailure">
         <i class="fas fa-plus-circle"></i>
       </span>
-
+       <paginate-links
+        v-if="failures.length"
+        for="failures"
+        class="paginate"
+        :show-step-links="true"
+        :limit="2"
+      ></paginate-links>
+      <paginate
+        ref="paginator"
+        name="failures"
+        :list="failures"
+        :per="4"
+        :key="failures ? failures.length : 1"
+        >
       <el-card
-        v-for="(failure, index) in failures"
+        v-for="(failure, index) in paginated('failures')"
         :key="index"
         class="failure-card mb-3"
       >
@@ -409,6 +510,7 @@
           placeholder="Please recommendation here..."
         ></el-input>
       </el-card>
+      </paginate>
     </div>
 
     <!-- Best Practices Tab -->
@@ -417,9 +519,23 @@
       <span class="clickable" @click.prevent="addBestPractice">
         <i class="fas fa-plus-circle"></i>
       </span>
+      <paginate-links
+        v-if="bestPractices.length"
+        for="bestPractices"
+        class="paginate"
+        :show-step-links="true"
+        :limit="2"
+      ></paginate-links>
+      <paginate
+        ref="paginator"
+        name="bestPractices"
+        :list="bestPractices"
+        :per="4"
+        :key="bestPractices ? bestPractices.length : 1"
+        >
 
       <el-card
-        v-for="(bestPractice, index) in bestPractices"
+        v-for="(bestPractice, index) in paginated('bestPractices')"
         :key="index"
         class="best-practice-card mb-3"
       >
@@ -456,6 +572,7 @@
           placeholder="Please recommendation here..."
         ></el-input>
       </el-card>
+      </paginate>
     </div>
 
     <!-- Files & Links Tab -->
@@ -473,9 +590,22 @@
       <span class="clickable" @click.prevent="addUpdate">
         <i class="fas fa-plus-circle"></i>
       </span>
-
+        <paginate-links
+        v-if="updates.length"
+        for="updates"
+        class="paginate"
+        :show-step-links="true"
+        :limit="2"
+      ></paginate-links>
+      <paginate
+        ref="paginator"
+        name="updates"
+        :list="updates"
+        :per="4"
+        :key="updates ? updates.length : 1"
+        >
       <el-card
-        v-for="(update, index) in updates"
+        v-for="(update, index) in paginated('updates')"
         :key="index"
         class="update-card mb-3"
       >
@@ -505,6 +635,7 @@
           placeholder="Please enter Description here..."
         ></el-input>
       </el-card>
+      </paginate>
     </div>
     <RelatedLessonMenu
       :facilities="facilities"
@@ -538,6 +669,7 @@ export default {
     return {
       formLoaded: false,
       currentTab: "tab1",
+      paginate: ["successes", "failures", "bestPractices", "updates"],
       tabs: [
         {
           label: "Lesson Info",
@@ -600,6 +732,7 @@ export default {
       successes: [],
       deleteSuccesses: [],
       failures: [],
+      // important: null, 
       deleteFailures: [],
       bestPractices: [],
       deleteBestPractices: [],
@@ -621,10 +754,13 @@ export default {
           lesson: {
             title: this.lesson.title,
             description: this.lesson.description,
-            date: this.lesson.date,
+            date: this.lesson.date,          
             task_type_id: this.lesson.task_type_id,
             user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
+            // important: !this.lesson.important,
+            reportable: this.lesson.reportable,
+            draft: this.lesson.draft,
             // Array values below
             sub_task_ids: [...this.relatedTasks.map((task) => task.id)],
             sub_issue_ids: [...this.relatedIssues.map((issue) => issue.id)],
@@ -798,6 +934,15 @@ export default {
     clearStage() {
       this.lesson.lesson_stage_id = null;
     },
+    // toggleImportant() {
+    // this.lesson = { ...this.lesson, important: !this.lesson.important };
+    // },
+    // toggleDraft() {
+    //   this.lesson = { ...this.lesson, draft: !this.lesson.draft };
+    // },
+    // toggleReportable() {
+    //   this.lesson = { ...this.lesson, reportable: !this.lesson.reportable };
+    // },
   },
   computed: {
     ...mapGetters([
@@ -821,10 +966,16 @@ export default {
         return "kanban";
       }
     },
+
     projectNameLink() {
       if (this.$route.path.includes("lessons")) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
       }
+    },
+    _isallowed() {
+      return (salut) =>
+        this.$currentUser.role == "superadmin" ||
+        this.$permissions.lessons[salut];
     },
     isMapView() {
       return this.$route.name === "MapLessonForm";
@@ -848,8 +999,9 @@ export default {
         if (this.contentLoaded && Object.keys(oldValue).length === 0) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
+          // this.important = this.lesson.important;
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
+          this.successes = this.lesson.lesson_details;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
@@ -861,13 +1013,42 @@ export default {
         if (this.lesson) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
+          // this.important = this.lesson.important;          
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.successes;
+          this.successes = this.lesson.lesson_details;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
         }
       },
+    },
+    "successes.length"(value, previous) {
+      this.$nextTick(() => {
+        if (this.$refs.paginator && (value === 1 || previous === 0)) {
+          this.$refs.paginator.goToPage(1);
+        }
+      });
+    },
+    "failures.length"(value, previous) {
+      this.$nextTick(() => {
+        if (this.$refs.paginator && (value === 1 || previous === 0)) {
+          this.$refs.paginator.goToPage(1);
+        }
+      });
+    },
+   "bestPractices.length"(value, previous) {
+      this.$nextTick(() => {
+        if (this.$refs.paginator && (value === 1 || previous === 0)) {
+          this.$refs.paginator.goToPage(1);
+        }
+      });
+    },
+    "updates.length"(value, previous) {
+      this.$nextTick(() => {
+        if (this.$refs.paginator && (value === 1 || previous === 0)) {
+          this.$refs.paginator.goToPage(1);
+        }
+      });
     },
     lessonStatus: {
       handler() {
@@ -917,6 +1098,50 @@ a:hover {
   list-style-type: circle;
   li {
     width: max-content;
+  }
+}
+.paginate-links.successes {
+  list-style: none !important;
+  user-select: none;
+  text-decoration-line: none !important;
+  margin-bottom: 18px;
+  a {
+    width: 20px;
+    height: 25px;
+    margin-right: 0;
+    border-radius: 2px;
+    background-color: white;
+    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+      0 3px 3px rgba(56, 56, 56, 0.23);
+    color: #383838;
+    padding: 5px 12px;
+    cursor: pointer;
+    text-decoration-line: none !important;
+  }
+  a:hover {
+    background-color: #ededed;
+  }
+  li.active a {
+    font-weight: bold;
+    color: #383838;
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  a.active {
+    background-color: rgba(211, 211, 211, 10%);
+  }
+  li.next:before {
+    content: " | ";
+    margin-right: 13px;
+    color: #ddd;
+  }
+  li.disabled a {
+    color: #ccc;
+    cursor: no-drop;
+  }
+  li {
+    display: inline !important;
+    margin: 1px;
+    color: #383838 !important;
   }
 }
 .text-danger {
