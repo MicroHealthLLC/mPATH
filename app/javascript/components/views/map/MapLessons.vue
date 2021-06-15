@@ -18,8 +18,15 @@
         @click.native="openLesson(lesson.id)"
         @mouseup.right.native="openContextMenu($event, lesson)"
         @contextmenu.prevent=""
-      >
-        <div class="font-lg card-title">{{ lesson.title }}</div>
+      >      
+        <div class="font-lg card-title">{{ lesson.title }}
+          <span class="float-right">                 
+            <span v-show="lesson.important" v-tooltip="`Important`" class="mr-1"> <i class="fas fa-star text-warning"></i></span>
+            <span v-show="lesson.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>          
+            <span v-show="lesson.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>                
+          </span>
+        </div>
+        
         <div class="font-sm">
           <span class="fbody-icon mr-2"
             ><i class="fas fa-calendar-alt"></i></span

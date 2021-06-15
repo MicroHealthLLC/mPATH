@@ -380,8 +380,9 @@
       scrollToStartDate() {     
         this.setLastFocusFilter(this.selectedEvent.start)    
      },
-      setToday () {
+      setToday (resource) {
        this.focus = '' || this.setLastFocusFilter('')  
+       console.log("Resource: " + resource)
       },
       prev () {
         this.$refs.calendar.prev()
@@ -529,13 +530,14 @@
         "facilities",
         "facilityGroups",
         'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter', 
         'getCalendarViewFilterOptions',
+        'getTaskIssueUserFilter',
         'calendarViewFilter',  
         'getCalendarViewFilter',
         'getLastFocusFilter',
-         'getShowAllEventsToggle',
-        'getShowAllToggle',
-        'filterDataForAdvancedFilter', 
+        'getShowAllEventsToggle',
+        'getShowAllToggle',      
         'getAdvancedFilter',     
         'getTaskIssueProgressStatusOptions',
         'getTaskIssueProgressStatusFilter',
@@ -549,6 +551,7 @@
         'onWatchFilter',
         "currentTasks",
         "contentLoaded",
+        'taskStageFilter',
         "currentIssues",
         "viewPermit",
         "currentProject",
@@ -562,29 +565,69 @@
       },
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
-        let search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
-        const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
-        let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
-        valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
-        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)         
-        if (search_query) valid = valid && search_query.test(resource.text)
-         
-        return valid
-        }), ['dueDate'])
+        let stageIds = _.map(this.taskStageFilter, 'id')
+        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+          if (taskIssueUsers.length > 0) {
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
+          }
+
+      
+          // //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId) 
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            var is_valid = resource.notes.length > 0
+            for (var createdAt of _notesCreatedAt) {
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if (is_valid) break
+            }
+            valid = valid && is_valid
+          }
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            var is_valid = true
+            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+            valid = valid && is_valid
+          }
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
+          }
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+            valid && search_query.test(resource.taskType) ||
+            valid && search_query.test(resource.userNames)
+          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
+         
+          return valid
+        }), ['dueDate'])
           if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
         
         return tasks
         
-       } else  {
-        
+       } else  {        
         tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
-        return tasks
-      
+        return tasks     
        }       
-    
-      
     }, 
      C_calendarTaskFilter: {           
         get() {

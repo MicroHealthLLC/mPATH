@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(version: 2021_06_14_224438) do
     t.integer "facility_project_id"
     t.boolean "important", default: false
     t.boolean "reportable", default: false
+    t.boolean "draft", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
