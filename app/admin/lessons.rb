@@ -3,7 +3,7 @@ ActiveAdmin.register Lesson do
   actions :all, except: [:show]
 
   breadcrumb do
-    links = [link_to('Admin', admin_root_path), link_to('Projects', admin_lessons_path)]
+    links = [link_to('Admin', admin_root_path), link_to('Lessons', admin_lessons_path)]
     if %(show edit).include?(params['action'])
       links << link_to(lesson.title, edit_admin_lesson_path)
     end
@@ -79,16 +79,20 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.facility&.facility_name}</span>".html_safe
       end
     end
-    column "Assigned To", :users do |lesson|
+    column "Added By", :users, sortable: 'users.first_name' do |lesson|
       if current_user.admin_write?
         lesson.users
       else
         "<span>#{lesson.users.map(&:full_name).join(', ')}</span>".html_safe
       end
     end
+
     actions defaults: false do |lesson|
       item "Edit", edit_admin_lesson_path(lesson), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_lesson_path(lesson), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
+      item "Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'success'} ), class: "member_link edit_link"
+      item "Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'failure'} ), class: "member_link edit_link"
+      item "Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'best_practices'} ), class: "member_link edit_link"
     end
   end
 
@@ -105,8 +109,8 @@ ActiveAdmin.register Lesson do
           f.input :description
           div id: 'facility_projects' do
             f.inputs for: [:facility_project, f.object.facility_project || FacilityProject.new] do |fp|
-                fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
-                fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
+              fp.input :project_id, label: 'Program', as: :select, collection: Project.all.map{|p| [p.name, p.id]}, include_blank: false
+              fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
             end
           end
           f.input :task_type, label: 'Category', include_blank: false
@@ -141,6 +145,12 @@ ActiveAdmin.register Lesson do
     f.actions
   end
 
+  controller do
+    def scoped_collection
+      super.includes(:task_type, :lesson_stage, :project, :facility, :user, :lesson_details)
+    end
+  end
+
   batch_action :destroy, if: proc {current_user.admin_delete?}, confirm: "Are you sure you want to delete these Lessons?" do |ids|
     deleted = Lesson.where(id: ids).destroy_all
     redirect_to collection_path, notice: "Successfully deleted #{deleted.count} Lessons"
@@ -155,7 +165,7 @@ ActiveAdmin.register Lesson do
   filter :facility_project_project_id, as: :select, collection: -> {Project.pluck(:name, :id)}, label: 'Program'
   filter :facility_project_facility_facility_name, as: :string, label: 'Project'
   filter :users_email, as: :string, label: "Email", input_html: {id: '__users_filter_emails'}
-  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Assigned To', input_html: {multiple: true, id: '__users_filters'}
+  filter :users, as: :select, collection: -> {User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}}, label: 'Added By', input_html: {multiple: true, id: '__users_filters'}
   filter :id, as: :select, collection: -> {[current_user.admin_privilege]}, input_html: {id: '__privileges_id'}, include_blank: false
   
 end

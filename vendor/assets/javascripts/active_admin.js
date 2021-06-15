@@ -17,6 +17,16 @@ function checkRiskProbabilityImpactNumber(element){
 
 jQuery(function($) {
 
+  $("#q_lesson_id").select2({
+    placeholder: "Search and select Lesson",
+    allowClear: true
+  });
+
+  $("#q_user_id").select2({
+    placeholder: "Search and select User",
+    allowClear: true
+  });
+  
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
     allowClear: true
