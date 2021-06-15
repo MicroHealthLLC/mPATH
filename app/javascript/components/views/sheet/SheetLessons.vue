@@ -77,8 +77,8 @@
             @contextmenu.prevent=""
           >
             <td>{{ lesson.title }}</td>
-            <td>{{ formatDate(new Date(lesson.date)) }}</td>
-            <td>{{ author(lesson.user_id) }}</td>
+            <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
+            <td class="text-center">{{ author(lesson.user_id) }}</td>
             <td>{{ lesson.description }}</td>
             <td class="text-center">     
               <span v-if="lesson.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
@@ -94,11 +94,13 @@
             </td>
             <td>
               <span v-if="lesson.notes[0]">{{ lesson.notes[0].body }}</span>
+              <span v-else>No Updates</span>
             </td>
           </tr>
         </table>
 
         <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
+        
         <!-- Lessons Per Page Toggle -->
         <div class="float-right mb-4 mt-2 font-sm">
           <div class="simple-select d-inline-block text-right font-sm">
@@ -349,6 +351,7 @@ export default {
 }
 td {
   border: 1px solid #dee2e6;
+  vertical-align: top;
 }
 .page-btns.active {
   background-color: rgba(211, 211, 211, 10%);
@@ -382,6 +385,10 @@ td {
   font-size: 14px;
   color: #606266;
   overflow-wrap: break-word;
+}
+tr:hover {
+  background-color: #cdecf5;
+  cursor: pointer;
 }
 .w-70 {
   float: right;
