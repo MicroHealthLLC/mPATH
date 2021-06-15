@@ -101,10 +101,6 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) =>
-                  facility.facility.id != this.$route.params.projectId
-              )
-              .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
               )
               .map((facility) => {
@@ -133,6 +129,7 @@ export default {
                       // Project Issues
                       ...facility.issues
                         .filter((issue) => !relatedIssueIds.includes(issue.id))
+                        .filter((issue) => issue.id != this.issue.id)
                         .map((issue) => {
                           return {
                             id: issue.id,
