@@ -1,6 +1,14 @@
 ActiveAdmin.register LessonDetail do
   menu parent: "Lessons", priority: 3
   actions :all, except: [:show]
+  
+  breadcrumb do
+    links = [link_to('Admin', admin_root_path), link_to('Lesson Details', admin_lesson_details_path)]
+    if %(show edit).include?(params['action'])
+      links << link_to(lesson_detail.id, edit_admin_lesson_detail_path)
+    end
+    links
+  end
 
   permit_params do
     permitted = [
@@ -10,7 +18,9 @@ ActiveAdmin.register LessonDetail do
       :lesson_id,  
       :detail_type
     ]
+    permitted
   end
+  
   index do
     column :id
     column :finding
