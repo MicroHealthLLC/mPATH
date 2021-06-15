@@ -244,7 +244,7 @@
         </div>
 
         <el-steps
-          :active="lessonStages.findIndex( (stage) => stage.id == lesson.lesson_stage_id )"
+          :active="lessonStages.findIndex((stage) => stage.id == lesson.lesson_stage_id)"
           finish-status="success"
           v-model="lesson.lesson_stage_id"
           value-key="id"
@@ -397,7 +397,7 @@
       <span class="clickable" @click.prevent="addSuccess">
         <i class="fas fa-plus-circle"></i>
       </span>
-       <paginate-links
+      <paginate-links
         v-if="successes.length"
         for="successes"
         class="paginate"
@@ -410,46 +410,46 @@
         :list="successes"
         :per="4"
         :key="successes ? successes.length : 1"
-        >
-      <el-card
-        v-for="(success, index) in paginated('successes')"
-        :key="index"
-        class="success-card mb-3"
       >
-        <div class="d-flex justify-content-between">
-          <label class="font-md">Findings</label>
-          <div class="font-sm">
-            <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span>
-              <span v-if="success.updated_at"
-                >{{ author(success.user_id) }} on
-                {{ new Date(success.updated_at).toLocaleString() }}</span
-              ><span v-else
-                >{{ $currentUser.full_name }} on
-                {{ new Date().toLocaleDateString() }}</span
-              ></el-tag
-            >
-            <i
-              class="el-icon-delete clickable ml-3"
-              @click="removeSuccess(index)"
-            ></i>
+        <el-card
+          v-for="(success, index) in paginated('successes')"
+          :key="index"
+          class="success-card mb-3"
+        >
+          <div class="d-flex justify-content-between">
+            <label class="font-md">Findings</label>
+            <div class="font-sm">
+              <el-tag size="mini"
+                ><span class="font-weight-bold">Submitted by:</span>
+                <span v-if="success.updated_at"
+                  >{{ author(success.user_id) }} on
+                  {{ new Date(success.updated_at).toLocaleString() }}</span
+                ><span v-else
+                  >{{ $currentUser.full_name }} on
+                  {{ new Date().toLocaleDateString() }}</span
+                ></el-tag
+              >
+              <i
+                class="el-icon-delete clickable ml-3"
+                @click="removeSuccess(index)"
+              ></i>
+            </div>
           </div>
-        </div>
 
-        <el-input
-          v-model="success.finding"
-          type="textarea"
-          placeholder="Please enter findings here..."
-        ></el-input>
+          <el-input
+            v-model="success.finding"
+            type="textarea"
+            placeholder="Please enter findings here..."
+          ></el-input>
 
-        <label class="font-md">Recommendation</label>
-        <el-input
-          v-model="success.recommendation"
-          type="textarea"
-          placeholder="Please recommendation here..."
-        ></el-input>
-      </el-card>
-       </paginate>
+          <label class="font-md">Recommendation</label>
+          <el-input
+            v-model="success.recommendation"
+            type="textarea"
+            placeholder="Please recommendation here..."
+          ></el-input>
+        </el-card>
+      </paginate>
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'" class="mt-2">
@@ -457,7 +457,7 @@
       <span class="clickable" @click.prevent="addFailure">
         <i class="fas fa-plus-circle"></i>
       </span>
-       <paginate-links
+      <paginate-links
         v-if="failures.length"
         for="failures"
         class="paginate"
@@ -470,45 +470,45 @@
         :list="failures"
         :per="4"
         :key="failures ? failures.length : 1"
-        >
-      <el-card
-        v-for="(failure, index) in paginated('failures')"
-        :key="index"
-        class="failure-card mb-3"
       >
-        <div class="d-flex justify-content-between">
-          <label class="font-md">Findings</label>
-          <div class="font-sm">
-            <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span>
-              <span v-if="failure.updated_at"
-                >{{ author(failure.user_id) }} on
-                {{ new Date(failure.updated_at).toLocaleString() }}</span
-              ><span v-else
-                >{{ $currentUser.full_name }} on
-                {{ new Date().toLocaleDateString() }}</span
-              ></el-tag
-            >
-            <i
-              class="el-icon-delete clickable ml-3"
-              @click="removeFailure(index)"
-            ></i>
+        <el-card
+          v-for="(failure, index) in paginated('failures')"
+          :key="index"
+          class="failure-card mb-3"
+        >
+          <div class="d-flex justify-content-between">
+            <label class="font-md">Findings</label>
+            <div class="font-sm">
+              <el-tag size="mini"
+                ><span class="font-weight-bold">Submitted by:</span>
+                <span v-if="failure.updated_at"
+                  >{{ author(failure.user_id) }} on
+                  {{ new Date(failure.updated_at).toLocaleString() }}</span
+                ><span v-else
+                  >{{ $currentUser.full_name }} on
+                  {{ new Date().toLocaleDateString() }}</span
+                ></el-tag
+              >
+              <i
+                class="el-icon-delete clickable ml-3"
+                @click="removeFailure(index)"
+              ></i>
+            </div>
           </div>
-        </div>
 
-        <el-input
-          v-model="failure.finding"
-          type="textarea"
-          placeholder="Please enter findings here..."
-        ></el-input>
+          <el-input
+            v-model="failure.finding"
+            type="textarea"
+            placeholder="Please enter findings here..."
+          ></el-input>
 
-        <label class="font-md">Recommendation</label>
-        <el-input
-          v-model="failure.recommendation"
-          type="textarea"
-          placeholder="Please recommendation here..."
-        ></el-input>
-      </el-card>
+          <label class="font-md">Recommendation</label>
+          <el-input
+            v-model="failure.recommendation"
+            type="textarea"
+            placeholder="Please recommendation here..."
+          ></el-input>
+        </el-card>
       </paginate>
     </div>
 
@@ -531,46 +531,45 @@
         :list="bestPractices"
         :per="4"
         :key="bestPractices ? bestPractices.length : 1"
-        >
-
-      <el-card
-        v-for="(bestPractice, index) in paginated('bestPractices')"
-        :key="index"
-        class="best-practice-card mb-3"
       >
-        <div class="d-flex justify-content-between">
-          <label class="font-md">Findings</label>
-          <div class="font-sm">
-            <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span>
-              <span v-if="bestPractice.updated_at"
-                >{{ author(bestPractice.user_id) }} on
-                {{ new Date(bestPractice.updated_at).toLocaleString() }}</span
-              ><span v-else
-                >{{ $currentUser.full_name }} on
-                {{ new Date().toLocaleDateString() }}</span
-              ></el-tag
-            >
-            <i
-              class="el-icon-delete clickable ml-3"
-              @click="removeBestPractice(index)"
-            ></i>
+        <el-card
+          v-for="(bestPractice, index) in paginated('bestPractices')"
+          :key="index"
+          class="best-practice-card mb-3"
+        >
+          <div class="d-flex justify-content-between">
+            <label class="font-md">Findings</label>
+            <div class="font-sm">
+              <el-tag size="mini"
+                ><span class="font-weight-bold">Submitted by:</span>
+                <span v-if="bestPractice.updated_at"
+                  >{{ author(bestPractice.user_id) }} on
+                  {{ new Date(bestPractice.updated_at).toLocaleString() }}</span
+                ><span v-else
+                  >{{ $currentUser.full_name }} on
+                  {{ new Date().toLocaleDateString() }}</span
+                ></el-tag
+              >
+              <i
+                class="el-icon-delete clickable ml-3"
+                @click="removeBestPractice(index)"
+              ></i>
+            </div>
           </div>
-        </div>
 
-        <el-input
-          v-model="bestPractice.finding"
-          type="textarea"
-          placeholder="Please enter findings here..."
-        ></el-input>
+          <el-input
+            v-model="bestPractice.finding"
+            type="textarea"
+            placeholder="Please enter findings here..."
+          ></el-input>
 
-        <label class="font-md">Recommendation</label>
-        <el-input
-          v-model="bestPractice.recommendation"
-          type="textarea"
-          placeholder="Please recommendation here..."
-        ></el-input>
-      </el-card>
+          <label class="font-md">Recommendation</label>
+          <el-input
+            v-model="bestPractice.recommendation"
+            type="textarea"
+            placeholder="Please recommendation here..."
+          ></el-input>
+        </el-card>
       </paginate>
     </div>
 
@@ -589,7 +588,7 @@
       <span class="clickable" @click.prevent="addUpdate">
         <i class="fas fa-plus-circle"></i>
       </span>
-        <paginate-links
+      <paginate-links
         v-if="updates.length"
         for="updates"
         class="paginate"
@@ -602,38 +601,38 @@
         :list="updates"
         :per="4"
         :key="updates ? updates.length : 1"
-        >
-      <el-card
-        v-for="(update, index) in paginated('updates')"
-        :key="index"
-        class="update-card mb-3"
       >
-        <div class="d-flex justify-content-between">
-          <label class="font-md">Description</label>
-          <div class="font-sm">
-            <el-tag size="mini"
-              ><span class="font-weight-bold">Submitted by:</span>
-              <span v-if="update.updated_at"
-                >{{ author(update.user_id) }} on
-                {{ new Date(update.updated_at).toLocaleString() }}</span
-              ><span v-else
-                >{{ $currentUser.full_name }} on
-                {{ new Date().toLocaleDateString() }}</span
-              ></el-tag
-            >
-            <i
-              class="el-icon-delete clickable ml-3"
-              @click="removeUpdate(index)"
-            ></i>
+        <el-card
+          v-for="(update, index) in paginated('updates')"
+          :key="index"
+          class="update-card mb-3"
+        >
+          <div class="d-flex justify-content-between">
+            <label class="font-md">Description</label>
+            <div class="font-sm">
+              <el-tag size="mini"
+                ><span class="font-weight-bold">Submitted by:</span>
+                <span v-if="update.updated_at"
+                  >{{ author(update.user_id) }} on
+                  {{ new Date(update.updated_at).toLocaleString() }}</span
+                ><span v-else
+                  >{{ $currentUser.full_name }} on
+                  {{ new Date().toLocaleDateString() }}</span
+                ></el-tag
+              >
+              <i
+                class="el-icon-delete clickable ml-3"
+                @click="removeUpdate(index)"
+              ></i>
+            </div>
           </div>
-        </div>
 
-        <el-input
-          v-model="update.body"
-          type="textarea"
-          placeholder="Please enter Description here..."
-        ></el-input>
-      </el-card>
+          <el-input
+            v-model="update.body"
+            type="textarea"
+            placeholder="Please enter Description here..."
+          ></el-input>
+        </el-card>
       </paginate>
     </div>
     <RelatedLessonMenu
@@ -731,7 +730,7 @@ export default {
       successes: [],
       deleteSuccesses: [],
       failures: [],
-      // important: null, 
+      // important: null,
       deleteFailures: [],
       bestPractices: [],
       deleteBestPractices: [],
@@ -753,7 +752,7 @@ export default {
           lesson: {
             title: this.lesson.title,
             description: this.lesson.description,
-            date: this.lesson.date,          
+            date: this.lesson.date,
             task_type_id: this.lesson.task_type_id,
             user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
@@ -928,7 +927,11 @@ export default {
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      this.lesson.lesson_stage_id = stage.id;
+      if (this.lesson.id) {
+        this.lesson.lesson_stage_id = stage.id;
+      } else {
+        this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
+      }
     },
     clearStage() {
       this.lesson.lesson_stage_id = null;
@@ -995,7 +998,11 @@ export default {
   watch: {
     lesson: {
       handler(newValue, oldValue) {
-        if (this.contentLoaded && Object.keys(oldValue).length === 0) {
+        if (
+          this.contentLoaded &&
+          Object.keys(oldValue).length === 0 &&
+          this.$route.params.lessonId != "new"
+        ) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
           this.important = this.lesson.important;
@@ -1039,7 +1046,7 @@ export default {
         }
       });
     },
-   "bestPractices.length"(value, previous) {
+    "bestPractices.length"(value, previous) {
       this.$nextTick(() => {
         if (this.$refs.paginator && (value === 1 || previous === 0)) {
           this.$refs.paginator.goToPage(1);
