@@ -121,7 +121,7 @@ ActiveAdmin.register User do
         # end
       # end
 
-      tab 'Advanced' do
+      tab 'Programs' do
         f.inputs 'Access' do
         f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
           p.input :sheets_view, as: :check_boxes, :collection =>  top_navigation_privileges_options(p.object, "sheets_view"), hidden: false
