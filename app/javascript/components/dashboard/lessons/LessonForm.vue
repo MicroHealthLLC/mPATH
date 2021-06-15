@@ -85,8 +85,7 @@
       <div class="col-12 px-0">
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
-        >
-        <!-- Flags bar UI complete....Still need to work on logic 
+        >      
         <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">             
 
             <span
@@ -158,7 +157,7 @@
                 Draft
               </small>
             </span>
-        </div> -->
+        </div> 
 
         <el-input
           name="Lesson Name"
@@ -758,7 +757,7 @@ export default {
             task_type_id: this.lesson.task_type_id,
             user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
-            // important: !this.lesson.important,
+            important: this.lesson.important,
             reportable: this.lesson.reportable,
             draft: this.lesson.draft,
             // Array values below
@@ -934,15 +933,15 @@ export default {
     clearStage() {
       this.lesson.lesson_stage_id = null;
     },
-    // toggleImportant() {
-    // this.lesson = { ...this.lesson, important: !this.lesson.important };
-    // },
-    // toggleDraft() {
-    //   this.lesson = { ...this.lesson, draft: !this.lesson.draft };
-    // },
-    // toggleReportable() {
-    //   this.lesson = { ...this.lesson, reportable: !this.lesson.reportable };
-    // },
+    toggleImportant() {
+      this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
+    },
+    toggleDraft() {
+      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });  
+    },
+    toggleReportable() {
+      this.SET_LESSON( { ...this.lesson, reportable: !this.lesson.reportable });    
+    },
   },
   computed: {
     ...mapGetters([
@@ -999,7 +998,9 @@ export default {
         if (this.contentLoaded && Object.keys(oldValue).length === 0) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          // this.important = this.lesson.important;
+          this.important = this.lesson.important;
+          this.draft = this.lesson.draft;
+          this.reportable = this.lesson.reportable;
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
@@ -1013,7 +1014,9 @@ export default {
         if (this.lesson) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          // this.important = this.lesson.important;          
+          this.important = this.lesson.important;  
+          this.draft = this.lesson.draft;
+          this.reportable = this.lesson.reportable;         
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;

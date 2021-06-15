@@ -64,7 +64,9 @@
             <th class="desc-col">
               Description
             </th>
-
+             <th class="flags-col">
+             Flags
+            </th>
             <th class="update-col">Last Update</th>
           </tr>
           <tr
@@ -79,6 +81,18 @@
             <td>{{ formatDate(new Date(lesson.date)) }}</td>
             <td>{{ author(lesson.user_id) }}</td>
             <td>{{ lesson.description }}</td>
+            <td class="text-center">     
+              <span v-if="lesson.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+              <span v-if="lesson.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>          
+              <span v-if="lesson.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+              <span v-if="
+                        lesson.important == false &&
+                        lesson.reportable == false &&                  
+                        lesson.draft == false"             
+                      >
+                    No flags at this time 
+              </span>            
+            </td>
             <td>
               <span v-if="lesson.notes[0]">{{ lesson.notes[0].body }}</span>
             </td>
@@ -365,11 +379,13 @@ th {
   padding: 10px;
   font-size: 0.7rem;
   color: #383838;
+
 }
 td {
   padding: 6px;
   font-size: 14px;
   color: #606266;
+  overflow-wrap: break-word;
 }
 .w-70 {
   float: right;
@@ -380,17 +396,17 @@ td {
     width: 65% !important;
   }
 }
+.date-col {
+  width: 10%;
+}
+.added-by-col, .flags-col {
+  width: 12.5%;
+}
 .lesson-col {
   width: 20%;
 }
-.date-col {
-  width: 15%;
-}
-.added-by-col {
-  width: 15%;
-}
 .desc-col {
-  width: 25%;
+  width: 20%;
 }
 .last-update-col {
   width: 25%;
