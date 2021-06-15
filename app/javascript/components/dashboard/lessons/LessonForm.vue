@@ -1001,7 +1001,7 @@ export default {
           this.relatedIssues = this.lesson.sub_issues;
           // this.important = this.lesson.important;
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.lesson_details;
+          this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
@@ -1015,7 +1015,7 @@ export default {
           this.relatedIssues = this.lesson.sub_issues;
           // this.important = this.lesson.important;          
           this.relatedRisks = this.lesson.sub_risks;
-          this.successes = this.lesson.lesson_details;
+          this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
