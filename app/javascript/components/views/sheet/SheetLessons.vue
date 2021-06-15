@@ -75,7 +75,6 @@
             @click="openLesson(lesson.id)"
             @mouseup.right="openContextMenu($event, lesson)"
             @contextmenu.prevent=""
-            :load="log(lesson)"
           >
             <td>{{ lesson.title }}</td>
             <td>{{ formatDate(new Date(lesson.date)) }}</td>
@@ -190,9 +189,6 @@ export default {
       const html = this.$refs.table.innerHTML;
       doc.autoTable({ html: "#lessonsPdf" });
       doc.save("Lessons Learned.pdf");
-    },
-    log(e){
-      console.log(e)
     },
     exportToExcel(table, name) {
       if (!table.nodeType) table = this.$refs.table;
