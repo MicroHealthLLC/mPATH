@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2021_06_14_153303) do
+=======
+ActiveRecord::Schema.define(version: 2021_06_14_224438) do
+
+  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_accountable_users_on_project_id"
+    t.index ["user_id"], name: "index_accountable_users_on_user_id"
+  end
+>>>>>>> 691d390ca4412033bd338c5e1eba5a8b7b9d0eb9
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -225,9 +236,9 @@ ActiveRecord::Schema.define(version: 2021_06_14_153303) do
     t.text "recommendation"
     t.integer "user_id"
     t.integer "lesson_id"
-    t.integer "detail_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "detail_type", default: "success"
   end
 
   create_table "lesson_stages", charset: "utf8", force: :cascade do |t|
