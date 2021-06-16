@@ -88,7 +88,12 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setAdvancedFilter", "setTaskTypeFilter"]),
+    ...mapMutations([
+    "setAdvancedFilter", 
+    "setTaskTypeFilter", 
+    'setIssueTypeFilter',
+    'setIssueSeverityFilter',
+    ]),
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
 
@@ -255,6 +260,22 @@ export default {
         return issues
       
        } 
+    },
+    C_issueTypeFilter: {
+      get() {
+        return this.issueTypeFilter
+      },
+      set(value) {
+        this.setIssueTypeFilter(value)
+      }
+    },
+    C_issueSeverityFilter: {
+      get() {
+        return this.issueSeverityFilter
+      },
+      set(value) {
+        this.setIssueSeverityFilter(value)
+      }
     },
     C_taskTypeFilter: {
       get() {
