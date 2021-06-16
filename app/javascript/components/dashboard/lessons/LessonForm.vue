@@ -1,5 +1,9 @@
 <template>
-  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
+  <form
+    @submit.prevent="saveLesson"
+    :class="{ _disabled: !lessonsLoaded }"
+    accept-charset="UTF-8"
+  >
     <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div>
@@ -85,79 +89,75 @@
       <div class="col-12 px-0">
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
-        >      
-        <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">             
+        >
+        <div
+          class="toggleWrapper float-right"
+          :class="{ 'font-sm': isMapView }"
+        >
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            data-cy="task_important"
+          >
+            <span v-tooltip="`Important`" v-show="lesson.important">
+              <i class="fas fa-star text-warning"></i>
+            </span>
+            <span v-tooltip="`Important`" v-show="!lesson.important">
+              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+            </span>
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Important
+            </small>
+          </span>
 
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-            >
-              <span 
-                v-tooltip="`Important`" 
-                v-show="lesson.important">
-               <i class="fas fa-star text-warning"></i>
-              </span>
-              <span 
-                v-tooltip="`Important`" 
-                v-show="!lesson.important">
-               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            data-cy="task_reportable"
+          >
+            <span v-tooltip="`Briefings`" v-show="lesson.reportable">
+              <i class="fas fa-flag text-primary"></i>
+            </span>
+            <span v-tooltip="`Briefings`" v-show="!lesson.reportable">
+              <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
             </span>
 
-             <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleReportable"
-              data-cy="task_reportable"
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
             >
-              <span
-                 v-tooltip="`Briefings`" 
-                 v-show="lesson.reportable">
-               <i class="fas fa-flag text-primary"></i>
-              </span>
-              <span 
-                v-tooltip="`Briefings`" 
-                v-show="!lesson.reportable">
-               <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-               Briefings
-              </small>
+              Briefings
+            </small>
+          </span>
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleDraft"
+            data-cy="task_important"
+          >
+            <span v-tooltip="`Draft`" v-show="lesson.draft">
+              <i class="fas fa-pencil-alt text-warning"></i>
             </span>
-              <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="task_important"
+            <span v-tooltip="`Draft`" v-show="!lesson.draft">
+              <i
+                class="fas fa-pencil-alt"
+                style="color:lightgray;cursor:pointer"
+              ></i>
+            </span>
+
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
             >
-              <span
-                 v-tooltip="`Draft`" 
-                 v-show="lesson.draft">
-               <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-              <span 
-                v-tooltip="`Draft`" 
-                v-show="!lesson.draft">
-               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Draft
-              </small>
-            </span>
-        </div> 
+              Draft
+            </small>
+          </span>
+        </div>
 
         <el-input
           name="Lesson Name"
@@ -244,7 +244,11 @@
         </div>
 
         <el-steps
-          :active="lessonStages.findIndex((stage) => stage.id == lesson.lesson_stage_id)"
+          :active="
+            lessonStages.findIndex(
+              (stage) => stage.id == lesson.lesson_stage_id
+            )
+          "
           finish-status="success"
           v-model="lesson.lesson_stage_id"
           value-key="id"
@@ -635,6 +639,8 @@
         </el-card>
       </paginate>
     </div>
+
+    <div v-if="!lessonsLoaded" class="load-spinner spinner-border"></div>
     <RelatedLessonMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
@@ -940,10 +946,10 @@ export default {
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
-      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });  
+      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
     },
     toggleReportable() {
-      this.SET_LESSON( { ...this.lesson, reportable: !this.lesson.reportable });    
+      this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
   },
   computed: {
@@ -953,6 +959,7 @@ export default {
       "facilities",
       "facilityGroups",
       "lesson",
+      "lessonsLoaded",
       "lessonStages",
       "lessonStatus",
       "taskTypes",
@@ -968,7 +975,6 @@ export default {
         return "kanban";
       }
     },
-
     projectNameLink() {
       if (this.$route.path.includes("lessons")) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
@@ -1021,9 +1027,9 @@ export default {
         if (this.lesson) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          this.important = this.lesson.important;  
+          this.important = this.lesson.important;
           this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;         
+          this.reportable = this.lesson.reportable;
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
