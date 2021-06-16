@@ -49,6 +49,18 @@ ActiveAdmin.register LessonDetail do
   end
 
   controller do
+    before_action :check_readability, only: [:index, :show]
+    # before_action :check_order, only: [:index]
+    before_action :check_writeability, only: [:new, :edit, :update, :create]
+
+    def check_readability
+      redirect_to '/not_found' and return unless current_user.admin_read?
+    end
+
+    def check_writeability
+      redirect_to '/not_found' and return unless current_user.admin_write?
+    end
+    
     def scoped_collection
       super.includes(:lesson, :user)
     end
