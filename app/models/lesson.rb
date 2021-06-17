@@ -443,4 +443,16 @@ class Lesson < ApplicationRecord
     end.as_json
   end
 
+  def manipulate_files(params)
+    return unless params[:lesson][:lesson_files].present?
+    file_blobs = JSON.parse(params[:lesson][:lesson_files])
+    file_blobs.each do |file|
+      if file['_destroy']
+        lesson_files.find_by_id(file['id'])&.purge
+      elsif file['_new']
+        lesson_files.new(blob_id: file['id'])
+      end
+    end
+  end
+
 end
