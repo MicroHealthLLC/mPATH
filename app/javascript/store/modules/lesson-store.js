@@ -127,25 +127,26 @@ const lessonModule = {
       // Prep Successes
       lesson.successes.forEach((success, index) => {
         Object.entries(success).forEach(([key, value]) => {
-          formData.append(`lesson[successes][${index}][${key}]`, value);
+          formData.append(`lesson[successes][][${key}]`, value);
         });
       });
       //Prep Failures
       lesson.failures.forEach((failure, index) => {
-        Object.entries(failure).forEach(([key, value]) => {
-          formData.append(`lesson[failures][${index}][${key}]`, value);
+        // formData.append(`lesson[failures][]`, JSON.stringify(failure) );
+        Object.entries(failure).forEach(([key, value]) => {        
+          formData.append(`lesson[failures][][${key}]`, value);
         });
       });
       //Prep Best Practices
       lesson.best_practices.forEach((bestPractice, index) => {
         Object.entries(bestPractice).forEach(([key, value]) => {
-          formData.append(`lesson[best_practices][${index}][${key}]`, value);
+          formData.append(`lesson[best_practices][][${key}]`, value);
         });
       });
       //Prep Updates
       lesson.notes_attributes.forEach((update, index) => {
         Object.entries(update).forEach(([key, value]) => {
-          formData.append(`lesson[notes_attributes][${index}][${key}]`, value);
+          formData.append(`lesson[notes_attributes][][${key}]`, value);
         });
       });
 
