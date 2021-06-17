@@ -100,15 +100,41 @@ const lessonModule = {
     },
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       // Update a lesson with changes
-      lesson = {
-        lesson: {
-          ...lesson,
-        },
-      };
+
+      let formData = new FormData();
+
+      formData.append("lesson[title]", lesson.title);
+      formData.append("lesson[description]", lesson.description);
+      formData.append("lesson[date]", lesson.date);
+      formData.append("lesson[task_type_id]", lesson.task_type_id);
+      formData.append("lesson[user_id]", lesson.user_id);
+      formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
+      formData.append("lesson[important]", lesson.important);
+      formData.append("lesson[reportable]", lesson.reportable);
+      formData.append("lesson[draft]", lesson.draft);
+
+      lesson.sub_task_ids.forEach((id) => {
+        formData.append("lesson[sub_task_ids][]", id);
+      });
+
+      lesson.sub_issue_ids.forEach((id) => {
+        formData.append("lesson[sub_issue_ids][]", id);
+      });
+
+      lesson.sub_risk_ids.forEach((id) => {
+        formData.append("lesson[sub_risk_ids][]", id);
+      });
+
+      lesson.successes.forEach((success, index) => {
+        Object.entries(success).forEach(([key, value]) => {
+          formData.append(`successes[${index}][${key}]`, value);
+        });
+      });
+
       axios({
         method: "PATCH",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons/${lessonId}`,
-        data: lesson,
+        data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
