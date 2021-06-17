@@ -169,6 +169,7 @@ class Issue < ApplicationRecord
       progress_status = "completed"
     end
 
+    is_overdue = false
     if !on_hold
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
