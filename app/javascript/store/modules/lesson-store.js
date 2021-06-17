@@ -28,9 +28,7 @@ const lessonModule = {
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED");
-        });
+        .finally(() => {});
     },
     fetchProjectLessons({ commit }, { programId, projectId }) {
       // Send GET request for all lessons contained within a project
@@ -49,11 +47,10 @@ const lessonModule = {
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED");
-        });
+        .finally(() => {});
     },
     fetchLesson({ commit }, { id, programId, projectId }) {
+      commit("TOGGLE_LESSONS_LOADED", false);
       // Retrieve lesson by id
       axios({
         method: "GET",
@@ -70,10 +67,11 @@ const lessonModule = {
           console.log(err);
         })
         .finally(() => {
-          commit("TOGGLE_LESSONS_LOADED");
+          commit("TOGGLE_LESSONS_LOADED", true);
         });
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
+      commit("TOGGLE_LESSONS_LOADED", false);
       // Add new lesson
       lesson = {
         lesson: {
@@ -96,9 +94,12 @@ const lessonModule = {
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED", true);
+        });
     },
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
+      commit("TOGGLE_LESSONS_LOADED", false);
       // Update a lesson with changes
       lesson = {
         lesson: {
@@ -121,7 +122,9 @@ const lessonModule = {
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED", true);
+        });
     },
     deleteLesson({ commit }, { id, programId, projectId }) {
       // Delete a single lesson
@@ -154,8 +157,7 @@ const lessonModule = {
     },
     SET_LESSON_STAGES: (state, lessonStages) =>
       (state.lesson_stages = lessonStages),
-    TOGGLE_LESSONS_LOADED: (state) =>
-      (state.lessons_loaded = !state.lessons_loaded),
+    TOGGLE_LESSONS_LOADED: (state, loaded) => (state.lessons_loaded = loaded),
     SET_LESSON_STATUS: (state, status) => (state.lesson_status = status),
   },
   getters: {
