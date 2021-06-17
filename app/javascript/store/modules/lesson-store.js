@@ -6,7 +6,7 @@ const lessonModule = {
     project_lessons: [],
     program_lessons: [],
     lesson_stages: [],
-    lessons_loaded: false,
+    lessons_loaded: true,
     lesson_status: 0,
   }),
 
