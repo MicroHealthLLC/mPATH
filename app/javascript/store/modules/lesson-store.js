@@ -102,30 +102,37 @@ const lessonModule = {
           formData.append(`lesson[successes][][${key}]`, value);
         });
       });
-      //Prep Failures
+      // Prep Failures
       lesson.failures.forEach((failure) => {
         // formData.append(`lesson[failures][]`, JSON.stringify(failure) );
         Object.entries(failure).forEach(([key, value]) => {
           formData.append(`lesson[failures][][${key}]`, value);
         });
       });
-      //Prep Best Practices
+      // Prep Best Practices
       lesson.best_practices.forEach((bestPractice) => {
         Object.entries(bestPractice).forEach(([key, value]) => {
           formData.append(`lesson[best_practices][][${key}]`, value);
         });
       });
-      //Prep Updates
+      // Prep Updates
       lesson.notes_attributes.forEach((update) => {
         Object.entries(update).forEach(([key, value]) => {
           formData.append(`lesson[notes_attributes][][${key}]`, value);
         });
       });
-      
+      // Prep Files
+      lesson.attach_files.forEach((file) => {
+        formData.append("lesson[lesson_files][]", file);
+      });
+      lesson.fileLinks.forEach((link) => {
+        formData.append("file_links[]", link.name);
+      });
+
       axios({
         method: "POST",
         url: `/api/v1/programs/${programId}/projects/${projectId}/lessons.json`,
-        data: lesson,
+        data: formData,
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
             .attributes["content"].value,
@@ -174,25 +181,32 @@ const lessonModule = {
           formData.append(`lesson[successes][][${key}]`, value);
         });
       });
-      //Prep Failures
+      // Prep Failures
       lesson.failures.forEach((failure) => {
         // formData.append(`lesson[failures][]`, JSON.stringify(failure) );
         Object.entries(failure).forEach(([key, value]) => {
           formData.append(`lesson[failures][][${key}]`, value);
         });
       });
-      //Prep Best Practices
+      // Prep Best Practices
       lesson.best_practices.forEach((bestPractice) => {
         Object.entries(bestPractice).forEach(([key, value]) => {
           formData.append(`lesson[best_practices][][${key}]`, value);
         });
       });
-      //Prep Updates
+      // Prep Updates
       lesson.notes_attributes.forEach((update) => {
         Object.entries(update).forEach(([key, value]) => {
           formData.append(`lesson[notes_attributes][][${key}]`, value);
         });
       });
+      // Prep Files
+      lesson.attach_files.forEach((file) => {
+        formData.append("lesson[lesson_files][]", file);
+      });
+      lesson.fileLinks.forEach(link => {
+        formData.append("file_links[]", link.name)
+      })
 
       axios({
         method: "PATCH",

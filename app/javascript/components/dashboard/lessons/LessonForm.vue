@@ -579,11 +579,20 @@
 
     <!-- Files & Links Tab -->
     <div v-show="currentTab == 'tab6'" class="row mt-2">
-      <div class="col">
+      <div class="col-6">
         <AttachmentInput @input="addFile" />
         <div v-for="(file, index) in files" :key="index">
           <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
         </div>
+        <div v-for="(file, index) in fileLinks" :key="index">
+          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+        </div>
+      </div>
+      <div class="col-6">
+        Add Link
+        <span class="clickable" @click="addFileLink()">
+          <i class="fas fa-plus-circle"></i>
+        </span>
       </div>
     </div>
     <!-- Updates Tab -->
@@ -717,12 +726,12 @@ export default {
           closable: false,
           form_fields: [],
         },
-        // {
-        //   label: "Files & Links",
-        //   key: "tab6",
-        //   closable: false,
-        //   form_fields: ["Files"],
-        // },
+        {
+          label: "Files & Links",
+          key: "tab6",
+          closable: false,
+          form_fields: ["Files"],
+        },
         {
           label: "Updates",
           key: "tab7",
@@ -743,6 +752,7 @@ export default {
       updates: [],
       deleteUpdates: [],
       files: [],
+      fileLinks: []
     };
   },
   methods: {
@@ -777,6 +787,7 @@ export default {
             ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
             attach_files: [...this.files],
+            fileLinks: [...this.fileLinks]
           },
         };
 
@@ -928,6 +939,14 @@ export default {
 
       this.files = files;
     },
+    addFileLink() {
+      this.fileLinks.push({
+        name: "https://www.google.com",
+        uri: "https://www.google.com",
+        link: true,
+        guid: this.guid(),
+      });
+    },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
       window.open(url, "_blank");
@@ -1019,6 +1038,7 @@ export default {
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files;
         }
       },
     },
@@ -1035,6 +1055,7 @@ export default {
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files;
         }
       },
     },
