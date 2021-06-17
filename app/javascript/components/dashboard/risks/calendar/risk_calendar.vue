@@ -140,7 +140,10 @@
             <span v-if="item.id == 'month'"><font-awesome-icon icon="calendar-alt" class="mr-1"  /> Month</span>
             <span v-if="item.id == '4day'"><font-awesome-icon icon="calendar-minus" class="mr-1"  /> 4 Day</span>         
             </v-btn>        
-           </v-btn-toggle> 
+           </v-btn-toggle>
+          <button class="btn btn-sm btn-info ml-3 total-table-btns">
+            Total: {{filteredCalendar.length}}
+          </button> 
         </v-toolbar>
       </v-sheet>
     
@@ -182,22 +185,30 @@
             {{ selectedEvent.category }}            
           </v-list-item-title>
         </v-list-item>
-         <v-list-item>
-          <v-list-item-title>          
-            <span class="d-inline mr-1"><small><b>Identified Date:</b></small></span>            
-             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
-          </v-list-item-title>
-        </v-list-item>
+     
          <v-list-item>
           <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>Risk Approach (RA):</b></small></span>  
+           <span class="d-inline mr-1"><small><b>Risk Approach:</b></small></span>  
            <span class="upperCase"> {{ selectedEvent.ra }} </span>
           </v-list-item-title>
         </v-list-item>
           <v-list-item>
-          <v-list-item-title> 
-           <span class="d-inline mr-1"><small><b>RA Due Date:</b></small></span>           
-               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+          <v-list-item-title @click.prevent="scrollToStartDate" class="point">          
+            <span class="d-inline mr-1"><small><b>Date Identified:</b></small></span>            
+             {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
+          </v-list-item-title>
+        </v-list-item>
+          <v-list-item>
+          <v-list-item-title class="point" @click.prevent="scrollToEndDate"> 
+           <span class="d-inline mr-1">
+               <span v-if="selectedEvent.isOngoing == true">
+                 <small><b> Date Closed:</b></small>
+               </span>
+               <small v-else><b>RA Due Date:</b></small></span> 
+               <span v-if="selectedEvent.isOngoing == true && 
+               selectedEvent.end == '2099-01-01'" class="mr-2">
+                <font-awesome-icon icon="retweet" class="text-success"  />
+                </span>   
                <span v-else>  
             {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
                </span>
@@ -206,7 +217,9 @@
          <v-list-item >
            <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
-               <span v-if="selectedEvent.isOngoing == true" class="mr-2"> - - -</span>   
+               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-2"> 
+              <font-awesome-icon icon="retweet" class="text-success"  />   
+              </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   
@@ -324,7 +337,9 @@
         'setTaskIssueProgressStatusFilter',
         'setTaskIssueOverdueFilter',
         'setShowAllEventsToggle',
+        'setRiskPriorityLevelFilter',
         'setLastFocusFilter',
+        'setRiskApproachFilter',
         'setTaskTypeFilter',
         'setMyActionsFilter',
         'setOnWatchFilter',
@@ -357,8 +372,9 @@
         return event.color
       },
       setToday () {
-        this.todayView = true 
-        this.setLastFocusFilter('')  
+        this.focus = '' || this.setLastFocusFilter('')  
+        // this.todayView = true 
+        // this.setLastFocusFilter('')  
       },
       prev () {
         this.$refs.calendar.prev()
@@ -366,12 +382,20 @@
       next () {
         this.$refs.calendar.next()
       }, 
-    addNewRisk() {
-      this.setRiskForManager({key: 'risk', value: {}})
-      // Route to new risk form page
-      this.$router.push(
-        `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/new`
-      );
+       scrollToEndDate() {
+      if (this.selectedEvent.end !== '2099-01-01'){
+        this.setLastFocusFilter(this.selectedEvent.end)  
+       }
+     },
+      scrollToStartDate() {     
+        this.setLastFocusFilter(this.selectedEvent.start)    
+     },
+      addNewRisk() {
+        this.setRiskForManager({key: 'risk', value: {}})
+        // Route to new risk form page
+        this.$router.push(
+          `/programs/${this.$route.params.programId}/calendar/projects/${this.$route.params.projectId}/risks/new`
+        );
     },
     editRisk(event) {   
       let eventObj = event
@@ -430,7 +454,7 @@
       },
     showAllEvents(){
         this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
-        console.log(this.getShowAllEventsToggle)
+        // console.log(this.getShowAllEventsToggle)
         if (this.getShowAllEventsToggle == true) {
         
           this.reRenderCalendar()
@@ -465,8 +489,10 @@
       // For loop to determine length of Tasks 
       for (let i = 0; i < this.filteredCalendar.length; i++) {    
 
-      if(this.riskData[i].ongoing) {
-       this.riskNames[i] = this.riskNames[i] + " (Ongoing)"
+      if(this.riskData[i].ongoing){
+       this.riskNames[i] = this.riskNames[i] + " (Ongoing)"     
+      }
+      if(this.riskData[i].ongoing && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){    
        this.riskEndDates[i] = '2099-01-01'
       }
           events.push({            
@@ -480,7 +506,7 @@
           ra: this.riskApproach[i],    
           pastDue: this.overdue[i], 
           progess: this.percentage[i],
-          color: this.colors.defaultColor,   
+          // color: this.colors.defaultColor,   
           hasStar: this.star[i], 
           isOngoing: this.ongoing[i],
           isDraft: this.draft[i],
@@ -489,12 +515,15 @@
         })
       }
       // This is the main Events array pushed into Calendar
-    if (this.getShowAllEventsToggle == false && !(this.risksQuery.length > 0) ) {
+    if (this.getShowAllEventsToggle == false && !(this.risksQuery.length > 0)) {
            this.events = []
-         } else 
+         } 
+    else 
           this.events = events
       }
-    },     
+ 
+    },   
+      
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
       },    
@@ -531,25 +560,61 @@
         'riskStageFilter',
          "currentProject",
         'myActionsFilter',
-        'onWatchFilter',
-        'riskUserFilter',
+        'onWatchFilter',  
         'taskTypes',      
        ]),
        _isallowed() {
         return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
       },
       filteredCalendar() {
-        let typeIds = _.map(this.C_taskTypeFilter, 'id')
+        let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+        let stageIds = _.map(this.riskStageFilter, 'id')
+        let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+        let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
+        let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
+
         const search_query = this.exists(this.risksQuery.trim()) ? new RegExp(_.escapeRegExp(this.risksQuery.trim().toLowerCase()), 'i') : null
-        const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let risks = _.sortBy(_.filter(this.facility.risks, (resource) => {
-        let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
-        valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
-        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
-        if (search_query) valid = valid && search_query.test(resource.text)
-         
-        return valid
-        }), ['dueDate'])
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+
+        let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+
+          let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+          if(taskIssueUsers.length > 0){
+            valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+          }
+
+          //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'facilityManagerRisks')
+
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
+          if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())
+
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
+          }
+
+          if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
+
+          if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+
+        
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.text) ||
+          valid && search_query.test(resource.riskApproach) ||
+          valid && search_query.test(resource.priorityLevelName) ||  
+          valid && search_query.test(resource.taskType.name) || 
+          valid && search_query.test(resource.userNames)
+
+
+          return valid;
+        })), ['dueDate'])
      
       if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
         
@@ -560,7 +625,8 @@
         risks  = risks.filter(t => t.draft == false && t.onHold == false)
         return risks
       
-       }       
+       } 
+         
     }, 
      C_calendarRiskFilter: {           
         get() {
@@ -569,6 +635,14 @@
         },
         set(value) {
           this.setAdvancedFilter(value)
+        }
+      },
+     C_riskPriorityLevelFilter: {
+        get() {
+          return this.getRiskPriorityLevelFilter
+        },
+        set(value) {
+          this.setRiskPriorityLevelFilter(value)
         }
       },
       C_showAllEventsToggle: {           
@@ -588,6 +662,14 @@
         },
         set(value) {
           this.setTaskIssueProgressStatusFilter(value)
+        }
+      },
+      C_riskApproachFilter: {
+        get() {      
+          return this.getRiskApproachFilter
+        },
+        set(value) {     
+            this.setRiskApproachFilter(value)
         }
       },
       C_taskIssueOverdueFilter: {
@@ -646,7 +728,17 @@
        }
       },
     },
-    currentFacility: {
+   filteredCalendar: {
+      handler(value) {
+        if (value) {         
+          this.reRenderCalendar()        
+        }
+         if (value && this.filteredCalendar.length == 0)   {
+          this.events = []
+        }           
+      },
+    },
+   currentFacility: {
       handler() {
         this.currentFacilityGroup = this.facilityGroups.find(
           (group) => group.id == this.currentFacility.facility.facilityGroupId
@@ -747,5 +839,12 @@ input[type=search] {
  .seeLess {
    display: none;
  }
+ .point {
+   cursor: pointer;  
+ }
+  .point:hover {
+   background-color: rgba(214, 219, 223, .45);
+ }
+
 
 </style> 

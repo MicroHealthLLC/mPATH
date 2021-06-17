@@ -12,6 +12,8 @@ import MapIssues from "./../components/views/map/MapIssues";
 import MapIssueForm from "./../components/views/map/MapIssueForm";
 import MapRisks from "./../components/views/map/MapRisks";
 import MapRiskForm from "./../components/views/map/MapRiskForm";
+import MapLessons from "./../components/views/map/MapLessons";
+import MapLessonForm from "./../components/views/map/MapLessonForm";
 import MapNotes from "./../components/views/map/MapNotes";
 import MapNoteForm from "./../components/views/map/MapNoteForm";
 //Sheet Routes Components
@@ -24,6 +26,8 @@ import SheetIssues from "./../components/views/sheet/SheetIssues";
 import SheetIssueForm from "./../components/views/sheet/SheetIssueForm";
 import SheetRisks from "./../components/views/sheet/SheetRisks";
 import SheetRiskForm from "./../components/views/sheet/SheetRiskForm";
+import SheetLessons from "./../components/views/sheet/SheetLessons";
+import SheetLessonForm from "./../components/views/sheet/SheetLessonForm";
 import SheetNotes from "./../components/views/sheet/SheetNotes";
 import SheetNoteForm from "./../components/views/sheet/SheetNoteForm";
 // Kanban Routes Components
@@ -96,6 +100,16 @@ export default new VueRouter({
           name: "MapRiskForm",
           path: "projects/:projectId/risks/:riskId",
           component: MapRiskForm,
+        },
+        {
+          name: "MapLessons",
+          path: "projects/:projectId/lessons",
+          component: MapLessons,
+        },
+        {
+          name: "MapLessonForm",
+          path: "projects/:projectId/lessons/:lessonId",
+          component: MapLessonForm,
         },
         {
           name: "MapNotes",
@@ -504,6 +518,16 @@ export default new VueRouter({
               });
             }
           },
+        },
+        {
+          name: "SheetLessons",
+          path: "projects/:projectId/lessons",
+          component: SheetLessons,
+        },
+        {
+          name: "SheetLessonForm",
+          path: "projects/:projectId/lessons/:lessonId",
+          component: SheetLessonForm,
         },
         {
           name: "SheetNotes",

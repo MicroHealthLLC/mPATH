@@ -11,8 +11,6 @@ class Risk < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   enum risk_approach: [:avoid, :mitigate, :transfer, :accept]
-  
-
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   # validates_inclusion_of :probability, in: 1..5
@@ -43,69 +41,6 @@ class Risk < ApplicationRecord
     include_association :sub_risks
 
     append :text => " - Copy"
-  end
-
-  def self.params_to_permit
-    [
-      :approved,
-      :approved_at,
-      :approval_time,
-      :facility_project_id,
-      :risk_description,
-      :impact_description,
-      :probability_description,
-      :probability,
-      :probability_name,
-      :impact_level,
-      :impact_level_name,
-      :risk_approach,
-      :status,
-      :duration,
-      :duration_name,
-      :status_name,
-      :explanation,
-      :risk_approach_description,
-      :task_type_id,
-      :task_type, 
-      :risk_stage_id,
-      :progress,
-      :start_date,
-      :due_date,
-      :auto_calculate,
-      :text,
-      :watched,
-      :important,
-      :on_hold, 
-      :draft, 
-      :ongoing,
-      user_ids: [],
-      risk_files: [],
-      sub_task_ids: [],
-      sub_issue_ids: [],
-      sub_risk_ids: [],
-      checklists_attributes: [
-        :id,
-        :_destroy,
-        :text,
-        :user_id,
-        :checked,
-        :position,
-        :due_date,
-        progress_lists_attributes: [
-          :id,
-          :_destroy,
-          :body,
-          :checklist_id,
-          :user_id
-        ]
-      ],
-      notes_attributes: [
-        :id,
-        :_destroy,
-        :user_id,
-        :body
-      ]
-    ]
   end
 
   def files_as_json
@@ -152,29 +87,6 @@ class Risk < ApplicationRecord
     impact_level_name_hash[impact_level] || impact_level_name_hash[1]
   end
 
-  def status_name_hash
-    {    
-      1 => "Monitoring",
-      2 => "Resolved", 
-      3 => "Closed"  
-    }
-  end
-
-  def status_name
-    status_name_hash[status] || status_name_hash[1]
-  end
-
-  def duration_name_hash
-    { 
-      1 => "Temporary",
-      2 => "Perpetual"    
-    }
-  end
-
-  def duration_name
-    duration_name_hash[duration] || duration_name_hash[1]
-  end
-
   def probability_name_hash
     {
       1 => "1 - Rare",
@@ -188,7 +100,79 @@ class Risk < ApplicationRecord
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
+  
+  def self.params_to_permit
+    [
+      :approved,
+      :approved_at,
+      :approval_time,
+      :facility_project_id,
+      :risk_description,
+      :impact_description,
+      :probability_description,
+      :probability,
+      :probability_name,
+      :impact_level,
+      :impact_level_name,
+      :risk_approach,
+      :status,
+      :duration,
+      :duration_name,
+      :status_name,
+      :explanation,
+      :risk_approach_description,
+      :task_type_id,
+      :task_type, 
+      :risk_stage_id,
+      :progress,
+      :start_date,
+      :due_date,
+      :auto_calculate,
+      :text,
+      :watched,
+      :important,
+      :reportable,
+      :on_hold, 
+      :draft, 
+      :ongoing,
+      user_ids: [],
+      risk_files: [],
+      sub_task_ids: [],
+      sub_issue_ids: [],
+      sub_risk_ids: [],
+      checklists_attributes: [
+        :id,
+        :_destroy,
+        :text,
+        :user_id,
+        :checked,
+        :position,
+        :due_date,
+        progress_lists_attributes: [
+          :id,
+          :_destroy,
+          :body,
+          :checklist_id,
+          :user_id
+        ]
+      ],
+      notes_attributes: [
+        :id,
+        :_destroy,
+        :user_id,
+        :body
+      ]
+    ]
+  end
 
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
   def to_json(options = {})
     attach_files = []
     rf = self.risk_files
@@ -276,8 +260,6 @@ class Risk < ApplicationRecord
       # risk_approach: risk_approach.humanize,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
-      duration_name: duration_name,
-      status_name: status_name,
       task_type: task_type.as_json, 
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
@@ -295,7 +277,6 @@ class Risk < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       draft: draft, 
       on_hold: on_hold, 
-
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables
@@ -336,7 +317,6 @@ class Risk < ApplicationRecord
   # Below this line added by JR on 2/12/2021.....Delete this comment if no errors after 30 days.
   def create_or_update_risk(params, user)
     risk_params = params.require(:risk).permit(Risk.params_to_permit)
-
 
     risk = self
     r_params = risk_params.dup
@@ -536,6 +516,29 @@ class Risk < ApplicationRecord
     if records_to_import.any?
       RiskUser.import(records_to_import)
     end
+  end
+
+  def status_name_hash
+    {    
+      1 => "Monitoring",
+      2 => "Resolved", 
+      3 => "Closed"  
+    }
+  end
+
+  def status_name
+    status_name_hash[status] || status_name_hash[1]
+  end
+
+  def duration_name_hash
+    { 
+      1 => "Temporary",
+      2 => "Perpetual"    
+    }
+  end
+
+  def duration_name
+    duration_name_hash[duration] || duration_name_hash[1]
   end
 
   def manipulate_files(params)

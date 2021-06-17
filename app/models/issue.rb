@@ -38,7 +38,17 @@ class Issue < ApplicationRecord
 
     append :title => " - Copy"
   end
-  
+
+  def lesson_json
+    {
+      id: id,
+      title: title,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
+
+
   def self.params_to_permit
     [
       :title,
@@ -55,6 +65,7 @@ class Issue < ApplicationRecord
       :watched,
       :kanban_order,
       :important,
+      :reportable,
       :on_hold, 
       :draft, 
       issue_files: [],

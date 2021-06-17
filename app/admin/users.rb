@@ -86,8 +86,11 @@ ActiveAdmin.register User do
           f.input :first_name
           f.input :last_name
           f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
-          f.input :phone_number
-          f.input :country_code
+
+          # f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
+          # f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :phone_number, as: :hidden
+          f.input :country_code, as: :hidden
           div id: 'user_phone_number-tab'
           f.input :address, as: :hidden, input_html: {autocomplete: :off}
           f.input :lat, as: :hidden
@@ -102,8 +105,8 @@ ActiveAdmin.register User do
       tab 'Password' do
         f.inputs 'Manage Password' do
           div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
-          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
-          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password, input_html: {disabled: true, autocomplete: :off}
+          f.input :password_confirmation, input_html: {disabled: true, autocomplete: :off}
         end
         div id: 'user-password__tab'
       end
@@ -174,6 +177,7 @@ ActiveAdmin.register User do
           f.inputs for: [:privilege, f.object.privilege || Privilege.new] do |p|
             p.input :admin, as: :check_boxes, :collection =>  admin_privileges_options(p.object, "admin")
           end
+
         end
       end
 

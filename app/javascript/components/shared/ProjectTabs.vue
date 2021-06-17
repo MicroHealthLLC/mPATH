@@ -46,6 +46,12 @@ export default {
           hidden: false,
         },
         {
+          label: "Lessons",
+          key: "lessons",
+          closable: false,
+          hidden: false
+        },
+        {
           label: "Notes",
           key: "notes",
           closable: false,

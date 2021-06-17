@@ -53,14 +53,14 @@ Project management for geographically separated sites
 # go to /var/www and from there 
         cd /var/www/
 
-        git clone https://github.com/MicroHealthLLC/mGis
+        git clone https://github.com/MicroHealthLLC/mPATH
 
-        nano /var/www/mGis/config/database.yml
+        nano /var/www/mPATH/config/database.yml
 
 --enter the password for mysql where it says password then save and exit
 
 # go to the cloned directory 
-        cd /var/www/mGis
+        cd /var/www/mPATH
 
         gem install rails
 

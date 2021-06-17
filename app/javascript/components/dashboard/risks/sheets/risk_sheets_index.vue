@@ -1,7 +1,7 @@
 <template>
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
-    <div class="d-flex align-item-center  w-75 float-right filters-wrapper">
+    <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
       <div class="ml-2 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
@@ -107,7 +107,7 @@
       @click.prevent="addNewRisk"
       data-cy="add_risk"
     >
-      <font-awesome-icon icon="plus-circle" />
+    <font-awesome-icon icon="plus-circle" />
       Add Risk
     </button>
     <div class="float-right">
@@ -848,7 +848,7 @@
 }
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
-    width: 70% !important;
+    width: 65% !important;
   } 
 }
 </style>

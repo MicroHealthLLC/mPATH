@@ -1,19 +1,14 @@
 <template>
-  <div
-    id="facility_sidebar"
-    class="pl-0"  
-    data-cy="facility_list"
-  >
-  <div class="stick">
-  <div   
-    @click="deselectProject"  
-    id="program_name"
-    class="programNameDiv smallCaps pl-2 pr-1"       
-  >   
-  {{ programName }}   
-  </div>
-  
-  </div>
+  <div id="facility_sidebar" class="pl-0" data-cy="facility_list">
+    <div class="stick">
+      <div
+        @click="deselectProject"
+        id="program_name"
+        class="programNameDiv smallCaps pl-2 pr-1"
+      >
+        {{ programName }}
+      </div>
+    </div>
     <h4 class="mt-4 text-info text-center" v-if="title">{{ title }}</h4>
     <div class="mb-3 ml-2" style="margin-top:1.8rem">
       <div v-if="contentLoaded">
@@ -87,8 +82,11 @@ export default {
       "facilityGroupFacilities",
     ]),
     programName() {
-      if (this.contentLoaded && (this.currentProject !== null || this.currentProject !== undefined)){
-        return this.currentProject.name
+      if (
+        this.contentLoaded &&
+        (this.currentProject !== null || this.currentProject !== undefined)
+      ) {
+        return this.currentProject.name;
       }
     },
     sortedGroups() {
@@ -118,6 +116,8 @@ export default {
         return "/issues";
       } else if (url.includes("risks")) {
         return "/risks";
+      } else if (url.includes("lessons")) {
+        return "/lessons";
       } else if (url.includes("notes")) {
         return "/notes";
       } else if (url.includes("kanban")) {
@@ -130,18 +130,18 @@ export default {
     },
   },
   methods: {
-    expandFacilityGroup(group) {     
+    expandFacilityGroup(group) {
       this.$emit("on-expand-facility-group", group);
     },
-    log(e){
-      console.log("This is the currentFac: " + e)
+    log(e) {
+      console.log("This is the currentFac: " + e);
     },
-    showFacility(facility) {    
+    showFacility(facility) {
       this.$emit("on-expand-facility", facility);
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
-        console.log("this works")
+        console.log("this works");
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
@@ -188,9 +188,9 @@ export default {
     }
   }
   .programNameDiv {
-    box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);    
+    box-shadow: 0 2.5px 2.5px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23);
     cursor: pointer;
-      &.active {
+    &.active {
       background-color: red !important;
       color: #007bff;
     }
@@ -205,7 +205,7 @@ export default {
     cursor: pointer;
   }
   .programNameBtn {
-     &.active {
+    &.active {
       background-color: red !important;
       color: #007bff;
     }

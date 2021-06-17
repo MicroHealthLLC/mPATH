@@ -50,7 +50,7 @@ class ProfilesController < AuthenticatedController
       current_user.settings(:preferences).update(preferences_params)
       render json: {current_user: current_user.as_json, preferences: current_user.get_preferences.value.with_indifferent_access, preference_url: current_user.preference_url }, status: 200
     else
-      render json: current_user.errors, status: :unprocessable_entity
+      render json: {errors: current_user.errors.full_messages.join(", ")}, status: :unprocessable_entity
     end
   end
 

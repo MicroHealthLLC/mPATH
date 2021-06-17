@@ -1,3 +1,4 @@
+
 <template>
 <div>
    <span class="filters-wrapper w-75">
@@ -193,16 +194,29 @@
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>          
-              <span class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
+            <v-list-item-title>     
+              <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
+                <small><b>Date Identified:</b></small>
+              </span>                 
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
+             
+              
               {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
+              
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title> 
-
-            <span class="d-inline mr-1"><small><b>Due Date:</b></small></span> 
-             <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+            <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
+              <small><b>Date Closed:</b></small>
+            </span> 
+            <span v-else class="d-inline mr-1">
+              <small><b>Due Date:</b></small>
+            </span> 
+             <span v-if="selectedEvent.isOngoing == true && 
+               selectedEvent.end == '2099-01-01'" class="mr-1">
+                <font-awesome-icon icon="retweet" class="text-success"  />
+                </span>                
                <span v-else> 
               {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
                </span>
@@ -211,7 +225,9 @@
           <v-list-item>
             <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
-               <span v-if="selectedEvent.isOngoing == true" class="mr-1"> - - -</span>   
+               <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
+                <font-awesome-icon icon="retweet" class="text-success"  />
+                </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
                </span>   
@@ -344,15 +360,6 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
-      //TODO: change the method name of isAllowed
-      _isallowed(salut) {
-        var programId = this.$route.params.programId;
-        var projectId = this.$route.params.projectId
-        let fPrivilege = this.$projectPrivileges[programId][projectId]
-        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-        let s = permissionHash[salut]
-        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
-      },
       log(e){
         console.log("Focus: " + e)
       },
@@ -479,7 +486,7 @@
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
 
-            if(this.taskData[i].ongoing) {
+            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {
             this.taskNames[i] = this.taskNames[i] + " (Ongoing)"
             this.taskEndDates[i] = '2099-01-01'
             }
@@ -493,7 +500,7 @@
             watch: this.onWatch[i],
             pastDue: this.overdue[i], 
             progess: this.percentage[i],
-            color: this.colors.defaultColor,  
+            // color: this.colors.defaultColor,  
             hasStar: this.star[i], 
             isOngoing: this.ongoing[i], 
             isDraft: this.draft[i],
@@ -548,6 +555,9 @@
      
      
        ]),
+       _isallowed() {
+        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
+      },
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
@@ -761,4 +771,5 @@ input[type=search] {
 //  .show {
 //    display: block;
 //  }
+
 </style> 

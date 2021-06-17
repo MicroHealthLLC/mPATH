@@ -10,6 +10,7 @@ import projectStore from './modules/project-store'
 import taskStore from './modules/task-store'
 import issueStore from './modules/issue-store'
 import riskStore from './modules/risk-store'
+import lessonStore from "./modules/lesson-store";
 
 // utility function
 const getSimpleDate = (date) => {
@@ -27,7 +28,8 @@ export default new Vuex.Store({
     projectStore,
     taskStore,
     issueStore,
-    riskStore
+    riskStore,
+    lessonStore
   },
   state: {
     advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
@@ -73,6 +75,7 @@ export default new Vuex.Store({
     // Datatable items per page filters
     tasksPerPageFilter: null,
     risksPerPageFilter: null,
+    lessonsPerPageFilter: null,
     issuesPerPageFilter: null,
     membersPerPageFilter:  null,
 
@@ -212,6 +215,7 @@ export default new Vuex.Store({
     setTasksPerPageFilter: (state, filter) => state.tasksPerPageFilter = filter,
     setIssuesPerPageFilter: (state, filter) => state.issuesPerPageFilter = filter,
     setRisksPerPageFilter: (state, filter) => state.risksPerPageFilter = filter,
+    setLessonsPerPageFilter: (state, filter) => state.lessonsPerPageFilter = filter,
 
     setCalendarViewFilter: (state, filter) => state.calendarViewFilter = filter,
 
@@ -379,7 +383,7 @@ export default new Vuex.Store({
         {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
-        {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
@@ -446,6 +450,17 @@ export default new Vuex.Store({
       ]
       return options;
     },
+    getLessonsPerPageFilter: state => state.lessonsPerPageFilter,
+    getLessonsPerPageFilterOptions: (state, getters) => {
+      var options = [
+        {id: 5, name: '5', value: 5},
+        {id: 15, name: '15', value: 15},
+        {id: 25, name: '25', value: 25},
+        {id: 50, name: '50', value: 50},
+        {id: 100, name: '100+', value: 100},
+      ]
+      return options;
+    },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
         {id: 'active', name: 'Active'},
@@ -465,12 +480,13 @@ export default new Vuex.Store({
         {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
-        {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
+        // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
         {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
+        {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'},
         {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
@@ -581,6 +597,7 @@ export default new Vuex.Store({
         ['tasksPerPageFilter', 'Tasks Per Page'],
         ['issuesPerPageFilter', 'Issues Per Page'],
         ['risksPerPageFilter', 'Risks Per Page'],
+        ['lessonsPerPageFilter', 'Lessons Per Page'],
         ['taskIssueUserFilter', 'Action Users'],
         ['riskApproachFilter', 'Risk Approaches'],
         ['riskStageFilter', 'Risk Stages'],
@@ -593,6 +610,7 @@ export default new Vuex.Store({
         ['myActionsFilter', 'My Assignments'],
         ['onWatchFilter', 'On Watch'],
         ['importantFilter', 'Important'],
+        ['briefingsFilter', 'Briefings'],
         ['onGoingFilter', 'Ongoing'],
         ['onHoldFilter', 'On Hold'],
         ['draftFilter', 'Drafts'],
@@ -611,7 +629,7 @@ export default new Vuex.Store({
         }
         return user_names
       // Advanced filters
-      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter'].includes(_filterValue) ){
+      }else if( ['overDueFilter', 'myActionsFilter', 'onWatchFilter','progressStatusFilter', 'importantFilter', 'onGoingFilter', 'onHoldFilter', 'draftFilter', 'briefingsFilter'].includes(_filterValue) ){
 
         var aFilter = getter.getAdvancedFilter
         var user_names = _.map( _.filter(aFilter, fHash => fHash.filterCategoryId == _filterValue), 'name' ).join(", ")
@@ -817,6 +835,7 @@ export default new Vuex.Store({
     tasksPerPageFilter: state => state.tasksPerPageFilter,
     issuesPerPageFilter: state => state.issuesPerPageFilter,
     risksPerPageFilter: state => state.risksPerPageFilter,
+    lessonsPerPageFilter: state => state.lessonsPerPageFilter,
     calendarViewFilter: state => state.calendarViewFilter,
 
 
@@ -861,6 +880,9 @@ export default new Vuex.Store({
       let taksIssueNotImportant = _.map(aFilter, 'id').includes("notImportant")
       let taskIssueImporant =  _.map(aFilter, 'id').includes("important")
 
+      let taksIssueNotReportable = _.map(aFilter, 'id').includes("notReportable")
+      let taskIssueReportable =  _.map(aFilter, 'id').includes("reportable")
+
       let taksIssueNotOnGoing = _.map(aFilter, 'id').includes("notOnGoing")
       let taskIssueOnGoing =  _.map(aFilter, 'id').includes("onGoing")
 
@@ -892,6 +914,7 @@ export default new Vuex.Store({
         (taskIssueMyAction == true && taksIssueNotMyAction == true) ||
         (taskIssueOnWatch == true && taksIssueNotOnWatch == true) ||
         (taskIssueImporant == true && taksIssueNotImportant == true) ||
+        (taskIssueReportable == true && taksIssueNotReportable == true) ||
         (taskIssueOnGoing == true && taksIssueNotOnGoing == true) ||
         (taskIssueOverdue == true && taskIssueNotOverdue == true) ||
         // (taskIssueRiskNotDraft == true && taskIssueRiskDraft == true) ||  
@@ -983,10 +1006,19 @@ export default new Vuex.Store({
       if(taskIssueImporant == true && taksIssueNotImportant == false){
         valid = valid && importants.includes(true)
       }
-
+  
 
       if(taskIssueImporant == false && taksIssueNotImportant == true){
         valid = valid && importants.includes(false)
+      }
+
+      let reportables = _.uniq(_.map(resources, 'reportable'))
+      if(taskIssueReportable == true && taksIssueNotReportable == false){
+        valid = valid && reportables.includes(true)
+      }
+
+      if(taskIssueReportable == false && taksIssueNotReportable == true){
+        valid = valid && reportables.includes(false)
       }
 
       // As per issue https://github.com/MicroHealthLLC/mPATH/issues/2649
@@ -1702,6 +1734,7 @@ export default new Vuex.Store({
             commit('setIssueStages', res.data.project.issueStages)
             commit('setIssueTypes', res.data.project.issueTypes)
             commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
             resolve()
           })
           .catch((err) => {
@@ -1931,6 +1964,7 @@ export default new Vuex.Store({
         'tasksPerPageFilter',
         'issuesPerPageFilter',
         'risksPerPageFilter',
+        'lessonsPerPageFilter',
 
         'riskStageFilter',
         'riskApproachFilter',
