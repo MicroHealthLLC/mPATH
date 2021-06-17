@@ -153,20 +153,8 @@ export default {
       let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
       let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
       let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
-      const search_query = this.exists(this.searchRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-
-      let noteDates = this.noteDateFilter
+      const search_query = this.exists(this.searchRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()),"i") : null
+      const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()),"i") : null      let noteDates = this.noteDateFilter
       let taskIssueDueDates = this.taskIssueDueDateFilter
       let taskIssueProgress = this.taskIssueProgressFilter
       let taskIssueUsers = this.getTaskIssueUserFilter
