@@ -101,7 +101,6 @@ const lessonModule = {
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
       commit("TOGGLE_LESSONS_LOADED", false);
       // Update a lesson with changes
-
       let formData = new FormData();
 
       formData.append("lesson[title]", lesson.title);
@@ -113,22 +112,40 @@ const lessonModule = {
       formData.append("lesson[important]", lesson.important);
       formData.append("lesson[reportable]", lesson.reportable);
       formData.append("lesson[draft]", lesson.draft);
-
+      // Prep Related Tasks
       lesson.sub_task_ids.forEach((id) => {
         formData.append("lesson[sub_task_ids][]", id);
       });
-
+      // Prep Related Issues
       lesson.sub_issue_ids.forEach((id) => {
         formData.append("lesson[sub_issue_ids][]", id);
       });
-
+      // Prep Related Risks
       lesson.sub_risk_ids.forEach((id) => {
         formData.append("lesson[sub_risk_ids][]", id);
       });
-
+      // Prep Successes
       lesson.successes.forEach((success, index) => {
         Object.entries(success).forEach(([key, value]) => {
-          formData.append(`successes[${index}][${key}]`, value);
+          formData.append(`lesson[successes][${index}][${key}]`, value);
+        });
+      });
+      //Prep Failures
+      lesson.failures.forEach((failure, index) => {
+        Object.entries(failure).forEach(([key, value]) => {
+          formData.append(`lesson[failures][${index}][${key}]`, value);
+        });
+      });
+      //Prep Best Practices
+      lesson.best_practices.forEach((bestPractice, index) => {
+        Object.entries(bestPractice).forEach(([key, value]) => {
+          formData.append(`lesson[best_practices][${index}][${key}]`, value);
+        });
+      });
+      //Prep Updates
+      lesson.notes_attributes.forEach((update, index) => {
+        Object.entries(update).forEach(([key, value]) => {
+          formData.append(`lesson[notes_attributes][${index}][${key}]`, value);
         });
       });
 
