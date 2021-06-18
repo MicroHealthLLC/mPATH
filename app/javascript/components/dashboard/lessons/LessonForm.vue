@@ -580,19 +580,49 @@
     <!-- Files & Links Tab -->
     <div v-show="currentTab == 'tab6'" class="row mt-2">
       <div class="col-6">
-        <AttachmentInput @input="addFile" />
+        <AttachmentInput @input="addFile" class="mb-3" />
         <div v-for="(file, index) in files" :key="index">
-          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
-        </div>
-        <div v-for="(file, index) in fileLinks" :key="index">
-          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+          <div
+            class="clickable file-name d-flex justify-content-between w-100 py-1"
+          >
+            <div @click.prevent="downloadFile(file)">
+              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+            </div>
+            <div @click="removeFile(file.id, index)">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-6">
         Add Link
         <span class="clickable" @click="addFileLink()">
-          <i class="fas fa-plus-circle"></i>
-        </span>
+          <i class="fas fa-plus-circle"></i
+        ></span>
+        <div v-for="(link, index) in fileLinks" :key="index">
+          <div
+            v-if="link.id"
+            class="d-flex clickable file-name justify-content-between py-1"
+          >
+            <div>
+              <i class="fas fa-link mr-1"></i>
+              {{ link.name }}
+            </div>
+            <div @click="removeFileLink(link.id, index)">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
+          <div v-else class="d-flex justify-content-between">
+            <el-input
+              v-model="link.name"
+              class="my-1"
+              placeholder="Enter link to a site or file"
+            ></el-input>
+            <div @click="removeFileLink(link.id, index)" class="clickable">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Updates Tab -->
@@ -752,7 +782,8 @@ export default {
       updates: [],
       deleteUpdates: [],
       files: [],
-      fileLinks: []
+      fileLinks: [],
+      destroyFileIds: [],
     };
   },
   methods: {
@@ -786,8 +817,9 @@ export default {
               ...this.deleteBestPractices,
             ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
-            attach_files: [...this.files],
-            fileLinks: [...this.fileLinks]
+            attach_files: [...this.files.filter((file) => !file.id)],
+            file_links: [...this.fileLinks.filter((file) => !file.id)],
+            destroy_file_ids: [...this.destroyFileIds],
           },
         };
 
@@ -928,24 +960,27 @@ export default {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
     addFile(files) {
-      console.log("Adding files...");
-      console.log(files);
-
       files.forEach((file) => {
         file.guid = this.guid();
+        this.files.push(file);
       });
-
-      console.log(files);
-
-      this.files = files;
     },
     addFileLink() {
       this.fileLinks.push({
-        name: "https://www.google.com",
-        uri: "https://www.google.com",
-        link: true,
-        guid: this.guid(),
+        name: "",
       });
+    },
+    removeFile(id, index) {
+      this.files.splice(index, 1);
+      if (id) {
+        this.destroyFileIds.push(id);
+      }
+    },
+    removeFileLink(id, index) {
+      this.fileLinks.splice(index, 1);
+      if (id) {
+        this.destroyFileIds.push(id);
+      }
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
@@ -1038,7 +1073,8 @@ export default {
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },
@@ -1055,7 +1091,8 @@ export default {
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
-          this.files = this.lesson.attach_files;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },
@@ -1194,5 +1231,11 @@ a:hover {
 .btn-shadow {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
+}
+.file-name:hover {
+  background-color: #cdecf5;
+}
+.delete-icon {
+  color: #dc3545;
 }
 </style>

@@ -104,7 +104,6 @@ const lessonModule = {
       });
       // Prep Failures
       lesson.failures.forEach((failure) => {
-        // formData.append(`lesson[failures][]`, JSON.stringify(failure) );
         Object.entries(failure).forEach(([key, value]) => {
           formData.append(`lesson[failures][][${key}]`, value);
         });
@@ -125,7 +124,8 @@ const lessonModule = {
       lesson.attach_files.forEach((file) => {
         formData.append("lesson[lesson_files][]", file);
       });
-      lesson.fileLinks.forEach((link) => {
+      // Prep File Links
+      lesson.file_links.forEach((link) => {
         formData.append("file_links[]", link.name);
       });
 
@@ -183,7 +183,6 @@ const lessonModule = {
       });
       // Prep Failures
       lesson.failures.forEach((failure) => {
-        // formData.append(`lesson[failures][]`, JSON.stringify(failure) );
         Object.entries(failure).forEach(([key, value]) => {
           formData.append(`lesson[failures][][${key}]`, value);
         });
@@ -204,9 +203,14 @@ const lessonModule = {
       lesson.attach_files.forEach((file) => {
         formData.append("lesson[lesson_files][]", file);
       });
-      lesson.fileLinks.forEach(link => {
-        formData.append("file_links[]", link.name)
-      })
+      // Prep File Links
+      lesson.file_links.forEach((link) => {
+        formData.append("file_links[]", link.name);
+      });
+      // Prep File Ids to be destroyed
+      lesson.destroy_file_ids.forEach((id) => {
+        formData.append("lesson[destroy_file_ids][]", id);
+      });
 
       axios({
         method: "PATCH",
