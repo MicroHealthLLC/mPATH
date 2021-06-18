@@ -126,14 +126,9 @@ class Lesson < ApplicationRecord
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids, 
 
-      sub_tasks: sub_tasks.includes(:facility).map(&:lesson_json),
-      sub_issues: sub_issues.includes(:facility).map(&:lesson_json),
-      sub_risks: sub_risks.includes(:facility).map(&:lesson_json),
-
-      # sub_tasks: sub_tasks.in_batches(of: 100){|s| s.map(&:lesson_json) },
-      # sub_issues: sub_issues.in_batches(of: 100){|s| s.map(&:lesson_json) },
-      # sub_risks: sub_risks.in_batches(of: 100){|s| s.map(&:lesson_json) },
-
+      sub_tasks: sub_tasks.map(&:lesson_json),
+      sub_issues: sub_issues.map(&:lesson_json),
+      sub_risks: sub_risks.map(&:lesson_json),
 
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
@@ -144,6 +139,10 @@ class Lesson < ApplicationRecord
       best_practices: best_practices.map(&:to_json)
 
     ).as_json
+  end
+
+  def self.lesson_preload_array
+    [:task_type, :lesson_details, :lesson_users, :lesson_stage, :related_tasks, :related_issues, :related_risks, { notes: :user }, {users: :organization}, {lesson_files_attachments: :blob},  {sub_tasks: [:facility]}, {sub_issues: [:facility] }, {sub_risks: [:facility] }, {facility_project: :facility} ]
   end
 
   def self.params_to_permit
@@ -346,7 +345,7 @@ class Lesson < ApplicationRecord
       lesson.assign_users(params)
 
     end
-    lesson.persisted?  ? lesson.reload : lesson
+    lesson.persisted?  ? Lesson.includes(Lesson.lesson_preload_array).find(lesson.id) : lesson
   end
 
 
