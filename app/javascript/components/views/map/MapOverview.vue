@@ -1,7 +1,471 @@
 <template>
   <div v-if="contentLoaded" id="facility-sheets" data-cy="facility_sheets">
     <div v-if="_isallowed('read')" class="px-0 mx-0">
-      <div class="row row-1 mt-2">
+      <div class="row row-2 mt-3 task-issue-risk-row">
+        <!-- Tasks Cards -->
+      <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
+          <el-card class="box-card" style="background-color:#fff">
+            <div class="row">
+              <div class="col">
+                <h5 class="d-inline"><b>TASKS</b></h5>
+                <h5 class="d-inline">
+                  <b class="float-right badge badge-secondary badge-pill">{{
+                    filteredTasks.length - taskVariation.taskDrafts.count
+                  }}</b>
+                </h5>
+                <hr />
+              </div>
+            </div>
+                <div class="row text-center">
+                <div class="col-3 p-0 mb-0">
+                  
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+         
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+           
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                   <span class="d-block" v-tooltip="`ONGOING`"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+   
+                </div>       
+              </div>
+
+              <div class="row text-center mt-0" :class="[taskStats.length > 0 ? '' : 'pb-3']">
+                <div class="col-3 pb-0 mb-0">
+                   <h4 class="">{{
+                    taskVariation.completed.count
+                  }}</h4>         
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    taskVariation.inProgress.count
+                  }}</h4>        
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                   <h4>{{ taskVariation.overdue.count }}
+                     </h4>
+                                    
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    taskVariation.ongoing.length
+                  }}</h4>          
+                </div>        
+                </div>      
+
+            <div v-if="taskStats.length > 0" data-cy="task_categories">
+              <el-collapse>
+                <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                 <div class="col-3 p-0  mb-0">
+                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
+                 <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
+                </div>
+                 
+                  </div>
+
+                <div class="row text-center mt-0">
+                <div class="col-3 pb-0 mb-0">
+                   <h4 class="">{{
+                    taskVariation.planned.count
+                  }}</h4>         
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    taskVariation.onHoldT.count
+                  }}</h4>        
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                   <h4 style="color:lightgray">{{  taskVariation.taskDrafts.count }}</h4>                      
+                </div>
+                
+                </div>
+                <hr/>
+                  <div data-cy="task_categories" class="row">
+                    
+                    <div class="col underline">
+                      CATEGORIES
+                    </div>
+                  </div>
+                  <div
+                    class="row"
+                    v-for="(task, index) in taskStats"
+                    :key="index"
+                  >
+                    <div class="col-5 font-sm pr-0">
+                      <span> {{ task.name }}</span>                  
+                    </div>
+                     <div class="col-2 pl-0">                     
+                      <span class="badge badge-secondary font-sm badge-pill">{{
+                        task.count
+                      }}</span>
+                    </div>
+                    <div class="col-5 mb-1">
+                      <span
+                        class="w-100 progress pg-content"
+                        :class="{ 'progress-0': task.progress <= 0 }"
+                      >
+                        <div
+                          class="progress-bar bg-info"
+                          :style="`width: ${task.progress}%`"
+                        >
+                          {{ task.progress }} %
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </el-card>
+        </div>
+        <!-- Issues Card -->
+      <div
+          class="col-md-4 col-lg-4 col-sm-12 mb-2"
+          data-cy="facility_issues"
+              >
+          <el-card class="box-card" style="background-color:#fff">
+            <div class="row">
+              <div class="col">
+                <h5 class="d-inline"><b>ISSUES</b></h5>
+                <h5 class="d-inline">
+                  <b class="float-right badge badge-secondary badge-pill">{{
+                    filteredIssues.length - issueVariation.issueDrafts.count
+                  }}</b>
+                </h5>
+                <hr />
+              </div>
+            </div>
+           
+             <div class="row text-center">
+                <div class="col-3 p-0 mb-0">                  
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+ 
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+               
+                </div>
+                 <div class="col-3 p-0 mb-0">
+                 <span v-tooltip="`OVERDUE`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+               
+                </div>
+                
+              </div>
+
+                <div class="row text-center mt-0" :class="[filteredIssues.length > 0 ? '' : 'pb-3']">
+                <div class="col-3 pb-0 mb-0">
+                   <h4 class="">{{
+                    issueVariation.completed.count
+                  }}</h4>         
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    issueVariation.inProgress.count
+                  }}</h4>        
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                   <h4>{{ issueVariation.overdue.count }}
+                     </h4>                      
+                </div>      
+                </div>
+
+            <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
+            <div v-if="filteredIssues.length" data-cy="issue_types">
+              <el-collapse>
+                <el-collapse-item title="..." name="1">
+                  <div v-if="contentLoaded">
+                      <div class="row mt-1 text-center">
+                    <div class="col-3 p-0  mb-0">                      
+                      <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                   
+                    </div>
+                    <div class="col-3 p-0 mb-0">
+                    <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+         
+                    </div>
+                    <div class="col-3 p-0 mb-0">
+                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
+                    <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
+                    </div>                    
+                  </div>
+
+                  <div class="row text-center mt-0">
+                  <div class="col-3 pb-0 mb-0">
+                    <h4 class="">{{
+                      issueVariation.planned.count
+                    }}</h4>         
+                  </div>
+                  <div class="col-3 pb-0 mb-0">
+                    <h4>{{
+                      issueVariation.onHoldI.count
+                    }}</h4>        
+                  </div>
+                  <div class="col-3 pb-0 mb-0">
+                    <h4 style="color:lightgray">{{ issueVariation.issueDrafts.count }}</h4>                      
+                  </div>
+                  
+                  </div>
+                   <hr/>
+                    <div class="row">
+                      <div class="col mt-1 underline">
+                        CATEGORIES
+                      </div>
+                    </div>
+                    <div
+                      class="row"
+                      v-for="(issue, index) in issueTaskCATEGORIES"
+                      :key="index"
+                    >
+                      <div class="col-5 pr-0">
+                        <span> {{ issue.name }}</span>                        
+                      </div>
+                      <div class="col-2 pl-0">                     
+                        <span class="badge badge-secondary font-md badge-pill">{{
+                          issue.count
+                        }}</span>
+                      </div>
+                      <div class="col-5 mt-1">
+                        <span
+                          class="w-100 mb-2 progress pg-content"
+                          :class="{ 'progress-0': issue.progress <= 0 }"
+                        >
+                          <div
+                            class="progress-bar bg-info"
+                            :style="`width: ${issue.progress}%`"
+                          >
+                            {{ issue.progress }} %
+                          </div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-cy="issue_types">
+                    <div class="col pl-0 mt-1 underline">
+                      ISSUE TYPES
+                    </div>
+                  </div>
+                  <div
+                    class="row"
+                    v-for="issue in issueStats"
+                    :key="issue.id"
+                  >
+                    <div class="col-5 font-sm pr-0">
+                      <span> {{ issue.name }}</span>
+                    </div>
+                      <div class="col-2 pl-0">                     
+                      <span class="badge badge-secondary font-sm badge-pill">{{
+                        issue.count
+                      }}</span>
+                    </div>
+                    <div class="col-5 mb-1">
+                      <span
+                        class="w-100 progress pg-content"
+                        :class="{ 'progress-0': issue.progress <= 0 }"
+                      >
+                        <div
+                          class="progress-bar bg-info"
+                          :style="`width: ${issue.progress}%`"
+                        >
+                          {{ issue.progress }} %
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </el-card>
+        </div>
+        <!-- Risks Card -->
+          <div
+            class="col-md-4 col-lg-4 col-sm-12"
+            data-cy="facility_risks"
+              >
+          <el-card class="box-card" style="background-color:#fff">
+            <div class="row">
+              <div class="col">
+                <h5 class="d-inline"><b>RISKS</b></h5>
+                <h5 v-if="contentLoaded" class="d-inline">
+                  <b class="float-right badge badge-secondary badge-pill">{{
+                    filteredRisks.length - riskVariation.riskDrafts.count
+                  }}</b>
+                </h5>
+                <hr />
+              </div>
+            </div>
+            
+              <div class="row text-center">
+                  <div class="col-3 p-0 mb-0">                    
+                    <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                   
+                  </div>
+                  <div class="col-3 p-0 mb-0">
+                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                 
+                  </div>
+                  <div class="col-3 p-0 mb-0">
+                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                               
+                  </div>
+                  <div class="col-3 p-0 mb-0">
+                    <span v-tooltip="`ONGOING`" class="d-block"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+                    
+                  </div>       
+                  </div>
+                  <div class="row text-center mt-0" :class="[filteredRisks.length > 0 ? '' : 'pb-3']">
+                <div class="col-3 pb-0 mb-0">
+                   <h4 class="">{{
+                    riskVariation.completed.count
+                  }}</h4>         
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    riskVariation.inProgress.count
+                  }}</h4>        
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                   <h4>{{ riskVariation.overdue.count }}
+                     </h4>              
+                       
+                </div>
+                 <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    riskVariation.ongoing.length
+                  }}</h4>          
+                </div>
+        
+              </div>          
+             
+            <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
+            <div v-if="filteredRisks.length">
+              <el-collapse>
+                <el-collapse-item title="..." name="1">
+                      <div class="row mt-1 text-center">
+                  <div class="col-3 p-0  mb-0">                    
+                    <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                   
+                  </div>
+                  <div class="col-3 p-0 mb-0">
+                   <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                          
+                  </div>
+                  <div class="col-3 p-0 mb-0">
+                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
+                    <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
+                  </div>
+                  
+                </div>
+
+                <div class="row text-center mt-0">
+                <div class="col-3 pb-0 mb-0">
+                  <h4 class="">{{
+                    riskVariation.planned.count
+                  }}</h4>         
+                </div>
+                <div class="col-3 pb-0 mb-0">
+                  <h4>{{
+                    riskVariation.onHoldR.count
+                  }}</h4>        
+                </div>
+                <div class="col-3 pb-0 mb-0">
+                  <h4 style="color:lightgray">{{  riskVariation.riskDrafts.count }}</h4>                      
+                </div>
+                
+                </div>
+                <hr/>
+                  <div class="row">
+                    <div class="col mt-1 underline">
+                      CATEGORIES
+                    </div>
+                  </div>
+                  <div v-for="(risk, index) in currentRiskTypes" :key="index">
+                    <div class="row" v-if="risk._display">
+                      <div class="col-5 pr-0">
+                        <span> {{ risk.name }}</span>                      
+                      </div>
+                       <div class="col-2 pl-0">                  
+                        <span class="badge badge-secondary font-sm  badge-pill">{{
+                          risk.length
+                        }}</span>
+                      </div>
+                      <div class="col-5 mt-1">
+                        <span
+                          class="w-100 mb-2 progress pg-content"
+                          :class="{ 'progress-0': risk.progress <= 0 }"
+                        >
+                          <div
+                            class="progress-bar bg-info"
+                            :style="`width: ${risk.progress}%`"
+                          >
+                            {{ risk.progress }} %
+                          </div>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3 mb-2">
+                    <div class="col underline">
+                      RISK PRIORITY LEVELS
+                    </div>
+                  </div>
+                  <div class="row font-sm">
+                    <div class="col text-center">
+                      <p class="mb-2 grey2">Very Low</p>
+                      <p class="mb-2 green">Low</p>
+                      <p class="mb-2 yellow">Moderate</p>
+                    </div>
+                    <div class="col">
+                      <span
+                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
+                        >{{ riskPriorityLevels.grey }}</span
+                      >
+                      <span
+                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
+                        >{{ riskPriorityLevels.green }}</span
+                      >
+                      <span
+                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
+                        >{{ riskPriorityLevels.yellow }}</span
+                      >
+                    </div>
+                    <div class="col text-center">
+                      <p class="mb-2 orange">High</p>
+                      <p class="mb-2 red">Extreme</p>
+                    </div>
+                    <div class="col">
+                      <span
+                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
+                        >{{ riskPriorityLevels.orange }}</span
+                      >
+                      <span
+                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
+                        >{{ riskPriorityLevels.red }}</span
+                      >
+                    </div>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </div>
+          </el-card>
+        </div>
+      </div>
+       <div class="row row-1 mt-2">
         <!-- Key Details Card -->
         <div class="col-md-8 pr-2">
           <el-card class="box-card" style="position:relative">
@@ -88,439 +552,6 @@
           </el-card>
         </div>
       </div>
-      <!-- Action Cards -->
-      <div class="row row-2 mt-3 task-issue-risk-row">
-        <!-- Tasks Cards -->
-        <div class="col-md-6 pr-2" data-cy="facility_tasks">
-          <el-card class="box-card" style="background-color:#fff">
-            <div class="row">
-              <div class="col">
-                <h5 class="d-inline"><b>TASKS</b></h5>
-                <h5 class="d-inline">
-                  <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredTasks.length
-                  }}</b>
-                </h5>
-                <hr />
-              </div>
-            </div>
-            <div class="row my-0 py-0">
-              <div class="col-5 pr-0 py-0">
-                <span>Complete</span>              
-              </div>
-               <div class="col-2 py-0 pl-0">               
-                <span class="badge badge-secondary badge-pill">{{
-                  taskVariation.completed.count
-                }}</span>
-              </div>
-              <div class="col-5 py-0">
-                <span
-                  class="w-100 progress pg-content"
-                  :class="{
-                    'progress-0': taskVariation.completed.percentage <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${taskVariation.completed.percentage}%`"
-                  >
-                    {{ taskVariation.completed.percentage }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-            <div class="row my-0">
-              <div class="col-5 pr-0">
-                <span>Overdue</span>              
-              </div>
-               <div class="col-2 pl-0">            
-                <span class="badge badge-secondary badge-pill">{{
-                  taskVariation.overdue.count
-                }}</span>
-              </div>
-              <div class="col-5 mt-1">
-                <span
-                  class="w-100 progress pg-content"
-                  :class="{
-                    'progress-0': taskVariation.overdue.percentage <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${taskVariation.overdue.percentage}%`"
-                  >
-                    {{ taskVariation.overdue.percentage }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-             <div class="row mt-0">
-                  <div class="col-5 pr-0 py-0">
-                    <span>Ongoing</span>               
-                  </div>
-                    <div class="col-2 py-0 pl-0">                   
-                    <span class="badge badge-secondary badge-pill">{{
-                      taskVariation.ongoing.length
-                    }}</span>
-                  </div>
-                  <div class="col-5 pt-0 pb-2">
-                    <span
-                        class="w-100 mt-1 progress progress-0 pg-content"
-                       
-                        >
-                        <div class="text-center pl-1" >
-                          <span v-tooltip="`Ongoing`" class="font-md" style="color:gray"> <i class="fas fa-retweet" style="color:gray" ></i></span>
-                        </div>
-                    </span>
-                  </div>
-                </div>
-
-            <div v-if="taskStats.length > 0" data-cy="task_categories">
-              <el-collapse>
-                <el-collapse-item title="Details" name="1">
-                  <div data-cy="task_categories" class="row">
-                    <div class="col underline">
-                      CATEGORIES
-                    </div>
-                  </div>
-                  <div
-                    class="row"
-                    v-for="(task, index) in taskStats"
-                    :key="index"
-                  >
-                    <div class="col-5 font-sm pr-0">
-                      <span> {{ task.name }}</span>                  
-                    </div>
-                     <div class="col-2 pl-0">                     
-                      <span class="badge badge-secondary font-sm badge-pill">{{
-                        task.count
-                      }}</span>
-                    </div>
-                    <div class="col-5 mb-1">
-                      <span
-                        class="w-100 progress pg-content"
-                        :class="{ 'progress-0': task.progress <= 0 }"
-                      >
-                        <div
-                          class="progress-bar bg-info"
-                          :style="`width: ${task.progress}%`"
-                        >
-                          {{ task.progress }} %
-                        </div>
-                      </span>
-                    </div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
-          </el-card>
-        </div>
-        <!-- Issues Card -->
-        <div class="col-md-6 pl-2" data-cy="facility_issues">
-          <el-card class="box-card" style="background-color:#fff">
-            <div class="row">
-              <div class="col">
-                <h5 class="d-inline"><b>ISSUES</b></h5>
-                <h5 class="d-inline">
-                  <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredIssues.length
-                  }}</b>
-                </h5>
-                <hr />
-              </div>
-            </div>
-            <div class="row my-0">
-              <div class="col-5 pr-0 py-0">
-                <span>Complete</span>               
-              </div>
-              <div class="col-2 pl-0 py-0">             
-                <span class="badge badge-secondary badge-pill">{{
-                  issueVariation.completed.count
-                }}</span>
-              </div>
-              <div class="col-5 py-0">
-                <span
-                  class="w-100 progress pg-content"
-                  :class="{
-                    'progress-0': issueVariation.completed.percentage <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${issueVariation.completed.percentage}%`"
-                  >
-                    {{ issueVariation.completed.percentage }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-            <div class="row my-0">
-              <div class="col-5 pr-0">
-                <span>Overdue</span>                
-              </div>
-               <div class="col-2 pl-0">               
-                <span class="badge badge-secondary badge-pill">{{
-                  issueVariation.overdue.count
-                }}</span>
-              </div>
-              <div class="col-5 mt-1">
-                <span
-                  class="w-100 mb-2 progress pg-content"
-                  :class="{
-                    'progress-0': issueVariation.overdue.percentage <= 0,
-                  }"
-                >
-                  <div
-                    class="progress-bar bg-info"
-                    :style="`width: ${issueVariation.overdue.percentage}%`"
-                  >
-                    {{ issueVariation.overdue.percentage }} %
-                  </div>
-                </span>
-              </div>
-            </div>
-            <!-- TASK CATEGORIES FOR ISSUE INSIDE COLLAPSIBLE SECTION -->
-            <div v-if="filteredIssues.length" data-cy="issue_types">
-              <el-collapse>
-                <el-collapse-item title="Details" name="1">
-                  <div v-if="contentLoaded">
-                    <div class="row">
-                      <div class="col mt-1 underline">
-                        CATEGORIES
-                      </div>
-                    </div>
-                    <div
-                      class="row"
-                      v-for="(issue, index) in issueTaskCATEGORIES"
-                      :key="index"
-                    >
-                      <div class="col-5 pr-0">
-                        <span> {{ issue.name }}</span>                        
-                      </div>
-                      <div class="col-2 pl-0">                     
-                        <span class="badge badge-secondary font-md badge-pill">{{
-                          issue.count
-                        }}</span>
-                      </div>
-                      <div class="col-5 mt-1">
-                        <span
-                          class="w-100 mb-2 progress pg-content"
-                          :class="{ 'progress-0': issue.progress <= 0 }"
-                        >
-                          <div
-                            class="progress-bar bg-info"
-                            :style="`width: ${issue.progress}%`"
-                          >
-                            {{ issue.progress }} %
-                          </div>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div data-cy="issue_types">
-                    <div class="col pl-0 mt-1 underline">
-                      ISSUE TYPES
-                    </div>
-                  </div>
-                  <div
-                    class="row"
-                    v-for="issue in issueStats"
-                    :key="issue.id"
-                  >
-                    <div class="col-5 font-sm pr-0">
-                      <span> {{ issue.name }}</span>
-                    </div>
-                      <div class="col-2 pl-0">                     
-                      <span class="badge badge-secondary font-sm badge-pill">{{
-                        issue.count
-                      }}</span>
-                    </div>
-                    <div class="col-5 mb-1">
-                      <span
-                        class="w-100 progress pg-content"
-                        :class="{ 'progress-0': issue.progress <= 0 }"
-                      >
-                        <div
-                          class="progress-bar bg-info"
-                          :style="`width: ${issue.progress}%`"
-                        >
-                          {{ issue.progress }} %
-                        </div>
-                      </span>
-                    </div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
-          </el-card>
-        </div>
-        <!-- Risks Card -->
-        <div class="col-md-12 pt-3" data-cy="facility_risks">
-          <el-card class="box-card" style="background-color:#fff">
-            <div class="row">
-              <div class="col">
-                <h5 class="d-inline"><b>RISKS</b></h5>
-                <h5 v-if="contentLoaded" class="d-inline">
-                  <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredRisks.length
-                  }}</b>
-                </h5>
-                <hr />
-              </div>
-            </div>
-            <div v-if="contentLoaded">
-              <div class="row">
-                <div class="col-5 py-0 pr-0">
-                  <span class="risk-card-title">Complete</span>                
-                </div>
-                 <div class="col-2 py-0 pl-0">                 
-                  <span class="badge badge-secondary badge-pill font-12">{{
-                    riskVariation.completed.count
-                  }}</span>
-                </div>
-                <div class="col-5 pt-1 my-0">
-                  <span
-                    class="w-100 progress pg-content"
-                    :class="{
-                      'progress-0': riskVariation.completed.percentage <= 0,
-                    }"
-                  >
-                    <div
-                      class="progress-bar bg-info"
-                      :style="`width: ${riskVariation.completed.percentage}%`"
-                    >
-                      {{ riskVariation.completed.percentage }} %
-                    </div>
-                  </span>
-                </div>
-              </div>
-              <div class="row mt-0">
-                <div class="col-5 pr-0">
-                  <span class="risk-card-title">Overdue</span>                 
-                </div>
-                 <div class="col-2 pl-0">               
-                  <span class="badge badge-secondary badge-pill font-12">{{
-                    riskVariation.overdue.count
-                  }}</span>
-                </div>
-                <div class="col-5 my-2">
-                  <span
-                    class="w-100 progress pg-content"
-                    :class="{
-                      'progress-0': riskVariation.overdue.percentage <= 0,
-                    }"
-                  >
-                    <div
-                      class="progress-bar bg-info"
-                      :style="`width: ${riskVariation.overdue.percentage}%`"
-                    >
-                      {{ riskVariation.overdue.percentage }} %
-                    </div>
-                  </span>
-                </div>
-              </div>
-                 <div class="row mt-1">
-                  <div class="col-5 py-0 pr-0">
-                    <span>Ongoing</span>               
-                  </div>
-                    <div class="col-2 py-0 pl-0">                   
-                    <span class="badge badge-secondary badge-pill">{{
-                      riskVariation.ongoing.length
-                    }}</span>
-                  </div>
-                  <div class="col-5">
-                    <span
-                        class="w-100 progress progress-0 pg-content"
-                       
-                        >
-                        <div class="text-center pl-1">
-                          <span v-tooltip="`Ongoing`" class="font-md"> <i class="fas fa-retweet" style="color:gray"></i></span>
-                        </div>
-                    </span>
-                  </div>
-                  </div>
-
-            </div>
-            <!-- RISK CATEGORIES INSIDE COLLAPSIBLE SECTION -->
-            <div v-if="filteredRisks.length">
-              <el-collapse>
-                <el-collapse-item title="Details" name="1">
-                  <div class="row">
-                    <div class="col mt-1 underline">
-                      CATEGORIES
-                    </div>
-                  </div>
-                  <div v-for="(risk, index) in currentRiskTypes" :key="index">
-                    <div class="row" v-if="risk._display">
-                      <div class="col-5 pr-0">
-                        <span> {{ risk.name }}</span>                      
-                      </div>
-                       <div class="col-2 pl-0">                  
-                        <span class="badge badge-secondary font-sm  badge-pill">{{
-                          risk.length
-                        }}</span>
-                      </div>
-                      <div class="col-5 mt-1">
-                        <span
-                          class="w-100 mb-2 progress pg-content"
-                          :class="{ 'progress-0': risk.progress <= 0 }"
-                        >
-                          <div
-                            class="progress-bar bg-info"
-                            :style="`width: ${risk.progress}%`"
-                          >
-                            {{ risk.progress }} %
-                          </div>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3 mb-2">
-                    <div class="col underline">
-                      RISK PRIORITY LEVELS
-                    </div>
-                  </div>
-                  <div class="row font-sm">
-                    <div class="col text-center">
-                      <p class="mb-2 grey2">Very Low</p>
-                      <p class="mb-2 green">Low</p>
-                      <p class="mb-2 yellow">Moderate</p>
-                    </div>
-                    <div class="col">
-                      <span
-                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
-                        >{{ riskPriorityLevels.grey }}</span
-                      >
-                      <span
-                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
-                        >{{ riskPriorityLevels.green }}</span
-                      >
-                      <span
-                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
-                        >{{ riskPriorityLevels.yellow }}</span
-                      >
-                    </div>
-                    <div class="col text-center">
-                      <p class="mb-2 orange">High</p>
-                      <p class="mb-2 red">Extreme</p>
-                    </div>
-                    <div class="col">
-                      <span
-                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
-                        >{{ riskPriorityLevels.orange }}</span
-                      >
-                      <span
-                        class="my-2 badge w-50 badge-secondary badge-pill d-block"
-                        >{{ riskPriorityLevels.red }}</span
-                      >
-                    </div>
-                  </div>
-                </el-collapse-item>
-              </el-collapse>
-            </div>
-          </el-card>
-        </div>
-      </div>
     </div>
     <div v-else class="text-danger mx-2 my-4">
       You don't have permission to read!
@@ -546,6 +577,7 @@ export default {
       loading: true,
       DV_updated: false,
       notesQuery: "",
+      today: new Date().toISOString().slice(0, 10),
       _selected: null,
       _categories: null,
     };
@@ -721,7 +753,27 @@ export default {
       return tasks;
     },
     // TODO: Move this calculation to back-end so that statistics can be available for other devices
-    taskVariation() {
+ taskVariation() {
+      let planned = _.filter(
+        this.filteredTasks,
+        (t) => t && t.startDate && t.startDate > this.today     
+      );     
+     let taskDrafts = _.filter(
+        this.filteredTasks,
+        (t) => t && t.draft == true      
+      );   
+     let inProgress = _.filter(
+        this.filteredTasks,
+        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing && !t.onHold
+      );
+      let inProgress_percent = this.getAverage(
+        inProgress.length,
+        this.filteredTasks.length
+      );
+     let onHoldT = _.filter(
+        this.filteredTasks,
+        (t) => t && t.onHold == true
+      );
       let completed = _.filter(
         this.filteredTasks,
         (t) => t && t.progress && t.progress == 100
@@ -738,6 +790,20 @@ export default {
       let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
 
       return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        onHoldT: {
+          count: onHoldT.length,          
+        },
+        taskDrafts: {
+          count: taskDrafts.length,          
+        },
+        inProgress: {
+          count: inProgress.length - planned.length,
+          percentage: Math.round(inProgress_percent),
+        },
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
@@ -815,6 +881,14 @@ export default {
     },
     // TODO: Move this calculation to back-end so that statistics can be available for other devices
     issueVariation() {
+      let planned = _.filter(
+        this.filteredIssues,
+        (t) => !t.draft && t.startDate && t.startDate > this.today     
+      );     
+      let issueDrafts = _.filter(
+        this.filteredIssues,
+         (t) => t && t.draft == true       
+      );      
       let completed = _.filter(
         this.filteredIssues,
         (t) => t && t.progress && t.progress == 100
@@ -822,17 +896,41 @@ export default {
       let completed_percent = this.getAverage(
         completed.length,
         this.filteredIssues.length
+      ); 
+       let inProgress = _.filter(
+        this.filteredIssues,
+        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.onHold
+        );
+      let onHoldI = _.filter(
+        this.filteredIssues,
+        (t) => t && t.onHold == true
+      );
+      let inProgress_percent = this.getAverage(
+        inProgress.length,
+        this.filteredIssues.length
       );
       let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredIssues.length
       );
-
       return {
+        planned: {
+          count: planned.length,          
+        },
+        onHoldI: {
+          count: onHoldI.length,          
+        },
+        issueDrafts: {
+          count: issueDrafts.length,          
+        },
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
+        },
+        inProgress: {
+          count: inProgress.length,
+          percentage: Math.round(inProgress_percent),
         },
         overdue: {
           count: overdue.length,
@@ -907,13 +1005,34 @@ export default {
       };
     },
     // TODO: Move this calculation to back-end so that statistics can be available for other devices
-    riskVariation() {
+   riskVariation() {
+      let planned = _.filter(
+        this.filteredRisks,
+        (t) => t && t.startDate && t.startDate > this.today     
+      );  
+      let onHoldR = _.filter(
+        this.filteredRisks,
+        (t) => t && t.onHold == true
+      );  
+
+     let riskDrafts = _.filter(
+        this.filteredRisks,
+        (t) => t && t.draft == true      
+      ); 
       let completed = _.filter(
         this.filteredRisks,
         (t) => t && t.progress && t.progress == 100
       );
+      let inProgress = _.filter(
+        this.filteredRisks,
+        (t) => t && t.progressStatus && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.onHold
+      );
       let completed_percent = this.getAverage(
         completed.length,
+        this.filteredRisks.length
+      );
+      let inProgress_percent = this.getAverage(
+        inProgress.length,
         this.filteredRisks.length
       );
       let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
@@ -923,9 +1042,22 @@ export default {
       );
       let ongoing = _.filter(this.filteredRisks, (t) => t && t.ongoing);
       return {
+       planned: {
+          count: planned.length,          
+        },
+        onHoldR: {
+          count: onHoldR.length,          
+        },
+        riskDrafts: {
+          count: riskDrafts.length,          
+        },
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
+        },
+        inProgress: {
+          count: inProgress.length,
+          percentage: Math.round(inProgress_percent),
         },
         overdue: {
           count: overdue.length,
@@ -1035,4 +1167,22 @@ export default {
 .underline {
   text-decoration: underline;
 }
+.smallerFont {
+  font-size: 10px;
+}
+/deep/.el-collapse-item__header, /deep/.el-collapse-item__wrap  {
+  border-bottom: none !important;
+}
+
+/deep/.el-card__body {
+    padding-bottom: 0 !important;
+}
+/deep/.el-collapse-item__header {
+  font-size: 2rem;
+  }
+
+/deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
+  display: none;
+}
+
 </style>

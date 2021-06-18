@@ -32,7 +32,7 @@ export default new Vuex.Store({
     lessonStore
   },
   state: {
-    advancedFilter: [{}],
+    advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
