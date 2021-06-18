@@ -92,7 +92,10 @@ class Lesson < ApplicationRecord
     successes = all_lesson_details.select{|l| l.detail_type == "success"}
     failures = all_lesson_details.select{|l| l.detail_type == "failure"}
     best_practices = all_lesson_details.select{|l| l.detail_type == "best_practices"}
-    
+    s_tasks = []
+    s_issues = []
+    s_risks = []
+    # binding.pry
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -126,7 +129,12 @@ class Lesson < ApplicationRecord
       sub_tasks: sub_tasks.includes(:facility).map(&:lesson_json),
       sub_issues: sub_issues.includes(:facility).map(&:lesson_json),
       sub_risks: sub_risks.includes(:facility).map(&:lesson_json),
-      
+
+      # sub_tasks: sub_tasks.in_batches(of: 100){|s| s.map(&:lesson_json) },
+      # sub_issues: sub_issues.in_batches(of: 100){|s| s.map(&:lesson_json) },
+      # sub_risks: sub_risks.in_batches(of: 100){|s| s.map(&:lesson_json) },
+
+
       sub_task_ids: sub_tasks.map(&:id),
       sub_issue_ids: sub_issues.map(&:id),
       sub_risk_ids: sub_risks.map(&:id),
@@ -145,7 +153,6 @@ class Lesson < ApplicationRecord
       :date, 
       :task_type_id,  
       :facility_project_id,
-      :user_id, 
       :reportable, 
       :important, 
       :draft, 
@@ -156,6 +163,7 @@ class Lesson < ApplicationRecord
       sub_risk_ids: [],
       lesson_files: [],
       user_ids: [],
+      destroy_file_ids: [],
       notes_attributes: [
         :id,
         :_destroy,
@@ -205,7 +213,7 @@ class Lesson < ApplicationRecord
     sub_issue_ids = t_params.delete(:sub_issue_ids)
     sub_risk_ids = t_params.delete(:sub_risk_ids)
     notes_attributes = t_params.delete(:notes_attributes)
-
+    destroy_file_ids = t_params.delete(:destroy_file_ids)&.map(&:to_i)
     # params_lesson_details = t_params.delete(:lesson_details)
     
     # NOTE: This code is written  based on request to overcome confusion for front end.
@@ -247,16 +255,17 @@ class Lesson < ApplicationRecord
     lesson.transaction do
       lesson.save
       lesson.add_link_attachment(params)
+      lesson.remove_attachment(destroy_file_ids)
 
       if notes_attributes.present?
         existing_notes = self.notes
         notes_objs = []
         notes_attributes.each do |value|
           if value[:_destroy].present?
-            n = existing_notes.detect{|e| e.id == value[:id]}
+            n = existing_notes.detect{|e| e.id == value[:id].to_i}
             n.destroy if n
           elsif value[:id].present?
-            n = existing_notes.detect{|e| e.id == value[:id]}
+            n = existing_notes.detect{|e| e.id == value[:id].to_i}
             n.update(value) if n
           else
             notes_objs << Note.new(value.merge({user_id: user.id, noteable_id: lesson.id, noteable_type: "Lesson"}) )
@@ -271,10 +280,10 @@ class Lesson < ApplicationRecord
 
         params_lesson_details.each do |value|
           if value[:_destroy].present?
-            l = existing_lesson_details.detect{|e| e.id == value[:id]}
+            l = existing_lesson_details.detect{|e| e.id == value[:id].to_i}
             l.destroy if l
           elsif value[:id].present?
-            l = existing_lesson_details.detect{|e| e.id == value[:id]}
+            l = existing_lesson_details.detect{|e| e.id == value[:id].to_i}
             l.update(value) if l
           else
             lesson_detail_objs << LessonDetail.new(value.merge({lesson_id: lesson.id,user_id: user.id}) )
@@ -340,11 +349,16 @@ class Lesson < ApplicationRecord
     lesson.persisted?  ? lesson.reload : lesson
   end
 
+
   def valid_url?(url)
     uri = URI.parse(url)
     (uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS) ) && !uri.host.nil?
   rescue URI::InvalidURIError
     false
+  end
+
+  def remove_attachment(dids = [])
+    lesson_files.where(id: dids)&.map(&:purge) if dids && dids.any?
   end
 
   def add_link_attachment(params = {})
