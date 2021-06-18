@@ -179,7 +179,7 @@ class Task < ApplicationRecord
     end
 
     is_overdue = false
-    if !ongoing
+    if !ongoing && !on_hold
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
 
