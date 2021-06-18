@@ -81,9 +81,9 @@ const lessonModule = {
       formData.append("lesson[task_type_id]", lesson.task_type_id);
       formData.append("lesson[user_id]", lesson.user_id);
       formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
-      formData.append("lesson[important]", lesson.important);
-      formData.append("lesson[reportable]", lesson.reportable);
-      formData.append("lesson[draft]", lesson.draft);
+      formData.append("lesson[important]", lesson.important || false);
+      formData.append("lesson[reportable]", lesson.reportable || false);
+      formData.append("lesson[draft]", lesson.draft || false);
       // Prep Related Tasks
       lesson.sub_task_ids.forEach((id) => {
         formData.append("lesson[sub_task_ids][]", id);
