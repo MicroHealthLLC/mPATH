@@ -801,7 +801,6 @@ export default {
             description: this.lesson.description,
             date: this.lesson.date,
             task_type_id: this.lesson.task_type_id,
-            user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
             important: this.lesson.important,
             reportable: this.lesson.reportable,
@@ -830,6 +829,7 @@ export default {
             ...this.$route.params,
           });
         } else {
+          lessonData.lesson.user_id = this.$currentUser.id;
           this.addLesson({
             ...lessonData,
             ...this.$route.params,

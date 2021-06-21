@@ -9,7 +9,6 @@ const lessonModule = {
     lessons_loaded: true,
     lesson_status: 0,
   }),
-
   actions: {
     fetchProgramLessons({ commit }, { programId }) {
       // Send GET request for all lessons contained within a program
@@ -71,63 +70,10 @@ const lessonModule = {
         });
     },
     addLesson({ commit }, { lesson, programId, projectId }) {
+      // Displays loader on front end
       commit("TOGGLE_LESSONS_LOADED", false);
-      // Add new lesson
-      let formData = new FormData();
-
-      formData.append("lesson[title]", lesson.title);
-      formData.append("lesson[description]", lesson.description);
-      formData.append("lesson[date]", lesson.date);
-      formData.append("lesson[task_type_id]", lesson.task_type_id);
-      formData.append("lesson[user_id]", lesson.user_id);
-      formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
-      formData.append("lesson[important]", lesson.important || false);
-      formData.append("lesson[reportable]", lesson.reportable || false);
-      formData.append("lesson[draft]", lesson.draft || false);
-      // Prep Related Tasks
-      lesson.sub_task_ids.forEach((id) => {
-        formData.append("lesson[sub_task_ids][]", id);
-      });
-      // Prep Related Issues
-      lesson.sub_issue_ids.forEach((id) => {
-        formData.append("lesson[sub_issue_ids][]", id);
-      });
-      // Prep Related Risks
-      lesson.sub_risk_ids.forEach((id) => {
-        formData.append("lesson[sub_risk_ids][]", id);
-      });
-      // Prep Successes
-      lesson.successes.forEach((success) => {
-        Object.entries(success).forEach(([key, value]) => {
-          formData.append(`lesson[successes][][${key}]`, value);
-        });
-      });
-      // Prep Failures
-      lesson.failures.forEach((failure) => {
-        Object.entries(failure).forEach(([key, value]) => {
-          formData.append(`lesson[failures][][${key}]`, value);
-        });
-      });
-      // Prep Best Practices
-      lesson.best_practices.forEach((bestPractice) => {
-        Object.entries(bestPractice).forEach(([key, value]) => {
-          formData.append(`lesson[best_practices][][${key}]`, value);
-        });
-      });
-      // Prep Updates
-      lesson.notes_attributes.forEach((update) => {
-        Object.entries(update).forEach(([key, value]) => {
-          formData.append(`lesson[notes_attributes][][${key}]`, value);
-        });
-      });
-      // Prep Files
-      lesson.attach_files.forEach((file) => {
-        formData.append("lesson[lesson_files][]", file);
-      });
-      // Prep File Links
-      lesson.file_links.forEach((link) => {
-        formData.append("file_links[]", link.name);
-      });
+      // Utilize utility function to prep Lesson form data
+      let formData = lessonFormData(lesson);
 
       axios({
         method: "POST",
@@ -150,67 +96,10 @@ const lessonModule = {
         });
     },
     updateLesson({ commit }, { lesson, programId, projectId, lessonId }) {
+      // Displays loader on front end
       commit("TOGGLE_LESSONS_LOADED", false);
-      // Update a lesson with changes
-      let formData = new FormData();
-
-      formData.append("lesson[title]", lesson.title);
-      formData.append("lesson[description]", lesson.description);
-      formData.append("lesson[date]", lesson.date);
-      formData.append("lesson[task_type_id]", lesson.task_type_id);
-      formData.append("lesson[user_id]", lesson.user_id);
-      formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
-      formData.append("lesson[important]", lesson.important);
-      formData.append("lesson[reportable]", lesson.reportable);
-      formData.append("lesson[draft]", lesson.draft);
-      // Prep Related Tasks
-      lesson.sub_task_ids.forEach((id) => {
-        formData.append("lesson[sub_task_ids][]", id);
-      });
-      // Prep Related Issues
-      lesson.sub_issue_ids.forEach((id) => {
-        formData.append("lesson[sub_issue_ids][]", id);
-      });
-      // Prep Related Risks
-      lesson.sub_risk_ids.forEach((id) => {
-        formData.append("lesson[sub_risk_ids][]", id);
-      });
-      // Prep Successes
-      lesson.successes.forEach((success) => {
-        Object.entries(success).forEach(([key, value]) => {
-          formData.append(`lesson[successes][][${key}]`, value);
-        });
-      });
-      // Prep Failures
-      lesson.failures.forEach((failure) => {
-        Object.entries(failure).forEach(([key, value]) => {
-          formData.append(`lesson[failures][][${key}]`, value);
-        });
-      });
-      // Prep Best Practices
-      lesson.best_practices.forEach((bestPractice) => {
-        Object.entries(bestPractice).forEach(([key, value]) => {
-          formData.append(`lesson[best_practices][][${key}]`, value);
-        });
-      });
-      // Prep Updates
-      lesson.notes_attributes.forEach((update) => {
-        Object.entries(update).forEach(([key, value]) => {
-          formData.append(`lesson[notes_attributes][][${key}]`, value);
-        });
-      });
-      // Prep Files
-      lesson.attach_files.forEach((file) => {
-        formData.append("lesson[lesson_files][]", file);
-      });
-      // Prep File Links
-      lesson.file_links.forEach((link) => {
-        formData.append("file_links[]", link.name);
-      });
-      // Prep File Ids to be destroyed
-      lesson.destroy_file_ids.forEach((id) => {
-        formData.append("lesson[destroy_file_ids][]", id);
-      });
+      // Utilize utility function to prep Lesson form data
+      let formData = lessonFormData(lesson);
 
       axios({
         method: "PATCH",
@@ -274,6 +163,76 @@ const lessonModule = {
     lessonsLoaded: (state) => state.lessons_loaded,
     lessonStatus: (state) => state.lesson_status,
   },
+};
+// Utility function to prepare form data from lesson object that is passed from LessonForm.vue
+const lessonFormData = (lesson) => {
+  let formData = new FormData();
+  // Append all required form data
+  formData.append("lesson[title]", lesson.title); // Required
+  formData.append("lesson[description]", lesson.description); // Required
+  formData.append("lesson[date]", lesson.date); // Required
+  if (lesson.task_type_id) {
+    formData.append("lesson[task_type_id]", lesson.task_type_id);
+  }
+  if (lesson.user_id) {
+    formData.append("lesson[user_id]", lesson.user_id);
+  }
+  if (lesson.lesson_stage_id) {
+    formData.append("lesson[lesson_stage_id]", lesson.lesson_stage_id);
+  }
+  formData.append("lesson[important]", lesson.important || false);
+  formData.append("lesson[reportable]", lesson.reportable || false);
+  formData.append("lesson[draft]", lesson.draft || false);
+  // Prep Related Tasks
+  lesson.sub_task_ids.forEach((id) => {
+    formData.append("lesson[sub_task_ids][]", id);
+  });
+  // Prep Related Issues
+  lesson.sub_issue_ids.forEach((id) => {
+    formData.append("lesson[sub_issue_ids][]", id);
+  });
+  // Prep Related Risks
+  lesson.sub_risk_ids.forEach((id) => {
+    formData.append("lesson[sub_risk_ids][]", id);
+  });
+  // Prep Successes
+  lesson.successes.forEach((success) => {
+    Object.entries(success).forEach(([key, value]) => {
+      formData.append(`lesson[successes][][${key}]`, value);
+    });
+  });
+  // Prep Failures
+  lesson.failures.forEach((failure) => {
+    Object.entries(failure).forEach(([key, value]) => {
+      formData.append(`lesson[failures][][${key}]`, value);
+    });
+  });
+  // Prep Best Practices
+  lesson.best_practices.forEach((bestPractice) => {
+    Object.entries(bestPractice).forEach(([key, value]) => {
+      formData.append(`lesson[best_practices][][${key}]`, value);
+    });
+  });
+  // Prep Updates
+  lesson.notes_attributes.forEach((update) => {
+    Object.entries(update).forEach(([key, value]) => {
+      formData.append(`lesson[notes_attributes][][${key}]`, value);
+    });
+  });
+  // Prep Files
+  lesson.attach_files.forEach((file) => {
+    formData.append("lesson[lesson_files][]", file);
+  });
+  // Prep File Links
+  lesson.file_links.forEach((link) => {
+    formData.append("file_links[]", link.name);
+  });
+  // Prep File Ids to be destroyed
+  lesson.destroy_file_ids.forEach((id) => {
+    formData.append("lesson[destroy_file_ids][]", id);
+  });
+
+  return formData;
 };
 
 export default lessonModule;
