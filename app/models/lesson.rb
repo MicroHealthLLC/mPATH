@@ -96,16 +96,22 @@ class Lesson < ApplicationRecord
     s_issues = []
     s_risks = []
     # binding.pry
+    latest_update = notes.last ? notes.last.json_for_lasson : {}
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       user_ids: p_users.map(&:id).compact.uniq,
       user_names: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      created_by: {
+        id: user.id,
+        full_name: user.full_name
+      },
+      last_update: latest_update,
       lesson_details: self.lesson_details.map(&:to_json),
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
-      notes: notes.as_json,
+      notes: notes.order("created_at ASC").as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: facility_project.facility_id,
 
@@ -138,6 +144,56 @@ class Lesson < ApplicationRecord
       failures: failures.map(&:to_json),
       best_practices: best_practices.map(&:to_json)
 
+    ).as_json
+  end
+
+  def build_response_for_index(options = {})
+    
+    t_users = options[:all_lesson_users] || []
+    all_users = options[:all_users] || []
+    if options[:for].present? && [:project_build_response, :lesson_index].include?(options[:for])
+      resource_users = t_users
+    else
+      resource_users = self.lesson_users #.where(user_id: self.users.active.uniq.map(&:id) )
+    end
+ 
+    p_users = []
+
+    if all_users.any?
+      p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
+    else
+      p_users = users.select(&:active?)
+    end
+
+    users_hash = {} 
+    p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
+
+    # Last name values added for improved sorting in datatables
+    users_last_name_hash = {} 
+    p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
+
+    # First name values added for improved sorting in datatables
+    users_first_name_hash = {} 
+    p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
+
+    # binding.pry
+    n = notes.order("updated_at DESC").first
+    latest_update = n ? n.json_for_lasson : {}
+    self.as_json.merge(
+      class_name: self.class.name,
+      user_ids: p_users.map(&:id).compact.uniq,
+      user_names: p_users.map(&:full_name).compact.join(", "),
+      users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
+      created_by: {
+        id: user.id,
+        full_name: user.full_name
+      },
+      last_update: latest_update,
+      notes: notes.as_json,
+      lesson_stage_id: self.lesson_stage_id,
+      lesson_stage: lesson_stage.try(:name),
+      notes_updated_at: notes.map(&:updated_at).compact.uniq,
+      project_id: facility_project.facility_id,
     ).as_json
   end
 
