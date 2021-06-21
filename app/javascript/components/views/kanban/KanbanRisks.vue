@@ -86,7 +86,12 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setAdvancedFilter", "setTaskTypeFilter"]),
+    ...mapMutations([
+      "setAdvancedFilter",
+      "setTaskTypeFilter",      
+      "setRiskPriorityLevelFilter",
+      "setRiskApproachFilter",
+      ]),
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
 
@@ -115,6 +120,10 @@ export default {
       "getAdvancedFilterOptions",
       "getTaskIssueUserFilter",
       "noteDateFilter",
+      'getRiskApproachFilterOptions',
+      'getRiskApproachFilter',
+      'getRiskPriorityLevelFilter',
+      'getRiskPriorityLevelFilterOptions',
       "riskStageFilter",
       "riskStages",
       "taskIssueDueDateFilter",
@@ -139,120 +148,68 @@ export default {
       );
     },
     filteredRisks() {
-      let taskTypeIds = _.map(this.C_taskTypeFilter, "id");
-      let stageIds = _.map(this.riskStageFilter, "id");
-      const search_query = this.exists(this.searchRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-
-      let noteDates = this.noteDateFilter;
-      let taskIssueDueDates = this.taskIssueDueDateFilter;
-      let taskIssueProgress = this.taskIssueProgressFilter;
-      let taskIssueUsers = this.getTaskIssueUserFilter;
-
-      let riskPriorityLevelFilterIds = _.map(
-        this.getRiskPriorityLevelFilter,
-        "id"
-      );
-
-      let riskApproachIds = _.map(this.getRiskApproachFilter, "id");
-
-      return _.orderBy(
-        _.filter(this.facility.risks, (resource) => {
-          let valid = Boolean(resource && resource.hasOwnProperty("progress"));
-
-          let userIds = [
-            ..._.map(resource.checklists, "userId"),
-            ...resource.userIds,
-          ];
-
-          if (taskIssueUsers.length > 0) {
-            if (taskIssueUsers.length > 0) {
-              valid =
-                valid &&
-                userIds.some(
-                  (u) => _.map(taskIssueUsers, "id").indexOf(u) !== -1
-                );
-            }
-          }
-
-          //TODO: For performance, send the whole tasks array instead of one by one
-          valid =
-            valid &&
-            this.filterDataForAdvancedFilter([resource], "kanbanRisks");
-
-          if (taskTypeIds.length > 0)
-            valid = valid && taskTypeIds.includes(resource.taskTypeId);
-
-          if (noteDates && noteDates[0] && noteDates[1]) {
-            let startDate = moment(noteDates[0], "YYYY-MM-DD");
-            let endDate = moment(noteDates[1], "YYYY-MM-DD");
-            let _notesCreatedAt = _.map(resource.notes, "createdAt");
-            let is_valid = resource.notes.length > 0;
-            for (let createdAt of _notesCreatedAt) {
-              let nDate = moment(createdAt, "YYYY-MM-DD");
-              is_valid = nDate.isBetween(startDate, endDate, "days", true);
-              if (is_valid) break;
-            }
-            valid = is_valid;
-          }
-
-          if (
-            taskIssueDueDates &&
-            taskIssueDueDates[0] &&
-            taskIssueDueDates[1]
-          ) {
-            let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
-            let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
-            let is_valid = true;
-            let nDate = moment(resource.dueDate, "YYYY-MM-DD");
-            is_valid = nDate.isBetween(startDate, endDate, "days", true);
-            valid = is_valid;
-          }
-
-          if (taskIssueProgress && taskIssueProgress[0]) {
-            let min = taskIssueProgress[0].value.split("-")[0];
-            let max = taskIssueProgress[0].value.split("-")[1];
-            valid =
-              valid && resource.progress >= min && resource.progress <= max;
-          }
-
-          if (riskApproachIds.length > 0)
-            valid = valid && riskApproachIds.includes(resource.riskApproach);
-
-          if (riskPriorityLevelFilterIds.length > 0)
-            valid =
-              valid &&
-              riskPriorityLevelFilterIds.includes(
-                resource.priorityLevelName.toLowerCase()
-              );
-
-          if (
-            this.searchStageId &&
-            this.searchStageId == resource.riskStageId
-          ) {
-            if (search_query)
-              valid = valid && search_query.test(resource.title);
-          } else if (stageIds.length > 0) {
-            valid = valid && stageIds.includes(resource.riskStageId);
-          }
-          if (sidebar_search_query)
-            valid = valid && sidebar_search_query.test(resource.text);
-
-          return valid;
-        }),
-        "kanbanOrder",
-        "asc"
-      );
+      let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
+      let stageIds = _.map(this.riskStageFilter, 'id')
+      let riskApproachIds = _.map(this.C_riskApproachFilter, 'id')
+      let riskPriorityLevelFilterIds = _.map(this.C_riskPriorityLevelFilter, 'id')
+      let riskPriorityLevelFilter = this.getRiskPriorityLevelFilter
+      const search_query = this.exists(this.searchRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchRisksQuery.trim().toLowerCase()),"i") : null
+      const sidebar_search_query = this.exists(this.sidebarRisksQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarRisksQuery.trim().toLowerCase()),"i") : null     
+     let noteDates = this.noteDateFilter
+     let taskIssueDueDates = this.taskIssueDueDateFilter
+      let taskIssueProgress = this.taskIssueProgressFilter
+      let taskIssueUsers = this.getTaskIssueUserFilter
+      var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+      let risks = _.sortBy(_.filter(this.facility.risks, ((resource) => {
+        let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+        let userIds = [..._.map(resource.checklists, 'userId'), resource.userIds]
+        if(taskIssueUsers.length > 0){
+          valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+        }
+        //TODO: For performance, send the whole tasks array instead of one by one
+        valid = valid && filterDataForAdvancedFilterFunction([resource], 'kanbanRisks')
+        if (stageIds.length > 0) valid = valid && stageIds.includes(resource.riskStageId)
+        if (taskIssueProgress && taskIssueProgress[0]) {
+          var min = taskIssueProgress[0].value.split("-")[0]
+          var max = taskIssueProgress[0].value.split("-")[1]
+          valid = valid && (resource.progress >= min && resource.progress <= max)
+        }
+        if (milestoneIds.length > 0) valid = valid && milestoneIds.includes(resource.taskTypeId)
+        if (riskApproachIds.length > 0) valid = valid && riskApproachIds.includes(resource.riskApproach)
+        if (riskPriorityLevelFilterIds.length > 0) valid = valid && riskPriorityLevelFilterIds.includes(resource.priorityLevelName.toLowerCase())        
+        if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.text) ||
+        valid && sidebar_search_query.test(resource.text) ||
+        valid && sidebar_search_query.test(resource.riskApproach) ||
+        valid && sidebar_search_query.test(resource.priorityLevelName) ||
+        valid && sidebar_search_query.test(resource.taskType.name) ||
+        valid && sidebar_search_query.test(resource.userNames)
+        return valid;
+      })), 'kanbanOrder', 'asc')
+      if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {           
+        return risks
+        
+        } else  {
+        
+        risks  = risks.filter(t => t.draft == false && t.onHold == false)
+        return risks
+      
+       }   
+    },
+    C_riskPriorityLevelFilter: {
+      get() {
+        return this.getRiskPriorityLevelFilter
+      },
+      set(value) {
+        this.setRiskPriorityLevelFilter(value)
+      }
+    },
+    C_riskApproachFilter: {
+      get() {      
+        return this.getRiskApproachFilter
+      },
+      set(value) {     
+          this.setRiskApproachFilter(value)
+      }
     },
     C_taskTypeFilter: {
       get() {

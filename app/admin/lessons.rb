@@ -30,6 +30,7 @@ ActiveAdmin.register Lesson do
         :facility_id
       ]
     ]
+    permitted
   end
 
   index do
@@ -86,13 +87,23 @@ ActiveAdmin.register Lesson do
         "<span>#{lesson.users.map(&:full_name).join(', ')}</span>".html_safe
       end
     end
+    column 'Lesson Details' do |lesson|
+      links = []
+      if lesson.lesson_details.select{|ld| ld.detail_type == 'success'}.any?
+        links << link_to("Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'success'} ), class: "member_link edit_link")
+      end
+      if lesson.lesson_details.select{|ld| ld.detail_type == 'failure'}.any?
+        links << link_to("Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'failure'} ), class: "member_link edit_link")
+      end
+      if lesson.lesson_details.select{|ld| ld.detail_type == 'best_practices'}.any?
+        links << link_to("Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'best_practices'} ), class: "member_link edit_link")
+      end
+      links.join(" ").html_safe  
+    end
 
     actions defaults: false do |lesson|
       item "Edit", edit_admin_lesson_path(lesson), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
       item "Delete", admin_lesson_path(lesson), title: 'Delete', class: "member_link delete_link", 'data-confirm': 'Are you sure you want to delete this?', method: 'delete' if current_user.admin_delete?
-      item "Successes", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'success'} ), class: "member_link edit_link"
-      item "Failures", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'failure'} ), class: "member_link edit_link"
-      item "Best Practices", admin_lesson_details_path(q: {lesson_id_eq: lesson.id, detail_type_equals: 'best_practices'} ), class: "member_link edit_link"
     end
   end
 
@@ -118,12 +129,12 @@ ActiveAdmin.register Lesson do
         end
       end
 
-      tab 'Assignments' do
-        f.inputs 'Assign Users' do
-          f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
-          div id: 'projects_users-tab'
-        end
-      end
+      # tab 'Assignments' do
+      #   f.inputs 'Assign Users' do
+      #     f.input :users, label: 'Assigned Users', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
+      #     div id: 'projects_users-tab'
+      #   end
+      # end
 
 
       tab 'Files & Links' do
@@ -146,6 +157,23 @@ ActiveAdmin.register Lesson do
   end
 
   controller do
+    
+    def create
+      build_resource
+      handle_files
+      super
+    end
+
+    def update
+      handle_files
+      super
+    end
+
+    def handle_files
+      resource.manipulate_files(params) if resource.present?
+      params[:lesson].delete(:lesson_files)
+    end
+
     def scoped_collection
       super.includes(:task_type, :lesson_stage, :project, :facility, :user, :lesson_details)
     end

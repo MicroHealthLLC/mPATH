@@ -1,5 +1,9 @@
 <template>
-  <form @submit.prevent="saveLesson" accept-charset="UTF-8">
+  <form
+    @submit.prevent="saveLesson"
+    :class="{ _disabled: !lessonsLoaded }"
+    accept-charset="UTF-8"
+  >
     <div class="mt-2  d-flex align-items-center">
       <!-- Breadcrumbs and form buttons -->
       <div>
@@ -85,79 +89,75 @@
       <div class="col-12 px-0">
         <label class="font-md"
           >Lesson Name <span style="color: #dc3545">*</span></label
-        >      
-        <div class="toggleWrapper float-right" :class="{'font-sm': isMapView}">             
+        >
+        <div
+          class="toggleWrapper float-right"
+          :class="{ 'font-sm': isMapView }"
+        >
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleImportant"
+            data-cy="task_important"
+          >
+            <span v-tooltip="`Important`" v-show="lesson.important">
+              <i class="fas fa-star text-warning"></i>
+            </span>
+            <span v-tooltip="`Important`" v-show="!lesson.important">
+              <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
+            </span>
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
+            >
+              Important
+            </small>
+          </span>
 
-            <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleImportant"
-              data-cy="task_important"
-            >
-              <span 
-                v-tooltip="`Important`" 
-                v-show="lesson.important">
-               <i class="fas fa-star text-warning"></i>
-              </span>
-              <span 
-                v-tooltip="`Important`" 
-                v-show="!lesson.important">
-               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
-              </span>             
-              <small 
-               :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Important
-              </small>
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleReportable"
+            data-cy="task_reportable"
+          >
+            <span v-tooltip="`Briefings`" v-show="lesson.reportable">
+              <i class="fas fa-flag text-primary"></i>
+            </span>
+            <span v-tooltip="`Briefings`" v-show="!lesson.reportable">
+              <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
             </span>
 
-             <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleReportable"
-              data-cy="task_reportable"
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
             >
-              <span
-                 v-tooltip="`Briefings`" 
-                 v-show="lesson.reportable">
-               <i class="fas fa-flag text-primary"></i>
-              </span>
-              <span 
-                v-tooltip="`Briefings`" 
-                v-show="!lesson.reportable">
-               <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-               Briefings
-              </small>
+              Briefings
+            </small>
+          </span>
+          <span
+            v-if="_isallowed('write')"
+            class="watch_action clickable mx-2"
+            @click.prevent.stop="toggleDraft"
+            data-cy="task_important"
+          >
+            <span v-tooltip="`Draft`" v-show="lesson.draft">
+              <i class="fas fa-pencil-alt text-warning"></i>
             </span>
-              <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleDraft"
-              data-cy="task_important"
+            <span v-tooltip="`Draft`" v-show="!lesson.draft">
+              <i
+                class="fas fa-pencil-alt"
+                style="color:lightgray;cursor:pointer"
+              ></i>
+            </span>
+
+            <small
+              :class="{ 'd-none': isMapView }"
+              style="vertical-align:text-top"
             >
-              <span
-                 v-tooltip="`Draft`" 
-                 v-show="lesson.draft">
-               <i class="fas fa-pencil-alt text-warning"></i>
-              </span>
-              <span 
-                v-tooltip="`Draft`" 
-                v-show="!lesson.draft">
-               <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
-              </span>
-             
-              <small 
-                :class="{'d-none': isMapView }"
-                style="vertical-align:text-top"> 
-                Draft
-              </small>
-            </span>
-        </div> 
+              Draft
+            </small>
+          </span>
+        </div>
 
         <el-input
           name="Lesson Name"
@@ -244,7 +244,11 @@
         </div>
 
         <el-steps
-          :active="lessonStages.findIndex((stage) => stage.id == lesson.lesson_stage_id)"
+          :active="
+            lessonStages.findIndex(
+              (stage) => stage.id == lesson.lesson_stage_id
+            )
+          "
           finish-status="success"
           v-model="lesson.lesson_stage_id"
           value-key="id"
@@ -575,10 +579,49 @@
 
     <!-- Files & Links Tab -->
     <div v-show="currentTab == 'tab6'" class="row mt-2">
-      <div class="col">
-        <AttachmentInput @input="addFile" />
+      <div class="col-6">
+        <AttachmentInput @input="addFile" class="mb-3" />
         <div v-for="(file, index) in files" :key="index">
-          <span @click.prevent="downloadFile(file)">{{ file.name }}</span>
+          <div
+            class="clickable file-name d-flex justify-content-between w-100 py-1"
+          >
+            <div @click.prevent="downloadFile(file)">
+              <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
+            </div>
+            <div @click="removeFile(file.id, index)">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        Add Link
+        <span class="clickable" @click="addFileLink()">
+          <i class="fas fa-plus-circle"></i
+        ></span>
+        <div v-for="(link, index) in fileLinks" :key="index">
+          <div
+            v-if="link.id"
+            class="d-flex clickable file-name justify-content-between py-1"
+          >
+            <div>
+              <i class="fas fa-link mr-1"></i>
+              {{ link.name }}
+            </div>
+            <div @click="removeFileLink(link.id, index)">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
+          <div v-else class="d-flex justify-content-between">
+            <el-input
+              v-model="link.name"
+              class="my-1"
+              placeholder="Enter link to a site or file"
+            ></el-input>
+            <div @click="removeFileLink(link.id, index)" class="clickable">
+              <i class="fas fa-times delete-icon"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -635,6 +678,8 @@
         </el-card>
       </paginate>
     </div>
+
+    <div v-if="!lessonsLoaded" class="load-spinner spinner-border"></div>
     <RelatedLessonMenu
       :facilities="facilities"
       :facilityGroups="facilityGroups"
@@ -711,12 +756,12 @@ export default {
           closable: false,
           form_fields: [],
         },
-        // {
-        //   label: "Files & Links",
-        //   key: "tab6",
-        //   closable: false,
-        //   form_fields: ["Files"],
-        // },
+        {
+          label: "Files & Links",
+          key: "tab6",
+          closable: false,
+          form_fields: ["Files"],
+        },
         {
           label: "Updates",
           key: "tab7",
@@ -737,6 +782,8 @@ export default {
       updates: [],
       deleteUpdates: [],
       files: [],
+      fileLinks: [],
+      destroyFileIds: [],
     };
   },
   methods: {
@@ -754,7 +801,6 @@ export default {
             description: this.lesson.description,
             date: this.lesson.date,
             task_type_id: this.lesson.task_type_id,
-            user_id: this.lesson.user_id,
             lesson_stage_id: this.lesson.lesson_stage_id,
             important: this.lesson.important,
             reportable: this.lesson.reportable,
@@ -770,7 +816,9 @@ export default {
               ...this.deleteBestPractices,
             ],
             notes_attributes: [...this.updates, ...this.deleteUpdates],
-            attach_files: [...this.files],
+            attach_files: [...this.files.filter((file) => !file.id)],
+            file_links: [...this.fileLinks.filter((file) => !file.id)],
+            destroy_file_ids: [...this.destroyFileIds],
           },
         };
 
@@ -781,6 +829,7 @@ export default {
             ...this.$route.params,
           });
         } else {
+          lessonData.lesson.user_id = this.$currentUser.id;
           this.addLesson({
             ...lessonData,
             ...this.$route.params,
@@ -911,16 +960,27 @@ export default {
       return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
     addFile(files) {
-      console.log("Adding files...");
-      console.log(files);
-
       files.forEach((file) => {
         file.guid = this.guid();
+        this.files.push(file);
       });
-
-      console.log(files);
-
-      this.files = files;
+    },
+    addFileLink() {
+      this.fileLinks.push({
+        name: "",
+      });
+    },
+    removeFile(id, index) {
+      this.files.splice(index, 1);
+      if (id) {
+        this.destroyFileIds.push(id);
+      }
+    },
+    removeFileLink(id, index) {
+      this.fileLinks.splice(index, 1);
+      if (id) {
+        this.destroyFileIds.push(id);
+      }
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;
@@ -940,10 +1000,10 @@ export default {
       this.SET_LESSON({ ...this.lesson, important: !this.lesson.important });
     },
     toggleDraft() {
-      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });  
+      this.SET_LESSON({ ...this.lesson, draft: !this.lesson.draft });
     },
     toggleReportable() {
-      this.SET_LESSON( { ...this.lesson, reportable: !this.lesson.reportable });    
+      this.SET_LESSON({ ...this.lesson, reportable: !this.lesson.reportable });
     },
   },
   computed: {
@@ -953,6 +1013,7 @@ export default {
       "facilities",
       "facilityGroups",
       "lesson",
+      "lessonsLoaded",
       "lessonStages",
       "lessonStatus",
       "taskTypes",
@@ -968,7 +1029,6 @@ export default {
         return "kanban";
       }
     },
-
     projectNameLink() {
       if (this.$route.path.includes("lessons")) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
@@ -1013,6 +1073,8 @@ export default {
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },
@@ -1021,14 +1083,16 @@ export default {
         if (this.lesson) {
           this.relatedTasks = this.lesson.sub_tasks;
           this.relatedIssues = this.lesson.sub_issues;
-          this.important = this.lesson.important;  
+          this.important = this.lesson.important;
           this.draft = this.lesson.draft;
-          this.reportable = this.lesson.reportable;         
+          this.reportable = this.lesson.reportable;
           this.relatedRisks = this.lesson.sub_risks;
           this.successes = this.lesson.successes;
           this.failures = this.lesson.failures;
           this.bestPractices = this.lesson.best_practices;
           this.updates = this.lesson.notes;
+          this.files = this.lesson.attach_files.filter((file) => !file.link);
+          this.fileLinks = this.lesson.attach_files.filter((file) => file.link);
         }
       },
     },
@@ -1167,5 +1231,11 @@ a:hover {
 .btn-shadow {
   box-shadow: 0 5px 10px rgba(56, 56, 56, 0.19),
     0 1px 1px rgba(56, 56, 56, 0.23);
+}
+.file-name:hover {
+  background-color: #cdecf5;
+}
+.delete-icon {
+  color: #dc3545;
 }
 </style>
