@@ -164,7 +164,7 @@
         <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
 
         <!-- Lessons Per Page Toggle -->
-        <div class="float-right mb-4 mt-2 font-sm">
+        <div v-if="filteredLessons.length > 0" class="float-right mb-4 mt-2 font-sm">
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>
             <el-select
