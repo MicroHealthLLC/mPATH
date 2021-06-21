@@ -839,14 +839,14 @@ export default {
     },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-      debugger;
+
       var programId = this.$route.params.programId;
       var projectId = this.$route.params.projectId
       // let fPrivilege = this.$projectPrivileges[programId][projectId]
       var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[salut]
-
+      if(!fPrivilege){
+        return (salut == "read")   
+      }
       return this.$currentUser.role == "superadmin" || fPrivilege.lessons[salut]
     },
     close() {
