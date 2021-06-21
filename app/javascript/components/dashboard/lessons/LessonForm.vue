@@ -837,6 +837,18 @@ export default {
         }
       });
     },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      debugger;
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      // let fPrivilege = this.$projectPrivileges[programId][projectId]
+      var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+
+      return this.$currentUser.role == "superadmin" || fPrivilege.lessons[salut]
+    },
     close() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}/lessons`
@@ -1033,11 +1045,6 @@ export default {
       if (this.$route.path.includes("lessons")) {
         return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
       }
-    },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.lessons[salut];
     },
     isMapView() {
       return this.$route.name === "MapLessonForm";
