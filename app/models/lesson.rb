@@ -88,7 +88,7 @@ class Lesson < ApplicationRecord
     users_first_name_hash = {} 
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
-    all_lesson_details = self.lesson_details
+    all_lesson_details = self.lesson_details.sort{|n| n.updated_at }
     successes = all_lesson_details.select{|l| l.detail_type == "success"}
     failures = all_lesson_details.select{|l| l.detail_type == "failure"}
     best_practices = all_lesson_details.select{|l| l.detail_type == "best_practices"}
@@ -96,7 +96,9 @@ class Lesson < ApplicationRecord
     s_issues = []
     s_risks = []
     # binding.pry
-    latest_update = notes.last ? notes.last.json_for_lasson : {}
+    s_notes = notes.sort{|n| n.updated_at }
+    latest_update = s_notes.first || {}
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
@@ -111,7 +113,7 @@ class Lesson < ApplicationRecord
       lesson_details: self.lesson_details.map(&:to_json),
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
-      notes: notes.order("created_at ASC").as_json,
+      notes: s_notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: facility_project.facility_id,
 

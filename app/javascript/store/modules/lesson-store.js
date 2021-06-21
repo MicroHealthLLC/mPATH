@@ -197,24 +197,36 @@ const lessonFormData = (lesson) => {
   });
   // Prep Successes
   lesson.successes.forEach((success) => {
+    if(!success["id"]){
+      success["id"] = ""
+    }
     Object.entries(success).forEach(([key, value]) => {
       formData.append(`lesson[successes][][${key}]`, value);
     });
   });
   // Prep Failures
   lesson.failures.forEach((failure) => {
+    if(!failure["id"]){
+      failure["id"] = ""
+    }
     Object.entries(failure).forEach(([key, value]) => {
       formData.append(`lesson[failures][][${key}]`, value);
     });
   });
   // Prep Best Practices
   lesson.best_practices.forEach((bestPractice) => {
+    if(!bestPractice["id"]){
+      bestPractice["id"] = ""
+    }
     Object.entries(bestPractice).forEach(([key, value]) => {
       formData.append(`lesson[best_practices][][${key}]`, value);
     });
   });
   // Prep Updates
   lesson.notes_attributes.forEach((update) => {
+    if(!update["id"]){
+      update["id"] = ""
+    }
     Object.entries(update).forEach(([key, value]) => {
       formData.append(`lesson[notes_attributes][][${key}]`, value);
     });
