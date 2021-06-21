@@ -93,8 +93,30 @@
               ></span>
             </th>
             <th class="added-by-col">Added By</th>
-            <th class="desc-col">
+            <th class="desc-col" @click="sortLessons('description')">
               Description
+              <span class="float-right"
+                ><div class="d-flex d-inline-flex flex-column">
+                  <div class="position-absolute">
+                    <font-awesome-icon
+                      icon="sort-up"
+                      class="sort-icon-arrow"
+                      :class="{
+                        'sort-asc': sortAsc && activeSortValue == 'description',
+                      }"
+                    />
+                  </div>
+                  <div>
+                    <font-awesome-icon
+                      icon="sort-down"
+                      class="sort-icon-arrow"
+                      :class="{
+                        'sort-dsc':
+                          !sortAsc && activeSortValue == 'description',
+                      }"
+                    />
+                  </div></div
+              ></span>
             </th>
             <th class="flags-col">
               Flags
@@ -257,8 +279,6 @@ export default {
       }
       // Sort ascending
       if (this.sortAsc) {
-        console.log(`Sorting by ${value}: Ascending`);
-
         this.projectLessons.sort((lesson1, lesson2) => {
           if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
             return -1;
@@ -272,8 +292,6 @@ export default {
         });
         // Sort descending
       } else {
-        console.log(`Sorting by ${value}: Descending`);
-
         this.projectLessons.sort((lesson1, lesson2) => {
           if (lesson1[value].toUpperCase() < lesson2[value].toUpperCase()) {
             return 1;
@@ -311,13 +329,11 @@ export default {
         this.projectLessons.sort(
           (lesson1, lesson2) => new Date(lesson2.date) - new Date(lesson1.date)
         );
-        console.log("Sorting by date: Ascending");
         // Sort descending
       } else {
         this.projectLessons.sort(
           (lesson1, lesson2) => new Date(lesson1.date) - new Date(lesson2.date)
         );
-        console.log("Sorting by date: Descending");
       }
       // Store active sort value
       this.activeSortValue = "date";
@@ -360,13 +376,6 @@ export default {
           if (index >= start && index < end) return true;
           return this.end;
         });
-    },
-    sortIcon() {
-      if (this.sortAsc) {
-        return "sort-up";
-      } else {
-        return "sort-down";
-      }
     },
   },
   mounted() {
@@ -456,6 +465,7 @@ tr:hover {
 }
 .sort-icon-arrow {
   color: #c0c4cc;
+  transform: scale(1.2);
 }
 .sort-asc,
 .sort-dsc {
