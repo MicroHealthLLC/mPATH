@@ -161,9 +161,16 @@
               </span>
             </td>
             <td>
-              <span v-if="lesson.last_update.body">{{
-                lesson.last_update.body
-              }}</span>
+              <span v-if="lesson.last_update.body"
+                ><div class="date-chip" v-tooltip="('By: ' + lesson.last_update.user)">
+                  {{
+                    moment(lesson.last_update.created_at).format(
+                      "DD MMM YYYY, h:mm a"
+                    )
+                  }}
+                </div>
+                {{ lesson.last_update.body }}</span
+              >
               <span v-else>No Updates</span>
             </td>
           </tr>
@@ -172,7 +179,10 @@
         <div v-else class="text-danger font-lg mt-4">No Lessons found...</div>
 
         <!-- Lessons Per Page Toggle -->
-        <div v-if="filteredLessons.length > 0" class="float-right mb-4 mt-2 font-sm">
+        <div
+          v-if="filteredLessons.length > 0"
+          class="float-right mb-4 mt-2 font-sm"
+        >
           <div class="simple-select d-inline-block text-right font-sm">
             <span>Displaying </span>
             <el-select
@@ -222,6 +232,8 @@ import { mapActions, mapGetters, mapMutations } from "vuex";
 import LessonContextMenu from "./../../shared/LessonContextMenu";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import moment from "moment";
+Vue.prototype.moment = moment;
 
 export default {
   components: {
@@ -438,9 +450,9 @@ export default {
         if (loaded1) {
           this.sortLessons("title");
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 
@@ -532,5 +544,13 @@ tr:hover {
 .sort-asc,
 .sort-dsc {
   color: #17a2b8;
+}
+.date-chip {
+  background-color: #6c757d !important;
+  font-size: 0.75rem;
+  padding: 1px;
+  color: #fff;
+  border-radius: 3px;
+  width: fit-content;
 }
 </style>

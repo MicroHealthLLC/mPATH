@@ -577,7 +577,7 @@
     <!-- Files & Links Tab -->
     <div v-show="currentTab == 'tab6'" class="row mt-2">
       <div class="col-6">
-        <AttachmentInput @input="addFile" class="mb-3" />
+        <AttachmentInput @input="addFile" :show-label="true" class="mb-3" />
         <div v-for="(file, index) in files" :key="index">
           <div
             class="clickable file-name d-flex justify-content-between w-100 py-1"
