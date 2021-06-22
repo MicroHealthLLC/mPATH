@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_14_224438) do
+ActiveRecord::Schema.define(version: 2021_06_21_193637) do
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(version: 2021_06_14_224438) do
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
+    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
