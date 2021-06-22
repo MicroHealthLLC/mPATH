@@ -96,8 +96,8 @@ class Lesson < ApplicationRecord
     s_issues = []
     s_risks = []
     # binding.pry
-    s_notes = notes.sort{|n| n.updated_at }
-    latest_update = s_notes.first || {}
+    s_notes = notes.sort{|n| n.created_at }
+    latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
     self.as_json.merge(
       class_name: self.class.name,
@@ -109,10 +109,10 @@ class Lesson < ApplicationRecord
         id: user.id,
         full_name: user.full_name
       },
-      last_update: latest_update,
       lesson_details: self.lesson_details.map(&:to_json),
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
+      last_update: latest_update,
       notes: s_notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: facility_project.facility_id,
@@ -179,8 +179,8 @@ class Lesson < ApplicationRecord
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
     # binding.pry
-    n = notes.order("updated_at DESC").first
-    latest_update = n ? n.json_for_lasson : {}
+    s_notes = notes.sort{|n| n.created_at }
+    latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
     self.as_json.merge(
       class_name: self.class.name,
       user_ids: p_users.map(&:id).compact.uniq,
@@ -191,7 +191,7 @@ class Lesson < ApplicationRecord
         full_name: user.full_name
       },
       last_update: latest_update,
-      notes: notes.as_json,
+      notes: s_notes.map(&:json_for_lasson),
       lesson_stage_id: self.lesson_stage_id,
       lesson_stage: lesson_stage.try(:name),
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
