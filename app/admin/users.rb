@@ -56,7 +56,8 @@ ActiveAdmin.register User do
         risks: [],
         issues: [],
         notes: [],
-        admin: []
+        admin: [],
+        lessons: []
       ]
     ]
   end
@@ -131,6 +132,7 @@ ActiveAdmin.register User do
             b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
             b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
             b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
+            b.input :lessons, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "lessons")
 
           end
         end
