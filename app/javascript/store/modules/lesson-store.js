@@ -30,6 +30,7 @@ const lessonModule = {
         .finally(() => {});
     },
     fetchProjectLessons({ commit }, { programId, projectId }) {
+      commit("TOGGLE_LESSONS_LOADED", false);
       // Send GET request for all lessons contained within a project
       axios({
         method: "GET",
@@ -46,7 +47,9 @@ const lessonModule = {
         .catch((err) => {
           console.log(err);
         })
-        .finally(() => {});
+        .finally(() => {
+          commit("TOGGLE_LESSONS_LOADED", true);
+        });
     },
     fetchLesson({ commit }, { id, programId, projectId }) {
       commit("TOGGLE_LESSONS_LOADED", false);

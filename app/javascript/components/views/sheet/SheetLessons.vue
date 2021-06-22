@@ -47,8 +47,8 @@
             <th class="lesson-col" @click="sortLessons('title')">
               Lesson
               <span class="float-right"
-                ><div class="d-flex d-inline-flex flex-column">
-                  <div class="position-absolute">
+                ><div class="d-flex d-inline-flex">
+                  <div class="top-arrow">
                     <font-awesome-icon
                       icon="sort-up"
                       class="sort-icon-arrow"
@@ -71,8 +71,8 @@
             <th class="date-col" @click="sortLessonsByDate">
               Date
               <span class="float-right"
-                ><div class="d-flex d-inline-flex flex-column">
-                  <div class="position-absolute">
+                ><div class="d-flex d-inline-flex">
+                  <div class="top-arrow">
                     <font-awesome-icon
                       icon="sort-up"
                       class="sort-icon-arrow"
@@ -98,8 +98,8 @@
             >
               Added By
               <span class="float-right"
-                ><div class="d-flex d-inline-flex flex-column">
-                  <div class="position-absolute">
+                ><div class="d-flex d-inline-flex">
+                  <div class="top-arrow">
                     <font-awesome-icon
                       icon="sort-up"
                       class="sort-icon-arrow"
@@ -431,8 +431,16 @@ export default {
   mounted() {
     // GET request action to retrieve all lessons for project
     this.fetchProjectLessons(this.$route.params);
-    this.sortLessons("title");
   },
+  watch: {
+    lessonsLoaded: {
+      handler(loaded1, loaded2) {
+        if (loaded1) {
+          this.sortLessons("title");
+        }
+      }
+    }
+  }
 };
 </script>
 
@@ -516,6 +524,10 @@ tr:hover {
 .sort-icon-arrow {
   color: #c0c4cc;
   transform: scale(1.2);
+}
+.top-arrow {
+  position: relative;
+  left: 7px;
 }
 .sort-asc,
 .sort-dsc {
