@@ -839,15 +839,19 @@ export default {
     },
     //TODO: change the method name of isAllowed
     _isallowed(salut) {
-
       var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
+      var projectId = this.$route.params.projectId;
       // let fPrivilege = this.$projectPrivileges[programId][projectId]
-      var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
-      if(!fPrivilege){
-        return (salut == "read")   
+      var fPrivilege = _.filter(
+        this.$projectPrivileges,
+        (f) => f.program_id == programId && f.project_id == projectId
+      )[0];
+      if (!fPrivilege) {
+        return salut == "read";
       }
-      return this.$currentUser.role == "superadmin" || fPrivilege.lessons[salut]
+      return (
+        this.$currentUser.role == "superadmin" || fPrivilege.lessons[salut]
+      );
     },
     close() {
       this.$router.push(
@@ -889,7 +893,7 @@ export default {
       );
     },
     addSuccess() {
-      this.successes.unshift({ finding: "", recommendation: "" });
+      this.successes.unshift({ id: "", finding: "", recommendation: "" });
     },
     removeSuccess(index) {
       this.$confirm(
@@ -909,7 +913,7 @@ export default {
         .catch(() => {});
     },
     addFailure() {
-      this.failures.unshift({ finding: "", recommendation: "" });
+      this.failures.unshift({ id: "", finding: "", recommendation: "" });
     },
     removeFailure(index) {
       this.$confirm(
@@ -929,7 +933,7 @@ export default {
         .catch(() => {});
     },
     addBestPractice() {
-      this.bestPractices.unshift({ finding: "", recommendation: "" });
+      this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
     },
     removeBestPractice(index) {
       this.$confirm(
@@ -949,7 +953,7 @@ export default {
         .catch(() => {});
     },
     addUpdate() {
-      this.updates.unshift({ body: "" });
+      this.updates.unshift({ id: "", body: "" });
     },
     removeUpdate(index) {
       this.$confirm(
