@@ -98,7 +98,6 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleImportant"
-            data-cy="task_important"
           >
             <span v-tooltip="`Important`" v-show="lesson.important">
               <i class="fas fa-star text-warning"></i>
@@ -118,7 +117,6 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleReportable"
-            data-cy="task_reportable"
           >
             <span v-tooltip="`Briefings`" v-show="lesson.reportable">
               <i class="fas fa-flag text-primary"></i>
@@ -138,7 +136,6 @@
             v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
-            data-cy="task_important"
           >
             <span v-tooltip="`Draft`" v-show="lesson.draft">
               <i class="fas fa-pencil-alt text-warning"></i>
