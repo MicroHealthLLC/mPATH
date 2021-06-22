@@ -71,7 +71,8 @@ ActiveAdmin.register User do
         risks: [],
         issues: [],
         notes: [],
-        admin: []
+        admin: [],
+        lessons: []
       ]
     ]
   end

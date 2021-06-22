@@ -9,6 +9,7 @@ class FacilityPrivilege < ApplicationRecord
   serialize :tasks, Array
   serialize :issues, Array
   serialize :risks, Array
+  serialize :lessons, Array
   serialize :notes, Array
   serialize :facility_project_ids, Array
 
@@ -46,6 +47,7 @@ class FacilityPrivilege < ApplicationRecord
       issues: get_permission_hash( self.issues.join("") ),
       risks: get_permission_hash( self.risks.join("") ),
       notes: get_permission_hash( self.notes.join("")),
+      lessons: get_permission_hash( self.lessons.join("")),
       facility_project_id: self.facility_project_id,
       project_id: self.facility_id,
       program_id: self.facility_project.project_id

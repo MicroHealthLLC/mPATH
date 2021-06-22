@@ -88,7 +88,12 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setAdvancedFilter", "setTaskTypeFilter"]),
+    ...mapMutations([
+    "setAdvancedFilter", 
+    "setTaskTypeFilter", 
+    'setIssueTypeFilter',
+    'setIssueSeverityFilter',
+    ]),
     handleAddNew(stage) {
       if (!this.viewPermit(this.currentTab, "write")) return;
 
@@ -146,33 +151,19 @@ export default {
       let taskTypeIds = _.map(this.C_taskTypeFilter, "id");
       let severityIds = _.map(this.C_issueSeverityFilter, "id");
       let stageIds = _.map(this.issueStageFilter, "id");
-      const search_query = this.exists(this.searchIssuesQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
-      const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim())
-        ? new RegExp(
-            _.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()),
-            "i"
-          )
-        : null;
+      const search_query = this.exists(this.searchIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.searchIssuesQuery.trim().toLowerCase()),"i") : null
+      const sidebar_search_query = this.exists(this.sidebarIssuesQuery.trim()) ? new RegExp(_.escapeRegExp(this.sidebarIssuesQuery.trim().toLowerCase()),"i") : null
       let noteDates = this.noteDateFilter;
       let taskIssueDueDates = this.taskIssueDueDateFilter;
       let taskIssueProgress = this.taskIssueProgressFilter;
-
       let taskIssueUsers = this.getTaskIssueUserFilter;
-
       let issues = _.orderBy(
         _.filter(this.facility.issues, (resource) => {
           let valid = Boolean(resource && resource.hasOwnProperty("progress"));
-
           let userIds = [
             ..._.map(resource.checklists, "userId"),
             ...resource.userIds,
           ];
-
           if (taskIssueUsers.length > 0) {
             if (taskIssueUsers.length > 0) {
               valid =
@@ -182,12 +173,8 @@ export default {
                 );
             }
           }
-
           //TODO: For performance, send the whole tasks array instead of one by one
-          valid =
-            valid &&
-            this.filterDataForAdvancedFilter([resource], "kanbanIssues");
-
+          valid = valid && this.filterDataForAdvancedFilter([resource], "kanbanIssues");
           if (typeIds.length > 0)
             valid = valid && typeIds.includes(resource.issueTypeId);
           if (taskTypeIds.length > 0)
@@ -196,7 +183,6 @@ export default {
             valid = valid && severityIds.includes(resource.issueSeverityId)
           if (stageIds.length > 0) 
             valid = valid && stageIds.includes(resource.issueStageId)
-
           if (noteDates && noteDates[0] && noteDates[1]) {
             let startDate = moment(noteDates[0], "YYYY-MM-DD");
             let endDate = moment(noteDates[1], "YYYY-MM-DD");
@@ -209,12 +195,7 @@ export default {
             }
             valid = is_valid;
           }
-
-          if (
-            taskIssueDueDates &&
-            taskIssueDueDates[0] &&
-            taskIssueDueDates[1]
-          ) {
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
             let startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD");
             let endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD");
             let is_valid = true;
@@ -222,19 +203,16 @@ export default {
             is_valid = nDate.isBetween(startDate, endDate, "days", true);
             valid = is_valid;
           }
-
           if (taskIssueProgress && taskIssueProgress[0]) {
             let min = taskIssueProgress[0].value.split("-")[0];
             let max = taskIssueProgress[0].value.split("-")[1];
             valid =
               valid && resource.progress >= min && resource.progress <= max;
           }
-
           if (search_query) valid = valid && search_query.test(resource.title) ||
             valid && search_query.test(resource.issueType) ||
             valid && search_query.test(resource.issueSeverity) ||
             valid && search_query.test(resource.userNames)
-          
           if (sidebar_search_query) valid = valid && sidebar_search_query.test(resource.title) ||
             valid && sidebar_search_query.test(resource.issueType) ||
             valid && sidebar_search_query.test(resource.issueSeverity) ||
@@ -255,6 +233,22 @@ export default {
         return issues
       
        } 
+    },
+    C_issueTypeFilter: {
+      get() {
+        return this.issueTypeFilter
+      },
+      set(value) {
+        this.setIssueTypeFilter(value)
+      }
+    },
+    C_issueSeverityFilter: {
+      get() {
+        return this.issueSeverityFilter
+      },
+      set(value) {
+        this.setIssueSeverityFilter(value)
+      }
     },
     C_taskTypeFilter: {
       get() {
