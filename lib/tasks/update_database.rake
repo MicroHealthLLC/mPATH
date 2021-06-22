@@ -36,6 +36,7 @@ end
 
 desc "Reverting back to string in Privilege table"
 task :revert_privileges => :environment do
+  puts "Reverting back to string in Privilege table"
   Privilege.all.each do |p|
     if p.lessons.include?("\n") ||  p.lessons.include?("]")
       p.lessons = YAML.load(p.lessons).join("")
