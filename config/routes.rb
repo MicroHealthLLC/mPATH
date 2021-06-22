@@ -51,6 +51,17 @@ Rails.application.routes.draw do
   get "/programs/:program_id/:tab/projects/:project_id/notes" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/notes/:id" => "projects#vue_js_route"
 
+  get "/programs/:program_id/:tab/projects/:project_id/lessons" => "projects#vue_js_route"
+  get "/programs/:program_id/:tab/projects/:project_id/lessons/:id" => "projects#vue_js_route"
+
+  # TODO: add in namespace instead of this. This is to make front end working
+  get "/api/v1/programs/:program_id/lessons" => "lessons#index"
+  get "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#index"
+  get "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#show"
+  post "/api/v1/programs/:program_id/projects/:project_id/lessons" => "lessons#create"
+  patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
+  delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
+
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do

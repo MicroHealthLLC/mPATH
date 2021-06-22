@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading" class="mt-1 ml-1 issues-index" data-cy="issue_sheet_index">
     <div v-if="_isallowed('read')">
-      <div class="d-flex align-item-center w-75 float-right filters-wrapper">
+      <div class="d-flex align-item-center w-70 float-right filters-wrapper">
         <div class="ml-2 task-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
           <el-input
@@ -489,6 +489,9 @@
         this.newIssue = false
         this.$emit('refresh-facility')
       },
+    //  log(e){
+    //     console.log(e)
+    //   },
       issueUpdated(issue, refresh=true) {
         let index = this.facility.issues.findIndex((t) => t.id == issue.id)
         if (index > -1) Vue.set(this.facility.issues, index, issue)
@@ -617,6 +620,7 @@
           if (search_query) valid = valid && search_query.test(resource.title) ||
             valid && search_query.test(resource.issueType) ||
             valid && search_query.test(resource.issueSeverity) ||
+            valid && search_query.test(resource.taskTypeName) ||
             valid && search_query.test(resource.userNames)
           return valid;
         })), ['dueDate'])
@@ -846,6 +850,11 @@
     float: right;
     margin-top: -85px;
   }
+  @media screen and (max-width: 1500px) {
+  .filters-wrapper {
+    width: 65% !important;
+  } 
+}
 /deep/.el-collapse   {
   border-bottom: none !important;
   }

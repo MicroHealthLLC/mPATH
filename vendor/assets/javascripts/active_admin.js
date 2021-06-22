@@ -17,6 +17,16 @@ function checkRiskProbabilityImpactNumber(element){
 
 jQuery(function($) {
 
+  $("#q_lesson_id").select2({
+    placeholder: "Search and select Lesson",
+    allowClear: true
+  });
+
+  $("#q_user_id").select2({
+    placeholder: "Search and select User",
+    allowClear: true
+  });
+  
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
     allowClear: true
@@ -1187,7 +1197,8 @@ jQuery(function($) {
     }
 
     // settings page
-    if ($("#settings_container").is(":visible"))
+    //if ($("#settings_container").is(":visible"))
+    if ($("#settings_container").length > 0)
     {
       let settings = new Vue({
         el: "#settings_container",
@@ -2264,7 +2275,8 @@ jQuery(function($) {
   }());
 
   // password generator tab
-  if ($("#user-password__tab").is(":visible"))
+  //if ($("#user-password__tab").is(":visible"))
+  if ($("#user-password__tab").length > 0)
   {
     let settings = new Vue({
       el: "#user-password__tab",

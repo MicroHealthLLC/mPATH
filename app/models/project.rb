@@ -36,7 +36,6 @@ class Project < SortableRecord
   has_many :favorite_filters, dependent: :destroy
   has_many :query_filters, dependent: :destroy
 
-  has_many :lessons, dependent: :destroy
   has_many :project_lesson_stages, dependent: :destroy
   has_many :lesson_stages, through: :project_lesson_stages
 

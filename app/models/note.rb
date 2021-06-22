@@ -1,9 +1,18 @@
 class Note < ApplicationRecord
-  default_scope {order(created_at: :desc)}
+  # default_scope {order(updated_at: :desc)}
 
   belongs_to :noteable, polymorphic: true
   belongs_to :user
   has_many_attached :note_files, dependent: :destroy
+
+  def json_for_lasson
+    {
+      id: id,
+      user: user.full_name,
+      body: body,
+      created_at: created_at
+    }
+  end
 
   def to_json
     attach_files = []

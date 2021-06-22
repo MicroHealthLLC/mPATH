@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_27_163641) do
+ActiveRecord::Schema.define(version: 2021_06_21_193637) do
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
+    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -217,6 +218,9 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.integer "kanban_order", default: 0
     t.integer "task_type_id"
     t.boolean "important", default: false
+    t.boolean "draft", default: false
+    t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["facility_project_id"], name: "index_issues_on_facility_project_id"
     t.index ["issue_severity_id"], name: "index_issues_on_issue_severity_id"
     t.index ["issue_stage_id"], name: "index_issues_on_issue_stage_id"
@@ -229,16 +233,9 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.text "recommendation"
     t.integer "user_id"
     t.integer "lesson_id"
-    t.integer "detail_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "lesson_projects", charset: "utf8", force: :cascade do |t|
-    t.integer "lesson_id"
-    t.integer "facility_project_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.string "detail_type", default: "success"
   end
 
   create_table "lesson_stages", charset: "utf8", force: :cascade do |t|
@@ -252,6 +249,7 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.integer "lesson_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "user_type", default: "responsible"
     t.index ["lesson_id"], name: "index_lesson_users_on_lesson_id"
     t.index ["user_id"], name: "index_lesson_users_on_user_id"
   end
@@ -262,23 +260,16 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.datetime "date"
     t.string "stage"
     t.integer "task_type_id"
-    t.integer "task_id"
-    t.integer "risk_id"
-    t.integer "issue_id"
-    t.integer "issue_type_id"
     t.integer "user_id"
-    t.integer "project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.boolean "important", default: false
     t.integer "facility_project_id"
+    t.boolean "important", default: false
+    t.boolean "reportable", default: false
+    t.boolean "draft", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
-    t.index ["issue_id"], name: "index_lessons_on_issue_id"
-    t.index ["issue_type_id"], name: "index_lessons_on_issue_type_id"
     t.index ["lesson_stage_id"], name: "index_lessons_on_lesson_stage_id"
-    t.index ["risk_id"], name: "index_lessons_on_risk_id"
-    t.index ["task_id"], name: "index_lessons_on_task_id"
     t.index ["task_type_id"], name: "index_lessons_on_task_type_id"
     t.index ["user_id"], name: "index_lessons_on_user_id"
   end
@@ -561,6 +552,14 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.boolean "approved"
     t.boolean "important", default: false
     t.boolean "ongoing", default: false
+    t.boolean "draft", default: false
+    t.boolean "on_hold", default: false
+    t.text "explanation"
+    t.integer "duration"
+    t.integer "status"
+    t.string "duration_name"
+    t.string "status_name"
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_risks_on_due_date"
     t.index ["facility_project_id"], name: "index_risks_on_facility_project_id"
     t.index ["risk_stage_id"], name: "index_risks_on_risk_stage_id"
@@ -648,6 +647,9 @@ ActiveRecord::Schema.define(version: 2021_05_27_163641) do
     t.datetime "calendar_start_date"
     t.boolean "important", default: false
     t.boolean "ongoing", default: false
+    t.boolean "draft", default: false
+    t.boolean "on_hold", default: false
+    t.boolean "reportable", default: false
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["facility_project_id"], name: "index_tasks_on_facility_project_id"
     t.index ["task_stage_id"], name: "index_tasks_on_task_stage_id"

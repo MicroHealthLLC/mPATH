@@ -293,6 +293,8 @@
         this.selectedSubNavigation = ''
         if(value.id == "kanban"){
           this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+        }else if(value.id == "map" || value.id == "sheet"){
+          this.subNavigationOptions = allowed_sub_navigation_tabs
         }else if(['gantt_chart', 'member_list'].includes(value.id) ){
           this.subNavigationOptions = []
         }
@@ -328,6 +330,8 @@
             if(this.selectedNavigation){
               if(this.selectedNavigation.id == "kanban"){
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
+              }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
+                this.subNavigationOptions = allowed_sub_navigation_tabs
               }else if(['gantt_chart', 'member_list'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }              
@@ -407,7 +411,7 @@
 
             })
             .catch((err) => {
-              console.log(err)
+              alert(err.response.data.errors)
             })
         })
       },
