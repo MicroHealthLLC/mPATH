@@ -125,8 +125,29 @@
             <th class="flags-col">
               Flags
             </th>
-            <th class="update-col">
+            <th class="update-col" @click="sortUpdates">
               Last Update
+              <span class="float-right"
+                ><div class="d-flex d-inline-flex">
+                  <div class="top-arrow">
+                    <font-awesome-icon
+                      icon="sort-up"
+                      class="sort-icon-arrow"
+                      :class="{
+                        'sort-asc': sortAsc && activeSortValue == 'updates',
+                      }"
+                    />
+                  </div>
+                  <div>
+                    <font-awesome-icon
+                      icon="sort-down"
+                      class="sort-icon-arrow"
+                      :class="{
+                        'sort-dsc': !sortAsc && activeSortValue == 'updates',
+                      }"
+                    />
+                  </div></div
+              ></span>
             </th>
           </tr>
           <tr
@@ -162,7 +183,10 @@
             </td>
             <td>
               <span v-if="lesson.last_update.body"
-                ><div class="date-chip" v-tooltip="('By: ' + lesson.last_update.user)">
+                ><div
+                  class="date-chip"
+                  v-tooltip="'By: ' + lesson.last_update.user"
+                >
                   {{
                     moment(lesson.last_update.created_at).format(
                       "DD MMM YYYY, h:mm a"
@@ -403,6 +427,49 @@ export default {
       }
       // Store active sort value
       this.activeSortValue = "date";
+    },
+    sortUpdates() {
+      // Determine whether to sort lessons ascending or descending
+      if (this.activeSortValue !== "updates" || !this.sortAsc) {
+        this.sortAsc = true;
+      } else {
+        this.sortAsc = false;
+      }
+      // Is used to replace empty values
+      let oldDate = new Date("12-31-1980");
+      // Sort ascending
+      if (this.sortAsc) {
+        this.projectLessons.sort((lesson1, lesson2) => {
+          if (!lesson1.notes_updated_at[0]) {
+            lesson1.notes_updated_at = oldDate;
+          }
+          if (!lesson2.notes_updated_at[0]) {
+            lesson2.notes_updated_at = oldDate;
+          }
+
+          return (
+            new Date(lesson2.notes_updated_at) -
+            new Date(lesson1.notes_updated_at)
+          );
+        });
+        // Sort descending
+      } else {
+        this.projectLessons.sort((lesson1, lesson2) => {
+          if (!lesson1.notes_updated_at[0]) {
+            lesson1.notes_updated_at = oldDate;
+          }
+          if (!lesson2.notes_updated_at[0]) {
+            lesson2.notes_updated_at = oldDate;
+          }
+
+          return (
+            new Date(lesson1.notes_updated_at) -
+            new Date(lesson2.notes_updated_at)
+          );
+        });
+      }
+      // Store active sort value
+      this.activeSortValue = "updates";
     },
     openContextMenu(e, lesson) {
       this.clickedLesson = lesson;
