@@ -5,9 +5,12 @@
     :style="style"
     ref="context"
     tabindex="0"
-    @mouseleave="close"
+    @focusout="clickOutside"
   >
     <div>
+      <div class="d-flex justify-content-end pt-2 pr-2">
+        <i class="el-icon-error" title="Close" @click="close"></i>
+      </div>
       <div class="menu-subwindow-title">Select Related {{ item }}s</div>
       <el-input
         class="filter-input"
@@ -230,6 +233,11 @@ export default {
     },
     toggleSubmitBtn() {
       this.submitted = false;
+    },
+    clickOutside(e) {
+      if (!e.relatedTarget) {
+        this.close();
+      }
     },
   },
   watch: {
