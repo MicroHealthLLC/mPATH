@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< Updated upstream
-ActiveRecord::Schema.define(version: 2021_06_14_224438) do
-=======
 ActiveRecord::Schema.define(version: 2021_06_23_141502) do
->>>>>>> Stashed changes
 
   create_table "accountable_users", charset: "utf8", force: :cascade do |t|
     t.bigint "user_id"
