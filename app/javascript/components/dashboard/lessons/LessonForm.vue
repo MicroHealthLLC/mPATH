@@ -652,10 +652,12 @@
             v-if="link.id"
             class="d-flex clickable file-name justify-content-between py-1"
           >
-            <div>
-              <i class="fas fa-link mr-1"></i>
-              {{ link.name }}
-            </div>
+            <a class="file-link" :href="link.uri" target="_blank"
+              ><div>
+                <i class="fas fa-link mr-1"></i>
+                {{ link.name }}
+              </div></a
+            >
             <div
               v-if="isAllowed('delete')"
               @click="removeFileLink(link.id, index)"
@@ -1303,5 +1305,8 @@ a:hover {
 }
 .delete-icon {
   color: #dc3545;
+}
+.file-link {
+  color: unset;
 }
 </style>
