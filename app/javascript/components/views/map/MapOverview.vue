@@ -764,7 +764,7 @@ export default {
       );   
      let inProgress = _.filter(
         this.filteredTasks,
-        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing && !t.onHold
+        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing  && t.startDate <= this.today 
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
@@ -772,17 +772,17 @@ export default {
       );
      let onHoldT = _.filter(
         this.filteredTasks,
-        (t) => t && t.onHold == true
+        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing
       );
       let completed = _.filter(
         this.filteredTasks,
-        (t) => t && t.progress && t.progress == 100
+        (t) => t && t.progress && t.progress == 100 && !t.draft
       );
       let completed_percent = this.getAverage(
         completed.length,
         this.filteredTasks.length
       );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue);
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && !t.draft);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredTasks.length
@@ -899,17 +899,17 @@ export default {
       ); 
        let inProgress = _.filter(
         this.filteredIssues,
-        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.onHold
+        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing && t.startDate <= this.today 
         );
       let onHoldI = _.filter(
         this.filteredIssues,
-        (t) => t && t.onHold == true
+        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
         this.filteredIssues.length
       );
-      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue);
+      let overdue = _.filter(this.filteredIssues, (t) => t && t.isOverdue && !t.onHold && !t.draft);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredIssues.length
@@ -1012,7 +1012,7 @@ export default {
       );  
       let onHoldR = _.filter(
         this.filteredRisks,
-        (t) => t && t.onHold == true
+        (t) => t && t.onHold == true  && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing
       );  
 
      let riskDrafts = _.filter(
@@ -1025,7 +1025,7 @@ export default {
       );
       let inProgress = _.filter(
         this.filteredRisks,
-        (t) => t && t.progressStatus && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.onHold
+        (t) => t && t.progressStatus && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing && t.startDate <= this.today 
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -1035,7 +1035,7 @@ export default {
         inProgress.length,
         this.filteredRisks.length
       );
-      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue);
+      let overdue = _.filter(this.filteredRisks, (t) => t && t.isOverdue && !t.onHold && !t.draft);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredRisks.length

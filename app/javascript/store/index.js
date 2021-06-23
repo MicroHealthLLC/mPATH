@@ -380,7 +380,7 @@ export default new Vuex.Store({
     // TODO: remove if not used anywhere
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
-        {id: 'active', name: 'In Progress', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
@@ -463,7 +463,7 @@ export default new Vuex.Store({
     },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
-        {id: 'active', name: 'In Progress'},
+        {id: 'active', name: 'Not Completed'},
         {id: 'completed', name: 'Completed'}
       ]
     },
@@ -477,7 +477,7 @@ export default new Vuex.Store({
     getAdvancedFilterOptions: (state, getters) => {
 
       var options = [
-        {id: 'active', name: 'In Progress', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
