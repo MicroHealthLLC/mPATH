@@ -61,14 +61,18 @@ export default {
     };
   },
   mounted() {
-    var programId = this.$route.params.programId;
-    var projectId = this.$route.params.projectId
-    var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
+    // var programId = this.$route.params.programId;
+    // var projectId = this.$route.params.projectId
+    // var fPrivilege = _.filter(this.$projectPrivileges, (f) => f.program_id == programId && f.project_id == projectId)[0]
     
-    if(fPrivilege){
-      for(var i = 0; i < this.tabs.length; i++){
-        this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
-      }      
+    // if(fPrivilege){
+    //   for(var i = 0; i < this.tabs.length; i++){
+    //     this.tabs[i].hidden = fPrivilege[this.tabs[i].key].hide
+    //   }      
+    // }
+    for(var i = 0; i < this.tabs.length; i++){
+      var hide = !this.$permissions[this.tabs[i].key]["read"] && !this.$permissions[this.tabs[i].key]["write"] && !this.$permissions[this.tabs[i].key]["delete"]
+      this.tabs[i].hidden = hide
     }
 
   },

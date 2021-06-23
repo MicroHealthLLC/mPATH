@@ -115,28 +115,28 @@ ActiveAdmin.register User do
         end
       end
 
-      tab 'Project privileges' do
-        f.inputs 'Assign Project Privileges' do
-          project_select_options = user.active_admin_facility_project_select_options
-          user_privileges = f.object.privilege || Privilege.new
-          f.has_many :facility_privileges,
-            heading: '',
-            new_record: 'Add Project Privilege',
-            remove_record: 'Remove Project Privilege',
-            allow_destroy: -> (c) { current_user.superadmin?  } do |b|
+      # tab 'Project privileges' do
+      #   f.inputs 'Assign Project Privileges' do
+      #     project_select_options = user.active_admin_facility_project_select_options
+      #     user_privileges = f.object.privilege || Privilege.new
+      #     f.has_many :facility_privileges,
+      #       heading: '',
+      #       new_record: 'Add Project Privilege',
+      #       remove_record: 'Remove Project Privilege',
+      #       allow_destroy: -> (c) { current_user.superadmin?  } do |b|
 
-            b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  project_select_options, b.object.facility_project_id ), include_blank: false, input_html: {class: "project_privileges_select"}
-            b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "overview")
-            b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
-            b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "tasks")
-            b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
-            b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
-            b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
-            b.input :lessons, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "lessons")
+      #       b.input :facility_project, label: 'Project', as: :select, collection: options_for_select(  project_select_options, b.object.facility_project_id ), include_blank: false, input_html: {class: "project_privileges_select"}
+      #       b.input :overview, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "overview")
+      #       b.input :admin, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "admin")
+      #       b.input :tasks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "tasks")
+      #       b.input :issues, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "issues")
+      #       b.input :risks, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "risks")
+      #       b.input :notes, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "notes")
+      #       b.input :lessons, as: :check_boxes, :collection =>  facility_privileges_options(b.object, user_privileges, "lessons")
 
-          end
-        end
-      end
+      #     end
+      #   end
+      # end
 
     end
 
