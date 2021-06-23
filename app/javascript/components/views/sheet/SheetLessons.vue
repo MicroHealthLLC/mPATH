@@ -7,6 +7,7 @@
     </div>
     <div class="wrapper mt-3 p-3">
       <button
+        v-if="isAllowed('write')"
         class="btn btn-md btn-primary addLessonBtn mr-3"
         @click="addLesson"
       >
@@ -475,6 +476,12 @@ export default {
       this.clickedLesson = lesson;
       e.preventDefault();
       this.$refs.menu.open(e);
+    },
+    isAllowed(privilege) {
+      return (
+        this.$currentUser.role == "superadmin" ||
+        this.$permissions.lessons[privilege]
+      );
     },
   },
   computed: {
