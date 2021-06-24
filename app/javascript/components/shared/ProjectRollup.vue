@@ -2,13 +2,13 @@
 <template>
   <div class="container-fluid m-2" data-cy="facility_rollup">
 
-   <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Program Rollup" class="p-3">
+   <!-- <el-tabs type="border-card" @tab-click="handleClick">
+  <el-tab-pane label="Program Rollup" class="p-3"> -->
     <!-- FIRST ROW:  PROGRAM NAME AND COUNT -->
     <div class="row pt-2">
       <div class="col-6 py-0 pl-0">
         <span v-if="contentLoaded">
-          <h4 v-if="isMapView" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
+          <h4 v-if="isMapView" :load="log(programLessons)" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
          <!-- <h3 v-if="contentLoaded" class="d-inline">
@@ -29,14 +29,14 @@
 
 <!-- SECOND ROW: ACTION CARDS (TASK, ISSUES, RISKS, LESSONS) -->
     <div class="row">
-      <div class="col px-0">
+      <div class="col px-0" :class="[isMapView ? 'col-6' : '']" >
           <el-card
             class="box-card mb-2"
             style="background-color:#fff"
             data-cy="task_summary"
           >      
             <div class="row">
-              <div class="col pl-2">
+              <div class="col pl-2" >
                 <h5 class="d-inline">TASKS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                   <span class="badge bg-secondary text-light badge-pill float-right">{{
@@ -52,21 +52,21 @@
                 <div class="col-3 p-0 mb-0">
                   
                   <span class="d-block" v-tooltip="`COMPLETE`" ><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-                  <!-- <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span> -->
-                    <span class="d-block smallerFont">COMPLETE</span>
+                  <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
+                    <!-- <span class="d-block smallerFont">COMPLETE</span> -->
 
                 </div>
                  <div class="col-3 p-0 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS</span>           
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
+                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
                 </div>
                  <div class="col-3 p-0 mb-0">
                    <span class="d-block" v-tooltip="`ONGOING`"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING </span>    
+                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING </span>    
                 </div>       
               </div>
 
@@ -100,15 +100,15 @@
                 <div class="col-3 p-0  mb-0">
                   
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
+                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md text-warning" /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                 </div>
                  
               </div>
@@ -180,7 +180,7 @@
           </el-card>
 
       </div>
-      <div class="col">
+      <div class="col" :class="[isMapView ? 'col-6' : '']">
             <el-card
             class="box-card mb-2"
             style="background-color:#fff"
@@ -202,15 +202,15 @@
                <div class="row text-center">
                 <div class="col-3 p-0 mb-0">                  
                   <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
+                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
                 <span v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">IN PROGRESS</span>           
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
                  <span v-tooltip="`OVERDUE`" class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE</span>               
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE</span>               
                 </div>
                 
               </div>
@@ -241,15 +241,15 @@
                 <div class="col-3 p-0  mb-0">
                   
                   <span v-tooltip="`PLANNED`" class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
+                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
                  <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
+                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
+                 <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                 </div>
                  
               </div>
@@ -352,7 +352,7 @@
             </div>
           </el-card>
       </div>
-      <div class="col px-0">
+      <div class="col px-0" :class="[isMapView ? 'col-6 pt-1' : '']" >
           <el-card
               class="box-card"
               style="background-color:#fff"
@@ -373,19 +373,19 @@
                 <div class="col-3 p-0 mb-0">
                   
                   <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
+                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS   </span>           
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS   </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
                  <span  v-tooltip="`OVERDUE`"  class="d-block"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
                 </div>
                  <div class="col-3 p-0 mb-0">
                    <span v-tooltip="`ONGOING`" class="d-block"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
-                 <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING</span>    
+                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING</span>    
                 </div>       
               </div>
 
@@ -421,15 +421,15 @@
                 <div class="row mt-1 text-center">
                   <div class="col-3 p-0  mb-0">                    
                     <span v-tooltip="`PLANNED`"  class="d-block"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
-                    <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
+                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                   </div>
                   <div class="col-3 p-0 mb-0">
                    <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
-                  <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
+                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col-3 p-0 mb-0">
                     <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md text-warning" /></span>
-                    <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
+                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                   </div>
                   
                 </div>
@@ -564,7 +564,7 @@
               </div>
             </el-card>
       </div>
-      <div v-show="isSheetsView" class="col-2">
+      <div class="col-2" :class="[isMapView ? 'col-6 pt-1' : '']" >
           <el-card
               class="box-card"
               style="background-color:#fff"
@@ -726,7 +726,7 @@
     
     </div>
 
-      </el-tab-pane>
+      <!-- </el-tab-pane>
   
     <el-tab-pane label="Program Breakdown">
      <div class="mb-2 float-right"> <button class="btn btn-md btn-info"> PROJECTS: {{ C_facilityCount }}</button></div>
@@ -740,25 +740,18 @@
       </div>
     </el-tab-pane>
     
-    <el-tab-pane label="Analytics">
-       
-        
-            
-
-        
+    <el-tab-pane label="Analytics">  -->
+<!-- KPI's and visual graphs will go here -->    
        
       
-    </el-tab-pane>
-       </el-tabs>
- 
- 
- 
+    <!-- </el-tab-pane>
+       </el-tabs>  -->
   </div>
 </template>
 
 <script>
 import Loader from "./loader";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "ProjectRollup",
   props: ["from"],
@@ -772,10 +765,17 @@ export default {
       today: new Date().toISOString().slice(0, 10),
     };
   },
+   mounted() {
+    this.fetchProgramLessons(this.$route.params);
+ 
+  },
   computed: {
     ...mapGetters([
       "contentLoaded",
       "currentProject",
+      "lessonsLoaded",
+      "projectLessons",
+      "programLessons",
       'projects',
       "facilities",
       "facilityCount",
@@ -1105,7 +1105,7 @@ export default {
       );      
       let completed = _.filter(
         this.filteredTasks,
-        (t) => t && t.progress && t.progress == 100 && t.draft == false
+        (t) => t && t.progress && t.progress == 100 
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -1123,12 +1123,12 @@ export default {
         inProgress.length,
         this.filteredTasks.length
       );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold);
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && t.ongoing == false);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredTasks.length
       );
-      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
+      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
       return {
         planned: {
           count: planned.length, 
@@ -1160,15 +1160,15 @@ export default {
    issueVariation() {
      let planned = _.filter(
         this.filteredIssues,
-        (t) => !t.draft && t.startDate && t.startDate > this.today     
+        (t) => t && t.draft == false && t.startDate && t.startDate > this.today     
       );     
       let issueDrafts = _.filter(
         this.filteredIssues,
-         (t) => t && t.draft == true 
+         (t) => t && t.draft == true && t.onHold == false 
       );      
       let completed = _.filter(
         this.filteredIssues,
-        (t) => t && t.progress && t.progress == 100  && t.draft == false
+        (t) => t && t.progress && t.progress == 100
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -1176,11 +1176,11 @@ export default {
       ); 
        let inProgress = _.filter(
         this.filteredIssues,
-        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && t.startDate <= this.today 
         );
       let onHoldI = _.filter(
         this.filteredIssues,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue
       );
       let inProgress_percent = this.getAverage(
         inProgress.length,
@@ -1278,11 +1278,12 @@ export default {
     },
   },
   methods: {
+     ...mapActions(["fetchProgramLessons"]),
     showLessToggle() {
       this.showLess = "Show Less";
     },
     log(e){
-      console.log("this is plannedTs" + e)
+      // console.log("this is Lessons" + e)
     },
     handleClick(tab, event) {
         console.log(tab, event);

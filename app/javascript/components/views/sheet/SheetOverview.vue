@@ -215,8 +215,8 @@
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                     </div>
                     <div class="col-3 p-0 mb-0">
-                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
-                    <span :class="{'d-none': isMapView }" class="d-block smallerFont" style="color:lightgray">DRAFTS</span>               
+                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                    <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                     </div>                    
                   </div>
 
@@ -232,7 +232,7 @@
                     }}</h4>        
                   </div>
                   <div class="col-3 pb-0 mb-0">
-                    <h4 style="color:lightgray">{{ issueVariation.issueDrafts.count }}</h4>                      
+                    <h4>{{ issueVariation.issueDrafts.count }}</h4>                      
                   </div>
                   
                   </div>
@@ -391,8 +391,8 @@
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
-                    <span :class="{'d-none': isMapView }" class="d-block smallerFont" style="color:lightgray">DRAFTS</span>               
+                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md"/></span>
+                    <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                   </div>
                   
                 </div>
@@ -409,7 +409,7 @@
                   }}</h4>        
                 </div>
                 <div class="col-3 pb-0 mb-0">
-                  <h4 style="color:lightgray">{{  riskVariation.riskDrafts.count }}</h4>                      
+                  <h4>{{  riskVariation.riskDrafts.count }}</h4>                      
                 </div>
                 
                 </div>
@@ -890,7 +890,7 @@ export default {
       return tasks;
     },
     // TODO: Move this calculation to back-end so that statistics can be available for other devices
-  taskVariation() {
+    taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
         (t) => t && t.draft == false && t.startDate && t.startDate > this.today 
@@ -898,12 +898,11 @@ export default {
       );     
      let taskDrafts = _.filter(
         this.filteredTasks,
-        // (t) => t && t.draft == true && t.onHold == false && t.ongoing == false 
-        (t) => t && t.draft == true   
+        (t) => t && t.draft == true && t.onHold == false && t.ongoing == false   
       );      
       let completed = _.filter(
         this.filteredTasks,
-        (t) => t && t.progress && t.progress == 100 &&  t.draft == false
+        (t) => t && t.progress && t.progress == 100 && t.draft == false
       );
       let completed_percent = this.getAverage(
         completed.length,
@@ -921,12 +920,12 @@ export default {
         inProgress.length,
         this.filteredTasks.length
       );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold);
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && t.ongoing == false);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredTasks.length
       );
-      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
+      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
       return {
         planned: {
           count: planned.length, 

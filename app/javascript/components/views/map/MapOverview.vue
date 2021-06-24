@@ -3,14 +3,14 @@
     <div v-if="_isallowed('read')" class="px-0 mx-0">
       <div class="row row-2 mt-3 task-issue-risk-row">
         <!-- Tasks Cards -->
-      <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
+      <div class="col-md-4 col-lg-4 col-sm-12 pr-1" data-cy="facility_tasks">
           <el-card class="box-card" style="background-color:#fff">
             <div class="row">
               <div class="col">
                 <h5 class="d-inline"><b>TASKS</b></h5>
                 <h5 class="d-inline">
                   <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredTasks.length - taskVariation.taskDrafts.count
+                    filteredTasks.length
                   }}</b>
                 </h5>
                 <hr />
@@ -73,11 +73,10 @@
 
                 </div>
                  <div class="col-3 p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
-                 <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
-                </div>
-                 
-                  </div>
+                <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md"/></span>
+                       
+                </div>                 
+               </div>
 
                 <div class="row text-center mt-0">
                 <div class="col-3 pb-0 mb-0">
@@ -91,7 +90,7 @@
                   }}</h4>        
                 </div>
                  <div class="col-3 pb-0 mb-0">
-                   <h4 style="color:lightgray">{{  taskVariation.taskDrafts.count }}</h4>                      
+                   <h4>{{  taskVariation.taskDrafts.count }}</h4>                      
                 </div>
                 
                 </div>
@@ -136,7 +135,7 @@
         </div>
         <!-- Issues Card -->
       <div
-          class="col-md-4 col-lg-4 col-sm-12 mb-2"
+          class="col-md-4 px-1 col-lg-4 col-sm-12 mb-2"
           data-cy="facility_issues"
               >
           <el-card class="box-card" style="background-color:#fff">
@@ -145,7 +144,7 @@
                 <h5 class="d-inline"><b>ISSUES</b></h5>
                 <h5 class="d-inline">
                   <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredIssues.length - issueVariation.issueDrafts.count
+                    filteredIssues.length 
                   }}</b>
                 </h5>
                 <hr />
@@ -200,8 +199,8 @@
          
                     </div>
                     <div class="col-3 p-0 mb-0">
-                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
-                    <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
+                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                               
                     </div>                    
                   </div>
 
@@ -217,7 +216,7 @@
                     }}</h4>        
                   </div>
                   <div class="col-3 pb-0 mb-0">
-                    <h4 style="color:lightgray">{{ issueVariation.issueDrafts.count }}</h4>                      
+                    <h4>{{ issueVariation.issueDrafts.count }}</h4>                      
                   </div>
                   
                   </div>
@@ -294,7 +293,7 @@
         </div>
         <!-- Risks Card -->
           <div
-            class="col-md-4 col-lg-4 col-sm-12"
+            class="col-md-4 col-lg-4 col-sm-12 pl-1"
             data-cy="facility_risks"
               >
           <el-card class="box-card" style="background-color:#fff">
@@ -303,7 +302,7 @@
                 <h5 class="d-inline"><b>RISKS</b></h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                   <b class="float-right badge badge-secondary badge-pill">{{
-                    filteredRisks.length - riskVariation.riskDrafts.count
+                    filteredRisks.length
                   }}</b>
                 </h5>
                 <hr />
@@ -366,8 +365,8 @@
                           
                   </div>
                   <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md" style="color:lightgray"  /></span>
-                    <span :class="{'d-none': isMapView }" class="smallerFont" style="color:lightgray">DRAFTS</span>               
+                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                         
                   </div>
                   
                 </div>
@@ -384,7 +383,7 @@
                   }}</h4>        
                 </div>
                 <div class="col-3 pb-0 mb-0">
-                  <h4 style="color:lightgray">{{  riskVariation.riskDrafts.count }}</h4>                      
+                  <h4>{{  riskVariation.riskDrafts.count }}</h4>                      
                 </div>
                 
                 </div>
@@ -753,42 +752,42 @@ export default {
       return tasks;
     },
     // TODO: Move this calculation to back-end so that statistics can be available for other devices
- taskVariation() {
+    taskVariation() {
       let planned = _.filter(
         this.filteredTasks,
-        (t) => t && t.startDate && t.startDate > this.today     
+        (t) => t && t.draft == false && t.startDate && t.startDate > this.today 
+          // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
         this.filteredTasks,
-        (t) => t && t.draft == true      
-      );   
-     let inProgress = _.filter(
-        this.filteredTasks,
-        (t) => t && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing  && t.startDate <= this.today 
-      );
-      let inProgress_percent = this.getAverage(
-        inProgress.length,
-        this.filteredTasks.length
-      );
-     let onHoldT = _.filter(
-        this.filteredTasks,
-        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.draft && !t.isOverdue && !t.ongoing
-      );
+        (t) => t && t.draft == true && t.onHold == false && t.ongoing == false   
+      );      
       let completed = _.filter(
         this.filteredTasks,
-        (t) => t && t.progress && t.progress == 100 && !t.draft
+        (t) => t && t.progress && t.progress == 100 && t.draft == false
       );
       let completed_percent = this.getAverage(
         completed.length,
         this.filteredTasks.length
       );
-      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && !t.draft);
+      let inProgress = _.filter(
+        this.filteredTasks,
+        (t) => t && t.progressStatus == 'active' && t.draft == false && !t.isOverdue && t.onHold == false && !t.ongoing && t.startDate <= this.today 
+      );
+     let onHoldT = _.filter(
+        this.filteredTasks,
+        (t) => t && t.onHold == true && t.progressStatus == 'active' && !t.isOverdue && !t.ongoing
+      );
+      let inProgress_percent = this.getAverage(
+        inProgress.length,
+        this.filteredTasks.length
+      );
+      let overdue = _.filter(this.filteredTasks, (t) => t && t.isOverdue && !t.onHold && t.ongoing == false);
       let overdue_percent = this.getAverage(
         overdue.length,
         this.filteredTasks.length
       );
-      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing);
-
+      let ongoing = _.filter(this.filteredTasks, (t) => t && t.ongoing );
       return {
         planned: {
           count: planned.length, 
@@ -800,19 +799,21 @@ export default {
         taskDrafts: {
           count: taskDrafts.length,          
         },
-        inProgress: {
-          count: inProgress.length - planned.length,
-          percentage: Math.round(inProgress_percent),
-        },
         completed: {
           count: completed.length,
           percentage: Math.round(completed_percent),
+        },
+      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          percentage: Math.round(inProgress_percent),
         },
         overdue: {
           count: overdue.length,
           percentage: Math.round(overdue_percent),
         },
-        ongoing
+        ongoing,       
+    
       };
     },
     filteredIssues() {

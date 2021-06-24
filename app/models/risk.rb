@@ -251,7 +251,7 @@ class Risk < ApplicationRecord
     end
 
     is_overdue = false
-    if !ongoing && !on_hold
+    if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
 
