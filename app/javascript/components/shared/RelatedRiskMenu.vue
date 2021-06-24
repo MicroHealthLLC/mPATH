@@ -146,7 +146,9 @@ export default {
                       // Project Risks
                       ...facility.risks
                         .filter((risk) => !relatedRiskIds.includes(risk.id))
-                        .filter((risk) => risk.id != this.risk.id)
+                        .filter((risk) =>
+                          this.risk ? risk.id != this.risk.id : true
+                        )
                         .map((risk) => {
                           return {
                             id: risk.id,
