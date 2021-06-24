@@ -26,7 +26,9 @@ class ProjectsController < AuthenticatedController
     end
 
     if !current_user.allowed?(view)
-      raise CanCan::AccessDenied
+      # raise CanCan::AccessDenied
+      redirect_to "/programs/#{params[:program_id]}/sheet"
+      return
     end
     
     respond_to do |format|

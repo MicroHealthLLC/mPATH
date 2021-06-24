@@ -1,5 +1,5 @@
 <template>
-  <div id="customtabs" class="d-flex align-items-center p-2">
+  <div v-if="tabsVisible" id="customtabs" class="d-flex align-items-center p-2">
     <div v-for="tab in tabs" :key="tab.key">
       <div
         v-if="!tab.hidden"
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "ProjectTabs",
   data() {
@@ -49,7 +49,7 @@ export default {
           label: "Lessons",
           key: "lessons",
           closable: false,
-          hidden: false
+          hidden: false,
         },
         {
           label: "Notes",
@@ -107,6 +107,9 @@ export default {
     },
     path() {
       return `/programs/${this.$route.params.programId}/${this.tab}/projects/${this.$route.params.projectId}`;
+    },
+    tabsVisible() {
+      return this.tabs.some((tab) => tab.hidden === false);
     },
   },
   watch: {

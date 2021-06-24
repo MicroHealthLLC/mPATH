@@ -11,11 +11,11 @@ class Privilege < ApplicationRecord
   # serialize :facility_manager_view, Array
   # serialize :risks, Array
   # serialize :lessons, Array
-  serialize :sheets_view, Array
-  serialize :map_view, Array
-  serialize :gantt_view, Array
-  serialize :kanban_view, Array
-  serialize :calendar_view, Array
-  serialize :members, Array
+  # serialize :sheets_view, Array
+  # serialize :map_view, Array
+  # serialize :gantt_view, Array
+  # serialize :kanban_view, Array
+  # serialize :calendar_view, Array
+  # serialize :members, Array
 
 end

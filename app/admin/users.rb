@@ -29,22 +29,22 @@ ActiveAdmin.register User do
       project_ids: [],
       privilege_attributes: [
         :id,
-        overview: [],
-        tasks: [],
-        issues: [],
-        notes: [],
-        admin: [],
-        map_view: [],
-        gantt_view: [],
-        watch_view: [],
-        kanban_view: [],
-        documents: [],
-        facility_manager_view: [],
-        calendar_view: [],
-        sheets_view: [],
-        members: [],
-        risks: [],
-        lessons: []
+        :overview,
+        :tasks,
+        :issues,
+        :notes,
+        :admin,
+        :map_view,
+        :gantt_view,
+        :watch_view,
+        :kanban_view,
+        :documents,
+        :facility_manager_view,
+        :calendar_view,
+        :sheets_view,
+        :members,
+        :risks,
+        :lessons
       ],
       project_privileges_attributes: [
         :id,
@@ -88,8 +88,8 @@ ActiveAdmin.register User do
           f.input :last_name
           f.input :email, input_html: {:'data-id' => user.id, autocomplete: :off}
 
-          # f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
-          # f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password, input_html: {disabled: user.id?, autocomplete: :off}
+          f.input :password_confirmation, input_html: {disabled: user.id?, autocomplete: :off}
           f.input :phone_number, as: :hidden
           f.input :country_code, as: :hidden
           div id: 'user_phone_number-tab'
@@ -97,17 +97,10 @@ ActiveAdmin.register User do
           f.input :lat, as: :hidden
           f.input :lng, as: :hidden
           div id: 'gmap-key', "data-key": Setting['GOOGLE_MAP_KEY']
+          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
           div id: 'user-gmaps-tab'
           f.input :status, include_blank: false, include_hidden: false, label: "State"
           f.input :organization, input_html: {class: "select2"}, include_blank: true
-        end
-      end
-
-      tab 'Password' do
-        f.inputs 'Manage Password' do
-          div id: 'passwords-key', "data-key": Setting['PASSWORDS_KEY']
-          f.input :password, input_html: {disabled: true, autocomplete: :off}
-          f.input :password_confirmation, input_html: {disabled: true, autocomplete: :off}
         end
         div id: 'user-password__tab'
       end
@@ -207,7 +200,6 @@ ActiveAdmin.register User do
           # end
         end
       end
-
     end
 
     actions

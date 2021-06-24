@@ -808,10 +808,11 @@ jQuery(function($) {
       watch: {
         "overview.read"(value) {
           if (this.loading) return;
-          if (!value) this.overview.read = true;
+          // if (!value) this.overview.read = true;
           let v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
+            this.overview.read = false;
             this.overview.write = false;
             this.overview.delete = false;
           }
@@ -821,19 +822,19 @@ jQuery(function($) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.overview.read = value;
+          //if (value) this.overview.read = value;
           $("#user_privilege_attributes_overview").val(v);
         },
         "overview.delete"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_overview").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.overview.read = value;
+          //if (value) this.overview.read = value;
           $("#user_privilege_attributes_overview").val(v);
         },
         "tasks.read"(value) {
           if (this.loading) return;
-          if (!value) this.tasks.read = true;
+          // if (!value) this.tasks.read = true;
           let v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -846,19 +847,19 @@ jQuery(function($) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "W" : v.replace("W", "")
-          if (value) this.tasks.read = value;
+          // if (value) this.tasks.read = value;
           $("#user_privilege_attributes_tasks").val(v);
         },
         "tasks.delete"(value) {
           if (this.loading) return;
           let v = $("#user_privilege_attributes_tasks").val();
           v = value ? v + "D" : v.replace("D", "")
-          if (value) this.tasks.read = value;
+          // if (value) this.tasks.read = value;
           $("#user_privilege_attributes_tasks").val(v);
         },
         "issues.read"(value) {
           if (this.loading) return;
-          if (!value) this.issues.read = true;
+          // if (!value) this.issues.read = true;
           let v = $("#user_privilege_attributes_issues").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -883,7 +884,7 @@ jQuery(function($) {
         },
         "risks.read"(value) {
           if (this.loading) return;
-          if (!value) this.risks.read = true;
+          // if (!value) this.risks.read = true;
           let v = $("#user_privilege_attributes_risks").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -908,7 +909,7 @@ jQuery(function($) {
         },
         "notes.read"(value) {
           if (this.loading) return;
-          if (!value) this.notes.read = true;
+          // if (!value) this.notes.read = true;
           let v = $("#user_privilege_attributes_notes").val();
           v = value ? v + "R" : v.replace("R", "")
           if (!value) {
@@ -1230,31 +1231,31 @@ jQuery(function($) {
            </li>
             <li class="choice d-flex">
               <label>Overview</label>
-              <label class="d-flex align-center" :readOnly="overview.read"><input type="checkbox" v-model="overview.read" :readOnly="overview.read">Read</label>
+              <label class="d-flex align-center" ><input type="checkbox" v-model="overview.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="overview.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Tasks</label>
-              <label class="d-flex align-center" :readOnly="tasks.read"><input type="checkbox" v-model="tasks.read" :readOnly="tasks.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="tasks.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="tasks.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="tasks.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Issues</label>
-              <label class="d-flex align-center" :readOnly="issues.read"><input type="checkbox" v-model="issues.read" :readOnly="issues.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="issues.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="issues.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="issues.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Risks</label>
-              <label class="d-flex align-center" :readOnly="risks.read"><input type="checkbox" v-model="risks.read" :readOnly="risks.read">Read</label>
+              <label class="d-flex align-center"><input type="checkbox" v-model="risks.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="risks.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="risks.delete">Delete</label>
             </li>
             <li class="choice d-flex">
               <label>Notes</label>
-              <label class="d-flex align-center" :readOnly="notes.read"><input type="checkbox" v-model="notes.read" :readOnly="notes.read">Read</label>
+              <label class="d-flex align-center" ><input type="checkbox" v-model="notes.read">Read</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.write">Write</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="notes.delete">Delete</label>
             </li>
