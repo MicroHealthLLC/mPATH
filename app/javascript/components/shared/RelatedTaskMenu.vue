@@ -112,7 +112,9 @@ export default {
                       // Project Tasks
                       ...facility.tasks
                         .filter((task) => !relatedTaskIds.includes(task.id))
-                        .filter((task) => task.id != this.task.id)
+                        .filter((task) =>
+                          this.task ? task.id != this.task.id : true
+                        )
                         .map((task) => {
                           return {
                             id: task.id,
