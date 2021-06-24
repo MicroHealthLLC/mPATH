@@ -23,48 +23,52 @@ task :remove_query_filters => :environment do
 
 end
 
-desc "Modify User privileges for array"
-task :modify_user_privileges => :environment do
+# desc "Modify User privileges for array"
+# task :modify_user_privileges => :environment do
 
-  puts "Modifying data type for privileges"
-  users = User.all
-  users.each do |user|
-    privilege = user.privilege
-    next if !privilege
-    h = privilege.attributes
-    update_att = {}
-    h.each do |k,v|
-      next if ["user_id", "created_at", "updated_at", "id"].include?(k) || privilege.send(k).is_a?(Array)
-      o = []
-      o << "R" if privilege.send(k).include?("R")
-      o << "W" if privilege.send(k).include?("W")
-      o << "D" if privilege.send(k).include?("D")
-      update_att[k] = o
-    end
-    privilege.update(update_att)
-  end
-end
+#   puts "Modifying data type for privileges"
+#   users = User.all
+#   users.each do |user|
+#     privilege = user.privilege
+#     next if !privilege
+#     h = privilege.attributes
+#     update_att = {}
+#     h.each do |k,v|
+#       next if ["user_id", "created_at", "updated_at", "id"].include?(k) || privilege.send(k).is_a?(Array)
+#       o = []
+#       o << "R" if privilege.send(k).include?("R")
+#       o << "W" if privilege.send(k).include?("W")
+#       o << "D" if privilege.send(k).include?("D")
+#       update_att[k] = o
+#     end
+#     privilege.update(update_att)
+#   end
+# end
 
-desc "Add Project privileges for User"
-task :create_project_privileges => :environment do
+desc "Add Program privileges for User"
+task :create_program_privileges => :environment do
 
-  Privilege.all.each do |privilege|
-    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number").clone
-    c = false
-    privilege_attr.each do |k,v|
-      if v.is_a?(String)
-        privilege_attr[k] = v.chars
-        c = true
-      end
-    end
-    privilege.update(privilege_attr) if c
-  end
+  # Privilege.all.each do |privilege|
+  #   privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number").clone
+  #   c = false
+  #   privilege_attr.each do |k,v|
+  #     if v.is_a?(String)
+  #       privilege_attr[k] = v.chars
+  #       c = true
+  #     end
+  #   end
+  #   privilege.update(privilege_attr) if c
+  # end
 
   puts "Adding Project privileges for User"
   User.all.each do |user|
     privilege = user.privilege
     privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
-
+    privilege_attr.each do |k,v|
+      if v.is_a?(String)
+        privilege_attr[k] = v.chars
+      end
+    end
     privilege_attr.merge!(user_id: user.id, project_ids: user.project_ids)
     p = ProjectPrivilege.create(privilege_attr)
   end
