@@ -120,10 +120,10 @@
             @click.prevent.stop="toggleReportable"
           >
             <span v-tooltip="`Briefings`" v-show="lesson.reportable">
-              <i class="fas fa-flag text-primary"></i>
+            <i class="fas fa-presentation text-primary"></i>
             </span>
             <span v-tooltip="`Briefings`" v-show="!lesson.reportable">
-              <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+              <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
             </span>
 
             <small

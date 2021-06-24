@@ -50,22 +50,19 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
-                      :class="{
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{
+                    
                         'sort-asc': sortAsc && activeSortValue == 'title',
                       }"
-                    />
+                    ></i>
                   </div>
                   <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                      <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'title',
                       }"
-                    />
+                    ></i>
                   </div></div
               ></span>
             </th>
@@ -74,22 +71,19 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
-                      :class="{
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{
                         'sort-asc': sortAsc && activeSortValue == 'date',
                       }"
-                    />
-                  </div>
+                     ></i>
+                   </div>
                   <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                    <i class="fas fa-sort-down sort-icon-arrow"
+                         :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'date',
                       }"
-                    />
+                    ></i>
+                  
                   </div></div
               ></span>
             </th>
@@ -101,22 +95,18 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
+                     <i class="fas fa-sort-up sort-icon-arrow"                
                       :class="{
                         'sort-asc': sortAsc && activeSortValue == 'created_by',
                       }"
-                    />
+                    ></i>
                   </div>
                   <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                    <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'created_by',
                       }"
-                    />
+                    ></i>
                   </div></div
               ></span>
             </th>
@@ -131,22 +121,18 @@
               <span class="float-right"
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
-                    <font-awesome-icon
-                      icon="sort-up"
-                      class="sort-icon-arrow"
-                      :class="{
+                     <i class="fas fa-sort-up sort-icon-arrow"
+                       :class="{
                         'sort-asc': sortAsc && activeSortValue == 'updates',
                       }"
-                    />
+                    ></i>
                   </div>
                   <div>
-                    <font-awesome-icon
-                      icon="sort-down"
-                      class="sort-icon-arrow"
-                      :class="{
+                   <i class="fas fa-sort-down sort-icon-arrow"
+                       :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'updates',
                       }"
-                    />
+                    ></i>
                   </div></div
               ></span>
             </th>
@@ -167,8 +153,8 @@
                 <i class="fas fa-star text-warning mr-1"></i
               ></span>
               <span v-if="lesson.reportable" v-tooltip="`Briefings`"
-                ><font-awesome-icon icon="flag" class="text-primary mr-1"
-              /></span>
+                ><i class="fas fa-presentation mr-1 text-primary"></i>
+              </span>
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
                 ><font-awesome-icon icon="pencil-alt" class="text-warning"
               /></span>

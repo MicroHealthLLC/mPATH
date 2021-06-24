@@ -14,7 +14,7 @@
        </td>
        <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
        <td class="eight text-center">
-         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+         <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>
          {{formatDate(risk.dueDate)}}
         </span>
@@ -29,18 +29,18 @@
          </span>        
         </td>
         <td class="eight text-center" >
-        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>{{risk.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
                 <span v-if="risk.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
                 <span v-if="risk.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-                <span v-if="risk.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
+                <span v-if="risk.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
                 <span v-if="risk.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="risk.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
-                <span v-if="risk.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-                <span v-if="risk.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+                <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
+                <span v-if="risk.onHold == true" v-tooltip="`On Hold`">   <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+                <span v-if="risk.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
                 <span v-if="                   
                      risk.ongoing == false && 
                      risk.watched == false &&
