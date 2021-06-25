@@ -75,6 +75,15 @@
       ...mapMutations([
         'setTaskForManager'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.notes.includes(s); 
+    },
       editNoteMode() {
         this.setTaskForManager({key: 'note', value: this.DV_note})
 
@@ -117,9 +126,6 @@
       },
       permitted() {
         return salut => !this.loading && this.note.userId === this.$currentUser.id && this._isallowed(salut)
-      },
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.notes[salut]
       },
       C_editForManager() {
         return this.managerView.note && this.managerView.note.id == this.DV_note.id

@@ -147,6 +147,15 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+    },
       deleteTask() {
         let confirm = window.confirm(`Are you sure, you want to delete "${this.DV_task.text}"?`)
         if (!confirm) {return}
@@ -204,9 +213,6 @@
         'currentProject',
         'viewPermit',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
       is_overdue() {
         return this.DV_task.isOverdue
       },

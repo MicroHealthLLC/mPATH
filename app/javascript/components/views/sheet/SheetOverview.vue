@@ -1455,5 +1455,5 @@ export default {
 .giantNumber {
   font-size: 3.7rem;
 }
-
 </style>
+

@@ -668,6 +668,15 @@
           lessonDetails: []
         }
       },
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      },
       log(e){
         //console.log("This is the currentProject: " + e)
       },
@@ -1063,10 +1072,6 @@
       filterLessonDetail(detailType){
         var details = _.filter(this.DV_lesson.lessonDetails, n => n.detailType == detailType)
         return _.orderBy(details, 'createdAt', 'desc')
-      },
-      _isallowed() {
-        console.log(this.$currentUser.role)
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessons[salut]
       },
       C_title() {
         return this._isallowed('write') ? this.task.id ? "Edit Task" : "Add Task" : "Task"

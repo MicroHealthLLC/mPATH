@@ -1,3 +1,4 @@
+
 <template>
   <div v-if="contentLoaded" id="facility-sheets" data-cy="facility_sheets">
     <div v-if="_isallowed('read')" class="px-0 mx-0">
@@ -1260,5 +1261,5 @@ export default {
 .giantNumber {
   font-size: 2.75rem;
 }
-
 </style>
+

@@ -1,4 +1,3 @@
-
 <template>
   <div id="task-sheets">
     <table v-if="!has_task" class="table table-sm table-bordered table-striped p-3">
@@ -129,6 +128,15 @@ export default {
   methods: {
     ...mapMutations(["updateTasksHash", "setTaskForManager", "setToggleRACI"]),
     ...mapActions(["taskDeleted", "taskUpdated", "updateWatchedTasks"]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+    },
     openSubTask(subTask) {
       let task = this.currentTasks.find((t) => t.id == subTask.id);
       if (!task) return;
@@ -193,11 +201,6 @@ export default {
       "currentProject",
       "getUnfilteredFacilities"
     ]),
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.tasks[salut];
-    },
     facility() {
       return this.facilities.find((f) => f.id == this.DV_task.facilityId);
     },

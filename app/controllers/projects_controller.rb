@@ -50,7 +50,7 @@ class ProjectsController < AuthenticatedController
     unless @project.nil?
       respond_to do |format|
         
-        format.json {render json: {project: @project.build_json_response}, status: 200}
+        format.json {render json: {project: @project.build_json_response(current_user)}, status: 200}
         # format.json {render json: {project: @project.as_complete_json}, status: 200}
         format.html {render action: :index}
       end

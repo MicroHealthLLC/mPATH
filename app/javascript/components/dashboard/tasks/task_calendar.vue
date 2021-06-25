@@ -1,4 +1,3 @@
-
 <template>
 <div>
    <span class="filters-wrapper w-75">

@@ -62,9 +62,15 @@ en:
         facility_name: "Project Name"
       facility:
         facility_name: "Project Name"
+      facility_privilege:
+        facility_project_ids: ""
     errors:
       models:
         task:
           attributes:
             text:
               blank: "Name is required"
+        facility_privilege:
+          attributes:
+            facility_project_ids:
+              blank: "At least one project is required"

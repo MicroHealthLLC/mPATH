@@ -12,13 +12,6 @@
 
 ActiveRecord::Schema.define(version: 2021_06_23_141502) do
 
-  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
-    t.bigint "user_id"
-    t.bigint "project_id"
-    t.index ["project_id"], name: "index_accountable_users_on_project_id"
-    t.index ["user_id"], name: "index_accountable_users_on_user_id"
-  end
-
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -28,9 +21,9 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
   create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
@@ -97,6 +90,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
+    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -121,7 +115,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center", default: "[]"
+    t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
@@ -140,6 +134,9 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "lessons", default: "---\n- R\n"
+    t.integer "project_id"
+    t.integer "group_number", default: 0
+    t.string "facility_project_ids", default: "--- []\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -358,6 +355,21 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin"
+    t.string "risks", default: "---\n- R\n"
+    t.string "lessons", default: "---\n- R\n"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "project_ids", default: "--- []\n"
+  end
+
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "risk_stage_id"
@@ -442,7 +454,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
-    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target"
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
   end
 
   create_table "region_states", charset: "utf8", force: :cascade do |t|
@@ -661,13 +673,10 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
-    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

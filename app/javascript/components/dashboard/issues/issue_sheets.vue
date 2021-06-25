@@ -123,6 +123,15 @@
         'taskUpdated',
         'updateWatchedIssues'
       ]),
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+      },
       editIssue() {
           this.DV_edit_issue = this.DV_issue
           this.$router.push(`/programs/${this.$route.params.programId}/sheet/projects/${this.$route.params.projectId}/issues/${this.DV_edit_issue.id}`)
@@ -184,9 +193,6 @@
         'viewPermit',
         'getToggleRACI',
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.issues[salut]
-      },
       is_overdue() {
         return this.DV_issue.progress !== 100 && new Date(this.DV_issue.dueDate).getTime() < new Date().getTime()
       },

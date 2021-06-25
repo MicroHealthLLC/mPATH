@@ -1,0 +1,42 @@
+- active_projects = user.projects.active
+- facility_privileges = user.facility_privileges.order("created_at DESC")
+- project_privileges = user.project_privileges
+- facility_projects = FacilityProject.includes(:facility).where(project_id: active_projects.map(&:id) )
+- option_array = facility_projects.map{|fp| [fp.id, fp.facility.facility_name ] }
+
+a{href="javascript:void(0)" onclick="addFacilityPrivilegeForm(this)" data-url=(add_facility_privilege_form_path(user_id: user.id)) class="button has_many_add"}Add Project Privilege
+
+div{id="facility_privilege_list"}
+  - facility_privileges.each do |fp|
+    - index = SecureRandom.random_number(10000000)
+    - facility_project_ids = fp.facility_project_ids
+    - project = active_projects.detect{|p| p.id == fp.project_id}
+    - next if !project
+    fieldset(class="inputs has_many_fields")
+      input(type="checkbox" value="true" name="user[facility_privileges_attributes][#{index}][_destroy]") Remove
+      ol
+        li(class="select input required")
+          div{id="facility_privilege#{index}"}
+            input(type='hidden' value=(fp.id) name="user[facility_privileges_attributes][#{index}][id]" )
+            
+            - user_project_privilege = project_privileges.detect{|p| p.project_id == fp.project_id }
+        
+          label(class="label") Select Program
+          select{class="facility_project_select" onchange='programSelectChange(this)' data-div-id="project_section_#{index}" data-user-id="#{user.id}"}
+            option{value="select_project"} Select project
+            - active_projects.each do |project|
+              option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
+
+        li(class="select input required")
+          label(class="label") Select Project
+          select{id="project_section_#{index}" name="user[facility_privileges_attributes][#{index}][facility_project_ids][]" class="project_selection_input" multiple="true" data-selected=(facility_project_ids)}
+            - project.facilities.each do |f|
+              option{value="#{f.id}" select=("selected" if facility_project_ids.include?(f.id.to_s) )}= f.facility_name
+
+        - FacilityPrivilege::PRIVILEGE_MODULE.each do |m_name|
+          li(class="select input required")
+            label(class="label")= m_name
+            input{type="hidden" value="" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" }
+
+            - FacilityPrivilege::PRIVILEGE_PERMISSIONS.each do |permission|
+              input{type="checkbox" value="#{permission[1]}" name="user[facility_privileges_attributes][#{index}][#{m_name}][]" checked=("checked" if fp.send(m_name).include?(permission[1]))}= permission[0]
