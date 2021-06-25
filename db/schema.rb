@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
   create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
 
   create_table "facilities", charset: "utf8", force: :cascade do |t|
     t.string "facility_name", default: "", null: false
+    t.integer "region_name", default: 0, null: false
     t.string "address"
     t.string "point_of_contact"
     t.string "phone_number"
@@ -114,7 +115,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.string "code"
     t.integer "status", default: 0
     t.integer "region_type", default: 0
-    t.string "center", default: "[]"
+    t.string "center"
     t.bigint "project_id"
     t.integer "progress", default: 0
     t.index ["project_id"], name: "index_facility_groups_on_project_id"
@@ -132,10 +133,10 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.integer "facility_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "lessons", default: "---\n- R\n"
     t.integer "project_id"
     t.integer "group_number", default: 0
     t.string "facility_project_ids", default: "--- []\n"
-    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -257,8 +258,8 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "lesson_stage_id"
-    t.integer "facility_project_id"
     t.boolean "important", default: false
+    t.integer "facility_project_id"
     t.boolean "reportable", default: false
     t.boolean "draft", default: false
     t.index ["facility_project_id"], name: "index_lessons_on_facility_project_id"
@@ -452,7 +453,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
-    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target"
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
   end
 
   create_table "region_states", charset: "utf8", force: :cascade do |t|
@@ -671,7 +672,6 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.integer "status", default: 1
     t.string "lat"
     t.string "lng"
-    t.string "privileges", default: ""
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
