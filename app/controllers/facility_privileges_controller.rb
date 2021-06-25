@@ -1,7 +1,12 @@
 class FacilityPrivilegesController < AuthenticatedController
   def facility_privileges_partial
     project = Project.find(params[:project_id])
-    user = User.find(params[:user_id])
+    if params[:user_id].present?
+      user = User.find(params[:user_id])
+    else
+      user = User.new
+    end
+    
     facility_projects = FacilityProject.includes(:facility, :project).where(project_id: project.id)
     user_project_privileg = ProjectPrivilege.where(user_id: user.id).select{|s| s.project_ids.include?(project.id.to_s) }.first
     facility_privilege = FacilityPrivilege.where(project_id: project.id, user_id: user.id).first
@@ -20,8 +25,10 @@ class FacilityPrivilegesController < AuthenticatedController
   def add_facility_privilege_form
     if params[:user_id]
       @user = User.find(params[:user_id])
+      @active_projects = @user.projects.active
     else
       @user = User.new
+      @active_projects = Project.where(id: params[:program_ids])
     end
     render json: { html: render_to_string(template: "admin/facility_privileges/facility_privilege_form", layout: false, :formats => [:html], locals: {user: @user}) }
   end

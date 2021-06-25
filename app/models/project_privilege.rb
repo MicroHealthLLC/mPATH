@@ -15,4 +15,7 @@ class ProjectPrivilege < ApplicationRecord
   PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
+  validates :project_ids, presence: true
+  validates :user_id, presence: true, on: :update
+
 end

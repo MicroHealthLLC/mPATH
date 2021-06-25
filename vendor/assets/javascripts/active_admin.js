@@ -17,8 +17,12 @@ function checkRiskProbabilityImpactNumber(element){
 
 function addFacilityPrivilegeForm(element){
   let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } ) 
   $.ajax({
     url: url,
+    data: {program_ids: program_ids},
     success: function(res, data){
       $("#facility_privilege_list").prepend(res.html)
     },

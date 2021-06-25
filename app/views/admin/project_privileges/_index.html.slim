@@ -1,6 +1,7 @@
-- active_projects = user.projects.active
 - project_privileges = user.project_privileges.order("created_at DESC")
-- option_array = active_projects.map{|fp| [fp.id, fp.name ] }
+- all_project_ids = project_privileges.map(&:project_ids)
+- all_projects = Project.where(id: ( all_project_ids +  user.project_ids ).uniq ).active.distinct 
+- option_array = all_projects.map{|fp| [fp.id, fp.name ] }
 
 a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button"}Add Program Privilege
 
@@ -10,7 +11,6 @@ div{id="project_privileges_list"}
   - project_privileges.each do |fp|
     - index = SecureRandom.random_number(10000000)
     - project_ids = fp.project_ids
-    - projects = active_projects.select{|p| project_ids.include?(p.id.to_s) }
 
     fieldset(class="inputs has_many_fields")
       input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
@@ -20,8 +20,8 @@ div{id="project_privileges_list"}
             input(type='hidden' value=(fp.id) name="user[project_privileges_attributes][#{index}][id]" )
                     
           label(class="label") Select Program
-          select{class="project_select" name="user[project_privileges_attributes][#{index}][project_ids][]" data-div-id="project_section_#{index}" data-user-id="#{user.id}"  data-selected=(project_ids) multiple="true"}
-            - active_projects.each do |project|
+          select{class="project_select" id="project_privilege_select" name="user[project_privileges_attributes][#{index}][project_ids][]" data-div-id="project_section_#{index}" data-user-id="#{user.id}"  data-selected=(project_ids) multiple="true"}
+            - all_projects.each do |project|
               option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
 
         - ProjectPrivilege::PRIVILEGE_MODULE.each do |m_name|
