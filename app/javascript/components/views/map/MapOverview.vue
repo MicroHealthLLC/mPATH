@@ -131,7 +131,7 @@
               </el-collapse-item>
             </el-collapse>
           </div>
-           <div else>
+           <div v-else>
             <el-collapse id="roll_up" class="taskCard">
             <el-collapse-item title="..." name="1">
               <div class="row mt-1 text-center">
@@ -300,7 +300,7 @@
               </el-collapse-item>
             </el-collapse>
           </div>
-           <div else>
+           <div v-else>
             <el-collapse id="roll_up" class="taskCard">
             <el-collapse-item title="..." name="1">
               <div class="row mt-1 text-center">
@@ -490,7 +490,7 @@
           </el-collapse-item>
         </el-collapse>
       </div>
-          <div else>
+          <div v-else>
             <el-collapse id="roll_up" class="taskCard">
             <el-collapse-item title="..." name="1">
               <div class="row mt-1 text-center">
