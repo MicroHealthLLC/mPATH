@@ -132,6 +132,9 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.integer "facility_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "project_id"
+    t.integer "group_number", default: 0
+    t.string "facility_project_ids", default: "--- []\n"
     t.string "lessons", default: "---\n- R\n"
   end
 
@@ -348,6 +351,21 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.integer "lesson_stage_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
+    t.string "overview", default: "---\n- R\n"
+    t.string "tasks", default: "---\n- R\n"
+    t.string "notes", default: "---\n- R\n"
+    t.string "issues", default: "---\n- R\n"
+    t.string "admin"
+    t.string "risks", default: "---\n- R\n"
+    t.string "lessons", default: "---\n- R\n"
+    t.integer "user_id"
+    t.integer "project_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "project_ids", default: "--- []\n"
   end
 
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
