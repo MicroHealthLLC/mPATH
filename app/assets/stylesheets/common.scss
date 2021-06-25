@@ -68,7 +68,8 @@ body {
 
 }
 .v-event-start, .v-event-end {
- color: black !important; 
+  // background-color: rgba(214, 219, 223, .10) !important;
+  color: black !important;
 }
 
 
@@ -90,6 +91,10 @@ background-color: #9EC64C !important;
  background-color: #1D336F !important;
 }
 
+.mh-blue-text {
+  //  dark blue
+   color: #1D336F !important;
+  }
 .mh-orange {
   background-color: #DD9036 !important;
 }
@@ -1051,7 +1056,7 @@ i.el-icon-circle-close {
 }
 
 .error {
-  .vue2-datepicker {
+  .vue2-datepicker, .mx-datepicker {
     input {
       border-color: #e84444;
     }

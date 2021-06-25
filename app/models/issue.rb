@@ -38,7 +38,17 @@ class Issue < ApplicationRecord
 
     append :title => " - Copy"
   end
-  
+
+  def lesson_json
+    {
+      id: id,
+      title: title,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
+  end
+
+
   def self.params_to_permit
     [
       :title,
@@ -55,6 +65,7 @@ class Issue < ApplicationRecord
       :watched,
       :kanban_order,
       :important,
+      :reportable,
       :on_hold, 
       :draft, 
       issue_files: [],
@@ -157,12 +168,18 @@ class Issue < ApplicationRecord
     if(progress >= 100)
       progress_status = "completed"
     end
+
+    is_overdue = false
+    if !on_hold
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
     task_type_name = self.task_type&.name
     self.as_json.merge(
       class_name: self.class.name,
       progress_status: progress_status,
       attach_files: attach_files,
-      is_overdue: progress < 100 && (due_date < Date.today),
+      is_overdue: is_overdue,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),

@@ -23,11 +23,12 @@
               $route.name !== 'SheetTaskForm' &&
               $route.name !== 'SheetIssueForm' &&
               $route.name !== 'SheetRiskForm' &&
-              $route.name !== 'SheetNoteForm'
+              $route.name !== 'SheetNoteForm' &&
+              $route.name !== 'SheetLessonForm'
           "
           class="d-flex align-items-center my-1 ml-1"
         >
-          <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
+          <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
           <h5 class="f-head mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
@@ -39,7 +40,8 @@
                 $route.name !== 'SheetTaskForm' &&
                 $route.name !== 'SheetIssueForm' &&
                 $route.name !== 'SheetRiskForm' &&
-                $route.name !== 'SheetNoteForm'
+                $route.name !== 'SheetNoteForm' &&
+                $route.name !== 'SheetLessonForm'
             "
           />
         </div>

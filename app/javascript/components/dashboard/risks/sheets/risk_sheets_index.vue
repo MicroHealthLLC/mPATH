@@ -1,7 +1,7 @@
 <template>
   <div id="risks-index" class="my-4 ml-1" data-cy="risk_sheet_index">
   <div v-if="_isallowed('read')">
-    <div class="d-flex align-item-center  w-75 float-right filters-wrapper">
+    <div class="d-flex align-item-center  w-70 float-right filters-wrapper">
       <div class="ml-2 risk-search-bar w-100">
         <label class="font-sm mb-0"><span style="visibility:hidden">|</span></label>
         <el-input
@@ -39,7 +39,7 @@
         <el-collapse class="risksFilter w-100"  style="position:absolute">
         <el-collapse-item name="1">
           <template slot="title" class="text-right">
-            <font-awesome-icon icon="sliders-h"  class="d-inline mr-2" />
+           <i class="fas fa-sliders-h d-inline mr-2"></i>
           MORE RISK FILTERS
           </template>
           <div class="mr-1 w-100 d-unset p-2">
@@ -107,7 +107,7 @@
       @click.prevent="addNewRisk"
       data-cy="add_risk"
     >
-      <font-awesome-icon icon="plus-circle" />
+    <font-awesome-icon icon="plus-circle" />
       Add Risk
     </button>
     <div class="float-right">
@@ -128,10 +128,10 @@
         @click.prevent="showAllToggle"
         class="btn btn-md mr-1 showAll text-light"          >
         <span v-if="getToggleRACI">
-        <font-awesome-icon icon="user" />
+       <i class="fas fa-user"></i>
         </span>
           <span v-else>
-        <font-awesome-icon icon="users"/>
+        <i class="fas fa-users"></i>
           </span>
         </button>
       <button class="ml-2 btn btn-md btn-info total-table-btns" data-cy="risk_total">
@@ -155,64 +155,64 @@
           <tr class="thead" style="background-color:#ededed;">
             <th class="sort-th" @click="sort('text')">Risk
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'text'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'text'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'text'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'text'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
             <th class="sort-th" @click="sort('riskApproach')">Risk Approach
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'riskApproach'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'riskApproach'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'riskApproach'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'riskApproach'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'riskApproach'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
 
             </th>
             <th class="sort-th"  @click="sort('priorityLevel')">Priority Level
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'priorityLevel'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'priorityLevel'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'priorityLevel'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'priorityLevel'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'priorityLevel'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
             <th class="pl-1 sort-th" @click="sort('startDate')">Start Date
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'startDate'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'startDate'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'startDate'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'startDate'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'startDate'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
             <th class="pl-1 sort-th" @click="sort('dueDate')">Due Date
               <span class="inactive-sort-icon scroll" v-if="currentSort !== 'dueDate'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'dueDate'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'dueDate'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'dueDate'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'dueDate'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
             <th class="sort-th p-1">
                 <span class="py-2 d-inline-block">Assigned Users</span><br>
@@ -247,50 +247,50 @@
               </button>
             </span>
               <span class="inactive-sort-icon scroll" v-if="currentSort !== sortedResponsibleUser || sortedAccountableUser">
-            <font-awesome-icon icon="sort" /></span>
+             <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedResponsibleUser">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedResponsibleUser">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedResponsibleUser">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedResponsibleUser">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === sortedAccountableUser">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === sortedAccountableUser">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === sortedAccountableUser">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === sortedAccountableUser">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
 
             </th>
             <th class="sort-th"  @click="sort('progress')" >Progress
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
               <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
             <th class="non-sort-th">Flags               
             </th>
             <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdatedAt'">
-              <font-awesome-icon icon="sort" /></span>
+               <i class="fas fa-sort"></i></span>
               <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
-              <font-awesome-icon icon="sort-up" /></span>
+              <i class="fas fa-sort-up"></i></span>
                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
-              <font-awesome-icon icon="sort-down" /></span>
+              <i class="fas fa-sort-down"></i></span>
             </th>
           </tr>
         </table>
@@ -841,7 +841,7 @@
 }
 @media screen and (max-width: 1500px) {
   .filters-wrapper {
-    width: 70% !important;
+    width: 65% !important;
   } 
 }
 </style>

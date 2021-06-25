@@ -197,6 +197,7 @@ GEM
     malloc_trim (0.1.0)
     marcel (1.0.1)
     method_source (1.0.0)
+    mini_magick (4.11.0)
     mini_mime (1.0.3)
     minitest (5.14.4)
     msgpack (1.4.2)
@@ -379,6 +380,7 @@ DEPENDENCIES
   letter_opener
   listen (>= 3.0.5, < 3.2)
   malloc_trim
+  mini_magick
   mysql2
   oj
   omniauth-google-oauth2
@@ -403,4 +405,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.4
+   2.2.19

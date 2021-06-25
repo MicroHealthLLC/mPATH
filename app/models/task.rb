@@ -51,6 +51,7 @@ class Task < ApplicationRecord
       :watched,    
       :kanban_order,
       :important,
+      :reportable,
       :draft, 
       :on_hold, 
       :ongoing,
@@ -96,6 +97,15 @@ class Task < ApplicationRecord
       p.update_progress
       FacilityGroup.where(project_id: p.id).map(&:update_progerss)
     end
+  end
+  
+  def lesson_json
+    {
+      id: id,
+      text: text,
+      project_id: facility.id,
+      project_name: facility.facility_name
+    }
   end
 
   def to_json(options = {})
@@ -169,7 +179,7 @@ class Task < ApplicationRecord
     end
 
     is_overdue = false
-    if !ongoing
+    if !ongoing && !on_hold
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
 
@@ -188,9 +198,10 @@ class Task < ApplicationRecord
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       important: important,
+      reportable: reportable,
       draft: draft, 
       on_hold: on_hold, 
-
+      
       # Add RACI user names
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,

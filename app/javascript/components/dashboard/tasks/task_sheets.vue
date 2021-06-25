@@ -7,7 +7,7 @@
         <td class="ten">{{task.taskType}}</td>
         <td class="eight text-center">{{formatDate(task.startDate)}}</td>
         <td class="eigth text-center">
-         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>
          {{formatDate(task.dueDate)}}
         </span>
@@ -22,19 +22,21 @@
          </span>        
         </td>
         <td class="eight text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>
+        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
         <span v-else>{{task.progress + "%"}}</span>
         </td>
         <td class="fort text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
-            <span v-if="task.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-            <span v-if="task.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="
                       task.important == false &&
+                      task.reportable == false &&
                       task.watched == false &&
                       task.ongoing == false && 
                       task.isOverdue == false &&
@@ -80,7 +82,9 @@
   </div>
 </template>
 
+<script src="https://kit.fontawesome.com/28fee60001.js" crossorigin="anonymous"></script>
 <script>
+
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import TaskForm from "./task_form";
 import IssueForm from "./../issues/issue_form";

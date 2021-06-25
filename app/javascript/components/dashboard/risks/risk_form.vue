@@ -13,7 +13,7 @@
           <div>
             <h5 class="mb-0">
                <span style="font-size: 16px; margin-right: 2.5px"
-              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+              > <i class="fas fa-suitcase mb-1"></i>
               </span>
               <router-link :to="projectNameLink">{{
                 facility.facilityName
@@ -67,6 +67,7 @@
           class="d-flex form-group pt-1 mb-1 justify-content-start"
         >
           <FormTabs
+            class="ml-4"
             :current-tab="currentTab"
             :tabs="tabs"
             :allErrors="errors"
@@ -99,56 +100,82 @@
             <div v-show="currentTab == 'risk'" class="paperLookTab">
               <!-- RISK OVERVIEW TAB -->
               <div class="form-group mx-4">
-                <label class="font-sm mt-3"
+                <label class="font-md mt-3"
                   >Risk Name <span style="color: #dc3545">*</span></label
                 >
 
               <div class="toggleWrapper float-right" id="risk_toggles" :class="{'font-sm': isMapView}">
                 <span
                   v-if="_isallowed('write')"
-                  class="watch_action mt-3 clickable mx-2"
+                  class="watch_action mt-3 clickable ml-2"
                   @click.prevent.stop="toggleWatched"
                   data-cy="risk_on_watch"
+                   v-tooltip="`On Watch`" 
                 >
-                  <span v-show="DV_risk.watched" 
-                ><i class="fas fa-eye"></i
+                  <span 
+                   v-show="DV_risk.watched" 
+                ><i class="fas fa-eye mr-1"></i
                  ></span>
-                 <span v-show="!DV_risk.watched" 
-                  ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
-                 ></span>
-           
-              <small style="vertical-align:text-top"> On Watch</small>
+                 <span                 
+                  v-show="!DV_risk.watched" 
+                  ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
+                 ></span>            
+                <small 
+                  style="vertical-align:text-top"
+                  :class="{'d-none': isMapView }"
+                  > 
+                  On Watch
+                </small>
                 </span>
 
               <span
-              v-if="_isallowed('write')"
-              class="watch_action clickable mx-2"
-              @click.prevent.stop="toggleOnhold"
-              data-cy="task_on_hold"
-            >
-              <span v-show="DV_risk.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleOnhold"
+                data-cy="task_on_hold"
+                v-tooltip="`On Hold`" 
+              >
+              <span              
+                v-show="DV_risk.onHold"
+                >
+               <i class="fas fa-pause-circle mr-1 text-primary"></i>
+              
               </span>
-              <span v-show="!DV_risk.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              <span 
+               v-show="!DV_risk.onHold"
+              >
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
+             
               </span>
              
-              <small style="vertical-align:text-top"> On Hold</small>
-            </span>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"
+              > 
+                On Hold</small>
+              </span>
 
                 <span
                   v-if="_isallowed('write')"
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleImportant"
                   data-cy="issue_important"
+                   v-tooltip="`Important`"   
                 >
-                <span v-show="DV_risk.important">
+                <span                  
+                  v-show="DV_risk.important">
                 <i class="fas fa-star text-warning"></i>
                 </span>
-                <span v-show="!DV_risk.important">
+                <span 
+                  v-show="!DV_risk.important">
                 <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
                 </span>
-                  <small style="vertical-align:text-top"> Important</small>
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"
+                  >
+                  Important
+                </small>
                 </span>
 
                  <span
@@ -156,15 +183,45 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleOngoing"
                   data-cy="risk_ongoing"
+                  v-tooltip="`Ongoing`" 
                    >
-                  <span v-show="DV_risk.ongoing">
+                  <span                   
+                    v-show="DV_risk.ongoing">
                   <i class="fas fa-retweet text-success"></i>
                   </span>
-                  <span v-show="!DV_risk.ongoing">
+                  <span 
+                    v-show="!DV_risk.ongoing">
                   <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
                   </span>
-                      <small style="vertical-align:text-top"> Ongoing</small>
+                    <small 
+                     :class="{'d-none': isMapView }"
+                     style="vertical-align:text-top"> 
+                     Ongoing
+                    </small>
                     </span>
+                <span
+                  v-if="_isallowed('write')"
+                  class="watch_action clickable mx-2"
+                  @click.prevent.stop="toggleReportable"
+                  data-cy="risk_reportable"
+                  v-tooltip="`Briefings`" 
+                >
+                  <span
+                    v-show="DV_risk.reportable">
+                   <i class="fas fa-presentation text-primary"></i>
+                  </span>
+                  <span 
+                    v-show="!DV_risk.reportable">
+                    <i class="fas fa-presentation mr-1" style="color:lightgray;cursor:pointer" ></i>
+               
+                  </span>
+                
+                  <small 
+                    :class="{'d-none': isMapView }"
+                    style="vertical-align:text-top"> 
+                  Briefings
+                  </small>
+                </span>
 
 
               <span
@@ -172,15 +229,24 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleDraft"
                 data-cy="task_important"
+                v-tooltip="`Draft`" 
               >
-                <span v-show="DV_risk.draft">
+                <span 
+               
+                  v-show="DV_risk.draft">
                 <i class="fas fa-pencil-alt text-warning"></i>
                 </span>
-                <span v-show="!DV_risk.draft">
+                <span 
+                  v-show="!DV_risk.draft">
                 <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
                 </span>
               
-                <small style="vertical-align:text-top"> Draft</small>
+                <small 
+                 :class="{'d-none': isMapView }"
+                 style="vertical-align:text-top"
+                 > 
+                 Draft
+                </small>
             </span>
 
               </div>
@@ -207,7 +273,7 @@
               </div>
 
               <div class="form-group mx-4">
-                <label class="font-sm"
+                <label class="font-md"
                   >Risk Description <span style="color: #dc3545">*</span></label
                 >
                 <el-input
@@ -234,7 +300,7 @@
 
               <div class="d-flex mb-1 form-group">
                 <div class="simple-select form-group w-33 ml-4">
-                  <label class="font-sm"
+                  <label class="font-md"
                     >Category <span style="color: #dc3545">*</span></label
                   >
                   <el-select
@@ -270,7 +336,7 @@
 
               <div class="mx-4 mt-2 mb-4" v-if="selectedRiskStage !== null">
                 <div v-if="selectedRiskStage !== undefined">       
-                  <div style="position:relative"><label class="font-sm mb-0">Stage</label>               
+                  <div style="position:relative"><label class="font-md mb-0">Stage</label>               
                     <button v-if="_isallowed('write')" @click.prevent="clearStages" :disabled="fixedStage" class="btn btn-sm d-inline-block btn-danger font-sm float-right clearStageBtn">Clear Stages</button>  
                   </div>    
                 <el-steps 
@@ -302,7 +368,7 @@
                   selectedRiskStage == null || selectedRiskStage == undefined
                 "
               >
-                <label class="font-sm">Select Stage</label>
+                <label class="font-md">Select Stage</label>
                 <el-steps
                   class="exampleOne"
                   :class="{ overSixSteps: riskStages.length >= 6 }"
@@ -328,7 +394,7 @@
 
               <div class="form-row mx-4">
                 <div class="form-group col-md-6 pl-0">
-                  <label class="font-sm"
+                  <label class="font-md"
                     >Date Identified
                     <span v-show="!DV_risk.ongoing" style="color: #dc3545">*</span></label
                   >
@@ -360,7 +426,7 @@
                  </label
                   ></span>
                   <span v-else>           
-                  <label class="font-sm"
+                  <label class="font-md"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
                   ></span>
@@ -401,7 +467,7 @@
             <div class="form-group mb-0 pt-3 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
                 <!-- 'Responsible' field was formally known as 'Assign Users' field -->
-                <label class="font-sm mb-0">Responsible</label>
+                <label class="font-md mb-0">Responsible</label>
 
                 <el-select
                   v-model="responsibleUsers"
@@ -424,7 +490,7 @@
                 </el-select>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
-                <label class="font-sm mb-0">Accountable</label>
+                <label class="font-md mb-0">Accountable</label>
 
                 <el-select
                   v-model="accountableRiskUsers"
@@ -449,7 +515,7 @@
 
             <div class="form-group mt-0 d-flex w-100">
               <div class="form-group user-select ml-4 mr-1 w-100">
-                <label class="font-sm mb-0">Consulted</label>
+                <label class="font-md mb-0">Consulted</label>
                 <el-select
                   v-model="consultedRiskUsers"
                   class="w-100"
@@ -470,7 +536,7 @@
                 </el-select>
               </div>
               <div class="form-group user-select ml-1 mr-4 w-100">
-                <label class="font-sm mb-0">Informed</label>
+                <label class="font-md mb-0">Informed</label>
                 <el-select
                   v-model="informedRiskUsers"
                   class="w-100"
@@ -501,7 +567,7 @@
             <div class="container-fluid pt-2 px-4">
               <div class="row mb-0">
                 <div class="col-md-3 simple-select form-group">
-                  <label class="font-sm">Priority Level:</label>
+                  <label class="font-md">Priority Level:</label>
                   <div class="risk-priorityLevel text-center">
                     <span class="risk-pL px-2 pt-2 mb-0 pb-0 mx-0">
                       {{ calculatePriorityLevel }}</span
@@ -615,7 +681,7 @@
 
                 <div class="col-md-3 p-0">
                   <div class="simple-select form-group mb-4">
-                    <label class="font-sm">Probability</label>
+                    <label class="font-md">Probability</label>
                     <el-select
                       v-model="selectedRiskPossibility"
                       class="w-100"
@@ -646,7 +712,7 @@
 
                   <!-- COLUMN ROW 2 -->
                   <div class="simple-select form-group">
-                    <label class="font-sm mb-0">Impact Level</label>
+                    <label class="font-md mb-0">Impact Level</label>
                     <el-select
                       v-model="selectedRiskImpactLevel"
                       class="w-100"
@@ -680,7 +746,7 @@
 
                 <div class="col-md-6 pl-1 pr-3">
                   <div class="form-group mx-1 mb-0">
-                    <label class="font-sm">Probability Description </label>
+                    <label class="font-md">Probability Description </label>
                     <el-input
                       type="textarea"
                       placeholder="Risk Probability description"
@@ -702,7 +768,7 @@
                     </div>
                   </div>
                   <div class="form-group mx-1">
-                    <label class="font-sm mb-0">Impact Description </label>
+                    <label class="font-md mb-0">Impact Description </label>
                     <el-input
                       type="textarea"
                       placeholder="Risk impact description"
@@ -1034,7 +1100,7 @@
 
             <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
-                <label class="font-sm"
+                <label class="font-md"
                   >Risk Approach <span style="color: #dc3545">*</span></label
                 >
                 <el-select
@@ -1068,7 +1134,7 @@
 
             <div class="row form-group mx-4 mb-0">
               <div class="col-md-12 px-0 simple-select form-group">
-                <label class="font-sm">Risk Approach Description </label>
+                <label class="font-md">Risk Approach Description </label>
                 <el-input
                   type="textarea"
                   placeholder="Describe how the Risk will be controlled"
@@ -1092,7 +1158,7 @@
             </div>
 
             <div class="row mx-4 mb-0">
-              <div class="col-md-12 font-sm pt-3 pl-0">
+              <div class="col-md-12 font-md pt-3 pl-0">
                 Risk Approach Approval
               </div>
             </div>
@@ -1144,9 +1210,9 @@
           <!-- BEGIN RISK CONTROL TAB SECTION -->
           <div v-show="currentTab == 'tab4'" class="paperLookTab">
             <div v-show="!DV_risk.ongoing"  class="form-group pt-2 mb-3 ml-4 mr-5">
-              <label class="font-sm mb-0 mr-3">Progress (in %)</label>
+              <label class="font-md mb-0 mr-3">Progress (in %)</label>
               <span class="ml-3">
-                <label class="font-sm mb-0 d-inline-flex align-items-center">
+                <label class="font-md mb-0 d-inline-flex align-items-center">
                   <input
                     type="checkbox"
                     v-model="DV_risk.autoCalculate"
@@ -1173,7 +1239,7 @@
             </div>
 
             <div class="form-group mt-2 mx-4">
-              <label class="font-sm">Checklists</label>
+              <label class="font-md">Checklists</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
@@ -1464,40 +1530,34 @@
                                       v-if="!progress.user"
                                       @click.prevent="validateThenSave"
                                     >
-                                      <font-awesome-icon
-                                        icon="save"
-                                        class="text-primary clickable"
-                                      />
+                                     <i class="far fa-save text-primary clickable"></i>
                                     </span>
                                     <span
                                       v-tooltip="`Edit`"
                                       v-if="progress.user"
                                       class="px-2"
                                     >
-                                      <font-awesome-icon
-                                        icon="pencil-alt"
-                                        class="text-info clickable"
+                                       <i class="fas fa-pencil-alt text-info clickable"  
                                         @click.prevent="editProgress"
-                                        :readonly="!_isallowed('write')"
-                                      />
+                                        :readonly="!_isallowed('write')">
+                                      </i>          
                                     </span>
                                     <span
                                       v-tooltip="`Delete`"
                                       class="pl-1"
                                       v-if="progress.user"
                                     >
-                                      <font-awesome-icon
-                                        icon="trash"
-                                        class="text-danger clickable"
-                                        v-if="_isallowed('write')"
-                                        @click.prevent="
-                                          destroyProgressList(
-                                            check,
-                                            progress,
-                                            pindex
-                                          )
-                                        "
-                                      />
+                                    <i class="fal fa-trash-alt text-danger clickable"
+                                      v-if="_isallowed('write')"
+                                      @click.prevent="
+                                        destroyProgressList(
+                                          check,
+                                          progress,
+                                          pindex
+                                        )
+                                      "                                 
+                                    >
+                                    </i>
                                     </span>
                                   </td>
                                 </tr>
@@ -1873,7 +1933,7 @@
           <!-- BEGIN RISK UPDATES TAB SECTION -->
           <div v-show="currentTab == 'tab8'" class="paperLookTab">
             <div class="form-group mt-2 mx-4 paginated-updates">
-              <label class="font-sm my-2">Updates</label>
+              <label class="font-md my-2">Updates</label>
               <span
                 class="ml-2 clickable"
                 v-if="_isallowed('write')"
@@ -1895,29 +1955,44 @@
                 class="paginate-list"
                 :key="filteredNotes ? filteredNotes.length : 1"
               >
-                <div
+                
+
+                <el-card
                   v-for="note in paginated('filteredNotes')"
-                  class="form-group"
+                  :key="note.id"
+                  class="update-card mb-3"
                 >
-                  <span class="d-inline-block w-100"
-                    ><label class="badge badge-secondary">Update by</label>
-                    <span class="font-sm text-muted">{{ noteBy(note) }}</span>
-                    <span
-                      v-if="allowDeleteNote(note)"
-                      class="clickable font-sm delete-action float-right"
-                      @click.prevent.stop="destroyNote(note)"
-                    >
-                      <i class="fas fa-trash-alt"></i>
-                    </span>
-                  </span>
-                  <textarea
-                    class="form-control"
+                  <div class="d-flex justify-content-between">
+                    <label class="font-md">Description</label>
+                    <div class="font-sm">
+                      <el-tag size="mini"
+                        ><span class="font-weight-bold">Submitted by:</span>
+                        <span v-if="note.updatedAt"
+                          >{{ author(note.userId) }} on
+                          {{ new Date(note.updatedAt).toLocaleString() }}</span
+                        ><span v-else
+                          >{{ $currentUser.full_name }} on
+                          {{ new Date().toLocaleDateString() }}</span
+                        ></el-tag
+                      >
+                      <i
+                        v-if="allowDeleteNote(note)"
+                        class="el-icon-delete clickable ml-3"
+                        @click.prevent.stop="destroyNote(note)"
+                      ></i>
+                    </div>
+                  </div>
+
+                  <el-input
                     v-model="note.body"
-                    rows="3"
+                    type="textarea"
+                    :rows="3"
                     placeholder="Enter your update here..."
                     :readonly="!allowEditNote(note)"
-                  ></textarea>
-                </div>
+                  ></el-input>
+                </el-card>
+
+
               </paginate>
             </div>
           </div>
@@ -1989,7 +2064,7 @@ export default {
       selectedTaskType: null,  
       selectedRiskStage: null,
       relatedIssues: [],
-      editToggle: false,   
+      editToggle: false,  
       relatedTasks: [],
       relatedRisks: [],
       showErrors: false,
@@ -2112,6 +2187,7 @@ export default {
         dueDate: "",
         autoCalculate: true,
         important: false,
+        reportable: false, 
         onHold: false,
         draft: false,
         ongoing: false,
@@ -2309,12 +2385,15 @@ export default {
       this.DV_risk = { ...this.DV_risk, ongoing: !this.DV_risk.ongoing };
       this.DV_risk.dueDate = '';
     },
-  toggleOnhold() {
-      this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
-    },
-  toggleDraft() {
-      this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
-    },
+    toggleOnhold() {
+        this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+      },
+    toggleDraft() {
+        this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
+      },
+    toggleReportable() {
+        this.DV_risk = { ...this.DV_risk, reportable: !this.DV_risk.reportable };
+      },
     removeFromWatch() {
       if (this.DV_risk.progress == 100 && this.DV_risk.watched == true) {
         this.toggleWatched();
@@ -2419,6 +2498,7 @@ export default {
         formData.append("risk[auto_calculate]", this.DV_risk.autoCalculate);
         formData.append("risk[important]", this.DV_risk.important);
         formData.append("risk[ongoing]", this.DV_risk.ongoing);
+        formData.append("risk[reportable]", this.DV_risk.reportable);
         formData.append("risk[on_hold]", this.DV_risk.onHold);
         formData.append("risk[draft]", this.DV_risk.draft);
         formData.append(
@@ -2802,6 +2882,9 @@ export default {
         1
       );
     },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+    },
   },
   computed: {
     ...mapGetters([
@@ -3128,6 +3211,16 @@ export default {
     },
     "DV_risk.startDate"(value) {
       if (!value) this.DV_risk.dueDate = "";
+    },
+    "DV_risk.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_risk.text} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_risk.text} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
+        }
+      }
     },
     "DV_risk.checklists": {
       handler: function(value) {
@@ -3660,5 +3753,10 @@ a:hover {
 }
 .text-smaller {
   font-size: smaller;
+}
+.update-card {
+  background-color: #ededed;
+  border-color: lightgray;
+  border-left: 10px solid #5aaaff;
 }
 </style>

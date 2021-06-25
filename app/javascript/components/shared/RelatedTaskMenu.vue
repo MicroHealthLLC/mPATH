@@ -101,9 +101,6 @@ export default {
             //Projects
             ...group.facilities
               .filter(
-                (facility) => facility.facility.id !== this.task.facilityId
-              )
-              .filter(
                 (facility) => this.item && facility[this.item + "s"].length > 0
               )
               .map((facility) => {
@@ -115,6 +112,9 @@ export default {
                       // Project Tasks
                       ...facility.tasks
                         .filter((task) => !relatedTaskIds.includes(task.id))
+                        .filter((task) =>
+                          this.task ? task.id != this.task.id : true
+                        )
                         .map((task) => {
                           return {
                             id: task.id,
@@ -242,9 +242,9 @@ export default {
     },
     clickOutside(e) {
       if (!e.relatedTarget) {
-        this.close()
+        this.close();
       }
-    }
+    },
   },
   watch: {
     filterTree(value) {

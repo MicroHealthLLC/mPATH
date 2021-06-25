@@ -12,7 +12,7 @@
         <div>
           <h5 class="mb-0">
             <span style="font-size: 16px; margin-right: 2.5px"
-              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+              > <i class="fas fa-suitcase mb-1"></i>
             </span>
             <router-link :to="projectNameLink">{{
               facility.facilityName
@@ -69,6 +69,7 @@
         class="d-flex form-group pt-1 mb-1 justify-content-start"
       >
         <FormTabs
+          class="ml-4"
           :current-tab="currentTab"
           :tabs="tabs"
           :allErrors="errors"
@@ -110,30 +111,41 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
             >
-              <span v-show="DV_issue.watched" 
-                ><i class="fas fa-eye"></i
+              <span               
+                v-show="DV_issue.watched" 
+                ><i class="fas fa-eye mr-1"></i
               ></span>
-              <span v-show="!DV_issue.watched" 
-                ><i  class="fas fa-eye" style="color:lightgray;cursor:pointer"></i
+              <span 
+                 v-show="!DV_issue.watched" 
+                ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
               ></span>
            
-              <small style="vertical-align:text-top"> On Watch</small>
+              <small style="vertical-align:text-top" :class="{'d-none': isMapView }">  
+                On Watch
+              </small>
             </span>
              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
+              v-tooltip="`On Hold`" 
             >
-              <span v-show="DV_issue.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+              <span 
+              
+                v-show="DV_issue.onHold">
+                <i class="fas fa-pause-circle mr-1 text-primary"></i>
               </span>
-              <span v-show="!DV_issue.onHold">
-               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              <span 
+               v-show="!DV_issue.onHold">
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
               </span>
              
-              <small style="vertical-align:text-top"> On Hold</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> On Hold</small>
             </span>
            
 
@@ -142,29 +154,63 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
+              v-tooltip="`Important`" 
             >
-               <span v-show="DV_issue.important">
+               <span               
+                v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
               </span>
-              <span v-show="!DV_issue.important">
+              <span 
+               v-show="!DV_issue.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>
-              <small style="vertical-align:text-top"> Important</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Important</small>
             </span>
+             <span
+                v-if="_isallowed('write')"
+                class="watch_action clickable mx-2"
+                @click.prevent.stop="toggleReportable"
+                data-cy="issue_reportable"
+                v-tooltip="`Briefings`" 
+              >
+                <span
+              
+                  v-show="DV_issue.reportable">
+                <i class="fas fa-presentation text-primary"></i>
+                </span>
+                <span 
+               
+                  v-show="!DV_issue.reportable">
+                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
+                </span>
+              
+                <small 
+                  :class="{'d-none': isMapView }"
+                  style="vertical-align:text-top"> 
+               Briefings
+                </small>
+                </span>
              <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
+              v-tooltip="`Draft`" 
             >
-              <span v-show="DV_issue.draft">
+              <span              
+                v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
-              <span v-show="!DV_issue.draft">
+              <span 
+               v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
              
-              <small style="vertical-align:text-top"> Draft</small>
+              <small 
+                :class="{'d-none': isMapView }"
+                style="vertical-align:text-top"> Draft</small>
             </span>
           </div>
 
@@ -807,31 +853,24 @@ Tab 1 Row Begins here -->
                                     v-if="!progress.user"
                                     @click.prevent="saveIssue"
                                   >
-                                    <font-awesome-icon
-                                      icon="save"
-                                      class="text-primary clickable"
-                                    />
+                                 <i class="far fa-save text-primary clickable"></i>
                                   </span>
                                   <span
                                     v-tooltip="`Edit`"
                                     v-if="progress.user"
                                     class="px-2"
                                   >
-                                    <font-awesome-icon
-                                      icon="pencil-alt"
-                                      class="text-info clickable"
-                                      @click.prevent="editProgress"
-                                      :readonly="!_isallowed('write')"
-                                    />
+                                <i class="fas fa-pencil-alt text-info clickable"  
+                                  @click.prevent="editProgress"
+                                  :readonly="!_isallowed('write')">
+                                </i>       
                                   </span>
                                   <span
                                     v-tooltip="`Delete`"
                                     class="pl-1"
                                     v-if="progress.user"
                                   >
-                                    <font-awesome-icon
-                                      icon="trash"
-                                      class="text-danger clickable"
+                                  <i class="fal fa-trash-alt text-danger clickable"
                                       v-if="_isallowed('write')"
                                       @click.prevent="
                                         destroyProgressList(
@@ -839,8 +878,9 @@ Tab 1 Row Begins here -->
                                           progress,
                                           pindex
                                         )
-                                      "
-                                    />
+                                      "                                 
+                                  >
+                                  </i>                 
                                   </span>
                                 </td>
                               </tr>
@@ -1155,30 +1195,40 @@ Tab 1 Row Begins here -->
               class="paginate-list"
               :key="filteredNotes ? filteredNotes.length : 1"
             >
-              <div
+              <el-card
                 v-for="note in paginated('filteredNotes')"
-                class="form-group"
                 :key="note.id"
+                class="update-card mb-3"
               >
-                <span class="d-inline-block w-100"
-                  ><label class="badge badge-secondary">Update by</label>
-                  <span class="font-sm text-muted">{{ noteBy(note) }}</span>
-                  <span
-                    v-if="allowDeleteNote(note)"
-                    class="clickable font-sm delete-action float-right"
-                    @click.stop="destroyNote(note)"
-                  >
-                    <i class="fas fa-trash-alt"></i>
-                  </span>
-                </span>
-                <textarea
-                  class="form-control"
+                <div class="d-flex justify-content-between">
+                  <label class="font-md">Description</label>
+                  <div class="font-sm">
+                    <el-tag size="mini"
+                      ><span class="font-weight-bold">Submitted by:</span>
+                      <span v-if="note.updatedAt"
+                        >{{ author(note.userId) }} on
+                        {{ new Date(note.updatedAt).toLocaleString() }}</span
+                      ><span v-else
+                        >{{ $currentUser.full_name }} on
+                        {{ new Date().toLocaleDateString() }}</span
+                      ></el-tag
+                    >
+                    <i
+                      v-if="allowDeleteNote(note)"
+                      class="el-icon-delete clickable ml-3"
+                      @click.prevent.stop="destroyNote(note)"
+                    ></i>
+                  </div>
+                </div>
+
+                <el-input
                   v-model="note.body"
-                  rows="3"
+                  type="textarea"
+                  :rows="3"
                   placeholder="Enter your update here..."
                   :readonly="!allowEditNote(note)"
-                ></textarea>
-              </div>
+                ></el-input>
+              </el-card>
             </paginate>
           </div>
         </div>
@@ -1237,7 +1287,7 @@ export default {
       selectedIssueType: null,
       selectedTaskType: null,
       selectedIssueSeverity: null,
-      editToggle: false,      
+      editToggle: false,  
       selectedIssueStage: null,
       issueUsers: [],
       responsibleUsers: null,
@@ -1325,6 +1375,7 @@ export default {
         description: "",
         autoCalculate: true,
         important: false,
+        reportable: false, 
         onHold: false,
         draft: false,
         responsibleUserIds: [],
@@ -1534,6 +1585,9 @@ export default {
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
     },
+   toggleReportable() {
+      this.DV_issue = { ...this.DV_issue, reportable: !this.DV_issue.reportable };
+    },
     removeFromWatch() {
       if (this.DV_issue.progress == 100 && this.DV_issue.watched == true) {
         this.toggleWatched();
@@ -1558,6 +1612,7 @@ export default {
         formData.append("issue[issue_type_id]", this.DV_issue.issueTypeId);
         formData.append("issue[task_type_id]", this.DV_issue.taskTypeId);
         formData.append("issue[important]", this.DV_issue.important);
+        formData.append("issue[reportable]", this.DV_issue.reportable);
         formData.append(
           "issue[issue_severity_id]",
           this.DV_issue.issueSeverityId
@@ -1939,6 +1994,9 @@ export default {
         1
       );
     },
+    author(id) {
+      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+    },
   },
   computed: {
     ...mapGetters([
@@ -2046,6 +2104,16 @@ export default {
     },
     "DV_issue.startDate"(value) {
       if (!value) this.DV_issue.dueDate = "";
+    },
+    "DV_issue.dueDate"(value) {
+      if (this.facility.dueDate) {
+        if (moment(value).isAfter(this.facility.dueDate, "day")) {
+          this.$alert(`${this.DV_issue.title} Due Date is past ${this.facility.facilityName} Completion Date!`, `${this.DV_issue.title} Due Date Warning`, {
+          confirmButtonText: 'Ok',
+          type: 'warning'
+        });
+        }
+      }
     },
     "DV_issue.checklists": {
       handler: function(value) {
@@ -2388,5 +2456,10 @@ a:hover {
 }
 .text-smaller {
   font-size: smaller;
+}
+.update-card {
+  background-color: #ededed;
+  border-color: lightgray;
+  border-left: 10px solid #5aaaff;
 }
 </style>
