@@ -54,10 +54,10 @@
                 </span>          
          </td>  
         <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + risk.notes[0].user.fullName)">        
-           {{moment(risk.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
+           {{moment(risk.notesUpdatedAt[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{risk.notes[0].body}}
+           <br> {{risk.notes[risk.notes.length - 1].body}}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
