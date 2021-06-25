@@ -6,7 +6,7 @@
         <div>
           <div v-if="_isallowed('read')" class="container-fluid px-0 mx-1">
             <div class="row row-2 mt-3 task-issue-risk-row">
-              <div class="col-md-4 col-lg-4 col-sm-12" data-cy="facility_tasks">
+              <div class="col" data-cy="facility_tasks">
                 <el-card class="box-card" style="background-color:#fff">
                   <div class="row">
                     <div class="col pb-0">
@@ -24,11 +24,11 @@
                 <div class="row text-center">
                 <div class="col-3 p-0 mb-0">
                   
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span   :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -36,7 +36,7 @@
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
                 </div>
                  <div class="col-3 p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+                   <span class="d-block" v-tooltip="`ONGOING`"> <i class="fas fa-retweet text-success"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING </span>    
                 </div>       
               </div>
@@ -73,11 +73,11 @@
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md"/></span>
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                 </div>
                  
@@ -141,14 +141,25 @@
                 </div>
                 </el-collapse-item>
               </el-collapse>
-            </div>
+               </div>
+                <div else>
+                <el-collapse id="roll_up" class="taskCard">
+                <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                  <div class="col p-0  mb-0">                  
+                              NO DATA TO DISPLAY
+                  </div>             
+                </div>
+                </el-collapse-item>
+              </el-collapse>
+              </div>
           </el-card>
         </div>
 
               <!-- Row 2, col-2 for Issues Card -->
 
               <div
-                class="col-md-4 col-lg-4 col-sm-12 mb-2"
+                class="col px-0 mb-2"
                 data-cy="facility_issues"
               >
                 <el-card class="box-card" style="background-color:#fff">
@@ -167,11 +178,11 @@
 
                 <div class="row text-center">
                 <div class="col-3 p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                  <span :class="{'d-none': isMapView }" class="d-block smallerFont">IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -211,11 +222,11 @@
                       <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                     </div>
                     <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                    <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                     </div>
                     <div class="col-3 p-0 mb-0">
-                    <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                    <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                     </div>                    
                   </div>
@@ -313,12 +324,23 @@
                       </el-collapse-item>
                     </el-collapse>
                   </div>
+                    <div else>
+                    <el-collapse id="roll_up" class="taskCard">
+                    <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                  <div class="col p-0  mb-0">                  
+                              NO DATA TO DISPLAY
+                  </div>             
+                </div>
+                </el-collapse-item>
+              </el-collapse>
+              </div>
                 </el-card>
               </div>
 
               <!-- Row 2, col-3 for Risks Card -->
               <div
-                class="col-md-4 col-lg-4 col-sm-12"
+                class="col pr-0"
                 data-cy="facility_risks"
               >
                 <el-card class="box-card" style="background-color:#fff">
@@ -336,11 +358,11 @@
                   </div>                  
                   <div class="row text-center">
                   <div class="col-3 p-0 mb-0">                    
-                    <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                    <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">COMPLETE</span>
                   </div>
                   <div class="col-3 p-0 mb-0">
-                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                  <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> IN PROGRESS   </span>           
                   </div>
                   <div class="col-3 p-0 mb-0">
@@ -348,7 +370,7 @@
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">OVERDUE </span>               
                   </div>
                   <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`ONGOING`" class="d-block"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+                    <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont">ONGOING</span>    
                   </div>       
                   </div>
@@ -387,11 +409,11 @@
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">PLANNED</span>
                   </div>
                   <div class="col-3 p-0 mb-0">
-                   <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                   <span :class="{'d-none': isMapView }" class="d-block smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md"/></span>
+                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span :class="{'d-none': isMapView }" class="d-block smallerFont">DRAFTS</span>               
                   </div>
                   
@@ -497,8 +519,50 @@
                       </el-collapse-item>
                     </el-collapse>
                   </div>
+                    <div else>
+                    <el-collapse id="roll_up" class="taskCard">
+                    <el-collapse-item title="..." name="1">
+                  <div class="row mt-1 text-center">
+                  <div class="col p-0  mb-0">                  
+                              NO DATA TO DISPLAY
+                  </div>             
+                </div>
+                </el-collapse-item>
+              </el-collapse>
+              </div>
                 </el-card>
               </div>
+                 <div class="col-2" :class="[isMapView ? 'col-6 pt-1' : '']" >
+          <el-card
+              class="box-card"
+              style="background-color:#fff"
+            
+            >
+              <div class="row">
+                <div class="col pb-0">
+                  <h6 class="d-inline">LESSONS LEARNED</h6>                 
+                  <hr />
+                </div>
+              </div>
+                <div class="row mt-0 pb-0 text-center">
+                <div class="col py-0">
+                 <span class="giantNumber">7</span>
+                </div>
+              </div>
+                <div>
+                <el-collapse>
+                  <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                LESSONS LEARNED DATA COMING SOON                  
+                </div>
+
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
+
+            
+            </el-card>
+               </div>
             </div>
             <div class="row row-1 mt-2">
               <div class="col-md-5 col-lg-5 col-sm-12" :class="[isMapView ? 'col-7' : '']">
@@ -1388,6 +1452,8 @@ export default {
 /deep/.el-collapse-item__arrow, /deep/.el-icon-arrow-right {
   display: none;
 }
-
+.giantNumber {
+  font-size: 3.7rem;
+}
 
 </style>

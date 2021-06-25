@@ -11,7 +11,7 @@
           <h4 v-if="isMapView" :load="log(programLessons)" class="d-inline mr-2 programName">{{ currentProject.name }}</h4>          
           <h3 v-else class="d-inline mr-2 programName">{{ currentProject.name }}</h3>        
         </span>     
-         <!-- <h3 v-if="contentLoaded" class="d-inline">
+         <h3 v-if="contentLoaded" class="d-inline">
            <el-popover
             placement="top-start"
             title="Project #"
@@ -20,7 +20,7 @@
             content="This is the total number of projects in this program.">
           <b class="badge bg-secondary text-light badge-pill" slot="reference"> {{ C_facilityCount }}</b>
           </el-popover>
-        </h3>  -->
+        </h3>  
        
       </div>
   
@@ -36,7 +36,7 @@
             data-cy="task_summary"
           >      
             <div class="row">
-              <div class="col pl-2" >
+              <div class="col pl-2" :class="[isMapView ? 'pb-1 pl-3' : '']">              
                 <h5 class="d-inline">TASKS</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                   <span class="badge bg-secondary text-light badge-pill float-right">{{
@@ -51,13 +51,13 @@
                <div class="row text-center">
                 <div class="col-3 p-0 mb-0">
                   
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                     <!-- <span class="d-block smallerFont">COMPLETE</span> -->
 
                 </div>
                  <div class="col-3 p-0 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -65,7 +65,7 @@
                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
                 </div>
                  <div class="col-3 p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING </span>    
                 </div>       
               </div>
@@ -103,11 +103,11 @@
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md text-warning" /></span>
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                 </div>
                  
@@ -173,6 +173,26 @@
                   </el-collapse-item>
                 </el-collapse>
               </div>
+              <div v-else>
+                 <el-collapse id="roll_up" class="taskCard">
+                  <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                <div class="col p-0  mb-0">
+                  
+                       NO DATA TO DISPLAY
+                </div>
+                 
+              
+              </div>
+
+              
+             
+              
+              
+                  
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
             </div>
             <div v-if="!contentLoaded" class="my-4">
               <loader type="code"></loader>
@@ -187,7 +207,7 @@
             data-cy="issue_summary"
           >
             <div class="row">
-              <div class="col">
+              <div class="col" :class="[isMapView ? 'pb-1' : '']">
                 <h5 class="d-inline">ISSUES</h5>
                 <h5 v-if="contentLoaded" class="d-inline">
                   <span class="badge bg-secondary text-light badge-pill float-right">{{
@@ -201,11 +221,11 @@
             <div v-if="contentLoaded">
                <div class="row text-center">
                 <div class="col-3 p-0 mb-0">                  
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                <span v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                <span v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">IN PROGRESS</span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -244,11 +264,11 @@
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                 <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ON HOLD  </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="text-warning font-md" /></span>
+                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                 </div>
                  
@@ -345,6 +365,20 @@
                   </el-collapse-item>
                 </el-collapse>
               </div>
+              <div v-else>
+                 <el-collapse id="roll_up" class="taskCard">
+                  <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                <div class="col p-0  mb-0">
+                  
+                       NO DATA TO DISPLAY
+                </div>
+                 
+              
+              </div>                 
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
             </div>
 
             <div v-if="!contentLoaded" class="my-4">
@@ -359,7 +393,7 @@
               data-cy="risk_summary"
             >
               <div class="row">
-                <div class="col pb-0">
+                <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
                   <h5 class="d-inline">RISKS</h5>
                   <h5 v-if="contentLoaded" class="d-inline">
                     <span class="badge bg-secondary text-light badge-pill float-right">{{
@@ -372,11 +406,11 @@
               <div class="row text-center">
                 <div class="col-3 p-0 mb-0">
                   
-                  <span  v-tooltip="`COMPLETE`" class="d-block"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
+                  <span  v-tooltip="`COMPLETE`" class="d-block"><i class="fas fa-clipboard-check text-success"></i></span>
                        <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
                 </div>
                  <div class="col-3 p-0 mb-0">
-                 <span  v-tooltip="`IN PROGRESS`" class="d-block"><font-awesome-icon icon="tasks" class="text-primary"  /></span>
+                 <span  v-tooltip="`IN PROGRESS`" class="d-block"><i class="far fa-tasks text-primary"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS   </span>           
                 </div>
                  <div class="col-3 p-0 mb-0">
@@ -384,7 +418,7 @@
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
                 </div>
                  <div class="col-3 p-0 mb-0">
-                   <span v-tooltip="`ONGOING`" class="d-block"> <font-awesome-icon icon="retweet" class="text-success"  /></span>
+                   <span v-tooltip="`ONGOING`" class="d-block"> <i class="fas fa-retweet text-success"></i></span>
                      <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING</span>    
                 </div>       
               </div>
@@ -424,11 +458,11 @@
                         <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">PLANNED</span>
                   </div>
                   <div class="col-3 p-0 mb-0">
-                   <span v-tooltip="`ON HOLD`" class="d-block"><font-awesome-icon icon="pause-circle" class="pencil-alt text-primary font-md"  /></span>
+                   <span v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                       <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> ON HOLD  </span>           
                   </div>
                   <div class="col-3 p-0 mb-0">
-                    <span v-tooltip="`DRAFTS`" class="d-block"><font-awesome-icon icon="pencil-alt" class="font-md text-warning" /></span>
+                    <span v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                         <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">DRAFTS</span>               
                   </div>
                   
@@ -559,6 +593,20 @@
                   </el-collapse-item>
                 </el-collapse>
               </div>
+              <div v-else>
+                 <el-collapse id="roll_up" class="taskCard">
+                  <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                <div class="col p-0  mb-0">
+                  
+                       NO DATA TO DISPLAY
+                </div>  
+              
+              </div>
+
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
               <div v-if="!contentLoaded" class="my-4">
                 <loader type="code"></loader>
               </div>
@@ -576,10 +624,20 @@
                   <hr />
                 </div>
               </div>
-                <div class="row mt-0 pb-3 text-center">
-                <div class="col">
-                 <span class="giantNumber">7</span>
+                <div class="row mt-0 pb-0 text-center">
+                <div class="col py-0">
+                 <span class="giantNumber" :class="[isMapView ? 'giantMapView' : '']" >7</span>
                 </div>
+              </div>
+                <div>
+                <el-collapse>
+                  <el-collapse-item title="..." name="1">
+                <div class="row mt-1 text-center">
+                LESSONS LEARNED DATA COMING SOON                  
+                </div>
+
+                  </el-collapse-item>
+                </el-collapse>
               </div>
 
             
@@ -1409,7 +1467,10 @@ ul > li {
 .programName {
   font-variant: small-caps;
 }
-// .fac-proj-status:hover, .tasks:hover, .issues:hover, .fac-groups:hover {
-//  background-color: #fff;
-// }
+.giantNumber {
+  font-size: 3.7rem;
+}
+.giantMapView {
+  font-size: 3.25rem;
+}
 </style>
