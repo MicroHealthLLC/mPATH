@@ -13,7 +13,7 @@
           <div>
             <h5 class="mb-0">
                <span style="font-size: 16px; margin-right: 2.5px"
-              > <font-awesome-icon style="margin-bottom:1px" icon="suitcase" />
+              > <i class="fas fa-suitcase mb-1"></i>
               </span>
               <router-link :to="projectNameLink">{{
                 facility.facilityName
@@ -107,17 +107,16 @@
               <div class="toggleWrapper float-right" id="risk_toggles" :class="{'font-sm': isMapView}">
                 <span
                   v-if="_isallowed('write')"
-                  class="watch_action mt-3 clickable mx-2"
+                  class="watch_action mt-3 clickable ml-2"
                   @click.prevent.stop="toggleWatched"
                   data-cy="risk_on_watch"
+                   v-tooltip="`On Watch`" 
                 >
                   <span 
-                    v-tooltip="`On Watch`" 
-                    v-show="DV_risk.watched" 
+                   v-show="DV_risk.watched" 
                 ><i class="fas fa-eye mr-1"></i
                  ></span>
-                 <span 
-                  v-tooltip="`On Watch`" 
+                 <span                 
                   v-show="!DV_risk.watched" 
                   ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
                  ></span>            
@@ -134,18 +133,19 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleOnhold"
                 data-cy="task_on_hold"
-              >
-              <span 
                 v-tooltip="`On Hold`" 
+              >
+              <span              
                 v-show="DV_risk.onHold"
                 >
-               <font-awesome-icon icon="pause-circle" class="mr-1 text-primary"/>
+               <i class="fas fa-pause-circle mr-1 text-primary"></i>
+              
               </span>
               <span 
-                v-tooltip="`On Hold`" 
-                v-show="!DV_risk.onHold"
+               v-show="!DV_risk.onHold"
               >
-               <font-awesome-icon icon="pause-circle" class="mr-1" style="color:lightgray;cursor:pointer"/>
+              <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
+             
               </span>
              
               <small 
@@ -160,14 +160,13 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleImportant"
                   data-cy="issue_important"
+                   v-tooltip="`Important`"   
                 >
-                <span 
-                  v-tooltip="`Important`"   
+                <span                  
                   v-show="DV_risk.important">
                 <i class="fas fa-star text-warning"></i>
                 </span>
                 <span 
-                  v-tooltip="`Important`" 
                   v-show="!DV_risk.important">
                 <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
                 </span>
@@ -184,14 +183,13 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleOngoing"
                   data-cy="risk_ongoing"
+                  v-tooltip="`Ongoing`" 
                    >
-                  <span 
-                    v-tooltip="`Ongoing`" 
+                  <span                   
                     v-show="DV_risk.ongoing">
                   <i class="fas fa-retweet text-success"></i>
                   </span>
                   <span 
-                    v-tooltip="`Ongoing`" 
                     v-show="!DV_risk.ongoing">
                   <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
                   </span>
@@ -206,16 +204,16 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleReportable"
                   data-cy="risk_reportable"
+                  v-tooltip="`Briefings`" 
                 >
                   <span
-                    v-tooltip="`Briefings`" 
                     v-show="DV_risk.reportable">
-                  <i class="fas fa-flag text-primary"></i>
+                   <i class="fas fa-presentation text-primary"></i>
                   </span>
                   <span 
-                    v-tooltip="`Briefings`" 
                     v-show="!DV_risk.reportable">
-                  <i class="fas fa-flag" style="color:lightgray;cursor:pointer"></i>
+                    <i class="fas fa-presentation mr-1" style="color:lightgray;cursor:pointer" ></i>
+               
                   </span>
                 
                   <small 
@@ -231,14 +229,14 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleDraft"
                 data-cy="task_important"
+                v-tooltip="`Draft`" 
               >
                 <span 
-                  v-tooltip="`Draft`" 
+               
                   v-show="DV_risk.draft">
                 <i class="fas fa-pencil-alt text-warning"></i>
                 </span>
                 <span 
-                  v-tooltip="`Draft`" 
                   v-show="!DV_risk.draft">
                 <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
                 </span>
@@ -1532,40 +1530,34 @@
                                       v-if="!progress.user"
                                       @click.prevent="validateThenSave"
                                     >
-                                      <font-awesome-icon
-                                        icon="save"
-                                        class="text-primary clickable"
-                                      />
+                                     <i class="far fa-save text-primary clickable"></i>
                                     </span>
                                     <span
                                       v-tooltip="`Edit`"
                                       v-if="progress.user"
                                       class="px-2"
                                     >
-                                      <font-awesome-icon
-                                        icon="pencil-alt"
-                                        class="text-info clickable"
+                                       <i class="fas fa-pencil-alt text-info clickable"  
                                         @click.prevent="editProgress"
-                                        :readonly="!_isallowed('write')"
-                                      />
+                                        :readonly="!_isallowed('write')">
+                                      </i>          
                                     </span>
                                     <span
                                       v-tooltip="`Delete`"
                                       class="pl-1"
                                       v-if="progress.user"
                                     >
-                                      <font-awesome-icon
-                                        icon="trash"
-                                        class="text-danger clickable"
-                                        v-if="_isallowed('write')"
-                                        @click.prevent="
-                                          destroyProgressList(
-                                            check,
-                                            progress,
-                                            pindex
-                                          )
-                                        "
-                                      />
+                                    <i class="fal fa-trash-alt text-danger clickable"
+                                      v-if="_isallowed('write')"
+                                      @click.prevent="
+                                        destroyProgressList(
+                                          check,
+                                          progress,
+                                          pindex
+                                        )
+                                      "                                 
+                                    >
+                                    </i>
                                     </span>
                                   </td>
                                 </tr>

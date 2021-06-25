@@ -1,4 +1,3 @@
-
 <template>
 <div>
    <span class="filters-wrapper w-75">
@@ -151,6 +150,9 @@
          
             </v-btn>        
            </v-btn-toggle>   
+          <button class="btn btn-sm btn-info ml-3 total-table-btns">
+          Total: {{filteredCalendar.length}}
+         </button>
 
         </v-toolbar>
       </v-sheet>
@@ -158,8 +160,7 @@
       <v-sheet height="600">     
          <v-calendar                      
           ref="calendar"        
-          v-model="C_lastFocus"
-          :load="log(focus)"
+          v-model="C_lastFocus"      
           color="primary"            
           :events="events"         
           :event-color="getEventColor"
@@ -194,19 +195,16 @@
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>     
+            <v-list-item-title @click.prevent="scrollToStartDate" class="point">     
               <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
                 <small><b>Date Identified:</b></small>
               </span>                 
-              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>            
-             
-              
-              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}
-              
+              <span v-else class="d-inline mr-1"><small><b>Start Date:</b></small></span>              
+              {{ moment(selectedEvent.start).format('DD MMM YYYY') }}              
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> 
+            <v-list-item-title @click.prevent="scrollToEndDate" class="point"> 
             <span v-if="selectedEvent.isOngoing == true" class="d-inline mr-1">
               <small><b>Date Closed:</b></small>
             </span> 
@@ -215,7 +213,7 @@
             </span> 
              <span v-if="selectedEvent.isOngoing == true && 
                selectedEvent.end == '2099-01-01'" class="mr-1">
-                <font-awesome-icon icon="retweet" class="text-success"  />
+               <i class="far fa-retweet text-success"></i>
                 </span>                
                <span v-else> 
               {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
@@ -226,7 +224,7 @@
             <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
                <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
-                <font-awesome-icon icon="retweet" class="text-success"  />
+            <i class="far fa-retweet text-success"></i>
                 </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
@@ -241,7 +239,7 @@
                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
+                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
                 <span v-if="
@@ -360,9 +358,9 @@
         'taskUpdated',
         'updateWatchedTasks'
       ]), 
-      log(e){
-        console.log("Focus: " + e)
-      },
+      // log(e){
+      //   console.log("Focus: " + e)
+      // },
       reRenderCalendar() {
         this.componentKey += 1;
       },   
@@ -376,9 +374,17 @@
       showM(){
         this.showMore = !this.showMore
       }, 
-      setToday () {
-        this.todayView = true 
-        this.setLastFocusFilter('')  
+      scrollToEndDate() {
+      if (this.selectedEvent.end !== '2099-01-01'){
+        this.setLastFocusFilter(this.selectedEvent.end)  
+       }
+     },
+      scrollToStartDate() {     
+        this.setLastFocusFilter(this.selectedEvent.start)    
+     },
+      setToday (resource) {
+       this.focus = '' || this.setLastFocusFilter('')  
+       console.log("Resource: " + resource)
       },
       prev () {
         this.$refs.calendar.prev()
@@ -451,8 +457,7 @@
         nativeEvent.stopPropagation()    
       },
     showAllEvents(){
-        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)
-         console.log(this.getShowAllEventsToggle)
+        this.setShowAllEventsToggle(!this.getShowAllEventsToggle)       
         if (this.getShowAllEventsToggle == true) {
         
           this.reRenderCalendar()
@@ -486,9 +491,11 @@
         // For loop to determine length of Calendar Tasks 
         for (let i = 0; i < this.filteredCalendar.length; i++) {
 
-            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {
-            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"
+            if(this.taskData[i].ongoing && this.taskEndDates[i] == null || this.taskEndDates[i] == undefined ) {        
             this.taskEndDates[i] = '2099-01-01'
+            }
+            if(this.taskData[i].ongoing) {
+            this.taskNames[i] = this.taskNames[i] + " (Ongoing)"          
             }
             events.push({            
             name: this.taskNames[i],
@@ -527,13 +534,14 @@
         "facilities",
         "facilityGroups",
         'getAdvancedFilterOptions',
+        'filterDataForAdvancedFilter', 
         'getCalendarViewFilterOptions',
+        'getTaskIssueUserFilter',
         'calendarViewFilter',  
         'getCalendarViewFilter',
         'getLastFocusFilter',
-         'getShowAllEventsToggle',
-        'getShowAllToggle',
-        'filterDataForAdvancedFilter', 
+        'getShowAllEventsToggle',
+        'getShowAllToggle',      
         'getAdvancedFilter',     
         'getTaskIssueProgressStatusOptions',
         'getTaskIssueProgressStatusFilter',
@@ -547,6 +555,7 @@
         'onWatchFilter',
         "currentTasks",
         "contentLoaded",
+        'taskStageFilter',
         "currentIssues",
         "viewPermit",
         "currentProject",
@@ -560,29 +569,69 @@
       },
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
-        let search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
-        const filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
-        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
-        let valid = Boolean(resource && resource.hasOwnProperty('progress'))        
-        valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
-        if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)         
-        if (search_query) valid = valid && search_query.test(resource.text)
-         
-        return valid
-        }), ['dueDate'])
+        let stageIds = _.map(this.taskStageFilter, 'id')
+        const search_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        const taskCategory_query = this.exists(this.tasksQuery.trim()) ? new RegExp(_.escapeRegExp(this.tasksQuery.trim().toLowerCase()), 'i') : null
+        let noteDates = this.noteDateFilter
+        let taskIssueDueDates = this.taskIssueDueDateFilter
 
+        let taskIssueProgress = this.taskIssueProgressFilter
+        let taskIssueUsers = this.getTaskIssueUserFilter
+        var filterDataForAdvancedFilterFunction = this.filterDataForAdvancedFilter
+        let tasks = _.sortBy(_.filter(this.facility.tasks, (resource) => {
+          let valid = Boolean(resource && resource.hasOwnProperty('progress'))
+          let userIds = [..._.map(resource.checklists, 'userId'), ...resource.userIds]
+          if (taskIssueUsers.length > 0) {
+            if(taskIssueUsers.length > 0){
+              valid = valid && userIds.some(u => _.map(taskIssueUsers, 'id').indexOf(u) !== -1)
+            }
+          }
+
+      
+          // //TODO: For performance, send the whole tasks array instead of one by one
+          valid = valid && filterDataForAdvancedFilterFunction([resource], 'sheetsTasks')
+          if (stageIds.length > 0) valid = valid && stageIds.includes(resource.taskStageId) 
+          if (typeIds.length > 0) valid = valid && typeIds.includes(resource.taskTypeId)
+          if (noteDates && noteDates[0] && noteDates[1]) {
+            var startDate = moment(noteDates[0], "YYYY-MM-DD")
+            var endDate = moment(noteDates[1], "YYYY-MM-DD")
+            var _notesCreatedAt = _.map(resource.notes, 'createdAt')
+            var is_valid = resource.notes.length > 0
+            for (var createdAt of _notesCreatedAt) {
+              var nDate = moment(createdAt, "YYYY-MM-DD")
+              is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+              if (is_valid) break
+            }
+            valid = valid && is_valid
+          }
+          if (taskIssueDueDates && taskIssueDueDates[0] && taskIssueDueDates[1]) {
+            var startDate = moment(taskIssueDueDates[0], "YYYY-MM-DD")
+            var endDate = moment(taskIssueDueDates[1], "YYYY-MM-DD")
+            var is_valid = true
+            var nDate = moment(resource.dueDate, "YYYY-MM-DD")
+            is_valid = nDate.isBetween(startDate, endDate, 'days', true)
+            valid = valid && is_valid
+          }
+          if (taskIssueProgress && taskIssueProgress[0]) {
+            var min = taskIssueProgress[0].value.split("-")[0]
+            var max = taskIssueProgress[0].value.split("-")[1]
+            valid = valid && (resource.progress >= min && resource.progress <= max)
+          }
+          if (search_query) valid = valid && search_query.test(resource.text) ||
+            valid && search_query.test(resource.taskType) ||
+            valid && search_query.test(resource.userNames)
+          // if (taskCategory_query) valid = valid && taskCategory_query.test(resource.taskType)
+         
+          return valid
+        }), ['dueDate'])
           if ( _.map(this.getAdvancedFilter, 'id') == 'draft' || _.map(this.getAdvancedFilter, 'id') == 'onHold') {   
         
         return tasks
         
-       } else  {
-        
+       } else  {        
         tasks  = tasks.filter(t => t.draft == false && t.onHold == false)
-        return tasks
-      
+        return tasks     
        }       
-    
-      
     }, 
      C_calendarTaskFilter: {           
         get() {
@@ -658,6 +707,15 @@
             (facility) => facility.facilityId == this.$route.params.projectId
           );
         }
+      },
+    },
+   filteredCalendar: {
+      handler(value) {
+        if (value) {
+          this.reRenderCalendar()        
+        } if (value && this.filteredCalendar.length == 0)   {
+          this.events = []
+        }           
       },
     },
     tasksQuery: {
@@ -765,11 +823,10 @@ input[type=search] {
     border: solid 1px lightgray;
    }
  }
-//  .dontShow {
-//    display: none;
-//  }
-//  .show {
-//    display: block;
-//  }
-
+ .point{
+   cursor: pointer;
+ }
+ .point:hover {
+   background-color: rgba(214, 219, 223, .45);
+ }
 </style> 
