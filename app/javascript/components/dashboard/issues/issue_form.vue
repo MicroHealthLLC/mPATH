@@ -111,15 +111,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleWatched"
               data-cy="issue_on_watch"
+              v-tooltip="`On Watch`" 
             >
-              <span 
-                v-tooltip="`On Watch`" 
+              <span               
                 v-show="DV_issue.watched" 
                 ><i class="fas fa-eye mr-1"></i
               ></span>
               <span 
-                v-tooltip="`On Watch`" 
-                v-show="!DV_issue.watched" 
+                 v-show="!DV_issue.watched" 
                 ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
               ></span>
            
@@ -132,15 +131,15 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="issue_on_hold"
+              v-tooltip="`On Hold`" 
             >
               <span 
-                v-tooltip="`On Hold`" 
+              
                 v-show="DV_issue.onHold">
                 <i class="fas fa-pause-circle mr-1 text-primary"></i>
               </span>
               <span 
-                v-tooltip="`On Hold`" 
-                v-show="!DV_issue.onHold">
+               v-show="!DV_issue.onHold">
               <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
               </span>
              
@@ -155,15 +154,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="issue_important"
+              v-tooltip="`Important`" 
             >
-               <span 
-                v-tooltip="`Important`" 
+               <span               
                 v-show="DV_issue.important">
                <i class="fas fa-star text-warning"></i>
               </span>
               <span 
-                v-tooltip="`Important`" 
-                v-show="!DV_issue.important">
+               v-show="!DV_issue.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>
               <small 
@@ -175,14 +173,15 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleReportable"
                 data-cy="issue_reportable"
+                v-tooltip="`Briefings`" 
               >
                 <span
-                  v-tooltip="`Briefings`" 
+              
                   v-show="DV_issue.reportable">
                 <i class="fas fa-presentation text-primary"></i>
                 </span>
                 <span 
-                  v-tooltip="`Briefings`" 
+               
                   v-show="!DV_issue.reportable">
                 <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
                 </span>
@@ -198,15 +197,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="issue_important"
+              v-tooltip="`Draft`" 
             >
-              <span 
-                v-tooltip="`Draft`" 
+              <span              
                 v-show="DV_issue.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
               <span 
-                v-tooltip="`Draft`" 
-                v-show="!DV_issue.draft">
+               v-show="!DV_issue.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
              

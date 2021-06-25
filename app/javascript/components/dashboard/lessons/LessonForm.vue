@@ -99,11 +99,12 @@
             v-if="isAllowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleImportant"
+            v-tooltip="`Important`"
           >
-            <span v-tooltip="`Important`" v-show="lesson.important">
+            <span v-show="lesson.important">
               <i class="fas fa-star text-warning"></i>
             </span>
-            <span v-tooltip="`Important`" v-show="!lesson.important">
+            <span v-show="!lesson.important">
               <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
             </span>
             <small
@@ -118,11 +119,12 @@
             v-if="isAllowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleReportable"
+            v-tooltip="`Briefings`" 
           >
-            <span v-tooltip="`Briefings`" v-show="lesson.reportable">
+            <span v-show="lesson.reportable">
             <i class="fas fa-presentation text-primary"></i>
             </span>
-            <span v-tooltip="`Briefings`" v-show="!lesson.reportable">
+            <span v-show="!lesson.reportable">
               <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
             </span>
 
@@ -137,11 +139,12 @@
             v-if="isAllowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
+            v-tooltip="`Draft`"
           >
-            <span v-tooltip="`Draft`" v-show="lesson.draft">
+            <span  v-show="lesson.draft">
               <i class="fas fa-pencil-alt text-warning"></i>
             </span>
-            <span v-tooltip="`Draft`" v-show="!lesson.draft">
+            <span v-show="!lesson.draft">
               <i
                 class="fas fa-pencil-alt"
                 style="color:lightgray;cursor:pointer"

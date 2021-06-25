@@ -155,8 +155,8 @@
                 ><i class="fas fa-presentation mr-1 text-primary"></i>
               </span>
               <span v-if="lesson.draft == true" v-tooltip="`Draft`"
-                ><font-awesome-icon icon="pencil-alt" class="text-warning"
-              /></span>
+                > <i class="fas fa-pencil-alt text-warning"></i>
+              </span>
               <span
                 v-if="
                   lesson.important == false &&

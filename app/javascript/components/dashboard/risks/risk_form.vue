@@ -110,14 +110,13 @@
                   class="watch_action mt-3 clickable ml-2"
                   @click.prevent.stop="toggleWatched"
                   data-cy="risk_on_watch"
+                   v-tooltip="`On Watch`" 
                 >
                   <span 
-                    v-tooltip="`On Watch`" 
-                    v-show="DV_risk.watched" 
+                   v-show="DV_risk.watched" 
                 ><i class="fas fa-eye mr-1"></i
                  ></span>
-                 <span 
-                  v-tooltip="`On Watch`" 
+                 <span                 
                   v-show="!DV_risk.watched" 
                   ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
                  ></span>            
@@ -134,17 +133,16 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleOnhold"
                 data-cy="task_on_hold"
-              >
-              <span 
                 v-tooltip="`On Hold`" 
+              >
+              <span              
                 v-show="DV_risk.onHold"
                 >
                <i class="fas fa-pause-circle mr-1 text-primary"></i>
               
               </span>
               <span 
-                v-tooltip="`On Hold`" 
-                v-show="!DV_risk.onHold"
+               v-show="!DV_risk.onHold"
               >
               <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>
              
@@ -162,14 +160,13 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleImportant"
                   data-cy="issue_important"
+                   v-tooltip="`Important`"   
                 >
-                <span 
-                  v-tooltip="`Important`"   
+                <span                  
                   v-show="DV_risk.important">
                 <i class="fas fa-star text-warning"></i>
                 </span>
                 <span 
-                  v-tooltip="`Important`" 
                   v-show="!DV_risk.important">
                 <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
                 </span>
@@ -186,14 +183,13 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleOngoing"
                   data-cy="risk_ongoing"
+                  v-tooltip="`Ongoing`" 
                    >
-                  <span 
-                    v-tooltip="`Ongoing`" 
+                  <span                   
                     v-show="DV_risk.ongoing">
                   <i class="fas fa-retweet text-success"></i>
                   </span>
                   <span 
-                    v-tooltip="`Ongoing`" 
                     v-show="!DV_risk.ongoing">
                   <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
                   </span>
@@ -208,14 +204,13 @@
                   class="watch_action clickable mx-2"
                   @click.prevent.stop="toggleReportable"
                   data-cy="risk_reportable"
+                  v-tooltip="`Briefings`" 
                 >
                   <span
-                    v-tooltip="`Briefings`" 
                     v-show="DV_risk.reportable">
                    <i class="fas fa-presentation text-primary"></i>
                   </span>
                   <span 
-                    v-tooltip="`Briefings`" 
                     v-show="!DV_risk.reportable">
                     <i class="fas fa-presentation mr-1" style="color:lightgray;cursor:pointer" ></i>
                
@@ -234,14 +229,14 @@
                 class="watch_action clickable mx-2"
                 @click.prevent.stop="toggleDraft"
                 data-cy="task_important"
+                v-tooltip="`Draft`" 
               >
                 <span 
-                  v-tooltip="`Draft`" 
+               
                   v-show="DV_risk.draft">
                 <i class="fas fa-pencil-alt text-warning"></i>
                 </span>
                 <span 
-                  v-tooltip="`Draft`" 
                   v-show="!DV_risk.draft">
                 <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
                 </span>

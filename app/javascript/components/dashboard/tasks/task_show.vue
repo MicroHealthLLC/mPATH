@@ -21,7 +21,7 @@
             <span v-show="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success mr-1"  /></span>   
             <span v-show="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mr-1"></i></span>   
             <span v-show="task.onHold" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
-            <span v-show="task.draft" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning  mr-1"  /></span>   
+            <span v-show="task.draft" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
              <span v-if="                                      
                       task.ongoing == false && 
                       task.isOverdue == false &&
@@ -30,8 +30,7 @@
                       task.onHold == false &&  
                       task.draft == false && 
                       task.progress < 100 "             
-                    >
-                        
+                    >                        
             </span>
                
           </div>
