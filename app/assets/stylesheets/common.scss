@@ -82,10 +82,7 @@ body {
 .today-icon {
   color:  #1976d2 !important
 }
-.giantNumber {
-  // Big numbers for dashboards
-  font-size:3rem; 
-}
+
 .mh-green {
 background-color: #9EC64C !important;
 }
@@ -94,6 +91,10 @@ background-color: #9EC64C !important;
  background-color: #1D336F !important;
 }
 
+.mh-blue-text {
+  //  dark blue
+   color: #1D336F !important;
+  }
 .mh-orange {
   background-color: #DD9036 !important;
 }
@@ -158,9 +159,6 @@ padding: 3px !important;
   }
 }
 
-.mb-half {
-  margin-bottom: 0.5rem;
-}
 span.mpathLogo {
   img {
     width: 200px;
@@ -365,7 +363,7 @@ td.col-issue_type, td.col-issue_severity {
    color: rgb(24, 19, 19);
  }
 
-// .el-collapse-item__header {color:#0275d8 !important}
+.el-collapse-item__header {color:#0275d8 !important}
 .el-collapse {
   border-top: none !important;
   border-bottom: 1px solid #EBEEF5;

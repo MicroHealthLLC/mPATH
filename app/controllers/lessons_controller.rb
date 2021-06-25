@@ -6,7 +6,7 @@ class LessonsController < AuthenticatedController
       facility_project = FacilityProject.where(project_id: params[:program_id], facility_id: params[:project_id]).first
       if facility_project
         lessons = Lesson.where(facility_project_id: facility_project.id).includes(Lesson.lesson_preload_array)
-        response_hash = {lessons: lessons.map(&:to_json)}
+        response_hash = {lessons: lessons.map(&:build_response_for_index)}
         status_code = 200
       else
         response_hash = {errors: "Program or Project not found"}
@@ -34,7 +34,8 @@ class LessonsController < AuthenticatedController
     lesson = Lesson.includes(Lesson.lesson_preload_array).find(params[:lesson_id])
     # authorize!(:create, lesson)
 
-    lesson.create_or_update_lesson(params, current_user)
+    lesson = lesson.create_or_update_lesson(params, current_user)
+
     if lesson.errors.any?
       render json: {errors: lesson.errors.full_messages.join(" ")}, status: 402
     else

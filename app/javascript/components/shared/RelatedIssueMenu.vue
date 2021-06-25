@@ -129,7 +129,9 @@ export default {
                       // Project Issues
                       ...facility.issues
                         .filter((issue) => !relatedIssueIds.includes(issue.id))
-                        .filter((issue) => issue.id != this.issue.id)
+                        .filter((issue) =>
+                          this.issue ? issue.id != this.issue.id : true
+                        )
                         .map((issue) => {
                           return {
                             id: issue.id,

@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.bigint "author_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
@@ -139,9 +139,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.integer "facility_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "project_id"
-    t.integer "group_number", default: 0
-    t.string "facility_project_ids", default: "--- []\n"
+    t.string "lessons", default: "---\n- R\n"
   end
 
   create_table "facility_projects", charset: "utf8", force: :cascade do |t|
@@ -360,21 +358,6 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "project_privileges", charset: "utf8", force: :cascade do |t|
-    t.string "overview", default: "---\n- R\n"
-    t.string "tasks", default: "---\n- R\n"
-    t.string "notes", default: "---\n- R\n"
-    t.string "issues", default: "---\n- R\n"
-    t.string "admin"
-    t.string "risks", default: "---\n- R\n"
-    t.string "lessons", default: "---\n- R\n"
-    t.integer "user_id"
-    t.integer "project_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "project_ids", default: "--- []\n"
-  end
-
   create_table "project_risk_stages", charset: "utf8", force: :cascade do |t|
     t.integer "project_id"
     t.integer "risk_stage_id"
@@ -459,7 +442,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["target_type", "target_id", "var"], name: "index_rails_settings_on_target_type_and_target_id_and_var", unique: true
-    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target_type_and_target_id"
+    t.index ["target_type", "target_id"], name: "index_rails_settings_on_target"
   end
 
   create_table "region_states", charset: "utf8", force: :cascade do |t|
@@ -545,9 +528,7 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.bigint "risk_stage_id"
     t.string "probability_name"
     t.string "impact_level_name"
-    t.text "type"
     t.text "probability_description"
-    t.datetime "approved_at"
     t.string "approval_time"
     t.boolean "approved"
     t.boolean "important", default: false
@@ -644,7 +625,6 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.datetime "watched_at"
     t.bigint "task_stage_id"
     t.integer "kanban_order", default: 0
-    t.datetime "calendar_start_date"
     t.boolean "important", default: false
     t.boolean "ongoing", default: false
     t.boolean "draft", default: false
@@ -692,8 +672,6 @@ ActiveRecord::Schema.define(version: 2021_06_23_141502) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "accountable_users", "projects"
-  add_foreign_key "accountable_users", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "checklists", "users"

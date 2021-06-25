@@ -28,8 +28,8 @@
           "
           class="d-flex align-items-center my-1 ml-1"
         >
-          <span class="fbody-icon"><font-awesome-icon icon="suitcase" /></span>
-          <h5 class="f-head mb-0 projectName">
+          <span class="fbody-icon"><i class="fas fa-suitcase"></i></span>
+          <h5 class="f-head mb-0">
             {{ currentFacility.facilityName || "Loading..." }}
           </h5>
         </div>
@@ -169,8 +169,5 @@ export default {
   height: calc(100vh - 100px);
   overflow-y: auto;
   overflow-x: hidden;
-}
-.projectName {
-  font-variant: small-caps;
 }
 </style>
