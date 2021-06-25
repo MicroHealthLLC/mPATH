@@ -49,10 +49,10 @@
               
         </td>
         <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + task.notes[0].user.fullName)">              
-          {{moment(task.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
+          {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
             </span>
-            <br> {{task.notes[0].body}}
+            <br> {{task.notes[task.notes.length - 1].body}}
            
         </td>       
         <td v-else class="twentyTwo">No Updates</td>

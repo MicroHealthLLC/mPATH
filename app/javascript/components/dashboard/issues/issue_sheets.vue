@@ -39,10 +39,10 @@
             </span>          
          </td>
          <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
-           {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
+           {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{issue.notes[0].body}}
+           <br> {{issue.notes[issue.notes.length - 1].body}}
         </td>
         <td class="oneSeven" v-else>No Updates</td>
       </tr>
