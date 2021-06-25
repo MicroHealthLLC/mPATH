@@ -89,3 +89,11 @@ task :revert_privileges => :environment do
     p.save
   end
 end
+
+desc 'Grant all privileges of Lesson to all users'
+task :grant_lesson_privileges => :environment do
+  puts 'Granting all privileges of Lesson to all users'
+  Privilege.all.each do |privilege|
+    privilege.update(lessons: "RWD")
+  end
+end
