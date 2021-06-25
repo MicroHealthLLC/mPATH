@@ -1047,16 +1047,40 @@ export default {
       });
     },
     removeFile(id, index) {
-      this.files.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.files.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     removeFileLink(id, index) {
-      this.fileLinks.splice(index, 1);
-      if (id) {
-        this.destroyFileIds.push(id);
-      }
+      this.$confirm(
+        `Are you sure you want to delete this file link?`,
+        "Confirm Delete",
+        {
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.fileLinks.splice(index, 1);
+          if (id) {
+            this.destroyFileIds.push(id);
+          }
+        })
+        .catch(() => {});
     },
     downloadFile(file) {
       let url = window.location.origin + file.uri;

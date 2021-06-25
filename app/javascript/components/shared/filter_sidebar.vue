@@ -1211,7 +1211,7 @@ export default {
       if(this.favoriteFilterData.id){
         this.setAdvancedFilter([])
       }else{
-        this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])        
+        this.setAdvancedFilter([])        
       }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])

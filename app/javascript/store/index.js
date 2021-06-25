@@ -32,7 +32,7 @@ export default new Vuex.Store({
     lessonStore
   },
   state: {
-    advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
+    advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
@@ -380,7 +380,7 @@ export default new Vuex.Store({
     // TODO: remove if not used anywhere
     getTaskIssueTabFilterOptions: (state, getters) =>{
       var options = [
-        {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
@@ -463,7 +463,7 @@ export default new Vuex.Store({
     },
     getTaskIssueProgressStatusOptions: (state, getters) => {
       return [
-        {id: 'active', name: 'Active'},
+        {id: 'active', name: 'Not Completed'},
         {id: 'completed', name: 'Completed'}
       ]
     },
@@ -477,16 +477,16 @@ export default new Vuex.Store({
     getAdvancedFilterOptions: (state, getters) => {
 
       var options = [
-        {id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
+        {id: 'active', name: 'Not Completed', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'completed', name: 'Completed', value: 'completed', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'},
         {id: 'overdue', name: 'Overdue', value: "overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         // {id: 'notOverdue', name: 'On Schedule', value: "not overdue", filterCategoryId: 'overDueFilter', filterCategoryName: 'Action Overdue'},
         {id: 'myAction', name: 'My Assignments', value: 'my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'notMyAction', name: 'Not My Assignments', value: 'not my action', filterCategoryId: 'myActionsFilter', filterCategoryName: 'My Assignments'},
         {id: 'onWatch', name: 'On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},
-        {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
+        {id: 'notOnWatch', name: 'Not On Watch', value: 'onWatch', filterCategoryId: 'onWatchFilter', filterCategoryName: 'On Watch'},      
         {id: 'reportable', name: 'Briefings', value: 'reportable', filterCategoryId: 'briefingsFilter', filterCategoryName: 'Briefings'},
+        {id: 'important', name: 'Marked Important', value: 'important', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'notImportant', name: 'Not Marked Important', value: 'notImportant', filterCategoryId: 'importantFilter', filterCategoryName: 'Important'},
         {id: 'onHold', name: 'On Hold', value: 'onHold', filterCategoryId: 'onHoldFilter', filterCategoryName: 'On Hold'},
         // {id: 'notOnHold', name: 'Not On Hold', value: 'notOnHold', filterCategoryId: 'notOnHoldFilter', filterCategoryName: 'Not On Hold'},
@@ -1376,7 +1376,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$topNavigationPermissions['gantt_view'].read || false
+        let f_read = Vue.prototype.$permissions.overview.read || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1403,8 +1403,7 @@ export default new Vuex.Store({
             }
           )
 
-          // if (Vue.prototype.$permissions.tasks.read)
-          if (f_read)
+          if (Vue.prototype.$permissions.tasks.read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')
@@ -1655,15 +1654,8 @@ export default new Vuex.Store({
       return {risks,  facilities}
     },
     viewPermit: () => (view, req) => {
-      var programId = this.$route.params.programId;
-      var projectId = this.$route.params.projectId
-      let fPrivilege = this.$projectPrivileges[programId][projectId]
-      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
-      let s = permissionHash[req]
-      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
-
-      //if (Vue.prototype.$currentUser.role === "superadmin") return true;
-      //return Vue.prototype.$permissions[view][req]
+      if (Vue.prototype.$currentUser.role === "superadmin") return true;
+      return Vue.prototype.$permissions[view][req]
     },
     riskApproaches: () => {
       return   ['avoid', 'mitigate', 'transfer', 'accept']

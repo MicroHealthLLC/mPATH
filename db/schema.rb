@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_21_193637) do
+ActiveRecord::Schema.define(version: 2021_06_23_141502) do
+
+  create_table "accountable_users", charset: "utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "project_id"
+    t.index ["project_id"], name: "index_accountable_users_on_project_id"
+    t.index ["user_id"], name: "index_accountable_users_on_user_id"
+  end
 
   create_table "active_admin_comments", charset: "utf8", force: :cascade do |t|
     t.string "namespace"
@@ -307,6 +314,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.string "risks", default: "R"
     t.string "calendar_view", default: "R"
     t.string "lessons", default: "R"
+    t.string "portfolio_view", default: "R"
     t.index ["user_id"], name: "index_privileges_on_user_id"
   end
 
@@ -675,7 +683,9 @@ ActiveRecord::Schema.define(version: 2021_06_21_193637) do
     t.string "country_code", default: ""
     t.string "color"
     t.bigint "organization_id"
+    t.string "jti", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
