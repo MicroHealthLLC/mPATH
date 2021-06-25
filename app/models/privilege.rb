@@ -18,4 +18,18 @@ class Privilege < ApplicationRecord
   # serialize :calendar_view, Array
   # serialize :members, Array
 
+  before_save :modify_values
+
+
+  def modify_values
+    att = self.attributes.dup
+    att.each do |field, value|
+      next if !value.is_a?(String)
+      if value.include?("\n") || value.include?("]")
+        att[field] = YAML.load(value).join("")
+      end
+    end
+    self.attributes = att
+  end
+
 end

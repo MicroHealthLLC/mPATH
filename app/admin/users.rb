@@ -29,22 +29,14 @@ ActiveAdmin.register User do
       project_ids: [],
       privilege_attributes: [
         :id,
-        :overview,
-        :tasks,
-        :issues,
-        :notes,
-        :admin,
-        :map_view,
-        :gantt_view,
-        :watch_view,
-        :kanban_view,
-        :documents,
-        :facility_manager_view,
-        :calendar_view,
-        :sheets_view,
-        :members,
-        :risks,
-        :lessons
+        sheets_view: [],
+        map_view: [],                
+        gantt_view: [],
+        kanban_view: [],
+        calendar_view: [],
+        members: [],
+        admin: []
+
       ],
       project_privileges_attributes: [
         :id,

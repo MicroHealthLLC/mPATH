@@ -18,7 +18,11 @@ class FacilityPrivilegesController < AuthenticatedController
   end
 
   def add_facility_privilege_form
-    @user = User.find(params[:user_id])
+    if params[:user_id]
+      @user = User.find(params[:user_id])
+    else
+      @user = User.new
+    end
     render json: { html: render_to_string(template: "admin/facility_privileges/facility_privilege_form", layout: false, :formats => [:html], locals: {user: @user}) }
   end
 
