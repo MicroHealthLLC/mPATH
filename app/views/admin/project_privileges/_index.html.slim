@@ -20,7 +20,7 @@ div{id="project_privileges_list"}
             input(type='hidden' value=(fp.id) name="user[project_privileges_attributes][#{index}][id]" )
                     
           label(class="label") Select Program
-          select{class="project_select" id="project_privilege_select" name="user[project_privileges_attributes][#{index}][project_ids][]" data-div-id="project_section_#{index}" data-user-id="#{user.id}"  data-selected=(project_ids) multiple="true"}
+          select{class="project_select" name="user[project_privileges_attributes][#{index}][project_ids][]" data-div-id="project_section_#{index}" data-user-id="#{user.id}"  data-selected=(project_ids) multiple="true"}
             - all_projects.each do |project|
               option{value=(project.id) selected=("selected" if fp.project_id == project.id) }= project.name
 

@@ -64,7 +64,7 @@ task :create_program_privileges => :environment do
   User.all.each do |user|
     next if !user.project_ids.any?
     privilege = user.privilege
-    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
+    privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
     privilege_attr.each do |k,v|
       if v.is_a?(String)
         privilege_attr[k] = v.chars

@@ -12,7 +12,7 @@ class TasksController < AuthenticatedController
     elsif ["destroy"].include?(params[:action]) 
       action = "delete"
     end
-    binding.pry
+
     raise(CanCan::AccessDenied) if !current_user.has_permission?(action: action,resource: 'tasks', program: params[:project_id], project: params[:facility_id])
 
   end
