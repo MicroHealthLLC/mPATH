@@ -1,6 +1,6 @@
 class CreateProjectPrivileges < ActiveRecord::Migration[6.1]
   def change
-    create_table :project_privileges do |t|
+    create_table :project_privileges, if_not_exists: true do |t|
       t.string :overview, default: ["R"].to_yaml
       t.string :tasks, default: ["R"].to_yaml
       t.string :notes, default: ["R"].to_yaml
