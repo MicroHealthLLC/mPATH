@@ -51,13 +51,12 @@
                 ><div class="d-flex d-inline-flex">
                   <div class="top-arrow">
                      <i class="fas fa-sort-up sort-icon-arrow"
-                       :class="{
-                    
+                       :class="{                    
                         'sort-asc': sortAsc && activeSortValue == 'title',
                       }"
                     ></i>
                   </div>
-                  <div>
+                  <div class="down-arrow">
                       <i class="fas fa-sort-down sort-icon-arrow"
                        :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'title',
@@ -77,7 +76,7 @@
                       }"
                      ></i>
                    </div>
-                  <div>
+                  <div class="down-arrow">
                     <i class="fas fa-sort-down sort-icon-arrow"
                          :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'date',
@@ -101,7 +100,7 @@
                       }"
                     ></i>
                   </div>
-                  <div>
+                  <div class="down-arrow">
                     <i class="fas fa-sort-down sort-icon-arrow"
                        :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'created_by',
@@ -127,7 +126,7 @@
                       }"
                     ></i>
                   </div>
-                  <div>
+                  <div class="down-arrow">
                    <i class="fas fa-sort-down sort-icon-arrow"
                        :class="{
                         'sort-dsc': !sortAsc && activeSortValue == 'updates',
@@ -600,6 +599,10 @@ tr:hover {
 .top-arrow {
   position: relative;
   left: 7px;
+}
+.down-arrow {
+  left: -2px;
+  position: relative;
 }
 .sort-asc,
 .sort-dsc {
