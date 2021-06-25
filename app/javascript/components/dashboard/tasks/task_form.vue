@@ -109,16 +109,15 @@
             <span
               v-if="_isallowed('write')"
               class="watch_action clickable mx-2"
+               v-tooltip="`On Watch`" 
               @click.prevent.stop="toggleWatched"
               data-cy="task_on_watch"
             >
-              <span 
-                v-tooltip="`On Watch`" 
+              <span                
                 v-show="DV_task.watched" 
                 ><i class="fas fa-eye mr-1"></i
               ></span>
               <span 
-                v-tooltip="`On Watch`" 
                 v-show="!DV_task.watched" 
                 ><i  class="fas fa-eye mr-1" style="color:lightgray;cursor:pointer"></i
               ></span>           
@@ -135,15 +134,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOnhold"
               data-cy="task_on_hold"
+               v-tooltip="`On Hold`" 
             >
-              <span 
-                v-tooltip="`On Hold`" 
+              <span                
                 v-show="DV_task.onHold">
                 <i class="fas fa-pause-circle mr-1 text-primary"></i>
               
               </span>
               <span
-                v-tooltip="`On Hold`"  
                 v-show="!DV_task.onHold">
               <i class="fas fa-pause-circle mr-1" style="color:lightgray;cursor:pointer"></i>              
               </span>
@@ -161,14 +159,13 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleImportant"
               data-cy="task_important"
+              v-tooltip="`Important`" 
             >
               <span 
-                v-tooltip="`Important`" 
                 v-show="DV_task.important">
                <i class="fas fa-star text-warning"></i>
               </span>
               <span 
-                v-tooltip="`Important`" 
                 v-show="!DV_task.important">
                <i class="far fa-star" style="color:lightgray;cursor:pointer"></i>
               </span>             
@@ -184,14 +181,13 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleOngoing"
               data-cy="task_ongoing"
+              v-tooltip="`Ongoing`" 
             >
-              <span 
-                v-tooltip="`Ongoing`" 
+              <span              
                 v-show="DV_task.ongoing">
               <i class="fas fa-retweet text-success"></i>
               </span>
-              <span 
-                v-tooltip="`Ongoing`" 
+              <span              
                 v-show="!DV_task.ongoing">
               <i class="fas fa-retweet" style="color:lightgray;cursor:pointer"></i>
               </span>             
@@ -206,15 +202,14 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleReportable"
               data-cy="task_reportable"
+              v-tooltip="`Briefings`" 
             >
-              <span
-                 v-tooltip="`Briefings`" 
+              <span               
                  v-show="DV_task.reportable">
                <i class="fas fa-presentation text-primary"></i>
               </span>
               <span 
-                v-tooltip="`Briefings`" 
-                v-show="!DV_task.reportable">
+               v-show="!DV_task.reportable">
                <i class="fas fa-presentation" style="color:lightgray;cursor:pointer"></i>
               </span>
              
@@ -229,14 +224,13 @@
               class="watch_action clickable mx-2"
               @click.prevent.stop="toggleDraft"
               data-cy="task_important"
+              v-tooltip="`Draft`" 
             >
-              <span
-                 v-tooltip="`Draft`" 
+              <span               
                  v-show="DV_task.draft">
                <i class="fas fa-pencil-alt text-warning"></i>
               </span>
-              <span 
-                v-tooltip="`Draft`" 
+              <span               
                 v-show="!DV_task.draft">
                <i class="fas fa-pencil-alt" style="color:lightgray;cursor:pointer"></i>
               </span>
