@@ -177,19 +177,10 @@
                  <el-collapse id="roll_up" class="taskCard">
                   <el-collapse-item title="..." name="1">
                 <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">
-                  
+                <div class="col p-0  mb-0">                  
                        NO DATA TO DISPLAY
-                </div>
-                 
-              
-              </div>
-
-              
-             
-              
-              
-                  
+                </div>             
+              </div>        
                   </el-collapse-item>
                 </el-collapse>
               </div>

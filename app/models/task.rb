@@ -176,22 +176,30 @@ class Task < ApplicationRecord
 
     if(progress >= 100)
       progress_status = "completed"
-    end    
-  
-    # if draft == true
-    #   ongoing = false
-    #   on_hold = false
-    # end
+    end  
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
+    
+    planned = false
+    if ( !draft && start_date > Date.today)
+      planned = true
+    end
 
+    in_progress = false
+    if ( !draft && !on_hold && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today)
+      in_progress = true
+    end
+
+    
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: is_overdue,
+      planned: planned, 
+      in_progress: in_progress, 
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
