@@ -20,11 +20,11 @@
         <td class="fort text-center" >
             <span v-if="issue.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="issue.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
-            <span v-if="issue.reportable" v-tooltip="`Briefings`"><font-awesome-icon icon="flag" class="text-primary mr-1"  /></span>
+            <span v-if="issue.reportable" v-tooltip="`Briefings`"><i class="fas fa-presentation mr-1 text-primary"></i></span>
             <span v-if="issue.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="issue.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-            <span v-if="issue.onHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-            <span v-if="issue.draft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
+            <span v-if="issue.onHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-if="issue.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="   
                   issue.watched == false &&        
                   issue.important == false &&  
@@ -39,10 +39,10 @@
             </span>          
          </td>
          <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + issue.notes[0].user.fullName)"> 
-           {{moment(issue.notesUpdatedAt[0]).format('DD MMM YYYY, h:mm a')}}
+           <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
+           {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{issue.notes[0].body}}
+           <br> {{issue.notes[issue.notes.length - 1].body}}
         </td>
         <td class="oneSeven" v-else>No Updates</td>
       </tr>

@@ -214,7 +214,7 @@
             </span> 
              <span v-if="selectedEvent.isOngoing == true && 
                selectedEvent.end == '2099-01-01'" class="mr-1">
-                <font-awesome-icon icon="retweet" class="text-success"  />
+               <i class="far fa-retweet text-success"></i>
                 </span>                
                <span v-else> 
               {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
@@ -225,7 +225,7 @@
             <v-list-item-title>
               <span class=d-inline mr-1 ><small><b>Progress:</b></small></span> 
                <span v-if="selectedEvent.isOngoing == true && selectedEvent.end == '2099-01-01'" class="mr-1">
-                <font-awesome-icon icon="retweet" class="text-success"  />
+            <i class="far fa-retweet text-success"></i>
                 </span>   
                <span v-else>
                {{ selectedEvent.progess }}%    
@@ -240,7 +240,7 @@
                  <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
                 <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
                 <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
-                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span>   
+                <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
                 <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
                 <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>   
                 <span v-if="
