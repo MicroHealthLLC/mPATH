@@ -70,7 +70,7 @@ task :create_program_privileges => :environment do
         privilege_attr[k] = v.chars
       end
     end
-    privilege_attr.merge!(user_id: user.id, project_ids: user.project_ids)
+    privilege_attr.merge!(user_id: user.id, project_ids: user.project_ids.map(&:to_s))
     p = ProjectPrivilege.create(privilege_attr)
   end
 end

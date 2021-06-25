@@ -339,16 +339,16 @@ class User < ApplicationRecord
     fph
   end
 
-  def has_permission?(action: "read", resource: , program: nil, project: nil)
+  def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
     begin
       program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
       project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
       action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
-      pph = project_privileges_hash
+      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
       result = false
       short_action_code = action_code_hash[action]
       if pph[program_id]
-        fph = facility_privileges_hash
+        fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
         if fph[program_id][project_id]
           result = fph[program_id][project_id][resource].include?(short_action_code)
         else

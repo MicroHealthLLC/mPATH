@@ -167,6 +167,9 @@ class Project < SortableRecord
 
     project_type_name = self.project_type.try(:name)
 
+    pph = user.project_privileges_hash
+    fph = user.facility_privileges_hash
+
     all_facility_projects.each do |fp|
 
       facility = all_facilities.detect{|f| f.id == fp.facility_id}
@@ -193,7 +196,7 @@ class Project < SortableRecord
       # tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
       # h[:tasks] = tasks.map(&:to_json)
       tasks = []
-      if user.has_permission?(resource: 'tasks', program: fp.project_id, project: fp.facility_id)
+      if user.has_permission?(resource: 'tasks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
         tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
         tids = tasks.map(&:id)
       end
@@ -207,7 +210,7 @@ class Project < SortableRecord
       # issues = all_issues.select{|i| i.facility_project_id == fp.id}
       # h[:issues] = issues.map(&:to_json)
       issues = []
-      if user.has_permission?(resource: 'issues', program: fp.project_id, project: fp.facility_id)
+      if user.has_permission?(resource: 'issues', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
         issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
         iids = issues.map(&:id)
       end
@@ -221,7 +224,7 @@ class Project < SortableRecord
       # risks = all_risks.select{|r| r.facility_project_id == fp.id}
       # h[:risks] = risks.map(&:to_json)
       risks = []
-      if user.has_permission?(resource: 'risks', program: fp.project_id, project: fp.facility_id)
+      if user.has_permission?(resource: 'risks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
         risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
         rids = risks.map(&:id)
       end
@@ -233,7 +236,7 @@ class Project < SortableRecord
 
       # Building Notes
       notes = []
-      if user.has_permission?(resource: 'notes', program: fp.project_id, project: fp.facility_id)
+      if user.has_permission?(resource: 'notes', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
         notes = all_notes.select{|r| r.noteable_id == fp.id}
       end
 
