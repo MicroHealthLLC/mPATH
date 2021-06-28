@@ -563,9 +563,6 @@
         'onWatchFilter',  
         'taskTypes',      
        ]),
-       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
       filteredCalendar() {
         let milestoneIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.riskStageFilter, 'id')
