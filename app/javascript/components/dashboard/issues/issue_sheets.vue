@@ -184,8 +184,8 @@
         this.$refs.menu.open(e);
       },
       updateTruncate(issue) {
-        if(!this.updateHover && issue.notes[issue.notes.length - 1].body.length > 160)
-          return issue.notes[issue.notes.length - 1].body.substring(0,159) + "...";
+        if(!this.updateHover && issue.notes[issue.notes.length - 1].body.length > 200)
+          return issue.notes[issue.notes.length - 1].body.substring(0,199) + "...";
         else
           return issue.notes[issue.notes.length - 1].body;
       },

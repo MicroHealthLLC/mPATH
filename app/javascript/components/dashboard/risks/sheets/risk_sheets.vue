@@ -183,8 +183,8 @@
         this.$refs.menu.open(e);
       },
       updateTruncate(risk) {
-        if(!this.updateHover && risk.notes[risk.notes.length - 1].body.length > 160)
-          return risk.notes[risk.notes.length - 1].body.substring(0,159) + "...";
+        if(!this.updateHover && risk.notes[risk.notes.length - 1].body.length > 200)
+          return risk.notes[risk.notes.length - 1].body.substring(0,199) + "...";
         else
           return risk.notes[risk.notes.length - 1].body;
       },

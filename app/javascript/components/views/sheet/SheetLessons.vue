@@ -473,14 +473,14 @@ export default {
       );
     },
     updateTruncate(lesson) {
-      if(!this.updateHover && lesson.last_update.body.length > 160)
-        return lesson.last_update.body.substring(0,159) + "...";
+      if(!this.updateHover && lesson.last_update.body.length > 200)
+        return lesson.last_update.body.substring(0,199) + "...";
       else
         return lesson.last_update.body;
     },
     descriptionTruncate(lesson) {
-      if(!this.descriptionHover && lesson.description.length > 160)
-        return lesson.description.substring(0,159) + "...";
+      if(!this.descriptionHover && lesson.description.length > 200)
+        return lesson.description.substring(0,199) + "...";
       else
         return lesson.description;
     },
