@@ -47,11 +47,11 @@
             </span>
               
         </td>
-        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
+        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0" @mouseover="updateHover = true" @mouseleave="updateHover = false">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
           {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
             </span>
-            <br> {{task.notes[task.notes.length - 1].body}}
+            <br> {{ updateTruncate(task) }}
            
         </td>       
         <td v-else class="twentyTwo">No Updates</td>
@@ -116,7 +116,8 @@ export default {
       DV_edit_task: {},
       DV_edit_issue: {},
       has_task: false,
-      showContextMenu: false
+      showContextMenu: false,
+      updateHover: false
     };
   },
   mounted() {
@@ -187,7 +188,13 @@ export default {
       let confirm = window.confirm(`Are you sure you want to delete "${this.DV_task.text}"?`)
       if (!confirm) {return}
       this.taskDeleted(this.DV_task)
-    }
+    },
+    updateTruncate(task) {
+      if(!this.updateHover && task.notes[task.notes.length - 1].body.length > 80)
+        return task.notes[task.notes.length - 1].body.substring(0,79) + "...";
+      else
+        return task.notes[task.notes.length - 1].body;
+    },
   },
   computed: {
     ...mapGetters([

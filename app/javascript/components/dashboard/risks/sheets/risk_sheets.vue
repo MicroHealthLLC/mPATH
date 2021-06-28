@@ -53,11 +53,11 @@
                     No flags at this time           
                 </span>          
          </td>  
-        <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0">
+        <td class="twenty" v-if="(risk.notesUpdatedAt.length) > 0" @mouseover="updateHover = true" @mouseleave="updateHover = false">
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
            {{moment(risk.notesUpdatedAt[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{risk.notes[risk.notes.length - 1].body}}
+           <br> {{ updateTruncate(risk) }}
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -100,7 +100,8 @@
         DV_risk: {},
         DV_edit_risk: {},
         has_risk: false,
-        showContextMenu: false
+        showContextMenu: false,
+        updateHover: false
       }
     },
     mounted() {
@@ -180,6 +181,12 @@
       openContextMenu(e) {
         e.preventDefault();
         this.$refs.menu.open(e);
+      },
+      updateTruncate(risk) {
+        if(!this.updateHover && risk.notes[risk.notes.length - 1].body.length > 80)
+          return risk.notes[risk.notes.length - 1].body.substring(0,79) + "...";
+        else
+          return risk.notes[risk.notes.length - 1].body;
       },
     },
     computed: {

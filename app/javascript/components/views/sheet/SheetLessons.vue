@@ -146,7 +146,9 @@
             <td>{{ lesson.title }}</td>
             <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
             <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td>{{ lesson.description }}</td>
+            <td @mouseover="descriptionHover = true" @mouseleave="descriptionHover = false">
+              {{ descriptionTruncate(lesson) }}
+              </td>
             <td class="text-center">
               <span v-if="lesson.important == true" v-tooltip="`Important`">
                 <i class="fas fa-star text-warning mr-1"></i
@@ -168,7 +170,7 @@
               </span>
             </td>
             <td>
-              <span v-if="lesson.last_update.body"
+              <span v-if="lesson.last_update.body" @mouseover="updateHover = true" @mouseleave="updateHover = false"
                 ><div
                   class="date-chip"
                   v-tooltip="'By: ' + lesson.last_update.user"
@@ -179,7 +181,7 @@
                     )
                   }}
                 </div>
-                {{ lesson.last_update.body }}</span
+                {{ updateTruncate(lesson) }}</span
               >
               <span v-else>No Updates</span>
             </td>
@@ -256,6 +258,8 @@ export default {
       showContextMenu: false,
       currentPage: 1,
       clickedLesson: {},
+      updateHover: false,
+      descriptionHover: false,
       search: "",
       uri: "data:application/vnd.ms-excel;base64,",
       template:
@@ -467,6 +471,18 @@ export default {
         this.$currentUser.role == "superadmin" ||
         this.$permissions.lessons[privilege]
       );
+    },
+    updateTruncate(lesson) {
+      if(!this.updateHover && lesson.last_update.body.length > 80)
+        return lesson.last_update.body.substring(0,79) + "...";
+      else
+        return lesson.last_update.body;
+    },
+    descriptionTruncate(lesson) {
+      if(!this.descriptionHover && lesson.description.length > 80)
+        return lesson.description.substring(0,79) + "...";
+      else
+        return lesson.description;
     },
   },
   computed: {

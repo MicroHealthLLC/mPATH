@@ -38,11 +38,11 @@
                 <!-- <span v-tooltip="`On Schedule`"><font-awesome-icon icon="calendar" class="text-success mr-1"  /> </span>           -->
             </span>          
          </td>
-         <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0">
+         <td class="oneSeven" v-if="(issue.notesUpdatedAt.length) > 0" @mouseover="updateHover = true" @mouseleave="updateHover = false">
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
            {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{issue.notes[issue.notes.length - 1].body}}
+           <br> {{ updateTruncate(issue) }}
         </td>
         <td class="oneSeven" v-else>No Updates</td>
       </tr>
@@ -103,7 +103,8 @@
         DV_edit_issue: {},
         has_issue: false,
         now: new Date().toISOString(),
-        showContextMenu: false
+        showContextMenu: false,
+        updateHover: false
       }
     },
     mounted() {
@@ -181,6 +182,12 @@
       openContextMenu(e) {
         e.preventDefault();
         this.$refs.menu.open(e);
+      },
+      updateTruncate(issue) {
+        if(!this.updateHover && issue.notes[issue.notes.length - 1].body.length > 80)
+          return issue.notes[issue.notes.length - 1].body.substring(0,79) + "...";
+        else
+          return issue.notes[issue.notes.length - 1].body;
       },
     },
     computed: {
