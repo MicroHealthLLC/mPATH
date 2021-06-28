@@ -190,8 +190,8 @@ export default {
       this.taskDeleted(this.DV_task)
     },
     updateTruncate(task) {
-      if(!this.updateHover && task.notes[task.notes.length - 1].body.length > 80)
-        return task.notes[task.notes.length - 1].body.substring(0,79) + "...";
+      if(!this.updateHover && task.notes[task.notes.length - 1].body.length > 160)
+        return task.notes[task.notes.length - 1].body.substring(0,159) + "...";
       else
         return task.notes[task.notes.length - 1].body;
     },
