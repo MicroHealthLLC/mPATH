@@ -108,6 +108,10 @@ class Task < ApplicationRecord
     }
   end
 
+  def porfolio_json
+    self.attributes
+  end
+
   def to_json(options = {})
     attach_files = []
     tf = self.task_files

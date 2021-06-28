@@ -132,6 +132,123 @@ class Project < SortableRecord
     hash
   end
 
+  def build_json_response_for_portfolio(resource_name, user)
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
+    all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
+    all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
+
+    all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
+    all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq
+    all_facility_ids = all_facility_projects.map(&:facility_id).compact.uniq
+
+    all_users = []
+    all_user_ids = []
+    resource_objects = []
+
+    if resource_name == "tasks"
+      all_tasks = Task.unscoped.includes([{task_files_attachments: :blob}, :task_type, :task_users, {users: :organization}, :task_stage, {checklists: [:user, {progress_lists: :user} ] }, { notes: :user }, :related_tasks, :related_issues, :related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |t1,t2| (t1.due_date && t2.due_date) ? (t1.due_date <=> t2.due_date) : ( t1.due_date ? -1 : 1 ) }
+      all_task_users = TaskUser.where(task_id: all_tasks.map(&:id) ).group_by(&:task_id)
+      all_user_ids += all_task_users.values.flatten.map(&:user_id)
+    end
+    
+    if resource_name == "issues"
+      all_issues = Issue.unscoped.includes([{issue_files_attachments: :blob}, :issue_type, :task_type, :issue_users, {users: :organization}, :issue_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility}, :issue_severity ]).where(facility_project_id: all_facility_project_ids)
+      all_issue_users = IssueUser.where(issue_id: all_issues.map(&:id) ).group_by(&:issue_id)
+      all_user_ids += all_issue_users.values.flatten.map(&:user_id)
+    end
+
+    if resource_name == "risks"
+      all_risks = Risk.unscoped.includes([{risk_files_attachments: :blob}, :task_type, :risk_users, {user: :organization},:risk_stage, {checklists: [:user, {progress_lists: :user} ] },  { notes: :user }, :related_tasks, :related_issues,:related_risks, :sub_tasks, :sub_issues, :sub_risks, {facility_project: :facility} ]).where(facility_project_id: all_facility_project_ids).sort{ |r1,r2| (r1.due_date && r2.due_date) ? (r1.due_date <=> r2.due_date) : ( r1.due_date ? -1 : 1 ) }
+      all_risk_users = RiskUser.where(risk_id: all_risks.map(&:id) ).group_by(&:risk_id)
+      all_user_ids += all_risk_users.values.flatten.map(&:user_id)
+    end
+
+    if resource_name == "notes"
+      all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
+    end
+
+    all_user_ids = all_user_ids.compact.uniq
+
+    all_users = User.includes(:organization).where(id: all_user_ids ).active
+    all_organizations = Organization.where(id: all_users.map(&:organization_id).compact.uniq )
+
+    all_facilities = Facility.includes(:facility_group).where(id: all_facility_ids)
+
+    if resource_name == "projects"
+      all_facilities.find_each{|f| resource_objects << f}
+      return resource_objects
+    end    
+
+    pph = user.project_privileges_hash
+    fph = user.facility_privileges_hash
+
+    all_facility_projects.each do |fp|
+
+      facility = all_facilities.detect{|f| f.id == fp.facility_id}
+
+      next if !facility
+      
+      if resource_name == "tasks"
+        # Building Tasks
+        # tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+        # h[:tasks] = tasks.map(&:to_json)
+        tasks = []
+        if user.has_permission?(resource: 'tasks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+          tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+          tids = tasks.map(&:id)
+        end
+
+        tasks.each do |t| 
+          resource_objects << t.porfolio_json #t.to_json({orgaizations: all_organizations, all_task_users: all_task_users[t.id], all_users: all_users, for: :project_build_response} )
+        end
+
+      end
+
+      if resource_name == "issues"
+        # Building Issues
+        # issues = all_issues.select{|i| i.facility_project_id == fp.id}
+        # h[:issues] = issues.map(&:to_json)
+        issues = []
+        if user.has_permission?(resource: 'issues', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+          issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
+          iids = issues.map(&:id)
+        end
+
+        issues.each do |i| 
+          resource_objects << i.porfolio_json #i.to_json( {orgaizations: all_organizations, all_issue_users: all_issue_users[i.id], all_users: all_users,for: :project_build_response} )
+        end
+      end
+
+      if resource_name == "risks"
+        # Building Risks
+        # risks = all_risks.select{|r| r.facility_project_id == fp.id}
+        # h[:risks] = risks.map(&:to_json)
+        risks = []
+        if user.has_permission?(resource: 'risks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+          risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
+          rids = risks.map(&:id)
+        end
+
+        risks.each do |r| 
+          resource_objects << r.porfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+      if resource_name == "notes"
+        # Building Notes
+        notes = []
+        if user.has_permission?(resource: 'notes', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+          notes = all_notes.select{|r| r.noteable_id == fp.id}
+        end
+
+        resource_objects = notes.map(&:to_json)
+      end
+
+    end
+
+    resource_objects
+  end
+  
   def build_json_response(user)
     all_facility_projects = FacilityProject.includes(:tasks, :status,:facility).where(project_id: self.id, facility: {status: :active})
     all_facility_project_ids = all_facility_projects.map(&:id).compact.uniq

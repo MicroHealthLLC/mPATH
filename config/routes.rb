@@ -62,6 +62,11 @@ Rails.application.routes.draw do
   patch "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#update"
   delete "/api/v1/programs/:program_id/projects/:project_id/lessons/:lesson_id" => "lessons#destroy"
 
+  get "/api/v1/portfolio/programs" => "projects#index"
+  get "/api/v1/portfolio/programs/:program_id/projects" => "projects#projects"
+  get "/api/v1/portfolio/programs/:program_id/tasks" => "projects#tasks"
+  get "/api/v1/portfolio/programs/:program_id/issues" => "projects#issues"
+  get "/api/v1/portfolio/programs/:program_id/risks" => "projects#risks"
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do

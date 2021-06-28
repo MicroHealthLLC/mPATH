@@ -48,7 +48,10 @@ class Issue < ApplicationRecord
     }
   end
 
-
+  def porfolio_json
+    self.attributes
+  end
+  
   def self.params_to_permit
     [
       :title,

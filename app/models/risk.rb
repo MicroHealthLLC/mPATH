@@ -100,7 +100,11 @@ class Risk < ApplicationRecord
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
-  
+
+  def porfolio_json
+    self.attributes
+  end
+
   def self.params_to_permit
     [
       :approved,
