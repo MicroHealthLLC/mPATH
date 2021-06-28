@@ -1033,7 +1033,7 @@ export default {
         .catch(() => {});
     },
     author(id) {
-      return this.activeProjectUsers.find((user) => user.id == id).fullName;
+      return this.projectUsers.find((user) => user.id == id).fullName;
     },
     addFile(files) {
       files.forEach((file) => {
@@ -1084,7 +1084,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "activeProjectUsers",
+      "projectUsers",
       "contentLoaded",
       "facilities",
       "facilityGroups",
