@@ -716,7 +716,7 @@
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
                 <span v-if="update.updated_at"
-                  >{{ author(update.user_id) }} on
+                  >{{ update.user.full_name }} on
                   {{ new Date(update.updated_at).toLocaleString() }}</span
                 ><span v-else
                   >{{ $currentUser.full_name }} on
