@@ -140,7 +140,7 @@ you will have to create an nginx service now
 
         bundle install
         
-        bin/rails db:migrate RAILS_ENV=production
+        rake db:migrate RAILS_ENV=production
         
         rake db:seed
 
