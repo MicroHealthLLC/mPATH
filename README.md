@@ -60,6 +60,12 @@ Agile portfolio management for large programs and projects including those geogr
 
 --enter the password for mysql where it says password then save and exit
 
+# generate your secrets for config/secrets.yml
+
+        rake secret
+
+put that output in config/secrets.yml
+
 # install passenger phusion
 
         yum install -y pygpgme curl
@@ -134,19 +140,16 @@ you will have to create an nginx service now
 
         bundle install
         
-        bin/rails db:migrate
+        bin/rails db:migrate RAILS_ENV=production
         
         rake db:seed
 
-        rake assets:precompile
+        rake assets:precompile RAILS_ENV=production
 
         chown -R nginx:nginx *
+        
+        Service nginx restart
 
-# generate your secrets for config/secrets.yml
-
-        rake secret
-
-put that output in config/secrets.yml
 
 # Setup
 go to https://your-url/admin
