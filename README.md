@@ -142,7 +142,7 @@ you will have to create an nginx service now
         
         rake db:migrate RAILS_ENV=production
         
-        rake db:seed
+        rake db:seed RAILS_ENV=production
 
         rake assets:precompile RAILS_ENV=production
 
