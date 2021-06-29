@@ -14,6 +14,14 @@ class Note < ApplicationRecord
     }
   end
 
+  def json_for_portfolio
+    {
+      id: id,
+      body: body,
+      created_at: created_at
+    }
+  end
+
   def to_json
     attach_files = []
     n_files = self.note_files

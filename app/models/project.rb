@@ -241,7 +241,7 @@ class Project < SortableRecord
           notes = all_notes.select{|r| r.noteable_id == fp.id}
         end
 
-        resource_objects = notes.map(&:to_json)
+        resource_objects += notes.map(&:json_for_portfolio)
       end
 
     end
