@@ -715,6 +715,14 @@ export default {
         this.DV_updated = true;
       });
     },
+   _isallowed(salut) {
+    var programId = this.$route.params.programId;
+    var projectId = this.$route.params.projectId
+    let fPrivilege = this.$projectPrivileges[programId][projectId]
+    let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+    let s = permissionHash[salut]
+    return this.$currentUser.role == "superadmin" || fPrivilege.overview.includes(s);      
+    },
   },
   computed: {
     ...mapGetters([
@@ -1161,11 +1169,7 @@ export default {
       }
       return taskTypes;
     },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.overview[salut];
-    },
+
   },
   watch: {
     contentLoaded: {
