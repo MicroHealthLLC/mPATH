@@ -33,7 +33,7 @@
       </div>
       <div class="ml-auto d-flex align-items-center">
         <button
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           class="btn btn-sm sticky-btn btn-primary text-nowrap btn-shadow mr-2"
         >
           Save Lesson
@@ -96,7 +96,7 @@
           :class="{ 'font-sm': isMapView }"
         >
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleImportant"
             v-tooltip="`Important`"
@@ -116,7 +116,7 @@
           </span>
 
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleReportable"
             v-tooltip="`Briefings`" 
@@ -136,7 +136,7 @@
             </small>
           </span>
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="watch_action clickable mx-2"
             @click.prevent.stop="toggleDraft"
             v-tooltip="`Draft`"
@@ -167,7 +167,7 @@
           type="text"
           placeholder="Lesson Name"
           :class="{ error: errors.has('Lesson Name') }"
-          :readonly="!isAllowed('write')"
+          :readonly="!_isallowed('write')"
         />
         <div v-show="errors.has('Lesson Name')" class="text-danger">
           {{ errors.first("Name") }}
@@ -187,7 +187,7 @@
           :class="{
             error: errors.has('Description'),
           }"
-          :readonly="!isAllowed('write')"
+          :readonly="!_isallowed('write')"
         ></el-input>
         <div v-show="errors.has('Description')" class="text-danger">
           {{ errors.first("Description") }}
@@ -202,7 +202,7 @@
           value-key="id"
           name="Category"
           placeholder="Select Category"
-          :disabled="!isAllowed('write')"
+          :disabled="!_isallowed('write')"
         >
           <!--TODO: Change taskTypes to categoryTypes -->
           <el-option
@@ -228,7 +228,7 @@
             format="DD MMM YYYY"
             placeholder="DD MM YYYY"
             class="w-100"
-            :disabled="!isAllowed('write')"
+            :disabled="!_isallowed('write')"
           />
         </div>
         <div v-show="errors.has('Date')" class="text-danger">
@@ -243,7 +243,7 @@
             v-show="lesson.lesson_stage_id"
             class="btn btn-sm btn-danger btn-shadow font-sm"
             @click.prevent="clearStage"
-            :disabled="!this.isAllowed('write')"
+            :disabled="!this._isallowed('write')"
           >
             Clear Stages
           </button>
@@ -279,7 +279,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Tasks
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'task')"
           >
@@ -317,7 +317,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Task"
                 @click.prevent="removeRelatedTask(task)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -325,7 +325,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Issues
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'issue')"
           >
@@ -363,7 +363,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Issue"
                 @click.prevent="removeRelatedIssue(issue)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -371,7 +371,7 @@
         <div :class="[isMapView ? 'col-12' : 'col']">
           Related Risks
           <span
-            v-if="isAllowed('write')"
+            v-if="_isallowed('write')"
             class="clickable"
             @click="openContextMenu($event, 'risk')"
           >
@@ -409,7 +409,7 @@
                 icon="el-icon-delete"
                 title="Remove Related Risk"
                 @click.prevent="removeRelatedRisk(risk)"
-                :disabled="!isAllowed('write')"
+                :disabled="!_isallowed('write')"
               ></el-button>
             </li>
           </ul>
@@ -420,7 +420,7 @@
     <div v-show="currentTab == 'tab3'" class="mt-2">
       <label>Successes</label>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addSuccess"
       >
@@ -461,7 +461,7 @@
               <i
                 class="el-icon-delete clickable ml-3"
                 @click="removeSuccess(index)"
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
               ></i>
             </div>
           </div>
@@ -470,7 +470,7 @@
             v-model="success.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -478,7 +478,7 @@
             v-model="success.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -487,7 +487,7 @@
     <div v-show="currentTab == 'tab4'" class="mt-2">
       <label>Failures</label>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addFailure"
       >
@@ -526,7 +526,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeFailure(index)"
               ></i>
@@ -537,7 +537,7 @@
             v-model="failure.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -545,7 +545,7 @@
             v-model="failure.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -555,7 +555,7 @@
     <div v-show="currentTab == 'tab5'" class="mt-2">
       <label>Best Practices</label>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addBestPractice"
       >
@@ -594,7 +594,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeBestPractice(index)"
               ></i>
@@ -605,7 +605,7 @@
             v-model="bestPractice.finding"
             type="textarea"
             placeholder="Please enter findings here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
 
           <label class="font-md">Recommendation</label>
@@ -613,7 +613,7 @@
             v-model="bestPractice.recommendation"
             type="textarea"
             placeholder="Please recommendation here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -623,7 +623,7 @@
     <div v-show="currentTab == 'tab6'" class="row mt-2">
       <div class="col-6">
         <AttachmentInput
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           @input="addFile"
           :show-label="true"
           class="mb-3"
@@ -635,16 +635,16 @@
             <div @click.prevent="downloadFile(file)">
               <font-awesome-icon icon="file" class="mr-2" />{{ file.name }}
             </div>
-            <div v-if="isAllowed('delete')" @click="removeFile(file.id, index)">
+            <div v-if="_isallowed('delete')" @click="removeFile(file.id, index)">
               <i class="fas fa-times delete-icon"></i>
             </div>
           </div>
         </div>
       </div>
       <div class="col-6">
-        <span v-if="isAllowed('write')">Add Link</span>
+        <span v-if="_isallowed('write')">Add Link</span>
         <span
-          v-if="isAllowed('write')"
+          v-if="_isallowed('write')"
           class="clickable"
           @click="addFileLink()"
         >
@@ -662,7 +662,7 @@
               </div></a
             >
             <div
-              v-if="isAllowed('delete')"
+              v-if="_isallowed('delete')"
               @click="removeFileLink(link.id, index)"
             >
               <i class="fas fa-times delete-icon"></i>
@@ -685,7 +685,7 @@
     <div v-show="currentTab == 'tab7'" class="mt-2">
       <label>Updates</label>
       <span
-        v-if="isAllowed('write')"
+        v-if="_isallowed('write')"
         class="clickable"
         @click.prevent="addUpdate"
       >
@@ -724,7 +724,7 @@
                 ></el-tag
               >
               <i
-                v-if="isAllowed('delete')"
+                v-if="_isallowed('delete')"
                 class="el-icon-delete clickable ml-3"
                 @click="removeUpdate(index)"
               ></i>
@@ -735,7 +735,7 @@
             v-model="update.body"
             type="textarea"
             placeholder="Please enter Description here..."
-            :readonly="!isAllowed('write')"
+            :readonly="!_isallowed('write')"
           ></el-input>
         </el-card>
       </paginate>
@@ -899,11 +899,13 @@ export default {
         }
       });
     },
-    isAllowed(privilege) {
-      return (
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.lessons[privilege]
-      );
+    _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.lessons.includes(s);      
     },
     close() {
       this.$router.push(
@@ -915,7 +917,7 @@ export default {
     },
     openContextMenu(e, item) {
       e.preventDefault();
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.$refs.menu.open(e, item);
       }
     },
@@ -947,7 +949,7 @@ export default {
       );
     },
     addSuccess() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.successes.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -969,7 +971,7 @@ export default {
         .catch(() => {});
     },
     addFailure() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.failures.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -991,7 +993,7 @@ export default {
         .catch(() => {});
     },
     addBestPractice() {
-      if (this.isAllowed("write")) {
+      if (this._isallowed("write")) {
         this.bestPractices.unshift({ id: "", finding: "", recommendation: "" });
       }
     },
@@ -1087,9 +1089,9 @@ export default {
       window.open(url, "_blank");
     },
     changeStage(stage) {
-      if (this.lesson.id && this.isAllowed("write")) {
+      if (this.lesson.id && this._isallowed("write")) {
         this.lesson.lesson_stage_id = stage.id;
-      } else if (this.isAllowed("write")) {
+      } else if (this._isallowed("write")) {
         this.SET_LESSON({ ...this.lesson, lesson_stage_id: stage.id });
       }
     },
