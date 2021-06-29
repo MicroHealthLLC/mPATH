@@ -23,6 +23,17 @@ td.col-issue_type, td.col-issue_severity {
   // color: #932419 !important;
 }
 
+
+.adminPanelBtn, .remove-btn {
+  // For Edit User Privileges
+  margin: 8px;
+}
+.remove-box {
+  margin-left: 8px;
+}
+#project_privileges_list, #facility_privilege_list {
+  margin-top: 10px;
+}
 //User Project Privilege CSS start
 li.has_many_container.facility_privileges {
   a.button.has_many_remove {
@@ -650,6 +661,19 @@ li.has_many_container.facility_privileges {
     color: #08A510;
     margin-left: 5px;
   }
+
+  ol {
+    li.select.input.required {
+      label {
+        text-transform: capitalize;
+      }
+      input {
+        margin-left: 1.25rem;
+        margin-right: .5rem;    
+        }
+      }
+    } 
+
   .select2-container {
     width: calc(80% - 22px) !important;
     .select2-selection--single {

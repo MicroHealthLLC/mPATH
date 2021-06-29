@@ -3,7 +3,7 @@
 - all_projects = Project.where(id: ( all_project_ids +  user.project_ids ).uniq ).active.distinct 
 - option_array = all_projects.map{|fp| [fp.id, fp.name ] }
 
-a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button"}Add Program Privilege
+a{href="javascript:void(0)" onclick="addProjectPrivilegeForm(this)" data-url=(project_privileges_load_form_path(user_id: user.id)) class="button adminPanelBtn"}Add Program Privilege
 
 div{id="message_div"}
 
@@ -13,7 +13,7 @@ div{id="project_privileges_list"}
     - project_ids = fp.project_ids
 
     fieldset(class="inputs has_many_fields")
-      input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
+      input(type="checkbox" class="remove-box" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
       ol
         li(class="select input required")
           div{id="project_privileges#{index}"}

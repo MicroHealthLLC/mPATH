@@ -4,7 +4,7 @@
 - facility_projects = FacilityProject.includes(:facility).where(project_id: active_projects.map(&:id) )
 - option_array = facility_projects.map{|fp| [fp.id, fp.facility.facility_name ] }
 
-a{href="javascript:void(0)" onclick="addFacilityPrivilegeForm(this)" data-url=(add_facility_privilege_form_path(user_id: user.id)) class="button has_many_add"}Add Project Privilege
+a{href="javascript:void(0)" onclick="addFacilityPrivilegeForm(this)" data-url=(add_facility_privilege_form_path(user_id: user.id)) class="button has_many_add adminPanelBtn"}Add Project Privilege
 
 div{id="facility_privilege_list"}
   - facility_privileges.each do |fp|

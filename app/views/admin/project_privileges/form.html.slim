@@ -2,7 +2,7 @@
 - fieldset_id = SecureRandom.hex(3)
 
 fieldset(class="inputs has_many_fields" id=(fieldset_id))
-  a{href="javascript:void(0)" class="button" onclick="$('##{fieldset_id}').remove()"} Remove
+  a{href="javascript:void(0)" class="button remove-btn" onclick="$('##{fieldset_id}').remove()"} Remove
   - if false
     input(type="checkbox" value="true" name="user[project_privileges_attributes][#{index}][_destroy]") Remove
   ol
