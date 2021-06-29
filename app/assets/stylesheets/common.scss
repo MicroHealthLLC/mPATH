@@ -886,6 +886,11 @@ th {
     font-size: 3em;
   }
 }
+
+.addProPrivBtn {
+  margin: 6px;
+}
+
 .paginated-updates /deep/ .paginate-links {
   float: right;
   display: flex;
@@ -1054,6 +1059,7 @@ i.el-icon-circle-close {
     }
   }
 }
+
 
 .error {
   .vue2-datepicker, .mx-datepicker {
