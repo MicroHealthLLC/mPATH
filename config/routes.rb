@@ -67,6 +67,7 @@ Rails.application.routes.draw do
   get "/api/v1/portfolio/programs/:program_id/tasks" => "projects#tasks"
   get "/api/v1/portfolio/programs/:program_id/issues" => "projects#issues"
   get "/api/v1/portfolio/programs/:program_id/risks" => "projects#risks"
+  get "/api/v1/portfolio/programs/:program_id/notes" => "projects#notes"
 
   resources :dashboard, only: [:index]
   resources :projects, only: [:index, :show] do
