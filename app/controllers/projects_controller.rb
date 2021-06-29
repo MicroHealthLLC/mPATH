@@ -89,6 +89,15 @@ class ProjectsController < AuthenticatedController
     end
   end
 
+  def lessons
+    project = current_user.projects.includes(:project_type).active.find(params[:program_id])
+    response_hash = project.build_json_response_for_portfolio("lessons", current_user)
+    respond_to do |format|
+      format.json {render json: response_hash }
+      format.html {}
+    end
+  end
+
   def show
     @project = current_user.projects.active.find_by(id: params[:id])
     check_permit("map_view")

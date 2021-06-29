@@ -163,6 +163,10 @@ class Project < SortableRecord
       all_user_ids += all_risk_users.values.flatten.map(&:user_id)
     end
 
+    if resource_name == "lessons"
+      all_lessons = Lesson.unscoped.includes(Lesson.lesson_preload_array).where(facility_project_id: all_facility_project_ids)
+    end
+
     if resource_name == "notes"
       all_notes = Note.unscoped.where(noteable_id: all_facility_project_ids, noteable_type: "FacilityProject")
     end
@@ -195,7 +199,6 @@ class Project < SortableRecord
         tasks = []
         if user.has_permission?(resource: 'tasks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
           tasks = all_tasks.select{|t| t.facility_project_id == fp.id }.compact.uniq
-          tids = tasks.map(&:id)
         end
 
         tasks.each do |t| 
@@ -211,7 +214,6 @@ class Project < SortableRecord
         issues = []
         if user.has_permission?(resource: 'issues', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
           issues = all_issues.select{|t| t.facility_project_id == fp.id }.compact.uniq
-          iids = issues.map(&:id)
         end
 
         issues.each do |i| 
@@ -226,10 +228,21 @@ class Project < SortableRecord
         risks = []
         if user.has_permission?(resource: 'risks', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
           risks = all_risks.select{|t| t.facility_project_id == fp.id }.compact.uniq
-          rids = risks.map(&:id)
         end
 
         risks.each do |r| 
+          resource_objects << r.porfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
+        end
+      end
+
+      if resource_name == "lessons"
+        # Building Lessons
+        lessons = []
+        if user.has_permission?(resource: 'lessons', program: fp.project_id, project: fp.facility_id, project_privileges_hash: pph, facility_privileges_hash: fph)
+          lessons = all_lessons.select{|t| t.facility_project_id == fp.id }.compact.uniq
+        end
+
+        lessons.each do |r| 
           resource_objects << r.porfolio_json #r.to_json( {orgaizations: all_organizations, all_risk_users: all_risk_users[r.id], all_users: all_users, for: :project_build_response} )
         end
       end
@@ -241,7 +254,7 @@ class Project < SortableRecord
           notes = all_notes.select{|r| r.noteable_id == fp.id}
         end
 
-        resource_objects += notes.map(&:json_for_portfolio)
+        resource_objects += notes.map(&:porfolio_json)
       end
 
     end

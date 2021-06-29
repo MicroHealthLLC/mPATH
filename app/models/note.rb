@@ -14,7 +14,7 @@ class Note < ApplicationRecord
     }
   end
 
-  def json_for_portfolio
+  def porfolio_json
     {
       id: id,
       body: body,
