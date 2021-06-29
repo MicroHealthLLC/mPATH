@@ -15,8 +15,9 @@ class FacilityPrivilege < ApplicationRecord
 
   validates_presence_of :project_id, :facility_project_ids
   before_save :remove_blank_string
+  before_save :check_for_admin_privileges
 
-  PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes"]
+  PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   def remove_blank_string
@@ -26,6 +27,21 @@ class FacilityPrivilege < ApplicationRecord
     issues.delete("")
     risks.delete("")
     notes.delete("")
+    lessons.delete("")
+  end
+
+  def check_for_admin_privileges
+    if admin && admin.any?
+      # admin_changed? 
+      # admin_was
+      fp = self
+      fp.overview = ( (fp.overview || []) + admin).compact.uniq
+      fp.tasks = ( (fp.tasks || [])  + admin).compact.uniq
+      fp.issues = ( (fp.issues || []) + admin).compact.uniq
+      fp.risks = ( (fp.risks || []) + admin).compact.uniq
+      fp.notes = ( (fp.notes || []) + admin).compact.uniq
+      fp.lessons = ( (fp.lessons || []) + admin).compact.uniq
+    end
   end
 
   def get_permission_hash(permission_str)

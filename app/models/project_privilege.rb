@@ -12,10 +12,26 @@ class ProjectPrivilege < ApplicationRecord
 
   serialize :project_ids, Array
 
-  PRIVILEGE_MODULE = ["overview", "admin", "tasks", "issues", "risks", "notes", "lessons"]
+  before_save :check_for_admin_privileges
+
+  PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
 
   validates :project_ids, presence: true
   validates :user_id, presence: true, on: :update
+
+  def check_for_admin_privileges
+    if admin && admin.any?
+      # admin_changed? 
+      # admin_was
+      fp = self
+      fp.overview = ( (fp.overview || []) + admin).compact.uniq
+      fp.tasks = ( (fp.tasks || [])  + admin).compact.uniq
+      fp.issues = ( (fp.issues || []) + admin).compact.uniq
+      fp.risks = ( (fp.risks || []) + admin).compact.uniq
+      fp.notes = ( (fp.notes || []) + admin).compact.uniq
+      fp.lessons = ( (fp.lessons || []) + admin).compact.uniq
+    end
+  end
 
 end
