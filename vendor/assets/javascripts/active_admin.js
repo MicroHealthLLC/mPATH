@@ -15,7 +15,115 @@ function checkRiskProbabilityImpactNumber(element){
   }
 }
 
+function addFacilityPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  let program_ids = $.map( $(".project_select"), function(e, i){
+    return $(e).val()
+  } ) 
+  $.ajax({
+    url: url,
+    data: {program_ids: program_ids},
+    success: function(res, data){
+      $("#facility_privilege_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function addProjectPrivilegeForm(element){
+  let url = $(element).attr("data-url")
+  $.ajax({
+    url: url,
+    success: function(res, data){
+      if(!res.projects_avaialble){
+        alert("All program privileges are set.")
+        return
+      }
+      $("#project_privileges_list").prepend(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function programSelectChange(element){
+  var project_id = $(element).val()
+  if(project_id == "select_project") return
+  var div_id = $(element).attr("data-div-id")
+  var user_id = $(element).attr("data-user-id")
+  let paramsIndex = $(element).attr("data-index")
+  $.ajax({
+    url: '/facility_privileges/facility_privileges_partial',
+    data: {project_id: project_id, user_id: user_id, index: paramsIndex},
+    success: function(res, data){
+      $("#"+div_id).html(res.html)
+    },
+    errors: function(data){
+      alert("Error loading data. Please try again later")
+    }
+  })
+}
+
+function initializeProjectPrivilegeSelect2(){
+
+  $.map($(".project_selection_input"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))  
+    }    
+
+    $(element).select2({
+      placeholder: "Search and select Project",
+      allowClear: true,
+      tags: true      
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
+function initializeProgramPrivilegeSelect2(){
+  $.map($(".project_select"), function(element){
+    let selectedData = []
+    if($(element).attr("data-selected")){
+      selectedData = JSON.parse($(element).attr("data-selected"))  
+    }    
+
+    $(element).select2({
+      placeholder: "Search and select Programs",
+      allowClear: true,
+      tags: true      
+    }).val(selectedData).trigger('change')
+
+    // $(element).on("select2:open", function (evt) {
+    //   var element = evt.params.data.element;
+    //   var $element = $(element);
+
+    //   $element.detach();
+    //   $(this).append($element);
+    //   $(this).trigger("change");
+    // });
+
+  })
+
+}
+
 jQuery(function($) {
+
+  initializeProjectPrivilegeSelect2()
+  initializeProgramPrivilegeSelect2()
 
   $("#q_lesson_id").select2({
     placeholder: "Search and select Lesson",
@@ -29,7 +137,7 @@ jQuery(function($) {
   
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
-    allowClear: true
+    allowClear: false
   });
 
   // Add placeholder to for organization select
@@ -506,7 +614,7 @@ jQuery(function($) {
 
   // user role previliges
   //if ($("#user-role_privilege-tab").is(":visible"))
-  if(true)
+  if($("#user-role_privilege-tab").length > 0)
   {
     let role_privilege = new Vue({
       el: "#user-role_privilege-tab",

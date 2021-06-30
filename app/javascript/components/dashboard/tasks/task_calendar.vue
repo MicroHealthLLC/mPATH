@@ -1,4 +1,3 @@
-
 <template>
 <div>
    <span class="filters-wrapper w-75">
@@ -468,6 +467,14 @@
            this.reRenderCalendar()
         }
       },
+      _isallowed(salut) {
+         var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      },
       updateRange ({ start, end }) {    
         // Mapping over Task Names, Start Dates, and Due Dates 
       if (this.filteredCalendar !== undefined && this.filteredCalendar.length > 0) {
@@ -565,9 +572,7 @@
      
      
        ]),
-       _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
+
       filteredCalendar() {
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
         let stageIds = _.map(this.taskStageFilter, 'id')

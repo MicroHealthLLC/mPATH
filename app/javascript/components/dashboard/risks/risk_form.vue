@@ -259,6 +259,7 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
+                  class ="inner-name-lowercase"
                   :class="{
                     error: errors.has('Risk Name'),
                   }"
@@ -2207,6 +2208,15 @@ export default {
        log(e){
           console.log("This is the riskDispStatus item: " + e)
       },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.risks.includes(s); 
+    },
     urlShortener(str, length, ending) {
       if (length == null) {
         length = 70;
@@ -2996,11 +3006,6 @@ export default {
         "desc"
       );
     },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.risks[salut];
-    },
     matrix11() {
       if (
         this.selectedRiskImpactLevel.id == 1 &&
@@ -3665,7 +3670,12 @@ ul {
   background-color: #fafafa;
 }
 /deep/.el-input__inner {
-  text-transform: capitalize !important;
+  text-transform: capitalize;
+}
+.inner-name-lowercase{
+  /deep/.el-input__inner{
+    text-transform: none !important;
+  }
 }
 .fa-building {
   font-size: large !important;

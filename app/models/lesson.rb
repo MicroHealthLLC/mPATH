@@ -95,7 +95,6 @@ class Lesson < ApplicationRecord
     s_tasks = []
     s_issues = []
     s_risks = []
-    # binding.pry
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
 
@@ -178,7 +177,6 @@ class Lesson < ApplicationRecord
     users_first_name_hash = {} 
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
-    # binding.pry
     s_notes = notes.sort{|n| n.created_at }
     latest_update = s_notes.first ? s_notes.first.json_for_lasson : {}
     self.as_json.merge(

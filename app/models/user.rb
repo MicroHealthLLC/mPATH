@@ -11,6 +11,7 @@ class User < ApplicationRecord
   belongs_to :organization, optional: true
   has_many :query_filters, dependent: :destroy
   has_many :facility_privileges, dependent: :destroy
+  has_many :project_privileges, dependent: :destroy
 
   validates :first_name, :last_name, presence: true
   validate :password_complexity
@@ -22,7 +23,8 @@ class User < ApplicationRecord
   scope :admin, -> {joins(:privilege).where("privileges.admin LIKE ? OR role = ?", "%R%", 1).distinct}
 
   accepts_nested_attributes_for :privilege, reject_if: :all_blank
-  accepts_nested_attributes_for :facility_privileges, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :facility_privileges, reject_if: proc { |attributes| attributes['facility_project_ids'].blank? }, allow_destroy: true
+  accepts_nested_attributes_for :project_privileges, reject_if: :all_blank, allow_destroy: true
 
   PREFERENCES_HASH =  {
       navigation_menu: 'map', 
@@ -47,8 +49,16 @@ class User < ApplicationRecord
     options
   end
 
-  def facility_privileges_hash
-    self.facility_privileges.includes(:facility, :facility_project)
+  def active_admin_project_privilege_select_options
+    fps_hash = self.projects.active
+    options = []
+    fps_hash.each do |project, fps|
+      options << [project.name, project.id, {disabled: true}]
+      fps.each do |f|
+        options << ["&nbsp;#{f.facility.facility_name}".html_safe, f.id]
+      end
+    end    
+    options
   end
 
   def encrypted_authentication_token
@@ -242,7 +252,118 @@ class User < ApplicationRecord
     projects.active.pluck :name
   end
 
+  # NOTE: this function is used for top level navigation
+  # check javascript/packs/dashboard.js
+  def privilege_hash
+    p = self.privilege
+    h = {
+      map_view: p.map_view,
+      gantt_view: p.gantt_view,
+      members: p.members,
+      sheets_view: p.sheets_view,
+      kanban_view: p.kanban_view,
+      calendar_view: p.calendar_view,
+      #NOTE: hard coding because lesson will go under project level. 
+      # Once front end is working with project, do remove this permission.
+      # This is used in topLevelNavigation for now 
+      lessons: p.lessons
+    }
+  end
+
+  def project_privileges_hash
+    user = self
+    pv = user.project_privileges
+    ph = {}
+    project_ids_with_privileges = []
+    pv.each do |p|
+      pids = p.project_ids.map(&:to_s)
+      project_ids_with_privileges = project_ids_with_privileges + pids
+      module_permissions = p.attributes.clone.except("id", "created_at", "updated_at", "user_id", "project_id", "project_ids")
+      module_permissions.transform_values{|v| v.delete(""); v}
+
+      pids.each do |pid|
+        ph[pid.to_s] = module_permissions
+      end
+    end
+
+    project_ids_with_privileges = project_ids_with_privileges.compact.uniq
+    user_project_ids = user.project_ids.map(&:to_s)
+    remaining_project_ids = user_project_ids - project_ids_with_privileges
+    
+    if remaining_project_ids.any?
+      user_privilege_attributes = (user.privilege || Privilege.new(user_id: user.id)).attributes.clone
+      user_privilege_attributes = user_privilege_attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_manager_view")
+      user_privilege_attributes = user_privilege_attributes.transform_values{|v| v.delete(""); v.chars}
+
+      remaining_project_ids.each do |pid|
+        ph[pid.to_s] = user_privilege_attributes
+      end
+    end
+
+    ph
+  end
+
+  #This will build has like this
+  # {<project_id> : { <facility_id>: { <all_perissions> } }
+  def facility_privileges_hash
+    user = self
+    fp = user.facility_privileges
+    
+    pids = user.project_ids #fp.pluck(:project_id)    
+    
+    fph = Hash.new{|h, (k,v)| h[k] = {} }
+    fph2 = Hash.new{|h, (k,v)| h[k] = [] }
+
+    fp.each do |f|
+      facility_project_ids = f.facility_project_ids
+      f_permissions = f.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "facility_project_ids", "facility_project_id", "facility_id").clone.transform_values{|v| v.delete(""); v }
+      f_permissions = f_permissions.transform_values{|v| v.delete(""); v}
+
+      facility_project_ids.each do |fid|
+        fph2[f.project_id.to_s] << fid.to_s 
+        fph[f.project_id.to_s][fid] = f_permissions.merge!({"facility_id" => fid})
+      end
+    end
+
+    pp_hash = user.project_privileges_hash
+
+    facility_project_hash = FacilityProject.includes(:facility, :project).where(project_id: pids).group_by{|p| p.project_id.to_s}.transform_values{|fp| fp.flatten.map{|f| f.facility_id.to_s }.compact.uniq }
+
+    facility_project_hash.each do |pid, fids|
+      fids2 = fids - ( fph2[pid] || [])
+      p_privilege = pp_hash[pid]
+      fids2.each do |ff|
+        fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
+      end       
+    end
+    fph
+  end
+
+  def has_permission?(action: "read", resource: , program: nil, project: nil, project_privileges_hash: {}, facility_privileges_hash: {} )
+    begin
+      program_id = program.is_a?(Project) ? program.id.to_s : program.to_s
+      project_id = project.is_a?(Facility) ? project.id.to_s : project.to_s
+      action_code_hash = {"read" => "R", "write" => "W", "delete" => "D"}
+      pph = project_privileges_hash.present? ? project_privileges_hash : self.project_privileges_hash
+      result = false
+      short_action_code = action_code_hash[action]
+      if pph[program_id]
+        fph = facility_privileges_hash.present? ? facility_privileges_hash : self.facility_privileges_hash
+        if fph[program_id][project_id]
+          result = fph[program_id][project_id][resource].include?(short_action_code)
+        else
+          result = pph[program_id][resource].include?(short_action_code)
+        end        
+      end
+    rescue Exception => e
+      puts "Exception in  User#has_permission? #{e.message}"
+      result = false
+    end
+    return result
+  end
+
   def allowed?(view)
     privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
   end
+
 end

@@ -1,0 +1,14 @@
+- index = SecureRandom.random_number(10000000)
+- fieldset_id = SecureRandom.hex(3)
+
+fieldset(class="inputs has_many_fields" id=(fieldset_id))
+  a{href="javascript:void(0)" class="button remove-btn" onclick="$('##{fieldset_id}').remove()"} Remove
+  ol
+    li(class="select input required")
+      label Select Program
+      select{class="facility_project_select" onchange='programSelectChange(this)' name="user[facility_privileges_attributes][#{index}][project_id]" data-div-id="project_section_#{index}" data-index="#{index}" data-user-id="#{user.id}"}
+        option{value="select_project"} Select Program
+        - @active_projects.each do |project|
+          option{value="#{project.id}"}= project.name
+
+    div{id="project_section_#{index}"}

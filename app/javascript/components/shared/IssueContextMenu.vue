@@ -12,10 +12,10 @@
       <hr />
       <el-menu-item
         @click="createDuplicate"
-        :disabled="!$permissions.issues.write"
+        :disabled="!isAllowed('write', 'issues')"
         >Duplicate</el-menu-item
       >
-      <el-submenu index="1" :disabled="!$permissions.issues.write">
+      <el-submenu index="1" :disabled="!isAllowed('write', 'issues')">
         <template slot="title">
           <span slot="title">Duplicate to...</span>
         </template>
@@ -57,7 +57,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-submenu index="2" :disabled="!$permissions.issues.write">
+      <el-submenu index="2" :disabled="!isAllowed('write', 'issues')">
         <template slot="title">
           <span slot="title">Move to...</span>
         </template>
@@ -79,7 +79,7 @@
         </div>
       </el-submenu>
       <hr />
-      <el-menu-item @click="deleteIssue" :disabled="!$permissions.issues.delete"
+      <el-menu-item @click="deleteIssue" :disabled="!isAllowed('delete', 'issues')"
         >Delete</el-menu-item
       >
     </el-menu>
@@ -156,16 +156,19 @@ export default {
       } else {
         return this.submitted;
       }
-    },
-    isAllowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.issues[salut];
-    },
+    }
   },
   methods: {
     ...mapActions(["issueDeleted"]),
     ...mapMutations(["updateIssuesHash"]),
+    isAllowed(salut, module) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege[module].includes(s); 
+    },
     // closes context menu
     close() {
       this.show = false;
@@ -194,7 +197,7 @@ export default {
       this.close();
     },
     moveIssue(issue, facilityProjectId) {
-      if (!this.isAllowed("write")) return;
+      if (!this.isAllowed("write", 'issues')) return;
       this.$validator.validate().then((success) => {
         if (!success || this.loading) {
           this.showErrors = !success;

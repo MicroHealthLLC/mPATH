@@ -256,9 +256,6 @@
       isUpdated() {
         return this.DV_task.dueDate != this.AC_task.endDate || this.DV_task.startDate != this.AC_task.startDate || this.DV_task.progress != this.AC_task.progress
       },
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      }
     },
     methods: {
       ...mapActions([
@@ -267,6 +264,10 @@
       ...mapMutations([
         'setPreviousRoute'
       ]),
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        return this.$currentUser.role == "superadmin" || Vue.prototype.$topNavigationPermissions.gantt_view[salut] 
+      },
       handleClick({column, data}) {
         if (!this._isallowed("write")) return
         if (!data.taskUrl || !column.label) return

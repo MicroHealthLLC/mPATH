@@ -1390,6 +1390,15 @@ export default {
         notes: [],
       };
     },
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.issues.includes(s); 
+    },
     selectedStage(item) {
       if (this._isallowed("write")) {
         this.selectedIssueStage = item;
@@ -2066,11 +2075,6 @@ export default {
         "createdAt",
         "desc"
       );
-    },
-    _isallowed() {
-      return (salut) =>
-        this.$currentUser.role == "superadmin" ||
-        this.$permissions.issues[salut];
     },
     tab() {
       if (this.$route.path.includes("map")) {

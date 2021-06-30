@@ -396,6 +396,15 @@
         'setToggleRACI',
         'setTaskForManager'
       ]),
+      //TODO: change the method name of isAllowed
+      _isallowed(salut) {
+        var programId = this.$route.params.programId;
+        var projectId = this.$route.params.projectId
+        let fPrivilege = this.$projectPrivileges[programId][projectId]
+        let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+        let s = permissionHash[salut]
+        return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      },
       sort:function(s) {
       //if s == current sort, reverse
       if(s === this.currentSort) {
@@ -476,9 +485,6 @@
         'viewPermit',
         'getToggleRACI'
       ]),
-      _isallowed() {
-        return salut => this.$currentUser.role == "superadmin" || this.$permissions.tasks[salut]
-      },
       filteredTasks() {
 
         let typeIds = _.map(this.C_taskTypeFilter, 'id')
