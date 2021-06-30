@@ -20,6 +20,14 @@ class ProjectPrivilege < ApplicationRecord
 
   validates :project_ids, presence: true
   validates :user_id, presence: true, on: :update
+  validate :check_minimum_privilege
+
+  def check_minimum_privilege
+    fp = self
+    if !fp.overview.join.present? && !fp.tasks.join.present? && !fp.issues.join.present? && !fp.risks.join.present? && !fp.notes.join.present? && !fp.lessons.join.present?
+      fp.errors.add(:base, "Program privileges can not be blank")
+    end
+  end
 
   def check_for_admin_privileges
     if admin && admin.any?

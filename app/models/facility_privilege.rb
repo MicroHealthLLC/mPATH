@@ -18,10 +18,17 @@ class FacilityPrivilege < ApplicationRecord
   before_save :add_read_privilege
   before_save :check_for_admin_privileges
 
-  
+  validate :check_minimum_privilege
 
   PRIVILEGE_MODULE = ["admin", "overview", "tasks", "issues", "risks", "notes", "lessons"]
   PRIVILEGE_PERMISSIONS = [['Read', 'R'], ['Write', 'W'], ['Delete', 'D'] ]
+
+  def check_minimum_privilege
+    fp = self
+    if !fp.overview.join.present? && !fp.tasks.join.present? && !fp.issues.join.present? && !fp.risks.join.present? && !fp.notes.join.present? && !fp.lessons.join.present?
+      fp.errors.add(:base, "Project Privileges can not be blank")
+    end
+  end
 
   def remove_blank_string
     overview.delete("")
