@@ -1,7 +1,7 @@
 ActiveAdmin.register LessonDetail do
   menu parent: "Lessons", priority: 3
   actions :all, except: [:show]
-  
+
   breadcrumb do
     links = [link_to('Admin', admin_root_path), link_to('Lesson Details', admin_lesson_details_path)]
     if %(show edit).include?(params['action'])
@@ -12,23 +12,23 @@ ActiveAdmin.register LessonDetail do
 
   permit_params do
     permitted = [
-      :finding, 
-      :recommendation, 
-      :user_id, 
-      :lesson_id,  
+      :finding,
+      :recommendation,
+      :user_id,
+      :lesson_id,
       :detail_type
     ]
     permitted
   end
-  
+
   index do
     column :id
     column :finding
     column :recommendation
-    column :user, sortable: 'users.first_name' 
-    column :lesson, sortable: 'lessons.title' 
+    column :user, sortable: 'users.first_name'
+    column :lesson, sortable: 'lessons.title'
     column :detail_type do |lesson_detail|
-      "<span>#{lesson_detail.detail_type.humanize}</span>".html_safe
+      "<span>#{lesson_detail.detail_type.titleize}</span>".html_safe
     end
     actions defaults: false do |lesson_detail|
       item "Edit", edit_admin_lesson_detail_path(lesson_detail), title: 'Edit', class: "member_link edit_link" if current_user.admin_write?
@@ -60,7 +60,7 @@ ActiveAdmin.register LessonDetail do
     def check_writeability
       redirect_to '/not_found' and return unless current_user.admin_write?
     end
-    
+
     def scoped_collection
       super.includes(:lesson, :user)
     end
