@@ -47,14 +47,14 @@
             </span>
               
         </td>
-        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0" @mouseover="updateHover = true" @mouseleave="updateHover = false">
+        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
            <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
           {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
             </span>
             <br> 
-            <div class="updateDiv" :class="{ open: updateHover }">
+            <span class="truncate-line-five">
               {{task.notes[task.notes.length - 1].body}}
-            </div>
+            </span>
            
         </td>       
         <td v-else class="twentyTwo">No Updates</td>
@@ -119,8 +119,7 @@ export default {
       DV_edit_task: {},
       DV_edit_issue: {},
       has_task: false,
-      showContextMenu: false,
-      updateHover:false
+      showContextMenu: false
     };
   },
   mounted() {
@@ -226,11 +225,6 @@ export default {
       },
       deep: true,
     },
-    /* updateHover: {
-      handler(value) {
-        value ? updateDiv.classList.add('open') : updateDiv.classList.remove('open');
-      },
-    }, */
     filterTree(value) {
       this.$refs.duplicatetree.filter(value);
       this.$refs.movetree.filter(value);
@@ -370,45 +364,17 @@ td {
       background-color: rgba(91, 192, 222, 0.3);
     }
   }
-  .updateDiv {
-    max-height: 100px;
-    display: -webkit-updateDiv;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;  
-    overflow: hidden;
-    transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
-    //transition: overflow 0.5s linear;
-    animation: hide 0.2s linear 0s forwards;
-  }
-  .updateDiv:hover {
-    display: -webkit-updateDiv;
-    //-webkit-line-clamp: initial;
-    animation: show 0.2s linear 0s forwards;
-  }
-  .updateDiv.open {
-    max-height: 100rem;
-    overflow: hidden;
-    transition: max-height 0.3s cubic-bezier(0.9, 0, 0.8, 0.2);
-  }
-  @keyframes show {
-    from {
-      //line-clamp: 5;
-      -webkit-line-clamp: 5;
-    }
-    to {
-      //line-clamp: initial;
-      -webkit-line-clamp: initial;
-    }
-  }
-  @keyframes hide {
-    from {
-      //line-clamp: initial;
-      -webkit-line-clamp: initial;
-    }
-    to {
-      //line-clamp: 5;
-      -webkit-line-clamp: 5;
-    }
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
   }
 }
 </style>
