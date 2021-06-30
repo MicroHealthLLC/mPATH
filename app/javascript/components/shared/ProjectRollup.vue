@@ -814,10 +814,6 @@ export default {
       today: new Date().toISOString().slice(0, 10),
     };
   },
-   mounted() {
-    this.fetchProgramLessons(this.$route.params);
- 
-  },
   computed: {
     ...mapGetters([
       "contentLoaded",
@@ -1327,7 +1323,7 @@ export default {
     },
   },
   methods: {
-     ...mapActions(["fetchProgramLessons"]),
+
     showLessToggle() {
       this.showLess = "Show Less";
     },

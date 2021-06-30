@@ -1,11 +1,13 @@
 .body-wrapper
   .mt-2.container
-    .container.mb-4.text-center.d-inline-block
+    .container.mb-2.text-center.d-inline-block
       h4.mt-1.text-center.mpath-logo
        | Welcome to  
       span.mpathLogo   
         =image_tag "mpath.svg"
     br
+     =link_to "api/v1/portfolio/programs", class: "nav-link mb-2 p-0 float-right", target: "_blank" do
+        | PORTFOLIO VIEWER
     .grid-container.program-name
       -if @active_projects.size > 0
         - @active_projects.each do |project|
