@@ -259,6 +259,7 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
+                  class ="inner-name-lowercase"
                   :class="{
                     error: errors.has('Risk Name'),
                   }"
@@ -3669,7 +3670,12 @@ ul {
   background-color: #fafafa;
 }
 /deep/.el-input__inner {
-  text-transform: capitalize !important;
+  text-transform: capitalize;
+}
+.inner-name-lowercase{
+  /deep/.el-input__inner{
+    text-transform: none !important;
+  }
 }
 .fa-building {
   font-size: large !important;
