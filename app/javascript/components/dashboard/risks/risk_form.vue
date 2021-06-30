@@ -3668,9 +3668,6 @@ ul {
 /deep/.el-collapse-item__header {
   background-color: #fafafa;
 }
-/deep/.el-input__inner {
-  text-transform: capitalize !important;
-}
 .fa-building {
   font-size: large !important;
   color: #383838 !important;
