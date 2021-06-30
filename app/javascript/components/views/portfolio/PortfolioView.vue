@@ -1,241 +1,518 @@
 <template>
-<div class="container-fluid m-2">
-  <el-tabs type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Portfolio Overview" class="p-3">
+<div class="container-fluid mt-5 mx-3">
+  <!-- Actual Portfolio name will be dynamic value of organization name   -->
+<div>
+ <h3 class="d-inline programName" >MicroHealth BO Portfolio</h3>
+ <span class="float-right mr-4"><button style="cursor:pointer"><i class="far fa-times-circle"></i></button> </span>
+  </div>
+  <el-tabs class="mt-2 mr-3 " type="border-card" @tab-click="handleClick">
+  <el-tab-pane label="Portfolio View" class="p-3">
+     <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
+       <!-- TASKS -->
+     <el-tab-pane label="Tasks" class="p-3">
+             <div class="row pt-2 text-center w-50 tcard">
+          
+                <div class="pb-0 pl-2 pr-4 mb-0">                  
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="smallerFont">COMPLETE</span>
+                   <h4 class="d-block">12</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                     <span class="smallerFont">IN PROGRESS</span> 
+                     <h4 class="d-block">64</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                    <span class="smallerFont">OVERDUE </span> 
+                    <h4 class="d-block">64</h4>                     
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
+                    <span class="smallerFont">ONGOING </span>    
+                      <h4 class="d-block">34</h4>  
+                </div> 
+                 <div class="py-0 px-4  mb-0">
+                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                      <span class="smallerFont">PLANNED</span>
+                        <h4 class="d-block">10</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                     <span class="smallerFont">ON HOLD</span> 
+                       <h4 class="d-block">42</h4>            
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span class="smallerFont">DRAFTS</span>   
+                       <h4 class="d-block">6</h4>              
+                </div> 
+            
+              </div>
+
+    <div class="row text-center mt-3" v-if="programObj !== null"> 
+         
+    <el-table
+    :data="programObj"  
+    class="mt-4 table-bordered"
+    style="width: 100%">
+    <el-table-column
+      fixed
+      prop="name"
+      sortable
+      label="Program"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="project"
+       sortable
+      label="Project"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="task"
+       sortable
+      label="Task"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="category"
+      label="Category"
+       sortable
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="startDate"
+      label="Start Date"
+       sortable
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="dueDate"
+      label="Due Date"
+       sortable
+      width="100">
+    </el-table-column>
+     <el-table-column
+      prop="users"
+      label="Assigned Users"
+       sortable
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="progress"
+      sortable
+      label="Progress"
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="flags"
+      label="Flags"
+       sortable
+      width="150">
+    </el-table-column>
+     <el-table-column
+      prop="lastUpdate"
+      label="Last Update"
+       sortable
+      width="300">
+    </el-table-column>
+    <!-- <el-table-column
+      fixed="right"
+      label="Operations"
+      width="120"> -->
+      <!-- <template slot-scope="scope">
+        <el-button @click="handleClick" type="text" size="small">Detail</el-button>
+        <el-button type="text" size="small">Edit</el-button>
+      </template> -->
+    <!-- </el-table-column> -->
+  </el-table>
+     
+              
+    </div>       
+
+
+               
+     </el-tab-pane>
+      <el-tab-pane label="Issues" class="p-3">
+             <div class="row pt-2 text-center w-50 tcard">
+          
+                <div class="pb-0 pl-2 pr-4 mb-0">                  
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="smallerFont">COMPLETE</span>
+                   <h4 class="d-block">19</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                     <span class="smallerFont">IN PROGRESS</span> 
+                     <h4 class="d-block">4</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                    <span class="smallerFont">OVERDUE </span> 
+                    <h4 class="d-block">62</h4>                     
+                </div>
+                
+                 <div class="py-0 px-4  mb-0">                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                      <span class="smallerFont">PLANNED</span>
+                        <h4 class="d-block">11</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                     <span class="smallerFont">ON HOLD</span> 
+                       <h4 class="d-block">42</h4>            
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span class="smallerFont">DRAFTS</span>   
+                       <h4 class="d-block">6</h4>              
+                </div> 
+            
+              </div>
+
+                 <div class="row text-center mt-3" v-if="programObj !== null">      
+    <el-table
+    :data="programObj"
+    stripe
+    class="mt-4 table-bordered"
+    style="width: 100%">
+    <el-table-column
+      fixed
+      prop="name"
+      sortable
+      label="Program"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="project"
+      label="Project"
+       sortable
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="issue"
+      label="Issue"
+       sortable
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="category"
+       sortable
+      label="Category"
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="startDate"
+      label="Start Date"
+       sortable
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="dueDate"
+      label="Due Date"
+       sortable
+      width="100">
+    </el-table-column>
+     <el-table-column
+      prop="users"
+      label="Assigned Users"
+       sortable
+      width="200">
+    </el-table-column>
+    <el-table-column
+      prop="progress"
+      sortable
+      label="Progress"
+      width="100">
+    </el-table-column>
+    <el-table-column
+      prop="flags"
+      label="Flags"
+       sortable
+      width="150">
+    </el-table-column>
+     <el-table-column
+      prop="lastUpdate"
+      label="Last Update"
+       sortable
+      width="300">
+    </el-table-column>
+    <!-- <el-table-column
+      fixed="right"
+      label="Operations"
+      width="120"> -->
+      <!-- <template slot-scope="scope">
+        <el-button @click="handleClick" type="text" size="small">Detail</el-button>
+        <el-button type="text" size="small">Edit</el-button>
+      </template> -->
+    <!-- </el-table-column> -->
+  </el-table>
+     
+              
+    </div>        
+
+     </el-tab-pane>
+     <el-tab-pane label="Risks" class="p-3">
+            <div class="row pt-2 text-center w-50 tcard">
+          
+                <div class="pb-0 pl-2 pr-4 mb-0">                  
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="smallerFont">COMPLETE</span>
+                   <h4 class="d-block">122</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                     <span class="smallerFont">IN PROGRESS</span> 
+                     <h4 class="d-block">624</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                    <span class="smallerFont">OVERDUE </span> 
+                    <h4 class="d-block">55</h4>                     
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
+                    <span class="smallerFont">ONGOING </span>    
+                      <h4 class="d-block">32</h4>  
+                </div> 
+                 <div class="py-0 px-4  mb-0">
+                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                      <span class="smallerFont">PLANNED</span>
+                        <h4 class="d-block">10</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                     <span class="smallerFont">ON HOLD</span> 
+                       <h4 class="d-block">42</h4>            
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span class="smallerFont">DRAFTS</span>   
+                       <h4 class="d-block">6</h4>              
+                </div> 
+            
+              </div>
+
+      <div class="row text-center mt-3" v-if="programObj !== null">      
+      <el-table
+      :data="programObj"
+      stripe
+      class="mt-4 table-bordered"
+      style="width: 100%">
+      <el-table-column
+        fixed
+        prop="name"
+        sortable
+        label="Program"
+        width="300">
+      </el-table-column>
+      <el-table-column
+        prop="project"
+        label="Project"
+         sortable
+        width="300">
+      </el-table-column>
+      <el-table-column
+        prop="risk"
+        label="Risk"
+         sortable
+        width="300">
+      </el-table-column>
+      <el-table-column
+        prop="category"
+        label="Category"
+         sortable
+        width="200">
+      </el-table-column>
+      <el-table-column
+        prop="startDate"
+        label="Start Date"
+         sortable
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="dueDate"
+         sortable
+        label="Due Date"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="users"
+        label="Assigned Users"
+         sortable
+        width="200">
+      </el-table-column>
+      <el-table-column
+        prop="progress"
+        sortable
+        label="Progress"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="flags"
+        label="Flags"
+         sortable
+        width="150">
+      </el-table-column>
+      <el-table-column
+        prop="lastUpdate"
+        label="Last Update"
+         sortable
+        width="300">
+      </el-table-column>
+      <!-- <el-table-column
+        fixed="right"
+        label="Operations"
+        width="120"> -->
+        <!-- <template slot-scope="scope">
+          <el-button @click="handleClick" type="text" size="small">Detail</el-button>
+          <el-button type="text" size="small">Edit</el-button>
+        </template> -->
+      <!-- </el-table-column> -->
+    </el-table>
+      
+                
+      </div>         
+
+     </el-tab-pane>
+    <el-tab-pane label="Lessons Learned" class="p-3">
+           <div class="row pt-2 text-center w-50 tcard">
+          
+                <div class="pb-0 pl-2 pr-4 mb-0">                  
+                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+                  <span class="smallerFont">COMPLETE</span>
+                   <h4 class="d-block">12</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                     <span class="smallerFont">IN PROGRESS</span> 
+                     <h4 class="d-block">64</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                    <span class="smallerFont">OVERDUE </span> 
+                    <h4 class="d-block">64</h4>                     
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
+                    <span class="smallerFont">ONGOING </span>    
+                      <h4 class="d-block">34</h4>  
+                </div> 
+                 <div class="py-0 px-4  mb-0">
+                  
+                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                      <span class="smallerFont">PLANNED</span>
+                        <h4 class="d-block">10</h4>  
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                     <span class="smallerFont">ON HOLD</span> 
+                       <h4 class="d-block">42</h4>            
+                </div>
+                 <div class="py-0 px-4 mb-0">
+                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                     <span class="smallerFont">DRAFTS</span>   
+                       <h4 class="d-block">6</h4>              
+                </div> 
+            
+              </div>
+
+        <div class="row text-center mt-3" v-if="programObj !== null">      
+        <el-table
+        :data="programObj"
+        stripe
+        class="mt-4 table-bordered"
+        style="width: 100%">
+        <el-table-column
+          fixed
+          prop="name"
+          sortable
+          label="Program"
+          width="300">
+        </el-table-column>
+        <el-table-column
+          prop="project"
+          label="Project"
+          sortable
+          width="300">
+        </el-table-column>
+        <el-table-column
+          prop="lesson"
+          sortable
+          label="Lessons Learned"
+          width="300">
+        </el-table-column>
+        <el-table-column
+          prop="date"
+          label="Date"
+          sortable
+          width="200">
+        </el-table-column>
+        <el-table-column
+          prop="addeBy"
+          label="Added By"
+          sortable
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="description"
+          label="Description"
+          sortable
+          width="300">
+        </el-table-column>
+        <el-table-column
+          prop="flags"
+          label="Flags"
+          sortable
+          width="200">
+        </el-table-column>
+        <el-table-column
+          prop="lastUpdate"
+          label="Last Update"
+          sortable
+          width="300">
+        </el-table-column>
+        <!-- <el-table-column
+          fixed="right"
+          label="Operations"
+          width="120"> -->
+          <!-- <template slot-scope="scope">
+            <el-button @click="handleClick" type="text" size="small">Detail</el-button>
+            <el-button type="text" size="small">Edit</el-button>
+          </template> -->
+        <!-- </el-table-column> -->
+      </el-table>
+        
+                  
+        </div>        
+
+     </el-tab-pane>
+     </el-tabs>
     <div class="row pt-2">
-    <div class="col-6 py-0 pl-0">         
-      <!-- Actual Portfolio name will be dynamic value of organization name   -->
-        <h3 class="d-inline mr-2 programName" >MicroHealth BO Portfolio</h3>   
-        <h3 v-if="portfolioObj !== null" class="d-inline">
-          <el-popover
+    <div class="col-6 py-0 pl-0">      
+    
+       
+          <!-- <el-popover
           placement="top-start"
           title="Project #"
           width="200"
           trigger="hover"
           content="This is the total number of programs in your portfolio.">
-        <b class="badge bg-secondary text-light badge-pill" slot="reference"> {{ programCount }}</b>
-        </el-popover>
-      </h3>      
+        <b class="badge bg-secondary text-light badge-pill" slot="reference"> </b>
+        </el-popover> -->
+
     
   </div>
    </div>
 
-    <div class="row">
-      <div class="col px-0" :class="[isMapView ? 'col-6' : '']" >
-          <el-card
-            class="box-card mb-2"
-            style="background-color:#fff"
-            data-cy="task_summary"
-          >      
-            <div class="row">
-              <div class="col pl-2" :class="[isMapView ? 'pb-1 pl-3' : '']">              
-                <h5 class="d-inline">TASKS</h5>
-                <h5  class="d-inline">
-                  <span class="badge bg-secondary text-light badge-pill float-right">{{
-                   
-                  }}</span>
-                </h5>
-                <hr class="mb-half"/>
-
-
-              </div>
-            </div>
-             <div>
-               <div class="row text-center">
-                <div class="col-3 p-0 mb-0">
-                  
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
-                  <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">COMPLETE</span>
-                    <!-- <span class="d-block smallerFont">COMPLETE</span> -->
-
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
-                     <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont"> IN PROGRESS</span>           
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
-                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">OVERDUE </span>               
-                </div>
-                 <div class="col-3 p-0 mb-0">
-                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
-                    <span :class="[isMapView ? 'd-none' : 'd-block']" class="smallerFont">ONGOING </span>    
-                </div>       
-              </div>
-
-                <!-- <div class="row text-center mt-0" :class="[filteredTasks.length > 0 ? '' : 'pb-3']">
-                <div class="col-3 pb-0 mb-0">
-                   <h4 class="">{{
-                    taskVariation.completed.count
-                  }}</h4>         
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                  <h4>{{
-                    taskVariation.inProgress.count
-                  }}</h4>        
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                   <h4>{{ taskVariation.overdue.count }}
-                     </h4>
-                                    
-                </div>
-                 <div class="col-3 pb-0 mb-0">
-                  <h4>{{
-                    taskVariation.ongoing.length
-                  }}</h4>          
-                </div>        
-                </div>       -->
-
-             
-              <div >
-                 <el-collapse id="roll_up" class="taskCard">
-                  <el-collapse-item title="..." name="1">
-                <div class="row mt-1 text-center">
-                <div class="col p-0  mb-0">                  
-                       NO DATA TO DISPLAY
-                </div>             
-              </div>        
-                  </el-collapse-item>
-                </el-collapse>
-              </div>
-            </div>
-
-      
-          </el-card>
-
-      </div>
-      <div class="col" :class="[isMapView ? 'col-6' : '']">
-            <el-card
-            class="box-card mb-2"
-            style="background-color:#fff"
-            data-cy="issue_summary"
-          >
-            <div class="row">
-              <div class="col" :class="[isMapView ? 'pb-1' : '']">
-                <h5 class="d-inline">ISSUES</h5>
-                <h5 class="d-inline">
-                 
-                </h5>
-                <hr class="mb-half"/>
-              </div>
-            </div>
-
-        
-        
-          </el-card>
-      </div>
-      <div class="col px-0" :class="[isMapView ? 'col-6 pt-1' : '']" >
-          <el-card
-              class="box-card"
-              style="background-color:#fff"
-              data-cy="risk_summary"
-            >
-              <div class="row">
-                <div class="col pb-0" :class="[isMapView ? 'pb-1' : '']">
-                  <h5 class="d-inline">RISKS</h5>
-                  <h5 class="d-inline">
-                    <span class="badge bg-secondary text-light badge-pill float-right">{{
-                      
-                    }}</span>
-                  </h5>
-                  <hr class="mb-half" />
-                </div>
-              </div>           
-            </el-card>
-      </div>
-      <div class="col-2" :class="[isMapView ? 'col-6 pt-1' : '']" >
-          <el-card
-              class="box-card"
-              style="background-color:#fff"
-            
-            >
-              <div class="row">
-                <div class="col pb-0">
-                  <h6 class="d-inline">LESSONS LEARNED</h6>                 
-                  <hr />
-                </div>
-              </div>
-             
-            
-            </el-card>
-      </div>
-
-    </div>
-      <div class="row">
-      <div class="col px-0" :class="[isMapView ? 'col-6' : '']" >
-          <el-card
-            class="box-card mb-2"
-            style="background-color:#fff"
-            data-cy="task_summary"
-          >      
-            <div class="row">
-              <div class="col pl-2" :class="[isMapView ? 'pb-1 pl-3' : '']">              
-                <h5 class="d-inline">PROGRAMS</h5>
-                <h5  class="d-inline">
-                  <span class="badge bg-secondary text-light badge-pill float-right">{{
-                   programCount
-                  }}</span>
-                </h5>
-                <hr class="mb-half"/>
-
-                 <ul v-for="(item, index) in programObj"  :key="index" >              
-                 <li class="p-2"> <router-link :to="`/programs/${item.id}/sheet`" style="cursor:pointer">{{ item.name }}</router-link> </li>    
-                 </ul>
-
-              </div>
-            </div>
-
-      
-          </el-card>
-
-      </div>
-      <div class="col" :class="[isMapView ? 'col-6' : '']">
-            <el-card
-            class="box-card mb-2"
-            style="background-color:#fff"
-            data-cy="issue_summary"
-          >
-            <div class="row">
-              <div class="col" :class="[isMapView ? 'pb-1' : '']">
-                <h5 class="d-inline">COOL DATA</h5>
-                <h5 class="d-inline">
-                 
-                </h5>
-                <hr class="mb-half"/>
-              </div>
-            </div>
-
-        
-        
-          </el-card>
-      </div>
-  
    
 
-    </div>
-
-
-  </el-tab-pane>
-   <el-tab-pane label="Portfolio Breakdown " class="p-3">
-     <div v-if="portfolioObj !== null">
-      <div class="mb-2 float-right"> 
-        <button class="btn btn-md btn-info"> PROGRAMS: {{ programCount }}</button>
-      </div>
-        <div class="pb-2 table-div" :load="log(JSON.stringify(portfolioObj.data.projects))" >
-          <div v-if="portfolioObj !== null" class="grid-container">
-            <el-card class="list-group-item text-center" style="min-height: 150px" v-for="(item, index) in programObj"  :key="index" >              
-             
-               <span class="p-2" > {{ item.name }} </span>          
-            </el-card>
-          </div>         
-      </div>
-     </div>
-
-  </el-tab-pane>
+ </el-tab-pane> 
    <el-tab-pane label="Portfolio Analytics" class="p-3">
-     Coming Soon
-
-  </el-tab-pane>
+   </el-tab-pane>
     </el-tabs>
   <!-- {{portfolioObj}} -->
 </div>
@@ -256,26 +533,29 @@ export default {
       showLess: "Show More",
       portfolioObj: null,
       programId: null,
+      closeWindow:'',
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
     };
   },
-   mounted() {    
+   mounted() { 
+     $( "#nav-wrap" ).hide();  
     axios
       .get('/api/v1/portfolio/programs.json')
-      .then(response => (this.portfolioObj = response))
+      .then(response => (this.portfolioObj = response))    
+      
+    if (this.portfolioObj !== null) {
+     console.log(this.portfolioObj.data)
+     }
   },
   computed: {
     ...mapGetters([
   
     ]),
-     projectObj() {
-        return this.currentProject.facilities
-      },
-     projectObj() {
-        return this.currentProject.facilities
-      },
-
+    //  projectObj() {
+       
+    //     return this.currentProject.facilities
+    //   },
     isPortfolioView() {
       return this.$route.name.includes("Portfolio");
     }, 
@@ -285,13 +565,15 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-    programCount(){
-      // if (this.projectObj !== null)
-      return this.portfolioObj.data.projects.length
-    },
-    programObj(){
-      // if (this.projectObj !== null)
+    // programCount(){
+      
+    //   return this.portfolioObj.data.projects.length
+    
+    // },
+    programObj(){     
+      if (this.portfolioObj !== null) {
       return this.portfolioObj.data.projects
+      }
     }, 
   
   },
@@ -446,5 +728,36 @@ ul > li {
 
 ul {
   margin-bottom: 0.5rem;
+}
+  // table {
+  //   table-layout: fixed;
+  //   width: 100%;
+  //   color: #606266;
+  //   position: relative;
+  //   margin-bottom: 0 !important;
+  // }
+/deep/.el-table {
+    padding-top: 0px;    
+    width: 100%;
+    margin-bottom: 6px;
+    box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+    border-top: solid #ededed 1.8px;    
+  }
+/deep/.el-table {
+  th {
+    background-color: #ededed !important;
+    text-align: center;     
+    font-size: 0.70rem;
+    color: #383838;
+    }
+  }
+.programNoBadge {
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+}
+.tcard {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
+}
+th {
+  font-size: .75rem;
 }
 </style>

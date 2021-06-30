@@ -41,6 +41,7 @@ body {
   } 
 }
 
+
 .v-calendar-daily_head-day {
   .v-event.white--text {
     visibility: visible !important;
@@ -320,6 +321,14 @@ td.col-issue_type, td.col-issue_severity {
 }
 .portfolio-page:hover { 
   transform: scale(1.015); 
+}
+
+.portfolioViewerBtn {
+  background-color: #DD9036;
+  border-radius: 3px;
+  color: white;
+  padding: 3px 6px;
+  box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
 }
 
 .program-name a {

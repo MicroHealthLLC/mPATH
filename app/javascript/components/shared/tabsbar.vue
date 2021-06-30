@@ -1,5 +1,5 @@
 <template>
-  <div id="tabbar" data-cy="main_tab">
+  <div id="tabbar" data-cy="main_tab" :class="[isPortfolioView ? 'd-none' : '']">
     <router-link v-if="permitted('map_view')" :to="routeMapSwap" tag="div">
       <div class="badge" :class="{ active: isMapView }" data-cy="map_tab">
         Map
@@ -85,6 +85,9 @@ export default {
     },
     isLessonsView() {
       return ["LessonsIndex", "LessonForm"].includes(this.$route.name);
+    },
+    isPortfolioView() {
+      return this.$route.name.includes("PortfolioView");
     },
     routeSheetSwap() {
       let route = this.$route.path;
