@@ -5,8 +5,13 @@
         <td class="oneFive">{{issue.title}}</td>
         <td class="ten col-issue_type">{{issue.issueType}}</td>
         <td class="nine col-issue_severity">{{issue.issueSeverity}}</td>
-        <td class="eight">{{formatDate(issue.startDate)}}</td>
-        <td class="eight">{{formatDate(issue.dueDate)}}</td>       
+        <td class="eight text-center">{{formatDate(issue.startDate)}}</td>
+        <td class="eight text-center">              
+         <span v-if="issue.onHold && issue.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>
+          {{formatDate(issue.dueDate)}}
+          </span>             
+        </td>       
          <td class="oneThree" >  
           <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
           <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   

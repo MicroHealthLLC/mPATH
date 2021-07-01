@@ -10,7 +10,7 @@ class Task < ApplicationRecord
   has_many :notes, as: :noteable, dependent: :destroy
 
   validates :text, presence: true
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :task_stage_id_changed?
@@ -193,7 +193,7 @@ class Task < ApplicationRecord
       in_progress = true
     end
 
-    
+   
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,

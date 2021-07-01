@@ -6,10 +6,11 @@
         <td class="ten">{{task.taskType}}</td>
         <td class="eight text-center">{{formatDate(task.startDate)}}</td>
         <td class="eigth text-center">
-         <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+         <span v-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
         <span v-else>
          {{formatDate(task.dueDate)}}
-        </span>
+        </span>      
        </td>
         <td class="fort" >
           <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
