@@ -1969,7 +1969,7 @@
                       <el-tag size="mini"
                         ><span class="font-weight-bold">Submitted by:</span>
                         <span v-if="note.updatedAt"
-                          >{{ author(note.userId) }} on
+                          >{{ note.user.fullName }} on
                           {{ new Date(note.updatedAt).toLocaleString() }}</span
                         ><span v-else
                           >{{ $currentUser.full_name }} on
