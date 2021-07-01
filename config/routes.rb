@@ -83,7 +83,7 @@ Rails.application.routes.draw do
     end
 
     resources :facilities do
-      resources :notes, module: :facilities
+      resources :notes #, module: :facilities
       resources :issues do
         post :batch_update, on: :collection
         post :create_duplicate, on: :member
