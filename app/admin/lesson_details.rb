@@ -66,4 +66,11 @@ ActiveAdmin.register LessonDetail do
     end
   end
 
+  filter :lesson
+  filter :user
+  filter :finding
+  filter :recommendation
+  filter :created_at
+  filter :updated_at
+  filter :detail_type, as: :select, collection: -> {[["Success","success"], ["Failure", "failure"], ["Best Practices", "best_practices"]]}, include_blank: false
 end
