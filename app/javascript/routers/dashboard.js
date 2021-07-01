@@ -68,7 +68,7 @@ export default new VueRouter({
         },
         {
           name: "MapOverview",
-          path: "projects/:projectId",
+          path: "projects/:projectId/overview",
           component: MapOverview,
         },
         {
@@ -163,7 +163,7 @@ export default new VueRouter({
         },
         {
           name: "SheetOverview",
-          path: "projects/:projectId",
+          path: "projects/:projectId/overview",
           component: SheetOverview,
           beforeEnter: (to, from, next) => {
             var programId = to.params.programId;

@@ -77,11 +77,7 @@ export default {
   },
   methods: {
     changeTab(tab) {
-      if (tab.key === "overview") {
-        this.$router.push(this.path);
-      } else {
-        this.$router.push(this.path + `/${tab.key}`);
-      }
+      this.$router.push(this.path + `/${tab.key}`);
     },
   },
   computed: {
