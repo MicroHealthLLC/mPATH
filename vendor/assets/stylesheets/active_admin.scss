@@ -35,6 +35,11 @@ td.col-issue_type, td.col-issue_severity {
   margin-top: 10px;
 }
 //User Project Privilege CSS start
+
+#lesson-info fieldset.inputs {
+  padding: 0 10px;
+}
+
 li.has_many_container.facility_privileges {
   a.button.has_many_remove {
     margin: 25px auto;
@@ -371,7 +376,6 @@ li.has_many_container.facility_privileges {
     align-items: center;
   }
   #facility_projects {
-    padding: 0 10px;
     .inputs {
       margin: 0;
       padding: 0;
