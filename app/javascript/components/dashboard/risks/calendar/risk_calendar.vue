@@ -502,6 +502,10 @@
       if(this.riskData[i].onHold) {
         this.riskNames[i] = this.riskNames[i] + " (On Hold)"          
         }
+      // if(this.riskData[i].onHold && (this.riskEndDates[i] == null)){    
+      //  this.riskEndDates[i] = '2099-01-01'
+      // }
+
           events.push({            
           name: this.riskNames[i],
           start: this.riskStartDates[i],

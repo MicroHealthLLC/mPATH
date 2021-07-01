@@ -2402,6 +2402,7 @@ export default {
     },
     toggleOnhold() {
         this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+        this.DV_risk.dueDate = '';
       },
     toggleDraft() {
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };

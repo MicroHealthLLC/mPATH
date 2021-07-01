@@ -1582,6 +1582,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_task = { ...this.DV_task, onHold: !this.DV_task.onHold };
+      this.DV_task.dueDate = '';
     },
     toggleDraft() {
       this.DV_task = { ...this.DV_task, draft: !this.DV_task.draft };

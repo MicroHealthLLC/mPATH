@@ -1597,6 +1597,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_issue = { ...this.DV_issue, onHold: !this.DV_issue.onHold };
+      this.DV_issue.dueDate = '';
     },
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
