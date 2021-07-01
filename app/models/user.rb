@@ -74,7 +74,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["member_list", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view", "gantt_view"]
+    nagivation_tabs = ["members", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view", "gantt_view"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
   end
 
@@ -84,7 +84,7 @@ class User < ApplicationRecord
       name = "map" if t == "map_view"
       name = "kanban" if t == "kanban_view"
       name = "sheet" if t == "sheets_view"
-      name = "member_list" if t == "member_list"
+      name = "members" if t == "members"
       
       #NOTE: Once front end routes are working, uncomment it.
       #name = "gantt_chart" if t == "gantt_view"      
@@ -106,46 +106,55 @@ class User < ApplicationRecord
     allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
   end
 
+  def top_navigation_hash
+     {
+      "members" => "members", 
+      "map_view" => "map",  
+      "gantt_view" => "gantt_chart",  
+      "sheets_view" => "sheet",  
+      "kanban_view" => "kanban",  
+      "calendar_view"  => "calendar"
+    }
+  end
+  def top_navigation_route_to_database_field_hash
+    top_navigation_hash.invert
+  end
+
+  def allowed_redirect_url(program_id)
+    tab = top_navigation_hash[ ( allowed_navigation_tabs.first || "sheets_view")  ]
+    "/programs/#{program_id}/#{tab}" 
+  end
+
   def preference_url
     p = self.get_preferences
     top_navigations = allowed_navigation_tabs
-    sub_navigations = allowed_sub_navigation_tabs
     url = "/"
     if p.program_id.present?
-
       url = "/programs/#{p.program_id}/sheet" # map must be
 
       if p.navigation_menu.present?
-
         navigtaion_present = false
-        if top_navigations.include?(p.navigation_menu)
+        if top_navigations.include?( top_navigation_route_to_database_field_hash[p.navigation_menu] )
           url = "/programs/#{p.program_id}/#{p.navigation_menu}"
           navigtaion_present = true
         elsif top_navigations.size > 0
-          url = "/programs/#{p.program_id}/#{top_navigations.first}"
+          url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
           navigtaion_present = true
         else
           url = ""
         end
         
         if navigtaion_present && p.project_id.present?              
-
           if p.sub_navigation_menu.present?
+            sub_navigation_privileges = facility_privileges_hash.dig(p.program_id.to_s, p.project_id.to_s ) || {}
+            sub_navigation_allowed = sub_navigation_privileges[p.sub_navigation_menu].present?
+            allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
 
-            sub_navigation_present = false
-            if sub_navigations.include?(p.sub_navigation_menu)
+            if sub_navigation_allowed
               url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
-              sub_navigation_present = true
-            elsif sub_navigations.size > 0
-              url = "#{url}/projects/#{p.project_id}/#{sub_navigations.first}"
-              sub_navigation_present = true
+            elsif allowed_sub_navigation_values.size > 0
+              url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
             end
-
-            # if p.sub_navigation_menu == "overview"
-            #   url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/"
-            # else
-            #   url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
-            # end
           end
         end
       end
@@ -388,7 +397,13 @@ class User < ApplicationRecord
   end
 
   def allowed?(view)
-    privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
+    # privilege.send(view)&.include?("R") || superadmin? || privilege.admin.include?("R")
+    return true if (superadmin? || privilege.admin.include?("R"))
+    if allowed_navigation_tabs.any?
+      allowed_navigation_tabs.include?(view)
+    else
+      view == "sheets_view"
+    end
   end
 
 end

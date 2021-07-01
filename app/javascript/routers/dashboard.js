@@ -130,7 +130,7 @@ export default new VueRouter({
     },
     {
       name: "TeamMembersView",
-      path: "/programs/:programId/member_list",
+      path: "/programs/:programId/members",
       component: MembersView,
     },
     {

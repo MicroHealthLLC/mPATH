@@ -13,7 +13,7 @@ class ProjectsController < AuthenticatedController
       view = "kanban_view"
     elsif ["gantt_chart", "gantt"].include?(params[:tab])
       view = "gantt_view"
-    elsif params[:tab] == "member_list"
+    elsif params[:tab] == "members"
       view = "members"
     elsif params[:tab] == "lessons" || params[:lesson_id]
       view = "lessons"
@@ -22,13 +22,14 @@ class ProjectsController < AuthenticatedController
   ##  elsif params[:tab] == "facility_manager"
   ##    view = "facility_manager_view" 
     else
-      raise CanCan::AccessDenied
+      redirect_to current_user.allowed_redirect_url(params[:program_id])
+      return
     end
 
     if !current_user.allowed?(view)
       # raise CanCan::AccessDenied
-      # redirect_to "/programs/#{params[:program_id]}/sheet"
-      # return
+      redirect_to current_user.allowed_redirect_url(params[:program_id])
+      return
     end
     
     respond_to do |format|

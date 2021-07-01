@@ -18,7 +18,7 @@ class Privilege < ApplicationRecord
   # serialize :calendar_view, Array
   # serialize :members, Array
 
-  # before_save :modify_values
+  before_save :modify_values
 
 
   def modify_values
