@@ -815,8 +815,7 @@ export default {
     };
   },
    mounted() {
-    this.fetchProgramLessons(this.$route.params);
- 
+    // this.fetchProgramLessons(this.$route.params);
   },
   computed: {
     ...mapGetters([
