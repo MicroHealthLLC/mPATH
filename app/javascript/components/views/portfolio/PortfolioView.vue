@@ -55,7 +55,8 @@
          
     <el-table
     :data="programObj"  
-    class="mt-4 table-bordered"
+    class="mt-4"
+    border
     style="width: 100%">
     <el-table-column
       fixed
@@ -66,12 +67,14 @@
     </el-table-column>
     <el-table-column
       prop="project"
+      fixed
        sortable
       label="Project"
       width="300">
     </el-table-column>
     <el-table-column
       prop="task"
+      fixed
        sortable
       label="Task"
       width="300">
@@ -86,13 +89,13 @@
       prop="startDate"
       label="Start Date"
        sortable
-      width="100">
+      width="120">
     </el-table-column>
     <el-table-column
       prop="dueDate"
       label="Due Date"
        sortable
-      width="100">
+      width="120">
     </el-table-column>
      <el-table-column
       prop="users"
@@ -114,6 +117,7 @@
     </el-table-column>
      <el-table-column
       prop="lastUpdate"
+      fixed="right"
       label="Last Update"
        sortable
       width="300">
@@ -747,7 +751,7 @@ ul {
   th {
     background-color: #ededed !important;
     text-align: center;     
-    font-size: 0.70rem;
+    // font-size: 0.70rem;
     color: #383838;
     }
   }
@@ -757,7 +761,7 @@ ul {
 .tcard {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
 }
-th {
-  font-size: .75rem;
-}
+// th {
+//   font-size: .75rem;
+// }
 </style>
