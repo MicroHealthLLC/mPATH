@@ -108,19 +108,44 @@ class User < ApplicationRecord
 
   def preference_url
     p = self.get_preferences
+    top_navigations = allowed_navigation_tabs
+    sub_navigations = allowed_sub_navigation_tabs
     url = "/"
     if p.program_id.present?
-      url = "/programs/#{p.program_id}/sheet" # map must be  
-      if p.navigation_menu.present?        
-        url = "/programs/#{p.program_id}/#{p.navigation_menu}"
-        if p.project_id.present?
-          url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}"
+
+      url = "/programs/#{p.program_id}/sheet" # map must be
+
+      if p.navigation_menu.present?
+
+        navigtaion_present = false
+        if top_navigations.include?(p.navigation_menu)
+          url = "/programs/#{p.program_id}/#{p.navigation_menu}"
+          navigtaion_present = true
+        elsif top_navigations.size > 0
+          url = "/programs/#{p.program_id}/#{top_navigations.first}"
+          navigtaion_present = true
+        else
+          url = ""
+        end
+        
+        if navigtaion_present && p.project_id.present?              
+
           if p.sub_navigation_menu.present?
-            if p.sub_navigation_menu == "overview"
-              url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/"
-            else
-              url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+
+            sub_navigation_present = false
+            if sub_navigations.include?(p.sub_navigation_menu)
+              url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+              sub_navigation_present = true
+            elsif sub_navigations.size > 0
+              url = "#{url}/projects/#{p.project_id}/#{sub_navigations.first}"
+              sub_navigation_present = true
             end
+
+            # if p.sub_navigation_menu == "overview"
+            #   url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/"
+            # else
+            #   url = "/programs/#{p.program_id}/#{p.navigation_menu}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+            # end
           end
         end
       end

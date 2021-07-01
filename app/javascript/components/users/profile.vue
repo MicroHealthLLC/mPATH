@@ -325,7 +325,14 @@
               }
             }
             this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
+
             this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+            console.log(this.selectedSubNavigation)
+            if(!this.selectedSubNavigation && this.subNavigationOptions.length > 0){
+              
+              console.log(this.preferences.subNavigationMenu)
+              this.selectedSubNavigation = this.subNavigationOptions[0]
+            }
 
             if(this.selectedNavigation){
               if(this.selectedNavigation.id == "kanban"){

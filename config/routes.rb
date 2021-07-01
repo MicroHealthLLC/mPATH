@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   get "/programs/:program_id/lessons/:lesson_id" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/" => "projects#vue_js_route"
 
+  get "/programs/:program_id/:tab/projects/:project_id/overview" => "projects#vue_js_route"
+
   get "/programs/:program_id/:tab/projects/:project_id/tasks" => "projects#vue_js_route"
   get "/programs/:program_id/:tab/projects/:project_id/tasks/:id" => "projects#vue_js_route"
 
