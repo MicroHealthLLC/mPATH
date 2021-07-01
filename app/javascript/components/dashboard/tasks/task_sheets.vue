@@ -51,7 +51,10 @@
            <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
           {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
             </span>
-            <br> {{task.notes[task.notes.length - 1].body}}
+            <br> 
+            <span class="truncate-line-five">
+              {{task.notes[task.notes.length - 1].body}}
+            </span>
            
         </td>       
         <td v-else class="twentyTwo">No Updates</td>
@@ -360,6 +363,18 @@ td {
     &:hover {
       background-color: rgba(91, 192, 222, 0.3);
     }
+  }
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
   }
 }
 </style>

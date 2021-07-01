@@ -42,7 +42,10 @@
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
            {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{issue.notes[issue.notes.length - 1].body}}
+           <br>
+           <span class="truncate-line-five">
+             {{issue.notes[issue.notes.length - 1].body}}
+           </span>
         </td>
         <td class="oneSeven" v-else>No Updates</td>
       </tr>
@@ -295,6 +298,18 @@
       form {
         position: inherit !important;
       }
+    }
+  }
+  .truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
     }
   }
 </style>
