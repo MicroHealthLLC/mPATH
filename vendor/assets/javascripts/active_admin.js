@@ -145,6 +145,11 @@ jQuery(function($) {
     allowClear: false
   });
 
+  $(".program_select").select2({
+    placeholder: "Search and select Program",
+    allowClear: false
+  });
+
   // Add placeholder to for organization select
   $("#user_organization_input .select2").select2({
     placeholder: "Search and select an organization",
