@@ -125,7 +125,7 @@ export default {
       } else if (url.includes("calendar")) {
         return "/tasks";
       } else {
-        return "";
+        return "/overview";
       }
     },
   },
