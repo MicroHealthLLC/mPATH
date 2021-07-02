@@ -65,13 +65,13 @@ Agile portfolio management for large programs and projects including those geogr
 
         gem install rails
 
-        gem install bundler
+        gem install bundler -v 2.1.4
 
-        yum install nodejs
-
-        yarn install
-
+        yum install nodejs - https://linuxize.com/post/how-to-install-yarn-on-centos-7/
+        
         bundle install
+
+        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/        
         
         rake db:migrate RAILS_ENV=production
         
