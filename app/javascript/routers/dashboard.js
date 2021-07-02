@@ -1,7 +1,5 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-import LessonsIndex from "./../components/views/lessons/LessonsIndex";
-import LessonForm from "./../components/views/lessons/LessonForm";
 import PortfolioView from "./../components/views/portfolio/PortfolioView";
 
 // Map Routes Components
@@ -69,7 +67,7 @@ export default new VueRouter({
         },
         {
           name: "MapOverview",
-          path: "projects/:projectId",
+          path: "projects/:projectId/overview",
           component: MapOverview,
         },
         {
@@ -131,22 +129,10 @@ export default new VueRouter({
     },
     {
       name: "TeamMembersView",
-      path: "/programs/:programId/member_list",
+      path: "/programs/:programId/members",
       component: MembersView,
     },
-    {
-      name: "LessonsIndex",
-      path: "/programs/:programId/lessons",
-      redirect: "/programs/:programId/map",
-      component: LessonsIndex,
-    },
-    {
-      name: "LessonForm",
-      path: "/programs/:programId/lessons/new",
-      redirect: "/programs/:programId/map",
-      component: LessonForm,
-    },
-    {
+     {
       name: "PortfolioView",
       path: "/api/v1/portfolio/programs",    
       component: PortfolioView,
@@ -163,7 +149,7 @@ export default new VueRouter({
         },
         {
           name: "SheetOverview",
-          path: "projects/:projectId",
+          path: "projects/:projectId/overview",
           component: SheetOverview,
           beforeEnter: (to, from, next) => {
             var programId = to.params.programId;

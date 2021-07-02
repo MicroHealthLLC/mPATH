@@ -426,12 +426,19 @@ Tab 1 Row Begins here -->
               </div>
             </div>
             <div class="form-group w-75 ml-1">
+             <span v-if="DV_issue.onHold ">           
+                <label class="font-md">
+                Estimated Completion Date <span><small class="text-danger">(Not required if Issue is On Hold)</small></span>
+                 </label
+                  ></span>
+                  <span v-else>
               <label class="font-md"
                 >Estimated Completion Date
                 <span style="color: #dc3545">*</span></label
-              >
-              <v2-date-picker
-                v-validate="'required'"
+              ></span>
+             
+              <v2-date-picker           
+                v-validate="{ required: !DV_issue.onHold }"
                 v-model="DV_issue.dueDate"
                 value-type="YYYY-MM-DD"
                 format="DD MMM YYYY"
@@ -1206,7 +1213,7 @@ Tab 1 Row Begins here -->
                     <el-tag size="mini"
                       ><span class="font-weight-bold">Submitted by:</span>
                       <span v-if="note.updatedAt"
-                        >{{ author(note.userId) }} on
+                        >{{ note.user.fullName }} on
                         {{ new Date(note.updatedAt).toLocaleString() }}</span
                       ><span v-else
                         >{{ $currentUser.full_name }} on
@@ -1590,6 +1597,7 @@ export default {
     },
     toggleOnhold() {
       this.DV_issue = { ...this.DV_issue, onHold: !this.DV_issue.onHold };
+      this.DV_issue.dueDate = '';
     },
     toggleDraft() {
       this.DV_issue = { ...this.DV_issue, draft: !this.DV_issue.draft };
@@ -2002,9 +2010,6 @@ export default {
         this.relatedRisks.findIndex((risk) => risk.id == id),
         1
       );
-    },
-    author(id) {
-      return this.activeProjectUsers.find((user) => user.id == id).fullName;
     },
   },
   computed: {

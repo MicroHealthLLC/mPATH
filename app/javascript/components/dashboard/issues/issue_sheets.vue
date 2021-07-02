@@ -5,8 +5,13 @@
         <td class="oneFive">{{issue.title}}</td>
         <td class="ten col-issue_type">{{issue.issueType}}</td>
         <td class="nine col-issue_severity">{{issue.issueSeverity}}</td>
-        <td class="eight">{{formatDate(issue.startDate)}}</td>
-        <td class="eight">{{formatDate(issue.dueDate)}}</td>       
+        <td class="eight text-center">{{formatDate(issue.startDate)}}</td>
+        <td class="eight text-center">              
+         <span v-if="issue.onHold && issue.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>
+          {{formatDate(issue.dueDate)}}
+          </span>             
+        </td>       
          <td class="oneThree" >  
           <span v-if="(issue.responsibleUsers.length > 0) && (issue.responsibleUsers[0] !== null)"> <span class="badge mr-1 badge-secondary font-sm badge-pill">R</span>{{issue.responsibleUsers[0].name}} <br></span> 
           <span v-if="(issue.accountableUsers.length > 0) && (issue.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{issue.accountableUsers[0].name}}<br></span>   
@@ -42,7 +47,10 @@
            <span class="toolTip" v-tooltip="('By: ' + issue.notes[issue.notes.length - 1].user.fullName)"> 
            {{moment(issue.notesUpdatedAt[issue.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{issue.notes[issue.notes.length - 1].body}}
+           <br>
+           <span class="truncate-line-five">
+             {{issue.notes[issue.notes.length - 1].body}}
+           </span>
         </td>
         <td class="oneSeven" v-else>No Updates</td>
       </tr>
@@ -295,6 +303,18 @@
       form {
         position: inherit !important;
       }
+    }
+  }
+  .truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
     }
   }
 </style>

@@ -19,7 +19,7 @@ function addFacilityPrivilegeForm(element){
   let url = $(element).attr("data-url")
   let program_ids = $.map( $(".project_select"), function(e, i){
     return $(e).val()
-  } ) 
+  } )
   $.ajax({
     url: url,
     data: {program_ids: program_ids},
@@ -72,13 +72,13 @@ function initializeProjectPrivilegeSelect2(){
   $.map($(".project_selection_input"), function(element){
     let selectedData = []
     if($(element).attr("data-selected")){
-      selectedData = JSON.parse($(element).attr("data-selected"))  
-    }    
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
 
     $(element).select2({
       placeholder: "Search and select Project",
       allowClear: true,
-      tags: true      
+      tags: true
     }).val(selectedData).trigger('change')
 
     // $(element).on("select2:open", function (evt) {
@@ -98,13 +98,13 @@ function initializeProgramPrivilegeSelect2(){
   $.map($(".project_select"), function(element){
     let selectedData = []
     if($(element).attr("data-selected")){
-      selectedData = JSON.parse($(element).attr("data-selected"))  
-    }    
+      selectedData = JSON.parse($(element).attr("data-selected"))
+    }
 
     $(element).select2({
       placeholder: "Search and select Programs",
       allowClear: true,
-      tags: true      
+      tags: true
     }).val(selectedData).trigger('change')
 
     // $(element).on("select2:open", function (evt) {
@@ -134,9 +134,19 @@ jQuery(function($) {
     placeholder: "Search and select User",
     allowClear: true
   });
-  
+
+  $("#q_detail_type").select2({
+    placeholder: "Search and select Detail Type",
+    allowClear: true
+  });
+
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
+    allowClear: false
+  });
+
+  $(".program_select").select2({
+    placeholder: "Search and select Program",
     allowClear: false
   });
 
@@ -168,13 +178,13 @@ jQuery(function($) {
     this.parentElement.classList.add(`status_${$(this).text()}`);
   });
 
-  //risk probability level labels 
+  //risk probability level labels
   $('#risk_probability_text').append(
-    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');    
+    '<div class="risk_prob_level"><span id="riskText">Probability Levels:</span> <div class="risk_probability">1 - Rare</div><div class="risk_probability bg-danger">2 - Unlikely</div><div class="risk_probability">3 - Possible</div> <div class="risk_probability">4 - Likely</div><div class="risk_probability">5 - Almost Certain</div></div');
 
   $('#risk_impact_text').append(
       '<div class="risk_prob_level"><span id="riskText">Impact Levels:</span> <div class="risk_probability">1 - Negligible</div><div class="risk_probability">2 - Minor</div><div class="risk_probability">3 - Moderate</div> <div class="risk_probability">4 - Major</div><div class="risk_probability">5 - Catastrophic</div></div')
- 
+
       // direct file-upload for tasks/issues
   $.directFileUpload = (file) => {
     const url = $("#direct-upload-url").data('directUploadUrl');
@@ -1204,7 +1214,7 @@ jQuery(function($) {
       template: `<div class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
         <fieldset v-if="!loading" class="inputs">
           <legend><span>Privileges</span></legend>
-          <ol class="choices-group">           
+          <ol class="choices-group">
             <li class="choice d-flex">
             <label>Sheet</label>
             <label class="d-flex align-center"><input type="checkbox" disabled v-model="sheets_view.read">Read</label>
@@ -1216,7 +1226,7 @@ jQuery(function($) {
             <li class="choice d-flex">
               <label>Gantt</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="gantt_view.read">Read</label>
-            </li>               
+            </li>
             <li class="choice d-flex">
               <label>Kanban</label>
               <label class="d-flex align-center"><input type="checkbox" v-model="kanban_view.read">Read</label>
@@ -1523,7 +1533,7 @@ jQuery(function($) {
                 for(var i = 0; i <= task_types.length; i++){
                   $(".__batch_task_form select[name=Category]").append($("<option>", {value: task_types[i].id, text: task_types[i].name}))
                 }
-                
+
                 this.categories = data
                 this.loading = false;
               });
@@ -1535,7 +1545,7 @@ jQuery(function($) {
                 for(var i = 0; i <= task_stages.length; i++){
                   $(".__batch_task_form select[name=Stage]").append($("<option>", {value: task_stages[i].id, text: task_stages[i].name}))
                 }
-                
+
                 this.stages = data
                 this.loading = false;
               });
@@ -2286,7 +2296,7 @@ jQuery(function($) {
       parent.append("<div id='__checklist_users_filters_multiselect'></div>");
       let email_select = $("#__users_filter_emails").siblings()[1];
       email_select.id = "__users_filter_emails_select";
-      
+
       Vue.component('multiselect', VueMultiselect.Multiselect);
       $.Vue_users_filter_select = new Vue({
         el: "#__checklist_users_filters_multiselect",

@@ -49,11 +49,14 @@
                   {{formatDate(DV_risk.startDate)}}
                   </span>              
                 
-                  <span  v-if="risk.ongoing == false">
-                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                  <span  v-if="risk.ongoing == false && risk.dueDate !== null">
+                    <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  
                     {{formatDate(DV_risk.dueDate)}}
                   </span>
-                  <span v-else v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
+                  <span  v-if="risk.onHold == true && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`">                              
+                  <i class="fas fa-pause-circle text-primary"></i>
+                  </span>
+                  <span v-if="risk.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
                 </div>
             </div>
 

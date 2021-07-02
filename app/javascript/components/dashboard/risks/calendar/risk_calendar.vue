@@ -207,8 +207,12 @@
                <small v-else><b>RA Due Date:</b></small></span> 
                <span v-if="selectedEvent.isOngoing == true && 
                selectedEvent.end == '2099-01-01'" class="mr-2">
-                <font-awesome-icon icon="retweet" class="text-success"  />
-                </span>   
+              <i class="far fa-retweet text-success mr-1"></i>
+                </span> 
+                <span v-if="selectedEvent.isOnHold == true && 
+               selectedEvent.end == null" class="mr-2">
+              <i class="fas fa-pause-circle mr-1 text-primary"></i>
+                </span>     
                <span v-else>  
             {{ moment(selectedEvent.end).format('DD MMM YYYY') }}
                </span>
@@ -228,13 +232,13 @@
          <v-list-item>
           <v-list-item-title>
            <span class="d-inline mr-1"><small><b>Flags:</b></small></span>  
-              <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+              <span v-if="selectedEvent.watch == true"  v-tooltip="`On Watch`"><i class="fas fa-eye mr-1"></i></span>
               <span v-if="selectedEvent.hasStar == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
               <span v-if="selectedEvent.pastDue == true" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
               <span v-if="selectedEvent.progess == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>
-              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><font-awesome-icon icon="retweet" class="text-success"  /></span> 
-              <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><font-awesome-icon icon="pause-circle" class="text-primary"  /></span>   
-              <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><font-awesome-icon icon="pencil-alt" class="text-warning"  /></span>     
+              <span v-if="selectedEvent.isOngoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>  
+              <span v-if="selectedEvent.isOnHold == true" v-tooltip="`On Hold`"><i class="fas fa-pause-circle text-primary"></i></span>  
+              <span v-if="selectedEvent.isDraft == true" v-tooltip="`Draft`"><i class="fas fa-pencil-alt text-warning mr-1"></i></span>   
                 <span v-if="
                       selectedEvent.watch == false && 
                       selectedEvent.isOngoing == false && 
@@ -495,6 +499,13 @@
       if(this.riskData[i].ongoing && (this.riskEndDates[i] == null || this.riskEndDates[i] == undefined)){    
        this.riskEndDates[i] = '2099-01-01'
       }
+      if(this.riskData[i].onHold) {
+        this.riskNames[i] = this.riskNames[i] + " (On Hold)"          
+        }
+      // if(this.riskData[i].onHold && (this.riskEndDates[i] == null)){    
+      //  this.riskEndDates[i] = '2099-01-01'
+      // }
+
           events.push({            
           name: this.riskNames[i],
           start: this.riskStartDates[i],
