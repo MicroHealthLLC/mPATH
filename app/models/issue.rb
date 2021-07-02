@@ -49,7 +49,7 @@ class Issue < ApplicationRecord
   end
 
   def porfolio_json
-    self.attributes
+    self.attributes.merge!({ project_name: facility.facility_name, program_name: project.name})
   end
   
   def self.params_to_permit
