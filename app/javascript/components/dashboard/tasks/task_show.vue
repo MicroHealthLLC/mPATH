@@ -45,12 +45,14 @@
                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(task.startDate)}}
                </span>              
-                <span  v-if="task.ongoing == false">
-                     <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>
+                <span  v-if="task.ongoing == false && task.dueDate !== null">
+                    <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt mr-0"></i></span>                  
                     {{formatDate(DV_task.dueDate)}}
-                </span>
-                <span v-else v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
-                
+                  </span>
+                  <span  v-if="task.onHold == true && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`">                              
+                  <i class="fas fa-pause-circle text-primary"></i>
+                  </span>
+                  <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success mx-2"></i></span>  
              </div>
           </div>     
          

@@ -43,7 +43,7 @@ ActiveAdmin.register Task do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column "Name", :text
     column "Category", :task_type, nil, sortable: 'task_types.name' do |task|
       if current_user.admin_write?

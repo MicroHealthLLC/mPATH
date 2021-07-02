@@ -11,7 +11,7 @@ class Issue < ApplicationRecord
   has_many_attached :issue_files, dependent: :destroy
   has_many :notes, as: :noteable, dependent: :destroy
 
-  validates :title, :start_date, :due_date, presence: true
+  validates :title, :start_date, :due_date, presence: true, if: ->  { !on_hold }
   accepts_nested_attributes_for :notes, reject_if: :all_blank, allow_destroy: true
 
   before_update :update_progress_on_stage_change, if: :issue_stage_id_changed?

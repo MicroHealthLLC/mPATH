@@ -47,8 +47,12 @@
                   <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
                   {{formatDate(issue.startDate)}}              
                     </span>
-                  <span class="fbody-icon mr-0"><i class="fas fa-calendar-alt"></i></span>
-                  {{formatDate(issue.dueDate)}}
+                  <span  v-if="issue.onHold && issue.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`" class="mr-0">
+                    <i class="fas fa-calendar-alt"></i>                  
+                  </span>
+                  <span v-else>
+                    {{formatDate(issue.dueDate)}}
+                  </span>
                 </div>
               </div>
    <!-- ROW 3 -->

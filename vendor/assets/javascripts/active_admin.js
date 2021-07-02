@@ -135,6 +135,11 @@ jQuery(function($) {
     allowClear: true
   });
 
+  $("#q_detail_type").select2({
+    placeholder: "Search and select Detail Type",
+    allowClear: true
+  });
+
   $(".project_privileges_select").select2({
     placeholder: "Search and select Project",
     allowClear: false
