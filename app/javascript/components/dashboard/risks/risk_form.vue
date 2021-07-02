@@ -259,6 +259,7 @@
                   :readonly="!_isallowed('write')"
                   data-cy="risk_name"
                   name="Risk Name"
+                  class ="inner-name-lowercase"
                   :class="{
                     error: errors.has('Risk Name'),
                   }"
@@ -420,18 +421,23 @@
                 </div>
 
                 <div class="form-group col-md-6 pr-0">
-                <span v-if="DV_risk.ongoing ">           
+                <span v-if="DV_risk.ongoing">           
                 <label class="font-md"><i class="fas fa-retweet text-success mr-1"></i>
                  Date Closed
                  </label
                   ></span>
-                  <span v-else>           
+                <span v-if="DV_risk.onHold">           
+                <label class="font-md">
+                Risk Approach Due Date <span><small class="text-danger">(Not required if Risk is On Hold)</small></span>
+                 </label
+                  ></span>
+                  <span v-if="!DV_risk.ongoing && !DV_risk.onHold">           
                   <label class="font-md"
                     >Risk Approach Due Date
                     <span style="color: #dc3545">*</span></label
                   ></span>
                   <v2-date-picker
-                    v-validate="{ required: !DV_risk.ongoing }"
+                    v-validate="{ required: !DV_risk.ongoing && !DV_risk.onHold }"
                     v-model="DV_risk.dueDate"
                     value-type="YYYY-MM-DD"
                     format="DD MMM YYYY"
@@ -1968,7 +1974,7 @@
                       <el-tag size="mini"
                         ><span class="font-weight-bold">Submitted by:</span>
                         <span v-if="note.updatedAt"
-                          >{{ author(note.userId) }} on
+                          >{{ note.user.fullName }} on
                           {{ new Date(note.updatedAt).toLocaleString() }}</span
                         ><span v-else
                           >{{ $currentUser.full_name }} on
@@ -2396,6 +2402,7 @@ export default {
     },
     toggleOnhold() {
         this.DV_risk = { ...this.DV_risk, onHold: !this.DV_risk.onHold };
+        this.DV_risk.dueDate = '';
       },
     toggleDraft() {
         this.DV_risk = { ...this.DV_risk, draft: !this.DV_risk.draft };
@@ -3669,7 +3676,12 @@ ul {
   background-color: #fafafa;
 }
 /deep/.el-input__inner {
-  text-transform: capitalize !important;
+  text-transform: capitalize;
+}
+.inner-name-lowercase{
+  /deep/.el-input__inner{
+    text-transform: none !important;
+  }
 }
 .fa-building {
   font-size: large !important;

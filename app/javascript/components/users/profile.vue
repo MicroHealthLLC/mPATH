@@ -295,7 +295,7 @@
           this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
         }else if(value.id == "map" || value.id == "sheet"){
           this.subNavigationOptions = allowed_sub_navigation_tabs
-        }else if(['gantt_chart', 'member_list'].includes(value.id) ){
+        }else if(['gantt_chart', 'members'].includes(value.id) ){
           this.subNavigationOptions = []
         }
       },
@@ -325,14 +325,21 @@
               }
             }
             this.selectedNavigation = this.navigationOptions.find((t) => t.id === this.preferences.navigationMenu );
+
             this.selectedSubNavigation = this.subNavigationOptions.find((t) => t.id === this.preferences.subNavigationMenu );
+            console.log(this.selectedSubNavigation)
+            if(!this.selectedSubNavigation && this.subNavigationOptions.length > 0){
+              
+              console.log(this.preferences.subNavigationMenu)
+              this.selectedSubNavigation = this.subNavigationOptions[0]
+            }
 
             if(this.selectedNavigation){
               if(this.selectedNavigation.id == "kanban"){
                 this.subNavigationOptions = _.filter(allowed_sub_navigation_tabs, h => !["overview", "notes"].includes(h.id))
               }else if(this.selectedNavigation.id == "map" || this.selectedNavigation.id == "sheet"){
                 this.subNavigationOptions = allowed_sub_navigation_tabs
-              }else if(['gantt_chart', 'member_list'].includes(this.selectedNavigation.id) ){
+              }else if(['gantt_chart', 'members'].includes(this.selectedNavigation.id) ){
                 this.subNavigationOptions = []
               }              
             }

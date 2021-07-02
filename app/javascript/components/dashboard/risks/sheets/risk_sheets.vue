@@ -15,7 +15,8 @@
        <td class="eight text-center">{{formatDate(risk.startDate)}}</td>
        <td class="eight text-center">
          <span v-if="risk.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-        <span v-else>
+         <span v-if="risk.onHold && risk.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+          <span v-else>
          {{formatDate(risk.dueDate)}}
         </span>
        </td>
@@ -57,7 +58,10 @@
            <span class="toolTip" v-tooltip="('By: ' + risk.notes[risk.notes.length - 1].user.fullName)">        
            {{moment(risk.notesUpdatedAt[risk.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
            </span>
-           <br> {{risk.notes[risk.notes.length - 1].body}}
+           <br> 
+           <span class="truncate-line-five">
+             {{risk.notes[risk.notes.length - 1].body}}
+           </span>
         </td>
         <td v-else class="twenty">No Updates</td>
       </tr>
@@ -339,5 +343,17 @@
   }
    .green1, .orange1, .red1 {   
     color:#fff;   
+  }
+  .truncate-line-five
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    &:hover
+    {
+      display: -webkit-box;
+      -webkit-line-clamp: unset;
+    }
   }
 </style>

@@ -146,7 +146,7 @@
             <td>{{ lesson.title }}</td>
             <td class="text-center">{{ formatDate(new Date(lesson.date)) }}</td>
             <td class="text-center">{{ lesson.created_by.full_name }}</td>
-            <td>{{ lesson.description }}</td>
+            <td><span class="truncate-line-five">{{ lesson.description }}</span></td>
             <td class="text-center">
               <span v-if="lesson.important == true" v-tooltip="`Important`">
                 <i class="fas fa-star text-warning mr-1"></i
@@ -179,8 +179,10 @@
                     )
                   }}
                 </div>
-                {{ lesson.last_update.body }}</span
-              >
+                <span class="truncate-line-five">
+                  {{ lesson.last_update.body }}
+                </span>
+              </span>
               <span v-else>No Updates</span>
             </td>
           </tr>
@@ -623,5 +625,18 @@ tr:hover {
   color: #fff;
   border-radius: 3px;
   width: fit-content;
+}
+.truncate-line-five
+{
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  &:hover
+  {
+    display: -webkit-box;
+    -webkit-line-clamp: unset;
+    overflow: hidden;
+  }
 }
 </style>

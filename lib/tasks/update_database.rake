@@ -61,7 +61,7 @@ task :create_program_privileges => :environment do
   # end
 
   puts "Adding Project privileges for User"
-  User.all.each do |user|
+  User.includes([:projects, :project_privileges, :privilege]).all.each do |user|
     next if !user.project_ids.any?
     privilege = user.privilege
     privilege_attr = privilege.attributes.except("id", "created_at", "updated_at", "user_id", "project_id", "group_number", "portfolio_view", "facility_manager_view","map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view" ).clone
@@ -70,8 +70,18 @@ task :create_program_privileges => :environment do
         privilege_attr[k] = v.chars
       end
     end
-    privilege_attr.merge!(user_id: user.id, project_ids: user.project_ids.map(&:to_s))
-    p = ProjectPrivilege.create(privilege_attr)
+    user_project_privileges = user.project_privileges
+    project_to_create_privileges = []
+    user.project_ids.each do |pid|
+      p = user_project_privileges.detect{|p| p.project_ids.map(&:to_i).include?(pid) }
+      if !p
+        project_to_create_privileges << pid
+      end
+    end
+    if project_to_create_privileges.any?
+      privilege_attr.merge!(user_id: user.id, project_ids: project_to_create_privileges.map(&:to_s))
+      p = ProjectPrivilege.create(privilege_attr)
+    end
   end
 end
 
@@ -139,4 +149,10 @@ task :revert_privileges => :environment do
     end
     p.save
   end
+end
+
+desc 'Grant all privileges of Lesson to all users'
+task :grant_lesson_privileges => :environment do
+  puts 'Granting all privileges of Lesson to all users'
+  Privilege.update_all(lessons: "RWD")
 end

@@ -16,7 +16,7 @@ class Risk < ApplicationRecord
   # validates_inclusion_of :probability, in: 1..5
   # validates_inclusion_of :impact_level, in: 1..5
   validates_presence_of :risk_description
-  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false }
+  validates :start_date, :due_date, presence: true, if: ->  { ongoing == false && on_hold == false }
 
   before_validation :cast_constants_to_i
   before_destroy :nuke_it!

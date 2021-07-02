@@ -35,6 +35,11 @@ td.col-issue_type, td.col-issue_severity {
   margin-top: 10px;
 }
 //User Project Privilege CSS start
+
+#lesson-info fieldset.inputs {
+  padding: 0 10px;
+}
+
 li.has_many_container.facility_privileges {
   a.button.has_many_remove {
     margin: 25px auto;
@@ -42,7 +47,7 @@ li.has_many_container.facility_privileges {
   fieldset.inputs.has_many_fields {
     margin-bottom: 30px;
   }
-  #user_facility_privileges_attributes_0_facility_project_input { 
+  #user_facility_privileges_attributes_0_facility_project_input {
     margin-bottom: 35px;
   }
   legend.label {
@@ -51,7 +56,7 @@ li.has_many_container.facility_privileges {
     }
   }
   ol.choices-group {
-    display: inline-flex;    
+    display: inline-flex;
     li.choice {
       width: 15%;
     }
@@ -116,7 +121,7 @@ li.has_many_container.facility_privileges {
   }
   .risk_prob_level {
     display:inline;
-    margin-left: 20.7%;  
+    margin-left: 20.7%;
     margin-bottom: 10px;
   }
   #riskText {
@@ -371,7 +376,6 @@ li.has_many_container.facility_privileges {
     align-items: center;
   }
   #facility_projects {
-    padding: 0 10px;
     .inputs {
       margin: 0;
       padding: 0;
@@ -669,13 +673,12 @@ li.has_many_container.facility_privileges {
       }
       input {
         margin-left: 1.25rem;
-        margin-right: .5rem;    
+        margin-right: .5rem;
         }
       }
-    } 
+    }
 
   .select2-container {
-    width: calc(80% - 22px) !important;
     .select2-selection--single {
       min-height: 28px;
       height: max-content;
