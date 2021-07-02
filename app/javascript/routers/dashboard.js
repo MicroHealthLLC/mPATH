@@ -1,7 +1,5 @@
 import GanttChartView from "./../components/dashboard/gantt_view";
 import MembersView from "./../components/dashboard/members_view";
-import LessonsIndex from "./../components/views/lessons/LessonsIndex";
-import LessonForm from "./../components/views/lessons/LessonForm";
 
 // Map Routes Components
 import MapView from "./../components/views/map/MapView";
@@ -132,24 +130,6 @@ export default new VueRouter({
       name: "TeamMembersView",
       path: "/programs/:programId/member_list",
       component: MembersView,
-    },
-    {
-      name: "LessonsIndex",
-      path: "/programs/:programId/lessons",
-      redirect: "/programs/:programId/map",
-      component: LessonsIndex,
-    },
-    {
-      name: "LessonForm",
-      path: "/programs/:programId/lessons/new",
-      redirect: "/programs/:programId/map",
-      component: LessonForm,
-    },
-    {
-      name: "LessonForm",
-      path: "/programs/:programId/lessons/:lessonId",
-      redirect: "/programs/:programId/map",
-      component: LessonForm,
     },
     {
       name: "SheetView",
