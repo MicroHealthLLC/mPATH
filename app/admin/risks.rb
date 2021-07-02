@@ -50,7 +50,7 @@ ActiveAdmin.register Risk do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column "Risk Name", :text
     column "Risk Description", :risk_description, sortable: false
     column "Impact Description", :impact_description, sortable: false
