@@ -326,9 +326,13 @@ td.col-issue_type, td.col-issue_severity {
 .portfolioViewerBtn {
   background-color: #DD9036;
   border-radius: 3px;
-  color: white;
+  color: white !important;
   padding: 3px 6px;
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
+  transition: all .2s ease-in;
+}
+.portfolioViewerBtn:hover {
+  transform: scale(1.05); 
 }
 
 .program-name a {

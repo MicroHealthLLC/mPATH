@@ -1,5 +1,6 @@
 class ProjectsController < AuthenticatedController
   before_action :set_project, only: [:destroy, :update, :gantt_chart, :watch_view, :member_list, :facility_manager, :sheet, :calendar]
+  layout :resolve_layout
 
   def vue_js_route
     view = "map_view"
@@ -221,4 +222,12 @@ class ProjectsController < AuthenticatedController
   def check_permit(view)
     return unless current_user.allowed?(view)
   end
+
+  def resolve_layout
+    case action_name
+    when "index" then "portfolio_viewer"
+    else "application"
+    end
+  end
+
 end
