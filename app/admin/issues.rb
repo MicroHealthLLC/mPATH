@@ -46,7 +46,7 @@ ActiveAdmin.register Issue do
 
   index do
     div id: '__privileges', 'data-privilege': "#{current_user.admin_privilege}"
-    selectable_column if current_user.admin_delete?
+    selectable_column if current_user.admin_write? || current_user.admin_delete?
     column :title
     column "Category", :task_type, nil, sortable: 'task_types.name' do |issue|
       if current_user.admin_write?
