@@ -60,6 +60,29 @@ Agile portfolio management for large programs and projects including those geogr
 
 --enter the password for mysql where it says password then save and exit
 
+# go to the cloned directory 
+        cd /var/www/mPATH
+
+        gem install rails
+
+        gem install bundler
+
+        yum install nodejs
+
+        yarn install
+
+        bundle install
+        
+        rake db:migrate RAILS_ENV=production
+        
+        rake db:seed RAILS_ENV=production
+
+        rake assets:precompile RAILS_ENV=production
+
+        chown -R nginx:nginx *
+        
+        Service nginx restart
+
 # generate your secrets for config/secrets.yml
 
         rake secret
@@ -127,28 +150,6 @@ you will have to create an nginx service now
 
         service nginx start
 
-# go to the cloned directory 
-        cd /var/www/mPATH
-
-        gem install rails
-
-        gem install bundler
-
-        yum install nodejs
-
-        yarn install
-
-        bundle install
-        
-        rake db:migrate RAILS_ENV=production
-        
-        rake db:seed RAILS_ENV=production
-
-        rake assets:precompile RAILS_ENV=production
-
-        chown -R nginx:nginx *
-        
-        Service nginx restart
 
 
 # Setup
