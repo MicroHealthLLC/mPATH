@@ -19,12 +19,14 @@ class Task < ApplicationRecord
   after_save :update_facility_project
   after_destroy :update_facility_project
 
+  enum status: %i[draft ongoing on_hold overdue in_progress planned completed]
+
   amoeba do
     include_association :task_type
     include_association :task_stage
     include_association :task_users
     include_association :users
-    
+
     include_association :facility_project
     include_association :checklists
     include_association :related_tasks
@@ -48,12 +50,12 @@ class Task < ApplicationRecord
       :description,
       :progress,
       :auto_calculate,
-      :watched,    
+      :watched,
       :kanban_order,
       :important,
       :reportable,
-      :draft, 
-      :on_hold, 
+      :draft,
+      :on_hold,
       :ongoing,
       task_files: [],
       user_ids: [],
@@ -98,7 +100,7 @@ class Task < ApplicationRecord
       FacilityGroup.where(project_id: p.id).map(&:update_progerss)
     end
   end
-  
+
   def lesson_json
     {
       id: id,
@@ -144,13 +146,13 @@ class Task < ApplicationRecord
     else
       resource_users = self.task_users #.where(user_id: self.users.active.uniq.map(&:id) )
     end
-    
+
     resource_user_ids = resource_users.to_a.map(&:user_id).compact.uniq
     accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
     responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
     consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
- 
+
     p_users = []
 
     if all_users.any?
@@ -159,15 +161,15 @@ class Task < ApplicationRecord
       p_users = users.select(&:active?)
     end
 
-    users_hash = {} 
+    users_hash = {}
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
 
     # Last name values added for improved sorting in datatables
-    users_last_name_hash = {} 
+    users_last_name_hash = {}
     p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
     # First name values added for improved sorting in datatables
-    users_first_name_hash = {} 
+    users_first_name_hash = {}
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
     sub_tasks = self.sub_tasks
@@ -176,13 +178,13 @@ class Task < ApplicationRecord
 
     if(progress >= 100)
       progress_status = "completed"
-    end  
+    end
 
     is_overdue = false
     if !ongoing && !on_hold && !draft
       is_overdue = ( progress < 100 && (due_date < Date.today) )
     end
-    
+
     planned = false
     if ( !draft && start_date > Date.today)
       planned = true
@@ -193,13 +195,13 @@ class Task < ApplicationRecord
       in_progress = true
     end
 
-   
+
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: is_overdue,
-      planned: planned, 
-      in_progress: in_progress, 
+      planned: planned,
+      in_progress: in_progress,
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
@@ -212,9 +214,9 @@ class Task < ApplicationRecord
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       important: important,
       reportable: reportable,
-      draft: draft, 
-      on_hold: on_hold, 
-      
+      draft: draft,
+      on_hold: on_hold,
+
       # Add RACI user names
       # Last name values added for improved sorting in datatables
       responsible_users: responsible_user_ids.map{|id| users_hash[id] }.compact,
@@ -223,15 +225,15 @@ class Task < ApplicationRecord
       accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
       accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
       accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
-      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
-    
-    
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact,
+
+
       # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
-      accountable_user_ids: accountable_user_ids,    
+      accountable_user_ids: accountable_user_ids,
       consulted_user_ids: consulted_user_ids,
-      informed_user_ids: informed_user_ids, 
+      informed_user_ids: informed_user_ids,
 
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility).facility_name,
@@ -272,7 +274,7 @@ class Task < ApplicationRecord
 
     task.transaction do
       task.save
-      
+
       task.add_link_attachment(params)
 
       if user_ids && user_ids.present?
@@ -305,7 +307,7 @@ class Task < ApplicationRecord
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
         RelatedTask.import(related_issue_objs2) if related_issue_objs2.any?
       end
-      
+
       if sub_risk_ids && sub_risk_ids.any?
         related_risk_objs = []
         related_risk_objs2 = []
@@ -423,9 +425,9 @@ class Task < ApplicationRecord
       end
       users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
     end
-    
+
     records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users
-    
+
     if users_to_delete.any?
       resource_users.where(user_id: users_to_delete).destroy_all
     end

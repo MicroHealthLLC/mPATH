@@ -23,6 +23,8 @@ class Risk < ApplicationRecord
   before_update :update_progress_on_stage_change, if: :risk_stage_id_changed?
   before_save :init_kanban_order, if: Proc.new {|risk| risk.risk_stage_id_was.nil?}
 
+  enum state: %i[draft ongoing on_hold overdue in_progress planned completed]
+
   amoeba do
     include_association :risk_stage
     include_association :user
@@ -96,11 +98,11 @@ class Risk < ApplicationRecord
       5 => "5 - Almost Certain"
     }
   end
-  
+
   def probability_name
     probability_name_hash[probability] || probability_name_hash[1]
   end
-  
+
   def self.params_to_permit
     [
       :approved,
@@ -122,7 +124,7 @@ class Risk < ApplicationRecord
       :explanation,
       :risk_approach_description,
       :task_type_id,
-      :task_type, 
+      :task_type,
       :risk_stage_id,
       :progress,
       :start_date,
@@ -132,8 +134,8 @@ class Risk < ApplicationRecord
       :watched,
       :important,
       :reportable,
-      :on_hold, 
-      :draft, 
+      :on_hold,
+      :draft,
       :ongoing,
       user_ids: [],
       risk_files: [],
@@ -203,7 +205,7 @@ class Risk < ApplicationRecord
     end
 
     fp = self.facility_project
-    
+
     t_users = options[:all_risk_users] || []
     all_users = options[:all_users] || []
     if options[:for].present? && [:project_build_response, :risk_index].include?(options[:for])
@@ -220,26 +222,26 @@ class Risk < ApplicationRecord
     informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
 
     risk_approver_user_ids = resource_users.map{|ru| ru.user_id if ru.approver? }.compact.uniq
-    
+
     resource_user_ids += risk_approver_user_ids
 
-    p_users = [] 
+    p_users = []
     if all_users.any?
       p_users = all_users.select{|u| resource_user_ids.include?(u.id) }
     else
       p_users = User.where(id: resource_user_ids).active
     end
-    
-    users_hash = {} 
+
+    users_hash = {}
     p_users.map{|u| users_hash[u.id] = {id: u.id, name: u.full_name} }
-    
+
     # Last name values added for improved sorting in datatables
-    users_last_name_hash = {} 
+    users_last_name_hash = {}
     p_users.map{|u| users_last_name_hash[u.id] = u.last_name }
 
-    
+
     # First name values added for improved sorting in datatables
-    users_first_name_hash = {} 
+    users_first_name_hash = {}
     p_users.map{|u| users_first_name_hash[u.id] = u.first_name }
 
     sub_tasks = self.sub_tasks
@@ -260,13 +262,13 @@ class Risk < ApplicationRecord
       # risk_approach: risk_approach.humanize,
       probability_name: probability_name,
       impact_level_name: impact_level_name,
-      task_type: task_type.as_json, 
+      task_type: task_type.as_json,
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
       is_overdue: is_overdue,
       progress_status: progress_status,
-      checklists: checklists.as_json,  
+      checklists: checklists.as_json,
       due_date_duplicate: due_date.as_json,
       facility_id: fp.try(:facility_id),
       facility_name: fp.try(:facility)&.facility_name,
@@ -275,8 +277,8 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
-      draft: draft, 
-      on_hold: on_hold, 
+      draft: draft,
+      on_hold: on_hold,
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables
@@ -286,22 +288,22 @@ class Risk < ApplicationRecord
       accountable_users: accountable_user_ids.map{|id| users_hash[id] }.compact,
       accountable_users_last_name: accountable_user_ids.map{|id| users_last_name_hash[id] }.compact,
       accountable_users_first_name: accountable_user_ids.map{|id| users_first_name_hash[id] }.compact,
-      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact, 
-      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact, 
+      consulted_users: consulted_user_ids.map{|id| users_hash[id] }.compact,
+      informed_users: informed_user_ids.map{|id| users_hash[id] }.compact,
 
-            
-      # Add RACI user ids     
+
+      # Add RACI user ids
       responsible_user_ids: responsible_user_ids,
       accountable_user_ids: accountable_user_ids,
       consulted_user_ids: consulted_user_ids,
       informed_user_ids: informed_user_ids,
 
       # Risk Approver name
-      risk_approver:   risk_approver_user_ids.map{|id| users_hash[id] }, 
+      risk_approver:   risk_approver_user_ids.map{|id| users_hash[id] },
 
       # Risk Approver user ids
       risk_approver_user_ids: risk_approver_user_ids,
-      
+
       notes: notes.as_json,
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       project_id: fp.try(:project_id),
@@ -341,7 +343,7 @@ class Risk < ApplicationRecord
 
     risk.transaction do
       risk.save
-      
+
       risk.add_link_attachment(params)
 
       if user_ids && user_ids.present?
@@ -374,7 +376,7 @@ class Risk < ApplicationRecord
         RelatedIssue.import(related_issue_objs) if related_issue_objs.any?
         RelatedRisk.import(related_issue_objs2) if related_issue_objs2.any?
       end
-      
+
       if sub_task_ids && sub_task_ids.any?
         related_task_objs = []
         related_task_objs2 = []
@@ -436,7 +438,7 @@ class Risk < ApplicationRecord
       end
     end
   end
-  
+
   # Above this line Added by JR to fix Watched and add Approved values
 
   def assign_users(params)
@@ -496,7 +498,7 @@ class Risk < ApplicationRecord
       users_to_delete += informed_user_ids - params[:informed_user_ids].map(&:to_i)
     end
 
-    # Risk Approver (aka: Risk Approach Approver is not part of RACI users but still a user within Risks module) 
+    # Risk Approver (aka: Risk Approach Approver is not part of RACI users but still a user within Risks module)
     if params[:risk_approver_user_ids].present?
       params[:risk_approver_user_ids].each do |uid|
         next if uid == "undefined"
@@ -506,9 +508,9 @@ class Risk < ApplicationRecord
       end
       users_to_delete += risk_approver_user_ids - params[:risk_approver_user_ids].map(&:to_i)
     end
-    
+
     records_to_import = accountable_resource_users + responsible_resource_users + consulted_resource_users + informed_resource_users + approver_resource_users
-    
+
     if users_to_delete.any?
       resource_users.where(user_id: users_to_delete).destroy_all
     end
@@ -519,10 +521,10 @@ class Risk < ApplicationRecord
   end
 
   def status_name_hash
-    {    
+    {
       1 => "Monitoring",
-      2 => "Resolved", 
-      3 => "Closed"  
+      2 => "Resolved",
+      3 => "Closed"
     }
   end
 
@@ -531,9 +533,9 @@ class Risk < ApplicationRecord
   end
 
   def duration_name_hash
-    { 
+    {
       1 => "Temporary",
-      2 => "Perpetual"    
+      2 => "Perpetual"
     }
   end
 
@@ -566,7 +568,7 @@ class Risk < ApplicationRecord
       self.progress = risk_stage.percentage
       self.auto_calculate = false
     end
-  end 
+  end
 
   private
   def cast_constants_to_i
