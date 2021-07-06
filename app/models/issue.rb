@@ -50,23 +50,13 @@ class Issue < ApplicationRecord
 
   def porfolio_json
 
-    resource_users = self.issue_users
-    
-    resource_user_ids = resource_users.to_a.map(&:user_id).compact.uniq
-    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
-    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
-    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
-    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
- 
-    p_users = resource_users.select(&:active?)
-
     merge_h = { 
       project_name: facility.facility_name, 
       program_name: project.name, 
       issue_type: issue_type.name,
       issue_severity: issue_severity.name,
       last_update: self.notes.last&.porfolio_json,
-      users: p_users.map{|u| {id: u.id, name: u.full_name} }
+      users: users.select(&:active?).map{|u| {id: u.id, name: u.full_name} }
     }
 
     self.attributes.merge!(merge_h)
