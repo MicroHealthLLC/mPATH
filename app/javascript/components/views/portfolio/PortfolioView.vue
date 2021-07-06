@@ -1,5 +1,5 @@
 <template>
-<div class="container-fluid mt-5 mx-3">
+<div class="container-fluid mt-3 mx-3">
   <!-- Actual Portfolio name will be dynamic value of organization name   -->
 <div>
 <span> <img class="mb-2" style="width:40px" :src="require('../../../../assets/images/mpathcircles.JPG')" /> 
@@ -19,7 +19,7 @@
          <template slot="label" class="text-right">
            TASKS
            <span class="badge badge-secondary badge-pill">
-           134
+              <span v-if="tasksObj">{{ tasksObj.length }}</span>
           </span>   
           </template>
              <div class="row pt-2 text-center w-50">
@@ -27,65 +27,66 @@
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block">12</h4>  
+                   <h4 class="d-block">{{ taskVariation.completed.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block">64</h4>  
+                     <h4 class="d-block">{{ taskVariation.inProgress.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block">64</h4>                     
+                    <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>                     
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span class="smallerFont">ONGOING </span>    
-                      <h4 class="d-block">34</h4>  
+                      <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
                 </div> 
                  <div class="py-0 px-4  mb-0">
                   
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block">10</h4>  
+                        <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block">42</h4>            
+                       <h4 class="d-block">{{ taskVariation.onHoldT.count }}</h4>            
                 </div>
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">6</h4>              
+                       <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
                 </div> 
             
               </div>
 
-            <div class="row text-center mt-3" v-if="programObj !== null"> 
+            <div class="row text-center mt-2" v-if="tasksObj !== null"> 
               <!-- TASKS TABLE -->
             <el-table
-              :data="programObj"  
+              :data="pagedTableData"  
               class="mt-4"
               border
               style="width: 100%">
             <el-table-column
               fixed
-              prop="name"
+              prop="program_name"
               sortable
+              :sort-method="test"
               label="Program"
               width="250">
             </el-table-column>
             <el-table-column
-              prop="project"
+              prop="project_name"
               fixed
               sortable
               label="Project"
               width="225">
             </el-table-column>
             <el-table-column
-              prop="task"
+              prop="text"
               fixed
               sortable
               label="Task"
@@ -98,13 +99,13 @@
               width="200">
             </el-table-column>
             <el-table-column
-              prop="startDate"
+              prop="start_date"
               label="Start Date"
               sortable
               width="120">
             </el-table-column>
             <el-table-column
-              prop="dueDate"
+              prop="due_date"
               label="Due Date"
               sortable
               width="120">
@@ -128,7 +129,7 @@
               width="150">
             </el-table-column>
             <el-table-column
-              prop="lastUpdate"
+              prop="last_update"
               fixed="right"
               label="Last Update"
               sortable
@@ -143,10 +144,20 @@
                 <el-button type="text" size="small">Edit</el-button>
               </template> -->
             <!-- </el-table-column> -->
+
           </el-table>
-            
+         
                       
-            </div>       
+            </div>    
+             <div class="float-right mt-2">
+          <el-pagination
+            
+            @current-change="setPage"
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :total="tasksObj.length">
+          </el-pagination>
+          </div>   
 
 
                
@@ -155,67 +166,67 @@
           <template slot="label" class="text-right">
            ISSUES
            <span class="badge badge-secondary badge-pill">
-           134
+           <span v-if="issuesObj">{{ issuesObj.length }}</span>
           </span>   
           </template>      
              <div class="row pt-2 text-center w-50">          
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block">19</h4>  
+                   <h4 class="d-block"> {{ issueVariation.completed.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block">4</h4>  
+                     <h4 class="d-block"> {{ issueVariation.inProgress.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block">62</h4>                     
+                    <h4 class="d-block">{{ issueVariation.overdue.count }}</h4>                     
                 </div>
                 
                  <div class="py-0 px-4  mb-0">                  
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block">11</h4>  
+                        <h4 class="d-block">{{ issueVariation.planned.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block">42</h4>            
+                       <h4 class="d-block"> {{ issueVariation.onHoldI.count }}</h4>            
                 </div>
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">6</h4>              
+                       <h4 class="d-block"> {{ issueVariation.issueDrafts.count }}</h4>              
                 </div> 
             
               </div>
   <!-- ISSUES TABLE -->
 
-          <div class="row text-center mt-3" v-if="programObj !== null">      
+          <div class="row text-center mt-2" v-if="issuesObj !== null">      
             <el-table
-              :data="programObj"
+              :data="issuesObj"
               border
               class="mt-4"
               style="width: 100%">
             <el-table-column
               fixed
-              prop="name"
+              prop="program_name"
               sortable
               label="Program"
               width="250">
             </el-table-column>
             <el-table-column
-              prop="project"
+              prop="project_name"
               label="Project"
               fixed
               sortable
               width="250">
             </el-table-column>
             <el-table-column
-              prop="issue"
+              prop="title"
               label="Issue"
               sortable
               fixed
@@ -228,13 +239,13 @@
               width="200">
             </el-table-column>
             <el-table-column
-              prop="startDate"
+              prop="start_date"
               label="Start Date"
               sortable
               width="120">
             </el-table-column>
             <el-table-column
-              prop="dueDate"
+              prop="due_date"
               label="Due Date"
               sortable
               width="120">
@@ -258,7 +269,7 @@
               width="150">
             </el-table-column>
             <el-table-column
-              prop="lastUpdate"
+              prop="last_update"
               label="Last Update"
               sortable
               fixed="right"
@@ -280,7 +291,7 @@
            <template slot="label" class="text-right">
            RISKS
            <span class="badge badge-secondary badge-pill">
-           13
+              <span v-if="risksObj">{{ risksObj.length }}</span>
           </span>   
           </template>
             <div class="row pt-2 text-center w-50">
@@ -288,68 +299,68 @@
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block">122</h4>  
+                   <h4 class="d-block"> {{ riskVariation.completed.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block">624</h4>  
+                     <h4 class="d-block"> {{ riskVariation.inProgress.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block">55</h4>                     
+                    <h4 class="d-block"> {{ riskVariation.overdue.count }}</h4>                     
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span class="smallerFont">ONGOING </span>    
-                      <h4 class="d-block">32</h4>  
+                      <h4 class="d-block">{{ riskVariation.ongoing.count }}</h4>  
                 </div> 
                  <div class="py-0 px-4  mb-0">
                   
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block">10</h4>  
+                        <h4 class="d-block">{{ riskVariation.planned.count }}</h4>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block">42</h4>            
+                       <h4 class="d-block">{{riskVariation.onHoldR.count }}</h4>            
                 </div>
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">6</h4>              
+                       <h4 class="d-block">{{ riskVariation.riskDrafts.count }}</h4>              
                 </div> 
             
               </div>
 <!-- RISKS TABLE -->
-      <div class="row text-center mt-3" v-if="programObj !== null">      
+      <div class="row text-center mt-2" v-if="risksObj !== null">      
           <el-table
-          :data="programObj"
+          :data="risksObj"
           border
           class="mt-4"
           style="width: 100%">
           <el-table-column
             fixed
-            prop="name"
+            prop="program_name"
             sortable
             label="Program"
             width="250">
           </el-table-column>
           <el-table-column
-            prop="project"
+            prop="project_name"
             label="Project"
             sortable
             fixed
-            width="250">
+            width="220">
           </el-table-column>
           <el-table-column
-            prop="risk"
+            prop="text"
             label="Risk"
             sortable
             fixed
-            width="250">
+            width="220">
           </el-table-column>
           <el-table-column
             prop="category"
@@ -358,16 +369,16 @@
             width="200">
           </el-table-column>
           <el-table-column
-            prop="startDate"
+            prop="start_date"
             label="Start Date"
             sortable
             width="120">
           </el-table-column>
           <el-table-column
-            prop="dueDate"
+            prop="due_date"
             sortable
-            label="Due Date"
-            width="120">
+            label="RA Due Date"
+            width="135">
           </el-table-column>
           <el-table-column
             prop="users"
@@ -388,7 +399,7 @@
             width="150">
           </el-table-column>
           <el-table-column
-            prop="lastUpdate"
+            prop="last_update"
             label="Last Update"
             fixed="right"
             sortable
@@ -429,7 +440,7 @@
               </div>
       
     <!-- LESSONS LEARNED TABLE -->
-        <div class="row text-center mt-3" v-if="programObj !== null">      
+        <div class="row text-center mt-2" v-if="programObj !== null">      
           <el-table
           :data="programObj"
           border
@@ -521,10 +532,11 @@
    
 
  </el-tab-pane> 
-   <el-tab-pane disabled label="Portfolio Analytics (Coming Soon)" class="p-3">
+   <el-tab-pane disabled  label="Portfolio Analytics (Coming Soon)" class="p-3">
+    
    </el-tab-pane>
     </el-tabs>
-  <!-- {{portfolioObj}} -->
+
  <div class="mhLogo"> <img class="mb-2" style="width:125px" :src="require('../../../../assets/images/microhealthllc.png')" /></div>
 </div>
 </template>
@@ -542,21 +554,32 @@ export default {
   data() {
     return {
       showLess: "Show More",
-      portfolioObj: null,
+      portfolioData: null, 
+      tasksData: null, 
+      issuesData: null, 
+      risksData: null, 
       programId: null, 
+      programName: null, 
+      page: 1,
+      pageSize: 10,
+      tasksRequest: axios.get("/api/v1/portfolio/tasks"),
+      issuesRequest: axios.get("/api/v1/portfolio/issues"),
+      risksRequest: axios.get("/api/v1/portfolio/risks"),
+      portfolioRequest: axios.get("/api/v1/portfolio/programs.json"),
       showMore: true,
       today: new Date().toISOString().slice(0, 10),
     };
   },
    mounted() { 
-    //  $( "#nav-wrap" ).hide();  
-    axios
-      .get('/api/v1/portfolio/programs.json')
-      .then(response => (this.portfolioObj = response))    
-      
-    if (this.portfolioObj !== null) {
-     console.log(this.portfolioObj.data)
-     }
+      axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
+          this.tasksData = responses[0]
+          this.issuesData = responses[1]
+          this.risksData = responses[2]
+          this.portfolioData = responses[3].data.projects
+         })).catch(errors => {
+  
+    })
+   
   },
   computed: {
     ...mapGetters([
@@ -581,16 +604,204 @@ export default {
     
     // },
     programObj(){     
-      if (this.portfolioObj !== null) {
-      return this.portfolioObj.data.projects
+      if (this.portfolioData !== null) {
+      return this.portfolioData
       }
     }, 
-  
+    tasksObj(){     
+      if (this.tasksData !== null) {
+      return this.tasksData.data
+      }
+    }, 
+    issuesObj(){     
+      if (this.issuesData !== null) {
+      return this.issuesData.data
+      }
+    }, 
+    risksObj(){     
+      if (this.risksData !== null) {
+      return this.risksData.data
+      }
+    }, 
+     pagedTableData() {
+       if (this.tasksObj && this.tasksObj !== undefined)
+       return this.tasksObj.slice(this.pageSize * this.page - this.pageSize, this.pageSize * this.page)
+     },
+   taskVariation() {
+      let planned = _.filter(
+        this.tasksObj,
+        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let taskDrafts = _.filter(
+        this.tasksObj,
+        (t) => t && t.draft == true
+      );      
+      let completed = _.filter(
+        this.tasksObj,
+        (t) => t && t.progress && t.progress == 100 
+      );
+      let inProgress = _.filter(
+        this.tasksObj,
+        (t) => t && t.progress < 100 && t.start_date <= this.today 
+      );
+     let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
+     let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );
+      // let completed_percent = this.getAverage(
+      //   completed.length,
+      //   this.tasksObj.length
+      // );
+      // let inProgress_percent = this.getAverage(
+      //   inProgress.length,
+      //   this.tasksObj.length
+      // );
+      let overdue = _.filter(this.tasksObj, (t) => t && t.due_date < this.today);
+      // let overdue_percent = this.getAverage(
+      //   overdue.length,
+      //   this.tasksObj.length
+      // );
+     
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        onHoldT: {
+          count: onHoldT.length,          
+        },
+        taskDrafts: {
+          count: taskDrafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+        ongoing: {
+          count: ongoing.length
+        },     
+      };
+    },
+     issueVariation() {
+      let planned = _.filter(
+        this.issuesObj,
+        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let issueDrafts = _.filter(
+        this.issuesObj,
+        (t) => t && t.draft == true
+      );      
+      let completed = _.filter(
+        this.issuesObj,
+        (t) => t && t.progress && t.progress == 100 
+      );
+      let inProgress = _.filter(
+        this.issuesObj,
+        (t) => t && t.progress < 100 && t.start_date <= this.today 
+      );
+     let onHoldI = _.filter(this.issuesObj, (t) => t && t.on_hold == true );
+     let overdue = _.filter(this.issuesObj, (t) => t && t.due_date < this.today);
+    
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        onHoldI: {
+          count: onHoldI.length,          
+        },
+        issueDrafts: {
+          count: issueDrafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+       };
+    },
+    riskVariation() {
+      let planned = _.filter(
+        this.risksObj,
+        (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
+          // (t) => t && t.startDate && t.startDate > this.today 
+      );     
+     let riskDrafts = _.filter(
+        this.risksObj,
+        (t) => t && t.draft == true
+      );      
+      let completed = _.filter(
+        this.risksObj,
+        (t) => t && t.progress && t.progress == 100 
+      );
+      let inProgress = _.filter(
+        this.risksObj,
+        (t) => t && t.progress < 100 && t.start_date <= this.today 
+      );
+     let onHoldR = _.filter(this.risksObj, (t) => t && t.on_hold == true );
+     let ongoing = _.filter(this.risksObj, (t) => t && t.ongoing == true );
+     let overdue = _.filter(this.risksObj, (t) => t && t.due_date < this.today);
+      return {
+        planned: {
+          count: planned.length, 
+          plannedTs: planned            
+        },
+        onHoldR: {
+          count: onHoldR.length,          
+        },
+        riskDrafts: {
+          count: riskDrafts.length,          
+        },
+        completed: {
+          count: completed.length,
+          // percentage: Math.round(completed_percent),
+        },      
+        inProgress: {
+          count: inProgress.length - planned.length,
+          // percentage: Math.round(inProgress_percent),
+        },
+        overdue: {
+          count: overdue.length,
+          // percentage: Math.round(overdue_percent),
+        },
+        ongoing: {
+          count: ongoing.length
+        },     
+      };
+    },
+
+
+
   },
   methods: {
     
     log(e){
       console.log("this is Lessons" + e)
+    },
+    test(a,b) {
+      this.programName = this.tasksObj. map(t => t.program_name) 
+      // let name = this.tasksObj.program_name
+       if (a[this.programName] <  b[this.programName]) return -1;
+       if (a[this.programName] > b[this.programName]) return 1;
+       return 0;  
+    },
+    setPage (val) {
+      this.page = val
     },
     getProgramId(id){
       this.programId = id
@@ -763,8 +974,8 @@ ul {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .10);
 }
 .mhLogo {
-  position: absolute;
-  bottom: 2%;
+  position: fixed;
+  bottom: 1%;
   right: 1.5%;
   z-index: 10;
 }
