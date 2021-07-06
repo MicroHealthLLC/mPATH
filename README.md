@@ -17,8 +17,6 @@ Agile portfolio management for large programs and projects including those geogr
         
         curl -sSL https://get.rvm.io | sudo bash -s stable
 
-        usermod -a -G rvm `username'
-
         export PATH="$PATH:$HOME/.rvm/bin"
 
         log out then log back in
