@@ -102,7 +102,25 @@ class Risk < ApplicationRecord
   end
 
   def porfolio_json
-    self.attributes.merge!({ project_name: facility.facility_name, program_name: project.name})
+    resource_users = self.risk_users
+    
+    resource_user_ids = resource_users.to_a.map(&:user_id).compact.uniq
+    accountable_user_ids = resource_users.map{|ru| ru.user_id if ru.accountable? }.compact.uniq
+    responsible_user_ids = resource_users.map{|ru| ru.user_id if ru.responsible? }.compact.uniq
+    consulted_user_ids = resource_users.map{|ru| ru.user_id if ru.consulted? }.compact.uniq
+    informed_user_ids = resource_users.map{|ru| ru.user_id if ru.informed? }.compact.uniq
+ 
+    p_users = users.select(&:active?)
+
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      category: task_type.name,
+      last_update: self.notes.last&.porfolio_json,
+      users: p_users.map{|u| {id: u.id, name: u.full_name} }
+    }
+
+    self.attributes.merge!(merge_h)
   end
 
   def self.params_to_permit

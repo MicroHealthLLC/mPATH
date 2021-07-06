@@ -18,7 +18,8 @@ class Note < ApplicationRecord
     {
       id: id,
       body: body,
-      created_at: created_at
+      created_at: created_at,
+      updated_at: updated_at
     }
   end
 
