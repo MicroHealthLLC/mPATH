@@ -134,9 +134,6 @@ class Risk < ApplicationRecord
       :watched,
       :important,
       :reportable,
-      :on_hold,
-      :draft,
-      :ongoing,
       user_ids: [],
       risk_files: [],
       sub_task_ids: [],
@@ -248,13 +245,16 @@ class Risk < ApplicationRecord
     sub_issues = self.sub_issues
     sub_risks = self.sub_risks
     progress_status = "active"
-    if(progress >= 100)
-      progress_status = "completed"
-    end
 
-    is_overdue = false
-    if !ongoing && !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    if progress >= 100
+      progress_status = "completed"
+      self.completed!
+    elsif progress < 100 && (due_date < Date.today)
+      self.overdue!
+    elsif start_date > Date.today
+      self.planned!
+    elsif start_date < Date.today
+      self.in_progress!
     end
 
     self.as_json.merge(
@@ -266,7 +266,6 @@ class Risk < ApplicationRecord
       risk_stage: risk_stage.try(:name),
       class_name: self.class.name,
       attach_files: attach_files,
-      is_overdue: is_overdue,
       progress_status: progress_status,
       checklists: checklists.as_json,
       due_date_duplicate: due_date.as_json,
@@ -277,8 +276,7 @@ class Risk < ApplicationRecord
       risk_owners: p_users.map(&:full_name).compact.join(", "),
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
       user_names: p_users.map(&:full_name).compact.join(", "),
-      draft: draft,
-      on_hold: on_hold,
+      status: status,
 
      # Add RACI user name
       # Last name values added for improved sorting in datatables
