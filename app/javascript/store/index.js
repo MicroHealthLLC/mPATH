@@ -1860,7 +1860,7 @@ export default new Vuex.Store({
     },
 
     async fetchDashboardData({dispatch, commit}, {id, cb}) {
-      await dispatch('fetchProjects')
+      // await dispatch('fetchProjects')
       await dispatch('fetchCurrentProject', id)
       commit('setContentLoaded', true)
       // commit('setToggleRACI', false)
