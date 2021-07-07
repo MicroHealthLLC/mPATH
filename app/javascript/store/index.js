@@ -32,7 +32,8 @@ export default new Vuex.Store({
     lessonStore
   },
   state: {
-    advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
+    // advancedFilter: [{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}],
+    advancedFilter: [],
     contentLoaded: false,
     toggleRACI: true,
     showAllEventsToggle: false,
@@ -1039,15 +1040,21 @@ export default new Vuex.Store({
     },
 
     filteredFacilities: (state, getters) => (_status='active') => {
+      // return getters.facilities;
+
       return _.filter(getters.facilities, (facility) => {
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
+        if(state.mapFilters.length < 1) return valid
 
         var resources1 = []
-        resources1 = resources1.concat(facility.tasks)
-        resources1 = resources1.concat(facility.issues)
-        resources1 = resources1.concat(facility.risks)
+        resources1.push(...facility.tasks)
+        resources1.push(...facility.issues)
+        resources1.push(...facility.risks)
+        // resources1 = resources1.concat(facility.tasks)
+        // resources1 = resources1.concat(facility.issues)
+        // resources1 = resources1.concat(facility.risks)
 
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0]
@@ -1704,102 +1711,71 @@ export default new Vuex.Store({
           })
       })
     },
-    fetchCurrentProject({commit, dispatch}, id) {
-      return new Promise((resolve, reject) => {
-        http.get(`/projects/${id}.json`)
-          .then((res) => {
-            let facilities = []
-            console.time("1")
-            for (let facility of res.data.project.facilities) {
-              facilities.push({...facility, ...facility.facility})
-            }
-            console.timeEnd("1")
-            console.time("2")
-            commit('setFacilities', facilities)
-            console.timeEnd("2")
-            console.time("3");
-            commit('setCurrentProject', res.data.project)
-            console.timeEnd("3");
-            
-            console.time("4");
-            commit('setFacilityGroups', res.data.project.facilityGroups)
-            console.timeEnd("4");
-            console.time("5");
-            commit("setProjectUsers", res.data.project.users);
-            console.timeEnd("5");
-            console.time("6");
-            commit('setAccountableUsers', res.data.project.accountableUsers)
-            console.timeEnd("6");
-            console.time("7");
-            commit('setConsultedUsers', res.data.project.consulted)
-            console.timeEnd("7");
-            
-            console.time("8");
-            commit('setInformedUsers', res.data.project.informed)
-            console.timeEnd("8");
-            console.time("9");
-            commit('setStatuses', res.data.project.statuses)
-            console.timeEnd("9");
-            
-            console.time("10");
-            commit('setTaskTypes', res.data.project.taskTypes)
-            console.timeEnd("10");
-            
-            console.time("11");
-            commit('setTaskStages', res.data.project.taskStages)
-            console.timeEnd("11");
-            
-            console.time("12");
-            commit('setRiskStages', res.data.project.riskStages)
-            console.timeEnd("12");
-            
-            console.time("13");
-            commit('setIssueStages', res.data.project.issueStages)
-            console.timeEnd("13");
-            
-            console.time("14");
-            commit('setIssueTypes', res.data.project.issueTypes)
-            console.timeEnd("14");
-            
-            console.time("15");
-            commit('setIssueSeverities', res.data.project.issueSeverities)
-            console.timeEnd("15");
-            
-            console.time("16");
-            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
-            console.timeEnd("16");
-               
-            resolve()
-          })
-          .catch((err) => {
-            console.error(err)
-            reject()
-          })
-      })
-    },
     // fetchCurrentProject({commit, dispatch}, id) {
     //   return new Promise((resolve, reject) => {
     //     http.get(`/projects/${id}.json`)
     //       .then((res) => {
     //         let facilities = []
+    //         console.time("1")
     //         for (let facility of res.data.project.facilities) {
     //           facilities.push({...facility, ...facility.facility})
     //         }
+    //         console.timeEnd("1")
+    //         console.time("2")
     //         commit('setFacilities', facilities)
+    //         console.timeEnd("2")
+    //         console.time("3");
     //         commit('setCurrentProject', res.data.project)
+    //         console.timeEnd("3");
+            
+    //         console.time("4");
     //         commit('setFacilityGroups', res.data.project.facilityGroups)
-    //         commit('setProjectUsers', res.data.project.users)
+    //         console.timeEnd("4");
+    //         console.time("5");
+    //         commit("setProjectUsers", res.data.project.users);
+    //         console.timeEnd("5");
+    //         console.time("6");
     //         commit('setAccountableUsers', res.data.project.accountableUsers)
+    //         console.timeEnd("6");
+    //         console.time("7");
     //         commit('setConsultedUsers', res.data.project.consulted)
+    //         console.timeEnd("7");
+            
+    //         console.time("8");
     //         commit('setInformedUsers', res.data.project.informed)
+    //         console.timeEnd("8");
+    //         console.time("9");
     //         commit('setStatuses', res.data.project.statuses)
+    //         console.timeEnd("9");
+            
+    //         console.time("10");
     //         commit('setTaskTypes', res.data.project.taskTypes)
+    //         console.timeEnd("10");
+            
+    //         console.time("11");
     //         commit('setTaskStages', res.data.project.taskStages)
+    //         console.timeEnd("11");
+            
+    //         console.time("12");
     //         commit('setRiskStages', res.data.project.riskStages)
+    //         console.timeEnd("12");
+            
+    //         console.time("13");
     //         commit('setIssueStages', res.data.project.issueStages)
+    //         console.timeEnd("13");
+            
+    //         console.time("14");
     //         commit('setIssueTypes', res.data.project.issueTypes)
+    //         console.timeEnd("14");
+            
+    //         console.time("15");
     //         commit('setIssueSeverities', res.data.project.issueSeverities)
+    //         console.timeEnd("15");
+            
+    //         console.time("16");
     //         commit('SET_LESSON_STAGES', res.data.project.lessonStages)
+    //         console.timeEnd("16");
+               
     //         resolve()
     //       })
     //       .catch((err) => {
@@ -1808,6 +1784,37 @@ export default new Vuex.Store({
     //       })
     //   })
     // },
+    fetchCurrentProject({commit, dispatch}, id) {
+      return new Promise((resolve, reject) => {
+        http.get(`/projects/${id}.json`)
+          .then((res) => {
+            let facilities = []
+            for (let facility of res.data.project.facilities) {
+              facilities.push({...facility, ...facility.facility})
+            }
+            commit('setFacilities', facilities)
+            commit('setCurrentProject', res.data.project)
+            commit('setFacilityGroups', res.data.project.facilityGroups)
+            commit('setProjectUsers', res.data.project.users)
+            commit('setAccountableUsers', res.data.project.accountableUsers)
+            commit('setConsultedUsers', res.data.project.consulted)
+            commit('setInformedUsers', res.data.project.informed)
+            commit('setStatuses', res.data.project.statuses)
+            commit('setTaskTypes', res.data.project.taskTypes)
+            commit('setTaskStages', res.data.project.taskStages)
+            commit('setRiskStages', res.data.project.riskStages)
+            commit('setIssueStages', res.data.project.issueStages)
+            commit('setIssueTypes', res.data.project.issueTypes)
+            commit('setIssueSeverities', res.data.project.issueSeverities)
+            commit('SET_LESSON_STAGES', res.data.project.lessonStages)
+            resolve()
+          })
+          .catch((err) => {
+            console.error(err)
+            reject()
+          })
+      })
+    },
     fetchFacility({commit, dispatch, getters}, {projectId, facilityId}) {
       return new Promise((resolve, reject) => {
         http.get(`/projects/${projectId}/facilities/${facilityId}.json`)
