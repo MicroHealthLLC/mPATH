@@ -22,45 +22,90 @@
               <span v-if="tasksObj">{{ tasksObj.length }}</span>
           </span>   
           </template>
-             <div class="row pt-2 text-center w-50">
-          
-                <div class="pb-0 pl-2 pr-4 mb-0">                  
+             <div class="row pt-2">
+               <div class="col-6 py-0">
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">     
+                  <div class="pr-4 text-center">             
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
                    <h4 class="d-block">{{ taskVariation.completed.count }}</h4>  
-                </div>
-                 <div class="py-0 px-4 mb-0">
-                  <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+                  </div>
+                  <div class="pr-4 text-center">
+                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
                      <h4 class="d-block">{{ taskVariation.inProgress.count }}</h4>  
-                </div>
-                 <div class="py-0 px-4 mb-0">
-                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                  </div>
+                   <div class="pr-4 text-center">
+                  <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>                     
-                </div>
-                 <div class="py-0 px-4 mb-0">
+                    <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>    
+                  </div>
+
+                    <div class="pr-4 text-center">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span class="smallerFont">ONGOING </span>    
-                      <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
-                </div> 
-                 <div class="py-0 px-4  mb-0">
-                  
-                  <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
+                    <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
+                 </div> 
+                   <div class="pr-4 text-center">  
+                      <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
                         <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
                 </div>
-                 <div class="py-0 px-4 mb-0">
-                 <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+                  <div class="pr-4 text-center">
+                     <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
                        <h4 class="d-block">{{ taskVariation.onHoldT.count }}</h4>            
                 </div>
-                 <div class="py-0 px-4 mb-0">
-                <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
-                     <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
+                 <div class="pr-5 text-center">
+                  <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                  <span class="smallerFont">DRAFTS</span>   
+                        <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
                 </div> 
-            
+                </div>
+              </div>
+
+             <div class="col-3 text-center py-0">
+                <label class="font-sm mb-0">Filter by Tag</label>
+               <div class="px-4 mb-0 py-2 bg-light tagsCol d-inline-flex">     
+                  <div class="text-center">             
+                  <span class="d-block" v-tooltip="`${ taskVariation.watched.count }`" ><i class="fas fa-eye"></i></span>
+                  <span class="smallerFont">ON WATCH</span>
+                   <input class="d-block m-auto" type="checkbox" style="">              
+                   <!-- <h4 class="d-block">{{ taskVariation.watched.count }}</h4>   -->
+                  </div>
+                  <div class="px-5 text-center">
+                   <span class="d-block" v-tooltip="`${ taskVariation.important.count }`"><i class="fas fa-star text-warning"></i></span>
+                     <span class="smallerFont">IMPORTANT</span> 
+                       <input class="d-block m-auto" type="checkbox" style="">    
+                     <!-- <h4 class="d-block">{{ taskVariation.important.count }}</h4>   -->
+                  </div>
+                   <div class="text-center">
+                  <span class="d-block" v-tooltip="`${ taskVariation.briefings.count }`"> <i class="fas fa-presentation text-primary"></i></span>
+                    <span class="smallerFont">BRIEFINGS </span> 
+                      <input class="d-block m-auto" type="checkbox" style="">  
+                    <!-- <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>     -->
+                  </div>
+               </div>
+             </div>
+
+             <div class="col-3 py-0">
+                <label class="font-sm mb-0">Programs</label>
+                <el-select 
+                                 
+                    class="w-100" 
+                    track-by="name" 
+                    filterable
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Search and select Programs"
+                  >
+                  <el-option 
+                                                                  
+                                                               
+                    >
+                  </el-option>
+                  </el-select> 
+              </div>
               </div>
 
             <div class="row text-center mt-2" v-if="tasksObj !== null"> 
@@ -636,7 +681,20 @@ export default {
      let taskDrafts = _.filter(
         this.tasksObj,
         (t) => t && t.draft == true
-      );      
+      );  
+      let important = _.filter(
+        this.tasksObj,
+        (t) => t && t.important == true
+      ); 
+        let briefings = _.filter(
+        this.tasksObj,
+        (t) => t && t.reportable == true
+      );
+      let watched = _.filter(
+        this.tasksObj,
+        (t) => t && t.watched == true
+      );
+              
       let completed = _.filter(
         this.tasksObj,
         (t) => t && t.progress && t.progress == 100 
@@ -665,6 +723,15 @@ export default {
         planned: {
           count: planned.length, 
           plannedTs: planned            
+        },
+        important: {
+          count: important.length,             
+        },
+        briefings: {
+          count: briefings.length,          
+        },
+        watched: {
+          count: watched.length,          
         },
         onHoldT: {
           count: onHoldT.length,          
@@ -978,6 +1045,10 @@ ul {
   bottom: 1%;
   right: 1.5%;
   z-index: 10;
+}
+.tagsCol {
+  border-radius: 4px;
+  border: .5px solid lightgray;
 }
 .fa-times-circle {
   font-size: 1.40rem;
