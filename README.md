@@ -7,6 +7,8 @@ Agile portfolio management for large programs and projects including those geogr
         yum clean all &&  yum update -y
 
         yum-config-manager --enable epel
+        
+        yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 
 # install ruby
@@ -14,8 +16,6 @@ Agile portfolio management for large programs and projects including those geogr
         gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
         
         curl -sSL https://get.rvm.io | sudo bash -s stable
-
-        usermod -a -G rvm `username'
 
         export PATH="$PATH:$HOME/.rvm/bin"
 
@@ -59,6 +59,29 @@ Agile portfolio management for large programs and projects including those geogr
         vi /var/www/mPATH/config/database.yml
 
 --enter the password for mysql where it says password then save and exit
+
+# go to the cloned directory 
+        cd /var/www/mPATH
+
+        gem install rails
+
+        gem install bundler -v 2.1.4
+
+        yum install nodejs - https://linuxize.com/post/how-to-install-yarn-on-centos-7/
+        
+        bundle install
+
+        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/        
+        
+        rake db:migrate RAILS_ENV=production
+        
+        rake db:seed RAILS_ENV=production
+
+        rake assets:precompile RAILS_ENV=production
+
+        chown -R nginx:nginx *
+        
+        Service nginx restart
 
 # generate your secrets for config/secrets.yml
 
@@ -127,28 +150,6 @@ you will have to create an nginx service now
 
         service nginx start
 
-# go to the cloned directory 
-        cd /var/www/mPATH
-
-        gem install rails
-
-        gem install bundler
-
-        yum install nodejs
-
-        yarn install
-
-        bundle install
-        
-        rake db:migrate RAILS_ENV=production
-        
-        rake db:seed RAILS_ENV=production
-
-        rake assets:precompile RAILS_ENV=production
-
-        chown -R nginx:nginx *
-        
-        Service nginx restart
 
 
 # Setup

@@ -412,7 +412,8 @@
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
-                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+               <i class="far fa-save text-light mr-1 clickable"></i>
+             
                 Save to Favorites
               </button>            
               <button 
@@ -1211,7 +1212,8 @@ export default {
       if(this.favoriteFilterData.id){
         this.setAdvancedFilter([])
       }else{
-        this.setAdvancedFilter([])        
+        this.setAdvancedFilter([])
+        // this.setAdvancedFilter([{id: 'active', name: 'Active', value: 'active', filterCategoryId: 'progressStatusFilter', filterCategoryName: 'Progress Status'}])
       }
       this.setProjectStatusFilter(null)
       this.setTaskIssueOverdueFilter([])

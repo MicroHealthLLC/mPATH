@@ -141,6 +141,7 @@ export default {
     },
     deselectProject(e) {
       if (e.target.id === "program_name") {
+       
         this.$router.push(
           `/programs/${this.$route.params.programId}/${this.tab}`
         );
