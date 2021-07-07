@@ -162,6 +162,15 @@ export default {
   },
   methods: {
     ...mapActions(["fetchProjectLessons"]),
+    //TODO: change the method name of isAllowed
+    _isallowed(salut) {
+      var programId = this.$route.params.programId;
+      var projectId = this.$route.params.projectId
+      let fPrivilege = this.$projectPrivileges[programId][projectId]
+      let permissionHash = {"write": "W", "read": "R", "delete": "D"}
+      let s = permissionHash[salut]
+      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+    },
     addLesson() {
       this.$router.push(
         `/programs/${this.$route.params.programId}/map/projects/${this.$route.params.projectId}/lessons/new`
@@ -209,9 +218,6 @@ export default {
       "projectLessons",
       "taskTypes",
     ]),
-     _isallowed() {
-    return salut => this.$currentUser.role == "superadmin" || this.$permissions.lessons[salut]
-    },
     filteredLessons() {
       return this.projectLessons.filter((lesson) =>
         lesson.title.toLowerCase().match(this.search.toLowerCase())
