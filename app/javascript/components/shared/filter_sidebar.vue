@@ -412,7 +412,8 @@
                 class="btn btn-sm font-sm btn-success text-light"
                 @click.prevent="saveFavoriteFilters" 
                 data-cy="save_favorite_filter"> 
-                <font-awesome-icon icon="save" class="text-light clickable mr-1" />
+               <i class="far fa-save text-light mr-1 clickable"></i>
+             
                 Save to Favorites
               </button>            
               <button 
