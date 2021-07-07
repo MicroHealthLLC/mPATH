@@ -49,14 +49,12 @@ class Task < ApplicationRecord
       :start_date,
       :description,
       :progress,
+      :status,
       :auto_calculate,
       :watched,
       :kanban_order,
       :important,
       :reportable,
-      :draft,
-      :on_hold,
-      :ongoing,
       task_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -176,32 +174,20 @@ class Task < ApplicationRecord
     sub_issues = self.sub_issues
     progress_status = "active"
 
-    if(progress >= 100)
+    if progress >= 100
       progress_status = "completed"
+      self.completed!
+    elsif progress < 100 && (due_date < Date.today)
+      self.overdue!
+    elsif start_date > Date.today
+      self.planned!
+    elsif start_date < Date.today
+      self.in_progress!
     end
-
-    is_overdue = false
-    if !ongoing && !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
-    end
-
-    planned = false
-    if ( !draft && start_date > Date.today)
-      planned = true
-    end
-
-    in_progress = false
-    if ( !draft && !on_hold && !is_overdue && !ongoing && progress_status == "active"  && start_date < Date.today)
-      in_progress = true
-    end
-
 
     self.as_json.merge(
       class_name: self.class.name,
       attach_files: attach_files,
-      is_overdue: is_overdue,
-      planned: planned,
-      in_progress: in_progress,
       progress_status: progress_status,
       task_type: task_type.try(:name),
       task_stage: task_stage.try(:name),
@@ -214,8 +200,7 @@ class Task < ApplicationRecord
       notes_updated_at: notes.map(&:updated_at).compact.uniq,
       important: important,
       reportable: reportable,
-      draft: draft,
-      on_hold: on_hold,
+      status: status,
 
       # Add RACI user names
       # Last name values added for improved sorting in datatables
