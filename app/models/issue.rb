@@ -67,8 +67,7 @@ class Issue < ApplicationRecord
       :kanban_order,
       :important,
       :reportable,
-      :on_hold,
-      :draft,
+      :status,
       issue_files: [],
       user_ids: [],
       sub_task_ids: [],
@@ -166,13 +165,16 @@ class Issue < ApplicationRecord
     sub_tasks = self.sub_tasks
     sub_issues = self.sub_issues
     progress_status = "active"
-    if(progress >= 100)
-      progress_status = "completed"
-    end
 
-    is_overdue = false
-    if !on_hold && !draft
-      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    if progress >= 100
+      progress_status = "completed"
+      self.completed!
+    elsif progress < 100 && (due_date < Date.today)
+      self.overdue!
+    elsif start_date > Date.today
+      self.planned!
+    elsif start_date < Date.today
+      self.in_progress!
     end
 
     task_type_name = self.task_type&.name
@@ -180,7 +182,6 @@ class Issue < ApplicationRecord
       class_name: self.class.name,
       progress_status: progress_status,
       attach_files: attach_files,
-      is_overdue: is_overdue,
       issue_type: issue_type.try(:name),
       issue_stage: issue_stage.try(:name),
       issue_severity: issue_severity.try(:name),
@@ -190,10 +191,7 @@ class Issue < ApplicationRecord
       user_names: p_users.map(&:full_name).compact.join(", "),
       user_ids: p_users.map(&:id).compact.uniq,
       users: p_users.as_json(only: [:id, :full_name, :title, :phone_number, :first_name, :last_name, :email]),
-      on_hold: on_hold,
-      draft: draft,
-
-
+      status: status,
 
       # Add RACI user name
       # Last name values added for improved sorting in datatables
