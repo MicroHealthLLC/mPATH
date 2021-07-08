@@ -2416,6 +2416,8 @@ export default {
       }
     },
     toggleApproved() {
+      if(!this._isallowed("write"))
+        return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.DV_risk.approvalTime =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();
