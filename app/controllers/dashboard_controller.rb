@@ -1,4 +1,5 @@
 class DashboardController < AuthenticatedController
+  layout "portfolio_viewer", only: [:portfolio]
   def index
     # project_ids = ProjectUser.where(user_id: current_user.id).map(&:project_id).compact.uniq
     # @active_projects = Project.includes(:facilities, facility_projects: [:tasks, :status]).where(id: project_ids).active
@@ -14,5 +15,6 @@ class DashboardController < AuthenticatedController
     # end
   end
   def portfolio
+
   end
 end
