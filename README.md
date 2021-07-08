@@ -4,13 +4,13 @@ Agile portfolio management for large programs and projects including those geogr
 
 # update centos
 
-        yum clean all &&  yum update -y
+      
 
         yum-config-manager --enable epel
         
-        yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        
         yum install epel-release
+        
+        yum clean all &&  yum update -y
 
 
 # install ruby
