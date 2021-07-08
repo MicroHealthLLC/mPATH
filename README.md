@@ -66,6 +66,7 @@ Agile portfolio management for large programs and projects including those geogr
         yum install -y  passenger || sudo yum-config-manager --enable cr && sudo yum install -y  passenger
 
 # install nginx
+        adduser nginx
         passenger-install-nginx-module
 choose one.  install it into the directory of your choice.  but for the conf below, chose /etc/nginx/
 
