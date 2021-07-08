@@ -1186,7 +1186,7 @@
                   ></span>
                   <span
                     v-show="!DV_risk.approved"
-                    class="empty_box mr-1 approver-pointer"
+                    class="empty_box mx-1 approver-pointer"
                     ><i class="far fa-square"></i
                   ></span>
                   <small style="vertical-align: text-top">Approved</small>
