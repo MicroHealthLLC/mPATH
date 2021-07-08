@@ -157,7 +157,7 @@ you will have to create an nginx service now
 # Setup
 go to https://your-url/admin
 
-login with temp account admin@example.com with password password
+login with temp account admin@example.com with password adminPa$$w0rd
 
 Change, configure and customize your instance.  callback uri for socialmedia setup below.
 
