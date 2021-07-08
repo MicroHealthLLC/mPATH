@@ -131,8 +131,18 @@ you will have to create an nginx service now
         make sure PassengerAgent is executable
         
         chmod +x /usr/lib64/passenger/support-binaries/*
+        
+        Be sure the logs are sent to /var/logs in nginx.conf or your conf file
+        
+        Be sure you have the log directory there
+        
+        mkdir /var/log/nginx
+        
+        chown -R nginx:nginx /var/log/nginx
 
         service nginx start
+        
+        If you still have permission problems be sure to check selinux
 
 #create /var/www and from there 
         mkdir /var/www
