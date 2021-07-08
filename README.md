@@ -13,6 +13,8 @@ Agile portfolio management for large programs and projects including those geogr
         yum install deltarpm
         
         yum clean all &&  yum update -y
+        
+        Reboot as there are likely kernel updates
 
 
 # install ruby
