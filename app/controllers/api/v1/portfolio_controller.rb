@@ -28,4 +28,13 @@ class Api::V1::PortfolioController < AuthenticatedController
     render json: json_response
   end
 
+  def lessons
+    all_resources = Lesson.joins(:facility_project).unscoped.includes(Lesson.lesson_preload_array).where("facility_projects.project_id" => current_user.project_ids)
+    json_response = []
+    all_resources.in_batches(of: 1000) do |resources|
+      json_response += resources.map(&:porfolio_json)
+    end
+    render json: json_response
+  end
+
 end

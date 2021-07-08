@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       get "/portfolio/tasks", to: "portfolio#tasks"
       get "/portfolio/risks", to: "portfolio#risks"
       get "/portfolio/issues", to: "portfolio#issues"
+      get "/portfolio/lessons", to: "portfolio#lessons"
     end
     resources :task_types, only: [:index]
     resources :facility_groups, only: [:index]

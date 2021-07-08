@@ -35,6 +35,18 @@ class Lesson < ApplicationRecord
       project_name: facility.facility_name
     }
   end
+  
+  def porfolio_json
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      category: task_type.name,
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(",")
+    }
+
+    self.attributes.merge!(merge_h)
+  end
 
   def to_json(options = {})
     attach_files = []
