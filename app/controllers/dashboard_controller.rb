@@ -13,4 +13,6 @@ class DashboardController < AuthenticatedController
     #   @facility_projects_hash[project_id] = f  
     # end
   end
+  def portfolio
+  end
 end
