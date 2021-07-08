@@ -85,14 +85,13 @@ choose one.  install it into the directory of your choice.  but for the conf bel
 
         nano /etc/nginx/conf/nginx.conf
 
-Below "http {" section, add these
+Below "http {" section, add these if not already present
 
         passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
         passenger_ruby /usr/local/rvm/gems/ruby-2.6.6/wrappers/ruby;
         passenger_instance_registry_dir /var/run/passenger-instreg;
 
-Below "server {" section
-add these
+Below "server {" section add these
 
         passenger_enabled on;
         rails_env production;
