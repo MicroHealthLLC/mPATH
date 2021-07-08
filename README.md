@@ -64,6 +64,8 @@ Agile portfolio management for large programs and projects including those geogr
         curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 
         yum install -y  passenger || sudo yum-config-manager --enable cr && sudo yum install -y  passenger
+        
+        yum install passenger-devel-6.0.9
 
 # install nginx
         
