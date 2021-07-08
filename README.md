@@ -66,6 +66,10 @@ Agile portfolio management for large programs and projects including those geogr
         yum install -y  passenger || sudo yum-config-manager --enable cr && sudo yum install -y  passenger
         
         yum install passenger-devel-6.0.9
+        
+        yum install libcurl-devel
+        
+        gem install rack
 
 # install nginx
         
