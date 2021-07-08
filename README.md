@@ -56,47 +56,7 @@ Agile portfolio management for large programs and projects including those geogr
 
 # be sure git is installed
         yum install git
-
-#create /var/www and from there 
-        mkdir /var/www
         
-        cd /var/www/
-
-        git clone https://github.com/MicroHealthLLC/mPATH
-
-        vi /var/www/mPATH/config/database.yml
-
---enter the password for mysql where it says password then save and exit
-
-# go to the cloned directory 
-        cd /var/www/mPATH
-
-        gem install rails
-
-        gem install bundler -v 2.1.4
-
-        yum install nodejs - https://linuxize.com/post/how-to-install-yarn-on-centos-7/
-        
-        bundle install
-
-        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/        
-        
-        rake db:migrate RAILS_ENV=production
-        
-        rake db:seed RAILS_ENV=production
-
-        rake assets:precompile RAILS_ENV=production
-
-        chown -R nginx:nginx *
-        
-        Service nginx restart
-
-# generate your secrets for config/secrets.yml
-
-        rake secret
-
-put that output in config/secrets.yml
-
 # install passenger phusion
 
         yum install -y pygpgme curl
@@ -158,6 +118,45 @@ you will have to create an nginx service now
 
         service nginx start
 
+#create /var/www and from there 
+        mkdir /var/www
+        
+        cd /var/www/
+
+        git clone https://github.com/MicroHealthLLC/mPATH
+
+        nano /var/www/mPATH/config/database.yml
+
+--enter the password for mysql where it says password then save and exit
+
+# go to the cloned directory 
+        cd /var/www/mPATH
+
+        gem install rails
+
+        gem install bundler -v 2.1.4
+
+        yum install nodejs - https://linuxize.com/post/how-to-install-yarn-on-centos-7/
+        
+        bundle install
+
+        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/        
+        
+        rake db:migrate RAILS_ENV=production
+        
+        rake db:seed RAILS_ENV=production
+
+        rake assets:precompile RAILS_ENV=production
+
+        chown -R nginx:nginx *
+        
+        Service nginx restart
+
+# generate your secrets for config/secrets.yml
+
+        rake secret
+
+put that output in config/secrets.yml
 
 
 # Setup
