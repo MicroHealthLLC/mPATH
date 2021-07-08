@@ -10,6 +10,8 @@ Agile portfolio management for large programs and projects including those geogr
         
         yum install epel-release
         
+        yum install deltarpm
+        
         yum clean all &&  yum update -y
 
 
