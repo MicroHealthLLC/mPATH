@@ -131,7 +131,7 @@ you will have to create an nginx service now
         
         chmod +x /usr/lib64/passenger/support-binaries/*
         
-        Be sure the logs are sent to /var/logs in nginx.conf or your conf file
+        Be sure the logs are sent to /var/logs/nginx in nginx.conf or your conf file
         
         Be sure you have the log directory there
         
