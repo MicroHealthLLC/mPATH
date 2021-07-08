@@ -156,7 +156,9 @@ you will have to create an nginx service now
         
         bundle install
 
-        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/        
+        yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/       
+        
+        rake secret  THEN put that output in config/secrets.yml
         
         rake db:migrate RAILS_ENV=production
         
@@ -168,11 +170,7 @@ you will have to create an nginx service now
         
         Service nginx restart
 
-# generate your secrets for config/secrets.yml
 
-        rake secret
-
-put that output in config/secrets.yml
 
 
 # Setup
