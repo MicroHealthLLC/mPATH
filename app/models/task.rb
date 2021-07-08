@@ -119,8 +119,8 @@ class Task < ApplicationRecord
       program_name: project.name, 
       is_overdue: is_overdue,
       category: task_type.name,
-      last_update: self.notes.last&.porfolio_json,
-      users: users.select(&:active?).map{|u| {id: u.id, name: u.full_name} }
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(",")
     }
 
     self.attributes.merge!(merge_h)
