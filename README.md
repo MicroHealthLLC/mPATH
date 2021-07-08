@@ -9,6 +9,8 @@ Agile portfolio management for large programs and projects including those geogr
         yum-config-manager --enable epel
         
         yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        
+        yum install epel-release
 
 
 # install ruby
