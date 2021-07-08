@@ -12,51 +12,54 @@
    </span>
   </div>
   <el-tabs class="mt-1 mr-3 " type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Portfolio View" class="p-3">
+  <el-tab-pane label="PORTFOLIO VIEWER" class="p-3" :load="log(filterOutWatched.length)">
      <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
        <!-- TASKS -->
-     <el-tab-pane class="p-3">
-         <template slot="label" class="text-right">
+     <el-tab-pane class="px-3 pt-0" >
+         <template slot="label" class="text-right" v-if="tasksObj && tasksObj !== undefined">
            TASKS
            <span class="badge badge-secondary badge-pill">
-              <span v-if="tasksObj">{{ tasksObj.length }}</span>
+              <span>{{ portfolioTasks.length }}</span>
+                <!-- <span v-if="getPortfolioWatchedTasksToggle">{{ tasksObj.length }}</span>
+                <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
              <div class="row pt-2">
-               <div class="col-6 py-0">
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">     
-                  <div class="pr-4 text-center">             
+               <div class="col-6 pt-2">
+                <label class="font-sm mb-0 text-center pb-1 d-block">DISPLAY BY STATE</label>
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
+                  <div class="pr-5 text-center">             
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
                    <h4 class="d-block">{{ taskVariation.completed.count }}</h4>  
                   </div>
-                  <div class="pr-4 text-center">
+                  <div class="pr-5 text-center">
                    <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
                      <h4 class="d-block">{{ taskVariation.inProgress.count }}</h4>  
                   </div>
-                   <div class="pr-4 text-center">
+                   <div class="pr-5 text-center">
                   <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
                     <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>    
                   </div>
 
-                    <div class="pr-4 text-center">
+                    <div class="pr-5 text-center">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span class="smallerFont">ONGOING </span>    
                     <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
                  </div> 
-                   <div class="pr-4 text-center">  
+                   <div class="pr-5 text-center">  
                       <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
                         <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
                 </div>
-                  <div class="pr-4 text-center">
+                  <div class="pr-5 text-center">
                      <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
                        <h4 class="d-block">{{ taskVariation.onHoldT.count }}</h4>            
                 </div>
-                 <div class="pr-5 text-center">
+                 <div class="text-center">
                   <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                   <span class="smallerFont">DRAFTS</span>   
                         <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
@@ -64,43 +67,46 @@
                 </div>
               </div>
 
-             <div class="col-3 text-center py-0">
-                <label class="font-sm mb-0">Filter by Tag</label>
-               <div class="px-4 mb-0 py-2 bg-light tagsCol d-inline-flex">     
+             <div class="col-3 tagsCol text-center pt-2 pl-0">
+                <label class="font-sm mb-0 pb-1 d-block">FILTER BY TAG</label>
+                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
                   <div class="text-center">             
-                  <span class="d-block" v-tooltip="`${ taskVariation.watched.count }`" ><i class="fas fa-eye"></i></span>
+                 <span class="d-block" 
+                      @click.prevent="toggleWatched"                     
+                      v-tooltip="">
+                      <i class="fas fa-eye " :class="[hideWatchedTasks == true ? 'light':'']"></i>
+                 </span>                  
                   <span class="smallerFont">ON WATCH</span>
-                   <input class="d-block m-auto" type="checkbox" style="">              
-                   <!-- <h4 class="d-block">{{ taskVariation.watched.count }}</h4>   -->
+                   <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
+                   <h4 class="d-block">{{ taskVariation.watched.count }}</h4>  
                   </div>
                   <div class="px-5 text-center">
                    <span class="d-block" v-tooltip="`${ taskVariation.important.count }`"><i class="fas fa-star text-warning"></i></span>
                      <span class="smallerFont">IMPORTANT</span> 
-                       <input class="d-block m-auto" type="checkbox" style="">    
-                     <!-- <h4 class="d-block">{{ taskVariation.important.count }}</h4>   -->
+                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
+                     <h4 class="d-block">{{ taskVariation.important.count }}</h4>  
                   </div>
                    <div class="text-center">
                   <span class="d-block" v-tooltip="`${ taskVariation.briefings.count }`"> <i class="fas fa-presentation text-primary"></i></span>
                     <span class="smallerFont">BRIEFINGS </span> 
-                      <input class="d-block m-auto" type="checkbox" style="">  
-                    <!-- <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>     -->
+                      <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
+                    <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>    
                   </div>
                </div>
              </div>
 
-             <div class="col-3 py-0">
-                <label class="font-sm mb-0">Programs</label>
-                <el-select 
-                                 
+             <div class="col-3 text-center py-0">
+                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select                                  
                     class="w-100" 
                     track-by="name" 
                     filterable
                     value-key="id"
                     multiple                                                                                                                                               
-                    placeholder="Search and select Programs"
-                  >
+                    placeholder="Filter by Program"
+                  >vhhhgg
                   <el-option 
-                                                                  
+                   value                                 
                                                                
                     >
                   </el-option>
@@ -108,11 +114,13 @@
               </div>
               </div>
 
-            <div class="row text-center mt-2" v-if="tasksObj !== null"> 
+            <div class="row text-center mt-2" v-if="tasksObj !== null">            
+            <span class="count"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ tasksObj.length}}</button></span>       
+             
               <!-- TASKS TABLE -->
             <el-table
               :data="pagedTableData"  
-              class="mt-4"
+              class="mt-5"
               border
               style="width: 100%">
             <el-table-column
@@ -577,7 +585,7 @@
    
 
  </el-tab-pane> 
-   <el-tab-pane disabled  label="Portfolio Analytics (Coming Soon)" class="p-3">
+   <el-tab-pane disabled  label="PORTFOLIO ANALYTICS (Coming Soon)" class="p-3">
     
    </el-tab-pane>
     </el-tabs>
@@ -589,7 +597,7 @@
 <script>
 import axios from 'axios';
 import Loader from "../../shared/loader.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "PortfolioView",
   props: ["from"],
@@ -599,7 +607,8 @@ export default {
   data() {
     return {
       showLess: "Show More",
-      portfolioData: null, 
+      hideWatchedTasks:false, 
+      portfolioData: null,    
       tasksData: null, 
       issuesData: null, 
       risksData: null, 
@@ -616,7 +625,8 @@ export default {
     };
   },
    mounted() { 
-      axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
+   
+     axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
           this.tasksData = responses[0]
           this.issuesData = responses[1]
           this.risksData = responses[2]
@@ -628,12 +638,10 @@ export default {
   },
   computed: {
     ...mapGetters([
-  
+      'getPortfolioWatchedTasksToggle', 
+      'getPortfolioBriefedTasksToggle',
+      'getPortfolioImportantTasksToggle'      
     ]),
-    //  projectObj() {
-       
-    //     return this.currentProject.facilities
-    //   },
     isPortfolioView() {
       return this.$route.name.includes("Portfolio");
     }, 
@@ -643,19 +651,31 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-    // programCount(){
-      
-    //   return this.portfolioObj.data.projects.length
-    
-    // },
     programObj(){     
       if (this.portfolioData !== null) {
       return this.portfolioData
       }
     }, 
-    tasksObj(){     
+    portfolioTasks(){
       if (this.tasksData !== null) {
-      return this.tasksData.data
+         return this.tasksData.data
+      }     
+    },
+    tasksObj(){     
+     if (this.tasksData !== null)
+     if (this.hideWatchedTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.watched)
+     } else if (!this.getPortfolioBriefedTasksToggle){
+       return _.filter(this.tasksData.data, (t) => t && !t.reportable)
+     } else if (!this.getPortfolioImportantTasksToggle){
+       return _.filter(this.tasksData.data, (t) => t && !t.important)   
+    } else if (this.tasksData !== null)  {
+       return this.portfolioTasks
+     }
+    }, 
+    filteredTasksObj(){     
+      if (this.tasksData !== null) {      
+       return  _.filter(this.tasksObj, (t) => t && t.watched)      
       }
     }, 
     issuesObj(){     
@@ -802,6 +822,9 @@ export default {
         },
        };
     },
+    filterOutWatched(){
+      return _.filter(this.tasksObj, (t) => t && t.watched == false );
+    },
     riskVariation() {
       let planned = _.filter(
         this.risksObj,
@@ -851,14 +874,44 @@ export default {
         },     
       };
     },
-
-
-
+     C_hideWatchedTasks: {                  
+        get() {       
+         return this.getPortfolioWatchedTasksToggle                 
+        },
+        set() {        
+         this.setPortfolioWatchedTasksToggle(!this.getPortfolioWatchedTasksToggle)
+        }        
+      },
+      C_hideImportantTasks: {                  
+      get() {       
+        return this.getPortfolioImportantTasksToggle                 
+      },
+      set() {        
+        this.setPortfolioImportantTasksToggle(!this.getPortfolioImportantTasksToggle)
+      }
+      
+    },
+      C_hideBriefedTasks: {                  
+      get() {       
+        return this.getPortfolioBriefedTasksToggle                 
+      },
+      set() {        
+        this.setPortfolioBriefedTasksToggle(!this.getPortfolioBriefedTasksToggle)
+      }
+      
+    },
   },
-  methods: {
-    
+  methods: {  
+   ...mapMutations([
+    'setPortfolioWatchedTasksToggle',
+    'setPortfolioBriefedTasksToggle',
+    'setPortfolioImportantTasksToggle'
+     ]),
     log(e){
-      console.log("this is Lessons" + e)
+      console.log("this is filtered Watched" + e)
+    }, 
+    toggleWatched(){
+        this.hideWatchedTasks = !this.hideWatchedTasks
     },
     test(a,b) {
       this.programName = this.tasksObj. map(t => t.program_name) 
@@ -867,6 +920,13 @@ export default {
        if (a[this.programName] > b[this.programName]) return 1;
        return 0;  
     },
+    // hideWatchedTasks(){
+    //   // console.log("This works")
+    //     this.setPortfolioWatchedTasksToggle(!this.getPortfolioWatchedTasksToggle)       
+    //     if (this.getPortfolioWatchedTasksToggle == true) {        
+    //       } else if (this.getPortfolioWatchedTasksToggle == false){
+    //     }
+    //   },
     setPage (val) {
       this.page = val
     },
@@ -1048,6 +1108,7 @@ ul {
 }
 .tagsCol {
   border-radius: 4px;
+  background-color: #f8f9fa;
   border: .5px solid lightgray;
 }
 .fa-times-circle {
@@ -1059,6 +1120,15 @@ ul {
 }
 .fa-times-circle:hover {
   transform: scale(1.25); 
+}
+.countBtn {
+    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+    position: absolute;
+    right:1%;
+}
+.light {
+  color: lightgray;
 }
 
 </style>
