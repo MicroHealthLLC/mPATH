@@ -128,16 +128,6 @@ you will have to create an nginx service now
 
         then start the service 
         
-        systemctl daemon-reload
-        
-        create the logfile directory
-        
-        mkdir /var/log/nginx
-        
-        make sure NGINX can write to it
-        
-        chown -R nginx:nginx /var/log/nginx
-        
         make sure PassengerAgent is executable
         
         chmod +x /usr/lib64/passenger/support-binaries/*
