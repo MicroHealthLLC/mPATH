@@ -12,107 +12,322 @@
    </span>
   </div>
   <el-tabs class="mt-1 mr-3 " type="border-card" @tab-click="handleClick">
-  <el-tab-pane label="Portfolio View" class="p-3">
+  <el-tab-pane label="PORTFOLIO VIEWER" class="p-3" :load="log(filterOutWatched.length)">
      <el-tabs class="mt-1" type="border-card" @tab-click="handleClick">
        <!-- TASKS -->
-     <el-tab-pane class="p-3">
-         <template slot="label" class="text-right">
+     <el-tab-pane class="px-3 pt-0" >
+         <template slot="label" class="text-right" v-if="tasksObj && tasksObj !== undefined">
            TASKS
            <span class="badge badge-secondary badge-pill">
-              <span v-if="tasksObj">{{ tasksObj.length }}</span>
+              <span>{{ portfolioTasks.length }}</span>
+                <!-- <span v-if="getPortfolioWatchedTasksToggle">{{ tasksObj.length }}</span>
+                <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
              <div class="row pt-2">
-               <div class="col-6 py-0">
-                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">     
-                  <div class="pr-4 text-center">             
-                  <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
+               <div class="col-6 pt-2">
+                <label class="font-sm mb-0 text-center pb-1 d-block">DISPLAY TASKS BY STATE</label>
+                <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
+                  <div class="pr-5 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
+                   <span class="d-block">
+                    <i class="fas fa-clipboard-check" :class="[hideCompleteTasks == true ? 'light':'text-success']"></i>
+                    </span>      
                   <span class="smallerFont">COMPLETE</span>
                    <h4 class="d-block">{{ taskVariation.completed.count }}</h4>  
                   </div>
-                  <div class="pr-4 text-center">
-                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
+
+                  <div class="pr-5 text-center icons" :class="[hideInprogressTasks == true ? 'light':'']" @click.prevent="toggleInprogress">
+                    <span class="d-block">
+                    <i class="far fa-tasks" :class="[hideInprogressTasks == true ? 'light':'text-primary']"></i>
+                    </span>                          
                      <span class="smallerFont">IN PROGRESS</span> 
                      <h4 class="d-block">{{ taskVariation.inProgress.count }}</h4>  
                   </div>
-                   <div class="pr-4 text-center">
-                  <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
+                
+                
+                 <div class="pr-5 text-center icons" :class="[hideOverdueTasks == true ? 'light':'']" @click.prevent="toggleOverdue">
+                    <span class="d-block">
+                    <i class="far fa-calendar" :class="[hideOverdueTasks == true ? 'light':'text-danger']"></i>
+                    </span>                  
                     <span class="smallerFont">OVERDUE </span> 
                     <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>    
                   </div>
 
-                    <div class="pr-4 text-center">
-                   <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
+                <div class="pr-5 text-center icons" :class="[hideOngoingTasks == true ? 'light':'']" @click.prevent="toggleOngoing">
+                  <span class="d-block">
+                  <i class="fas fa-retweet" :class="[hideOngoingTasks == true ? 'light':'text-success']"></i>
+                  </span> 
                     <span class="smallerFont">ONGOING </span>    
                     <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
                  </div> 
-                   <div class="pr-4 text-center">  
-                      <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
-                      <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
+
+
+                <div class="pr-5 text-center icons" :class="[hidePlannedTasks == true ? 'light':'']" @click.prevent="togglePlanned"> 
+                  <span class="d-block">
+                  <i class="fas fa-calendar-check" :class="[hidePlannedTasks == true ? 'light':'text-info']"></i>
+                  </span>                     
+                  <span class="smallerFont">PLANNED</span>
+                    <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
                 </div>
-                  <div class="pr-4 text-center">
-                     <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
+             
+                <div class="pr-5 text-center icons" :class="[hideOnholdTasks == true ? 'light':'']"  @click.prevent="toggleOnhold">
+                     <span class="d-block">
+                      <i class="fas fa-pause-circle" :class="[hideOnholdTasks == true ? 'light':'text-primary']"></i>
+                     </span> 
                      <span class="smallerFont">ON HOLD</span> 
                        <h4 class="d-block">{{ taskVariation.onHoldT.count }}</h4>            
                 </div>
-                 <div class="pr-5 text-center">
-                  <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
+                 
+                 
+                 <div class="text-center icons" :class="[hideDraftTasks == true ? 'light':'']"  @click.prevent="toggleDraft" >
+                  <span class="d-block">
+                      <i class="fas fa-pencil-alt" :class="[hideDraftTasks == true ? 'light':'text-warning']"></i>
+                  </span>     
                   <span class="smallerFont">DRAFTS</span>   
                         <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
                 </div> 
+               
+               
                 </div>
               </div>
 
-             <div class="col-3 text-center py-0">
-                <label class="font-sm mb-0">Filter by Tag</label>
-               <div class="px-4 mb-0 py-2 bg-light tagsCol d-inline-flex">     
-                  <div class="text-center">             
-                  <span class="d-block" v-tooltip="`${ taskVariation.watched.count }`" ><i class="fas fa-eye"></i></span>
+             <div class="col-3 tagsCol text-center pt-2 pl-0">
+                <label class="font-sm mb-0 pb-1 d-block">DISPLAY TASKS BY TAG</label>
+                 <div class="pb-0 pl-2 mb-0 d-inline-flex">    
+                  <div class="text-center icons" :class="[hideWatchedTasks == true ? 'light':'']" @click.prevent="toggleWatched"   >             
+                 <span class="d-block">
+                      <i class="fas fa-eye " ></i>
+                 </span>                  
                   <span class="smallerFont">ON WATCH</span>
-                   <input class="d-block m-auto" type="checkbox" style="">              
-                   <!-- <h4 class="d-block">{{ taskVariation.watched.count }}</h4>   -->
+                   <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
+                   <h4 class="d-block">{{ taskVariation.watched.count }}</h4>  
                   </div>
-                  <div class="px-5 text-center">
-                   <span class="d-block" v-tooltip="`${ taskVariation.important.count }`"><i class="fas fa-star text-warning"></i></span>
-                     <span class="smallerFont">IMPORTANT</span> 
-                       <input class="d-block m-auto" type="checkbox" style="">    
-                     <!-- <h4 class="d-block">{{ taskVariation.important.count }}</h4>   -->
+                  <div class="px-5 text-center icons" :class="[hideImportantTasks == true ? 'light':'']" @click.prevent="toggleImportant"     >
+                  <span class="d-block">
+                      <i class="fas fa-star" :class="[hideImportantTasks == true ? 'light':'text-warning']"></i>
+                  </span>     
+                      <span class="smallerFont">IMPORTANT</span> 
+                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
+                     <h4 class="d-block">{{ taskVariation.important.count }}</h4>  
                   </div>
-                   <div class="text-center">
-                  <span class="d-block" v-tooltip="`${ taskVariation.briefings.count }`"> <i class="fas fa-presentation text-primary"></i></span>
+                   <div class="text-center icons"  :class="[hideBriefedTasks == true ? 'light':'']" @click.prevent="toggleBriefing"         >
+                      <span class="d-block">
+                     <i class="fas fa-presentation" :class="[hideBriefedTasks == true ? 'light':'text-primary']"></i>
+                  </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
-                      <input class="d-block m-auto" type="checkbox" style="">  
-                    <!-- <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>     -->
+                      <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
+                    <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>    
                   </div>
                </div>
              </div>
 
-             <div class="col-3 py-0">
-                <label class="font-sm mb-0">Programs</label>
-                <el-select 
-                                 
+             <div class="col-3 text-center py-0">
+                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select                                  
                     class="w-100" 
+                    v-model="C_programNameFilter"  
                     track-by="name" 
                     filterable
                     value-key="id"
                     multiple                                                                                                                                               
-                    placeholder="Search and select Programs"
+                    placeholder="Filter by Program"
                   >
                   <el-option 
-                                                                  
-                                                               
+                    v-for="item in C_programNames"                                                     
+                    :value="item"   
+                    :key="item.id"  
+                    :label="item.program_name"                                                                
                     >
                   </el-option>
                   </el-select> 
               </div>
               </div>
 
-            <div class="row text-center mt-2" v-if="tasksObj !== null"> 
+            <div class="row text-center mt-2" v-if="tasksObj !== null">            
+            <span class="count"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ tasksObj.length}}</button></span>   
+                
+                <!-- <div v-if="filteredTasks.length > 0">
+        <div  style="margin-bottom:50px" data-cy="tasks_table">
+          <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
+           
+            <thead style="background-color:#ededed;">
+              <th class="sort-th" @click="sort('program_name')" >Program Name
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'program_name'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'program_name'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th" @click="sort('project_name')">Project Name
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== ''">
+                 <i class="fas fa-sort"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'project_name'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+              <th class="pl-1 sort-th" @click="sort('text')">Task
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'text'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'text'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'text'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'text'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'text'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="pl-1 sort-th" @click="sort('category')">Category
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'category'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'category'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'category'">
+                 <i class="fas fa-sort-down"></i></span>
+              </th>
+              <th class="sort-th p-1">
+                 <span class="py-2 d-inline-block">Assigned Users</span>
+
+
+              </th>
+              <th class="sort-th" @click="sort('progress')">Progress
+                <span class="inactive-sort-icon scroll" v-if="currentSort !== 'progress'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'progress'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+              <th class='non-sort-th'>Flags
+               
+              </th>
+              <th class="sort-th" @click="sort('notesUpdatedAt')">Last Update
+                 <span class="inactive-sort-icon scroll" v-if="currentSort !== 'notesUpdateAt'">
+                 <i class="fas fa-sort"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir === 'asc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-up"></i></span>
+                 <span class="inactive-sort-icon scroll" v-if="currentSortDir !== 'asc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-up"></i></span>
+                <span class="sort-icon scroll" v-if="currentSortDir ==='desc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-down"></i></span>
+                <span class="inactive-sort-icon scroll" v-if="currentSortDir !=='desc' && currentSort === 'notesUpdatedAt'">
+                 <i class="fas fa-sort-down"></i></span>
+
+              </th>
+            </thead>
+            <tbody>
+        <tr v-for="text, index in tasksObj" :key="index">
+        <td class="oneSix">{{task.text}}</td>
+        <td class="ten">{{task.taskType}}</td>
+        <td class="eight text-center">{{formatDate(task.startDate)}}</td>
+        <td class="eigth text-center">
+        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+         <span v-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
+        <span v-else>
+         {{formatDate(task.dueDate)}}
+        </span>      
+       </td>
+        <td class="fort" >
+          <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
+          <span v-if="(task.accountableUsers.length > 0) && (task.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{task.accountableUsers[0].name}}<br></span>    -->
+          <!-- Consulted Users and Informed Users are toggle values         -->
+          <!-- <span :class="{'show-all': getToggleRACI }" >             
+             <span v-if="(task.consultedUsers.length > 0) && (task.consultedUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">C</span>{{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
+             <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g,' ')}}</span>      
+         </span>        
+        </td>
+        <td class="eight text-center">
+        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
+        <span v-else>{{task.progress + "%"}}</span>
+        </td>
+        <td class="fort text-center">
+            <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
+            <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
+            <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
+            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+            <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
+            <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
+            <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
+            <span v-if="
+                      task.important == false &&
+                      task.reportable == false &&
+                      task.watched == false &&
+                      task.ongoing == false && 
+                      task.isOverdue == false &&
+                      task.onHold == false &&  
+                      task.draft == false && 
+                      task.progress < 100 "             
+                    >
+                  No flags at this time         
+            </span>
+              
+        </td>
+        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
+           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
+          {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
+            </span>
+            <br> 
+            <span class="truncate-line-five">
+              {{task.notes[task.notes.length - 1].body}}
+            </span>
+           
+        </td>       
+        <td v-else class="twentyTwo">No Updates</td>
+      </tr>
+            </tbody>
+          </table> -->
+<!--            
+          <div class="float-right mb-4 mt-2 font-sm">
+           <div class="simple-select d-inline-block text-right font-sm">
+           <span class="mr-1">Displaying </span>
+            <el-select
+            v-model="C_tasksPerPage"
+            class="w-33"
+            track-by="value"
+            value-key="id"
+            >
+            <el-option
+              v-for="item in getTasksPerPageFilterOptions"
+              :value="item"
+              :key="item.id"
+              :label="item.name"
+              >
+            </el-option>
+            </el-select>
+           </div> -->
+          <!-- <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+            <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / this.C_tasksPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
+        </div>
+        </div>
+      </div>
+      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No Tasks found...</h6> -->
               <!-- TASKS TABLE -->
-            <el-table
+           <el-table
               :data="pagedTableData"  
-              class="mt-4"
+              class="mt-5"
               border
               style="width: 100%">
             <el-table-column
@@ -178,17 +393,10 @@
               fixed="right"
               label="Last Update"
               sortable
-              width="250">
+              width="250">             
             </el-table-column>
-            <!-- <el-table-column
-              fixed="right"
-              label="Operations"
-              width="120"> -->
-              <!-- <template slot-scope="scope">
-                <el-button @click="handleClick" type="text" size="small">Detail</el-button>
-                <el-button type="text" size="small">Edit</el-button>
-              </template> -->
-            <!-- </el-table-column> -->
+
+          
 
           </el-table>
          
@@ -207,7 +415,7 @@
 
                
      </el-tab-pane>
-      <el-tab-pane class="p-3">  
+      <el-tab-pane disabled class="p-3">  
           <template slot="label" class="text-right">
            ISSUES
            <span class="badge badge-secondary badge-pill">
@@ -577,7 +785,7 @@
    
 
  </el-tab-pane> 
-   <el-tab-pane disabled  label="Portfolio Analytics (Coming Soon)" class="p-3">
+   <el-tab-pane disabled  label="PORTFOLIO ANALYTICS (Coming Soon)" class="p-3">
     
    </el-tab-pane>
     </el-tabs>
@@ -589,7 +797,7 @@
 <script>
 import axios from 'axios';
 import Loader from "../../shared/loader.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "PortfolioView",
   props: ["from"],
@@ -599,7 +807,21 @@ export default {
   data() {
     return {
       showLess: "Show More",
-      portfolioData: null, 
+      // 3 Tags
+      hideWatchedTasks:false, 
+      hideImportantTasks:false, 
+      hideBriefedTasks:false, 
+
+      // 7 Action States
+      hideDraftTasks:false,
+      hideCompleteTasks:false, 
+      hideInprogressTasks:false, 
+      hideOverdueTasks:false, 
+      hideOngoingTasks:false, 
+      hidePlannedTasks:false, 
+      hideOnholdTasks:false, 
+
+      portfolioData: null,    
       tasksData: null, 
       issuesData: null, 
       risksData: null, 
@@ -616,7 +838,8 @@ export default {
     };
   },
    mounted() { 
-      axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
+   
+     axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
           this.tasksData = responses[0]
           this.issuesData = responses[1]
           this.risksData = responses[2]
@@ -628,12 +851,12 @@ export default {
   },
   computed: {
     ...mapGetters([
-  
+      'getPortfolioWatchedTasksToggle', 
+      'getPortfolioBriefedTasksToggle',
+      'getPortfolioImportantTasksToggle', 
+      'getProgramNameFilter',
+      'programNameFilter'     
     ]),
-    //  projectObj() {
-       
-    //     return this.currentProject.facilities
-    //   },
     isPortfolioView() {
       return this.$route.name.includes("Portfolio");
     }, 
@@ -643,19 +866,59 @@ export default {
     isSheetsView() {
       return this.$route.name.includes("Sheet");
     },
-    // programCount(){
-      
-    //   return this.portfolioObj.data.projects.length
-    
-    // },
     programObj(){     
       if (this.portfolioData !== null) {
       return this.portfolioData
       }
     }, 
-    tasksObj(){     
+    portfolioTasks(){
       if (this.tasksData !== null) {
-      return this.tasksData.data
+         return this.tasksData.data
+      }     
+    },
+    tasksObj(){     
+     if (this.tasksData !== null)
+    //  if condition for 7 States
+       if (this.hideCompleteTasks){
+       return _.filter(this.tasksData.data, (t) => t && t.progress < 100 )
+     } 
+       if (this.hideInProgressTasks){
+      //  Fix in Progress once backend values are available
+       return _.filter(this.tasksData.data, (t) => t && t.progress < 100 && t.start_date <= this.today )
+     } 
+       if (this.hideOverdueTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.is_overdue)
+     } 
+       if (this.hideOnholdTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.on_hold)
+     } 
+       if (this.hideOngoingTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.ongoing)
+     } 
+       if (this.hideDraftTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.draft)
+     } 
+       if (this.hidePlannedTasks){
+        //  Fix Planned once backend values are available
+       return _.filter(this.tasksData.data, (t) => t && !t.watched)
+     } 
+    //  If condition for 3 Tags
+     if (this.hideWatchedTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.watched)
+     } 
+     
+     if (this.hideBriefedTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.reportable)
+     } 
+     if (this.hideImportantTasks){
+       return _.filter(this.tasksData.data, (t) => t && !t.important)   
+    } else if (this.tasksData !== null)  {
+       return this.portfolioTasks
+     }
+    }, 
+    filteredTasksObj(){     
+      if (this.tasksData !== null) {      
+       return  _.filter(this.tasksObj, (t) => t && t.watched)      
       }
     }, 
     issuesObj(){     
@@ -674,51 +937,39 @@ export default {
      },
    taskVariation() {
       let planned = _.filter(
-        this.tasksObj,
+        this.portfolioTasks,
         (t) => t && t.draft == false && t.start_date && t.start_date > this.today 
           // (t) => t && t.startDate && t.startDate > this.today 
       );     
      let taskDrafts = _.filter(
-        this.tasksObj,
+      this.portfolioTasks,
         (t) => t && t.draft == true
       );  
       let important = _.filter(
-        this.tasksObj,
+      this.portfolioTasks,
         (t) => t && t.important == true
       ); 
         let briefings = _.filter(
-        this.tasksObj,
+        this.portfolioTasks,
         (t) => t && t.reportable == true
       );
       let watched = _.filter(
-        this.tasksObj,
+     this.portfolioTasks,
         (t) => t && t.watched == true
       );
               
       let completed = _.filter(
-        this.tasksObj,
+       this.portfolioTasks,
         (t) => t && t.progress && t.progress == 100 
       );
       let inProgress = _.filter(
-        this.tasksObj,
+      this.portfolioTasks,
         (t) => t && t.progress < 100 && t.start_date <= this.today 
       );
-     let onHoldT = _.filter(this.tasksObj, (t) => t && t.on_hold == true );
-     let ongoing = _.filter(this.tasksObj, (t) => t && t.ongoing == true );
-      // let completed_percent = this.getAverage(
-      //   completed.length,
-      //   this.tasksObj.length
-      // );
-      // let inProgress_percent = this.getAverage(
-      //   inProgress.length,
-      //   this.tasksObj.length
-      // );
-      let overdue = _.filter(this.tasksObj, (t) => t && t.due_date < this.today);
-      // let overdue_percent = this.getAverage(
-      //   overdue.length,
-      //   this.tasksObj.length
-      // );
-     
+     let onHoldT = _.filter(this.portfolioTasks, (t) => t && t.on_hold == true );
+     let ongoing = _.filter(this.portfolioTasks, (t) => t && t.ongoing == true );
+     let overdue = _.filter( this.portfolioTasks, (t) => t && t.due_date < this.today);
+
       return {
         planned: {
           count: planned.length, 
@@ -802,6 +1053,9 @@ export default {
         },
        };
     },
+    filterOutWatched(){
+      return _.filter(this.tasksObj, (t) => t && t.watched == false );
+    },
     riskVariation() {
       let planned = _.filter(
         this.risksObj,
@@ -851,14 +1105,89 @@ export default {
         },     
       };
     },
-
-
-
+    C_programNames() {
+      return this.getProgramNameFilter
+    },
+    C_programNameFilter: {
+      get() {
+        return this.programNameFilter
+      },
+      set(value) {
+        this.setProgramNameFilter(value)
+      }
+    },
+     C_hideWatchedTasks: {                  
+        get() {       
+         return this.getPortfolioWatchedTasksToggle                 
+        },
+        set() {        
+         this.setPortfolioWatchedTasksToggle(!this.getPortfolioWatchedTasksToggle)
+        }        
+      },
+      C_hideImportantTasks: {                  
+      get() {       
+        return this.getPortfolioImportantTasksToggle                 
+      },
+      set() {        
+        this.setPortfolioImportantTasksToggle(!this.getPortfolioImportantTasksToggle)
+      }
+      
+    },
+      C_hideBriefedTasks: {                  
+      get() {       
+        return this.getPortfolioBriefedTasksToggle                 
+      },
+      set() {        
+        this.setPortfolioBriefedTasksToggle(!this.getPortfolioBriefedTasksToggle)
+      }
+      
+    },
   },
-  methods: {
-    
+  methods: {  
+   ...mapMutations([
+    'setPortfolioWatchedTasksToggle',
+    'setPortfolioBriefedTasksToggle',
+    'setPortfolioImportantTasksToggle',
+    'setProgramNameFilter'
+     ]),
     log(e){
-      console.log("this is Lessons" + e)
+      console.log("this is filtered Watched" + e)
+    }, 
+  // Toggle for 3 Action Tags
+    toggleWatched(){
+        this.hideWatchedTasks = !this.hideWatchedTasks
+    },
+    toggleBriefing(){
+        this.hideBriefedTasks = !this.hideBriefedTasks
+    },
+    toggleImportant(){
+        this.hideImportantTasks = !this.hideImportantTasks
+    },
+// Toggle for 7 Action States
+    toggleComplete(){
+        this.hideCompleteTasks = !this.hideCompleteTasks
+    },
+    toggleInprogress(){
+        this.hideInprogressTasks = !this.hideInprogressTasks
+    },
+    toggleOverdue(){
+        this.hideOverdueTasks = !this.hideOverdueTasks
+    },
+    toggleOngoing(){
+        this.hideOngoingTasks = !this.hideOngoingTasks
+    },
+    toggleDraft(){
+        this.hideDraftTasks = !this.hideDraftTasks
+    },
+  
+    togglePlanned(){
+        this.hidePlannedTasks = !this.hidePlannedTasks
+    },  
+    toggleOnhold(){
+        this.hideOnholdTasks = !this.hideOnholdTasks
+    },
+    toggleOverdue(){
+      this.hideOverdueTasks = !this.hideOverdueTasks
     },
     test(a,b) {
       this.programName = this.tasksObj. map(t => t.program_name) 
@@ -867,6 +1196,13 @@ export default {
        if (a[this.programName] > b[this.programName]) return 1;
        return 0;  
     },
+    // hideWatchedTasks(){
+    //   // console.log("This works")
+    //     this.setPortfolioWatchedTasksToggle(!this.getPortfolioWatchedTasksToggle)       
+    //     if (this.getPortfolioWatchedTasksToggle == true) {        
+    //       } else if (this.getPortfolioWatchedTasksToggle == false){
+    //     }
+    //   },
     setPage (val) {
       this.page = val
     },
@@ -1015,7 +1351,9 @@ ul > li {
 .giantMapView {
   font-size: 3.25rem;
 }
-
+i, .icons {
+  cursor: pointer;
+}
 ul {
   margin-bottom: 0.5rem;
 }
@@ -1048,6 +1386,7 @@ ul {
 }
 .tagsCol {
   border-radius: 4px;
+  background-color: #f8f9fa;
   border: .5px solid lightgray;
 }
 .fa-times-circle {
@@ -1059,6 +1398,15 @@ ul {
 }
 .fa-times-circle:hover {
   transform: scale(1.25); 
+}
+.countBtn {
+    box-shadow: 0 2.5px 5px rgba(56, 56, 56, 0.19),
+    0 3px 3px rgba(56, 56, 56, 0.23);
+    position: absolute;
+    right:1%;
+}
+.light {
+  color: lightgray;
 }
 
 </style>
