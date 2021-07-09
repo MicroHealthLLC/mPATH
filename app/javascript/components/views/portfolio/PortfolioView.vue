@@ -33,7 +33,7 @@
                     <i class="fas fa-clipboard-check" :class="[hideCompleteTasks == true ? 'light':'text-success']"></i>
                     </span>      
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block">{{ taskVariation.completed.count }}</h4>  
+                   <h5 class="d-block">{{ taskVariation.completed.count }}</h5>  
                   </div>
 
                   <div class="pr-5 text-center icons" :class="[hideInprogressTasks == true ? 'light':'']" @click.prevent="toggleInprogress">
@@ -41,7 +41,7 @@
                     <i class="far fa-tasks" :class="[hideInprogressTasks == true ? 'light':'text-primary']"></i>
                     </span>                          
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block">{{ taskVariation.inProgress.count }}</h4>  
+                     <h5 class="d-block">{{ taskVariation.inProgress.count }}</h5>  
                   </div>
                 
                 
@@ -50,7 +50,7 @@
                     <i class="far fa-calendar" :class="[hideOverdueTasks == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block"> {{ taskVariation.overdue.count }}  </h4>    
+                    <h5 class="d-block"> {{ taskVariation.overdue.count }}  </h5>    
                   </div>
 
                 <div class="pr-5 text-center icons" :class="[hideOngoingTasks == true ? 'light':'']" @click.prevent="toggleOngoing">
@@ -58,7 +58,7 @@
                   <i class="fas fa-retweet" :class="[hideOngoingTasks == true ? 'light':'text-success']"></i>
                   </span> 
                     <span class="smallerFont">ONGOING </span>    
-                    <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h4>  
+                    <h5 class="d-block"> <span v-if="tasksObj">{{ taskVariation.ongoing.count }}</span></h5>  
                  </div> 
 
 
@@ -67,7 +67,7 @@
                   <i class="fas fa-calendar-check" :class="[hidePlannedTasks == true ? 'light':'text-info']"></i>
                   </span>                     
                   <span class="smallerFont">PLANNED</span>
-                    <h4 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h4>  
+                    <h5 class="d-block"> <span v-if="tasksObj">{{ taskVariation.planned.count }}</span></h5>  
                 </div>
              
                 <div class="pr-5 text-center icons" :class="[hideOnholdTasks == true ? 'light':'']"  @click.prevent="toggleOnhold">
@@ -75,7 +75,7 @@
                       <i class="fas fa-pause-circle" :class="[hideOnholdTasks == true ? 'light':'text-primary']"></i>
                      </span> 
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block">{{ taskVariation.onHoldT.count }}</h4>            
+                       <h5 class="d-block">{{ taskVariation.onHoldT.count }}</h5>            
                 </div>
                  
                  
@@ -84,7 +84,7 @@
                       <i class="fas fa-pencil-alt" :class="[hideDraftTasks == true ? 'light':'text-warning']"></i>
                   </span>     
                   <span class="smallerFont">DRAFTS</span>   
-                        <h4 class="d-block">{{  taskVariation.taskDrafts.count }}</h4>              
+                        <h5 class="d-block">{{  taskVariation.taskDrafts.count }}</h5>              
                 </div> 
                
                
@@ -100,7 +100,7 @@
                  </span>                  
                   <span class="smallerFont">ON WATCH</span>
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
-                   <h4 class="d-block">{{ taskVariation.watched.count }}</h4>  
+                   <h5 class="d-block">{{ taskVariation.watched.count }}</h5>  
                   </div>
                   <div class="px-5 text-center icons" :class="[hideImportantTasks == true ? 'light':'']" @click.prevent="toggleImportant"     >
                   <span class="d-block">
@@ -108,7 +108,7 @@
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
-                     <h4 class="d-block">{{ taskVariation.important.count }}</h4>  
+                     <h5 class="d-block">{{ taskVariation.important.count }}</h5>  
                   </div>
                    <div class="text-center icons"  :class="[hideBriefedTasks == true ? 'light':'']" @click.prevent="toggleBriefing"         >
                       <span class="d-block">
@@ -116,7 +116,7 @@
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
-                    <h4 class="d-block"> {{ taskVariation.briefings.count }}  </h4>    
+                    <h5 class="d-block"> {{ taskVariation.briefings.count }}  </h5>    
                   </div>
                </div>
              </div>
@@ -125,7 +125,7 @@
                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
                 <el-select                                  
                     class="w-100" 
-                    v-model="C_programNameFilter"  
+                   
                     track-by="name" 
                     filterable
                     value-key="id"
@@ -133,10 +133,9 @@
                     placeholder="Filter by Program"
                   >
                   <el-option 
-                    v-for="item in C_programNames"                                                     
-                    :value="item"   
-                    :key="item.id"  
-                    :label="item.program_name"                                                                
+                  
+                     
+                                                                             
                     >
                   </el-option>
                   </el-select> 
@@ -334,7 +333,7 @@
               fixed
               prop="program_name"
               sortable
-              :sort-method="test"
+              :sort-change="test"
               label="Program"
               width="250">
             </el-table-column>
@@ -426,33 +425,33 @@
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block"> {{ issueVariation.completed.count }}</h4>  
+                   <h5 class="d-block"> {{ issueVariation.completed.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block"> {{ issueVariation.inProgress.count }}</h4>  
+                     <h5 class="d-block"> {{ issueVariation.inProgress.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block">{{ issueVariation.overdue.count }}</h4>                     
+                    <h5 class="d-block">{{ issueVariation.overdue.count }}</h5>                     
                 </div>
                 
                  <div class="py-0 px-4  mb-0">                  
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block">{{ issueVariation.planned.count }}</h4>  
+                        <h5 class="d-block">{{ issueVariation.planned.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block"> {{ issueVariation.onHoldI.count }}</h4>            
+                       <h5 class="d-block"> {{ issueVariation.onHoldI.count }}</h5>            
                 </div>
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block"> {{ issueVariation.issueDrafts.count }}</h4>              
+                       <h5 class="d-block"> {{ issueVariation.issueDrafts.count }}</h5>              
                 </div> 
             
               </div>
@@ -552,38 +551,38 @@
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block"> {{ riskVariation.completed.count }}</h4>  
+                   <h5 class="d-block"> {{ riskVariation.completed.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                   <span class="d-block" v-tooltip="`IN PROGRESS`"><i class="far fa-tasks text-primary"></i></span>
                      <span class="smallerFont">IN PROGRESS</span> 
-                     <h4 class="d-block"> {{ riskVariation.inProgress.count }}</h4>  
+                     <h5 class="d-block"> {{ riskVariation.inProgress.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`OVERDUE`"><font-awesome-icon icon="calendar" class="text-danger"  /></span>
                     <span class="smallerFont">OVERDUE </span> 
-                    <h4 class="d-block"> {{ riskVariation.overdue.count }}</h4>                     
+                    <h5 class="d-block"> {{ riskVariation.overdue.count }}</h5>                     
                 </div>
                  <div class="py-0 px-4 mb-0">
                    <span class="d-block" v-tooltip="`ONGOING`"><i class="fas fa-retweet text-success"></i></span>
                     <span class="smallerFont">ONGOING </span>    
-                      <h4 class="d-block">{{ riskVariation.ongoing.count }}</h4>  
+                      <h5 class="d-block">{{ riskVariation.ongoing.count }}</h5>  
                 </div> 
                  <div class="py-0 px-4  mb-0">
                   
                   <span class="d-block" v-tooltip="`PLANNED`"><font-awesome-icon icon="calendar-check" class="text-secondary font-md"  /></span>
                       <span class="smallerFont">PLANNED</span>
-                        <h4 class="d-block">{{ riskVariation.planned.count }}</h4>  
+                        <h5 class="d-block">{{ riskVariation.planned.count }}</h5>  
                 </div>
                  <div class="py-0 px-4 mb-0">
                  <span  v-tooltip="`ON HOLD`" class="d-block"><i class="fas fa-pause-circle text-primary font-md"></i></span>
                      <span class="smallerFont">ON HOLD</span> 
-                       <h4 class="d-block">{{riskVariation.onHoldR.count }}</h4>            
+                       <h5 class="d-block">{{riskVariation.onHoldR.count }}</h5>            
                 </div>
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">{{ riskVariation.riskDrafts.count }}</h4>              
+                       <h5 class="d-block">{{ riskVariation.riskDrafts.count }}</h5>              
                 </div> 
             
               </div>
@@ -682,13 +681,13 @@
                 <div class="pb-0 pl-2 pr-4 mb-0">                  
                   <span class="d-block" v-tooltip="`COMPLETE`" ><i class="fas fa-clipboard-check text-success"></i></span>
                   <span class="smallerFont">COMPLETE</span>
-                   <h4 class="d-block">12</h4>  
+                   <h5 class="d-block">12</h5>  
                 </div>
             
                  <div class="py-0 px-4 mb-0">
                 <span  v-tooltip="`DRAFTS`" class="d-block"><i class="fas fa-pencil-alt text-warning font-md"></i></span>
                      <span class="smallerFont">DRAFTS</span>   
-                       <h4 class="d-block">6</h4>              
+                       <h5 class="d-block">6</h5>              
                 </div>             
               </div>
       
@@ -821,15 +820,15 @@ export default {
       hidePlannedTasks:false, 
       hideOnholdTasks:false, 
 
-      portfolioData: null,    
-      tasksData: null, 
+      portfolioData: null,  
+    
       issuesData: null, 
       risksData: null, 
       programId: null, 
       programName: null, 
       page: 1,
       pageSize: 10,
-      tasksRequest: axios.get("/api/v1/portfolio/tasks"),
+      // tasksRequest: axios.get("/api/v1/portfolio/tasks"),
       issuesRequest: axios.get("/api/v1/portfolio/issues"),
       risksRequest: axios.get("/api/v1/portfolio/risks"),
       portfolioRequest: axios.get("/api/v1/portfolio/programs.json"),
@@ -838,12 +837,13 @@ export default {
     };
   },
    mounted() { 
+     this.fetchPortfolioTasks()
    
-     axios.all([this.tasksRequest, this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
-          this.tasksData = responses[0]
-          this.issuesData = responses[1]
-          this.risksData = responses[2]
-          this.portfolioData = responses[3].data.projects
+     axios.all([this.issuesRequest, this.risksRequest, this.portfolioRequest]).then(axios.spread((...responses) => {
+          // this.portfolioTaskObj = responses[0]
+          this.issuesData = responses[0]
+          this.risksData = responses[1]
+          this.portfolioData = responses[2].data.projects
          })).catch(errors => {
   
     })
@@ -854,8 +854,9 @@ export default {
       'getPortfolioWatchedTasksToggle', 
       'getPortfolioBriefedTasksToggle',
       'getPortfolioImportantTasksToggle', 
-      'getProgramNameFilter',
-      'programNameFilter'     
+      'getProgramNameFilter',    
+      'programNameFilter',
+      'portfolioTasks'    
     ]),
     isPortfolioView() {
       return this.$route.name.includes("Portfolio");
@@ -871,53 +872,62 @@ export default {
       return this.portfolioData
       }
     }, 
-    portfolioTasks(){
-      if (this.tasksData !== null) {
-         return this.tasksData.data
-      }     
+    portfolioTaskObj(){      
+         return this.portfolioTasks      
     },
     tasksObj(){     
-     if (this.tasksData !== null)
-    //  if condition for 7 States
-       if (this.hideCompleteTasks){
-       return _.filter(this.tasksData.data, (t) => t && t.progress < 100 )
-     } 
-       if (this.hideInProgressTasks){
-      //  Fix in Progress once backend values are available
-       return _.filter(this.tasksData.data, (t) => t && t.progress < 100 && t.start_date <= this.today )
-     } 
-       if (this.hideOverdueTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.is_overdue)
-     } 
-       if (this.hideOnholdTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.on_hold)
-     } 
-       if (this.hideOngoingTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.ongoing)
-     } 
-       if (this.hideDraftTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.draft)
-     } 
-       if (this.hidePlannedTasks){
-        //  Fix Planned once backend values are available
-       return _.filter(this.tasksData.data, (t) => t && !t.watched)
-     } 
-    //  If condition for 3 Tags
-     if (this.hideWatchedTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.watched)
-     } 
-     
-     if (this.hideBriefedTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.reportable)
-     } 
-     if (this.hideImportantTasks){
-       return _.filter(this.tasksData.data, (t) => t && !t.important)   
-    } else if (this.tasksData !== null)  {
-       return this.portfolioTasks
-     }
+    
+      return this.portfolioTaskObj.filter(task => {
+        
+        if (this.hideDraftTasks) {
+          return !task.draft
+        } else return true
+        
+      }).filter(task => {
+         if (this.hideOnholdTasks) {
+          return !task.on_hold
+        } else return true
+
+      }).filter(task => {
+         if (this.hideOngoingTasks) {
+          return !task.ongoing
+        } else return true
+
+      }).filter(task => {
+         if (this.hideInprogressTasks) {
+          return task.progress < 100 && task.start_date <= this.today 
+        } else return true
+
+      }).filter(task => {
+         if (this.hideOverdueTasks) {
+          return !task.is_overdue
+        } else return true
+
+      }).filter(task => {
+         if (this.hideCompleteTasks) {
+          return task.progress < 100
+        } else return true
+
+      }).filter(task => {
+         if (this.hideInprogressTasks) {
+          return task.progress < 100 && task.start_date <= this.today
+        } else return true
+      }).filter(task => {
+        // This and last 2 filters are for Filtered Tags
+         if (this.hideWatchedTasks) {
+          return !task.watched
+        } else return true
+
+    //  if (this.hideImportantTasks){
+    //    return _.filter(this.portfolioTaskObj.data, (t) => t && !t.important)   
+    // } else if (this.portfolioTaskObj !== null)  {
+    //    return this.portfolioTasks
+    //  }}
+    
+      })
     }, 
     filteredTasksObj(){     
-      if (this.tasksData !== null) {      
+      if (this.portfolioTaskObj !== null) {      
        return  _.filter(this.tasksObj, (t) => t && t.watched)      
       }
     }, 
@@ -1105,17 +1115,17 @@ export default {
         },     
       };
     },
-    C_programNames() {
-      return this.getProgramNameFilter
-    },
-    C_programNameFilter: {
-      get() {
-        return this.programNameFilter
-      },
-      set(value) {
-        this.setProgramNameFilter(value)
-      }
-    },
+    // C_programNames() {
+    //   return this.getProgramNameFilter
+    // },
+    // C_programNameFilter: {
+    //   get() {
+    //     return this.programNameFilter
+    //   },
+    //   set(value) {
+    //     this.setProgramNameFilter(value)
+    //   }
+    // },
      C_hideWatchedTasks: {                  
         get() {       
          return this.getPortfolioWatchedTasksToggle                 
@@ -1150,6 +1160,9 @@ export default {
     'setPortfolioImportantTasksToggle',
     'setProgramNameFilter'
      ]),
+   ...mapActions([
+      'fetchPortfolioTasks'
+     ]),
     log(e){
       console.log("this is filtered Watched" + e)
     }, 
@@ -1178,8 +1191,7 @@ export default {
     },
     toggleDraft(){
         this.hideDraftTasks = !this.hideDraftTasks
-    },
-  
+    },  
     togglePlanned(){
         this.hidePlannedTasks = !this.hidePlannedTasks
     },  
@@ -1189,20 +1201,21 @@ export default {
     toggleOverdue(){
       this.hideOverdueTasks = !this.hideOverdueTasks
     },
-    test(a,b) {
-      this.programName = this.tasksObj. map(t => t.program_name) 
-      // let name = this.tasksObj.program_name
-       if (a[this.programName] <  b[this.programName]) return -1;
-       if (a[this.programName] > b[this.programName]) return 1;
-       return 0;  
+    test() {
+      // return this.tasksObj.sort(a, b => a.program_name - b.program_name)
+     return this.tasksObj.sort(function(a, b) {
+      var nameA = a.program_name.toUpperCase(); // ignore upper and lowercase
+      var nameB = b.program_name.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+      return -1;
+     }
+     if (nameA > nameB) {
+    return 1;
+      }
+      // names must be equal
+      return 0;
+    });
     },
-    // hideWatchedTasks(){
-    //   // console.log("This works")
-    //     this.setPortfolioWatchedTasksToggle(!this.getPortfolioWatchedTasksToggle)       
-    //     if (this.getPortfolioWatchedTasksToggle == true) {        
-    //       } else if (this.getPortfolioWatchedTasksToggle == false){
-    //     }
-    //   },
     setPage (val) {
       this.page = val
     },
