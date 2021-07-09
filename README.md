@@ -35,24 +35,6 @@ Agile portfolio management for large programs and projects including those geogr
 
         bash -l -c "rvm use 2.6.6 --default"
 
-# Install Mysql
-        yum install mariadb-server mariadb
-
-        yum install mysql-devel
-
-        systemctl start mariadb
-
-        systemctl enable mariadb
-
-        mysql_secure_installation
-
-        mysql -u root -p
-
-        create database mpath_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
-      
-        GRANT ALL PRIVILEGES ON mpath_dev.* TO 'user'@'localhost';
-
-        exit
 
 # be sure git is installed
         yum install git
@@ -144,6 +126,25 @@ you will have to create an nginx service now
         service nginx start
         
         If you still have permission problems be sure to check selinux
+        
+# Install Mysql
+        yum install mariadb-server mariadb
+
+        yum install mysql-devel
+
+        systemctl start mariadb
+
+        systemctl enable mariadb
+
+        mysql_secure_installation
+
+        mysql -u root -p
+
+        create database mpath_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
+      
+        GRANT ALL PRIVILEGES ON mpath_dev.* TO 'user'@'localhost';
+
+        exit
 
 #create /var/www and from there 
         mkdir /var/www
