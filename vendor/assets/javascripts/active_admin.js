@@ -130,7 +130,7 @@ jQuery(function($) {
     allowClear: true
   });
 
-  $("#q_user_id").select2({
+  $("#q_user_id, #q_checklists_user_id").select2({
     placeholder: "Search and select User",
     allowClear: true
   });
