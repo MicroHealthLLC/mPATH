@@ -131,7 +131,7 @@ ActiveAdmin.register Lesson do
           #     fp.input :facility_id, label: 'Project', as: :select, collection: Facility.all.map{|p| [p.facility_name, p.id]}, include_blank: false
           #   end
           # end
-          f.input :task_type, label: 'Category', include_blank: false
+          f.input :task_type, label: 'Category',  input_html: {class: "select2"}, include_blank: true
           f.input :lesson_stage, label: 'Stage', input_html: {class: "select2"}, include_blank: true
           f.input :user_id, label: 'User', as: :select, collection: User.active.map{|u| [u.full_name, u.id]}, input_html: {class: "select2"}
 
