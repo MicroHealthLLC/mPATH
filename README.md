@@ -138,13 +138,6 @@ you will have to create an nginx service now
 
         mysql_secure_installation
 
-        mysql -u root -p
-
-        create database mpath_dev CHARACTER SET utf8 COLLATE utf8_general_ci;
-      
-        GRANT ALL PRIVILEGES ON mpath_dev.* TO 'user'@'localhost';
-
-        exit
 
 #create /var/www and from there 
         mkdir /var/www
@@ -171,6 +164,8 @@ you will have to create an nginx service now
         yarn install - https://linuxize.com/post/how-to-install-yarn-on-centos-7/       
         
         rake secret  THEN put that output in config/secrets.yml
+        
+        rails db:create RAILS_ENV=production
         
         rake db:migrate RAILS_ENV=production
         
