@@ -122,6 +122,8 @@ you will have to create an nginx service now
 ----end---
 
         enable the service
+        
+        systemctl daemon-reload 
 
         systemctl enable nginx
 
