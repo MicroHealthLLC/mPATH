@@ -24,9 +24,31 @@
                 <span v-if="!getPortfolioWatchedTasksToggle"> {{filterOutWatched.length }}</span> -->
           </span>   
           </template>
-             <div class="row pt-2">
-               <div class="col-6 pt-2">
-                <label class="font-sm mb-0 text-center pb-1 d-block">DISPLAY TASKS BY STATE</label>
+             <div class="row pt-2">          
+
+            
+             <div class="col-3 text-center py-0">
+                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
+                <el-select                                  
+                    class="w-100" 
+                   
+                    track-by="name" 
+                    filterable
+                    value-key="id"
+                    multiple                                                                                                                                               
+                    placeholder="Filter by Program"
+                  >
+                  <el-option 
+                  
+                     
+                                                                             
+                    >
+                  </el-option>
+                  </el-select> 
+              </div>           
+              
+                <div class="col-6 text-center pt-2">
+                <label class="font-sm mb-0 pb-1 d-block">DISPLAY TASKS BY STATE</label>
                 <div class="pb-0 pl-2 pr-4 mb-0 d-inline-flex">                       
                   <div class="pr-5 text-center icons" :class="[hideCompleteTasks == true ? 'light':'']" @click.prevent="toggleComplete">             
                    <span class="d-block">
@@ -90,9 +112,8 @@
                
                 </div>
               </div>
-
-             <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">DISPLAY TASKS BY TAG</label>
+                 <div class="col-3 tagsCol text-center pt-2 pl-0">
+                <label class="font-sm mb-0 pb-1 d-block">FILTER DISPLAYED TASKS BY TAG</label>
                  <div class="pb-0 pl-2 mb-0 d-inline-flex">    
                   <div class="text-center icons" :class="[hideWatchedTasks == true ? 'light':'']" @click.prevent="toggleWatched"   >             
                  <span class="d-block">
@@ -120,34 +141,14 @@
                   </div>
                </div>
              </div>
-
-             <div class="col-3 text-center py-0">
-                <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <el-select                                  
-                    class="w-100" 
-                   
-                    track-by="name" 
-                    filterable
-                    value-key="id"
-                    multiple                                                                                                                                               
-                    placeholder="Filter by Program"
-                  >
-                  <el-option 
-                  
-                     
-                                                                             
-                    >
-                  </el-option>
-                  </el-select> 
-              </div>
               </div>
 
-            <div class="row text-center mt-2" v-if="tasksObj !== null">            
+      <div class="row text-center mt-2" v-if="tasksObj !== null">            
             <span class="count"><button class="btn countBtn text-light btn-md mh-orange">RESULTS: {{ tasksObj.length}}</button></span>   
                 
-                <!-- <div v-if="filteredTasks.length > 0">
-        <div  style="margin-bottom:50px" data-cy="tasks_table">
-          <table class="table table-sm table-bordered table-striped mt-3 stickyTableHeader">
+      
+        <div data-cy="tasks_table">
+          <table class="table table-sm mt-5 stickyTableHeader table-bordered">
            
             <thead style="background-color:#ededed;">
               <th class="sort-th" @click="sort('program_name')" >Program Name
@@ -234,39 +235,22 @@
 
               </th>
             </thead>
-            <tbody>
-        <tr v-for="text, index in tasksObj" :key="index">
-        <td class="oneSix">{{task.text}}</td>
-        <td class="ten">{{task.taskType}}</td>
-        <td class="eight text-center">{{formatDate(task.startDate)}}</td>
-        <td class="eigth text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-         <span v-if="task.onHold && task.dueDate == null" v-tooltip="`On Hold (w/no Due Date)`"><i class="fas fa-pause-circle text-primary"></i></span>
-        <span v-else>
-         {{formatDate(task.dueDate)}}
-        </span>      
-       </td>
-        <td class="fort" >
-          <span v-if="(task.responsibleUsers.length > 0) && (task.responsibleUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">R</span>{{task.responsibleUsers[0].name}} <br></span> 
-          <span v-if="(task.accountableUsers.length > 0) && (task.accountableUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">A</span>{{task.accountableUsers[0].name}}<br></span>    -->
-          <!-- Consulted Users and Informed Users are toggle values         -->
-          <!-- <span :class="{'show-all': getToggleRACI }" >             
-             <span v-if="(task.consultedUsers.length > 0) && (task.consultedUsers[0] !== null)"> <span class="badge mr-1 font-sm badge-secondary badge-pill">C</span>{{JSON.stringify(task.consultedUsers.map(consultedUsers => (consultedUsers.name))).replace(/]|[['"]/g, ' ')}}<br></span> 
-             <span v-if="(task.informedUsers.length > 0) && (task.informedUsers[0] !== null)"> <span class="badge font-sm badge-secondary mr-1 badge-pill">I</span>{{JSON.stringify(task.informedUsers.map(informedUsers => (informedUsers.name))).replace(/]|[['"]/g,' ')}}</span>      
-         </span>        
-        </td>
-        <td class="eight text-center">
-        <span v-if="task.ongoing" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>
-        <span v-else>{{task.progress + "%"}}</span>
-        </td>
-        <td class="fort text-center">
+         <tbody>
+        <tr v-for="task, index in sortedTasks" :key="index">
+        <td>{{ task.program_name }}</td>
+        <td>{{ task.project_name }}</td>
+        <td>{{ task.text }}</td>
+        <td>{{ task.category }}</td>
+        <td> {{ task.users }} </td>   
+        <td> {{ task.progress }} </td>
+        <td class="text-center">
             <span v-if="task.watched == true"  v-tooltip="`On Watch`"><font-awesome-icon icon="eye" class="mr-1"  /></span>
             <span v-if="task.important == true"  v-tooltip="`Important`"> <i class="fas fa-star text-warning mr-1"></i></span>
             <span v-if="task.reportable" v-tooltip="`Briefings`"> <i class="fas fa-presentation mr-1 text-primary"></i></span>
-            <span v-if="task.isOverdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
+            <span v-if="task.is_overdue" v-tooltip="`Overdue`"><font-awesome-icon icon="calendar" class="text-danger mr-1"  /></span>
             <span v-if="task.progress == 100" v-tooltip="`Completed`"><font-awesome-icon icon="clipboard-check" class="text-success"  /></span>   
             <span v-if="task.ongoing == true" v-tooltip="`Ongoing`"><i class="far fa-retweet text-success"></i></span>   
-            <span v-if="task.onHold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
+            <span v-if="task.on_hold == true" v-tooltip="`On Hold`"> <i class="fas fa-pause-circle mr-1 text-primary"></i></span>   
             <span v-if="task.draft == true" v-tooltip="`Draft`"> <i class="fas fa-pencil-alt text-warning"></i></span>   
             <span v-if="
                       task.important == false &&
@@ -279,24 +263,16 @@
                       task.progress < 100 "             
                     >
                   No flags at this time         
-            </span>
-              
-        </td>
-        <td class="twentyTwo" v-if="(task.notesUpdatedAt.length) > 0">
-           <span class="toolTip" v-tooltip="('By: ' + task.notes[task.notes.length - 1].user.fullName)">              
-          {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}
-            </span>
-            <br> 
-            <span class="truncate-line-five">
-              {{task.notes[task.notes.length - 1].body}}
-            </span>
-           
-        </td>       
-        <td v-else class="twentyTwo">No Updates</td>
-      </tr>
-            </tbody>
-          </table> -->
-<!--            
+              </span>              
+          </td>
+        <td v-if="task.last_update !== null">{{task.last_update.body}}</td>
+        <td v-else>No Update</td>
+     
+       
+        </tr>
+        </tbody>
+        </table> 
+          
           <div class="float-right mb-4 mt-2 font-sm">
            <div class="simple-select d-inline-block text-right font-sm">
            <span class="mr-1">Displaying </span>
@@ -314,17 +290,17 @@
               >
             </el-option>
             </el-select>
-           </div> -->
-          <!-- <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
+           </div> 
+          <span class="mr-1 pr-3" style="border-right:solid 1px lightgray">Per Page </span>
             <button class="btn btn-sm page-btns" @click="prevPage"><i class="fas fa-angle-left"></i></button>
-            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.filteredTasks.length / this.C_tasksPerPage.value) }} </button>
+            <button class="btn btn-sm page-btns" id="page-count"> {{ currentPage }} of {{ Math.ceil(this.tasksObj.length / this.C_tasksPerPage.value) }} </button>
             <button class="btn btn-sm page-btns" @click="nextPage"><i class="fas fa-angle-right"></i></button>
         </div>
         </div>
-      </div>
-      <h6 v-else class="text-danger alt-text" data-cy="no_task_found">No Tasks found...</h6> -->
+    
+     
               <!-- TASKS TABLE -->
-           <el-table
+           <!-- <el-table
               :data="pagedTableData"  
               class="mt-5"
               border
@@ -408,10 +384,10 @@
             layout="prev, pager, next"
             :page-size="pageSize"
             :total="tasksObj.length">
-          </el-pagination>
-          </div>   
+          </el-pagination> -->
+    
 
-
+      </div>
                
      </el-tab-pane>
       <el-tab-pane disabled class="p-3">  
@@ -806,6 +782,9 @@ export default {
   data() {
     return {
       showLess: "Show More",
+      currentSort:'program_name',
+      currentSortDir:'asc',
+       currentPage:1,
       // 3 Tags
       hideWatchedTasks:false, 
       hideImportantTasks:false, 
@@ -853,11 +832,27 @@ export default {
     ...mapGetters([
       'getPortfolioWatchedTasksToggle', 
       'getPortfolioBriefedTasksToggle',
+      'getTasksPerPageFilterOptions',
       'getPortfolioImportantTasksToggle', 
-      'getProgramNameFilter',    
+      'getProgramNameFilter',
+      'getTasksPerPageFilter',    
       'programNameFilter',
       'portfolioTasks'    
     ]),
+   sortedTasks:function() {
+          return this.tasksObj.sort((a,b) => {
+          let modifier = 1;
+          if(this.currentSortDir === 'desc') modifier = -1;
+          if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+          if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+          return 0;
+           }).filter((row, index) => {
+          let start = (this.currentPage-1)*this.C_tasksPerPage.value;
+          let end = this.currentPage*this.C_tasksPerPage.value;
+          if(index >= start && index < end) return true;
+          return this.end
+        });
+    },
     isPortfolioView() {
       return this.$route.name.includes("Portfolio");
     }, 
@@ -917,13 +912,10 @@ export default {
          if (this.hideWatchedTasks) {
           return !task.watched
         } else return true
-
-    //  if (this.hideImportantTasks){
-    //    return _.filter(this.portfolioTaskObj.data, (t) => t && !t.important)   
-    // } else if (this.portfolioTaskObj !== null)  {
-    //    return this.portfolioTasks
-    //  }}
-    
+      }).filter(task => {
+         if (this.hideImportantTasks) {
+          return !task.important
+        } else return true    
       })
     }, 
     filteredTasksObj(){     
@@ -1143,6 +1135,14 @@ export default {
       }
       
     },
+    C_tasksPerPage: {
+      get() {
+        return this.getTasksPerPageFilter || {id: 15, name: '15', value: 15}
+      },
+      set(value) {
+        this.setTasksPerPageFilter(value)
+       }
+     },
       C_hideBriefedTasks: {                  
       get() {       
         return this.getPortfolioBriefedTasksToggle                 
@@ -1156,6 +1156,7 @@ export default {
   methods: {  
    ...mapMutations([
     'setPortfolioWatchedTasksToggle',
+    'setTasksPerPageFilter',
     'setPortfolioBriefedTasksToggle',
     'setPortfolioImportantTasksToggle',
     'setProgramNameFilter'
@@ -1163,6 +1164,19 @@ export default {
    ...mapActions([
       'fetchPortfolioTasks'
      ]),
+       sort:function(s) {
+      //if s == current sort, reverse
+      if(s === this.currentSort) {
+        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+      }
+        this.currentSort = s;
+      },
+      nextPage:function() {
+        if((this.currentPage*this.C_tasksPerPage.value) < this.tasksObj.length) this.currentPage++;
+      },
+      prevPage:function() {
+        if(this.currentPage > 1) this.currentPage--;
+      },
     log(e){
       console.log("this is filtered Watched" + e)
     }, 
@@ -1421,5 +1435,41 @@ ul {
 .light {
   color: lightgray;
 }
+  table {
+    table-layout: fixed;
+    width: 100%;
+    position: relative;
+    margin-bottom: 0 !important;
+  }
+  .stickyTableHeader {
+    position: sticky;
+    position: -webkit-sticky;
+    z-index: 10;
+    justify-content: center;
+    left: 15;
+    top: 0;
+    width: 100%;
+  }  
+   .page-btns {
+    width: 20px;
+    line-height: 1 !important;
+    border: none !important;
+    height: 25px;
+    margin-right: 1px;
+    background-color: white;
+    color: #383838;
+    cursor: pointer;
+ }
+  .page-btns:hover {
+    background-color: #ededed;
+  }
+  #page-count {
+    width: auto !important;
+    cursor: default;
+  }
+  .page-btns.active  {
+    background-color: rgba(211, 211, 211, 10%);
+    border:none !important;
+ }
 
 </style>
