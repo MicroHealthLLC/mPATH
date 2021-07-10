@@ -152,8 +152,8 @@
           <td v-if="(issue.dueDate) <= now">X</td>
           <td v-else></td>
           <td v-if="(issue.notes.length) > 0">
-            By: {{ issue.notes[0].user.fullName}} on
-            {{moment(issue.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[0].body.replace(/[^ -~]/g,'')}}
+            By: {{ issue.notes[issue.notes.length - 1].user.fullName}} on
+            {{moment(issue.notes[issue.notes.length - 1].createdAt).format('DD MMM YYYY, h:mm a')}}: {{issue.notes[issue.notes.length - 1].body.replace(/[^ -~]/g,'')}}
           </td>
           <td v-else>No Updates</td>
         </tr>

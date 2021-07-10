@@ -96,7 +96,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(task, i) in filteredTasks">
+        <tr v-for="(task, i) in filteredTasks" :key="i">
           <td class="text-center">{{i+1}}</td>
           <td>{{task.text}}</td>
           <td>{{task.taskType}}</td>
@@ -111,8 +111,8 @@
           </td>
           <td v-else></td>
           <td v-if="(task.notes.length) > 0">
-            By: {{ task.notes[0].user.fullName}} on
-            {{moment(task.notes[0].createdAt).format('DD MMM YYYY, h:mm a')}}: {{task.notes[0].body.replace(/[^ -~]/g,'')}}
+            By: {{ task.notes[task.notes.length - 1].user.fullName }} on
+            {{moment(task.notesUpdatedAt[task.notes.length - 1]).format('DD MMM YYYY, h:mm a')}}: {{task.notes[task.notes.length - 1].body}}
           </td>
           <td v-else>No Updates</td>
         </tr>
