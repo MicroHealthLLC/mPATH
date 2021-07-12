@@ -2052,7 +2052,12 @@ ul {
     background-color: #ededed !important;
     text-align: center;     
     color: #383838;
+  
     }
+  }
+
+th {
+  font-size: .8rem !important;
   }
 .programNoBadge {
   box-shadow: 0 2.5px 5px rgba(56,56, 56,0.19), 0 3px 3px rgba(56,56,56,0.23);
