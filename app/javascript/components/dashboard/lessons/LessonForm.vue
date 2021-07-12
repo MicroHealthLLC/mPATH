@@ -446,7 +446,7 @@
           class="success-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
@@ -513,7 +513,7 @@
           class="failure-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
@@ -581,7 +581,7 @@
           class="best-practice-card mb-3"
         >
           <div class="d-flex justify-content-between">
-            <label class="font-md">Findings</label>
+            <label class="font-md">Findings <span style="color: #dc3545">*</span></label>
             <div class="font-sm">
               <el-tag size="mini"
                 ><span class="font-weight-bold">Submitted by:</span>
