@@ -103,6 +103,25 @@ class Risk < ApplicationRecord
     probability_name_hash[probability] || probability_name_hash[1]
   end
 
+  def porfolio_json
+    is_overdue = false
+    if !ongoing && !on_hold && !draft
+      is_overdue = ( progress < 100 && (due_date < Date.today) )
+    end
+
+    merge_h = { 
+      project_name: facility.facility_name, 
+      program_name: project.name, 
+      category: task_type.name,
+      is_overdue: is_overdue,
+      last_update: self.notes.last&.porfolio_json,
+      notes_updated_at: notes.sort_by(&:updated_at).map(&:updated_at).last(1),
+      users: users.select(&:active?).map(&:full_name).join(",")
+    }
+
+    self.attributes.merge!(merge_h)
+  end
+
   def self.params_to_permit
     [
       :approved,

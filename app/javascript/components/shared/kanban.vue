@@ -17,7 +17,7 @@
             <div class="col">
               <div class="badge">
                 <span>{{column.title}}</span>
-                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="viewPermit(kanbanType, 'write')" data-cy="kanban_add_btn">
+                <span class="font-sm add" v-tooltip="`Add new ${kanbanType}`" @click.prevent="handleAddNew(column.stage)" v-if="_isallowed(kanbanType, 'write')" data-cy="kanban_add_btn">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </span>
               </div>
@@ -26,7 +26,7 @@
            
           </div>
           <div class="kan-body">
-            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed('write')">
+            <draggable :move="handleMove" @change="(e) => handleChange(e, column.tasks)"  :list="column.tasks" :animation="100" ghost-class="ghost-card" group="tasks" :key="column.title" class="kanban-draggable" data-cy="kanban_draggable" v-if="_isallowed(kanbanType, 'write')">
               <div
                 :is="cardShow"
                 v-for="task in column.tasks"
@@ -89,13 +89,13 @@ export default {
       'updateKanbanTaskIssues'
     ]),   
     //TODO: change the method name of isAllowed
-    _isallowed(salut) {
+    _isallowed(view,salut) {
       var programId = this.$route.params.programId;
       var projectId = this.$route.params.projectId
       let fPrivilege = this.$projectPrivileges[programId][projectId]
       let permissionHash = {"write": "W", "read": "R", "delete": "D"}
       let s = permissionHash[salut]
-      return this.$currentUser.role == "superadmin" || fPrivilege.tasks.includes(s); 
+      return this.$currentUser.role == "superadmin" || fPrivilege[view].includes(s);
     },
     viewPermit: () => (view, req) => {
       var programId = this.$route.params.programId;
