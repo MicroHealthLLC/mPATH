@@ -81,7 +81,7 @@ class User < ApplicationRecord
   end
 
   def allowed_navigation_tabs(right = 'R')
-    nagivation_tabs = ["members", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["calendar_view", "gantt_view"]
+    nagivation_tabs = ["members", "map_view", "gantt_view", "sheets_view", "kanban_view", "calendar_view"] - ["gantt_view"]
     self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & nagivation_tabs
   end
 
@@ -96,7 +96,7 @@ class User < ApplicationRecord
       #NOTE: Once front end routes are working, uncomment it.
       #name = "gantt_chart" if t == "gantt_view"      
 
-      # name = "calendar" if t == "calendar_view"
+      name = "calendar" if t == "calendar_view"
 
       n << {id: name.downcase, name: name.humanize, value: name.downcase}
     end
@@ -105,12 +105,15 @@ class User < ApplicationRecord
   end
 
   def allowed_sub_navigation_tabs(right = 'R')
-    sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview"]
-    self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
+    # sub_nagivation_tabs = ["tasks", "issues", "notes", "risks", "overview", "admin", "lessons"]
+    # self.privilege.attributes.select{|k,v| v.is_a?(String) && v.include?(right)}.keys & sub_nagivation_tabs
+    self.facility_privileges_hash.transform_values{|v| v.transform_values{|v| v.map{|k,v| {id: k.downcase, name: k.humanize, value: k.downcase} if (k != "facility_id") && (v.present? || v.any?) }.compact } }
+    
   end
 
   def build_sub_navigation_tabs_for_profile
-    allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
+    # allowed_sub_navigation_tabs.map{|s| {id: s.downcase, name: s.humanize, value: s.downcase} }
+    allowed_sub_navigation_tabs
   end
 
   def top_navigation_hash
@@ -135,6 +138,7 @@ class User < ApplicationRecord
   def preference_url
     p = self.get_preferences
     top_navigations = allowed_navigation_tabs
+    current_top_navigation_menu = nil
     url = "/"
     if p.program_id.present?
       url = "/programs/#{p.program_id}/sheet" # map must be
@@ -143,9 +147,11 @@ class User < ApplicationRecord
         navigtaion_present = false
         if top_navigations.include?( top_navigation_route_to_database_field_hash[p.navigation_menu] )
           url = "/programs/#{p.program_id}/#{p.navigation_menu}"
+          current_top_navigation_menu = p.navigation_menu
           navigtaion_present = true
         elsif top_navigations.size > 0
           url = "/programs/#{p.program_id}/#{top_navigation_hash[top_navigations.first]}"
+          current_top_navigation_menu = top_navigations.first
           navigtaion_present = true
         else
           url = ""
@@ -158,10 +164,27 @@ class User < ApplicationRecord
             allowed_sub_navigation_values = sub_navigation_privileges.map{|key,value| key if value.is_a?(Array) && value.any? }.compact
 
             if sub_navigation_allowed
-              url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+
+              # NOTE: calender_view don't have lessons tab so we will just allow tasks, issues and risks tab
+              if current_top_navigation_menu == 'calendar_view'
+                if  ["tasks", "issues", "risks"].include?(p.sub_navigation_menu)
+                  url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+                end
+              else
+                url = "#{url}/projects/#{p.project_id}/#{p.sub_navigation_menu}"
+              end
+            
             elsif allowed_sub_navigation_values.size > 0
-              url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+            
+              if current_top_navigation_menu == 'calendar_view'
+                if  ["tasks", "issues", "risks"].include?(allowed_sub_navigation_values.first)
+                  url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+                end
+              else
+                url = "#{url}/projects/#{p.project_id}/#{allowed_sub_navigation_values.first}"
+              end
             end
+          
           end
         end
       end
@@ -209,6 +232,10 @@ class User < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
+  end
+
+  def self.get_users_with_fullname
+    User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
   end
 
   def as_json(options=nil)
@@ -372,7 +399,7 @@ class User < ApplicationRecord
 
     facility_project_hash.each do |pid, fids|
       fids2 = fids - ( fph2[pid] || [])
-      p_privilege = pp_hash[pid]
+      p_privilege = (pp_hash[pid] || {}).except("map_view", "gantt_view", "watch_view", "documents", "members", "sheets_view", "kanban_view", "calendar_view", "portfolio_view")
       fids2.each do |ff|
         fph[pid][ff] = p_privilege.clone.merge!({"facility_id" => ff})
       end       

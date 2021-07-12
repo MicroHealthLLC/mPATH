@@ -156,3 +156,9 @@ task :grant_lesson_privileges => :environment do
   puts 'Granting all privileges of Lesson to all users'
   Privilege.update_all(lessons: "RWD")
 end
+
+desc 'Set sheet view as default privilege if no other is selected'
+task :assign_default_privilege => :environment do
+  puts 'Set sheet view as default privilege if no other is selected'
+  Privilege.all.map(&:save)
+end

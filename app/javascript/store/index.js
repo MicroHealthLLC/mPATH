@@ -1045,11 +1045,15 @@ export default new Vuex.Store({
         let valid = _status === 'all' || facility.status === _status
         valid = valid && facility.facilityGroupStatus == "active"
         if (!valid) return valid
+        if(state.mapFilters.length < 1) return valid
 
         var resources1 = []
-        resources1 = resources1.concat(facility.tasks)
-        resources1 = resources1.concat(facility.issues)
-        resources1 = resources1.concat(facility.risks)
+        resources1.push(...facility.tasks)
+        resources1.push(...facility.issues)
+        resources1.push(...facility.risks)
+        // resources1 = resources1.concat(facility.tasks)
+        // resources1 = resources1.concat(facility.issues)
+        // resources1 = resources1.concat(facility.risks)
 
         _.each(state.mapFilters, (f) => {
           let k = Object.keys(f)[0]
@@ -1378,7 +1382,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$topNavigationPermissions.gantt_view['read']  || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1405,7 +1409,7 @@ export default new Vuex.Store({
             }
           )
 
-          if (Vue.prototype.$permissions.tasks.read)
+          if (f_read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')
