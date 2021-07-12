@@ -418,7 +418,7 @@
     </div>
     <!-- Successes Tab -->
     <div v-show="currentTab == 'tab3'" class="mt-2">
-      <label>Successes</label>
+      <span>Successes</span>
       <span
         v-if="_isallowed('write')"
         class="clickable"
@@ -426,6 +426,9 @@
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Successes without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="successes.length"
         for="successes"
@@ -485,7 +488,7 @@
     </div>
     <!-- Failures Tab -->
     <div v-show="currentTab == 'tab4'" class="mt-2">
-      <label>Failures</label>
+      <span>Failures</span>
       <span
         v-if="_isallowed('write')"
         class="clickable"
@@ -493,6 +496,9 @@
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Failures without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="failures.length"
         for="failures"
@@ -553,7 +559,7 @@
 
     <!-- Best Practices Tab -->
     <div v-show="currentTab == 'tab5'" class="mt-2">
-      <label>Best Practices</label>
+      <span>Best Practices</span>
       <span
         v-if="_isallowed('write')"
         class="clickable"
@@ -561,6 +567,9 @@
       >
         <i class="fas fa-plus-circle"></i>
       </span>
+      <div class="font-sm" style="color: gray;">
+        <label>Best Practices without findings will be deleted before Lesson is saved</label>
+      </div>
       <paginate-links
         v-if="bestPractices.length"
         for="bestPractices"
