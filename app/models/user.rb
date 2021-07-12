@@ -227,6 +227,10 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def self.get_users_with_fullname
+    User.where.not(last_name: ['', nil]).or(User.where.not(first_name: [nil, ''])).map{|u| ["#{u.first_name} #{u.last_name}", u.id]}
+  end
+
   def as_json(options=nil)
     json = super(options)
     json.merge(
