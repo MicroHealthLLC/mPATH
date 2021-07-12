@@ -1380,7 +1380,7 @@ export default new Vuex.Store({
           }
         )
 
-        let f_read = Vue.prototype.$permissions.overview.read || false
+        let f_read = Vue.prototype.$topNavigationPermissions.gantt_view['read']  || false
         // for facilities under facility_groups
         let facility_count = 1
         for (let facility of groups[group]) {
@@ -1407,7 +1407,7 @@ export default new Vuex.Store({
             }
           )
 
-          if (Vue.prototype.$permissions.tasks.read)
+          if (f_read)
           {
             // for task_types under facilities
             let types = _.groupBy(facility.tasks, 'taskType')
