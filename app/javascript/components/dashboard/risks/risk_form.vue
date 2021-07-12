@@ -1186,7 +1186,7 @@
                   ></span>
                   <span
                     v-show="!DV_risk.approved"
-                    class="empty_box mr-1 approver-pointer"
+                    class="empty_box mx-1 approver-pointer"
                     ><i class="far fa-square"></i
                   ></span>
                   <small style="vertical-align: text-top">Approved</small>
@@ -2416,6 +2416,8 @@ export default {
       }
     },
     toggleApproved() {
+      if(!this._isallowed("write"))
+        return;
       this.DV_risk = { ...this.DV_risk, approved: !this.DV_risk.approved };
       this.DV_risk.approvalTime =
         this.$currentUser.full_name + " on " + new Date().toLocaleString();
