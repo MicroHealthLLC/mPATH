@@ -30,8 +30,7 @@
              <div class="col-3 text-center py-0">
                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
                 <el-select                                  
-                    class="w-100" 
-                   
+                    class="w-100"                    
                     track-by="name" 
                     filterable
                     value-key="id"
@@ -67,7 +66,7 @@
                 
                  <div class="pr-5 text-center icons" :class="[hideOverdueTasks == true ? 'light':'']" @click.prevent="toggleOverdue">
                     <span class="d-block">
-                    <i class="far fa-calendar" :class="[hideOverdueTasks == true ? 'light':'text-danger']"></i>
+                    <i class="fas fa-calendar" :class="[hideOverdueTasks == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
                     <h5 class="d-block"> {{ taskVariation.overdue.count }}  </h5>    
@@ -111,9 +110,9 @@
                 </div>
               </div>
                  <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FILTER DISPLAYED TASKS BY TAG</label>
+                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED TASKS BY TAG</label>
                  <div class="pb-0 pl-2 mb-0 d-inline-flex">    
-                  <div class="text-center icons" :class="[hideWatchedTasks == true ? 'light':'']" @click.prevent="toggleWatched"   >             
+                  <div class="text-center icons" :class="[hideWatchedTasks == true ? '':'light']" @click.prevent="toggleWatched"   >             
                  <span class="d-block">
                       <i class="fas fa-eye " ></i>
                  </span>                  
@@ -121,17 +120,17 @@
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
                    <h5 class="d-block">{{ taskVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantTasks == true ? 'light':'']" @click.prevent="toggleImportant"     >
+                  <div class="px-5 text-center icons" :class="[hideImportantTasks == true ? '':'light']" @click.prevent="toggleImportant"     >
                   <span class="d-block">
-                      <i class="fas fa-star" :class="[hideImportantTasks == true ? 'light':'text-warning']"></i>
+                      <i class="fas fa-star" :class="[hideImportantTasks == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
                      <h5 class="d-block">{{ taskVariation.important.count }}</h5>  
                   </div>
-                   <div class="text-center icons"  :class="[hideBriefedTasks == true ? 'light':'']" @click.prevent="toggleBriefing"         >
+                   <div class="text-center icons"  :class="[hideBriefedTasks == true ? '':'light']" @click.prevent="toggleBriefing"         >
                       <span class="d-block">
-                     <i class="fas fa-presentation" :class="[hideBriefedTasks == true ? 'light':'text-primary']"></i>
+                     <i class="fas fa-presentation" :class="[hideBriefedTasks == true ? 'text-primary':'light']"></i>
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
@@ -400,7 +399,7 @@
             
              <div class="col-3 text-center py-0">
                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <el-select                                  
+                <!-- <el-select                                  
                     class="w-100"                    
                     track-by="name" 
                     filterable
@@ -412,7 +411,7 @@
                     value="NEED DATA"                                                                              
                     >
                   </el-option>
-                  </el-select> 
+                  </el-select>  -->
               </div>           
               
                 <div class="col-6 text-center pt-2">
@@ -437,7 +436,7 @@
                 
                  <div class="pr-5 text-center icons" :class="[hideOverdueIssues == true ? 'light':'']" @click.prevent="toggleOverdueI">
                     <span class="d-block">
-                    <i class="far fa-calendar" :class="[hideOverdueIssues == true ? 'light':'text-danger']"></i>
+                    <i class="fas fa-calendar" :class="[hideOverdueIssues == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
                     <h5 class="d-block"> {{ issueVariation.overdue.count }}  </h5>    
@@ -472,9 +471,9 @@
                 </div>
               </div>
                  <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FILTER DISPLAYED ISSUES BY TAG</label>
+                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED ISSUES BY TAG</label>
                  <div class="pb-0 pl-2 mb-0 d-inline-flex">    
-                  <div class="text-center icons" :class="[hideWatchedIssues == true ? 'light':'']" @click.prevent="toggleWatchedI"   >             
+                  <div class="text-center icons" :class="[hideWatchedIssues == true ? '':'light']" @click.prevent="toggleWatchedI"   >             
                  <span class="d-block">
                       <i class="fas fa-eye " ></i>
                  </span>                  
@@ -482,17 +481,17 @@
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedissues">               -->
                    <h5 class="d-block">{{ issueVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantIssues == true ? 'light':'']" @click.prevent="toggleImportantI"     >
+                  <div class="px-5 text-center icons" :class="[hideImportantIssues == true ? '':'light']" @click.prevent="toggleImportantI"     >
                   <span class="d-block">
-                      <i class="fas fa-star" :class="[hideImportantIssues == true ? 'light':'text-warning']"></i>
+                      <i class="fas fa-star" :class="[hideImportantIssues == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantissues">     -->
                      <h5 class="d-block">{{ issueVariation.important.count }}</h5>  
                   </div>
-                   <div class="text-center icons"  :class="[hideBriefedIssues == true ? 'light':'']" @click.prevent="toggleBriefingI"         >
+                   <div class="text-center icons"  :class="[hideBriefedIssues == true ? '':'light']" @click.prevent="toggleBriefingI"         >
                       <span class="d-block">
-                     <i class="fas fa-presentation" :class="[hideBriefedIssues == true ? 'light':'text-primary']"></i>
+                     <i class="fas fa-presentation" :class="[hideBriefedIssues == true ? 'text-primary':'']"></i>
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedissues">   -->
@@ -758,7 +757,7 @@
             
              <div class="col-3 text-center py-0">
                 <label class="font-sm pb-1 mb-0">FILTER BY PROGRAM</label>
-                <el-select                                  
+                <!-- <el-select                                  
                     class="w-100" 
                    
                     track-by="name" 
@@ -771,7 +770,7 @@
                      value="NEED DATA"                                                                             
                     >
                   </el-option>
-                  </el-select> 
+                  </el-select>  -->
               </div>           
               
                 <div class="col-6 text-center pt-2">
@@ -796,7 +795,7 @@
                 
                  <div class="pr-5 text-center icons" :class="[hideOverdueRisks == true ? 'light':'']" @click.prevent="toggleOverdueR">
                     <span class="d-block">
-                    <i class="far fa-calendar" :class="[hideOverdueRisks == true ? 'light':'text-danger']"></i>
+                    <i class="fas fa-calendar" :class="[hideOverdueRisks == true ? 'light':'text-danger']"></i>
                     </span>                  
                     <span class="smallerFont">OVERDUE </span> 
                     <h5 class="d-block"> {{ riskVariation.overdue.count }}  </h5>    
@@ -840,27 +839,27 @@
                 </div>
               </div>
                  <div class="col-3 tagsCol text-center pt-2 pl-0">
-                <label class="font-sm mb-0 pb-1 d-block">FILTER DISPLAYED RISKS BY TAG</label>
+                <label class="font-sm mb-0 pb-1 d-block">FOCUS DISPLAYED RISKS BY TAG</label>
                  <div class="pb-0 pl-2 mb-0 d-inline-flex">    
-                  <div class="text-center icons" :class="[hideWatchedRisks == true ? 'light':'']" @click.prevent="toggleWatchedR"   >             
+                  <div class="text-center icons" :class="[hideWatchedRisks == true ? '':'light']" @click.prevent="toggleWatchedR"   >             
                  <span class="d-block">
-                      <i class="fas fa-eye " ></i>
+                      <i class="fas fa-eye" ></i>
                  </span>                  
                   <span class="smallerFont">ON WATCH</span>
                    <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="watched" v-model="C_hideWatchedTasks">               -->
                    <h5 class="d-block">{{ riskVariation.watched.count }}</h5>  
                   </div>
-                  <div class="px-5 text-center icons" :class="[hideImportantRisks == true ? 'light':'']" @click.prevent="toggleImportantR"     >
+                  <div class="px-5 text-center icons" :class="[hideImportantRisks == true ? '':'light']" @click.prevent="toggleImportantR"     >
                   <span class="d-block">
-                      <i class="fas fa-star" :class="[hideImportantRisks == true ? 'light':'text-warning']"></i>
+                      <i class="fas fa-star" :class="[hideImportantRisks == true ? 'text-warning':'light']"></i>
                   </span>     
                       <span class="smallerFont">IMPORTANT</span> 
                        <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="important" v-model="C_hideImportantTasks">     -->
                      <h5 class="d-block">{{ riskVariation.important.count }}</h5>  
                   </div>
-                   <div class="text-center icons"  :class="[hideBriefedRisks == true ? 'light':'']" @click.prevent="toggleBriefingR"         >
+                   <div class="text-center icons"  :class="[hideBriefedRisks == true ? '':'light']" @click.prevent="toggleBriefingR"         >
                       <span class="d-block">
-                     <i class="fas fa-presentation" :class="[hideBriefedRisks == true ? 'light':'text-primary']"></i>
+                     <i class="fas fa-presentation" :class="[hideBriefedRisks == true ? 'text-primary ':'light']"></i>
                   </span>     
                     <span class="smallerFont">BRIEFINGS </span> 
                       <!-- <input class="d-block m-auto" type="checkbox" id="checkbox" value="briefed" v-model="C_hideBriefedTasks">   -->
@@ -1311,7 +1310,7 @@ export default {
     },
     tasksObj(){      
       return this.portfolioTaskObj.filter(task => {
-        
+        // Filtering 7 Task States        
         if (this.hideDraftTasks) {
           return !task.draft
         } else return true
@@ -1326,10 +1325,6 @@ export default {
           return !task.ongoing
         } else return true
 
-      }).filter(task => {
-         if (this.hideBriefedTasks) {
-          return !task.reportable
-        } else return true
 
       }).filter(task => {
          if (this.hideInprogressTasks) {
@@ -1346,18 +1341,35 @@ export default {
           return task.progress < 100
         } else return true
 
+      // Filtering 3 Task Tags
       }).filter(task => {
-         if (this.hideInprogressTasks) {
-          return task.progress < 100 && task.start_date <= this.today
+         if (this.hideBriefedTasks && !this.hideWatchedTasks && !this.hideImportantTasks ) {
+          return task.reportable
+        }
+        if (this.hideBriefedTasks && this.hideWatchedTasks && !this.hideImportantTasks) {          
+           return task.reportable + task.watched
+
+        } if (this.hideBriefedTasks && this.hideWatchedTasks && this.hideImportantTasks) {          
+           return task.reportable + task.watched + task.important
         } else return true
+
       }).filter(task => {
         // This and last 2 filters are for Filtered Tags
-         if (this.hideWatchedTasks) {
-          return !task.watched
-        } else return true
+         if (this.hideWatchedTasks  && !this.hideBriefedTasks && !this.hideImportantTasks) {
+           return task.watched
+        } if (this.hideWatchedTasks && this.hideBriefedTasks && !this.hideImportantTasks) {          
+           return  task.watched + task.reportable
+        } if (this.hideWatchedTasks && this.hideBriefedTasks && this.hideImportantTasks) {          
+           return  task.watched + task.reportable + task.important
+        } else return true          
+       
       }).filter(task => {
-         if (this.hideImportantTasks) {
-          return !task.important
+         if (this.hideImportantTasks && !this.hideBriefedTasks && !this.hideWatchedTask) {
+          return task.important
+        } if (this.hideImportantTasks && this.hideBriefedTasks && !this.hideWatchedTask) {
+          return task.important + task.reportable
+       } if (this.hideImportantTasks && this.hideBriefedTasks && this.hideWatchedTask) {
+          return task.important + task.reportable + task.watched
         } else return true    
       })
     }, 
@@ -1371,17 +1383,7 @@ export default {
          if (this.hideOnholdIssues) {
           return !issue.on_hold
         } else return true
-
-      }).filter(issue => {
-         if (this.hideInprogressIssues) {
-          return issue.progress < 100 && issue.start_date <= this.today 
-        } else return true
-
-      }).filter(issue => {
-         if (this.hideBriefedIssues) {
-          return !issue.reportable
-        } else return true
-
+   
       }).filter(issue => {
          if (this.hideOverdueIssues) {
           return !issue.is_overdue
@@ -1396,16 +1398,39 @@ export default {
          if (this.hideInprogressIssues) {
           return issue.progress < 100 && issue.start_date <= this.today
         } else return true
+    // Filtering 3 Issues Tags
+
       }).filter(issue => {
-        // This and last 2 filters are for Filtered Tags
-         if (this.hideWatchedIssues) {
-          return !issue.watched
-        } else return true
+         if (this.hideBriefedIssues && !this.hideWatchedIssues && !this.hideImportantIssues ) {
+          return issue.reportable
+        }
+        if (this.hideBriefedIssues && this.hideWatchedIssues && !this.hideImportantIssues) {          
+           return issue.reportable + issue.watched
+
+        } if (this.hideBriefedIssues && this.hideWatchedIssues && this.hideImportantIssues) {          
+           return issue.reportable + issue.watched + issue.important
+        } else return true   
+
       }).filter(issue => {
-         if (this.hideImportantIssues) {
-          return !issue.important
+         if (this.hideWatchedIssues && !this.hideBriefedIssues && !this.hideImportantIssues) {
+           return issue.watched
+        } if (this.hideWatchedIssues && this.hideImportantIssues && !this.hideBriefedIssues ) {          
+           return issue.important + issue.watched
+       } if (this.hideWatchedIssues && this.hideImportantIssues && this.hideBriefedIssues ) {          
+           return issue.important + issue.watched + issue.reportable
         } else return true    
+       
+      }).filter(issue => {
+         if (this.hideImportantIssues && !this.hideBriefedIssues && !this.hideWatchedIssues) {
+          return issue.important
+        } if (this.hideImportantIssues && this.hideBriefedIssues  && !this.hideWatchedIssues) {
+          return issue.important + issue.reportable
+         } if (this.hideImportantIssues && this.hideBriefedIssues  && this.hideWatchedIssues) {
+          return issue.important + issue.reportable + issue.watched
+        } else return true     
       })
+    
+
     }, 
      risksObj(){     
       return this.portfolioRiskObj.filter(risk => {        
@@ -1416,12 +1441,7 @@ export default {
       }).filter(risk => {
          if (this.hideOnholdRisks) {
           return !risk.on_hold
-        } else return true
-
-      }).filter(risk => {
-         if (this.hideBriefedRisks) {
-          return !risk.reportable
-        } else return true
+        } else return true    
 
      }).filter(risk => {
          if (this.hideInprogressRisks) {
@@ -1447,15 +1467,35 @@ export default {
          if (this.hideInprogressRisks) {
           return risk.progress < 100 && risk.start_date <= this.today
         } else return true
+
+    }).filter(risk => {
+         if (this.hideBriefedRisks && !this.hideWatchedRisks && !this.hideImportantRisks ) {
+          return risk.reportable
+        }
+        if (this.hideBriefedRisks && this.hideWatchedRisks && !this.hideImportantRisks) {          
+           return risk.reportable + risk.watched
+
+        } if (this.hideBriefedRisks && this.hideWatchedRisks && this.hideImportantRisks) {          
+           return risk.reportable + risk.watched + risk.important
+        } else return true   
+
       }).filter(risk => {
-        // This and last 2 filters are for Filtered Tags
-         if (this.hideWatchedRisks) {
-          return !risk.watched
-        } else return true
-      }).filter(risk => {
-         if (this.hideImportantRisks) {
-          return !risk.important
+         if (this.hideWatchedRisks && !this.hideBriefedRisks && !this.hideImportantRisks) {
+           return risk.watched
+        } if (this.hideWatchedRisks && this.hideImportantRisks && !this.hideBriefedRisks ) {          
+           return risk.important + risk.watched
+       } if (this.hideWatchedRisks && this.hideImportantRisks && this.hideBriefedRisks ) {          
+           return risk.important + risk.watched + risk.reportable
         } else return true    
+       
+      }).filter(risk => {
+         if (this.hideImportantRisks && !this.hideBriefedRisks && !this.hideWatchedRisks) {
+          return risk.important
+        } if (this.hideImportantRisks && this.hideBriefedRisks  && !this.hideWatchedRisks) {
+          return risk.important + risk.reportable
+         } if (this.hideImportantRisks && this.hideBriefedRisks && this.hideWatchedRisks) {
+          return risk.important + risk.reportable + risk.watched
+        } else return true     
       })
     }, 
     //  pagedTableData() {
